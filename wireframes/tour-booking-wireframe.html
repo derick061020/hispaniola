@@ -1,0 +1,791 @@
+<title>Hispaniola — Wireframes Ficha de Tour + Booking</title>
+<style>
+  :root {
+    --papel: #FAFAF8;
+    --tinta: #1B1E21;
+    --tinta-2: #5A6058;
+    --bloque: #EEEFEA;
+    --bloque-2: #E2E4DD;
+    --linea: #C9CCC5;
+    --linea-fuerte: #9AA096;
+    --acento: #0E7A8A;
+    --acento-tenue: #0E7A8A1A;
+    --btn: #2A2E32;
+    --btn-texto: #FAFAF8;
+    --ok: #2E7D4F;
+    --ok-tenue: #2E7D4F1A;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --papel: #16191B; --tinta: #E8EAE6; --tinta-2: #9AA096;
+      --bloque: #21262A; --bloque-2: #2A3036; --linea: #3A4045;
+      --linea-fuerte: #565E63; --acento: #55B9C7; --acento-tenue: #55B9C71F;
+      --btn: #E8EAE6; --btn-texto: #16191B; --ok: #5CBF8A; --ok-tenue: #5CBF8A1F;
+    }
+  }
+  :root[data-theme="dark"] {
+    --papel: #16191B; --tinta: #E8EAE6; --tinta-2: #9AA096;
+    --bloque: #21262A; --bloque-2: #2A3036; --linea: #3A4045;
+    --linea-fuerte: #565E63; --acento: #55B9C7; --acento-tenue: #55B9C71F;
+    --btn: #E8EAE6; --btn-texto: #16191B; --ok: #5CBF8A; --ok-tenue: #5CBF8A1F;
+  }
+  :root[data-theme="light"] {
+    --papel: #FAFAF8; --tinta: #1B1E21; --tinta-2: #5A6058;
+    --bloque: #EEEFEA; --bloque-2: #E2E4DD; --linea: #C9CCC5;
+    --linea-fuerte: #9AA096; --acento: #0E7A8A; --acento-tenue: #0E7A8A1A;
+    --btn: #2A2E32; --btn-texto: #FAFAF8; --ok: #2E7D4F; --ok-tenue: #2E7D4F1A;
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--papel); color: var(--tinta);
+    font: 15px/1.5 ui-sans-serif, system-ui, "Segoe UI", sans-serif; }
+  .mono { font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; }
+  .marco { max-width: 1240px; margin: 0 auto; padding: 40px 24px 96px; }
+
+  header.doc { max-width: 860px; margin-bottom: 8px; }
+  .eyebrow { font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+    font-size: 12px; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--acento); margin: 0 0 10px; }
+  header.doc h1 { font-size: clamp(26px, 4vw, 38px); line-height: 1.15; margin: 0 0 12px;
+    letter-spacing: -.01em; text-wrap: balance; }
+  header.doc p { color: var(--tinta-2); max-width: 62ch; margin: 0 0 8px; }
+  .reglas { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; padding: 0; list-style: none; }
+  .reglas li { font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; font-size: 12px;
+    padding: 5px 10px; border: 1px solid var(--linea); border-radius: 3px;
+    color: var(--tinta-2); background: var(--bloque); }
+  .reglas li.no { text-decoration: line-through; text-decoration-color: var(--linea-fuerte); }
+
+  h2.parte { font-size: 20px; margin: 56px 0 0; padding-top: 24px; border-top: 2px solid var(--tinta);
+    letter-spacing: -.01em; }
+  h2.parte .mono { font-size: 12px; color: var(--acento); display: block; margin-bottom: 6px;
+    letter-spacing: .14em; text-transform: uppercase; }
+
+  .fila { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 20px;
+    align-items: start; margin-top: 28px; }
+  .nota { position: sticky; top: 16px; border-left: 2px solid var(--acento); padding: 2px 0 2px 14px; }
+  .nota h3 { font-size: 14px; margin: 0 0 6px; display: flex; align-items: center; gap: 8px; }
+  .pin { font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; font-size: 11px;
+    color: var(--acento); background: var(--acento-tenue); border: 1px solid var(--acento);
+    border-radius: 3px; padding: 1px 6px; }
+  .nota p { font-size: 13px; color: var(--tinta-2); margin: 0 0 8px; }
+  .nota p strong { color: var(--tinta); font-weight: 600; }
+
+  .wire { border: 1px solid var(--linea-fuerte); background: var(--papel); border-radius: 4px; overflow: hidden; }
+  .zona { padding: 18px 22px; border-top: 1px dashed var(--linea); }
+  .zona:first-child { border-top: 0; }
+
+  .img { background:
+      linear-gradient(to top right, transparent calc(50% - .5px), var(--linea) 50%, transparent calc(50% + .5px)),
+      linear-gradient(to bottom right, transparent calc(50% - .5px), var(--linea) 50%, transparent calc(50% + .5px)),
+      var(--bloque);
+    border: 1px solid var(--linea); border-radius: 3px;
+    display: flex; align-items: center; justify-content: center; color: var(--tinta-2);
+    font-size: 11px; font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+    text-transform: uppercase; letter-spacing: .1em; text-align: center; }
+
+  .btn-w, .btn-w2 { display: inline-block; padding: 9px 18px; border-radius: 4px;
+    font-size: 13px; font-weight: 600; white-space: nowrap; }
+  .btn-w { background: var(--btn); color: var(--btn-texto); }
+  .btn-w2 { border: 1.5px solid var(--btn); color: var(--tinta); }
+  .btn-block { display: block; text-align: center; }
+
+  .chip { display: inline-block; font-size: 11px; padding: 2px 8px;
+    border: 1px solid var(--linea-fuerte); border-radius: 999px; color: var(--tinta-2); }
+  .chip.ok { border-color: var(--ok); color: var(--ok); background: var(--ok-tenue); }
+  .etq { font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; font-size: 10px;
+    letter-spacing: .12em; text-transform: uppercase; color: var(--tinta-2); margin: 0 0 10px; }
+  .stars { letter-spacing: 2px; font-size: 13px; }
+  .h-wire { margin: 0; line-height: 1.2; letter-spacing: -.01em; }
+  .sub-wire { color: var(--tinta-2); margin: 6px 0 0; }
+  .meta { font-size: 12px; color: var(--tinta-2); }
+  .precio { font-size: 15px; font-weight: 700; }
+  .precio small { font-weight: 400; color: var(--tinta-2); }
+
+  .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+
+  .benef { border: 1px solid var(--linea); border-radius: 5px; padding: 12px; background: var(--bloque); }
+  .benef h4 { margin: 0 0 4px; font-size: 13px; }
+  .benef p { margin: 0; font-size: 12px; color: var(--tinta-2); }
+
+  /* ficha: layout con widget lateral */
+  .ficha-grid { display: grid; grid-template-columns: minmax(0,1fr) 260px; gap: 18px; align-items: start; }
+  .widget-card { border: 1.5px solid var(--linea-fuerte); border-radius: 6px; background: var(--bloque);
+    padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+  .widget-card .cal { border: 1px solid var(--linea-fuerte); background: var(--papel); border-radius: 4px;
+    padding: 8px; font-size: 11px; color: var(--tinta-2); text-align: center;
+    font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; }
+  .campo { display: flex; flex-direction: column; gap: 4px; }
+  .campo label { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--tinta-2);
+    font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; }
+  .campo .input { border: 1px solid var(--linea-fuerte); background: var(--papel); border-radius: 4px;
+    padding: 8px 10px; font-size: 13px; color: var(--tinta-2); }
+
+  /* mosaico galeria */
+  .mosaico { display: grid; grid-template-columns: 2fr 1fr 1fr; grid-template-rows: 90px 90px; gap: 8px; }
+  .mosaico .img:first-child { grid-row: span 2; }
+
+  /* timeline */
+  .tl { list-style: none; margin: 12px 0 0; padding: 0; }
+  .tl li { display: grid; grid-template-columns: 64px 16px 1fr; gap: 10px; padding: 0 0 18px; position: relative; }
+  .tl .hora { font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; font-size: 11px;
+    color: var(--tinta-2); text-align: right; padding-top: 2px; }
+  .tl .punto { width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--linea-fuerte);
+    background: var(--papel); margin: 4px auto 0; }
+  .tl li::before { content: ""; position: absolute; left: 71px; top: 16px; bottom: 0;
+    width: 2px; background: var(--linea); }
+  .tl li:last-child::before { display: none; }
+  .tl h4 { margin: 0 0 2px; font-size: 13px; }
+  .tl p { margin: 0; font-size: 12px; color: var(--tinta-2); }
+
+  /* tabla comparativa */
+  .comp { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 12px; }
+  .comp th, .comp td { border: 1px solid var(--linea); padding: 8px 10px; text-align: left; }
+  .comp th { background: var(--bloque); font-size: 12px; }
+  .comp .si { color: var(--ok); }
+
+  /* booking: pasos */
+  .pasos { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--tinta-2);
+    flex-wrap: wrap; }
+  .pasos .p { display: flex; align-items: center; gap: 6px; }
+  .pasos .n { width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid var(--linea-fuerte);
+    display: inline-flex; align-items: center; justify-content: center; font-size: 11px;
+    font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; }
+  .pasos .p.act { color: var(--tinta); font-weight: 600; }
+  .pasos .p.act .n { border-color: var(--tinta); background: var(--btn); color: var(--btn-texto); }
+  .pasos .p.hecho .n { border-color: var(--ok); color: var(--ok); }
+  .pasos .sep { width: 26px; height: 1px; background: var(--linea-fuerte); }
+
+  .book-grid { display: grid; grid-template-columns: minmax(0,1fr) 240px; gap: 18px; align-items: start; }
+  .resumen { border: 1px solid var(--linea-fuerte); border-radius: 6px; overflow: hidden; background: var(--bloque); }
+  .resumen .img { height: 70px; border: 0; border-bottom: 1px solid var(--linea); border-radius: 0; }
+  .resumen .cuerpo { padding: 12px; font-size: 12px; display: flex; flex-direction: column; gap: 6px; }
+  .resumen .linea-total { border-top: 1px solid var(--linea-fuerte); padding-top: 8px; margin-top: 4px;
+    display: flex; justify-content: space-between; font-weight: 700; font-size: 14px; }
+  .resumen .fila-r { display: flex; justify-content: space-between; color: var(--tinta-2); }
+
+  /* calendario grande */
+  .cal-g { border: 1px solid var(--linea-fuerte); border-radius: 6px; overflow: hidden; }
+  .cal-g .cab { display: flex; justify-content: space-between; padding: 10px 14px;
+    background: var(--bloque); border-bottom: 1px solid var(--linea); font-size: 13px; font-weight: 600; }
+  .cal-g table { width: 100%; border-collapse: collapse; font-size: 11px; text-align: center;
+    font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; }
+  .cal-g th { padding: 6px 0; color: var(--tinta-2); font-weight: 400; }
+  .cal-g td { padding: 7px 0 4px; border-top: 1px solid var(--linea); color: var(--tinta); }
+  .cal-g td small { display: block; color: var(--tinta-2); font-size: 9px; }
+  .cal-g td.off { color: var(--linea-fuerte); text-decoration: line-through; }
+  .cal-g td.sel { background: var(--btn); color: var(--btn-texto); border-radius: 4px; }
+  .cal-g td.sel small { color: var(--btn-texto); }
+
+  .slot { border: 1.5px solid var(--linea-fuerte); border-radius: 6px; padding: 12px; display: flex;
+    justify-content: space-between; align-items: center; gap: 10px; background: var(--papel); }
+  .slot.sel { border-color: var(--tinta); background: var(--bloque); }
+  .slot .radio { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--linea-fuerte); }
+  .slot.sel .radio { border-color: var(--tinta); background: var(--tinta); box-shadow: inset 0 0 0 3px var(--bloque); }
+
+  .stepper { display: inline-flex; align-items: center; gap: 12px; border: 1px solid var(--linea-fuerte);
+    border-radius: 4px; padding: 6px 12px; font-weight: 600; }
+  .stepper span.pm { color: var(--tinta-2); font-size: 16px; }
+
+  /* menu cards */
+  .plato { border: 1.5px solid var(--linea); border-radius: 6px; overflow: hidden; background: var(--papel); }
+  .plato.sel { border-color: var(--tinta); }
+  .plato .img { height: 64px; border: 0; border-bottom: 1px solid var(--linea); border-radius: 0; }
+  .plato .cuerpo { padding: 8px 10px; font-size: 12px; }
+  .plato .cuerpo strong { display: block; font-size: 12px; }
+  .plato .cuerpo span { color: var(--tinta-2); font-size: 11px; }
+
+  /* pago */
+  .opcion-pago { border: 1.5px solid var(--linea); border-radius: 6px; padding: 12px; display: grid;
+    grid-template-columns: 18px 1fr auto; gap: 10px; align-items: start; background: var(--papel); }
+  .opcion-pago.sel { border-color: var(--tinta); background: var(--bloque); }
+  .opcion-pago .radio { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--linea-fuerte); margin-top: 2px; }
+  .opcion-pago.sel .radio { border-color: var(--tinta); background: var(--tinta); box-shadow: inset 0 0 0 3px var(--bloque); }
+  .opcion-pago h4 { margin: 0 0 2px; font-size: 13px; }
+  .opcion-pago p { margin: 0; font-size: 12px; color: var(--tinta-2); }
+
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  /* gracias */
+  .check-big { width: 54px; height: 54px; border-radius: 50%; border: 3px solid var(--ok);
+    color: var(--ok); display: flex; align-items: center; justify-content: center;
+    font-size: 26px; margin: 0 auto 12px; }
+  .codigo { font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; font-size: 18px;
+    letter-spacing: .1em; border: 1.5px dashed var(--linea-fuerte); border-radius: 6px;
+    padding: 8px 18px; display: inline-block; }
+  .next-step { display: grid; grid-template-columns: 26px 1fr; gap: 10px; padding: 10px 0;
+    border-top: 1px solid var(--linea); font-size: 13px; }
+  .next-step:first-of-type { border-top: 0; }
+  .next-step .n2 { width: 22px; height: 22px; border-radius: 50%; background: var(--bloque-2);
+    display: flex; align-items: center; justify-content: center; font-size: 11px;
+    font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; }
+  .next-step p { margin: 0; color: var(--tinta-2); font-size: 12px; }
+  .next-step strong { font-size: 13px; color: var(--tinta); }
+
+  .barra-movil { display: flex; justify-content: space-between; align-items: center; gap: 12px;
+    border: 1.5px solid var(--linea-fuerte); border-radius: 6px; padding: 10px 14px;
+    background: var(--bloque); max-width: 340px; }
+
+  @media (max-width: 1000px) {
+    .fila { grid-template-columns: 1fr; }
+    .nota { position: static; }
+  }
+  @media (max-width: 760px) {
+    .ficha-grid, .book-grid, .grid-3, .grid-4, .form-grid, .mosaico { grid-template-columns: 1fr 1fr; }
+    .mosaico { grid-template-rows: auto; }
+    .grid-2 { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 520px) {
+    .ficha-grid, .book-grid, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+  }
+</style>
+
+<div class="marco">
+  <header class="doc">
+    <p class="eyebrow">Hispaniola Aquatic Adventures · Rediseño web · 2026-07-11</p>
+    <h1>Wireframes: Ficha de tour + Flujo de booking</h1>
+    <p>Segunda entrega (la home está en su propio wireframe). Aquí vive la conversión:
+    la <strong>plantilla de ficha de tour</strong> y el <strong>flujo de reserva completo en 4 pasos</strong>
+    hasta la pantalla de gracias. Cada decisión responde a una fricción medida en la
+    auditoría del flujo actual de xpotours.</p>
+    <ul class="reglas">
+      <li>Fecha + personas ANTES que cualquier dato personal</li>
+      <li>Resumen de compra siempre visible</li>
+      <li>Indicador de pasos en todo el funnel</li>
+      <li class="no">Fechas de llegada/salida del viaje</li>
+      <li class="no">Nº de habitación como requisito</li>
+      <li class="no">"¿Cómo nos conociste?" en el checkout</li>
+      <li class="no">Select de 190 países</li>
+    </ul>
+  </header>
+
+  <!-- ============ PARTE A: FICHA DE TOUR ============ -->
+  <h2 class="parte"><span class="mono">Parte A</span>Plantilla de ficha de tour <span class="meta">(ejemplo: Semi-Privado Premium)</span></h2>
+
+  <!-- A1 cabecera de ficha -->
+  <section class="fila">
+    <div class="wire">
+      <div class="zona">
+        <p class="meta">Inicio / Tours / Semi-Privado Premium</p>
+        <h2 class="h-wire" style="font-size:26px; margin-top:6px;">Semi-Privado Premium — catamarán solo adultos</h2>
+        <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:center; margin-top:8px;">
+          <span class="stars">★★★★★</span>
+          <span style="font-size:13px;"><strong>4.9</strong> · 1.782 reseñas</span>
+          <span class="chip ok">✓ Cancelación gratis</span>
+          <span class="chip">Recogida en hotel</span>
+          <span class="chip">Solo adultos</span>
+          <span class="chip">4 horas</span>
+          <span class="chip">WiFi a bordo</span>
+        </div>
+      </div>
+      <div class="zona">
+        <div class="mosaico">
+          <div class="img">Foto principal + quote de reseña superpuesta</div>
+          <div class="img">Foto</div>
+          <div class="img">Foto</div>
+          <div class="img">Video ▶</div>
+          <div class="img">Ver 33 fotos →</div>
+        </div>
+      </div>
+    </div>
+    <aside class="nota">
+      <h3><span class="pin">A1</span> Above the fold de la ficha</h3>
+      <p>Todo lo que hoy falta, en la primera pantalla: <strong>rating con nº de reseñas,
+      cancelación gratis, audiencia (solo adultos) y duración</strong> como chips junto al H1
+      — patrón Civitatis/Viator calcado.</p>
+      <p>Mosaico de 5 con quote real superpuesta y acceso a la galería completa con
+      lightbox. Se acabó el grid infinito de "Memories".</p>
+    </aside>
+  </section>
+
+  <!-- A2 layout con widget -->
+  <section class="fila">
+    <div class="wire">
+      <div class="zona ficha-grid">
+        <div>
+          <p class="etq">Nav de anclas (sticky): Itinerario · Incluye · Menú · Opiniones · FAQ</p>
+          <h3 class="h-wire" style="font-size:17px;">Un día de mar en grupo pequeño</h3>
+          <p class="sub-wire" style="font-size:13px;">Descripción corta de 3-4 líneas máximo con
+          "Leer más" colapsado. Snorkel en vivero de coral con bióloga marina, playa desierta
+          con coco-loco y comida hecha a bordo en la cocina flotante. Máximo 25 personas
+          en un barco para 70.</p>
+          <p class="meta" style="margin-top:8px;">Leer descripción completa ▾</p>
+        </div>
+        <div class="widget-card">
+          <div>
+            <span class="precio" style="font-size:20px;">US$ 99</span>
+            <span class="meta">/persona · desde</span>
+          </div>
+          <div class="cal">📅 Julio 2026 — días con precio<br>[mini calendario]</div>
+          <div class="campo"><label>Horario</label><div class="input">9:00 AM ▾</div></div>
+          <div class="campo"><label>Personas</label><div class="input">2 adultos ▾</div></div>
+          <span class="btn-w btn-block">Continuar — US$ 228</span>
+          <p class="meta" style="margin:0;">✓ Confirma con 25% (US$ 57)<br>
+          ✓ Cancela gratis hasta 7 días antes<br>✓ Reembolso total por mal clima</p>
+        </div>
+      </div>
+    </div>
+    <aside class="nota">
+      <h3><span class="pin">A2</span> El widget ES la página</h3>
+      <p><strong>Widget sticky a la derecha en desktop; en móvil, barra inferior fija</strong>
+      (precio + CTA) que abre el paso 1 del booking. El precio aparece en la primera
+      pantalla — hoy está a 6 pantallas de scroll.</p>
+      <p>El CTA ya muestra el total calculado. El microcopy del depósito y la cancelación
+      van pegados al botón: es donde se decide.</p>
+      <p>Un solo precio "desde" ($99 = paquete Light). El Premium se elige dentro del
+      flujo — muere la aritmética confusa de "starting at $103 vs $114".</p>
+    </aside>
+  </section>
+
+  <!-- A3 itinerario -->
+  <section class="fila">
+    <div class="wire">
+      <div class="zona grid-2" style="align-items:start;">
+        <div>
+          <p class="etq">Itinerario — 4 horas</p>
+          <ul class="tl">
+            <li><span class="hora">8:05</span><span class="punto"></span>
+              <div><h4>Recogida en tu hotel</h4><p>Transporte con AC. La hora exacta según tu hotel — se confirma al reservar.</p></div></li>
+            <li><span class="hora">9:00</span><span class="punto"></span>
+              <div><h4>Zarpamos desde Bávaro</h4><p>Check-in en instalaciones privadas y navegación por la costa hasta Cabo Engaño.</p></div></li>
+            <li><span class="hora">~9:45</span><span class="punto"></span>
+              <div><h4>Snorkel en el vivero de coral</h4><p>Arrecife de Cabeza de Toro: proyecto de restauración top-3 de RD, explicado por nuestra bióloga marina.</p></div></li>
+            <li><span class="hora">~11:00</span><span class="punto"></span>
+              <div><h4>Playa desierta + coco-loco</h4><p>Cóctel en coco real (con o sin alcohol).</p></div></li>
+            <li><span class="hora">~11:45</span><span class="punto"></span>
+              <div><h4>Piscina natural + comida a bordo</h4><p>Agua a 1,2 m — apto para principiantes. Tu plato, recién hecho en la cocina flotante.</p></div></li>
+            <li><span class="hora">13:00</span><span class="punto"></span>
+              <div><h4>Regreso y traslado al hotel</h4><p></p></div></li>
+          </ul>
+        </div>
+        <div class="img" style="min-height:280px;">Mapa de la ruta<br>(costa Bávaro → Cabo Engaño,<br>3 paradas marcadas)</div>
+      </div>
+    </div>
+    <aside class="nota">
+      <h3><span class="pin">A3</span> Itinerario visual con mapa</h3>
+      <p>Los 5 párrafos de prosa actuales se convierten en <strong>timeline con horas + mapa
+      de ruta</strong>. Los horarios (9-13 h / 13-17 h) hoy están enterrados en el
+      párrafo 5 de la ficha.</p>
+      <p>El mapa vende la ruta ("exclusive locations not visited by typical tour
+      routes") mejor que cualquier texto.</p>
+    </aside>
+  </section>
+
+  <!-- A4 incluye + menu -->
+  <section class="fila">
+    <div class="wire">
+      <div class="zona">
+        <p class="etq">Qué incluye</p>
+        <div class="grid-4">
+          <div class="benef"><h4>Equipo de snorkel</h4><p>Sanitizado, todas las tallas.</p></div>
+          <div class="benef"><h4>Transporte ida y vuelta</h4><p>AC, desde tu hotel.</p></div>
+          <div class="benef"><h4>Comida + bebidas</h4><p>Cocina flotante y barra.</p></div>
+          <div class="benef"><h4>Bióloga marina</h4><p>Guía del arrecife.</p></div>
+        </div>
+        <p class="meta" style="margin-top:10px;">No incluido: fotos HD originales (US$ 20 vía
+        Dropbox) · suplemento de transporte desde Casa de Campo.</p>
+      </div>
+      <div class="zona">
+        <p class="etq">Tu menú, a tu elección</p>
+        <p class="sub-wire" style="font-size:13px; margin:0 0 10px;">Cada persona elige su plato
+        al reservar. Recién hecho a bordo, no buffet recalentado.</p>
+        <div class="grid-4">
+          <div class="plato"><div class="img">Foto plato</div>
+            <div class="cuerpo"><strong>Mariscos</strong><span>Langosta, pulpo, camarón</span></div></div>
+          <div class="plato"><div class="img">Foto plato</div>
+            <div class="cuerpo"><strong>Carne</strong><span>Angus certificado</span></div></div>
+          <div class="plato"><div class="img">Foto plato</div>
+            <div class="cuerpo"><strong>Surf & Turf</strong><span>Langosta + Angus</span></div></div>
+          <div class="plato"><div class="img">Foto plato</div>
+            <div class="cuerpo"><strong>Vegetariano</strong><span>Ceviche de zucchini</span></div></div>
+        </div>
+        <table class="comp">
+          <tr><th></th><th>Light — US$ 99</th><th>Premium — US$ 114</th></tr>
+          <tr><td>Menú</td><td>Pollo o pescado a la parrilla</td><td class="si">6 platos: langosta, Angus, surf&turf…</td></tr>
+          <tr><td>Todo lo demás</td><td class="si">✓ idéntico</td><td class="si">✓ idéntico</td></tr>
+        </table>
+        <p class="meta" style="margin-top:8px;">* Langosta se sustituye por langostino salvaje de marzo a junio (veda).</p>
+      </div>
+    </div>
+    <aside class="nota">
+      <h3><span class="pin">A4</span> Incluye + menú: el diferenciador estrella</h3>
+      <p>Las fotos reales de platos son el activo que <strong>ningún competidor tiene</strong> —
+      suben de las profundidades de la ficha a sección propia.</p>
+      <p>Premium vs Light como <strong>una tabla de una sola diferencia</strong> (el menú), no dos
+      bloques duplicados con dos "What to bring". La nota de la veda de langosta se
+      mantiene: honestidad = confianza.</p>
+    </aside>
+  </section>
+
+  <!-- A5 reviews + faq + relacionados -->
+  <section class="fila">
+    <div class="wire">
+      <div class="zona grid-3">
+        <div>
+          <p class="etq">Opiniones</p>
+          <p class="h-wire" style="font-size:30px;">4.9<span class="meta" style="font-size:13px;"> / 5</span></p>
+          <p class="meta">1.782 reseñas verificadas<br>[▓▓▓▓▓ 5★ 92%] [▓ 4★ 6%]…<br>
+          Ver en TripAdvisor · Viator →</p>
+        </div>
+        <div class="benef" style="grid-column: span 2;">
+          <p style="font-size:13px; margin:0 0 6px;">"Quote larga destacada — la mejor reseña
+          reciente que mencione coral, comida o tripulación. Rotación editorial mensual."</p>
+          <span class="meta">★★★★★ · Nombre · Viator · jun 2026 &nbsp;&nbsp; [+ 2 quotes más]</span>
+        </div>
+      </div>
+      <div class="zona grid-2">
+        <div>
+          <p class="etq">FAQ de este tour</p>
+          <p class="meta" style="line-height:2;">¿Y si llueve? — reembolso o cambio de fecha +<br>
+          ¿Hay baño a bordo? +<br>¿Puedo ir si no sé nadar? +<br>¿Traigo efectivo? ¿cuánto? +</p>
+        </div>
+        <div>
+          <p class="etq">También te puede gustar</p>
+          <div class="grid-2">
+            <div class="benef"><h4>Snorkel Lovers</h4><p>La versión para familias · US$ 98</p></div>
+            <div class="benef"><h4>Charter Privado</h4><p>El barco entero para tu grupo · US$ 55/p</p></div>
+          </div>
+        </div>
+      </div>
+      <div class="zona">
+        <div class="barra-movil">
+          <div><span class="precio">US$ 99</span> <span class="meta">/pers</span><br>
+          <span class="meta">★ 4.9 · Cancela gratis</span></div>
+          <span class="btn-w">Elegir fecha</span>
+        </div>
+        <p class="meta" style="margin:8px 0 0;">↑ Barra inferior fija en móvil (siempre visible al hacer scroll)</p>
+      </div>
+    </div>
+    <aside class="nota">
+      <h3><span class="pin">A5</span> Cierre de la ficha</h3>
+      <p>Reviews con distribución y fuente verificable. <strong>FAQ del tour ataca las 4
+      objeciones de compra reales</strong> (clima, baño, nadar, efectivo — esta última prepara
+      el pago del saldo en cash).</p>
+      <p>Cross-sell entre los 4 tours al final — hoy las fichas son callejones sin
+      salida. Y el formulario de cotización de eventos <strong>desaparece de aquí</strong>: vive
+      en su propia página.</p>
+    </aside>
+  </section>
+
+  <!-- ============ PARTE B: BOOKING ============ -->
+  <h2 class="parte"><span class="mono">Parte B</span>Flujo de booking — 4 pasos <span class="meta">(sustituye el formulario monolítico de xpotours)</span></h2>
+
+  <!-- B1 paso 1 -->
+  <section class="fila">
+    <div class="wire">
+      <div class="zona" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+        <div class="pasos">
+          <span class="p act"><span class="n">1</span> Fecha y personas</span><span class="sep"></span>
+          <span class="p"><span class="n">2</span> Personaliza</span><span class="sep"></span>
+          <span class="p"><span class="n">3</span> Pago</span><span class="sep"></span>
+          <span class="p"><span class="n">4</span> ¡Listo!</span>
+        </div>
+        <span class="meta">🔒 Pago seguro · Stripe</span>
+      </div>
+      <div class="zona book-grid">
+        <div>
+          <h3 class="h-wire" style="font-size:17px;">¿Qué día navegamos?</h3>
+          <div class="cal-g" style="margin-top:10px;">
+            <div class="cab"><span>‹</span><span>Julio 2026</span><span>›</span></div>
+            <table>
+              <tr><th>L</th><th>M</th><th>X</th><th>J</th><th>V</th><th>S</th><th>D</th></tr>
+              <tr><td class="off">13</td><td>14<small>$99</small></td><td>15<small>$99</small></td><td>16<small>$99</small></td><td>17<small>$99</small></td><td class="off">18</td><td>19<small>$99</small></td></tr>
+              <tr><td>20<small>$99</small></td><td>21<small>$99</small></td><td class="sel">22<small>$99</small></td><td>23<small>$99</small></td><td>24<small>$99</small></td><td class="off">25</td><td>26<small>$99</small></td></tr>
+            </table>
+          </div>
+          <p class="etq" style="margin-top:14px;">Horario — mié 22 de julio</p>
+          <div class="grid-2">
+            <div class="slot sel"><div style="display:flex; gap:10px; align-items:center;">
+              <span class="radio"></span><div><strong style="font-size:13px;">9:00 AM</strong><br>
+              <span class="meta">Regreso 1:00 PM</span></div></div>
+              <span class="chip">quedan 9</span></div>
+            <div class="slot"><div style="display:flex; gap:10px; align-items:center;">
+              <span class="radio"></span><div><strong style="font-size:13px;">1:00 PM</strong><br>
+              <span class="meta">Regreso 5:00 PM</span></div></div>
+              <span class="chip ok">quedan 17</span></div>
+          </div>
+          <p class="etq" style="margin-top:14px;">Personas</p>
+          <div style="display:flex; gap:14px; align-items:center; flex-wrap:wrap;">
+            <span class="stepper"><span class="pm">−</span> 2 adultos <span class="pm">+</span></span>
+            <span class="meta">Tour solo adultos (18+). ¿Van con niños? → Snorkel Lovers</span>
+          </div>
+          <p class="etq" style="margin-top:14px;">Paquete</p>
+          <div class="grid-2">
+            <div class="slot"><div style="display:flex; gap:10px; align-items:center;">
+              <span class="radio"></span><div><strong style="font-size:13px;">Light — US$ 99</strong><br>
+              <span class="meta">Pollo o pescado a la parrilla</span></div></div></div>
+            <div class="slot sel"><div style="display:flex; gap:10px; align-items:center;">
+              <span class="radio"></span><div><strong style="font-size:13px;">Premium — US$ 114</strong><br>
+              <span class="meta">Langosta, Angus, surf & turf…</span></div></div>
+              <span class="chip">popular</span></div>
+          </div>
+          <span class="btn-w btn-block" style="margin-top:16px;">Continuar</span>
+        </div>
+        <div class="resumen">
+          <div class="img">Foto del tour</div>
+          <div class="cuerpo">
+            <strong style="font-size:13px;">Semi-Privado Premium</strong>
+            <span class="fila-r"><span>★ 4.9 (1.782)</span></span>
+            <span class="fila-r"><span>Fecha</span><span>mié 22 jul</span></span>
+            <span class="fila-r"><span>Horario</span><span>9:00 AM</span></span>
+            <span class="fila-r"><span>Personas</span><span>2 adultos</span></span>
+            <span class="fila-r"><span>2 × US$ 114</span><span>US$ 228</span></span>
+            <span class="linea-total"><span>Total</span><span>US$ 228</span></span>
+            <span class="meta">o confirma hoy con US$ 57 (25%)</span>
+            <span class="chip ok" style="align-self:start;">✓ Cancela gratis hasta el 15 jul</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <aside class="nota">
+      <h3><span class="pin">B1</span> Paso 1 — fecha, hora, personas, paquete</h3>
+      <p>El orden correcto: <strong>calendario con precio por día → horario con plazas
+      restantes → personas → paquete</strong>. Cero datos personales, cero fechas del viaje.
+      Lo que xpotours pide en 8 campos aquí son 4 decisiones con feedback inmediato.</p>
+      <p>"Quedan 9" es <strong>urgencia real del motor</strong> (los barcos van al 35% del aforo) —
+      sustituye el "last reservation: 21 seconds ago" fake.</p>
+      <p>El resumen lateral nace aquí y <strong>acompaña todo el funnel</strong>. En móvil: colapsado
+      arriba, expandible.</p>
+      <p>Adults-only gestionado con redirección amable al tour de familias, no con letra
+      pequeña.</p>
+    </aside>
+  </section>
+
+  <!-- B2 paso 2 -->
+  <section class="fila">
+    <div class="wire">
+      <div class="zona" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+        <div class="pasos">
+          <span class="p hecho"><span class="n">✓</span> Fecha</span><span class="sep"></span>
+          <span class="p act"><span class="n">2</span> Personaliza</span><span class="sep"></span>
+          <span class="p"><span class="n">3</span> Pago</span><span class="sep"></span>
+          <span class="p"><span class="n">4</span> ¡Listo!</span>
+        </div>
+        <span class="meta">🔒 Pago seguro · Stripe</span>
+      </div>
+      <div class="zona book-grid">
+        <div>
+          <h3 class="h-wire" style="font-size:17px;">El plato de cada uno</h3>
+          <p class="sub-wire" style="font-size:13px;">Se cocina a bordo, recién hecho. Puedes
+          cambiarlo hasta 24 h antes del tour.</p>
+          <p class="etq" style="margin-top:12px;">Persona 1</p>
+          <div class="grid-4">
+            <div class="plato sel"><div class="img">Foto</div><div class="cuerpo"><strong>Mariscos</strong><span>langosta, pulpo…</span></div></div>
+            <div class="plato"><div class="img">Foto</div><div class="cuerpo"><strong>Carne</strong><span>Angus</span></div></div>
+            <div class="plato"><div class="img">Foto</div><div class="cuerpo"><strong>Surf & Turf</strong><span>mixto</span></div></div>
+            <div class="plato"><div class="img">Foto</div><div class="cuerpo"><strong>Vegetariano</strong><span>ceviche, pasta</span></div></div>
+          </div>
+          <p class="etq" style="margin-top:12px;">Persona 2</p>
+          <div class="grid-4">
+            <div class="plato"><div class="img">Foto</div><div class="cuerpo"><strong>Mariscos</strong></div></div>
+            <div class="plato sel"><div class="img">Foto</div><div class="cuerpo"><strong>Carne</strong></div></div>
+            <div class="plato"><div class="img">Foto</div><div class="cuerpo"><strong>Surf & Turf</strong></div></div>
+            <div class="plato"><div class="img">Foto</div><div class="cuerpo"><strong>Vegetariano</strong></div></div>
+          </div>
+          <p class="etq" style="margin-top:16px;">¿Dónde te recogemos?</p>
+          <div class="grid-2">
+            <div class="campo"><label>Tu hotel</label><div class="input">🔍 Hard Rock Hotel — Bávaro</div></div>
+            <div class="benef" style="align-self:end;"><h4>Tu recogida: 8:05 AM</h4>
+              <p>Lobby principal. Te lo recordamos por WhatsApp la tarde anterior.</p></div>
+          </div>
+          <p class="meta" style="margin-top:6px;">¿No está tu hotel? Escríbenos por WhatsApp ·
+          Alojamiento privado / Airbnb → punto de encuentro</p>
+          <div class="campo" style="margin-top:12px;"><label>Algo que debamos saber (opcional)</label>
+            <div class="input">Alergias, movilidad, celebración…</div></div>
+          <span class="btn-w btn-block" style="margin-top:16px;">Continuar al pago</span>
+        </div>
+        <div class="resumen">
+          <div class="img">Foto del tour</div>
+          <div class="cuerpo">
+            <strong style="font-size:13px;">Semi-Privado Premium</strong>
+            <span class="fila-r"><span>mié 22 jul · 9:00 AM</span></span>
+            <span class="fila-r"><span>2 adultos · Premium</span></span>
+            <span class="fila-r"><span>Menú</span><span>Mariscos + Carne</span></span>
+            <span class="fila-r"><span>Recogida</span><span>Hard Rock 8:05</span></span>
+            <span class="linea-total"><span>Total</span><span>US$ 228</span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <aside class="nota">
+      <h3><span class="pin">B2</span> Paso 2 — menú y recogida (el paso que enamora)</h3>
+      <p>La selección de menú pasa de <strong>modal rojo de error "Missing Menu's: 2"</strong> a
+      tarjetas con foto por persona — el momento más memorable del funnel. Es el paso
+      donde el cliente saborea el tour antes de pagarlo.</p>
+      <p><strong>El hotel se pide aquí</strong>, después del compromiso con la fecha — y devuelve
+      valor inmediato: tu hora de recogida (esto xpotours ya lo resuelve bien con el
+      autocomplete + pickup, se conserva). Room # muere; si el hotel lo exige, se pide
+      por WhatsApp después.</p>
+      <p>"Cámbialo hasta 24 h antes" baja la ansiedad de decidir ahora.</p>
+    </aside>
+  </section>
+
+  <!-- B3 paso 3 -->
+  <section class="fila">
+    <div class="wire">
+      <div class="zona" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+        <div class="pasos">
+          <span class="p hecho"><span class="n">✓</span> Fecha</span><span class="sep"></span>
+          <span class="p hecho"><span class="n">✓</span> Personaliza</span><span class="sep"></span>
+          <span class="p act"><span class="n">3</span> Pago</span><span class="sep"></span>
+          <span class="p"><span class="n">4</span> ¡Listo!</span>
+        </div>
+        <span class="meta">🔒 Pago seguro · Stripe</span>
+      </div>
+      <div class="zona book-grid">
+        <div>
+          <h3 class="h-wire" style="font-size:17px;">Tus datos</h3>
+          <div class="form-grid" style="margin-top:10px;">
+            <div class="campo"><label>Nombre</label><div class="input">Como en tu ID</div></div>
+            <div class="campo"><label>Apellido</label><div class="input"></div></div>
+            <div class="campo"><label>Email — aquí va tu voucher</label><div class="input"></div></div>
+            <div class="campo"><label>WhatsApp / móvil</label><div class="input">🇺🇸 +1 ▾ · número</div></div>
+          </div>
+          <h3 class="h-wire" style="font-size:17px; margin-top:18px;">¿Cómo prefieres pagar?</h3>
+          <div style="display:flex; flex-direction:column; gap:10px; margin-top:10px;">
+            <div class="opcion-pago sel"><span class="radio"></span>
+              <div><h4>Reserva con el 25% — US$ 57 hoy</h4>
+              <p>El resto (US$ 171) en efectivo el día del tour <strong>con 5% de descuento</strong>
+              (pagarías US$ 162) — o con tarjeta desde tu voucher, sin descuento.</p></div>
+              <span class="chip">recomendado</span></div>
+            <div class="opcion-pago"><span class="radio"></span>
+              <div><h4>Pago completo — US$ 228 hoy</h4>
+              <p>Todo resuelto, nada que llevar el día del tour.</p></div></div>
+          </div>
+          <div class="campo" style="margin-top:14px;"><label>Tarjeta — Stripe</label>
+            <div class="input">💳 Número · MM/AA · CVC</div></div>
+          <div style="display:flex; gap:8px; align-items:start; margin-top:12px;">
+            <span style="border:1.5px solid var(--linea-fuerte); width:14px; height:14px; border-radius:3px; margin-top:2px;"></span>
+            <p class="meta" style="margin:0;">Acepto los términos: cancelación gratis hasta 7 días
+            antes · reembolso total por mal clima · no-show sin reembolso ·
+            <u>liability release</u>.</p>
+          </div>
+          <span class="btn-w btn-block" style="margin-top:14px;">Confirmar reserva — pagar US$ 57</span>
+          <p class="meta" style="text-align:center; margin-top:8px;">Confirmación instantánea al email y WhatsApp</p>
+        </div>
+        <div class="resumen">
+          <div class="img">Foto del tour</div>
+          <div class="cuerpo">
+            <strong style="font-size:13px;">Semi-Privado Premium</strong>
+            <span class="fila-r"><span>mié 22 jul · 9:00 AM · 2 adultos</span></span>
+            <span class="fila-r"><span>Mariscos + Carne · Hard Rock 8:05</span></span>
+            <span class="fila-r"><span>Total del tour</span><span>US$ 228</span></span>
+            <span class="linea-total"><span>Pagas hoy</span><span>US$ 57</span></span>
+            <span class="fila-r"><span>A bordo (cash −5%)</span><span>US$ 162</span></span>
+            <span class="chip ok" style="align-self:start;">✓ Cancela gratis hasta el 15 jul</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <aside class="nota">
+      <h3><span class="pin">B3</span> Paso 3 — datos mínimos + el depósito como héroe</h3>
+      <p><strong>4 campos.</strong> Mueren: ciudad, select de 190 países (el prefijo del teléfono
+      ya lo dice), room #, promo code escondido tras un link "¿tienes un código?", y
+      "¿cómo nos conociste?" se muda a la pantalla de gracias.</p>
+      <p>El <strong>depósito 25% pasa de checkbox con letra pequeña a opción por defecto
+      con la cuenta hecha</strong> (US$ 57 hoy, US$ 162 cash a bordo). Es el mejor argumento
+      anti-OTA del negocio y aquí por fin se ve.</p>
+      <p>El botón dice exactamente lo que pasa: "pagar US$ 57". Los términos, resumidos
+      en una línea legible — el PDF legal como link.</p>
+    </aside>
+  </section>
+
+  <!-- B4 paso 4 gracias -->
+  <section class="fila">
+    <div class="wire">
+      <div class="zona" style="text-align:center;">
+        <div class="check-big">✓</div>
+        <h3 class="h-wire" style="font-size:22px;">¡Nos vemos a bordo, Ana!</h3>
+        <p class="sub-wire" style="font-size:13px;">Tu reserva está confirmada. Te enviamos el
+        voucher a ana@email.com y por WhatsApp.</p>
+        <div style="margin-top:12px;"><span class="codigo">HSP-2607-4821</span></div>
+        <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:14px;">
+          <span class="btn-w2">⬇ Voucher PDF</span>
+          <span class="btn-w2">📅 Añadir al calendario</span>
+          <span class="btn-w2">💬 Guardar WhatsApp</span>
+        </div>
+      </div>
+      <div class="zona grid-2">
+        <div>
+          <p class="etq">Qué sigue</p>
+          <div class="next-step"><span class="n2">1</span>
+            <div><strong>Hoy</strong><p>Recibes voucher + recibo del depósito (US$ 57 pagados).</p></div></div>
+          <div class="next-step"><span class="n2">2</span>
+            <div><strong>Mar 21 jul, por la tarde</strong><p>Te confirmamos por WhatsApp la recogida: Hard Rock Hotel, lobby, 8:05 AM.</p></div></div>
+          <div class="next-step"><span class="n2">3</span>
+            <div><strong>Mié 22 jul</strong><p>Trae: traje de baño, toalla, protector biodegradable y
+            <strong>US$ 162 en efectivo</strong> (saldo con 5% dcto) — o paga el saldo online desde tu voucher.</p></div></div>
+        </div>
+        <div>
+          <div class="resumen" style="background:var(--papel);">
+            <div class="cuerpo">
+              <strong style="font-size:13px;">Tu reserva</strong>
+              <span class="fila-r"><span>Semi-Privado Premium</span></span>
+              <span class="fila-r"><span>mié 22 jul · 9:00 AM</span></span>
+              <span class="fila-r"><span>Ana — Mariscos · Luis — Carne</span></span>
+              <span class="fila-r"><span>Cambia el menú hasta el 21 jul →</span></span>
+              <span class="linea-total"><span>Saldo a bordo</span><span>US$ 162</span></span>
+            </div>
+          </div>
+          <div class="benef" style="margin-top:10px;">
+            <h4>¿Celebráis algo? 🎉</h4>
+            <p>Cumpleaños, aniversario, pedida… cuéntanoslo por WhatsApp y lo preparamos.</p>
+          </div>
+        </div>
+      </div>
+      <div class="zona" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+        <span class="meta">Por curiosidad: ¿cómo nos encontraste? [Google] [Instagram] [TikTok] [Recomendación] [Otro]</span>
+        <span class="meta">¿Dudas? WhatsApp +1-829-305-2804</span>
+      </div>
+    </div>
+    <aside class="nota">
+      <h3><span class="pin">B4</span> Paso 4 — gracias que trabaja</h3>
+      <p>La confirmación no es un recibo: es la <strong>preparación del día del tour</strong>.
+      Timeline de qué pasa ahora (voucher → recordatorio WhatsApp → qué traer), con el
+      dato crítico en negrita: cuánto efectivo llevar.</p>
+      <p>"Guardar WhatsApp" convierte el canal preferido del negocio en botón.
+      "Cambia el menú hasta el 21 jul" da control post-compra y reduce cancelaciones.</p>
+      <p><strong>"¿Cómo nos conociste?" vive aquí</strong> — mismo dato de marketing, cero
+      fricción en el checkout. El upsell de celebraciones conecta con la línea de
+      eventos sin ensuciar el flujo.</p>
+    </aside>
+  </section>
+
+  <!-- B5 principios -->
+  <section class="fila">
+    <div class="wire">
+      <div class="zona">
+        <p class="etq">Reglas transversales del funnel</p>
+        <div class="grid-3">
+          <div class="benef"><h4>Mismo dominio visual</h4>
+            <p>Aunque el motor siga siendo xpotours, el checkout hereda tipografía, color y
+            componentes del sitio. Nada de columna estrecha con tablas de los 90.</p></div>
+          <div class="benef"><h4>Estado recuperable</h4>
+            <p>URL por paso (deep-link a tour+fecha), y si abandonas en el paso 2-3, email/WhatsApp
+            opcional de "tu fecha te espera" con el carrito.</p></div>
+          <div class="benef"><h4>Errores en contexto</h4>
+            <p>Validación inline campo a campo. Nunca un modal rojo genérico: el patrón
+            "Missing Menu's" queda prohibido.</p></div>
+          <div class="benef"><h4>Móvil primero</h4>
+            <p>Cada paso cabe en una pantalla de teléfono con el resumen colapsado arriba
+            y el CTA fijo abajo. Los pasos son páginas, no un scroll infinito.</p></div>
+          <div class="benef"><h4>Confianza en cada paso</h4>
+            <p>"Cancela gratis hasta el 15 jul" (fecha calculada, no política abstracta)
+            visible del paso 1 al 3, junto al total.</p></div>
+          <div class="benef"><h4>Analytics del funnel</h4>
+            <p>Evento por paso (fecha → personaliza → pago → gracias) en el MISMO dominio,
+            para medir dónde se cae la gente — hoy es imposible con el iframe.</p></div>
+        </div>
+      </div>
+    </div>
+    <aside class="nota">
+      <h3><span class="pin">B5</span> Principios para Derick</h3>
+      <p>Esta sección es el <strong>contrato técnico del funnel</strong>: da igual si el motor
+      final es xpotours re-skineado, un reemplazo, o un desarrollo propio sobre su API —
+      estas 6 reglas son lo que no se negocia.</p>
+      <p>La decisión motor-de-reservas sigue abierta con el cliente (pendiente en la
+      nota del proyecto).</p>
+    </aside>
+  </section>
+</div>
