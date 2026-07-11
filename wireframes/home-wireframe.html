@@ -1,0 +1,570 @@
+<title>Hispaniola — Wireframe Home</title>
+<style>
+  :root {
+    --papel: #FAFAF8;
+    --tinta: #1B1E21;
+    --tinta-2: #5A6058;
+    --bloque: #EEEFEA;
+    --bloque-2: #E2E4DD;
+    --linea: #C9CCC5;
+    --linea-fuerte: #9AA096;
+    --acento: #0E7A8A;
+    --acento-tenue: #0E7A8A1A;
+    --btn: #2A2E32;
+    --btn-texto: #FAFAF8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --papel: #16191B;
+      --tinta: #E8EAE6;
+      --tinta-2: #9AA096;
+      --bloque: #21262A;
+      --bloque-2: #2A3036;
+      --linea: #3A4045;
+      --linea-fuerte: #565E63;
+      --acento: #55B9C7;
+      --acento-tenue: #55B9C71F;
+      --btn: #E8EAE6;
+      --btn-texto: #16191B;
+    }
+  }
+  :root[data-theme="dark"] {
+    --papel: #16191B; --tinta: #E8EAE6; --tinta-2: #9AA096;
+    --bloque: #21262A; --bloque-2: #2A3036; --linea: #3A4045;
+    --linea-fuerte: #565E63; --acento: #55B9C7; --acento-tenue: #55B9C71F;
+    --btn: #E8EAE6; --btn-texto: #16191B;
+  }
+  :root[data-theme="light"] {
+    --papel: #FAFAF8; --tinta: #1B1E21; --tinta-2: #5A6058;
+    --bloque: #EEEFEA; --bloque-2: #E2E4DD; --linea: #C9CCC5;
+    --linea-fuerte: #9AA096; --acento: #0E7A8A; --acento-tenue: #0E7A8A1A;
+    --btn: #2A2E32; --btn-texto: #FAFAF8;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--papel);
+    color: var(--tinta);
+    font: 15px/1.5 ui-sans-serif, system-ui, "Segoe UI", sans-serif;
+  }
+  .mono { font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; }
+
+  .marco { max-width: 1240px; margin: 0 auto; padding: 40px 24px 96px; }
+
+  /* ---------- cabecera del documento ---------- */
+  header.doc { max-width: 860px; margin-bottom: 20px; }
+  .eyebrow {
+    font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+    font-size: 12px; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--acento); margin: 0 0 10px;
+  }
+  header.doc h1 {
+    font-size: clamp(26px, 4vw, 38px); line-height: 1.15; margin: 0 0 12px;
+    letter-spacing: -.01em; text-wrap: balance;
+  }
+  header.doc p { color: var(--tinta-2); max-width: 62ch; margin: 0 0 8px; }
+  .reglas {
+    display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; padding: 0; list-style: none;
+  }
+  .reglas li {
+    font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+    font-size: 12px; padding: 5px 10px; border: 1px solid var(--linea);
+    border-radius: 3px; color: var(--tinta-2); background: var(--bloque);
+  }
+  .reglas li.no { text-decoration: line-through; text-decoration-color: var(--linea-fuerte); }
+
+  /* ---------- filas seccion + nota ---------- */
+  .fila {
+    display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 20px;
+    align-items: start; margin-top: 28px;
+  }
+  .nota {
+    position: sticky; top: 16px;
+    border-left: 2px solid var(--acento); padding: 2px 0 2px 14px;
+  }
+  .nota h3 {
+    font-size: 14px; margin: 0 0 6px; display: flex; align-items: center; gap: 8px;
+  }
+  .pin {
+    font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+    font-size: 11px; color: var(--acento); background: var(--acento-tenue);
+    border: 1px solid var(--acento); border-radius: 3px; padding: 1px 6px;
+  }
+  .nota p { font-size: 13px; color: var(--tinta-2); margin: 0 0 8px; }
+  .nota p strong { color: var(--tinta); font-weight: 600; }
+
+  /* ---------- lenguaje de wireframe ---------- */
+  .wire {
+    border: 1px solid var(--linea-fuerte); background: var(--papel);
+    border-radius: 4px; overflow: hidden;
+  }
+  .wire + .wire { margin-top: 0; }
+  .zona { padding: 18px 22px; border-top: 1px dashed var(--linea); }
+  .zona:first-child { border-top: 0; }
+
+  .img {
+    background:
+      linear-gradient(to top right, transparent calc(50% - .5px), var(--linea) 50%, transparent calc(50% + .5px)),
+      linear-gradient(to bottom right, transparent calc(50% - .5px), var(--linea) 50%, transparent calc(50% + .5px)),
+      var(--bloque);
+    border: 1px solid var(--linea); border-radius: 3px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--tinta-2); font-size: 11px;
+    font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+    text-transform: uppercase; letter-spacing: .1em;
+  }
+
+  .btn-w, .btn-w2 {
+    display: inline-block; padding: 9px 18px; border-radius: 4px;
+    font-size: 13px; font-weight: 600; white-space: nowrap;
+  }
+  .btn-w { background: var(--btn); color: var(--btn-texto); }
+  .btn-w2 { border: 1.5px solid var(--btn); color: var(--tinta); }
+
+  .chip {
+    display: inline-block; font-size: 11px; padding: 2px 8px;
+    border: 1px solid var(--linea-fuerte); border-radius: 999px; color: var(--tinta-2);
+  }
+  .etq {
+    font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+    font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--tinta-2);
+    margin: 0 0 10px;
+  }
+  .stars { letter-spacing: 2px; color: var(--tinta); font-size: 13px; }
+  .h-wire { margin: 0; line-height: 1.2; letter-spacing: -.01em; }
+  .sub-wire { color: var(--tinta-2); margin: 6px 0 0; }
+  .meta { font-size: 12px; color: var(--tinta-2); }
+
+  /* header del sitio */
+  .nav-wire { display: flex; align-items: center; gap: 18px; }
+  .nav-wire .logo {
+    width: 118px; height: 34px; border: 1px solid var(--linea-fuerte); border-radius: 3px;
+    display: flex; align-items: center; justify-content: center; font-size: 11px;
+    font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; color: var(--tinta-2);
+  }
+  .nav-wire ul { display: flex; gap: 16px; list-style: none; margin: 0; padding: 0; font-size: 13px; }
+  .nav-wire .der { margin-left: auto; display: flex; gap: 10px; align-items: center; }
+  .topbar { display: flex; justify-content: space-between; font-size: 12px; color: var(--tinta-2);
+    padding: 8px 22px; background: var(--bloque); border-bottom: 1px solid var(--linea); }
+
+  /* hero */
+  .hero { display: grid; grid-template-columns: 1.1fr .9fr; gap: 22px; align-items: stretch; }
+  .hero .img { min-height: 300px; }
+  .trust-row { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; margin-top: 14px; font-size: 13px; }
+  .widget {
+    border: 1.5px solid var(--linea-fuerte); border-radius: 6px; padding: 14px; margin-top: 18px;
+    background: var(--bloque); display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 10px; align-items: end;
+  }
+  .campo { display: flex; flex-direction: column; gap: 4px; }
+  .campo label { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--tinta-2);
+    font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; }
+  .campo .input { border: 1px solid var(--linea-fuerte); background: var(--papel); border-radius: 4px;
+    padding: 8px 10px; font-size: 13px; color: var(--tinta-2); }
+
+  /* strips y grids */
+  .strip { display: flex; flex-wrap: wrap; gap: 10px 26px; align-items: center; justify-content: center;
+    font-size: 12px; color: var(--tinta-2); }
+  .strip .dato strong { display: block; font-size: 17px; color: var(--tinta); }
+
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+
+  .card { border: 1px solid var(--linea-fuerte); border-radius: 5px; overflow: hidden; background: var(--papel);
+    display: flex; flex-direction: column; }
+  .card .img { border: 0; border-bottom: 1px solid var(--linea); border-radius: 0; height: 110px; }
+  .card .cuerpo { padding: 12px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+  .card .pie { display: flex; align-items: center; justify-content: space-between; margin-top: auto; padding-top: 8px; }
+  .precio { font-size: 15px; font-weight: 700; }
+  .precio small { font-weight: 400; color: var(--tinta-2); }
+
+  .benef { border: 1px solid var(--linea); border-radius: 5px; padding: 12px; background: var(--bloque); }
+  .benef h4 { margin: 0 0 4px; font-size: 13px; }
+  .benef p { margin: 0; font-size: 12px; color: var(--tinta-2); }
+  .ico { width: 26px; height: 26px; border: 1px solid var(--linea-fuerte); border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center; font-size: 11px;
+    color: var(--tinta-2); margin-bottom: 8px;
+    font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; }
+
+  .quote { border: 1px solid var(--linea); border-radius: 5px; padding: 14px; background: var(--papel); }
+  .quote p { margin: 0 0 8px; font-size: 13px; }
+
+  .banda-cta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px;
+    background: var(--bloque-2); border-radius: 5px; padding: 18px 20px; }
+
+  .faq-item { border-top: 1px solid var(--linea); padding: 10px 2px; display: flex; justify-content: space-between;
+    font-size: 13px; }
+  .faq-item:first-of-type { border-top: 0; }
+
+  .footer-wire { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 18px; font-size: 12px; color: var(--tinta-2); }
+  .footer-wire h5 { margin: 0 0 8px; font-size: 12px; color: var(--tinta); text-transform: uppercase; letter-spacing: .08em; }
+  .footer-wire ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 5px; }
+
+  /* responsive */
+  @media (max-width: 1000px) {
+    .fila { grid-template-columns: 1fr; }
+    .nota { position: static; }
+  }
+  @media (max-width: 760px) {
+    .hero, .grid-4, .grid-3, .grid-2, .footer-wire { grid-template-columns: 1fr 1fr; }
+    .widget { grid-template-columns: 1fr 1fr; }
+    .hero { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 520px) {
+    .grid-4, .grid-3, .footer-wire { grid-template-columns: 1fr; }
+  }
+</style>
+
+<div class="marco">
+  <header class="doc">
+    <p class="eyebrow">Hispaniola Aquatic Adventures · Rediseño web · 2026-07-11</p>
+    <h1>Wireframe de la Home</h1>
+    <p>Estructura y jerarquía propuestas para la página de inicio, derivadas de la
+    auditoría (<span class="mono">analisis/auditoria-web-actual.md</span>) y del benchmark
+    (<span class="mono">analisis/benchmark-competencia.md</span>). El trabajo visual se hace a mano
+    en Figma sobre esta base. El objetivo único de la página: <strong>llevar tráfico a la ficha de
+    tour y al widget de disponibilidad</strong>.</p>
+    <ul class="reglas">
+      <li>KPI: clicks a disponibilidad</li>
+      <li>Mobile-first (60%+ del tráfico turista)</li>
+      <li class="no">Modal de video al entrar</li>
+      <li class="no">Barra de colores de redes</li>
+      <li class="no">"Last reservation: 21 seconds ago"</li>
+      <li class="no">Widget flotante de Facebook</li>
+    </ul>
+  </header>
+
+  <!-- 01 · header -->
+  <section class="fila">
+    <div class="wire">
+      <div class="topbar">
+        <span>WhatsApp +1-829-305-2804 · Toll-free 1-800-657-0016</span>
+        <span>ES / EN</span>
+      </div>
+      <div class="zona nav-wire">
+        <div class="logo">LOGO</div>
+        <ul>
+          <li><strong>Tours ▾</strong></li>
+          <li>Eventos ▾</li>
+          <li>Nosotros</li>
+          <li>Sostenibilidad</li>
+          <li>FAQ</li>
+        </ul>
+        <div class="der">
+          <span class="chip">☎ Ayuda</span>
+          <span class="btn-w">Reservar</span>
+        </div>
+      </div>
+    </div>
+    <aside class="nota">
+      <h3><span class="pin">01</span> Header — nav visible</h3>
+      <p>Navegación expuesta en desktop (hoy vive tras una hamburguesa "MENU" que además
+      no recibe el click). <strong>"Tours" es un dropdown con los 4 productos con nombre
+      único</strong> — resuelve el doble "Private Tours" y saca a Saona de la sombra.</p>
+      <p>CTA "Reservar" persistente (header sticky). En móvil: hamburguesa + CTA visible
+      siempre.</p>
+    </aside>
+  </section>
+
+  <!-- 02 · hero -->
+  <section class="fila">
+    <div class="wire">
+      <div class="zona hero">
+        <div>
+          <p class="etq">Punta Cana · Bávaro</p>
+          <h2 class="h-wire" style="font-size:30px;">Los catamaranes originales de Punta Cana,
+          en grupos pequeños</h2>
+          <p class="sub-wire">Snorkel en un vivero de coral real, cocina flotante con menú a
+          tu elección y barcos a media capacidad. Desde 2012.</p>
+          <div class="trust-row">
+            <span class="stars">★★★★★</span>
+            <span><strong>4.9</strong> · 1.782 reseñas</span>
+            <span class="chip">#1 en TripAdvisor · 7 años</span>
+            <span class="chip">Premios Viator 22-24</span>
+          </div>
+          <div class="widget">
+            <div class="campo"><label>Tour</label><div class="input">Todos los tours ▾</div></div>
+            <div class="campo"><label>Fecha</label><div class="input">📅 Elegir fecha</div></div>
+            <div class="campo"><label>Personas</label><div class="input">2 ▾</div></div>
+            <span class="btn-w">Ver disponibilidad</span>
+          </div>
+          <p class="meta" style="margin-top:10px;">✓ Cancelación gratis hasta 7 días antes
+          · ✓ Confirma con solo 25% de depósito</p>
+        </div>
+        <div class="img">Foto/video hero — catamarán navegando</div>
+      </div>
+    </div>
+    <aside class="nota">
+      <h3><span class="pin">02</span> Hero — promesa + disponibilidad</h3>
+      <p>La promesa une los dos diferenciadores más fuertes (grupos pequeños + experiencia
+      original). La <strong>fila de confianza va pegada al titular</strong>, con los números
+      reales que hoy están regalados a Viator.</p>
+      <p><strong>El widget fecha+personas ES el CTA</strong> — patrón Civitatis: disponibilidad
+      antes que datos personales. Si el motor xpotours no permite pre-carga, el botón lleva
+      a la ficha del tour con el calendario arriba.</p>
+      <p>El video actual del modal pasa a ser el fondo del hero o pieza de la sección 08,
+      nunca una interrupción.</p>
+    </aside>
+  </section>
+
+  <!-- 03 · prueba rápida -->
+  <section class="fila">
+    <div class="wire">
+      <div class="zona strip">
+        <span class="dato"><strong>91.607</strong> clientes felices</span>
+        <span class="dato"><strong>4.454</strong> días navegados</span>
+        <span class="dato"><strong>≤35%</strong> de la capacidad del barco</span>
+        <span class="dato"><strong>0</strong> plástico a bordo</span>
+        <span class="meta">[TripAdvisor] [Viator] [WeddingWire] [LTG] — logos monocromos</span>
+      </div>
+    </div>
+    <aside class="nota">
+      <h3><span class="pin">03</span> Cinta de datos</h3>
+      <p>Los stats que hoy están enterrados en la ficha de Semi-Private (4.454 días,
+      91.607 clientes) suben a la home como cinta única. Premios como
+      <strong>logos monocromos alineados</strong>, no imágenes pixeladas apiladas.</p>
+    </aside>
+  </section>
+
+  <!-- 04 · productos -->
+  <section class="fila">
+    <div class="wire">
+      <div class="zona">
+        <p class="etq">Nuestros tours</p>
+        <h2 class="h-wire" style="font-size:22px;">Elige tu día en el Caribe</h2>
+        <div class="grid-4" style="margin-top:14px;">
+          <div class="card">
+            <div class="img">Foto</div>
+            <div class="cuerpo">
+              <span class="chip">Solo adultos</span>
+              <strong>Semi-Privado Premium</strong>
+              <span class="meta">★ 4.9 (1.782) · 4 h · máx. 25</span>
+              <span class="meta">✓ Cancelación gratis</span>
+              <div class="pie"><span class="precio">US$ 99 <small>/pers · desde</small></span>
+                <span class="btn-w2">Ver tour</span></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="img">Foto</div>
+            <div class="cuerpo">
+              <span class="chip">Familias</span>
+              <strong>Snorkel Lovers</strong>
+              <span class="meta">★ 4.9 · 4 h · máx. 25</span>
+              <span class="meta">✓ Cancelación gratis</span>
+              <div class="pie"><span class="precio">US$ 98 <small>/pers · desde</small></span>
+                <span class="btn-w2">Ver tour</span></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="img">Foto</div>
+            <div class="cuerpo">
+              <span class="chip">Grupo privado</span>
+              <strong>Charter Privado</strong>
+              <span class="meta">3-4 h · hasta 120</span>
+              <span class="meta">✓ Fecha flexible</span>
+              <div class="pie"><span class="precio">US$ 55 <small>/pers · desde</small></span>
+                <span class="btn-w2">Ver tour</span></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="img">Foto</div>
+            <div class="cuerpo">
+              <span class="chip">Día completo</span>
+              <strong>Isla Saona</strong>
+              <span class="meta">día completo · máx. —</span>
+              <span class="meta">✓ Cancelación gratis</span>
+              <div class="pie"><span class="precio">US$ — <small>/pers · desde</small></span>
+                <span class="btn-w2">Ver tour</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <aside class="nota">
+      <h3><span class="pin">04</span> Los 4 productos, de una</h3>
+      <p>Sube del 40% del scroll (móvil actual) al segundo bloque. <strong>Saona entra al
+      catálogo visible</strong> con nombre propio.</p>
+      <p>Anatomía de tarjeta calcada del estándar OTA: badge de audiencia, rating con nº,
+      duración, capacidad, cancelación, precio "desde" <strong>consistente con la ficha</strong>
+      (hoy: home $98 vs ficha $84-114) y un solo CTA.</p>
+      <p>Precio de Saona: dato por confirmar con el cliente.</p>
+    </aside>
+  </section>
+
+  <!-- 05 · reserva directa -->
+  <section class="fila">
+    <div class="wire">
+      <div class="zona">
+        <p class="etq">Reserva directa</p>
+        <h2 class="h-wire" style="font-size:22px;">¿Por qué reservar aquí y no en un portal?</h2>
+        <div class="grid-4" style="margin-top:14px;">
+          <div class="benef"><span class="ico">25%</span>
+            <h4>Confirma con 25%</h4><p>Paga el depósito hoy y el resto en efectivo el día del tour.</p></div>
+          <div class="benef"><span class="ico">-5%</span>
+            <h4>Descuento en cash</h4><p>5% extra si el saldo lo pagas en efectivo a bordo.</p></div>
+          <div class="benef"><span class="ico">🍽</span>
+            <h4>Elige tu menú</h4><p>Langosta, Angus o vegetariano: solo reservando directo eliges plato por persona.</p></div>
+          <div class="benef"><span class="ico">💬</span>
+            <h4>WhatsApp directo</h4><p>Hablas con el equipo del barco, no con un call center.</p></div>
+        </div>
+        <p class="meta" style="margin-top:10px;">+ Reembolso total por mal clima o cancelando
+        con 7 días. Mismo precio que en los portales — pero con todo esto incluido.</p>
+      </div>
+    </div>
+    <aside class="nota">
+      <h3><span class="pin">05</span> "Why book direct" — el bloque que no existe</h3>
+      <p>El hallazgo central del benchmark: <strong>Viator vende el mismo tour a $114</strong> y la
+      web propia no da ninguna razón visible para reservar directo. Estas 4 ventajas ya
+      existen en el negocio; hoy son letra pequeña del checkout.</p>
+      <p>Es LA conversación contra las OTAs — merece bloque propio antes de los
+      diferenciadores de marca.</p>
+    </aside>
+  </section>
+
+  <!-- 06 · diferenciadores -->
+  <section class="fila">
+    <div class="wire">
+      <div class="zona grid-2" style="align-items:center;">
+        <div class="img" style="min-height:220px;">Foto grande — bióloga marina / coral</div>
+        <div>
+          <p class="etq">La diferencia Hispaniola</p>
+          <h2 class="h-wire" style="font-size:22px;">No es otro party boat</h2>
+          <div class="grid-2" style="margin-top:12px;">
+            <div class="benef"><h4>Coral vivo, no piscina de show</h4>
+              <p>Snorkel en uno de los 3 mayores proyectos de restauración de coral de RD, con bióloga marina a bordo.</p></div>
+            <div class="benef"><h4>Cocina flotante</h4>
+              <p>Comida preparada al momento en el barco — pescado del Caribe y Angus certificado.</p></div>
+            <div class="benef"><h4>Barcos a media capacidad</h4>
+              <p>Reservamos máximo el 35% del aforo permitido. Espacio, no multitud.</p></div>
+            <div class="benef"><h4>Eco / cero plástico</h4>
+              <p>Coco-loco en coco real. Nada de vasos desechables.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <aside class="nota">
+      <h3><span class="pin">06</span> Diferenciadores como historia visual</h3>
+      <p>Los 7 párrafos del muro de texto actual se convierten en <strong>4 tiles de una
+      línea + una foto que respire</strong>. El contenido ya existe; cambia la forma.</p>
+      <p>En Figma: esta sección es donde la dirección visual premium (referencias Sunreef /
+      Black Tomato del research) tiene que sentirse más.</p>
+    </aside>
+  </section>
+
+  <!-- 07 · reviews -->
+  <section class="fila">
+    <div class="wire">
+      <div class="zona">
+        <p class="etq">Reseñas verificadas</p>
+        <h2 class="h-wire" style="font-size:22px;">4.9 de 5 en 1.782 reseñas</h2>
+        <div class="grid-3" style="margin-top:14px;">
+          <div class="quote"><p>"Quote real de un huésped, 2-3 líneas máximo, elegida por
+            mencionar el coral / la comida / la tripulación."</p>
+            <span class="meta">★★★★★ · Nombre · Viator · jun 2026</span></div>
+          <div class="quote"><p>"Segunda quote — idealmente en otro idioma origen (mercado
+            US + LATAM) para reflejar la clientela real."</p>
+            <span class="meta">★★★★★ · Nombre · TripAdvisor · may 2026</span></div>
+          <div class="quote"><p>"Tercera quote — la que hable de reservar directo o del
+            trato por WhatsApp."</p>
+            <span class="meta">★★★★★ · Nombre · Facebook · may 2026</span></div>
+        </div>
+        <p class="meta" style="margin-top:10px;">Ver todas → TripAdvisor · Viator · Facebook (links verificables)</p>
+      </div>
+    </div>
+    <aside class="nota">
+      <h3><span class="pin">07</span> Prueba social con fuente</h3>
+      <p>Hoy la web tiene CERO reseñas visibles teniendo una de las mejores reputaciones
+      del destino. Quotes reales con <strong>fuente verificable y fecha</strong> — el patrón
+      quote-sobre-foto de Civitatis también funciona en la ficha de tour.</p>
+      <p>Esto sustituye la urgencia fake ("last reservation: 21 seconds ago") por confianza
+      verificable.</p>
+    </aside>
+  </section>
+
+  <!-- 08 · eventos -->
+  <section class="fila">
+    <div class="wire">
+      <div class="zona banda-cta">
+        <div style="max-width:52ch;">
+          <p class="etq">Eventos privados</p>
+          <h2 class="h-wire" style="font-size:20px;">Bodas, cumpleaños y team-buildings a bordo</h2>
+          <p class="sub-wire" style="font-size:13px;">Charter completo con comida, barra libre
+          y coordinación. Hasta 120 personas.</p>
+        </div>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <div class="img" style="width:120px; height:70px;">Foto</div>
+          <span class="btn-w2">Pedir cotización</span>
+        </div>
+      </div>
+    </div>
+    <aside class="nota">
+      <h3><span class="pin">08</span> Eventos — segunda línea, no ruido</h3>
+      <p>La línea de eventos (bodas, MICE, celebraciones) es negocio real pero otro
+      job-to-be-done: <strong>una banda con CTA a su propio funnel de cotización</strong>. El
+      formulario de eventos sale de las fichas de tour (hoy está incrustado en
+      Semi-Private confundiendo la página).</p>
+    </aside>
+  </section>
+
+  <!-- 09 · galería + faq + cta final -->
+  <section class="fila">
+    <div class="wire">
+      <div class="zona">
+        <p class="etq">El día, en imágenes</p>
+        <div class="grid-4" style="margin-top:10px;">
+          <div class="img" style="height:90px;">Foto</div>
+          <div class="img" style="height:90px;">Foto</div>
+          <div class="img" style="height:90px;">Video ▶</div>
+          <div class="img" style="height:90px;">+ galería</div>
+        </div>
+      </div>
+      <div class="zona">
+        <p class="etq">Preguntas frecuentes</p>
+        <div class="faq-item"><span>¿Qué pasa si llueve el día de mi tour?</span><span>+</span></div>
+        <div class="faq-item"><span>¿Puedo pagar solo el depósito?</span><span>+</span></div>
+        <div class="faq-item"><span>¿Incluye recogida en mi hotel?</span><span>+</span></div>
+        <div class="faq-item"><span>¿Los niños pueden ir en todos los tours?</span><span>+</span></div>
+        <p class="meta" style="margin-top:8px;">Ver todas las preguntas →</p>
+      </div>
+      <div class="zona banda-cta">
+        <h2 class="h-wire" style="font-size:20px;">Tu día en el Caribe empieza aquí</h2>
+        <span class="btn-w">Ver disponibilidad</span>
+      </div>
+    </div>
+    <aside class="nota">
+      <h3><span class="pin">09</span> Galería curada + FAQ + cierre</h3>
+      <p>Galería de <strong>6-8 piezas seleccionadas con lightbox</strong> (no el grid infinito
+      de "Memories"). El video vive aquí, click-to-play.</p>
+      <p>Las 4 FAQ elegidas atacan objeciones de compra (clima, depósito, pick-up, niños)
+      y enlazan a la página FAQ completa. CTA final espejo del hero.</p>
+    </aside>
+  </section>
+
+  <!-- 10 · footer -->
+  <section class="fila">
+    <div class="wire">
+      <div class="zona footer-wire">
+        <div>
+          <h5>Hispaniola Aquatic Adventures</h5>
+          <p style="margin:0 0 8px;">Plaza Bibijagua, Bávaro, RD.<br>
+          Eco-friendly · Sin plástico · Desde 2012.</p>
+          <span class="meta">[FB] [IG] [TA] [YT] — iconos monocromos</span>
+        </div>
+        <div><h5>Tours</h5>
+          <ul><li>Semi-Privado Premium</li><li>Snorkel Lovers</li><li>Charter Privado</li><li>Isla Saona</li></ul></div>
+        <div><h5>Empresa</h5>
+          <ul><li>Nosotros</li><li>Sostenibilidad</li><li>Agentes de viaje</li><li>Tips Punta Cana</li><li>FAQ</li></ul></div>
+        <div><h5>Reservas</h5>
+          <ul><li>WhatsApp +1-829-305-2804</li><li>Toll-free 1-800-657-0016</li><li>Política de cancelación</li>
+          <li>[Stripe] [Visa] [MC] [PayPal]</li></ul></div>
+      </div>
+    </div>
+    <aside class="nota">
+      <h3><span class="pin">10</span> Footer</h3>
+      <p>Consolida los dos footers actuales (bloque + barra social duplicada) en uno.
+      La política de cancelación con link propio — es argumento de venta, no letra
+      pequeña.</p>
+    </aside>
+  </section>
+</div>
