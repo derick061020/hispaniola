@@ -763,6 +763,7 @@
       estadoReserva.horaRecogida = null;
       estadoReserva.pago = 'deposito';
       estadoReserva.codigo = null;
+      estadoReserva.mesCalendarioOffset = 0;
       irA('#/reservar/' + t.slug + '/1');
     });
   }
@@ -776,11 +777,460 @@
   }
 
   // ============================================================
+  // BOOKING — utilidades compartidas (cálculo de totales, calendario, resumen)
+  // ============================================================
+  function calcularTotales() {
+    var t = TOURS[estadoReserva.tour];
+    var personas = estadoReserva.personas;
+    var subtotal = t.precioLight * personas;
+    var upgrade = estadoReserva.paquete === 'premium' ? t.upgradePremium * personas : 0;
+    var total = subtotal + upgrade;
+    var deposito = Math.round(total * 0.25);
+    var saldo = total - deposito;
+    var saldoCash = Math.round(saldo * 0.95);
+    return { subtotal: subtotal, upgrade: upgrade, total: total, deposito: deposito, saldo: saldo, saldoCash: saldoCash, personas: personas };
+  }
+
+  function nombrePlato(id) {
+    var p = PLATOS.filter(function (p) { return p.id === id; })[0];
+    return p ? p.nombre : '';
+  }
+
+  function pasosIndicadorHTML(slug, activo) {
+    var pasos = [
+      { n: 1, label: 'Fecha y personas', ruta: '#/reservar/' + slug + '/1' },
+      { n: 2, label: 'Personaliza', ruta: '#/reservar/' + slug + '/2' },
+      { n: 3, label: 'Pago', ruta: '#/reservar/' + slug + '/3' },
+      { n: 4, label: '¡Listo!', ruta: '#/reservar/' + slug + '/gracias' }
+    ];
+    var items = pasos.map(function (p, i) {
+      var estado = p.n === activo ? ' activo' : (p.n < activo ? ' hecho' : '');
+      var puedeIr = p.n < activo;
+      var contenido = '<span class="n">' + (p.n < activo ? '✓' : p.n) + '</span>' + p.label;
+      var el = puedeIr
+        ? '<button type="button" class="paso' + estado + '" data-ir="' + p.ruta + '">' + contenido + '</button>'
+        : '<span class="paso' + estado + '">' + contenido + '</span>';
+      return el + (i < pasos.length - 1 ? '<span class="sep"></span>' : '');
+    }).join('');
+    return '<div class="booking-cab"><div class="pasos-indicador">' + items + '</div><span class="candado">🔒 Pago seguro · Stripe</span></div>';
+  }
+
+  function generarCalendarioMes(offsetMeses) {
+    var hoy = new Date();
+    var mesBase = new Date(hoy.getFullYear(), hoy.getMonth() + offsetMeses, 1);
+    var primerDiaSemana = mesBase.getDay();
+    var offsetLunes = (primerDiaSemana + 6) % 7;
+    var diasEnMes = new Date(mesBase.getFullYear(), mesBase.getMonth() + 1, 0).getDate();
+    var celdas = [];
+    for (var i = 0; i < offsetLunes; i++) celdas.push(null);
+    for (var d = 1; d <= diasEnMes; d++) celdas.push(new Date(mesBase.getFullYear(), mesBase.getMonth(), d));
+    while (celdas.length % 7 !== 0) celdas.push(null);
+    var semanas = [];
+    for (var s = 0; s < celdas.length; s += 7) semanas.push(celdas.slice(s, s + 7));
+    return { mesBase: mesBase, semanas: semanas };
+  }
+
+  function calendarioGrandeHTML(t, offset) {
+    var cal = generarCalendarioMes(offset);
+    var hoy = hoyISO();
+    var agotados = [sumarDias(hoy, 3), sumarDias(hoy, 10)];
+    var sinDisponibilidad = offset >= 1;
+    var filasHTML = cal.semanas.map(function (semana) {
+      return '<tr>' + semana.map(function (d) {
+        if (!d) return '<td class="vacio"></td>';
+        var iso = fechaAISO(d);
+        var esPasado = iso < hoy;
+        var off = sinDisponibilidad || esPasado || agotados.indexOf(iso) >= 0;
+        var sel = estadoReserva.fecha === iso;
+        if (off) return '<td class="off"><button type="button" disabled>' + d.getDate() + '</button></td>';
+        return '<td class="' + (sel ? 'sel' : '') + '"><button type="button" data-dia-booking="' + iso + '">' + d.getDate() + '<small>$' + t.precioLight + '</small></button></td>';
+      }).join('') + '</tr>';
+    }).join('');
+    return '<div class="cal-grande">' +
+      '<div class="cal-grande-cab">' +
+      '<button type="button" id="btn-mes-prev"' + (offset <= 0 ? ' disabled' : '') + '>‹</button>' +
+      '<span>' + MESES_LARGOS[cal.mesBase.getMonth()].replace(/^./, function (c) { return c.toUpperCase(); }) + ' ' + cal.mesBase.getFullYear() + '</span>' +
+      '<button type="button" id="btn-mes-next">›</button>' +
+      '</div>' +
+      '<table><tr><th>L</th><th>M</th><th>X</th><th>J</th><th>V</th><th>S</th><th>D</th></tr>' + filasHTML + '</table>' +
+      '</div>' +
+      (sinDisponibilidad ? estadoSinDisponibilidadHTML(cal.mesBase) : '');
+  }
+
+  function estadoSinDisponibilidadHTML(mesBase) {
+    return conNota('booking-sin-disponibilidad',
+      '<div style="margin-top:16px;">' +
+      '<p class="meta" style="margin-bottom:10px;">' + MESES_LARGOS[mesBase.getMonth()].replace(/^./, function (c) { return c.toUpperCase(); }) + ' está completo — es temporada alta.</p>' +
+      '<div class="grid-2">' +
+      '<div class="estado-vacio">' +
+      '<h4 style="margin-bottom:6px;">Avísame cuando se libere</h4>' +
+      '<p class="meta" style="margin-bottom:10px;">Deja tu email y te escribimos si se abre un cupo o un segundo barco.</p>' +
+      '<div class="campo"><input type="email" id="input-email-espera" placeholder="tu@email.com"></div>' +
+      '<button type="button" class="btn btn-secundario btn-bloque" id="btn-avisarme" style="margin-top:8px;">Avisarme</button>' +
+      '</div>' +
+      '<div class="estado-vacio">' +
+      '<h4 style="margin-bottom:6px;">💬 Escríbenos por WhatsApp</h4>' +
+      '<p class="meta" style="margin-bottom:10px;">A veces abrimos un segundo barco para fechas específicas — pregunta directo, a veces se resuelve en minutos.</p>' +
+      '<a href="https://wa.me/18293052804" target="_blank" rel="noopener" class="btn btn-primario btn-bloque">Abrir WhatsApp</a>' +
+      '</div></div></div>');
+  }
+
+  function renderResumenReserva(pasoActual) {
+    var t = TOURS[estadoReserva.tour];
+    var hayFechaHora = estadoReserva.fecha && estadoReserva.horarioIdx !== null && estadoReserva.horarioIdx !== undefined;
+    var filas = '<div class="fila-r"><span>★ ' + t.rating + ' (' + t.resenas.toLocaleString('en-US') + ')</span></div>';
+    filas += filaClicable('Fecha', estadoReserva.fecha ? formatoFechaCorta(estadoReserva.fecha) : '—', slugActual() + '/1', pasoActual);
+    if (hayFechaHora) filas += filaClicable('Horario', t.horarios[estadoReserva.horarioIdx].hora, slugActual() + '/1', pasoActual);
+    filas += filaClicable('Personas', estadoReserva.personas + ' ' + (estadoReserva.personas > 1 ? 'personas' : 'persona'), slugActual() + '/1', pasoActual);
+    if (pasoActual >= 2 && estadoReserva.platos.length && estadoReserva.platos.indexOf(null) < 0) {
+      filas += filaClicable('Menú', estadoReserva.platos.map(nombrePlato).join(' + '), slugActual() + '/2', pasoActual);
+    }
+    if (pasoActual >= 2 && estadoReserva.hotel) {
+      filas += filaClicable('Recogida', estadoReserva.hotel.split(' — ')[0] + (estadoReserva.horaRecogida ? ' ' + estadoReserva.horaRecogida : ''), slugActual() + '/2', pasoActual);
+    }
+    var totalHTML = '';
+    if (hayFechaHora) {
+      var tot = calcularTotales();
+      if (pasoActual === 1) {
+        totalHTML += '<div class="fila-r"><span>' + tot.personas + ' pers × ' + formatoDinero(t.precioLight) + '</span><span>' + formatoDinero(tot.subtotal) + '</span></div>';
+        if (tot.upgrade > 0) totalHTML += '<div class="fila-r"><span>Upgrade Premium (+' + t.upgradePremium + '×' + tot.personas + ')</span><span>' + formatoDinero(tot.upgrade) + '</span></div>';
+      }
+      totalHTML += '<div class="linea-total"><span>' + (pasoActual >= 3 ? 'Pagas hoy' : 'Total') + '</span><span>' + formatoDinero(pasoActual >= 3 && estadoReserva.pago === 'deposito' ? tot.deposito : tot.total) + '</span></div>';
+      if (pasoActual === 1) totalHTML += '<p class="meta">o confirma hoy con ' + formatoDinero(tot.deposito) + ' (25%)</p>';
+      if (pasoActual >= 3 && estadoReserva.pago === 'deposito') totalHTML += '<div class="fila-r"><span>A bordo (cash −5%)</span><span>' + formatoDinero(tot.saldoCash) + '</span></div>';
+      var fechaLimite = estadoReserva.fecha ? formatoFechaCorta(sumarDias(estadoReserva.fecha, -7)) : '';
+      if (fechaLimite) totalHTML += '<span class="chip ok" style="align-self:start; margin-top:6px;">✓ Cancela gratis hasta el ' + fechaLimite + '</span>';
+    }
+    return '<div class="resumen-reserva"><div class="img">Foto del tour</div><div class="cuerpo">' +
+      '<strong style="font-size:14px;">' + esc(t.nombre) + '</strong>' + filas + totalHTML + '</div></div>';
+  }
+
+  function filaClicable(label, valor, rutaSufijo, pasoActual) {
+    var pasoDeLaFila = parseInt(rutaSufijo.split('/').pop(), 10);
+    var clicable = pasoActual > pasoDeLaFila;
+    return '<div class="fila-r' + (clicable ? ' clic' : '') + '"' + (clicable ? ' data-ir="#/reservar/' + rutaSufijo + '"' : '') + '><span>' + label + '</span><span>' + esc(valor) + '</span></div>';
+  }
+
+  function slugActual() { return estadoReserva.tour; }
+
+  function asegurarEstadoReserva(slug) {
+    if (estadoReserva.tour !== slug) {
+      estadoReserva.tour = slug;
+      estadoReserva.fecha = null;
+      estadoReserva.horarioIdx = null;
+      estadoReserva.personas = 2;
+      estadoReserva.paquete = 'light';
+      estadoReserva.platos = [];
+      estadoReserva.hotel = null;
+      estadoReserva.horaRecogida = null;
+      estadoReserva.pago = 'deposito';
+      estadoReserva.codigo = null;
+      estadoReserva.mesCalendarioOffset = 0;
+    }
+  }
+
+  // ============================================================
+  // PÁGINA: Booking paso 1 — fecha, horario, personas, paquete
+  // ============================================================
+  function renderBookingPaso1(params) {
+    var t = TOURS[params.slug];
+    if (!t || t.booking !== 'completo') { render404(); return; }
+    asegurarEstadoReserva(params.slug);
+
+    var offset = estadoReserva.mesCalendarioOffset || 0;
+    var sinDisponibilidad = offset >= 1;
+
+    var horarioSeccion = '';
+    if (!sinDisponibilidad) {
+      if (estadoReserva.fecha) {
+        horarioSeccion = '<span class="etq" style="margin-top:18px; display:block;">Horario — ' + formatoFechaLarga(estadoReserva.fecha) + '</span>' +
+          '<div class="grid-2">' + t.horarios.map(function (h, i) {
+            var sel = estadoReserva.horarioIdx === i;
+            return '<button type="button" class="slot' + (sel ? ' sel' : '') + '" data-horario="' + i + '">' +
+              '<div style="display:flex; gap:10px; align-items:center;"><span class="slot-radio"></span><div class="slot-info"><strong>' + h.hora + '</strong><span>Regreso ' + h.regreso + '</span></div></div>' +
+              '<span class="chip' + (h.quedan <= 5 ? '' : ' ok') + '">quedan ' + h.quedan + '</span></button>';
+          }).join('') + '</div>';
+      } else {
+        horarioSeccion = '<p class="meta" style="margin-top:16px;">Elige un día en el calendario para ver los horarios.</p>';
+      }
+    }
+
+    var personasPaqueteSeccion = '';
+    if (!sinDisponibilidad) {
+      var maxSel = Math.min(t.maxPax || 10, 10);
+      personasPaqueteSeccion =
+        '<span class="etq" style="margin-top:18px; display:block;">Personas</span>' +
+        '<div style="display:flex; gap:14px; align-items:center; flex-wrap:wrap;">' +
+        '<div class="stepper-pax"><button type="button" id="btn-pax-menos"' + (estadoReserva.personas <= 1 ? ' disabled' : '') + '>−</button>' +
+        '<span id="pax-num">' + estadoReserva.personas + '</span>' +
+        '<button type="button" id="btn-pax-mas"' + (estadoReserva.personas >= maxSel ? ' disabled' : '') + '>+</button></div>' +
+        (t.audiencia === 'Solo adultos' ? '<span class="meta">Tour solo adultos (18+). ¿Van con niños? → <a href="#/tour/snorkel-lovers" style="color:var(--acento);">Snorkel Lovers</a></span>' : '') +
+        '</div>' +
+        '<span class="etq" style="margin-top:18px; display:block;">Paquete <span style="text-transform:none; letter-spacing:0; color:var(--tinta-2);">— Light es el default</span></span>' +
+        '<div class="grid-2">' +
+        '<button type="button" class="slot' + (estadoReserva.paquete === 'light' ? ' sel' : '') + '" data-paquete="light">' +
+        '<div style="display:flex; gap:10px; align-items:center;"><span class="slot-radio"></span><div class="slot-info"><strong>Light — ' + formatoDinero(t.precioLight) + '/pers</strong><span>Pollo o pescado a la parrilla</span></div></div>' +
+        '<span class="chip ok">base</span></button>' +
+        '<button type="button" class="slot' + (estadoReserva.paquete === 'premium' ? ' sel' : '') + '" data-paquete="premium">' +
+        '<div style="display:flex; gap:10px; align-items:center;"><span class="slot-radio"></span><div class="slot-info"><strong>Premium <span style="color:var(--acento);">+' + formatoDinero(t.upgradePremium) + '/pers</span></strong><span>Mariscos, carne, surf & turf, vegetariano</span></div></div>' +
+        (estadoReserva.paquete === 'premium' ? '<span class="chip">upgrade elegido</span>' : '') + '</button>' +
+        '</div>' +
+        (estadoReserva.paquete === 'premium' ? '<p class="meta" style="margin-top:6px;">Tocaste el upgrade a Premium — el resumen de la derecha desglosa esa diferencia.</p>' : '');
+    }
+
+    var puedeContinuar = !sinDisponibilidad && estadoReserva.fecha && estadoReserva.horarioIdx !== null && estadoReserva.horarioIdx !== undefined;
+
+    app.innerHTML = '<div class="contenedor" style="padding-top:16px;">' +
+      pasosIndicadorHTML(t.slug, 1) +
+      '<div class="book-grid">' +
+      '<div>' +
+      '<h3 style="font-size:17px; margin-bottom:10px;">¿Qué día navegamos?</h3>' +
+      calendarioGrandeHTML(t, offset) +
+      horarioSeccion +
+      personasPaqueteSeccion +
+      (sinDisponibilidad ? '' : '<button type="button" class="btn btn-primario btn-bloque" id="btn-paso1-continuar" style="margin-top:20px;"' + (puedeContinuar ? '' : ' disabled') + '>Continuar</button>') +
+      '</div>' +
+      renderResumenReserva(1) +
+      '</div></div>';
+
+    inicializarBookingPaso1(t);
+  }
+
+  function inicializarBookingPaso1(t) {
+    var btnPrev = $('#btn-mes-prev'), btnNext = $('#btn-mes-next');
+    if (btnPrev) btnPrev.addEventListener('click', function () { estadoReserva.mesCalendarioOffset--; renderBookingPaso1({ slug: t.slug }); });
+    if (btnNext) btnNext.addEventListener('click', function () { estadoReserva.mesCalendarioOffset++; renderBookingPaso1({ slug: t.slug }); });
+
+    $all('[data-dia-booking]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        estadoReserva.fecha = btn.getAttribute('data-dia-booking');
+        estadoReserva.horarioIdx = null;
+        renderBookingPaso1({ slug: t.slug });
+      });
+    });
+    $all('[data-horario]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        estadoReserva.horarioIdx = parseInt(btn.getAttribute('data-horario'), 10);
+        renderBookingPaso1({ slug: t.slug });
+      });
+    });
+    $all('[data-paquete]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        estadoReserva.paquete = btn.getAttribute('data-paquete');
+        renderBookingPaso1({ slug: t.slug });
+      });
+    });
+    var btnMenos = $('#btn-pax-menos'), btnMas = $('#btn-pax-mas');
+    if (btnMenos) btnMenos.addEventListener('click', function () { if (estadoReserva.personas > 1) { estadoReserva.personas--; renderBookingPaso1({ slug: t.slug }); } });
+    if (btnMas) btnMas.addEventListener('click', function () { estadoReserva.personas++; renderBookingPaso1({ slug: t.slug }); });
+
+    var btnAvisarme = $('#btn-avisarme');
+    if (btnAvisarme) btnAvisarme.addEventListener('click', function () {
+      var input = $('#input-email-espera');
+      if (!input.value || input.value.indexOf('@') < 0) { mostrarToast('Escribe un email válido'); return; }
+      mostrarToast('Listo — te avisaremos apenas se libere un cupo.');
+      input.value = '';
+    });
+
+    var btnContinuar = $('#btn-paso1-continuar');
+    if (btnContinuar) btnContinuar.addEventListener('click', function () {
+      if (btnContinuar.disabled) return;
+      irA('#/reservar/' + t.slug + '/2');
+    });
+  }
+
+  // ============================================================
+  // PÁGINA: Booking paso 2 — menú por persona + hotel
+  // ============================================================
+  function renderBookingPaso2(params) {
+    var t = TOURS[params.slug];
+    if (!t || t.booking !== 'completo') { render404(); return; }
+    if (estadoReserva.tour !== t.slug || !estadoReserva.fecha) { irA('#/tour/' + params.slug); return; }
+    if (!estadoReserva.platos || estadoReserva.platos.length !== estadoReserva.personas) {
+      estadoReserva.platos = new Array(estadoReserva.personas).fill(null);
+    }
+
+    var listaHotel = '<datalist id="lista-hoteles">' + HOTELES.map(function (h) { return '<option value="' + h + '">'; }).join('') + '</datalist>';
+
+    var personasHTML = '';
+    for (var i = 0; i < estadoReserva.personas; i++) {
+      personasHTML += '<span class="etq" style="margin-top:14px; display:block;">Persona ' + (i + 1) + '</span>' +
+        '<div class="grid-4">' + PLATOS.map(function (p) {
+          var sel = estadoReserva.platos[i] === p.id;
+          return '<button type="button" class="plato' + (sel ? ' sel' : '') + '" data-persona="' + i + '" data-plato="' + p.id + '">' +
+            '<div class="img">Foto</div><div class="cuerpo"><strong>' + esc(p.nombre) + '</strong><span>' + esc(p.desc) + '</span></div></button>';
+        }).join('') + '</div>';
+    }
+
+    app.innerHTML = '<div class="contenedor" style="padding-top:16px;">' +
+      pasosIndicadorHTML(t.slug, 2) +
+      '<div class="book-grid">' +
+      '<div>' +
+      '<h3 style="font-size:17px; margin-bottom:6px;">El plato de cada uno</h3>' +
+      '<p class="meta" style="margin-bottom:6px;">Se cocina a bordo, recién hecho. Puedes cambiarlo hasta 24 h antes del tour desde Mi Reserva.</p>' +
+      personasHTML +
+      '<span class="etq" style="margin-top:20px; display:block;">¿Dónde te recogemos?</span>' +
+      '<div class="grid-2">' +
+      '<div class="campo"><label>Tu hotel</label><input type="text" id="input-hotel" list="lista-hoteles" placeholder="Empieza a escribir…" value="' + esc(estadoReserva.hotel || '') + '">' + listaHotel + '</div>' +
+      '<div class="benef" id="recogida-info" style="align-self:end; ' + (estadoReserva.horaRecogida ? '' : 'display:none;') + '"><h4>Tu recogida: <span id="recogida-hora">' + esc(estadoReserva.horaRecogida || '') + '</span></h4><p>Lobby principal. Te lo recordamos por WhatsApp la tarde anterior.</p></div>' +
+      '</div>' +
+      '<p class="meta" style="margin-top:8px;">¿No está tu hotel? Escríbenos por WhatsApp · Alojamiento privado / Airbnb → punto de encuentro</p>' +
+      '<div class="campo" style="margin-top:14px;"><label>Algo que debamos saber (opcional)</label><textarea id="input-nota" placeholder="Alergias, movilidad, celebración…">' + esc(estadoReserva.notaAdicional || '') + '</textarea></div>' +
+      '<button type="button" class="btn btn-primario btn-bloque" id="btn-paso2-continuar" style="margin-top:18px;">Continuar al pago</button>' +
+      '</div>' +
+      renderResumenReserva(2) +
+      '</div></div>';
+
+    inicializarBookingPaso2(t);
+  }
+
+  function calcularHoraRecogida(horaTourStr) {
+    var m = horaTourStr.match(/(\d+):(\d+)\s*(AM|PM)/i);
+    if (!m) return '';
+    var h = parseInt(m[1], 10) % 12;
+    if (/pm/i.test(m[3])) h += 12;
+    var min = parseInt(m[2], 10);
+    var total = h * 60 + min - 55;
+    if (total < 0) total += 24 * 60;
+    var hh = Math.floor(total / 60), mm = total % 60;
+    var period = hh >= 12 ? 'PM' : 'AM';
+    var hh12 = hh % 12; if (hh12 === 0) hh12 = 12;
+    return hh12 + ':' + String(mm).padStart(2, '0') + ' ' + period;
+  }
+
+  function inicializarBookingPaso2(t) {
+    $all('[data-plato]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var i = parseInt(btn.getAttribute('data-persona'), 10);
+        estadoReserva.platos[i] = btn.getAttribute('data-plato');
+        renderBookingPaso2({ slug: t.slug });
+      });
+    });
+    var inputHotel = $('#input-hotel');
+    inputHotel.addEventListener('change', function () {
+      estadoReserva.hotel = inputHotel.value || null;
+      if (estadoReserva.hotel && HOTELES.indexOf(estadoReserva.hotel) >= 0) {
+        estadoReserva.horaRecogida = calcularHoraRecogida(TOURS[t.slug].horarios[estadoReserva.horarioIdx].hora);
+      } else {
+        estadoReserva.horaRecogida = null;
+      }
+      renderBookingPaso2({ slug: t.slug });
+    });
+    var inputNota = $('#input-nota');
+    inputNota.addEventListener('input', function () { estadoReserva.notaAdicional = inputNota.value; });
+
+    $('#btn-paso2-continuar').addEventListener('click', function () {
+      if (estadoReserva.platos.indexOf(null) >= 0) { mostrarToast('Falta elegir el plato de alguna persona'); return; }
+      if (!estadoReserva.hotel) { mostrarToast('Escribe o elige tu hotel'); return; }
+      irA('#/reservar/' + t.slug + '/3');
+    });
+  }
+
+  // ============================================================
+  // PÁGINA: Booking paso 3 — datos + pago
+  // ============================================================
+  function renderBookingPaso3(params) {
+    var t = TOURS[params.slug];
+    if (!t || t.booking !== 'completo') { render404(); return; }
+    if (estadoReserva.tour !== t.slug || !estadoReserva.hotel) { irA('#/tour/' + params.slug); return; }
+
+    var tot = calcularTotales();
+    app.innerHTML = '<div class="contenedor" style="padding-top:16px;">' +
+      pasosIndicadorHTML(t.slug, 3) +
+      '<div class="book-grid">' +
+      '<div>' +
+      '<h3 style="font-size:17px; margin-bottom:10px;">Tus datos</h3>' +
+      '<div class="form-grid">' +
+      '<div class="campo" id="campo-nombre"><label>Nombre</label><input type="text" id="input-nombre" placeholder="Como en tu ID" value="' + esc(estadoReserva.datos.nombre) + '"><span class="error-msg">Falta tu nombre</span></div>' +
+      '<div class="campo" id="campo-apellido"><label>Apellido</label><input type="text" id="input-apellido" value="' + esc(estadoReserva.datos.apellido) + '"><span class="error-msg">Falta tu apellido</span></div>' +
+      '<div class="campo" id="campo-email"><label>Email — aquí va tu voucher</label><input type="email" id="input-email" value="' + esc(estadoReserva.datos.email) + '"><span class="error-msg">Email inválido</span></div>' +
+      '<div class="campo" id="campo-telefono"><label>WhatsApp / móvil</label><input type="tel" id="input-telefono" placeholder="+1 809 000 0000" value="' + esc(estadoReserva.datos.telefono) + '"><span class="error-msg">Falta tu teléfono</span></div>' +
+      '</div>' +
+      '<h3 style="font-size:17px; margin-top:20px;">Pago exprés</h3>' +
+      '<div class="wallets-row">' +
+      '<button type="button" class="btn btn-secundario wallet-btn" data-wallet="Apple Pay"> Pay</button>' +
+      '<button type="button" class="btn btn-secundario wallet-btn" data-wallet="Google Pay">G Pay</button>' +
+      '<button type="button" class="btn btn-secundario wallet-btn" data-wallet="PayPal">PayPal</button>' +
+      '</div>' +
+      '<p class="meta">o completa con tarjeta abajo</p>' +
+      '<h3 style="font-size:17px; margin-top:18px;">¿Cómo prefieres pagar?</h3>' +
+      '<div style="display:flex; flex-direction:column; gap:10px; margin-top:10px;">' +
+      '<button type="button" class="opcion-pago' + (estadoReserva.pago === 'deposito' ? ' sel' : '') + '" data-pago="deposito"><span class="opcion-pago-radio"></span>' +
+      '<div><h4>Reserva con el 25% — ' + formatoDinero(tot.deposito) + ' hoy</h4><p>El resto (' + formatoDinero(tot.saldo) + ') en efectivo el día del tour <strong>con 5% de descuento</strong> (pagarías ' + formatoDinero(tot.saldoCash) + ') — o con tarjeta desde tu voucher, sin descuento.</p></div>' +
+      '<span class="chip">recomendado</span></button>' +
+      '<button type="button" class="opcion-pago' + (estadoReserva.pago === 'completo' ? ' sel' : '') + '" data-pago="completo"><span class="opcion-pago-radio"></span>' +
+      '<div><h4>Pago completo — ' + formatoDinero(tot.total) + ' hoy</h4><p>Todo resuelto, nada que llevar el día del tour.</p></div></button>' +
+      '</div>' +
+      '<div class="campo" style="margin-top:14px;"><label>Tarjeta — Stripe</label><input type="text" id="input-tarjeta" placeholder="💳 Número · MM/AA · CVC"></div>' +
+      '<div style="display:flex; gap:8px; align-items:start; margin-top:12px;">' +
+      '<input type="checkbox" id="chk-terminos" style="margin-top:3px;">' +
+      '<label for="chk-terminos" class="meta" style="margin:0;">Acepto los términos: cancelación gratis hasta 7 días antes · reembolso total por mal clima · no-show sin reembolso · <a href="#/reserva-directa" style="color:var(--acento);">liability release</a>.</label>' +
+      '</div>' +
+      '<p class="meta error-msg" id="error-terminos" style="margin-top:4px;">Debes aceptar los términos para continuar</p>' +
+      '<button type="button" class="btn btn-primario btn-bloque" id="btn-confirmar-reserva" style="margin-top:14px;">Confirmar reserva — pagar ' + formatoDinero(estadoReserva.pago === 'deposito' ? tot.deposito : tot.total) + '</button>' +
+      '<p class="meta" style="text-align:center; margin-top:8px;">Confirmación instantánea al email y WhatsApp</p>' +
+      '</div>' +
+      renderResumenReserva(3) +
+      '</div></div>';
+
+    inicializarBookingPaso3(t);
+  }
+
+  function inicializarBookingPaso3(t) {
+    $all('[data-pago]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        estadoReserva.pago = btn.getAttribute('data-pago');
+        renderBookingPaso3({ slug: t.slug });
+      });
+    });
+    $all('[data-wallet]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        mostrarToast('Simulando pago con ' + btn.getAttribute('data-wallet') + '…');
+        if (!estadoReserva.datos.nombre) estadoReserva.datos.nombre = 'Ana';
+        if (!estadoReserva.datos.apellido) estadoReserva.datos.apellido = 'Pérez';
+        if (!estadoReserva.datos.email) estadoReserva.datos.email = 'ana@email.com';
+        if (!estadoReserva.datos.telefono) estadoReserva.datos.telefono = '+1 809 000 0000';
+        setTimeout(function () { finalizarReserva(t); }, 500);
+      });
+    });
+    $('#btn-confirmar-reserva').addEventListener('click', function () {
+      var ok = true;
+      var nombre = $('#input-nombre').value.trim(), apellido = $('#input-apellido').value.trim();
+      var email = $('#input-email').value.trim(), telefono = $('#input-telefono').value.trim();
+      var terminos = $('#chk-terminos').checked;
+      marcarError('campo-nombre', !nombre); if (!nombre) ok = false;
+      marcarError('campo-apellido', !apellido); if (!apellido) ok = false;
+      var emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      marcarError('campo-email', !emailValido); if (!emailValido) ok = false;
+      marcarError('campo-telefono', !telefono); if (!telefono) ok = false;
+      $('#error-terminos').style.display = terminos ? 'none' : 'block';
+      if (!terminos) ok = false;
+      if (!ok) { mostrarToast('Revisa los campos marcados'); return; }
+      estadoReserva.datos = { nombre: nombre, apellido: apellido, email: email, telefono: telefono };
+      finalizarReserva(t);
+    });
+  }
+
+  function marcarError(idCampo, hayError) {
+    var campo = document.getElementById(idCampo);
+    if (campo) campo.classList.toggle('error', hayError);
+  }
+
+  function finalizarReserva(t) {
+    estadoReserva.codigo = generarCodigoReserva();
+    estadoReserva.fechaConfirmada = hoyISO();
+    irA('#/reservar/' + t.slug + '/gracias');
+  }
+
+  // ============================================================
   // Registro de rutas
   // ============================================================
   ruta('/', renderHome);
   ruta('/tours', renderTours);
   ruta('/tour/:slug', renderFicha);
+  ruta('/reservar/:slug/1', renderBookingPaso1);
+  ruta('/reservar/:slug/2', renderBookingPaso2);
+  ruta('/reservar/:slug/3', renderBookingPaso3);
 
   // Delegación global: cualquier elemento con data-ir="#/ruta" navega al hacer click.
   // Patrón reutilizado en booking, ficha, eventos, etc. (evita listeners repetidos por render).
