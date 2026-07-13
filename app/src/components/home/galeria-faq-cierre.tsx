@@ -1,13 +1,21 @@
 import { useState } from 'react'
 import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
 import { Boton } from '@/components/ui/boton'
+import { PilaFotos, type FotoPila } from '@/components/ui/pila-fotos'
 
 // Galería + FAQ + cierre — última sección de contenido de la home. La
 // galería completa (23 fotos) y el listado completo de FAQ viven fuera de
 // alcance de este build (prototipo/); aquí se muestra una curaduría real.
-const FOTOS_GRID = ['galeria-semi-privado-2', 'galeria-charter-privado-4', 'galeria-snorkel-lovers-4']
-const FOTO_MAS_GALERIA = 'galeria-semi-privado-5'
-const FOTOS_OCULTAS = 23 - FOTOS_GRID.length - 1
+//
+// v2: el grid plano de 4 fotos pasa al PHOTO-STACK (passe-partout blanco +
+// sombra + rotación) — el efecto que Samuel señaló de la ref. Vacationeeze.
+const FOTOS_PILA: FotoPila[] = [
+  { foto: 'galeria-semi-privado-2', alt: 'Pareja brindando en el agua junto al catamarán' },
+  { foto: 'galeria-charter-privado-4', alt: 'Catamarán fondeado frente a una playa de palmeras' },
+  { foto: 'galeria-snorkel-lovers-4', alt: 'Familia almorzando a bordo' },
+]
+const TOTAL_FOTOS_GALERIA = 23
+const FOTOS_OCULTAS = TOTAL_FOTOS_GALERIA - FOTOS_PILA.length
 
 const FAQS = [
   { p: '¿Qué pasa si llueve el día de mi tour?', r: 'Reembolso total o cambio de fecha, sin costo.' },
@@ -25,19 +33,12 @@ export function GaleriaFaqCierre() {
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-2">
           <div>
             <p className="text-xs font-semibold uppercase tracking-wide text-aqua-dark">El día, en imágenes</p>
-            <div className="mt-3 grid grid-cols-2 gap-2.5">
-              {FOTOS_GRID.map((f) => (
-                <div key={f} className="h-28 overflow-hidden rounded-lg sm:h-36">
-                  <img src={`/fotos/${f}.webp`} alt="" className="size-full object-cover" />
-                </div>
-              ))}
-              <EnlacePrototipo className="group relative h-28 overflow-hidden rounded-lg sm:h-36">
-                <img src={`/fotos/${FOTO_MAS_GALERIA}.webp`} alt="" className="size-full object-cover" />
-                <div className="absolute inset-0 flex items-center justify-center bg-navy/60 text-sm font-semibold text-white transition-colors group-hover:bg-navy/70">
-                  +{FOTOS_OCULTAS} fotos
-                </div>
+            <PilaFotos fotos={FOTOS_PILA} className="mt-6" />
+            <p className="mt-6 text-center text-sm">
+              <EnlacePrototipo className="font-semibold text-aqua-dark hover:underline">
+                Ver las {FOTOS_OCULTAS} fotos restantes →
               </EnlacePrototipo>
-            </div>
+            </p>
           </div>
 
           <div>

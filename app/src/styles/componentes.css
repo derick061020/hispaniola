@@ -1,0 +1,50 @@
+/* ============================================================
+   CSS de componente — efectos a medida que no se expresan bien con utilidades.
+
+   POR QUÉ EXISTE: el photo-stack necesita que el hover REVIERTA una rotación
+   que viene de una custom property (`--rot`). Con utilidades
+   (`rotate-[var(--rot)]` + `hover:rotate-0`) no conseguimos que el hover se
+   aplicara: la foto se quedaba torcida. Escrito como CSS explícito funciona
+   —verificado en navegador comparando capturas en reposo y con el ratón
+   encima— y además el orden de la cascada queda a la vista, que para un
+   efecto propio como éste se lee mejor y se traduce mejor a Figma.
+
+   Todos los valores siguen saliendo de tokens (@theme en tokens.css).
+   ============================================================ */
+
+.pila-foto {
+  position: relative;
+  z-index: var(--z);
+  rotate: var(--rot);
+  translate: 0 0;
+  border-radius: var(--radius-foto);
+  background: var(--color-papel);
+  padding: 0.5rem;
+  box-shadow: var(--shadow-polaroid);
+  transition:
+    rotate 300ms ease-out,
+    translate 300ms ease-out;
+}
+
+@media (min-width: 640px) {
+  .pila-foto {
+    padding: 0.625rem;
+  }
+}
+
+/* Al pasar el ratón: la foto se endereza, se levanta y sube por encima de las
+   que la tapan. Solo con puntero real (en táctil no hay hover que revertir). */
+@media (hover: hover) {
+  .pila-foto:hover {
+    z-index: 50;
+    rotate: 0deg;
+    translate: 0 -0.5rem;
+  }
+}
+
+/* Con reduced-motion el cambio ocurre igual, pero sin animarlo. */
+@media (prefers-reduced-motion: reduce) {
+  .pila-foto {
+    transition: none;
+  }
+}
