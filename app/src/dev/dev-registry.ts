@@ -104,6 +104,32 @@ export const devSections: DevSection[] = [
       },
     ],
   },
+  {
+    title: 'Home — Argumentos',
+    screens: [
+      {
+        title: 'Why-direct',
+        route: '/',
+        status: 'done',
+        description: '4 beneficios de reservar directo (depósito 25%, -5% cash, elegir menú, WhatsApp directo) + link a la comparación completa.',
+        states: [],
+      },
+      {
+        title: 'Diferenciadores',
+        route: '/',
+        status: 'done',
+        description: '"No es otro party boat": coral vivo, cocina flotante, media capacidad, cero plástico. Foto real de coral/snorkel.',
+        states: [],
+      },
+      {
+        title: 'Reviews',
+        route: '/',
+        status: 'done',
+        description: '3 reseñas verificadas + link a TripAdvisor/Facebook (nunca a Viator, ver nota en el componente).',
+        states: [],
+      },
+    ],
+  },
 ]
 
 export function devStats() {
