@@ -69,17 +69,26 @@ export const devSections: DevSection[] = [
         ],
       },
       {
-        title: 'Hero + buscador',
+        title: 'Hero + baraja de tours',
         route: '/',
         status: 'done',
         description:
-          'Foto full-bleed real (aérea del catamarán) + buscador de disponibilidad (tour/fecha/personas). CTA sticky en móvil.',
+          'v2: hero en contenedor redondeado (ya no a sangre) y baraja de los 4 tours en rotación, que sustituye al buscador de disponibilidad. Cada card es un producto con precio y CTA. CTA sticky en móvil.',
         states: [
           {
-            label: 'Buscador abierto (móvil)',
+            label: 'Baraja: Semi-Privado',
             kind: 'estado',
-            to: '/?dev-buscador=abierto',
-            note: 'Solo tiene efecto visual con el viewport en modo móvil (el toggle está oculto en desktop, donde el buscador ya está siempre visible).',
+            to: '/?dev-baraja=semi-privado',
+            note: 'Congela esa card como activa y DETIENE el auto-avance → frame limpio para Figma.',
+          },
+          { label: 'Baraja: Snorkel Lovers', kind: 'estado', to: '/?dev-baraja=snorkel-lovers' },
+          { label: 'Baraja: Charter Privado', kind: 'estado', to: '/?dev-baraja=charter-privado' },
+          { label: 'Baraja: Isla Saona', kind: 'estado', to: '/?dev-baraja=isla-saona' },
+          {
+            label: 'Baraja estática (reduced-motion)',
+            kind: 'variante',
+            to: '/?dev-baraja=estatica',
+            note: 'Simula prefers-reduced-motion: sin auto-avance, la baraja solo responde a clic.',
           },
         ],
       },
