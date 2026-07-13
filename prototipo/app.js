@@ -1389,6 +1389,245 @@
   }
 
   // ============================================================
+  // Formularios de demostración — validación nativa (required),
+  // sin envío real. Reutilizado en Eventos, MICE, Agentes, Contacto.
+  // ============================================================
+  function inicializarFormularioDemo(formId, mensajeExito) {
+    var form = $('#' + formId);
+    if (!form) return;
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (!form.checkValidity()) { form.reportValidity(); return; }
+      form.style.display = 'none';
+      var exito = document.createElement('div');
+      exito.className = 'estado-vacio';
+      exito.innerHTML = '<h4 style="margin-bottom:6px;">✓ ¡Listo!</h4><p class="meta">' + mensajeExito + '</p>';
+      form.insertAdjacentElement('afterend', exito);
+      exito.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  }
+
+  // ============================================================
+  // PÁGINA: Eventos — hub con deep-link ?tipo=
+  // ============================================================
+  function renderEventos(params, query) {
+    var tipoPre = (query && query.tipo) || '';
+    var ocasionCard = function (o) {
+      var cta = o.esLanding ? (o.tipo === 'boda' ? 'Ver bodas →' : 'Ver MICE →') : 'Cotizar →';
+      return '<div class="card"><div class="img">Foto</div><div class="cuerpo">' +
+        '<strong>' + esc(o.nombre) + '</strong><span class="meta">' + esc(o.meta) + '</span>' +
+        '<div class="pie"><a href="' + o.ruta + '" class="btn btn-secundario btn-sm">' + cta + '</a></div></div></div>';
+    };
+    var opcionesTipo = ['boda', 'mice', 'cumpleanos', 'aniversario', 'despedida', 'reunion', 'charter', 'otro'].map(function (v) {
+      var label = v === 'otro' ? 'Otro' : (TIPO_EVENTO_LABEL[v] || v);
+      return '<option value="' + v + '"' + (v === tipoPre ? ' selected' : '') + '>' + label + '</option>';
+    }).join('');
+
+    app.innerHTML = '<div class="contenedor">' +
+      '<div class="hero" style="padding-top:32px;">' +
+      '<div><span class="etq">Eventos privados a bordo</span>' +
+      '<h1 style="font-size:30px;">Celebrarlo en el mar cambia el recuerdo</h1>' +
+      '<p class="sub">Catamarán privado para tu grupo: comida hecha a bordo, barra, música y una tripulación que se encarga de todo. De 10 a 120 personas.</p>' +
+      '<div style="display:flex; gap:10px; flex-wrap:wrap;">' +
+      '<a href="#form-eventos" class="btn btn-primario">Pedir cotización</a>' +
+      '<a href="https://wa.me/18293052804" target="_blank" rel="noopener" class="btn btn-secundario">💬 WhatsApp directo</a>' +
+      '</div><p class="meta" style="margin-top:10px;">Respuesta en menos de 24 h · Desde US$ 55/persona</p></div>' +
+      '<div class="img" style="min-height:280px;">Foto — brindis a bordo</div>' +
+      '</div>' +
+      '<div class="tabla-stats"><div><strong>120</strong>personas máx.</div><div><strong>3-4 h</strong>de navegación</div>' +
+      '<div><strong>91.607</strong>invitados felices</div><span class="meta">WeddingWire Couples\' Choice 18-21 · TripAdvisor #1</span></div>' +
+      '</div>' +
+      '<div class="contenedor seccion">' +
+      '<span class="etq">¿Qué celebras?</span><h2 class="seccion-title">Elige tu ocasión</h2>' +
+      '<div class="grid-3" style="margin-top:14px;">' + OCASIONES.map(ocasionCard).join('') + '</div>' +
+      '</div>' +
+      '<div class="contenedor seccion">' +
+      '<span class="etq">Cómo funciona</span>' +
+      '<div class="pasos-indicador" style="margin-bottom:14px;">' +
+      '<span class="paso activo"><span class="n">1</span>Nos cuentas tu evento</span><span class="sep"></span>' +
+      '<span class="paso"><span class="n">2</span>Cotización en 24 h</span><span class="sep"></span>' +
+      '<span class="paso"><span class="n">3</span>Ajustamos el detalle</span><span class="sep"></span>' +
+      '<span class="paso"><span class="n">4</span>Reserva con depósito</span></div>' +
+      '<div class="grid-4">' +
+      '<div class="benef"><h4>Barco entero</h4><p>Solo tu grupo. Sin desconocidos a bordo.</p></div>' +
+      '<div class="benef"><h4>Comida a bordo</h4><p>Menú a medida desde la cocina flotante.</p></div>' +
+      '<div class="benef"><h4>Barra y música</h4><p>Tu playlist o DJ. Barra abierta opcional.</p></div>' +
+      '<div class="benef"><h4>Coordinación</h4><p>Una persona dedicada de principio a fin.</p></div>' +
+      '</div></div>' +
+      '<div class="contenedor seccion grid-2" style="align-items:start;">' +
+      '<div>' +
+      '<span class="etq">Cuéntanos tu evento</span>' +
+      '<form id="form-eventos">' +
+      '<div class="form-grid">' +
+      '<div class="campo"><label>Nombre</label><input type="text" required></div>' +
+      '<div class="campo"><label>Email</label><input type="email" required></div>' +
+      '<div class="campo"><label>WhatsApp</label><input type="tel" required></div>' +
+      '<div class="campo"><label>Tipo de evento</label><select id="select-tipo-evento" required>' + opcionesTipo + '</select></div>' +
+      '<div class="campo"><label>Fecha (aprox.)</label><input type="date"></div>' +
+      '<div class="campo"><label>Nº de invitados</label><input type="number" min="1" value="20"></div>' +
+      '</div>' +
+      '<div class="campo" style="margin-top:10px;"><label>¿Qué tienes en mente?</label><textarea placeholder="Horario, decoración, menú, música…"></textarea></div>' +
+      '<button type="submit" class="btn btn-primario btn-bloque" style="margin-top:12px;">Pedir mi cotización</button>' +
+      '<p class="meta" style="text-align:center; margin-top:6px;">Te respondemos en menos de 24 h. ¿Con prisa? Escríbenos por WhatsApp.</p>' +
+      '</form>' +
+      '</div>' +
+      '<div>' +
+      '<span class="etq">Lo que dicen los grupos</span>' +
+      '<div class="quote" style="margin-bottom:10px;"><p>"Coordinaron cada detalle de la boda de mi hermana, quedamos encantados."</p><span class="meta">★★★★★ · WeddingWire · 2025</span></div>' +
+      '<div class="img" style="height:130px;">Galería de eventos (8-10 fotos)</div>' +
+      '</div></div>' +
+      '</div>';
+
+    inicializarFormularioDemo('form-eventos', 'Pedimos tu cotización — te respondemos en menos de 24 h.');
+    if (tipoPre) { var sel = $('#select-tipo-evento'); sel.value = tipoPre; setTimeout(function () { $('#form-eventos').scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 50); }
+  }
+
+  // ============================================================
+  // PÁGINA: Bodas
+  // ============================================================
+  function renderBodas() {
+    app.innerHTML = '<div class="contenedor">' +
+      '<p class="migaja" style="padding-top:16px;"><a href="#/">Inicio</a> / <a href="#/eventos">Eventos</a> / Bodas</p>' +
+      '<div class="hero" style="padding-top:10px;">' +
+      '<div><span class="etq">Bodas y celebraciones nupciales</span>' +
+      '<h1 style="font-size:28px;">Vuestro "sí" con el Caribe de fondo</h1>' +
+      '<p class="sub">Ceremonia a bordo, welcome party para los invitados que llegan, o la despedida del grupo el último día. El barco es vuestro.</p>' +
+      '<div class="trust-row"><span class="stars">★★★★★</span><strong>Couples\' Choice WeddingWire 2018-2021</strong></div>' +
+      '<a href="#/eventos?tipo=boda" class="btn btn-primario">Pedir cotización de boda</a>' +
+      '</div><div class="img" style="min-height:260px;">Foto — pareja en cubierta</div></div>' +
+      '<div class="seccion"><span class="etq">Tres momentos, tres formatos</span>' +
+      '<div class="grid-3">' +
+      '<div class="card"><div class="img">Foto</div><div class="cuerpo"><strong>Ceremonia a bordo</strong><span class="meta">Íntima, hasta 40 invitados. Decoración, oficiante y brindis.</span></div></div>' +
+      '<div class="card"><div class="img">Foto</div><div class="cuerpo"><strong>Welcome party</strong><span class="meta">Rompe el hielo entre las dos familias el día antes.</span></div></div>' +
+      '<div class="card"><div class="img">Foto</div><div class="cuerpo"><strong>Despedida del grupo</strong><span class="meta">El último día, todos juntos, sin protocolo.</span></div></div>' +
+      '</div></div>' +
+      '<div class="seccion grid-2" style="align-items:start;">' +
+      '<div><span class="etq">Qué incluye</span><div class="grid-2">' +
+      '<div class="benef"><h4>Barco privado</h4><p>Hasta 120 personas.</p></div>' +
+      '<div class="benef"><h4>Menú a medida</h4><p>Con la novia/novio, no de catálogo.</p></div>' +
+      '<div class="benef"><h4>Decoración</h4><p>Flores, arco, telas — coordinado.</p></div>' +
+      '<div class="benef"><h4>Fotografía</h4><p>Fotógrafo a bordo (opcional).</p></div>' +
+      '<div class="benef"><h4>Barra abierta</h4><p>Cóctel de bienvenida en coco.</p></div>' +
+      '<div class="benef"><h4>Coordinadora</h4><p>Una persona vuestra de principio a fin.</p></div>' +
+      '</div><p class="meta" style="margin-top:8px;">Trabajamos con los wedding planners de la zona. ¿Ya tenéis uno? Nos coordinamos con él.</p></div>' +
+      '<div><span class="etq">Bodas reales</span><div class="img" style="height:160px;">Galería de bodas (mosaico)</div>' +
+      '<div class="quote" style="margin-top:10px;"><p>"El equipo hizo que todo fluyera — nuestros invitados no paraban de hablar del atardecer."</p><span class="meta">★★★★★ · WeddingWire</span></div></div>' +
+      '</div>' +
+      '<div class="seccion"><div class="banda-cta">' +
+      '<div><h3 style="font-size:18px;">Contadnos vuestra fecha</h3><p class="meta">Respuesta en menos de 24 h · Sin compromiso</p></div>' +
+      '<div style="display:flex; gap:10px;"><a href="#/eventos?tipo=boda" class="btn btn-primario">Pedir cotización</a><a href="https://wa.me/18293052804" target="_blank" rel="noopener" class="btn btn-secundario">💬 WhatsApp</a></div>' +
+      '</div></div>' +
+      '</div>';
+  }
+
+  // ============================================================
+  // PÁGINA: Empresas / MICE
+  // ============================================================
+  function renderEmpresas() {
+    app.innerHTML = '<div class="contenedor">' +
+      '<p class="migaja" style="padding-top:16px;"><a href="#/">Inicio</a> / <a href="#/eventos">Eventos</a> / Empresas</p>' +
+      '<div class="hero" style="padding-top:10px;">' +
+      '<div><span class="etq">MICE · Grupos corporativos</span>' +
+      '<h1 style="font-size:28px;">La actividad que sí recuerdan de la convención</h1>' +
+      '<p class="sub">Incentivos, team building y cierres de evento en catamarán privado. Coordinación con tu DMC o directamente contigo.</p>' +
+      '<div style="display:flex; gap:10px; flex-wrap:wrap;"><a href="#/eventos?tipo=mice" class="btn btn-primario">Solicitar propuesta</a>' +
+      '<button type="button" class="btn btn-secundario" data-accion-demo="dossier">⬇ Dossier corporativo (PDF)</button></div></div>' +
+      '<div class="img" style="min-height:260px;">Foto — grupo corporativo a bordo</div></div>' +
+      '<div class="tabla-stats"><div><strong>120</strong>pax por barco</div><div><strong>Multi-barco</strong>para grupos mayores</div>' +
+      '<div><strong>Factura</strong>fiscal RD / internacional</div><div><strong>Seguro</strong>y permisos al día</div></div>' +
+      '<div class="seccion"><span class="etq">Formatos</span><div class="grid-3">' +
+      '<div class="card"><div class="img">Foto</div><div class="cuerpo"><strong>Incentivo</strong><span class="meta">El premio del año para el equipo comercial.</span></div></div>' +
+      '<div class="card"><div class="img">Foto</div><div class="cuerpo"><strong>Team building</strong><span class="meta">Regata, retos de snorkel, dinámicas a bordo.</span></div></div>' +
+      '<div class="card"><div class="img">Foto</div><div class="cuerpo"><strong>Cierre de convención</strong><span class="meta">Cóctel de despedida navegando al atardecer.</span></div></div>' +
+      '</div></div>' +
+      '<div class="seccion"><span class="etq">Lo que un organizador necesita saber</span><div class="grid-4">' +
+      '<div class="benef"><h4>Capacidad y flota</h4><p>Nº de barcos, aforo real por embarcación.</p></div>' +
+      '<div class="benef"><h4>Plan B por clima</h4><p>Política de reprogramación por escrito.</p></div>' +
+      '<div class="benef"><h4>Logística</h4><p>Traslados desde los hoteles sede, horarios cerrados.</p></div>' +
+      '<div class="benef"><h4>Facturación</h4><p>Condiciones de pago corporativas y factura formal.</p></div>' +
+      '</div></div>' +
+      '<div class="seccion grid-2" style="align-items:start;">' +
+      '<div><span class="etq">Solicita tu propuesta</span>' +
+      '<form id="form-mice"><div class="form-grid">' +
+      '<div class="campo"><label>Empresa / DMC</label><input type="text" required></div>' +
+      '<div class="campo"><label>Contacto</label><input type="text" required></div>' +
+      '<div class="campo"><label>Email corporativo</label><input type="email" required></div>' +
+      '<div class="campo"><label>Teléfono</label><input type="tel" required></div>' +
+      '<div class="campo"><label>Nº de participantes</label><input type="number" min="1" value="50"></div>' +
+      '<div class="campo"><label>Fechas</label><input type="date"></div>' +
+      '</div>' +
+      '<div class="campo" style="margin-top:10px;"><label>Objetivo del evento</label><textarea placeholder="Incentivo, team building, cierre…"></textarea></div>' +
+      '<button type="submit" class="btn btn-primario btn-bloque" style="margin-top:12px;">Enviar solicitud</button>' +
+      '</form></div>' +
+      '<div><span class="etq">Han navegado con nosotros</span><div class="grid-3">' +
+      new Array(6).fill('<div class="img" style="height:44px;">Logo</div>').join('') + '</div>' +
+      '<div class="quote" style="margin-top:10px;"><p>"El equipo se adaptó a nuestra agenda corporativa sin fricciones."</p><span class="meta">Directora de RRHH · Empresa regional</span></div></div>' +
+      '</div></div>';
+
+    inicializarFormularioDemo('form-mice', 'Solicitud enviada — te contactamos en menos de 24 h con tu propuesta.');
+    var btnDossier = $('[data-accion-demo="dossier"]');
+    if (btnDossier) btnDossier.addEventListener('click', function () { mostrarToast('Demo: aquí se descargaría el dossier corporativo en PDF.'); });
+  }
+
+  // ============================================================
+  // PÁGINA: Nosotros
+  // ============================================================
+  function renderNosotros() {
+    app.innerHTML = '<div class="contenedor">' +
+      '<div class="hero" style="padding-top:32px;">' +
+      '<div><span class="etq">Nosotros</span>' +
+      '<h1 style="font-size:28px;">Los que llevamos 4.454 días saliendo a navegar</h1>' +
+      '<p class="sub">Hispaniola nació para hacer lo contrario del tour masificado: barcos a media capacidad, comida hecha a bordo y un arrecife que estamos reconstruyendo con nuestras manos.</p>' +
+      '<p class="meta">Anclas: <a href="#ancla-tripulacion" style="color:var(--acento);">La tripulación</a> · <a href="#ancla-flota" style="color:var(--acento);">La flota</a> · <a href="#ancla-fundacion" style="color:var(--acento);">La fundación</a></p>' +
+      '</div><div class="img" style="min-height:220px;">Foto — la tripulación completa</div></div>' +
+      '<div class="tabla-stats"><div><strong>4.454</strong>días navegados</div><div><strong>91.607</strong>clientes</div>' +
+      '<div><strong>#1</strong>TripAdvisor · 7 años</div><div><strong>2016</strong>plantando coral</div></div>' +
+      '<div id="ancla-tripulacion" class="seccion" style="scroll-margin-top:80px;">' +
+      '<span class="etq">La tripulación</span><p class="meta" style="margin-bottom:12px;">No somos un call center con barcos. Estas son las caras que te van a recibir en el muelle.</p>' +
+      '<div class="grid-4">' + TRIPULACION.map(function (p) { return '<div class="crew-item"><div class="img" style="border-radius:50%;">Foto</div><strong>' + esc(p.nombre) + '</strong><span>' + esc(p.rol) + '</span></div>'; }).join('') + '</div></div>' +
+      '<div id="ancla-flota" class="seccion" style="scroll-margin-top:80px;">' +
+      '<span class="etq">La flota</span><div class="grid-3">' +
+      FLOTA.map(function (f) { return '<div class="card"><div class="img">Foto barco</div><div class="cuerpo"><strong>' + esc(f.nombre) + '</strong><span class="meta">' + esc(f.meta) + '</span></div></div>'; }).join('') + '</div></div>' +
+      '<div id="ancla-fundacion" class="seccion grid-2" style="align-items:start; scroll-margin-top:80px;">' +
+      '<div><span class="etq">La fundación</span><h3 style="font-size:17px; margin-bottom:8px;">Ecological Bávaro Reefs</h3>' +
+      '<ul class="timeline">' +
+      '<li><span class="hora">2016</span><span class="punto"></span><div><h4>Empezamos a plantar</h4><p>Primeras estructuras artificiales de arrecife.</p></div></li>' +
+      '<li><span class="hora">Hoy</span><span class="punto"></span><div><h4>Top-3 de RD</h4><p>El Ministerio de Medio Ambiente lo reconoce entre los 3 mayores proyectos de jardinería de coral del país.</p></div></li>' +
+      '<li><span class="hora">Cada tour</span><span class="punto"></span><div><h4>Tú lo visitas</h4><p>El snorkel del tour ocurre EN el vivero. Nuestra bióloga te explica qué estás viendo.</p></div></li>' +
+      '</ul><a href="#/sostenibilidad" class="btn btn-secundario" style="margin-top:8px;">Ver Sostenibilidad →</a></div>' +
+      '<div class="img" style="min-height:230px;">Foto — vivero de coral / bióloga trabajando</div></div>' +
+      '<div class="seccion"><div class="banda-cta"><h3 style="font-size:18px;">¿Vienes a navegar con nosotros?</h3><a href="#/tours" class="btn btn-primario">Ver tours</a></div></div>' +
+      '</div>';
+  }
+
+  // ============================================================
+  // PÁGINA: Sostenibilidad
+  // ============================================================
+  function renderSostenibilidad() {
+    app.innerHTML = '<div class="contenedor">' +
+      '<div class="hero" style="padding-top:32px;">' +
+      '<div><span class="etq">Sostenibilidad</span>' +
+      '<h1 style="font-size:28px;">Llevamos gente al arrecife que estamos reconstruyendo</h1>' +
+      '<p class="sub">No es un sello en el pie de página. Es el sitio exacto donde haces snorkel en nuestros tours.</p></div>' +
+      '<div class="img" style="min-height:220px;">Foto — coral plantado, antes/después</div></div>' +
+      '<div class="tabla-stats"><div><strong>2016</strong>primer coral plantado</div><div><strong>Top 3</strong>proyectos de RD</div>' +
+      '<div><strong>0</strong>plástico a bordo</div><span class="meta">Nº de corales plantados: dato pendiente de confirmar con el cliente</span></div>' +
+      '<div class="seccion grid-2" style="align-items:start;">' +
+      '<div><span class="etq">Ecological Bávaro Reefs</span>' +
+      '<p class="sub" style="max-width:none;">Qué es la jardinería de coral, cómo se planta, por qué funciona. Explicado por nuestra bióloga marina — no un muro de texto.</p>' +
+      '<div class="grid-3" style="margin-top:12px;"><div class="img" style="height:80px;">Vivero</div><div class="img" style="height:80px;">Plantado</div><div class="img" style="height:80px;">Crecido</div></div>' +
+      '<p class="meta" style="margin-top:8px;">Reconocido por el Ministerio de Medio Ambiente de la República Dominicana.</p></div>' +
+      '<div><span class="etq">Lo que hacemos a bordo</span><div class="grid-2">' +
+      '<div class="benef"><h4>Cero plástico</h4><p>El coco-loco va en un coco de verdad. Nada desechable.</p></div>' +
+      '<div class="benef"><h4>Protector biodegradable</h4><p>Te lo pedimos antes de entrar al agua — el químico mata el coral.</p></div>' +
+      '<div class="benef"><h4>Snorkel sin tocar</h4><p>Briefing obligatorio: se mira, no se pisa.</p></div>' +
+      '<div class="benef"><h4>Limpieza de playa</h4><p>Jornadas con la comunidad de Bávaro.</p></div>' +
+      '</div></div></div>' +
+      '<div class="seccion"><div class="banda-cta"><div><h3 style="font-size:18px;">Ven a ver el arrecife</h3><p class="meta">Todos nuestros tours de snorkel paran en el vivero.</p></div><a href="#/tours" class="btn btn-primario">Ver tours</a></div></div>' +
+      '</div>';
+  }
+
+  // ============================================================
   // Registro de rutas
   // ============================================================
   ruta('/', renderHome);
@@ -1399,6 +1638,11 @@
   ruta('/reservar/:slug/3', renderBookingPaso3);
   ruta('/reservar/:slug/gracias', renderBookingGracias);
   ruta('/mi-reserva', renderMiReserva);
+  ruta('/eventos', renderEventos);
+  ruta('/eventos/bodas', renderBodas);
+  ruta('/eventos/empresas', renderEmpresas);
+  ruta('/nosotros', renderNosotros);
+  ruta('/sostenibilidad', renderSostenibilidad);
 
   // Delegación global: cualquier elemento con data-ir="#/ruta" navega al hacer click.
   // Patrón reutilizado en booking, ficha, eventos, etc. (evita listeners repetidos por render).
