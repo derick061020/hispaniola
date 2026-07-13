@@ -69,18 +69,31 @@ o de confianza baja al footer. El escritorio, por fin, tiene un camino a reserva
 │                                                    [ RESERVAR ]   │
 └───────────────────────────────────────────────────────────────────┘
 
-1. TOURS ▾                                    → /tours (listado, clickeable)
-   ├── Semi-Privado Premium   · solo adultos · desde US$ 99
-   ├── Snorkel Lovers         · familias     · desde US$ 98
-   ├── Charter Privado        · tu grupo     · desde US$ 55
-   ├── Isla Saona             · día completo · desde US$ —
-   └── ─────────────────────
-       Ver todos los tours →
+1. TOURS ▾  → /tours          ★ MEGAMENÚ (escaparate con foto + precio)
+   ┌──────────────────────────────────────────────────────────────┐
+   │ MEDIO DÍA · 4 h                          DÍA COMPLETO        │
+   │ [img] Semi-Privado Premium               [img] Isla Saona    │
+   │       solo adultos · máx 25 · desde $99        desde $—      │
+   │ [img] Snorkel Lovers                                         │
+   │       familias · máx 25 · desde $98                          │
+   │ [img] Charter Privado                                        │
+   │       tu grupo · hasta 120 · desde $55                       │
+   ├──────────────────────────────────────────────────────────────┤
+   │ ¿No sabes cuál? Compara los 4 →      Ver todos los tours →   │
+   └──────────────────────────────────────────────────────────────┘
 
-2. EVENTOS ▾                                  → /eventos (hub, clickeable)
-   ├── Bodas                                  → /eventos/bodas
-   ├── Empresas y MICE                        → /eventos/empresas
-   └── Cumpleaños, aniversarios, despedidas   → /eventos (ancla)
+2. EVENTOS ▾  → /eventos      ★ MEGAMENÚ (con deep-link al form)
+   ┌──────────────────────────────────────────────────────────────┐
+   │ CELEBRACIONES          CORPORATIVO         Barco entero      │
+   │ [img] Bodas y pre-boda [img] Empresas/MICE  10-120 personas  │
+   │  ↳ landing propia       ↳ landing propia    desde $55/pers   │
+   │ Cumpleaños*            Incentivos*          ★ WeddingWire    │
+   │ Aniversarios*          Team building*        2018-2021       │
+   │ Despedidas*            Cierre convención*                    │
+   │ Reuniones familiares*  ⬇ Dossier PDF       [Pedir cotización]│
+   └──────────────────────────────────────────────────────────────┘
+   * = deep-link a /eventos?tipo=X → el formulario llega con la
+     ocasión YA preseleccionada. Sin eso, listarlas sería decoración.
 
 3. NOSOTROS ▾                                 → /nosotros (clickeable)
    ├── La tripulación y la flota              → /nosotros
@@ -95,6 +108,19 @@ o de confianza baja al footer. El escritorio, por fin, tiene un camino a reserva
 
 [ RESERVAR ]  ← botón destacado, siempre visible (sticky)   → /reservar
 ```
+
+### ¿Cuáles llevan megamenú y cuáles no?
+
+**Criterio: la forma del menú sigue a la forma del contenido.** Forzar megamenús donde no
+hay contenido se ve vacío; negarlos donde sí lo hay desperdicia el mejor espacio de la web.
+
+| Ítem | Formato | Por qué |
+|---|---|---|
+| **Tours** | ★ **Megamenú** | 4 productos con foto, audiencia, capacidad y precio. Es el **camino al dinero**: el escaparate acelera la decisión antes de entrar a una ficha. Agrupados por duración (medio día / día completo), que es como el turista piensa su agenda. |
+| **Eventos** | ★ **Megamenú** | 2 landings reales + 6 ocasiones que **deep-linkean al hub con el formulario preseleccionado**. Sin ese deep-link serían decoración; con él, dan "scent" (quien busca "cumpleaños en barco" ve la palabra exacta) y ahorran un paso. Tercera columna = resumen comercial + CTA. |
+| Nosotros | Desplegable simple | Solo 2 destinos (tripulación/flota · sostenibilidad). |
+| Guías | Sin desplegable | Es una página. |
+| Ayuda | Desplegable simple | 3 destinos (FAQ · Contacto · Mi reserva). |
 
 ### Cambios clave respecto al menú actual
 
