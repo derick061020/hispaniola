@@ -379,7 +379,25 @@ var estadoReserva = {
   codigo: null,
   fechaConfirmada: null,
   comoNosConociste: null,
-  mesCalendarioOffset: 0 // para navegar meses en el paso 1
+  mesCalendarioOffset: 0, // para navegar meses en el paso 1
+  saldoPagado: false
+};
+
+// ---------- Reserva demo — se muestra en Mi Reserva si aún no se hizo ninguna ----------
+var RESERVA_DEMO = {
+  esDemo: true,
+  tour: 'semi-privado',
+  fecha: sumarDias(hoyISO(), 9),
+  horarioIdx: 0,
+  personas: 2,
+  paquete: 'premium',
+  platos: ['mariscos', 'carne'],
+  hotel: 'Hard Rock Hotel — Bávaro',
+  horaRecogida: '8:05 AM',
+  pago: 'deposito',
+  datos: { nombre: 'Ana', apellido: 'Pérez', email: 'ana@email.com', telefono: '+1 809 000 0000' },
+  codigo: 'HSP-DEMO-4821',
+  saldoPagado: false
 };
 
 var estadoBusquedaHero = { tourSlug: null, fecha: null, personas: 2 };

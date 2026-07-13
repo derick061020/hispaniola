@@ -1223,6 +1223,172 @@
   }
 
   // ============================================================
+  // PÁGINA: Booking paso 4 — gracias
+  // ============================================================
+  function renderBookingGracias(params) {
+    var t = TOURS[params.slug];
+    if (!t || estadoReserva.tour !== params.slug || !estadoReserva.codigo) { irA('#/tour/' + params.slug); return; }
+    var tot = calcularTotales();
+    var fechaRecordatorio = formatoFechaLarga(sumarDias(estadoReserva.fecha, -1));
+    var fechaTour = formatoFechaLarga(estadoReserva.fecha);
+    var horario = t.horarios[estadoReserva.horarioIdx];
+    var pagoCompleto = estadoReserva.pago === 'completo';
+
+    app.innerHTML = '<div class="contenedor" style="padding-top:16px; max-width:900px;">' +
+      pasosIndicadorHTML(t.slug, 4) +
+      conNota('booking-gracias', '<div style="text-align:center; padding:20px 0 10px;">' +
+        '<div class="check-grande">✓</div>' +
+        '<h2 style="font-size:24px; margin-bottom:8px;">¡Nos vemos a bordo, ' + esc(estadoReserva.datos.nombre) + '!</h2>' +
+        '<p class="meta" style="margin-bottom:14px;">Tu reserva está confirmada. Te enviamos el voucher a ' + esc(estadoReserva.datos.email) + ' y por WhatsApp.</p>' +
+        '<span class="codigo-reserva">' + estadoReserva.codigo + '</span>' +
+        '<div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:16px;">' +
+        '<button type="button" class="btn btn-secundario" data-accion-demo="voucher">⬇ Voucher PDF</button>' +
+        '<button type="button" class="btn btn-secundario" data-accion-demo="calendario">📅 Añadir al calendario</button>' +
+        '<a href="https://wa.me/18293052804" target="_blank" rel="noopener" class="btn btn-secundario">💬 Guardar WhatsApp</a>' +
+        '</div>' +
+        '<p class="meta" style="margin-top:12px;"><a href="#/mi-reserva" style="color:var(--acento);">Gestionar mi reserva →</a></p>' +
+        '</div>') +
+      '<div class="grid-2" style="margin-top:20px; align-items:start;">' +
+      '<div>' +
+      '<span class="etq">Qué sigue</span>' +
+      '<div class="next-step"><span class="n2">1</span><div><strong>Hoy</strong><p>' +
+      (pagoCompleto ? 'Recibes voucher + recibo del pago completo (' + formatoDinero(tot.total) + ' pagados).' : 'Recibes voucher + recibo del depósito (' + formatoDinero(tot.deposito) + ' pagados).') +
+      '</p></div></div>' +
+      '<div class="next-step"><span class="n2">2</span><div><strong>' + fechaRecordatorio + ', por la tarde</strong><p>Te confirmamos por WhatsApp la recogida: ' + esc(estadoReserva.hotel) + ', lobby, ' + esc(estadoReserva.horaRecogida) + '.</p></div></div>' +
+      '<div class="next-step"><span class="n2">3</span><div><strong>' + fechaTour + '</strong><p>' +
+      (pagoCompleto
+        ? 'Ya tienes todo pagado — solo trae traje de baño, toalla y protector biodegradable.'
+        : 'Trae: traje de baño, toalla, protector biodegradable y <strong>' + formatoDinero(tot.saldoCash) + ' en efectivo</strong> (saldo con 5% dcto) — o paga el saldo online desde <a href="#/mi-reserva" style="color:var(--acento);">Mi Reserva</a>.') +
+      '</p></div></div>' +
+      '</div>' +
+      '<div>' +
+      '<div class="resumen-reserva" style="position:static;"><div class="cuerpo">' +
+      '<strong style="font-size:14px;">Tu reserva</strong>' +
+      '<div class="fila-r"><span>' + esc(t.nombre) + '</span></div>' +
+      '<div class="fila-r"><span>' + fechaTour + ' · ' + horario.hora + '</span></div>' +
+      '<div class="fila-r"><span>' + estadoReserva.platos.map(function (id, i) { return 'Persona ' + (i + 1) + ': ' + nombrePlato(id); }).join(' · ') + '</span></div>' +
+      '<div class="fila-r"><span><a href="#/mi-reserva" style="color:var(--acento);">Cambia el menú hasta el ' + fechaRecordatorio + ' →</a></span></div>' +
+      (!pagoCompleto ? '<div class="linea-total"><span>Saldo a bordo</span><span>' + formatoDinero(tot.saldoCash) + '</span></div>' : '<div class="linea-total"><span>Saldo</span><span>' + formatoDinero(0) + '</span></div>') +
+      '</div></div>' +
+      '<div class="benef" style="margin-top:12px;"><h4>¿Celebráis algo? 🎉</h4><p>Cumpleaños, aniversario, pedida… cuéntanoslo por WhatsApp y lo preparamos.</p></div>' +
+      '</div></div>' +
+      '<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-top:24px; padding-top:16px; border-top:1px solid var(--linea);">' +
+      '<div><p class="meta" style="margin-bottom:8px;">Por curiosidad: ¿cómo nos encontraste?</p>' +
+      '<div class="chips-origen">' + ['Google', 'Instagram', 'TikTok', 'Recomendación', 'Otro'].map(function (o) {
+        return '<button type="button" class="chip-origen' + (estadoReserva.comoNosConociste === o ? ' sel' : '') + '" data-origen="' + o + '">' + o + '</button>';
+      }).join('') + '</div></div>' +
+      '<span class="meta">¿Dudas? WhatsApp +1-829-305-2804</span>' +
+      '</div></div>';
+
+    inicializarBookingGracias();
+  }
+
+  function inicializarBookingGracias() {
+    $all('[data-accion-demo]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var accion = btn.getAttribute('data-accion-demo');
+        mostrarToast(accion === 'voucher' ? 'Demo: aquí se descargaría el voucher en PDF.' : 'Demo: aquí se añadiría el tour a tu calendario.');
+      });
+    });
+    $all('[data-origen]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        estadoReserva.comoNosConociste = btn.getAttribute('data-origen');
+        $all('[data-origen]').forEach(function (b) { b.classList.remove('sel'); });
+        btn.classList.add('sel');
+        mostrarToast('¡Gracias! Nos ayuda a mejorar.');
+      });
+    });
+  }
+
+  // ============================================================
+  // PÁGINA: Mi Reserva — sostiene "cambia tu menú" y "paga el saldo"
+  // ============================================================
+  function renderMiReserva() {
+    var esReal = !!estadoReserva.codigo;
+    var r = esReal ? estadoReserva : RESERVA_DEMO;
+    var t = TOURS[r.tour];
+    var tot;
+    if (esReal) {
+      tot = calcularTotales();
+    } else {
+      var subtotal = t.precioLight * r.personas;
+      var upgrade = r.paquete === 'premium' ? t.upgradePremium * r.personas : 0;
+      var total = subtotal + upgrade;
+      var deposito = Math.round(total * 0.25);
+      var saldo = total - deposito;
+      tot = { total: total, deposito: deposito, saldo: saldo, saldoCash: Math.round(saldo * 0.95) };
+    }
+    var horario = t.horarios[r.horarioIdx];
+    // "Ya pagado" y "Saldo pendiente" no sobre-suman al total a propósito: el saldo
+    // mostrado ya lleva el 5% de descuento por pagar en efectivo (mismo criterio del
+    // paso 3 del booking) — es un incentivo, no un balance contable estricto.
+    var yaPagado = r.pago === 'completo' ? tot.total : tot.deposito;
+    var saldoMostrado = r.pago === 'completo' ? 0 : tot.saldoCash;
+    if (r.saldoPagado) { yaPagado = tot.total; saldoMostrado = 0; }
+
+    app.innerHTML = '<div class="contenedor seccion" style="max-width:900px;">' +
+      (!esReal ? '<div class="banda-cta" style="margin-bottom:20px;"><p style="margin:0; font-size:13.5px;">Estás viendo una <strong>reserva de ejemplo</strong> — cuando completes una reserva real, esta pantalla mostrará la tuya.</p></div>' : '') +
+      '<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:20px;">' +
+      '<div><span class="etq" style="margin:0;">Mi reserva</span><h1 style="font-size:20px;">' + r.codigo + ' · ' + esc(t.nombre) + ' · ' + formatoFechaCorta(r.fecha) + '</h1></div>' +
+      '<span class="chip ok">✓ Confirmada</span>' +
+      '</div>' +
+      '<div class="grid-2" style="align-items:start;">' +
+      '<div>' +
+      '<span class="etq">Tu tour</span>' +
+      '<div class="resumen-reserva" style="position:static;"><div class="img">Foto del tour</div><div class="cuerpo">' +
+      '<div class="fila-r"><span>Fecha y hora</span><span>' + formatoFechaCorta(r.fecha) + ' · ' + horario.hora + '</span></div>' +
+      '<div class="fila-r"><span>Personas</span><span>' + r.personas + '</span></div>' +
+      '<div class="fila-r"><span>Recogida</span><span>' + esc(r.hotel) + ' ' + esc(r.horaRecogida) + '</span></div>' +
+      '<div class="fila-r"><span>Total del tour</span><span>' + formatoDinero(tot.total) + '</span></div>' +
+      '<div class="fila-r"><span>Ya pagado</span><span>' + formatoDinero(yaPagado) + '</span></div>' +
+      '<div class="linea-total"><span>Saldo pendiente</span><span>' + formatoDinero(saldoMostrado) + '</span></div>' +
+      '</div></div>' +
+      (saldoMostrado > 0
+        ? '<button type="button" class="btn btn-primario btn-bloque" id="btn-pagar-saldo" style="margin-top:10px;">Pagar saldo online — ' + formatoDinero(saldoMostrado) + '</button>' +
+          '<p class="meta" style="text-align:center; margin-top:6px;">O paga en efectivo a bordo — no hace falta hacer nada aquí.</p>'
+        : '<p class="meta" style="text-align:center; margin-top:10px;">✓ Saldo pagado — no queda nada pendiente.</p>') +
+      '</div>' +
+      '<div>' +
+      '<span class="etq">El plato de cada uno <span style="text-transform:none; letter-spacing:0;">— toca uno para cambiarlo</span></span>' +
+      '<div class="grid-2">' + r.platos.map(function (id, i) {
+        var p = PLATOS.filter(function (p) { return p.id === id; })[0];
+        return '<button type="button" class="plato sel" data-cambiar-plato="' + i + '"><div class="img">Foto</div><div class="cuerpo"><strong>Persona ' + (i + 1) + '</strong><span>' + (p ? esc(p.nombre) : '—') + '</span></div></button>';
+      }).join('') + '</div>' +
+      '</div></div>' +
+      '<div class="grid-3" style="margin-top:24px;">' +
+      '<button type="button" class="btn btn-secundario btn-bloque" data-accion-demo="voucher">⬇ Descargar voucher</button>' +
+      '<a class="btn btn-secundario btn-bloque" target="_blank" rel="noopener" href="https://wa.me/18293052804?text=' + encodeURIComponent('Hola, quiero solicitar un cambio de fecha para mi reserva ' + r.codigo) + '">💬 Solicitar cambio de fecha</a>' +
+      '<a class="btn btn-secundario btn-bloque" target="_blank" rel="noopener" href="https://wa.me/18293052804?text=' + encodeURIComponent('Hola, quiero cancelar mi reserva ' + r.codigo) + '">✕ Cancelar reserva</a>' +
+      '</div>' +
+      '<p class="meta" style="margin-top:16px;">Cancelación gratis hasta el ' + formatoFechaCorta(sumarDias(r.fecha, -7)) + ' (7 días antes). Después de esa fecha aplica la <a href="#/reserva-directa" style="color:var(--acento);">política de cancelación</a>. ¿Dudas? WhatsApp +1-829-305-2804.</p>' +
+      '</div>';
+
+    inicializarMiReserva(r, t);
+  }
+
+  function inicializarMiReserva(r, t) {
+    $all('[data-accion-demo]').forEach(function (btn) {
+      btn.addEventListener('click', function () { mostrarToast('Demo: aquí se descargaría el voucher en PDF.'); });
+    });
+    var btnPagar = $('#btn-pagar-saldo');
+    if (btnPagar) btnPagar.addEventListener('click', function () {
+      r.saldoPagado = true;
+      mostrarToast('Pago recibido — ¡gracias!');
+      renderMiReserva();
+    });
+    var menuPlatos = ['mariscos', 'carne', 'surf-turf', 'vegetariano'];
+    $all('[data-cambiar-plato]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var i = parseInt(btn.getAttribute('data-cambiar-plato'), 10);
+        var actualIdx = menuPlatos.indexOf(r.platos[i]);
+        r.platos[i] = menuPlatos[(actualIdx + 1) % menuPlatos.length];
+        mostrarToast('Plato de la persona ' + (i + 1) + ' actualizado.');
+        renderMiReserva();
+      });
+    });
+  }
+
+  // ============================================================
   // Registro de rutas
   // ============================================================
   ruta('/', renderHome);
@@ -1231,6 +1397,8 @@
   ruta('/reservar/:slug/1', renderBookingPaso1);
   ruta('/reservar/:slug/2', renderBookingPaso2);
   ruta('/reservar/:slug/3', renderBookingPaso3);
+  ruta('/reservar/:slug/gracias', renderBookingGracias);
+  ruta('/mi-reserva', renderMiReserva);
 
   // Delegación global: cualquier elemento con data-ir="#/ruta" navega al hacer click.
   // Patrón reutilizado en booking, ficha, eventos, etc. (evita listeners repetidos por render).
