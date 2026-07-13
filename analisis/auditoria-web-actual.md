@@ -26,27 +26,47 @@ rediseño debe convivir con el iframe (peor opción — limita todo el funnel).
 
 ## 2. Arquitectura de información
 
-Navegación actual (escondida tras hamburguesa "MENU" incluso en desktop):
+> **Corregido 2026-07-13.** La versión inicial de esta sección decía que el menú estaba
+> "escondido tras hamburguesa incluso en desktop". Era un error de método: las primeras
+> capturas se tomaron con un viewport de 914px, por debajo del breakpoint de 1170px, así
+> que salía el menú móvil. **A partir de 1170px sí hay un megamenú de escritorio con 6
+> ítems.** El mapa completo y verificado del sitio está en `mapa-del-sitio.md`.
 
-- Home
-- About Us (Our Crew / Our Fleet / Our Foundation)
-- Tours: Premium Semiprivate-Adults · Snorkel Lovers ALL AGES · **Private Tours ×2**
-- Events & Celebrations · Wedding Groups · MICE
-- Sustainability (+ Competitive Advantage)
-- Online Booking · Contact · Travel Agents · TIPS for Punta Cana · FAQ's
+Menú de escritorio (≥1170px), 6 ítems de primer nivel:
+
+- **Home**
+- **About Us** ▾ (Our Crew / Our Fleet / Our Foundation)
+- **Catamaran Experiences** ▾ (megamenú de 2 columnas: "Punta Cana Half Day Snorkel" con
+  3 tours, y "Saona Island Full Day" con 1)
+- **Events & Celebrations** ▾ (Events & Party Boat / Weddings / MICE)
+- **Sustainability** ▾ (Sustainability / Competitive Advantage)
+- **Contact Us** ▾ (Contact / Travel Agents / TIPS / FAQ's)
+
+Por debajo de 1170px, el plugin *meanmenu* lo sustituye por una hamburguesa que **aplana
+toda la jerarquía** a 21 ítems planos (simula el anidamiento con guiones "- Our Crew").
 
 ### Problemas
 
-1. **Dos ítems se llaman igual ("Private Tours") y llevan a páginas distintas**:
+1. **En escritorio NO hay ningún ítem de menú que lleve a reservar.** "Online Booking"
+   existe en el menú móvil pero no en el de escritorio: al booking solo se llega por el
+   botón del hero, el footer, o los CTA de las fichas.
+2. **Dos ítems se llaman igual ("Private Tours") y llevan a páginas distintas**:
    `private-catamaran-snorkeling-excursion-puntacana.php` y
-   `private-saona-island-excursion.php`. El producto **Isla Saona es invisible**: no
-   aparece en las tarjetas de la home (solo hay 3) y en el menú está camuflado.
-2. El menú está colapsado en desktop sin necesidad, y además **el click al botón MENU lo
-   intercepta el selector de idiomas** (bug real reproducido: `mobile-languages` tapa el
-   área táctil — Playwright no pudo clickarlo).
-3. Catálogo real: 4 tours + eventos (bodas, cumpleaños, aniversarios, despedidas, MICE).
+   `private-saona-island-excursion.php`. En el megamenú los distingue solo la columna;
+   en el menú móvil aplanado quedan **idénticos y consecutivos**. El producto Isla Saona
+   además no aparece en las tarjetas de la home (solo hay 3).
+3. **El click al botón MENU lo intercepta el selector de idiomas** (bug real reproducido
+   en anchos <1170px: `mobile-languages` tapa el área táctil — Playwright no pudo clickarlo).
+4. **Los 4 tours cuelgan de un padre no clickeable** ("Catamaran Experiences"): no existe
+   una página de listado de tours. O abres el megamenú, o los ves en la home.
+5. **Un 5º tour está comentado en el código** del megamenú (`sustainability-experience.php`,
+   hoy 404). Siendo el coral su mayor diferenciador, conviene preguntar al cliente qué pasó.
+6. **9 links rotos visibles en la home**: los 9 iconos de "all our cruises include" apuntan
+   a `feature.html` (404). Más 1 en Events (`pevents-...` con typo). Señal de que la web
+   lleva años sin mantenimiento.
+7. Catálogo real: 4 tours + eventos (bodas, cumpleaños, aniversarios, despedidas, MICE).
    La home solo enseña 3 tarjetas de tours y 4 de eventos, sin jerarquía de negocio.
-4. Páginas de contenido (Tips, FAQ, Sustainability, Competitive Advantage) desconectadas
+8. Páginas de contenido (Tips, FAQ, Sustainability, Competitive Advantage) desconectadas
    del funnel — nada te devuelve a reservar.
 
 ---
