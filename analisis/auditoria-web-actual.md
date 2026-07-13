@@ -192,6 +192,8 @@ Capturas: `audit/booking-01-form.jpeg` (inicial), `booking-02-availability.jpeg`
 | 7 | 3-5 errores de consola JS por página | Global |
 | 8 | Banner "YOUR NEXT ADVENTURE AWAITS" ilegible (blanco sobre claro) | Home |
 | 9 | "Last reservation: 21 seconds ago" — urgencia no creíble | Global |
+| 10 | Estadísticas contradictorias en la misma página: "90.498 Happy Clients, 1.336 days sailing" en el encabezado vs "301.661 happy clients... 4.456 days of sailing" en el párrafo de abajo | why-book-with-us.php |
+| 11 | `competitive-advantage.php` es un stub de una sola frase ("videos que muestran la Bávaro Reefs Foundation") sin los videos ni contenido real, anidado sin necesidad bajo Sustainability | competitive-advantage.php |
 
 ---
 
