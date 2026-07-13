@@ -146,8 +146,44 @@ look comercial-premium con pleno conocimiento de ambas.)
    OTA, el bloque why-book-direct, las fotos de platos propias y la prueba social
    (#1 TripAdvisor) cargan con la diferenciación — no recortarlos ni suavizarlos.
 
+## 7. Iteración v2 — «Boutique luminoso» (2026-07-13, misma tarde)
+
+Con la home v1 ya construida y vista en el navegador (tag `v1.0-home-diseno`), Samuel
+pasó **4 referencias nuevas** y pidió un plan para evolucionarla. La dirección no se
+tira: la B "Charter Premium" se mantiene como base (paleta, tipografía, contenido,
+orden de secciones), pero la **forma** se vuelve más aireada, más redondeada y más
+editorial.
+
+Lo que dijo, por referencia:
+
+- **Journeo** (claro, redondeado): le gusta la estética general → hero como contenedor
+  redondeado con mucho aire, no a sangre.
+- **Vacationeeze** (editorial boutique): le gusta la estética general **y en concreto**
+  las fotos con **borde blanco + sombra** (passe-partout tipo polaroid, rotadas y
+  solapadas) → se convierte en componente reutilizable.
+- **Wanderlust**: le gusta, pero menos que las dos primeras → no se copia su piel.
+- **ExploreX**: **no** le gusta la estética, **solo** las cards apiladas del hero → se
+  toma únicamente el mecanismo: quitar el buscador de disponibilidad y poner una baraja
+  de cards que rota (la activa se agranda al frente; la que estaba activa sube, encoge y
+  se va al final de la cola).
+
+⚠️ **Consecuencia de conversión registrada**: quitar el buscador del hero elimina el CTA
+principal del wireframe aprobado (`NOTAS['home-hero']`: *disponibilidad antes que datos
+personales*, patrón Civitatis). Se acepta porque la baraja **asume ese papel**: cada card
+es un producto real, clicable, con precio y CTA, y se conservan el CTA primario del hero,
+el sticky de móvil y el grid de tours inmediatamente debajo. No se pierde el camino a la
+reserva; cambia de "buscar" a "mirar el producto y entrar".
+
+Plan de ejecución: **`app/PLAN-v2.md`** (5 fases, commit por fase). Introduce la primera
+animación del proyecto → al traspasar a Figma habrá que leer [[animaciones-a-figma]]
+(loop infinito = componente interactivo, cada estado congelable como frame).
+
 ---
 
 Referencias en vivo (2026-07-13): sailingcollective.com · moorings.com ·
 blacktomato.com · hispaniolaaquaticadventures.com. Capturas:
 `analisis/referencias-visuales/ref-*.jpeg`.
+
+Referencias v2 (2026-07-13, pasadas por Samuel en el chat): Journeo · Vacationeeze ·
+Wanderlust · ExploreX. **Pendiente**: guardarlas en
+`analisis/referencias-visuales/v2/` (llegaron pegadas en el chat, no como archivos).
