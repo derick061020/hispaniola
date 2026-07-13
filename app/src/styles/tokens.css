@@ -57,12 +57,14 @@
   --text-lead--line-height: 1.6;
   --text-precio: 1.5rem; /* número de precio en panel menta */
   --text-precio--line-height: 1.1;
+  --text-stat: 2.75rem; /* v2: cifras de la cinta de confianza (ref. Journeo) */
+  --text-stat--line-height: 1.1;
   --text-eyebrow: 0.75rem; /* caps letterspaced */
   --text-eyebrow--line-height: 1;
 
   /* ---------- Forma ---------- */
-  --radius-card: 0.75rem; /* 12px — cards con esquinas redondeadas */
-  --radius-btn: 0.5rem; /* 8px — botones */
+  --radius-card: 1rem; /* 16px — v2: sube de 12px, para rimar con el hero */
+  --radius-btn: 0.625rem; /* 10px — v2: sube de 8px */
   --radius-chip: 999px;
   /* v2: el hero deja de ir a sangre y vive en un contenedor redondeado
      (refs Journeo y Vacationeeze). Mismo radio para la card de la baraja. */

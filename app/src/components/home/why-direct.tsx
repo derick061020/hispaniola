@@ -1,4 +1,5 @@
 import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
+import { Etiqueta } from '@/components/ui/etiqueta'
 
 // "Why book direct" — el bloque que no existe en la web actual (ver
 // NOTAS['home-why-direct'] del prototipo): Viator vende el mismo tour al
@@ -14,8 +15,8 @@ export function WhyDirect() {
   return (
     <section className="bg-papel-hueso px-5 py-seccion-sm sm:px-10 sm:py-seccion">
       <div className="mx-auto max-w-6xl">
-        <p className="text-xs font-semibold uppercase tracking-wide text-aqua-dark">Reserva directa</p>
-        <h2 className="mt-2 max-w-2xl font-display text-h2 font-semibold text-navy">
+        <Etiqueta>Reserva directa</Etiqueta>
+        <h2 className="mt-3 max-w-2xl font-display text-h2 font-semibold text-navy">
           ¿Por qué reservar aquí y no en un portal?
         </h2>
 

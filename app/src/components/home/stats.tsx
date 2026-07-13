@@ -16,7 +16,7 @@ export function Stats() {
             key={s.label}
             className={`text-center ${i > 0 ? 'sm:border-l sm:border-linea' : ''}`}
           >
-            <p className="font-display text-h2 font-semibold text-navy">{s.valor}</p>
+            <p className="font-display text-hero-movil font-semibold text-navy sm:text-stat">{s.valor}</p>
             <p className="mt-1 text-sm text-navy-soft">{s.label}</p>
           </div>
         ))}

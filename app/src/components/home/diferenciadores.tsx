@@ -1,3 +1,5 @@
+import { Etiqueta } from '@/components/ui/etiqueta'
+
 // "No es otro party boat" — diferenciadores reales frente al resto del
 // mercado (benchmark de competencia). Foto real de coral/snorkel (no stock).
 const BENEFICIOS = [
@@ -19,8 +21,8 @@ export function Diferenciadores() {
           />
         </div>
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wide text-aqua-dark">La diferencia Hispaniola</p>
-          <h2 className="mt-2 font-display text-h2 font-semibold text-navy">No es otro party boat</h2>
+          <Etiqueta>La diferencia Hispaniola</Etiqueta>
+          <h2 className="mt-3 font-display text-h2 font-semibold text-navy">No es otro party boat</h2>
 
           <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2">
             {BENEFICIOS.map((b) => (

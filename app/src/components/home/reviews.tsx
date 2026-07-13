@@ -1,3 +1,5 @@
+import { Etiqueta } from '@/components/ui/etiqueta'
+
 // Reseñas verificadas — el link "ver más" NO apunta a Viator a propósito
 // (ver NOTAS['home-reviews'] del prototipo): no regalar tráfico al canal que
 // vende el mismo tour, en pleno momento de decisión.
@@ -20,8 +22,8 @@ export function Reviews() {
   return (
     <section className="bg-papel-hueso px-5 py-seccion-sm sm:px-10 sm:py-seccion">
       <div className="mx-auto max-w-6xl">
-        <p className="text-xs font-semibold uppercase tracking-wide text-aqua-dark">Reseñas verificadas</p>
-        <h2 className="mt-2 font-display text-h2 font-semibold text-navy">4.9 de 5 en 1.782 reseñas</h2>
+        <Etiqueta>Reseñas verificadas</Etiqueta>
+        <h2 className="mt-3 font-display text-h2 font-semibold text-navy">4.9 de 5 en 1.782 reseñas</h2>
 
         <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-3">
           {QUOTES.map((q) => (

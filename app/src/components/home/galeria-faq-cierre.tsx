@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
 import { Boton } from '@/components/ui/boton'
 import { PilaFotos, type FotoPila } from '@/components/ui/pila-fotos'
+import { Etiqueta } from '@/components/ui/etiqueta'
 
 // Galería + FAQ + cierre — última sección de contenido de la home. La
 // galería completa (23 fotos) y el listado completo de FAQ viven fuera de
@@ -32,8 +33,8 @@ export function GaleriaFaqCierre() {
       <div className="mx-auto max-w-6xl">
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-2">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-aqua-dark">El día, en imágenes</p>
-            <PilaFotos fotos={FOTOS_PILA} className="mt-6" />
+            <Etiqueta>El día, en imágenes</Etiqueta>
+            <PilaFotos fotos={FOTOS_PILA} className="mt-8" />
             <p className="mt-6 text-center text-sm">
               <EnlacePrototipo className="font-semibold text-aqua-dark hover:underline">
                 Ver las {FOTOS_OCULTAS} fotos restantes →
@@ -42,8 +43,8 @@ export function GaleriaFaqCierre() {
           </div>
 
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-aqua-dark">Preguntas frecuentes</p>
-            <div className="mt-3 flex flex-col divide-y divide-linea rounded-card bg-papel ring-1 ring-linea">
+            <Etiqueta>Preguntas frecuentes</Etiqueta>
+            <div className="mt-4 flex flex-col divide-y divide-linea rounded-card bg-papel ring-1 ring-linea">
               {FAQS.map((f, i) => (
                 <div key={f.p}>
                   <button
