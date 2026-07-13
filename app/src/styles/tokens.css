@@ -24,6 +24,7 @@
   --color-navy-soft: #5b6b78; /* meta/caption sobre papel */
   --color-aqua: #0e8c9c; /* acento de marca — cuentagotas */
   --color-aqua-dark: #0b6f7c; /* hover del acento */
+  --color-aqua-tint: #eaf3f4; /* fondo tenue del acento (hover, icon circles) */
   --color-coral: #ef5b44; /* CTA de reserva */
   --color-coral-dark: #d6432c; /* hover del CTA */
   --color-menta: #e7f5ef; /* fondo de panel de precio */

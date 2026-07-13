@@ -126,7 +126,7 @@ export function DevMode() {
                 <span className="rounded-full bg-papel-hueso px-2.5 py-1 text-xs font-medium text-navy-soft">
                   {stats.placeholder} placeholder
                 </span>
-                <span className="rounded-full bg-[#EAF3F4] px-2.5 py-1 text-xs font-medium text-aqua-dark">
+                <span className="rounded-full bg-aqua-tint px-2.5 py-1 text-xs font-medium text-aqua-dark">
                   {stats.states} estados
                 </span>
               </div>
@@ -196,7 +196,7 @@ function ScreenRow({ screen, onGo }: { screen: DevScreen; onGo: (to: string) => 
               type="button"
               onClick={() => onGo(state.to)}
               title={state.note ?? state.to}
-              className="inline-flex h-6 items-center gap-1.5 rounded-full bg-papel-hueso px-2.5 text-[11px] text-navy-soft ring-1 ring-inset ring-linea transition-colors hover:bg-[#EAF3F4] hover:text-aqua-dark hover:ring-aqua/40"
+              className="inline-flex h-6 items-center gap-1.5 rounded-full bg-papel-hueso px-2.5 text-[11px] text-navy-soft ring-1 ring-inset ring-linea transition-colors hover:bg-aqua-tint hover:text-aqua-dark hover:ring-aqua/40"
             >
               <span className="font-mono text-[10px] font-semibold text-aqua-dark">{state.kind}</span>
               {state.label}

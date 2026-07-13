@@ -22,7 +22,7 @@ export function WhyDirect() {
         <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {BENEFICIOS.map((b) => (
             <div key={b.titulo}>
-              <div className="grid size-11 place-items-center rounded-full bg-[#EAF3F4] text-sm font-bold text-aqua-dark">
+              <div className="grid size-11 place-items-center rounded-full bg-aqua-tint text-sm font-bold text-aqua-dark">
                 {b.icono}
               </div>
               <p className="mt-3 font-display text-base font-semibold text-navy">{b.titulo}</p>

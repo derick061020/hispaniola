@@ -1,21 +1,15 @@
 import type { AnchorHTMLAttributes, ButtonHTMLAttributes } from 'react'
 
-const base = 'inline-flex items-center justify-center rounded-btn text-sm font-semibold transition'
-const variantes = {
-  primario: 'bg-coral px-5 py-3 text-white shadow-sm hover:bg-coral-dark',
-  secundario: 'border border-aqua px-5 py-2.5 text-aqua-dark hover:bg-[#EAF3F4]',
-} as const
-
-type Variante = keyof typeof variantes
+const clases =
+  'inline-flex items-center justify-center rounded-btn bg-coral px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-coral-dark'
 
 type Props =
-  | ({ variante?: Variante; href: string } & AnchorHTMLAttributes<HTMLAnchorElement>)
-  | ({ variante?: Variante; href?: undefined } & ButtonHTMLAttributes<HTMLButtonElement>)
+  | ({ href: string } & AnchorHTMLAttributes<HTMLAnchorElement>)
+  | ({ href?: undefined } & ButtonHTMLAttributes<HTMLButtonElement>)
 
-export function Boton({ variante = 'primario', className = '', ...props }: Props) {
-  const clases = `${base} ${variantes[variante]} ${className}`
+export function Boton({ className = '', ...props }: Props) {
   if (props.href !== undefined) {
-    return <a className={clases} {...(props as AnchorHTMLAttributes<HTMLAnchorElement>)} />
+    return <a className={`${clases} ${className}`} {...(props as AnchorHTMLAttributes<HTMLAnchorElement>)} />
   }
-  return <button type="button" className={clases} {...(props as ButtonHTMLAttributes<HTMLButtonElement>)} />
+  return <button type="button" className={`${clases} ${className}`} {...(props as ButtonHTMLAttributes<HTMLButtonElement>)} />
 }

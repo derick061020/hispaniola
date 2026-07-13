@@ -1,12 +1,12 @@
 // Página de validación de fundaciones (F0): swatches de paleta + type scale.
 // No es parte de la home — sirve para revisar tokens antes de construir bloques.
-const swatches: { nombre: string; token: string; hex: string; texto?: string }[] = [
+const swatches: { nombre: string; token: string; hex: string; textoClaro?: boolean }[] = [
   { nombre: 'Papel', token: 'papel', hex: '#FFFFFF' },
   { nombre: 'Papel hueso', token: 'papel-hueso', hex: '#F7F9FA' },
-  { nombre: 'Navy', token: 'navy', hex: '#0B2545', texto: '#FFFFFF' },
-  { nombre: 'Navy sub', token: 'navy-sub', hex: '#42525F', texto: '#FFFFFF' },
-  { nombre: 'Aqua', token: 'aqua', hex: '#0E8C9C', texto: '#FFFFFF' },
-  { nombre: 'Coral', token: 'coral', hex: '#EF5B44', texto: '#FFFFFF' },
+  { nombre: 'Navy', token: 'navy', hex: '#0B2545', textoClaro: true },
+  { nombre: 'Navy sub', token: 'navy-sub', hex: '#42525F', textoClaro: true },
+  { nombre: 'Aqua', token: 'aqua', hex: '#0E8C9C', textoClaro: true },
+  { nombre: 'Coral', token: 'coral', hex: '#EF5B44', textoClaro: true },
   { nombre: 'Menta', token: 'menta', hex: '#E7F5EF' },
   { nombre: 'Línea', token: 'linea', hex: '#DFE6EA' },
 ]
@@ -31,7 +31,7 @@ export function FundacionesPage() {
             <div key={s.token} className="overflow-hidden rounded-card ring-1 ring-linea">
               <div
                 className="flex h-20 items-end p-2"
-                style={{ background: `var(--color-${s.token})`, color: s.texto ? `var(--color-papel)` : `var(--color-navy)` }}
+                style={{ background: `var(--color-${s.token})`, color: s.textoClaro ? `var(--color-papel)` : `var(--color-navy)` }}
               >
                 <span className="text-xs font-medium">{s.hex}</span>
               </div>
@@ -84,7 +84,7 @@ export function FundacionesPage() {
           <button className="rounded-btn bg-coral px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-coral-dark">
             Ver disponibilidad
           </button>
-          <button className="rounded-btn border border-aqua px-5 py-2.5 text-sm font-semibold text-aqua transition hover:bg-[#EAF3F4]">
+          <button className="rounded-btn border border-aqua px-5 py-2.5 text-sm font-semibold text-aqua transition hover:bg-aqua-tint">
             Nuestros tours
           </button>
           <div className="rounded-card bg-menta px-4 py-2.5">
