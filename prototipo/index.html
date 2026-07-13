@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hispaniola Aquatic Adventures — Prototipo</title>
+<link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+
+<header class="principal">
+  <div class="topbar">
+    <a href="https://wa.me/18293052804" target="_blank" rel="noopener">💬 WhatsApp +1-829-305-2804</a>
+    <div class="idiomas"><span class="activo">ES</span> · <span>EN</span></div>
+  </div>
+  <div class="nav-wrap">
+    <a href="#/" class="logo">Hispaniola</a>
+
+    <nav class="nav-desktop" id="nav-desktop">
+      <div class="nav-item" data-menu="tours">
+        <button type="button" data-toggle-menu="tours">Tours <span class="caret">▾</span></button>
+        <div class="mega mega-tours" id="mega-tours"></div>
+      </div>
+      <div class="nav-item" data-menu="eventos">
+        <button type="button" data-toggle-menu="eventos">Eventos <span class="caret">▾</span></button>
+        <div class="mega mega-eventos" id="mega-eventos"></div>
+      </div>
+      <div class="nav-item" data-menu="nosotros">
+        <button type="button" data-toggle-menu="nosotros">Nosotros <span class="caret">▾</span></button>
+        <div class="mega" id="mega-nosotros" style="width:260px;">
+          <a class="mega-ev-item" href="#/nosotros">La tripulación y la flota</a>
+          <a class="mega-ev-item" href="#/sostenibilidad">El arrecife que reconstruimos</a>
+        </div>
+      </div>
+      <a href="#/guias">Guías</a>
+      <div class="nav-item" data-menu="ayuda">
+        <button type="button" data-toggle-menu="ayuda">Ayuda <span class="caret">▾</span></button>
+        <div class="mega" id="mega-ayuda" style="width:240px;">
+          <a class="mega-ev-item" href="#/faq">Preguntas frecuentes</a>
+          <a class="mega-ev-item" href="#/contacto">Contacto y WhatsApp</a>
+          <a class="mega-ev-item" href="#/mi-reserva">Gestionar mi reserva</a>
+        </div>
+      </div>
+    </nav>
+
+    <div class="nav-der">
+      <a href="#/tours" class="btn btn-primario btn-sm">Reservar</a>
+      <button type="button" class="hamburguesa" id="btn-hamburguesa" aria-label="Menú">☰</button>
+    </div>
+  </div>
+</header>
+
+<div class="menu-movil" id="menu-movil">
+  <div class="menu-movil-cab">
+    <strong>Menú</strong>
+    <button type="button" class="hamburguesa" id="btn-cerrar-movil" aria-label="Cerrar">✕</button>
+  </div>
+  <div id="menu-movil-acordeon"></div>
+  <div class="menu-movil-cta">
+    <a href="#/tours" class="btn btn-primario btn-bloque" data-cierra-movil>Reservar ahora</a>
+  </div>
+</div>
+
+<main id="app"></main>
+
+<footer class="principal">
+  <div class="footer-grid">
+    <div>
+      <h5>Hispaniola Aquatic Adventures</h5>
+      <p style="margin-bottom:8px;">Plaza Bibijagua, Bávaro, RD.<br>Eco-friendly · Sin plástico · Desde 2012.</p>
+      <p class="meta">★ 4.9 · 1.782 reseñas · #1 TripAdvisor 7 años</p>
+    </div>
+    <div>
+      <h5>Tours</h5>
+      <ul>
+        <li><a href="#/tour/semi-privado">Semi-Privado Premium</a></li>
+        <li><a href="#/tour/snorkel-lovers">Snorkel Lovers</a></li>
+        <li><a href="#/tour/charter-privado">Charter Privado</a></li>
+        <li><a href="#/tour/isla-saona">Isla Saona</a></li>
+        <li><a href="#/eventos">Eventos</a></li>
+      </ul>
+    </div>
+    <div>
+      <h5>Empresa</h5>
+      <ul>
+        <li><a href="#/nosotros">Nosotros</a></li>
+        <li><a href="#/sostenibilidad">Sostenibilidad</a></li>
+        <li><a href="#/guias">Guías Punta Cana</a></li>
+        <li><a href="#/agentes"><strong>Agentes de viaje</strong></a></li>
+      </ul>
+    </div>
+    <div>
+      <h5>Reservas y ayuda</h5>
+      <ul>
+        <li><a href="#/tours">Reservar ahora</a></li>
+        <li><a href="#/mi-reserva">Mi reserva</a></li>
+        <li><a href="#/reserva-directa"><strong>¿Por qué reservar directo?</strong></a></li>
+        <li><a href="#/faq">FAQ · Contacto</a></li>
+        <li><a href="https://wa.me/18293052804" target="_blank" rel="noopener">WhatsApp +1-829-305-2804</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">Prototipo de wireframe navegable — Hispaniola Aquatic Adventures · No es el diseño final.</div>
+</footer>
+
+<div class="badge-prototipo">
+  <span>📐 PROTOTIPO</span>
+  <button type="button" id="btn-notas">📝 notas</button>
+</div>
+
+<aside class="drawer-notas" id="drawer-notas">
+  <button type="button" class="cerrar" id="cerrar-drawer">✕</button>
+  <h4 id="drawer-titulo">Nota</h4>
+  <p id="drawer-cuerpo"></p>
+</aside>
+
+<div class="toast" id="toast"></div>
+
+<script src="datos.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
