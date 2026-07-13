@@ -145,7 +145,7 @@ export function DevMode() {
                     </h3>
                     <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
                       {section.screens.map((screen) => (
-                        <ScreenRow key={`${section.title}-${screen.route}`} screen={screen} onGo={go} />
+                        <ScreenRow key={`${section.title}-${screen.title}`} screen={screen} onGo={go} />
                       ))}
                     </div>
                   </section>

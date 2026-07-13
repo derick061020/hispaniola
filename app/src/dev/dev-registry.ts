@@ -68,6 +68,21 @@ export const devSections: DevSection[] = [
           { label: 'Menú móvil abierto', kind: 'variante', to: '/?dev-movil=abierto', note: 'Ver mejor con el viewport en modo móvil.' },
         ],
       },
+      {
+        title: 'Hero + buscador',
+        route: '/',
+        status: 'done',
+        description:
+          'Foto full-bleed real (aérea del catamarán) + buscador de disponibilidad (tour/fecha/personas). CTA sticky en móvil.',
+        states: [
+          {
+            label: 'Buscador abierto (móvil)',
+            kind: 'estado',
+            to: '/?dev-buscador=abierto',
+            note: 'Solo tiene efecto visual con el viewport en modo móvil (el toggle está oculto en desktop, donde el buscador ya está siempre visible).',
+          },
+        ],
+      },
     ],
   },
 ]

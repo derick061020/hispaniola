@@ -134,9 +134,9 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-2">
-          <Boton href="#tours" className="hidden sm:inline-flex">
-            Reservar
-          </Boton>
+          <span className="hidden sm:inline-flex">
+            <Boton href="#tours">Reservar</Boton>
+          </span>
           <button
             type="button"
             onClick={() => setMovilAbierto(true)}

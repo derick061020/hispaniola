@@ -136,7 +136,12 @@ estructura ni el orden (ya validados en la revisión de conversión):
 - La sección de mayor riesgo/valor: foto curada full-bleed con gradiente de
   legibilidad, claim, buscador (tour/fecha/personas) con dropdowns visuales
   simulados y estado móvil; sticky CTA móvil.
-- Estados Dev: `?dev-buscador=abierto`, `?dev-hero=movil`.
+- Estado Dev: `?dev-buscador=abierto`. (`?dev-hero=movil` planeado originalmente
+  para forzar un ancho de teléfono se descartó al construirlo: Tailwind
+  resuelve `sm:`/`md:` contra el viewport real, no el ancho de un contenedor
+  — un `max-width` forzado solo rompe el layout sin simular nada fiel. La
+  verificación responsive real es con el viewport de Playwright, como en
+  el resto del plan.)
 - Commit + tag: `v0.2-hero`.
 
 ### F4 — Confianza + grid de tours
