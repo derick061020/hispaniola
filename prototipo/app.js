@@ -450,9 +450,123 @@
   }
 
   // ============================================================
-  // Registro de rutas — F0: solo home. El resto se agrega en fases siguientes.
+  // PÁGINA: /tours — doble función (fix 1.3): sin fecha = listado,
+  // con fecha = resultados de disponibilidad.
+  // ============================================================
+  function renderTours() {
+    var hayFecha = !!estadoBusquedaHero.fecha;
+    app.innerHTML =
+      '<div class="contenedor seccion">' +
+      barraBusquedaTours() +
+      (hayFecha ? resultadosDisponibilidadHTML() : listadoToursHTML()) +
+      '</div>';
+    inicializarBarraBusquedaTours();
+  }
+
+  function barraBusquedaTours() {
+    var opciones = ORDEN_TOURS.map(function (s) {
+      var sel = estadoBusquedaHero.tourSlug === s ? ' selected' : '';
+      return '<option value="' + s + '"' + sel + '>' + TOURS[s].nombre + '</option>';
+    }).join('');
+    var selTodos = !estadoBusquedaHero.tourSlug ? ' selected' : '';
+    if (!estadoBusquedaHero.fecha) {
+      return '<span class="etq">Tours</span><h1 style="font-size:26px; margin-bottom:16px;">Elige tu día en el Caribe</h1>' +
+        '<div class="buscador" style="margin-bottom:32px;">' +
+        '<div class="campo"><label>Tour</label><select id="tours-tour"><option value=""' + selTodos + '>Todos los tours</option>' + opciones + '</select></div>' +
+        '<div class="campo"><label>Fecha</label><input type="date" id="tours-fecha" min="' + hoyISO() + '"></div>' +
+        '<div class="campo"><label>Personas</label><select id="tours-personas">' +
+        [1, 2, 3, 4, 5, 6].map(function (n) { return '<option' + (n === estadoBusquedaHero.personas ? ' selected' : '') + '>' + n + '</option>'; }).join('') +
+        '</select></div>' +
+        '<button type="button" class="btn btn-primario" id="btn-tours-buscar">Ver disponibilidad</button>' +
+        '</div>';
+    }
+    return '<div class="banda-cta" style="margin-bottom:28px;">' +
+      '<div><span class="etq" style="margin-bottom:2px;">Tu búsqueda</span>' +
+      '<strong style="font-size:15px;">' + formatoFechaCorta(estadoBusquedaHero.fecha) + ' · ' + estadoBusquedaHero.personas + ' persona' + (estadoBusquedaHero.personas > 1 ? 's' : '') +
+      ' · ' + (estadoBusquedaHero.tourSlug ? TOURS[estadoBusquedaHero.tourSlug].nombre : 'Todos los tours') + '</strong></div>' +
+      '<button type="button" class="btn btn-secundario btn-sm" id="btn-editar-busqueda">Editar búsqueda</button>' +
+      '</div>';
+  }
+
+  function inicializarBarraBusquedaTours() {
+    var btnBuscar = $('#btn-tours-buscar');
+    if (btnBuscar) {
+      btnBuscar.addEventListener('click', function () {
+        estadoBusquedaHero.tourSlug = $('#tours-tour').value || null;
+        estadoBusquedaHero.fecha = $('#tours-fecha').value || null;
+        estadoBusquedaHero.personas = parseInt($('#tours-personas').value, 10) || 2;
+        if (!estadoBusquedaHero.fecha) { mostrarToast('Elige una fecha para ver horarios disponibles'); return; }
+        renderTours();
+      });
+    }
+    var btnEditar = $('#btn-editar-busqueda');
+    if (btnEditar) {
+      btnEditar.addEventListener('click', function () {
+        estadoBusquedaHero.fecha = null;
+        renderTours();
+      });
+    }
+  }
+
+  function listadoToursHTML() {
+    var lista = estadoBusquedaHero.tourSlug ? [estadoBusquedaHero.tourSlug] : ORDEN_TOURS;
+    return '<div class="grid-4">' + lista.map(function (slug) {
+      var t = TOURS[slug];
+      return '<a class="card clic" href="#/tour/' + slug + '">' +
+        '<div class="img">Foto</div>' +
+        '<div class="cuerpo">' +
+        '<span class="chip">' + esc(t.audienciaChip) + '</span>' +
+        '<strong>' + esc(t.nombre) + '</strong>' +
+        '<span class="meta">★ ' + t.rating + ' (' + t.resenas.toLocaleString('en-US') + ') · ' + esc(t.duracionCorta) + (t.maxPax ? ' · máx. ' + t.maxPax : '') + '</span>' +
+        '<span class="chip acento">Elige fecha para ver horarios</span>' +
+        '<div class="pie"><span class="precio">' + formatoDinero(t.precioLight) + ' <small>/pers · desde</small></span>' +
+        '<span class="btn btn-secundario btn-sm">Ver tour</span></div>' +
+        '</div></a>';
+    }).join('') + '</div>';
+  }
+
+  function resultadosDisponibilidadHTML() {
+    var lista = estadoBusquedaHero.tourSlug ? [estadoBusquedaHero.tourSlug] : ORDEN_TOURS;
+    return conNota('tours-doble-funcion', '<div class="grid-2">' + lista.map(function (slug) {
+      var t = TOURS[slug];
+      var cuerpoDisp, cta;
+      if (slug === 'isla-saona') {
+        cuerpoDisp = '<span class="meta" style="color:var(--tinta-2);">Sin cupo el ' + formatoFechaCorta(estadoBusquedaHero.fecha) + '</span>';
+        cta = '<button type="button" class="btn btn-secundario btn-sm" data-ir="#/tour/isla-saona">Ver próximas fechas →</button>';
+      } else if (t.booking === 'cotizacion') {
+        cuerpoDisp = '<span class="meta">Disponible — horario a coordinar</span>';
+        cta = '<button type="button" class="btn btn-secundario btn-sm" data-ir="#/eventos?tipo=charter">Cotizar →</button>';
+      } else {
+        var chipsHorario = t.horarios.map(function (h) {
+          if (h.quedan !== null && h.quedan <= 5) return '<span class="chip">últimas ' + h.quedan + ' plazas ' + h.hora + '</span>';
+          return '<span class="chip ok">' + h.hora + '</span>';
+        }).join(' ');
+        cuerpoDisp = '<span class="meta">Horarios libres: ' + chipsHorario + '</span>';
+        cta = '<button type="button" class="btn btn-secundario btn-sm" data-ir="#/tour/' + slug + '">Ver horarios →</button>';
+      }
+      return '<div class="card card-horizontal">' +
+        '<div class="img">Foto</div>' +
+        '<div class="cuerpo">' +
+        '<strong>' + esc(t.nombre) + '</strong>' +
+        '<span class="meta">★ ' + t.rating + ' · ' + esc(t.audiencia) + '</span>' +
+        cuerpoDisp +
+        '<div class="pie">' + (t.precioLight ? '<span class="precio">' + formatoDinero(t.precioLight) + '<small>/pers</small></span>' : '<span></span>') + cta + '</div>' +
+        '</div></div>';
+    }).join('') + '</div>');
+  }
+
+  // ============================================================
+  // Registro de rutas
   // ============================================================
   ruta('/', renderHome);
+  ruta('/tours', renderTours);
+
+  // Delegación global: cualquier elemento con data-ir="#/ruta" navega al hacer click.
+  // Patrón reutilizado en booking, ficha, eventos, etc. (evita listeners repetidos por render).
+  document.addEventListener('click', function (e) {
+    var el = e.target.closest('[data-ir]');
+    if (el) irA(el.getAttribute('data-ir'));
+  });
 
   window.addEventListener('hashchange', enrutar);
   window.addEventListener('DOMContentLoaded', function () {

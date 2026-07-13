@@ -396,3 +396,32 @@ function generarCodigoReserva() {
   var num = Math.floor(1000 + Math.random() * 8999);
   return 'HSP-' + mm + hoy.getDate() + '-' + num;
 }
+
+// ---------- Fechas (formato ES, evitando corrimiento de zona horaria) ----------
+var DIAS_CORTOS = ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'];
+var MESES_CORTOS = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+var MESES_LARGOS = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+
+function parseFechaISO(iso) {
+  var partes = iso.split('-');
+  return new Date(parseInt(partes[0], 10), parseInt(partes[1], 10) - 1, parseInt(partes[2], 10));
+}
+function fechaAISO(d) {
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+function formatoFechaCorta(iso) {
+  var d = parseFechaISO(iso);
+  return DIAS_CORTOS[d.getDay()] + ' ' + d.getDate() + ' ' + MESES_CORTOS[d.getMonth()];
+}
+function formatoFechaLarga(iso) {
+  var d = parseFechaISO(iso);
+  return DIAS_CORTOS[d.getDay()] + ' ' + d.getDate() + ' de ' + MESES_LARGOS[d.getMonth()];
+}
+function hoyISO() {
+  return fechaAISO(new Date());
+}
+function sumarDias(iso, n) {
+  var d = parseFechaISO(iso);
+  d.setDate(d.getDate() + n);
+  return fechaAISO(d);
+}
