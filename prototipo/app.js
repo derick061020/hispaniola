@@ -46,6 +46,7 @@
 
   function enrutar() {
     cerrarTodosLosMenus();
+    document.body.classList.remove('tiene-barra-movil');
     var info = parseHash();
     for (var i = 0; i < RUTAS.length; i++) {
       var m = info.path.match(RUTAS[i].regex);
@@ -556,10 +557,230 @@
   }
 
   // ============================================================
+  // PÁGINA: Ficha de tour (plantilla data-driven para los 4 tours)
+  // ============================================================
+  var fichaDiaSel = null; // fecha ISO elegida en el widget de la ficha (estado local, no global)
+
+  function renderFicha(params) {
+    var t = TOURS[params.slug];
+    if (!t) { render404(); return; }
+    fichaDiaSel = null;
+    app.innerHTML =
+      '<div class="contenedor" style="padding-top:20px;">' +
+      '<p class="migaja"><a href="#/">Inicio</a> / <a href="#/tours">Tours</a> / ' + esc(t.nombre) + '</p>' +
+      '<h1 style="font-size:26px; margin-bottom:10px;">' + esc(t.tituloLargo) + '</h1>' +
+      '<div style="display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:18px;">' +
+      '<span class="stars">★★★★★</span><span style="font-size:14px;"><strong>' + t.rating + '</strong> · ' + t.resenas.toLocaleString('en-US') + ' reseñas</span>' +
+      (t.booking !== 'consulta' ? '<span class="chip ok">✓ Cancelación gratis</span>' : '') +
+      '<span class="chip">' + esc(t.audienciaChip) + '</span><span class="chip">' + esc(t.duracion) + '</span>' +
+      (t.booking === 'completo' ? '<span class="chip">Recogida en hotel</span>' : '') +
+      '</div>' +
+      '<div class="mosaico">' +
+      '<div class="img" style="position:relative;">Foto principal<div class="quote-flot">"' + primeraResenaTour(t) + '"</div></div>' +
+      '<div class="img">Foto</div><div class="img">Foto</div><div class="img">Video ▶</div>' +
+      '<div class="img">Ver 33 fotos →</div>' +
+      '</div>' +
+      '<div class="ficha-anclas">' +
+      '<a href="#ancla-itinerario">Itinerario</a><a href="#ancla-incluye">Incluye</a>' +
+      (t.booking === 'completo' ? '<a href="#ancla-menu">Menú</a>' : '') +
+      '<a href="#ancla-opiniones">Opiniones</a><a href="#ancla-faq">FAQ</a>' +
+      '</div>' +
+      '<div class="ficha-grid">' +
+      '<div>' +
+      '<h2 style="font-size:17px; margin-bottom:8px;">Un día de mar' + (t.booking === 'cotizacion' ? ' a tu medida' : (t.audiencia === 'Solo adultos' ? ' en grupo pequeño' : '')) + '</h2>' +
+      '<p class="meta" style="font-size:14px; color:var(--tinta-2);">' + esc(t.descripcionCorta) + '</p>' +
+      '</div>' +
+      widgetLateralFicha(t) +
+      '</div>' +
+      (t.booking === 'completo' ? comparadorStripHTML() : '') +
+      seccionItinerario(t) +
+      seccionIncluye(t) +
+      (t.booking === 'completo' ? seccionMenu(t) : '') +
+      seccionOpinionesFaq(t) +
+      '<div class="barra-movil-fija" id="barra-movil-ficha">' +
+      '<div><span class="precio">' + (t.precioLight ? formatoDinero(t.precioLight) : 'Consultar') + '</span> ' + (t.precioLight ? '<span class="meta">/pers</span>' : '') + '<br><span class="meta">★ ' + t.rating + (t.booking !== 'consulta' ? ' · Cancela gratis' : '') + '</span></div>' +
+      ctaBarraMovil(t) +
+      '</div>' +
+      '</div>';
+    document.body.classList.add('tiene-barra-movil');
+    inicializarFicha(t);
+  }
+
+  function primeraResenaTour(t) {
+    if (t.slug === 'semi-privado') return 'El coral fue lo mejor del viaje — la bióloga nos explicó todo.';
+    if (t.slug === 'snorkel-lovers') return 'Perfecto para ir con los niños, todos se sintieron seguros.';
+    if (t.slug === 'charter-privado') return 'Coordinaron todo a nuestra medida, el barco entero para la familia.';
+    return 'Playas increíbles, la comida en la isla estuvo deliciosa.';
+  }
+
+  function widgetLateralFicha(t) {
+    if (t.booking === 'cotizacion') {
+      return '<div class="widget-lateral" id="ficha-widget">' +
+        '<div><span class="precio-grande">' + formatoDinero(t.precioLight) + '</span><span class="meta"> /persona · desde</span></div>' +
+        '<p class="meta">Este tour se cotiza a tu medida según nº de personas y menú — hasta ' + t.maxPax + ' personas.</p>' +
+        '<a href="#/eventos?tipo=charter" class="btn btn-primario btn-bloque">Pedir cotización</a>' +
+        '<a href="https://wa.me/18293052804" target="_blank" rel="noopener" class="btn btn-secundario btn-bloque">💬 WhatsApp directo</a>' +
+        '</div>';
+    }
+    if (t.booking === 'consulta') {
+      return '<div class="widget-lateral" id="ficha-widget">' +
+        '<div><span class="precio-grande">US$ —</span></div>' +
+        '<p class="meta"><strong>Precio pendiente de confirmar con el cliente.</strong> Duración y capacidad también están por definir.</p>' +
+        '<a href="https://wa.me/18293052804" target="_blank" rel="noopener" class="btn btn-primario btn-bloque">💬 Consultar por WhatsApp</a>' +
+        '</div>';
+    }
+    var opcionesHorario = t.horarios.map(function (h, i) { return '<option value="' + i + '">' + h.hora + (h.regreso ? ' — regreso ' + h.regreso : '') + '</option>'; }).join('');
+    var maxSel = Math.min(t.maxPax || 6, 6);
+    var opcionesPax = '';
+    for (var n = 1; n <= maxSel; n++) opcionesPax += '<option' + (n === 2 ? ' selected' : '') + '>' + n + '</option>';
+    return '<div class="widget-lateral" id="ficha-widget">' +
+      '<div><span class="precio-grande">' + formatoDinero(t.precioLight) + '</span><span class="meta"> /persona · desde</span></div>' +
+      '<div class="etq" style="margin-bottom:4px;">Elige una fecha</div>' +
+      '<div id="ficha-dias" style="display:flex; gap:6px; overflow-x:auto; padding-bottom:6px;"></div>' +
+      '<div class="campo"><label>Horario</label><select id="ficha-horario">' + opcionesHorario + '</select></div>' +
+      '<div class="campo"><label>Personas</label><select id="ficha-personas">' + opcionesPax + '</select></div>' +
+      '<button type="button" class="btn btn-primario btn-bloque" id="btn-ficha-continuar" disabled>Elige una fecha</button>' +
+      '<p class="meta" style="margin:0;">✓ Confirma con 25% de depósito<br>✓ Cancela gratis hasta 7 días antes<br>✓ Reembolso total por mal clima</p>' +
+      '</div>';
+  }
+
+  function comparadorStripHTML() {
+    return conNota('ficha-comparador', '<div class="comparador-strip">' +
+      '<p style="margin:0; font-size:13.5px;">Mismo precio que en Viator o Civitatis — aquí con <strong>depósito del 25%</strong>, menú a elección y WhatsApp directo.</p>' +
+      '<a href="#/reserva-directa" class="btn btn-secundario btn-sm" style="white-space:nowrap; background:var(--papel);">Ver comparación →</a>' +
+      '</div>');
+  }
+
+  function seccionItinerario(t) {
+    return '<div id="ancla-itinerario" class="seccion" style="scroll-margin-top:110px;"><div class="grid-2" style="align-items:start;">' +
+      '<div><span class="etq">Itinerario — ' + esc(t.duracion) + '</span><ul class="timeline">' +
+      t.itinerario.map(function (it) {
+        return '<li><span class="hora">' + esc(it.hora) + '</span><span class="punto"></span><div><h4>' + esc(it.titulo) + '</h4><p>' + esc(it.texto) + '</p></div></li>';
+      }).join('') + '</ul></div>' +
+      '<div class="img" style="min-height:280px;">Mapa de la ruta<br>(costa Bávaro → Cabo Engaño,<br>3 paradas marcadas)</div>' +
+      '</div></div>';
+  }
+
+  function seccionIncluye(t) {
+    return '<div id="ancla-incluye" class="seccion" style="scroll-margin-top:110px;">' +
+      '<span class="etq">Qué incluye</span>' +
+      '<div class="grid-4">' + t.incluye.map(function (i) {
+        return '<div class="benef"><h4>' + esc(i.titulo) + '</h4><p>' + esc(i.texto) + '</p></div>';
+      }).join('') + '</div>' +
+      '<p class="meta" style="margin-top:12px;">' + esc(t.noIncluido) + '</p>' +
+      '</div>';
+  }
+
+  function seccionMenu(t) {
+    return conNota('ficha-menu', '<div id="ancla-menu" class="seccion" style="scroll-margin-top:110px;">' +
+      '<span class="etq">Tu menú, a tu elección</span>' +
+      '<p class="meta" style="margin-bottom:12px;">Cada persona elige su plato al reservar. Recién hecho a bordo, no buffet recalentado.</p>' +
+      '<div class="grid-4">' + PLATOS.map(function (p) {
+        return '<div class="plato"><div class="img">Foto plato</div><div class="cuerpo"><strong>' + esc(p.nombre) + '</strong><span>' + esc(p.desc) + '</span></div></div>';
+      }).join('') + '</div>' +
+      '<table class="tabla-comp">' +
+      '<tr><th></th><th>Light — ' + formatoDinero(t.precioLight) + '</th><th>Premium — +' + formatoDinero(t.upgradePremium) + '</th></tr>' +
+      '<tr><td>Menú</td><td>Pollo o pescado a la parrilla</td><td class="si">4 platos: mariscos, carne, surf&turf, vegetariano</td></tr>' +
+      '<tr><td>Todo lo demás</td><td class="si">✓ idéntico</td><td class="si">✓ idéntico</td></tr>' +
+      '</table>' +
+      '<p class="meta" style="margin-top:8px;">* Langosta se sustituye por langostino salvaje de marzo a junio (veda).</p>' +
+      '</div>');
+  }
+
+  function seccionOpinionesFaq(t) {
+    var relacionados = (t.tambienTeGusta || []).map(function (s) {
+      var r = TOURS[s];
+      return '<a class="benef" style="display:block;" href="#/tour/' + s + '"><h4>' + esc(r.nombre) + '</h4><p>' + esc(r.audiencia) + ' · ' + (r.precioLight ? formatoDinero(r.precioLight) + '/pers' : 'Consultar') + '</p></a>';
+    }).join('');
+    return '<div id="ancla-opiniones" class="seccion" style="scroll-margin-top:110px;">' +
+      '<div class="grid-3">' +
+      '<div><span class="etq">Opiniones</span><p style="font-size:30px; font-weight:800;">' + t.rating + '<span class="meta" style="font-size:13px; font-weight:400;"> / 5</span></p>' +
+      '<p class="meta">' + t.resenas.toLocaleString('en-US') + ' reseñas verificadas<br>Ver en <a href="https://www.tripadvisor.com" target="_blank" rel="noopener" style="color:var(--acento);">TripAdvisor</a> →</p></div>' +
+      '<div class="benef" style="grid-column:span 2;"><p style="font-size:14px; margin-bottom:6px;">"' + primeraResenaTour(t) + ' Volveríamos sin dudarlo."</p><span class="meta">★★★★★ · Cliente verificado · jun 2026</span></div>' +
+      '</div>' +
+      '<div id="ancla-faq" class="grid-2" style="margin-top:24px; scroll-margin-top:110px;">' +
+      '<div><span class="etq">FAQ de este tour</span>' +
+      t.faqTour.map(function (f, i) {
+        return '<div class="acc' + (i === 0 ? ' abierto' : '') + '"><button type="button" class="acc-cab" data-acc-ficha>' + esc(f.p) + '<span class="signo">' + (i === 0 ? '−' : '+') + '</span></button><div class="acc-cuerpo">' + esc(f.r) + '</div></div>';
+      }).join('') + '</div>' +
+      '<div><span class="etq">También te puede gustar</span>' + relacionados + '</div>' +
+      '</div></div>';
+  }
+
+  function ctaBarraMovil(t) {
+    if (t.booking === 'cotizacion') return '<a href="#/eventos?tipo=charter" class="btn btn-primario">Cotizar</a>';
+    if (t.booking === 'consulta') return '<a href="https://wa.me/18293052804" target="_blank" rel="noopener" class="btn btn-primario">Consultar</a>';
+    return '<a href="#ficha-widget" class="btn btn-primario">Elegir fecha</a>';
+  }
+
+  function inicializarFicha(t) {
+    $all('[data-acc-ficha]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var item = btn.closest('.acc');
+        var abierto = item.classList.toggle('abierto');
+        btn.querySelector('.signo').textContent = abierto ? '−' : '+';
+      });
+    });
+    if (t.booking !== 'completo') return;
+
+    var contDias = $('#ficha-dias');
+    var hoy = hoyISO();
+    var diasAgotados = [sumarDias(hoy, 3), sumarDias(hoy, 10)];
+    var html = '';
+    for (var i = 0; i < 14; i++) {
+      var iso = sumarDias(hoy, i);
+      var d = parseFechaISO(iso);
+      var off = diasAgotados.indexOf(iso) >= 0;
+      html += '<button type="button" class="btn btn-secundario btn-sm" style="flex-direction:column; height:auto; padding:8px 10px; min-width:52px;" ' +
+        'data-dia="' + iso + '"' + (off ? ' disabled' : '') + '>' +
+        '<span style="font-size:10px; text-transform:uppercase;">' + DIAS_CORTOS[d.getDay()] + '</span>' +
+        '<span style="font-weight:700;">' + d.getDate() + '</span>' +
+        '</button>';
+    }
+    contDias.innerHTML = html;
+
+    $all('[data-dia]', contDias).forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        $all('[data-dia]', contDias).forEach(function (b) { b.classList.remove('btn-primario'); b.classList.add('btn-secundario'); });
+        btn.classList.remove('btn-secundario'); btn.classList.add('btn-primario');
+        fichaDiaSel = btn.getAttribute('data-dia');
+        actualizarBotonContinuarFicha(t);
+      });
+    });
+
+    $('#ficha-horario').addEventListener('change', function () { actualizarBotonContinuarFicha(t); });
+    $('#ficha-personas').addEventListener('change', function () { actualizarBotonContinuarFicha(t); });
+
+    $('#btn-ficha-continuar').addEventListener('click', function () {
+      if (!fichaDiaSel) return;
+      estadoReserva.tour = t.slug;
+      estadoReserva.fecha = fichaDiaSel;
+      estadoReserva.horarioIdx = parseInt($('#ficha-horario').value, 10);
+      estadoReserva.personas = parseInt($('#ficha-personas').value, 10);
+      estadoReserva.paquete = 'light';
+      estadoReserva.platos = [];
+      estadoReserva.hotel = null;
+      estadoReserva.horaRecogida = null;
+      estadoReserva.pago = 'deposito';
+      estadoReserva.codigo = null;
+      irA('#/reservar/' + t.slug + '/1');
+    });
+  }
+
+  function actualizarBotonContinuarFicha(t) {
+    var btn = $('#btn-ficha-continuar');
+    if (!fichaDiaSel) { btn.disabled = true; btn.textContent = 'Elige una fecha'; return; }
+    var personas = parseInt($('#ficha-personas').value, 10) || 2;
+    btn.disabled = false;
+    btn.textContent = 'Continuar — ' + formatoDinero(t.precioLight * personas);
+  }
+
+  // ============================================================
   // Registro de rutas
   // ============================================================
   ruta('/', renderHome);
   ruta('/tours', renderTours);
+  ruta('/tour/:slug', renderFicha);
 
   // Delegación global: cualquier elemento con data-ir="#/ruta" navega al hacer click.
   // Patrón reutilizado en booking, ficha, eventos, etc. (evita listeners repetidos por render).

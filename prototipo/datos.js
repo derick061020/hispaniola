@@ -42,10 +42,10 @@ var TOURS = {
     ],
     noIncluido: 'No incluido: fotos HD originales (US$ 20 vía Dropbox) · suplemento de transporte desde Casa de Campo.',
     faqTour: [
-      '¿Y si llueve? — reembolso o cambio de fecha',
-      '¿Hay baño a bordo?',
-      '¿Puedo ir si no sé nadar?',
-      '¿Traigo efectivo? ¿cuánto?'
+      { p: '¿Y si llueve?', r: 'Reembolso total o cambio de fecha, sin costo.' },
+      { p: '¿Hay baño a bordo?', r: 'Sí, todos nuestros barcos tienen baño.' },
+      { p: '¿Puedo ir si no sé nadar?', r: 'Sí, el snorkel es en aguas poco profundas y con chaleco disponible.' },
+      { p: '¿Traigo efectivo? ¿cuánto?', r: 'Solo si eliges pagar el depósito del 25% — el saldo restante, con 5% de descuento si es en efectivo.' }
     ],
     tambienTeGusta: ['snorkel-lovers', 'charter-privado']
   },
@@ -85,10 +85,10 @@ var TOURS = {
     ],
     noIncluido: 'No incluido: fotos HD originales (US$ 20 vía Dropbox) · suplemento de transporte desde Casa de Campo.',
     faqTour: [
-      '¿Desde qué edad pueden ir los niños?',
-      '¿Hay chalecos infantiles?',
-      '¿Puedo ir si no sé nadar?',
-      '¿Traigo efectivo? ¿cuánto?'
+      { p: '¿Desde qué edad pueden ir los niños?', r: 'No hay edad mínima — llevamos chalecos de todas las tallas, incluidas infantiles.' },
+      { p: '¿Hay chalecos infantiles?', r: 'Sí, para todas las edades y tamaños.' },
+      { p: '¿Puedo ir si no sé nadar?', r: 'Sí, el snorkel es en aguas poco profundas y con chaleco disponible.' },
+      { p: '¿Traigo efectivo? ¿cuánto?', r: 'Solo si eliges pagar el depósito del 25% — el saldo restante, con 5% de descuento si es en efectivo.' }
     ],
     tambienTeGusta: ['semi-privado', 'charter-privado']
   },
@@ -125,10 +125,10 @@ var TOURS = {
     ],
     noIncluido: 'Precio final según nº de personas y menú elegido — se cotiza a medida.',
     faqTour: [
-      '¿Cuál es el mínimo de personas?',
-      '¿Puedo elegir la ruta?',
-      '¿Aceptan pagos corporativos?',
-      '¿Cómo funciona la cotización?'
+      { p: '¿Cuál es el mínimo de personas?', r: 'Dato pendiente de confirmar con el cliente — escríbenos por WhatsApp y te respondemos al instante.' },
+      { p: '¿Puedo elegir la ruta?', r: 'Sí, la coordinamos contigo según lo que quiera ver tu grupo.' },
+      { p: '¿Aceptan pagos corporativos?', r: 'Sí, ver la página de Empresas y MICE para facturación formal.' },
+      { p: '¿Cómo funciona la cotización?', r: 'Nos cuentas tu grupo y fecha, y te respondemos en menos de 24 h con precio final.' }
     ],
     tambienTeGusta: ['semi-privado', 'snorkel-lovers']
   },
@@ -137,7 +137,7 @@ var TOURS = {
     nombre: 'Isla Saona',
     tituloLargo: 'Isla Saona — día completo en catamarán privado',
     audiencia: 'Privado · día completo',
-    audienciaChip: 'Día completo',
+    audienciaChip: 'Privado',
     maxPax: null,
     aforoBarco: null,
     duracion: 'Día completo',
@@ -162,10 +162,10 @@ var TOURS = {
     ],
     noIncluido: 'Precio, duración exacta y capacidad: PENDIENTE de confirmar con el cliente.',
     faqTour: [
-      '¿Cuánto dura el tour completo?',
-      '¿Qué incluye el almuerzo?',
-      '¿Hay descuento para niños?',
-      '¿Cuál es el precio?'
+      { p: '¿Cuánto dura el tour completo?', r: 'Dato pendiente de confirmar con el cliente.' },
+      { p: '¿Qué incluye el almuerzo?', r: 'Comida típica dominicana servida en la propia isla.' },
+      { p: '¿Hay descuento para niños?', r: 'Dato pendiente de confirmar con el cliente.' },
+      { p: '¿Cuál es el precio?', r: 'Aún no está definido — escríbenos por WhatsApp y te damos el precio actualizado.' }
     ],
     tambienTeGusta: ['semi-privado', 'charter-privado']
   }
