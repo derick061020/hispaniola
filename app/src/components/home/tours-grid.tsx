@@ -5,7 +5,7 @@ import { TourCard } from './tour-card'
 // propio (ver NOTAS['home-tours'] del prototipo).
 export function ToursGrid() {
   return (
-    <section id="tours" className="scroll-mt-20 px-5 py-16 sm:px-10">
+    <section id="tours" className="scroll-mt-20 px-5 py-seccion-sm sm:px-10 sm:py-seccion">
       <div className="mx-auto max-w-6xl">
         <p className="text-xs font-semibold uppercase tracking-wide text-aqua-dark">Nuestros tours</p>
         <h2 className="mt-2 font-display text-h2 font-semibold text-navy">Elige tu día en el Caribe</h2>

@@ -20,7 +20,7 @@ export function GaleriaFaqCierre() {
   const [abierta, setAbierta] = useState<number | null>(0)
 
   return (
-    <section className="bg-papel-hueso px-5 py-16 sm:px-10">
+    <section className="bg-papel-hueso px-5 py-seccion-sm sm:px-10 sm:py-seccion">
       <div className="mx-auto max-w-6xl">
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-2">
           <div>

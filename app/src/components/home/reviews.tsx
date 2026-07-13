@@ -18,7 +18,7 @@ const QUOTES = [
 
 export function Reviews() {
   return (
-    <section className="bg-papel-hueso px-5 py-16 sm:px-10">
+    <section className="bg-papel-hueso px-5 py-seccion-sm sm:px-10 sm:py-seccion">
       <div className="mx-auto max-w-6xl">
         <p className="text-xs font-semibold uppercase tracking-wide text-aqua-dark">Reseñas verificadas</p>
         <h2 className="mt-2 font-display text-h2 font-semibold text-navy">4.9 de 5 en 1.782 reseñas</h2>

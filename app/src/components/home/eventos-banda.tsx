@@ -4,7 +4,7 @@ import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
 // (fuera de alcance de este build).
 export function EventosBanda() {
   return (
-    <section className="px-5 py-12 sm:px-10">
+    <section className="px-5 py-seccion-sm sm:px-10">
       <div className="mx-auto max-w-6xl">
         <div className="flex flex-col gap-5 rounded-card bg-navy p-7 sm:flex-row sm:items-center sm:justify-between sm:p-9">
           <div className="max-w-lg">

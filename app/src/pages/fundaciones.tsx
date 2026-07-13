@@ -79,6 +79,44 @@ export function FundacionesPage() {
       </section>
 
       <section className="mt-12">
+        <h2 className="text-sm font-semibold uppercase tracking-wide text-navy-soft">
+          Forma y sombra — v2 «Boutique luminoso»
+        </h2>
+        <div className="mt-4 grid grid-cols-2 gap-6 rounded-card bg-papel p-6 ring-1 ring-linea sm:grid-cols-4">
+          <div>
+            <div className="h-20 rounded-hero bg-papel-hueso ring-1 ring-linea" />
+            <p className="mt-2 text-sm font-medium text-navy">Hero</p>
+            <p className="font-mono text-[11px] text-navy-soft">--radius-hero · 28px</p>
+          </div>
+          <div>
+            <div className="h-20 rounded-card bg-papel-hueso ring-1 ring-linea" />
+            <p className="mt-2 text-sm font-medium text-navy">Card</p>
+            <p className="font-mono text-[11px] text-navy-soft">--radius-card · 12px</p>
+          </div>
+          <div>
+            <div className="h-20 rounded-hero bg-papel shadow-baraja" />
+            <p className="mt-2 text-sm font-medium text-navy">Baraja (activa)</p>
+            <p className="font-mono text-[11px] text-navy-soft">--shadow-baraja</p>
+          </div>
+          <div>
+            <div className="h-20 rotate-[-4deg] rounded-foto bg-papel p-1.5 shadow-polaroid">
+              <div className="size-full rounded-foto bg-papel-hueso" />
+            </div>
+            <p className="mt-2 text-sm font-medium text-navy">Photo-stack</p>
+            <p className="font-mono text-[11px] text-navy-soft">--shadow-polaroid · --radius-foto</p>
+          </div>
+        </div>
+        <p className="mt-3 text-xs text-navy-soft">
+          Ritmo vertical: <code>--spacing-seccion</code> 7rem (desktop) /{' '}
+          <code>--spacing-seccion-sm</code> 4rem (móvil) — cableados como{' '}
+          <code>py-seccion</code> en las secciones (en v1 el token existía pero nadie lo usaba).
+          Movimiento de la baraja: <code>--baraja-intervalo</code> 4000ms ·{' '}
+          <code>--baraja-transicion</code> 600ms — <strong>de aquí salen los delays del
+          prototipo de Figma</strong>, no de ojo.
+        </p>
+      </section>
+
+      <section className="mt-12">
         <h2 className="text-sm font-semibold uppercase tracking-wide text-navy-soft">Botones</h2>
         <div className="mt-4 flex flex-wrap items-center gap-3 rounded-card bg-papel p-6 ring-1 ring-linea">
           <button className="rounded-btn bg-coral px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-coral-dark">

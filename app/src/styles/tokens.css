@@ -1,6 +1,8 @@
 /* ============================================================
-   Hispaniola — Tokens de la Dirección B "Charter Premium".
-   Fuente: analisis/direccion-visual.md §4 y §6 (decisión + guardarraíles).
+   Hispaniola — Tokens.
+   Base: Dirección B "Charter Premium" (analisis/direccion-visual.md §4 y §6).
+   Evolución v2 "Boutique luminoso" (§7 + app/PLAN-v2.md): misma paleta y
+   tipografía, pero más aire, más redondez y tratamiento editorial.
    Estos tokens serán 1:1 las variables de Figma en el traspaso — no
    introducir valores sueltos en los componentes, todo pasa por aquí.
    ============================================================ */
@@ -39,8 +41,8 @@
   --font-cuerpo: 'Inter', ui-sans-serif, system-ui, sans-serif;
 
   /* Tamaños con nombre — espejo de futuros text styles en Figma */
-  --text-hero: 3rem; /* claim del hero */
-  --text-hero--line-height: 1.15;
+  --text-hero: 3.5rem; /* claim del hero — v2: sube de 3rem (presencia editorial) */
+  --text-hero--line-height: 1.12;
   --text-h2: 2rem; /* título de sección */
   --text-h2--line-height: 1.2;
   --text-h3: 1.375rem; /* título de card */
@@ -56,14 +58,29 @@
   --radius-card: 0.75rem; /* 12px — cards con esquinas redondeadas */
   --radius-btn: 0.5rem; /* 8px — botones */
   --radius-chip: 999px;
+  /* v2: el hero deja de ir a sangre y vive en un contenedor redondeado
+     (refs Journeo y Vacationeeze). Mismo radio para la card de la baraja. */
+  --radius-hero: 1.75rem; /* 28px */
+  --radius-foto: 0.375rem; /* 6px — foto dentro del passe-partout del photo-stack */
 
   /* ---------- Sombra (regla B: sombra suave, a diferencia de Eventus/Synexia) --- */
   --shadow-card: 0 4px 16px rgb(11 37 69 / 8%);
   --shadow-hero: 0 8px 28px rgb(11 37 69 / 25%);
+  /* v2 */
+  --shadow-baraja: 0 18px 44px rgb(11 37 69 / 22%); /* card activa de la baraja */
+  --shadow-polaroid: 0 14px 34px rgb(11 37 69 / 18%); /* foto del photo-stack */
 
   /* ---------- Spacing de sección ---------- */
-  --spacing-seccion: 5rem; /* padding vertical entre bloques de la home */
-  --spacing-seccion-sm: 3rem;
+  --spacing-seccion: 7rem; /* v2: sube de 5rem — el "aire" de la ref. Journeo */
+  --spacing-seccion-sm: 4rem;
+
+  /* ---------- Movimiento (v2) ----------
+     ⚠️ Estas constantes son la FUENTE del prototipo de Figma: los delays del
+     componente interactivo salen de aquí, no "a ojo" (playbook animaciones-a-figma,
+     paso 1). Si cambian, cambia el traspaso. */
+  --baraja-intervalo: 4000ms; /* cada cuánto rota la baraja */
+  --baraja-transicion: 600ms; /* duración del movimiento de cada card */
+  --baraja-easing: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 body {

@@ -75,14 +75,10 @@ Con eso el camino a reserva sigue estando en la primera pantalla y a un clic.
 
 ### 2.2 Qué muestran las cards
 
-**Recomendación: los 4 tours** (Semi-Privado $99, Snorkel Lovers $98, Charter Privado
-$55, Isla Saona "Consultar"). Son el producto que genera la reserva y ya tienen foto,
-chip de audiencia, duración, rating y precio en `data/home.ts`.
-
-Samuel dijo "eventos", que puede leerse como los tipos de evento (bodas, cumpleaños,
-MICE…). **Está en "Decisiones abiertas"** — las cards se alimentan de un array en
-`data/home.ts`, así que cambiar de tours a eventos (o a una mezcla) es cambiar una
-constante, no reescribir el componente. Si no hay respuesta, se ejecuta con tours.
+**DECIDIDO por Samuel (2026-07-13): los 4 tours.** No los tipos de evento.
+Semi-Privado ($99), Snorkel Lovers ($98), Charter Privado ($55) e Isla Saona
+("Consultar"). Ya tienen foto, chip de audiencia, duración, rating y precio en
+`data/home.ts` — la baraja se alimenta de `TOURS`, sin datos nuevos.
 
 ### 2.3 Mecánica exacta de la animación
 
@@ -243,9 +239,8 @@ Aplicar el lenguaje nuevo (redondez, aire, jerarquía serif) a lo que ya existe:
 
 ## 8. Decisiones abiertas (Samuel decide al revisar este plan)
 
-1. **¿Qué muestran las cards de la baraja?** → Recomendación: **los 4 tours** (son el
-   camino al dinero y ya tienen todos los datos). Alternativa: los tipos de evento
-   (bodas, cumpleaños, MICE…). Es un array en `data/home.ts`, se cambia en un minuto.
+1. ~~¿Qué muestran las cards de la baraja?~~ → **RESUELTO (2026-07-13): los 4 tours**,
+   no los tipos de evento. Ver §2.2.
 2. **¿Se toca el coral?** El coral `#EF5B44` es bastante fuerte para un look editorial.
    La v2 **no lo toca** por defecto. Si al ver F1 canta demasiado, se sustituye por navy
    en los CTA secundarios y se deja el coral solo para "Reservar".

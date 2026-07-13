@@ -9,7 +9,7 @@ const BENEFICIOS = [
 
 export function Diferenciadores() {
   return (
-    <section className="px-5 py-16 sm:px-10">
+    <section className="px-5 py-seccion-sm sm:px-10 sm:py-seccion">
       <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-10 lg:grid-cols-2">
         <div className="overflow-hidden rounded-card">
           <img

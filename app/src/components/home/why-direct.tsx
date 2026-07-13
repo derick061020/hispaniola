@@ -12,7 +12,7 @@ const BENEFICIOS = [
 
 export function WhyDirect() {
   return (
-    <section className="bg-papel-hueso px-5 py-16 sm:px-10">
+    <section className="bg-papel-hueso px-5 py-seccion-sm sm:px-10 sm:py-seccion">
       <div className="mx-auto max-w-6xl">
         <p className="text-xs font-semibold uppercase tracking-wide text-aqua-dark">Reserva directa</p>
         <h2 className="mt-2 max-w-2xl font-display text-h2 font-semibold text-navy">
