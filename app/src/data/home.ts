@@ -9,6 +9,8 @@ export type Tour = {
   duracionCorta: string
   rating: number
   resenas: number
+  /** null = sin tope publicado */
+  maxPax: number | null
   /** null = sin precio fijo (se cotiza o se consulta) */
   precioLight: number | null
   booking: 'completo' | 'cotizacion' | 'consulta'
@@ -25,6 +27,7 @@ export const TOURS: Tour[] = [
     duracionCorta: '4 h',
     rating: 4.9,
     resenas: 1782,
+    maxPax: 25,
     precioLight: 99,
     booking: 'completo',
     descripcionCorta:
@@ -38,6 +41,7 @@ export const TOURS: Tour[] = [
     duracionCorta: '4 h',
     rating: 4.9,
     resenas: 1782,
+    maxPax: 25,
     precioLight: 98,
     booking: 'completo',
     descripcionCorta:
@@ -51,6 +55,7 @@ export const TOURS: Tour[] = [
     duracionCorta: '3-4 h',
     rating: 4.9,
     resenas: 1782,
+    maxPax: 120,
     precioLight: 55,
     booking: 'cotizacion',
     descripcionCorta:
@@ -64,6 +69,7 @@ export const TOURS: Tour[] = [
     duracionCorta: 'día completo',
     rating: 4.9,
     resenas: 1782,
+    maxPax: null,
     precioLight: null,
     booking: 'consulta',
     descripcionCorta:

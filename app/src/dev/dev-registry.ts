@@ -85,6 +85,25 @@ export const devSections: DevSection[] = [
       },
     ],
   },
+  {
+    title: 'Home — Confianza y catálogo',
+    screens: [
+      {
+        title: 'Cinta de stats',
+        route: '/',
+        status: 'done',
+        description: '4 cifras (clientes, días navegados, % de capacidad, plástico) + reconocimiento en TripAdvisor/Viator/WeddingWire/LTG.',
+        states: [],
+      },
+      {
+        title: 'Grid de tours',
+        route: '/',
+        status: 'done',
+        description: 'Los 4 productos (incluida Isla Saona) con foto, chip de audiencia, rating, precio o CTA de cotización/consulta.',
+        states: [],
+      },
+    ],
+  },
 ]
 
 export function devStats() {
