@@ -16,7 +16,7 @@ export function FundacionesPage() {
     <main className="mx-auto max-w-4xl px-6 py-12">
       <p className="text-xs font-semibold uppercase tracking-wide text-aqua-dark">Fundaciones — F0</p>
       <h1 className="mt-2 font-display text-h2 font-semibold text-navy">
-        Dirección B — Charter Premium
+        v2 — Boutique luminoso
       </h1>
       <p className="mt-2 max-w-prose text-navy-sub">
         Tokens de <code className="text-sm">src/styles/tokens.css</code>. El aqua se usa con
@@ -49,31 +49,31 @@ export function FundacionesPage() {
         <div className="mt-4 space-y-6 rounded-card bg-papel p-6 ring-1 ring-linea">
           <div>
             <p className="text-hero font-display font-medium text-navy">Navega el arrecife</p>
-            <p className="font-mono text-[11px] text-navy-soft">--text-hero · Lora</p>
+            <p className="font-mono text-[11px] text-navy-soft">--text-hero · Poppins</p>
           </div>
           <div>
             <p className="text-h2 font-display font-semibold text-navy">Título de sección</p>
-            <p className="font-mono text-[11px] text-navy-soft">--text-h2 · Lora</p>
+            <p className="font-mono text-[11px] text-navy-soft">--text-h2 · Poppins</p>
           </div>
           <div>
             <p className="text-h3 font-display font-semibold text-navy">Título de card</p>
-            <p className="font-mono text-[11px] text-navy-soft">--text-h3 · Lora</p>
+            <p className="font-mono text-[11px] text-navy-soft">--text-h3 · Poppins</p>
           </div>
           <div>
             <p className="text-lead text-navy-sub">
               Párrafo destacado / lead — 4.9★ en 1.782 reseñas y #1 en TripAdvisor durante 7 años.
             </p>
-            <p className="font-mono text-[11px] text-navy-soft">--text-lead · Inter</p>
+            <p className="font-mono text-[11px] text-navy-soft">--text-lead · Poppins</p>
           </div>
           <div>
             <p className="text-precio font-semibold text-menta-texto">$99</p>
-            <p className="font-mono text-[11px] text-navy-soft">--text-precio · Inter (sobre fondo menta)</p>
+            <p className="font-mono text-[11px] text-navy-soft">--text-precio · Poppins (sobre fondo menta)</p>
           </div>
           <div>
             <p className="text-eyebrow font-semibold uppercase tracking-[0.14em] text-aqua-dark">
               Punta Cana · Desde 2012
             </p>
-            <p className="font-mono text-[11px] text-navy-soft">--text-eyebrow · Inter caps</p>
+            <p className="font-mono text-[11px] text-navy-soft">--text-eyebrow · Poppins caps</p>
           </div>
         </div>
       </section>
@@ -91,7 +91,7 @@ export function FundacionesPage() {
           <div>
             <div className="h-20 rounded-card bg-papel-hueso ring-1 ring-linea" />
             <p className="mt-2 text-sm font-medium text-navy">Card</p>
-            <p className="font-mono text-[11px] text-navy-soft">--radius-card · 12px</p>
+            <p className="font-mono text-[11px] text-navy-soft">--radius-card · 16px</p>
           </div>
           <div>
             <div className="h-20 rounded-hero bg-papel shadow-baraja" />

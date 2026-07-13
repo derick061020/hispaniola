@@ -2,8 +2,28 @@
 
 Diseño visual final de la home de Hispaniola Aquatic Adventures, construido en
 React para trasladarse después a Figma vía MCP (mismo flujo que Eventus y
-Synexia — ver playbook `codigo-a-figma` del cerebro). Ver el plan completo,
-fase por fase, en [`PLAN.md`](./PLAN.md).
+Synexia — ver playbook `codigo-a-figma` del cerebro).
+
+- [`PLAN.md`](./PLAN.md) — cómo se construyó la home (v1, tag `v1.0-home-diseno`).
+- [`PLAN-v2.md`](./PLAN-v2.md) — **la versión actual**: dirección «Boutique
+  luminoso» (tag `v2.0-home-boutique`). Hero con baraja de tours en rotación,
+  photo-stack, más aire y Poppins en toda la web.
+
+## Lo que hay que saber de la v2
+
+- **El hero ya no lleva buscador de disponibilidad**: lo sustituye una **baraja
+  de los 4 tours** que rota sola cada 4s (la activa está al frente; al avanzar
+  sube, encoge y se va al final de la cola). Cada card es un producto real con
+  precio y CTA — es decir, la baraja *asume* el papel de camino a la reserva
+  que tenía el buscador. Se conservan el CTA primario, el sticky de móvil y el
+  grid de tours debajo.
+- **Congelar la baraja** (imprescindible para el traspaso a Figma): `?dev-baraja=semi-privado`
+  · `=snorkel-lovers` · `=charter-privado` · `=isla-saona` · `=estatica`.
+  Cada deep-link fija esa card como activa **y detiene el auto-avance**.
+- La baraja es un **loop infinito** → en Figma va como *componente interactivo*
+  con una variante por card, no como cadena de frames (playbook
+  [[animaciones-a-figma]]). Los delays salen de los tokens `--baraja-*`, no
+  "a ojo": si cambias el token, cambia el prototipo de Figma.
 
 ## Cómo correrlo
 
@@ -34,8 +54,9 @@ Abre `http://localhost:5173` (o el puerto que indique Vite). Requiere Node 18+.
 ## Stack
 
 Vite + React + TypeScript + Tailwind CSS v4 + React Router. Sin librerías de
-UI ni de animación (todo componente es propio). Iconos: `lucide-react`.
-Fuentes self-hosted vía `@fontsource` (Lora + Inter).
+UI ni de animación (todo componente es propio; la baraja son transiciones CSS
++ un `setInterval`). Iconos: `lucide-react`. Fuente self-hosted vía
+`@fontsource`: **Poppins**, en titulares y cuerpo.
 
 ## Estructura
 
@@ -44,15 +65,17 @@ app/
 ├── PLAN.md                 ← plan de ejecución por fases (F0-F7)
 ├── public/fotos/           ← 35 fotos reales extraídas de la web actual
 └── src/
-    ├── styles/tokens.css   ← TODOS los tokens (Tailwind v4 @theme)
-    ├── data/home.ts        ← contenido (tours, platos, ocasiones), portado
-    │                          de prototipo/datos.js
-    ├── components/ui/      ← Boton, Logo, EnlacePrototipo
-    ├── components/home/    ← una sección de la home por archivo
-    ├── dev/                ← Dev Mode (glosario navegable, NO va a Figma)
+    ├── styles/tokens.css      ← TODOS los tokens (Tailwind v4 @theme)
+    ├── styles/componentes.css ← CSS a medida (el hover del photo-stack; ahí
+    │                             está explicado por qué no son utilidades)
+    ├── data/home.ts           ← contenido (tours, platos, ocasiones), portado
+    │                             de prototipo/datos.js
+    ├── components/ui/         ← Boton, Logo, Etiqueta, PilaFotos, EnlacePrototipo
+    ├── components/home/       ← una sección de la home por archivo (+ BarajaHero)
+    ├── dev/                   ← Dev Mode (glosario navegable, NO va a Figma)
     └── pages/
-        ├── home.tsx        ← compone todas las secciones
-        └── fundaciones.tsx ← swatches + type scale, para validar tokens
+        ├── home.tsx           ← compone todas las secciones
+        └── fundaciones.tsx    ← swatches + type scale, para validar tokens
 ```
 
 ## Reglas de diseño (ver también `CLAUDE.md` del repo)

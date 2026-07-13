@@ -89,6 +89,13 @@
   --baraja-intervalo: 4000ms; /* cada cuánto rota la baraja */
   --baraja-transicion: 600ms; /* duración del movimiento de cada card */
   --baraja-easing: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Medidas del escenario de la baraja. Explícitas a propósito: las cards son
+     `absolute`, así que no hay contenido en flujo que dimensione la caja. */
+  --spacing-baraja-ancho: 20rem; /* 320px */
+  --spacing-baraja-ancho-sm: 22.5rem; /* 360px */
+  --spacing-baraja-alto: 23.75rem; /* 380px */
+  --spacing-baraja-alto-sm: 26.25rem; /* 420px */
 }
 
 body {

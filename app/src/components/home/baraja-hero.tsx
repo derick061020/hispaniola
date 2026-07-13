@@ -84,7 +84,7 @@ export function BarajaHero() {
     // hay contenido en flujo que dimensione la caja — sin un ancho fijo el
     // contenedor colapsa a 0 dentro de una columna de grid `auto`.
     <div
-      className="relative h-[380px] w-[320px] shrink-0 sm:h-[420px] sm:w-[360px]"
+      className="relative h-baraja-alto w-baraja-ancho shrink-0 sm:h-baraja-alto-sm sm:w-baraja-ancho-sm"
       onMouseEnter={() => setPausada(true)}
       onMouseLeave={() => setPausada(false)}
     >
