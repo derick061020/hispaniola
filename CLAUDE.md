@@ -1,6 +1,27 @@
 # Hispaniola
 
 Rediseño en Figma de la web de Hispaniola Aquatic Adventures. Samuel diseña, Derick desarrolla.
+El diseño final de la home se construye primero en React (`app/`, ver `app/PLAN.md`) y
+luego se traslada a Figma vía MCP — mismo flujo probado en Eventus/Synexia.
+
+## Reglas del proyecto React (`app/`)
+
+- **Todo pasa por tokens** (`app/src/styles/tokens.css`, `@theme` de Tailwind v4). Cero
+  hex o valores mágicos en componentes — esos tokens serán las variables de Figma en
+  el traspaso. Si un color/tamaño/radio no existe como token, se añade el token primero.
+- **Dirección visual = B "Charter Premium"** (`analisis/direccion-visual.md`). El aqua
+  es acento con cuentagotas (marca/links/badges), nunca fondo grande de sección.
+- **Un componente React = un futuro componente Figma**: nombres claros en
+  `src/components/ui/` (piezas reusables) y `src/components/home/` (una por sección).
+- **Dev Mode obligatorio**: cada bloque/estado nuevo se registra en
+  `app/src/dev/dev-registry.ts` en el mismo commit que lo crea. Las líneas que el Dev
+  Mode obliga a tocar en componentes de producto se marcan `// [dev-mode]`.
+- **Nada de `src/dev/` (ni líneas `[dev-mode]`) va a Figma** — se excluyen al preparar
+  el traspaso (ver playbook `dev-mode-glosario-prototipo` del cerebro).
+- **El código NUNCA se importa a Figma** con Anima/html.to.design (regla de oro del
+  playbook `codigo-a-figma`) — el traspaso se construye a mano con componentes reales.
+- Contenido/copy/precios se portan de `prototipo/datos.js` (fuente canónica), nunca
+  se inventan. Fotos: reales de la web actual, no stock.
 
 ## Cerebro del dueño (Samuel)
 
