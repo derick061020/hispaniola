@@ -1628,6 +1628,208 @@
   }
 
   // ============================================================
+  // PÁGINA: FAQ — buscador en vivo + acordeón por categoría
+  // ============================================================
+  function renderFaq() {
+    var pills = FAQ_CATEGORIAS.map(function (c) {
+      return '<button type="button" class="categoria-pill" data-cat-pill="cat-' + c.id + '">' + esc(c.nombre) + '</button>';
+    }).join('');
+    var categorias = FAQ_CATEGORIAS.map(function (c) {
+      return '<div class="faq-categoria" id="cat-' + c.id + '" style="scroll-margin-top:80px; margin-bottom:28px;">' +
+        '<span class="etq">' + esc(c.nombre) + '</span>' +
+        c.preguntas.map(function (q, i) {
+          return '<div class="acc' + (i === 0 && c.id === 'reservas' ? ' abierto' : '') + '">' +
+            '<button type="button" class="acc-cab" data-acc-faq>' + esc(q.p) + '<span class="signo">' + (i === 0 && c.id === 'reservas' ? '−' : '+') + '</span></button>' +
+            '<div class="acc-cuerpo">' + esc(q.r) + '</div></div>';
+        }).join('') + '</div>';
+    }).join('');
+
+    app.innerHTML = '<div class="contenedor seccion" style="max-width:800px;">' +
+      '<h1 style="font-size:26px; margin-bottom:12px;">Preguntas frecuentes</h1>' +
+      '<div class="campo" style="max-width:420px; margin-bottom:6px;"><input type="text" id="faq-buscar" placeholder="🔍 Busca tu pregunta…"></div>' +
+      '<div class="categoria-pills">' + pills + '</div>' +
+      '<div style="margin-top:20px;">' + categorias + '</div>' +
+      '<div class="banda-cta">' +
+      '<div><h3 style="font-size:17px;">¿No está tu pregunta?</h3><p class="meta">Escríbenos por WhatsApp — respondemos en minutos.</p></div>' +
+      '<a href="https://wa.me/18293052804" target="_blank" rel="noopener" class="btn btn-primario">💬 Preguntar por WhatsApp</a>' +
+      '</div></div>';
+
+    inicializarFaq();
+  }
+
+  function inicializarFaq() {
+    $('#faq-buscar').addEventListener('input', function () {
+      var q = this.value.trim().toLowerCase();
+      $all('.faq-categoria').forEach(function (cat) {
+        var algunaVisible = false;
+        $all('.acc', cat).forEach(function (acc) {
+          var texto = acc.querySelector('.acc-cab').textContent.toLowerCase();
+          var visible = !q || texto.indexOf(q) >= 0;
+          acc.style.display = visible ? '' : 'none';
+          if (visible) { algunaVisible = true; if (q) acc.classList.add('abierto'); }
+        });
+        cat.style.display = algunaVisible ? '' : 'none';
+      });
+    });
+    $all('[data-acc-faq]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var item = btn.closest('.acc');
+        var abierto = item.classList.toggle('abierto');
+        btn.querySelector('.signo').textContent = abierto ? '−' : '+';
+      });
+    });
+    $all('[data-cat-pill]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        $all('[data-cat-pill]').forEach(function (b) { b.classList.remove('activa'); });
+        btn.classList.add('activa');
+        $('#' + btn.getAttribute('data-cat-pill')).scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+  }
+
+  // ============================================================
+  // PÁGINA: Contacto
+  // ============================================================
+  function renderContacto() {
+    app.innerHTML = '<div class="contenedor seccion" style="max-width:900px;">' +
+      '<h1 style="font-size:24px; margin-bottom:20px;">Hablas con nosotros, no con un call center</h1>' +
+      '<div class="grid-3" style="margin-bottom:24px;">' +
+      '<div class="benef"><h4>💬 WhatsApp — lo más rápido</h4><p>+1-829-305-2804 · Respondemos en minutos, 8:00-20:00 (GMT-4).</p>' +
+      '<a href="https://wa.me/18293052804" target="_blank" rel="noopener" class="btn btn-primario btn-sm" style="margin-top:8px;">Abrir WhatsApp</a></div>' +
+      '<div class="benef"><h4>☎ Teléfono</h4><p>Toll free EE.UU./Canadá: 1-800-657-0016<br>Local RD: +1-829-305-2804</p></div>' +
+      '<div class="benef"><h4>✉ Email</h4><p>Para cotizaciones de eventos y agencias. Respuesta en menos de 24 h.</p></div>' +
+      '</div>' +
+      '<div class="grid-2" style="align-items:start;">' +
+      '<div><span class="etq">Escríbenos</span>' +
+      '<form id="form-contacto">' +
+      '<div class="form-grid">' +
+      '<div class="campo"><label>Nombre</label><input type="text" required></div>' +
+      '<div class="campo"><label>Email</label><input type="email" required></div>' +
+      '</div>' +
+      '<div class="campo" style="margin-top:10px;"><label>¿Sobre qué?</label><select required>' +
+      '<option value="">Elige una opción</option><option>Reserva existente</option><option>Nuevo tour</option><option>Evento</option><option>Agencia</option><option>Otro</option>' +
+      '</select></div>' +
+      '<div class="campo" style="margin-top:10px;"><label>Mensaje</label><textarea required></textarea></div>' +
+      '<button type="submit" class="btn btn-primario btn-bloque" style="margin-top:12px;">Enviar mensaje</button>' +
+      '<p class="meta" style="margin-top:8px;">¿Ya tienes una reserva? Ten a mano tu código (HSP-XXXX-XXXX) y te ayudamos más rápido.</p>' +
+      '</form></div>' +
+      '<div><span class="etq">Dónde estamos</span>' +
+      '<div class="img" style="min-height:190px;">Mapa interactivo — Plaza Bibijagua, Bávaro</div>' +
+      '<div class="benef" style="margin-top:10px;"><h4>Plaza Bibijagua, Bávaro</h4>' +
+      '<p>Punta Cana, República Dominicana.<br><strong>Ojo:</strong> esta es la oficina. El día del tour te recogemos en tu hotel — no vengas aquí.</p></div>' +
+      '</div></div></div>';
+
+    inicializarFormularioDemo('form-contacto', 'Recibimos tu mensaje — te respondemos en menos de 24 h (o antes por WhatsApp).');
+  }
+
+  // ============================================================
+  // PÁGINA: Agentes de viaje
+  // ============================================================
+  function renderAgentes() {
+    app.innerHTML = '<div class="contenedor">' +
+      '<div class="hero" style="padding-top:32px;">' +
+      '<div><span class="etq">Travel Agents · Programa profesional</span>' +
+      '<h1 style="font-size:26px;">Vende una excursión por la que te den las gracias</h1>' +
+      '<p class="sub">Comisión, tarifas netas y un contacto real para cuando tu cliente te escriba un domingo.</p>' +
+      '<a href="#form-agentes" class="btn btn-primario">Registrarme como agente</a></div>' +
+      '<div class="img" style="min-height:220px;">Foto — clientes felices a bordo</div></div>' +
+      '<div class="seccion"><span class="etq">Qué te damos</span><div class="grid-4">' +
+      '<div class="benef"><h4>Comisión</h4><p>% por reserva confirmada — dato a confirmar con el cliente.</p></div>' +
+      '<div class="benef"><h4>Tarifas netas</h4><p>Precio neto para que tú pongas tu margen.</p></div>' +
+      '<div class="benef"><h4>Material de venta</h4><p>Fotos, fichas y videos listos para tu cliente.</p></div>' +
+      '<div class="benef"><h4>Contacto directo</h4><p>Un WhatsApp que te responde una persona.</p></div>' +
+      '</div></div>' +
+      '<div class="seccion grid-2" style="align-items:start;">' +
+      '<div><span class="etq">Registro de agencia</span>' +
+      '<form id="form-agentes">' +
+      '<div class="form-grid">' +
+      '<div class="campo"><label>Agencia</label><input type="text" required></div>' +
+      '<div class="campo"><label>Contacto</label><input type="text" required></div>' +
+      '<div class="campo"><label>Email</label><input type="email" required></div>' +
+      '<div class="campo"><label>WhatsApp</label><input type="tel" required></div>' +
+      '<div class="campo"><label>País</label><input type="text"></div>' +
+      '<div class="campo"><label>Web / IATA (opc.)</label><input type="text"></div>' +
+      '</div>' +
+      '<button type="submit" class="btn btn-primario btn-bloque" style="margin-top:12px;">Enviar registro</button>' +
+      '<p class="meta" style="margin-top:6px;">Validamos tu agencia y te enviamos las tarifas netas en menos de 48 h.</p>' +
+      '</form></div>' +
+      '<div><span class="etq">Cómo funciona</span><ul class="timeline">' +
+      '<li><span class="hora">1</span><span class="punto"></span><div><h4>Te registras</h4><p>Validamos la agencia.</p></div></li>' +
+      '<li><span class="hora">2</span><span class="punto"></span><div><h4>Recibes tarifas</h4><p>Netas, con tu material de venta.</p></div></li>' +
+      '<li><span class="hora">3</span><span class="punto"></span><div><h4>Reservas por tu canal</h4><p>Con tu código de agente.</p></div></li>' +
+      '<li><span class="hora">4</span><span class="punto"></span><div><h4>Cobras tu comisión</h4><p>Liquidación mensual.</p></div></li>' +
+      '</ul></div></div></div>';
+
+    inicializarFormularioDemo('form-agentes', 'Registro recibido — validamos tu agencia y te enviamos tarifas netas en menos de 48 h.');
+  }
+
+  // ============================================================
+  // PÁGINA: Guías / Blog (índice + artículo)
+  // ============================================================
+  function renderGuias() {
+    var destacada = GUIAS.filter(function (g) { return g.destacado; })[0];
+    var resto = GUIAS.filter(function (g) { return !g.destacado; });
+    app.innerHTML = '<div class="contenedor seccion">' +
+      '<h1 style="font-size:24px;">Guías para no equivocarte con tu excursión</h1>' +
+      '<p class="sub" style="max-width:60ch;">Escritas por gente que lleva 12 años en el agua aquí. Sin humo comercial.</p>' +
+      '<div class="grid-2" style="margin-top:20px; align-items:start;">' +
+      '<a class="card clic" href="#/guias/' + destacada.slug + '"><div class="img" style="height:150px;">Foto destacada</div>' +
+      '<div class="cuerpo"><span class="chip">Destacado</span><strong>' + esc(destacada.titulo) + '</strong>' +
+      '<span class="meta">' + esc(destacada.resumen) + ' — ' + esc(destacada.lectura) + '</span></div></a>' +
+      '<div style="display:flex; flex-direction:column; gap:10px;">' +
+      resto.map(function (g) {
+        return '<a class="art-card" href="#/guias/' + g.slug + '"><div class="img">Foto</div><div class="cuerpo"><strong style="font-size:13.5px;">' + esc(g.titulo) + '</strong>' +
+          '<p class="meta" style="margin-top:4px;">' + esc(g.resumen) + '</p></div></a>';
+      }).join('') + '</div></div>' +
+      '<div class="banda-cta" style="margin-top:28px;"><div><h3 style="font-size:17px;">¿Listo para reservar?</h3><p class="meta">Todos nuestros tours, con cancelación gratis.</p></div>' +
+      '<a href="#/tours" class="btn btn-primario">Ver tours</a></div></div>';
+  }
+
+  function renderGuiaArticulo(params) {
+    var g = GUIAS.filter(function (g) { return g.slug === params.slug; })[0];
+    if (!g) { render404(); return; }
+    app.innerHTML = '<div class="contenedor seccion" style="max-width:720px;">' +
+      '<p class="migaja"><a href="#/">Inicio</a> / <a href="#/guias">Guías</a> / ' + esc(g.titulo) + '</p>' +
+      '<h1 style="font-size:26px; margin-bottom:10px;">' + esc(g.titulo) + '</h1>' +
+      (g.lectura ? '<p class="meta" style="margin-bottom:16px;">' + g.lectura + '</p>' : '') +
+      '<div class="img" style="min-height:220px; margin-bottom:20px;">Foto destacada</div>' +
+      '<p style="margin-bottom:14px; color:var(--tinta-2);">' + esc(g.resumen) + '</p>' +
+      '<p style="margin-bottom:14px; color:var(--tinta-2);">Contenido completo pendiente — esta es la plantilla de artículo del blog. Cada guía real incluirá el desarrollo completo, fotos propias y un cierre con recomendación directa de tour.</p>' +
+      '<div class="banda-cta"><div><h3 style="font-size:16px;">¿Listo para reservar?</h3></div><a href="#/tours" class="btn btn-primario">Ver tours</a></div>' +
+      '</div>';
+  }
+
+  // ============================================================
+  // PÁGINA: Reserva directa
+  // ============================================================
+  function renderReservaDirecta() {
+    app.innerHTML = '<div class="contenedor seccion">' +
+      '<h1 style="font-size:26px;">Lo mismo cuesta igual. Aquí incluye más.</h1>' +
+      '<p class="sub" style="max-width:64ch;">Nos vas a encontrar en Viator, TripAdvisor y en la recepción de tu hotel. El precio es el mismo. La diferencia es lo que pasa cuando reservas con nosotros directamente.</p>' +
+      '<div class="scroll-x" style="margin-top:16px;">' +
+      '<table class="vs-tabla">' +
+      '<tr><th style="width:34%;"></th><th class="destaca">Reservando aquí</th><th>Portal / agencia / recepción</th></tr>' +
+      '<tr><td>Precio del tour</td><td class="si">US$ 114</td><td class="no">US$ 114 — igual</td></tr>' +
+      '<tr><td>Pagas hoy</td><td class="si">Solo 25% (US$ 28,50)</td><td class="no">100% por adelantado</td></tr>' +
+      '<tr><td>El resto</td><td class="si">En efectivo a bordo, con 5% de descuento</td><td class="no">—</td></tr>' +
+      '<tr><td>Eliges tu plato</td><td class="si">Sí, uno por persona, con foto</td><td class="no">No</td></tr>' +
+      '<tr><td>Cambios de última hora</td><td class="si">Por WhatsApp con el equipo del barco</td><td class="no">Formulario / call center</td></tr>' +
+      '<tr><td>Cliente repetidor</td><td class="si">5% de descuento</td><td class="no">No aplica</td></tr>' +
+      '<tr><td>Reservas con 30+ días</td><td class="si">5% de descuento</td><td class="no">No aplica</td></tr>' +
+      '<tr><td>Mal clima</td><td class="si">Reembolso total o cambio de fecha</td><td class="no">Según política del portal</td></tr>' +
+      '</table></div>' +
+      '<p class="meta" style="margin-top:8px;">Los descuentos son acumulables hasta un máximo del 15% — a confirmar con el cliente.</p>' +
+      '<div class="seccion"><span class="etq">Y además, lo de siempre</span><div class="grid-4">' +
+      '<div class="benef"><h4>Cancelación gratis</h4><p>Hasta 7 días antes, sin preguntas.</p></div>' +
+      '<div class="benef"><h4>Confirmación instantánea</h4><p>Voucher al email y al WhatsApp.</p></div>' +
+      '<div class="benef"><h4>Pago seguro</h4><p>Stripe. Tarjeta, wallets o PayPal.</p></div>' +
+      '<div class="benef"><h4>Somos el operador</h4><p>No un intermediario: el barco es nuestro.</p></div>' +
+      '</div></div>' +
+      '<div class="banda-cta"><h3 style="font-size:18px;">Reserva directo y paga solo el 25% hoy</h3><a href="#/tours" class="btn btn-primario">Ver disponibilidad</a></div>' +
+      '</div>';
+  }
+
+  // ============================================================
   // Registro de rutas
   // ============================================================
   ruta('/', renderHome);
@@ -1643,6 +1845,12 @@
   ruta('/eventos/empresas', renderEmpresas);
   ruta('/nosotros', renderNosotros);
   ruta('/sostenibilidad', renderSostenibilidad);
+  ruta('/faq', renderFaq);
+  ruta('/contacto', renderContacto);
+  ruta('/agentes', renderAgentes);
+  ruta('/guias', renderGuias);
+  ruta('/guias/:slug', renderGuiaArticulo);
+  ruta('/reserva-directa', renderReservaDirecta);
 
   // Delegación global: cualquier elemento con data-ir="#/ruta" navega al hacer click.
   // Patrón reutilizado en booking, ficha, eventos, etc. (evita listeners repetidos por render).
