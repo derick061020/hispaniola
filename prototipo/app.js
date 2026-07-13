@@ -633,7 +633,7 @@
     var maxSel = Math.min(t.maxPax || 6, 6);
     var opcionesPax = '';
     for (var n = 1; n <= maxSel; n++) opcionesPax += '<option' + (n === 2 ? ' selected' : '') + '>' + n + '</option>';
-    return '<div class="widget-lateral" id="ficha-widget">' +
+    return conNota('ficha-widget', '<div class="widget-lateral" id="ficha-widget">' +
       '<div><span class="precio-grande">' + formatoDinero(t.precioLight) + '</span><span class="meta"> /persona · desde</span></div>' +
       '<div class="etq" style="margin-bottom:4px;">Elige una fecha</div>' +
       '<div id="ficha-dias" style="display:flex; gap:6px; overflow-x:auto; padding-bottom:6px;"></div>' +
@@ -641,7 +641,7 @@
       '<div class="campo"><label>Personas</label><select id="ficha-personas">' + opcionesPax + '</select></div>' +
       '<button type="button" class="btn btn-primario btn-bloque" id="btn-ficha-continuar" disabled>Elige una fecha</button>' +
       '<p class="meta" style="margin:0;">✓ Confirma con 25% de depósito<br>✓ Cancela gratis hasta 7 días antes<br>✓ Reembolso total por mal clima</p>' +
-      '</div>';
+      '</div>');
   }
 
   function comparadorStripHTML() {
@@ -987,7 +987,7 @@
       '<h3 style="font-size:17px; margin-bottom:10px;">¿Qué día navegamos?</h3>' +
       calendarioGrandeHTML(t, offset) +
       horarioSeccion +
-      personasPaqueteSeccion +
+      (sinDisponibilidad ? personasPaqueteSeccion : conNota('booking-paso1', personasPaqueteSeccion)) +
       (sinDisponibilidad ? '' : '<button type="button" class="btn btn-primario btn-bloque" id="btn-paso1-continuar" style="margin-top:20px;"' + (puedeContinuar ? '' : ' disabled') + '>Continuar</button>') +
       '</div>' +
       renderResumenReserva(1) +
@@ -1068,7 +1068,7 @@
       '<div>' +
       '<h3 style="font-size:17px; margin-bottom:6px;">El plato de cada uno</h3>' +
       '<p class="meta" style="margin-bottom:6px;">Se cocina a bordo, recién hecho. Puedes cambiarlo hasta 24 h antes del tour desde Mi Reserva.</p>' +
-      personasHTML +
+      conNota('booking-paso2', personasHTML) +
       '<span class="etq" style="margin-top:20px; display:block;">¿Dónde te recogemos?</span>' +
       '<div class="grid-2">' +
       '<div class="campo"><label>Tu hotel</label><input type="text" id="input-hotel" list="lista-hoteles" placeholder="Empieza a escribir…" value="' + esc(estadoReserva.hotel || '') + '">' + listaHotel + '</div>' +
@@ -1146,13 +1146,13 @@
       '<div class="campo" id="campo-email"><label>Email — aquí va tu voucher</label><input type="email" id="input-email" value="' + esc(estadoReserva.datos.email) + '"><span class="error-msg">Email inválido</span></div>' +
       '<div class="campo" id="campo-telefono"><label>WhatsApp / móvil</label><input type="tel" id="input-telefono" placeholder="+1 809 000 0000" value="' + esc(estadoReserva.datos.telefono) + '"><span class="error-msg">Falta tu teléfono</span></div>' +
       '</div>' +
-      '<h3 style="font-size:17px; margin-top:20px;">Pago exprés</h3>' +
+      conNota('booking-paso3', '<h3 style="font-size:17px; margin-top:20px;">Pago exprés</h3>' +
       '<div class="wallets-row">' +
       '<button type="button" class="btn btn-secundario wallet-btn" data-wallet="Apple Pay"> Pay</button>' +
       '<button type="button" class="btn btn-secundario wallet-btn" data-wallet="Google Pay">G Pay</button>' +
       '<button type="button" class="btn btn-secundario wallet-btn" data-wallet="PayPal">PayPal</button>' +
       '</div>' +
-      '<p class="meta">o completa con tarjeta abajo</p>' +
+      '<p class="meta">o completa con tarjeta abajo</p>') +
       '<h3 style="font-size:17px; margin-top:18px;">¿Cómo prefieres pagar?</h3>' +
       '<div style="display:flex; flex-direction:column; gap:10px; margin-top:10px;">' +
       '<button type="button" class="opcion-pago' + (estadoReserva.pago === 'deposito' ? ' sel' : '') + '" data-pago="deposito"><span class="opcion-pago-radio"></span>' +
@@ -1335,7 +1335,7 @@
       '<div class="grid-2" style="align-items:start;">' +
       '<div>' +
       '<span class="etq">Tu tour</span>' +
-      '<div class="resumen-reserva" style="position:static;"><div class="img">Foto del tour</div><div class="cuerpo">' +
+      conNota('mi-reserva', '<div class="resumen-reserva" style="position:static;"><div class="img">Foto del tour</div><div class="cuerpo">' +
       '<div class="fila-r"><span>Fecha y hora</span><span>' + formatoFechaCorta(r.fecha) + ' · ' + horario.hora + '</span></div>' +
       '<div class="fila-r"><span>Personas</span><span>' + r.personas + '</span></div>' +
       '<div class="fila-r"><span>Recogida</span><span>' + esc(r.hotel) + ' ' + esc(r.horaRecogida) + '</span></div>' +
@@ -1346,7 +1346,7 @@
       (saldoMostrado > 0
         ? '<button type="button" class="btn btn-primario btn-bloque" id="btn-pagar-saldo" style="margin-top:10px;">Pagar saldo online — ' + formatoDinero(saldoMostrado) + '</button>' +
           '<p class="meta" style="text-align:center; margin-top:6px;">O paga en efectivo a bordo — no hace falta hacer nada aquí.</p>'
-        : '<p class="meta" style="text-align:center; margin-top:10px;">✓ Saldo pagado — no queda nada pendiente.</p>') +
+        : '<p class="meta" style="text-align:center; margin-top:10px;">✓ Saldo pagado — no queda nada pendiente.</p>')) +
       '</div>' +
       '<div>' +
       '<span class="etq">El plato de cada uno <span style="text-transform:none; letter-spacing:0;">— toca uno para cambiarlo</span></span>' +
@@ -1438,8 +1438,8 @@
       '<div><strong>91.607</strong>invitados felices</div><span class="meta">WeddingWire Couples\' Choice 18-21 · TripAdvisor #1</span></div>' +
       '</div>' +
       '<div class="contenedor seccion">' +
-      '<span class="etq">¿Qué celebras?</span><h2 class="seccion-title">Elige tu ocasión</h2>' +
-      '<div class="grid-3" style="margin-top:14px;">' + OCASIONES.map(ocasionCard).join('') + '</div>' +
+      conNota('eventos-hub', '<span class="etq">¿Qué celebras?</span><h2 class="seccion-title">Elige tu ocasión</h2>' +
+      '<div class="grid-3" style="margin-top:14px;">' + OCASIONES.map(ocasionCard).join('') + '</div>') +
       '</div>' +
       '<div class="contenedor seccion">' +
       '<span class="etq">Cómo funciona</span>' +
@@ -1806,7 +1806,7 @@
     app.innerHTML = '<div class="contenedor seccion">' +
       '<h1 style="font-size:26px;">Lo mismo cuesta igual. Aquí incluye más.</h1>' +
       '<p class="sub" style="max-width:64ch;">Nos vas a encontrar en Viator, TripAdvisor y en la recepción de tu hotel. El precio es el mismo. La diferencia es lo que pasa cuando reservas con nosotros directamente.</p>' +
-      '<div class="scroll-x" style="margin-top:16px;">' +
+      conNota('reserva-directa', '<div class="scroll-x" style="margin-top:16px;">' +
       '<table class="vs-tabla">' +
       '<tr><th style="width:34%;"></th><th class="destaca">Reservando aquí</th><th>Portal / agencia / recepción</th></tr>' +
       '<tr><td>Precio del tour</td><td class="si">US$ 114</td><td class="no">US$ 114 — igual</td></tr>' +
@@ -1817,7 +1817,7 @@
       '<tr><td>Cliente repetidor</td><td class="si">5% de descuento</td><td class="no">No aplica</td></tr>' +
       '<tr><td>Reservas con 30+ días</td><td class="si">5% de descuento</td><td class="no">No aplica</td></tr>' +
       '<tr><td>Mal clima</td><td class="si">Reembolso total o cambio de fecha</td><td class="no">Según política del portal</td></tr>' +
-      '</table></div>' +
+      '</table></div>') +
       '<p class="meta" style="margin-top:8px;">Los descuentos son acumulables hasta un máximo del 15% — a confirmar con el cliente.</p>' +
       '<div class="seccion"><span class="etq">Y además, lo de siempre</span><div class="grid-4">' +
       '<div class="benef"><h4>Cancelación gratis</h4><p>Hasta 7 días antes, sin preguntas.</p></div>' +
