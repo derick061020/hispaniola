@@ -130,6 +130,25 @@ export const devSections: DevSection[] = [
       },
     ],
   },
+  {
+    title: 'Home — Cierre',
+    screens: [
+      {
+        title: 'Banda de eventos',
+        route: '/',
+        status: 'done',
+        description: 'CTA de eventos privados (bodas, cumpleaños, team-building) sobre card navy.',
+        states: [],
+      },
+      {
+        title: 'Galería + FAQ + cierre',
+        route: '/',
+        status: 'done',
+        description: 'Curaduría de 4 fotos reales (+19 más), acordeón de 4 FAQ (primera abierta) y CTA final "Ver disponibilidad".',
+        states: [],
+      },
+    ],
+  },
 ]
 
 export function devStats() {
