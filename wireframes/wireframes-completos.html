@@ -383,6 +383,12 @@
       garantía de mejor precio, etc.) quedan documentados en
       <span class="mono">analisis/revision-wireframes.md</span> como backlog de refinamiento en Figma —
       no bloquean el diseño visual.</p>
+      <p class="fuente"><strong>Corrección de precisión (2026-07-13):</strong> la fusión "Why book
+      with us + Competitive Advantage → Reserva directa" se basaba en los nombres de las páginas,
+      no en su contenido real. Verificado en vivo: <span class="mono">why-book-with-us.php</span> sí
+      justifica la página "Reserva directa"; <span class="mono">competitive-advantage.php</span> es
+      un stub sin relación (videos de la Bávaro Reefs Foundation, anidado bajo Sustainability) y
+      ahora se absorbe en Sostenibilidad, no aquí. Ver <a href="#paginas">Parte 4</a>.</p>
     </div>
   </header>
 
@@ -1351,11 +1357,19 @@
               <td>Landing B2B con lenguaje corporativo (capacidad, factura, coordinador).</td></tr>
             <tr><td>About Us (+ Crew / Fleet / Foundation)</td><td class="accion"><span class="tag mantiene">rehace</span></td>
               <td>Una página con anclas. La Fundación gana peso: es el diferenciador que nadie más tiene.</td></tr>
-            <tr><td>Why book with us <span class="meta">+</span> Competitive Advantage</td>
-              <td class="accion"><span class="tag fusion">fusión</span></td>
-              <td><strong>Dos páginas que dicen lo mismo.</strong> Se funden en "Reserva directa" — la respuesta a Viator.</td></tr>
+            <tr><td>Why book with us</td>
+              <td class="accion"><span class="tag fusion">→ reserva directa</span></td>
+              <td>Su contenido real ("solo vendemos directo, sin comisión de intermediario") es
+              la semilla de la nueva página "Reserva directa" — la respuesta a Viator.</td></tr>
+            <tr><td>Competitive Advantage</td>
+              <td class="accion"><span class="tag fusion">→ sostenibilidad</span></td>
+              <td><strong>Verificado en vivo (no es lo que se asumió al inicio):</strong> es un
+              stub de una frase anidado bajo Sustainability ("videos que muestran la Bávaro
+              Reefs Foundation"), sin relación con argumentos de reserva directa. Se retira como
+              página propia; su idea de videos de diferenciadores se absorbe en Sostenibilidad/Nosotros.</td></tr>
             <tr><td>Sustainability</td><td class="accion"><span class="tag mantiene">rehace</span></td>
-              <td>Absorbe "Our Foundation" como contenido profundo; About solo la resume y enlaza.</td></tr>
+              <td>Absorbe "Our Foundation" y el ángulo de video de "Competitive Advantage" como
+              contenido profundo; About solo la resume y enlaza.</td></tr>
             <tr><td>Contact</td><td class="accion"><span class="tag mantiene">rehace</span></td>
               <td>Deja de ser un formulario huérfano: WhatsApp primero, mapa real, horarios.</td></tr>
             <tr><td>Travel Agents</td><td class="accion"><span class="tag mantiene">rehace</span></td>
@@ -1745,10 +1759,16 @@
       </div>
     </div>
     <aside class="nota">
-      <h3><span class="pin">E5</span> Reserva directa <span class="tag fusion">fusión</span></h3>
+      <h3><span class="pin">E5</span> Reserva directa <span class="tag fusion">de why-book-with-us</span></h3>
       <p class="url">/reserva-directa</p>
       <p><strong>La página más importante de esta parte</strong> — enlazada ahora también desde
       dentro de la ficha (<a href="#ficha">A2</a>), no solo desde home y el checkout.</p>
+      <p>Corrección tras verificar el sitio en vivo: esta página desarrolla el contenido real
+      de <span class="mono">why-book-with-us.php</span> (el badge del hero — "solo vendemos
+      directo, sin comisión de intermediario"), con la tabla comparativa como evolución de esa
+      idea. <strong>"Competitive Advantage" NO se fusiona aquí</strong> — es un stub sobre videos
+      de la Bávaro Reefs Foundation, sin relación con reserva directa; su contenido se absorbe
+      en Sostenibilidad (<a href="#paginas">S1</a>), no en esta página.</p>
       <p><strong>Verificar con el cliente</strong> si los descuentos (5+5+5) son realmente
       acumulables y hasta qué tope.</p>
     </aside>
@@ -1811,6 +1831,10 @@
       <p class="url">/sostenibilidad</p>
       <p>Hoy "ECO FRIENDLY / NO PLASTIC" es una banda decorativa repetida en todas las
       páginas. La sustancia real (proyecto top-3 del país) merece la página propia.</p>
+      <p>También absorbe <span class="mono">competitive-advantage.php</span> — hoy un stub
+      de una frase ("videos que muestran la Bávaro Reefs Foundation") anidado sin sentido
+      bajo esta misma sección. Si esos videos existen, esta es su casa natural; si no
+      existen, la página se retira sin perder nada real.</p>
     </aside>
   </section>
 
