@@ -1,0 +1,1002 @@
+<title>Hispaniola — Wireframes páginas restantes</title>
+<style>
+  :root {
+    --papel: #FAFAF8; --tinta: #1B1E21; --tinta-2: #5A6058;
+    --bloque: #EEEFEA; --bloque-2: #E2E4DD; --linea: #C9CCC5;
+    --linea-fuerte: #9AA096; --acento: #0E7A8A; --acento-tenue: #0E7A8A1A;
+    --btn: #2A2E32; --btn-texto: #FAFAF8; --ok: #2E7D4F; --ok-tenue: #2E7D4F1A;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --papel: #16191B; --tinta: #E8EAE6; --tinta-2: #9AA096;
+      --bloque: #21262A; --bloque-2: #2A3036; --linea: #3A4045;
+      --linea-fuerte: #565E63; --acento: #55B9C7; --acento-tenue: #55B9C71F;
+      --btn: #E8EAE6; --btn-texto: #16191B; --ok: #5CBF8A; --ok-tenue: #5CBF8A1F;
+    }
+  }
+  :root[data-theme="dark"] {
+    --papel: #16191B; --tinta: #E8EAE6; --tinta-2: #9AA096;
+    --bloque: #21262A; --bloque-2: #2A3036; --linea: #3A4045;
+    --linea-fuerte: #565E63; --acento: #55B9C7; --acento-tenue: #55B9C71F;
+    --btn: #E8EAE6; --btn-texto: #16191B; --ok: #5CBF8A; --ok-tenue: #5CBF8A1F;
+  }
+  :root[data-theme="light"] {
+    --papel: #FAFAF8; --tinta: #1B1E21; --tinta-2: #5A6058;
+    --bloque: #EEEFEA; --bloque-2: #E2E4DD; --linea: #C9CCC5;
+    --linea-fuerte: #9AA096; --acento: #0E7A8A; --acento-tenue: #0E7A8A1A;
+    --btn: #2A2E32; --btn-texto: #FAFAF8; --ok: #2E7D4F; --ok-tenue: #2E7D4F1A;
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--papel); color: var(--tinta);
+    font: 15px/1.5 ui-sans-serif, system-ui, "Segoe UI", sans-serif; }
+  .mono { font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; }
+  .marco { max-width: 1240px; margin: 0 auto; padding: 40px 24px 96px; }
+
+  header.doc { max-width: 880px; margin-bottom: 8px; }
+  .eyebrow { font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; font-size: 12px;
+    letter-spacing: .14em; text-transform: uppercase; color: var(--acento); margin: 0 0 10px; }
+  header.doc h1 { font-size: clamp(26px, 4vw, 38px); line-height: 1.15; margin: 0 0 12px;
+    letter-spacing: -.01em; text-wrap: balance; }
+  header.doc p { color: var(--tinta-2); max-width: 64ch; margin: 0 0 8px; }
+
+  /* tabla de IA */
+  .ia-tabla { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 18px; }
+  .ia-tabla th, .ia-tabla td { border: 1px solid var(--linea); padding: 8px 10px; text-align: left;
+    vertical-align: top; }
+  .ia-tabla th { background: var(--bloque); font-size: 12px; text-transform: uppercase;
+    letter-spacing: .06em; font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; }
+  .ia-tabla td.accion { white-space: nowrap; font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+    font-size: 12px; }
+  .tag { display: inline-block; font-size: 11px; padding: 1px 7px; border-radius: 3px;
+    font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; }
+  .tag.nueva { background: var(--ok-tenue); color: var(--ok); border: 1px solid var(--ok); }
+  .tag.fusion { background: var(--acento-tenue); color: var(--acento); border: 1px solid var(--acento); }
+  .tag.mantiene { background: var(--bloque); color: var(--tinta-2); border: 1px solid var(--linea-fuerte); }
+  .scroll-x { overflow-x: auto; }
+
+  h2.parte { font-size: 20px; margin: 60px 0 0; padding-top: 24px; border-top: 2px solid var(--tinta);
+    letter-spacing: -.01em; }
+  h2.parte .mono { font-size: 12px; color: var(--acento); display: block; margin-bottom: 6px;
+    letter-spacing: .14em; text-transform: uppercase; }
+  h2.parte .meta-p { display: block; font-size: 13px; font-weight: 400; color: var(--tinta-2);
+    margin-top: 6px; }
+
+  .fila { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 20px;
+    align-items: start; margin-top: 28px; }
+  .nota { position: sticky; top: 16px; border-left: 2px solid var(--acento); padding: 2px 0 2px 14px; }
+  .nota h3 { font-size: 14px; margin: 0 0 6px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .pin { font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; font-size: 11px;
+    color: var(--acento); background: var(--acento-tenue); border: 1px solid var(--acento);
+    border-radius: 3px; padding: 1px 6px; }
+  .nota p { font-size: 13px; color: var(--tinta-2); margin: 0 0 8px; }
+  .nota p strong { color: var(--tinta); font-weight: 600; }
+  .url { font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; font-size: 11px;
+    color: var(--tinta-2); }
+
+  .wire { border: 1px solid var(--linea-fuerte); background: var(--papel); border-radius: 4px; overflow: hidden; }
+  .zona { padding: 18px 22px; border-top: 1px dashed var(--linea); }
+  .zona:first-child { border-top: 0; }
+
+  .img { background:
+      linear-gradient(to top right, transparent calc(50% - .5px), var(--linea) 50%, transparent calc(50% + .5px)),
+      linear-gradient(to bottom right, transparent calc(50% - .5px), var(--linea) 50%, transparent calc(50% + .5px)),
+      var(--bloque);
+    border: 1px solid var(--linea); border-radius: 3px; display: flex; align-items: center;
+    justify-content: center; color: var(--tinta-2); font-size: 11px;
+    font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; text-transform: uppercase;
+    letter-spacing: .1em; text-align: center; padding: 4px; }
+
+  .btn-w, .btn-w2 { display: inline-block; padding: 9px 18px; border-radius: 4px; font-size: 13px;
+    font-weight: 600; white-space: nowrap; }
+  .btn-w { background: var(--btn); color: var(--btn-texto); }
+  .btn-w2 { border: 1.5px solid var(--btn); color: var(--tinta); }
+  .btn-block { display: block; text-align: center; }
+
+  .chip { display: inline-block; font-size: 11px; padding: 2px 8px; border: 1px solid var(--linea-fuerte);
+    border-radius: 999px; color: var(--tinta-2); }
+  .chip.ok { border-color: var(--ok); color: var(--ok); background: var(--ok-tenue); }
+  .etq { font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; font-size: 10px;
+    letter-spacing: .12em; text-transform: uppercase; color: var(--tinta-2); margin: 0 0 10px; }
+  .h-wire { margin: 0; line-height: 1.2; letter-spacing: -.01em; }
+  .sub-wire { color: var(--tinta-2); margin: 6px 0 0; }
+  .meta { font-size: 12px; color: var(--tinta-2); }
+  .stars { letter-spacing: 2px; font-size: 13px; }
+  .precio { font-size: 15px; font-weight: 700; }
+  .precio small { font-weight: 400; color: var(--tinta-2); }
+
+  .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+
+  .benef { border: 1px solid var(--linea); border-radius: 5px; padding: 12px; background: var(--bloque); }
+  .benef h4 { margin: 0 0 4px; font-size: 13px; }
+  .benef p { margin: 0; font-size: 12px; color: var(--tinta-2); }
+
+  .card { border: 1px solid var(--linea-fuerte); border-radius: 5px; overflow: hidden;
+    background: var(--papel); display: flex; flex-direction: column; }
+  .card .img { border: 0; border-bottom: 1px solid var(--linea); border-radius: 0; height: 100px; }
+  .card .cuerpo { padding: 12px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+  .card .pie { display: flex; align-items: center; justify-content: space-between; margin-top: auto;
+    padding-top: 8px; }
+
+  .campo { display: flex; flex-direction: column; gap: 4px; }
+  .campo label { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--tinta-2);
+    font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; }
+  .campo .input { border: 1px solid var(--linea-fuerte); background: var(--papel); border-radius: 4px;
+    padding: 8px 10px; font-size: 13px; color: var(--tinta-2); }
+  .campo .input.alto { padding-bottom: 28px; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  .quote { border: 1px solid var(--linea); border-radius: 5px; padding: 12px; background: var(--papel); }
+  .quote p { margin: 0 0 6px; font-size: 13px; }
+
+  .banda-cta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+    gap: 14px; background: var(--bloque-2); border-radius: 5px; padding: 18px 20px; }
+
+  /* comparativa directa vs OTA */
+  .vs { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 10px; }
+  .vs th, .vs td { border: 1px solid var(--linea); padding: 9px 10px; text-align: left; }
+  .vs th { background: var(--bloque); font-size: 12px; }
+  .vs th.destaca { background: var(--ok-tenue); color: var(--ok); border-color: var(--ok); }
+  .vs td.si { color: var(--ok); font-weight: 600; }
+  .vs td.no { color: var(--tinta-2); }
+
+  /* acordeon FAQ */
+  .acc { border-top: 1px solid var(--linea); padding: 11px 2px; display: flex;
+    justify-content: space-between; gap: 12px; font-size: 13px; }
+  .acc:first-of-type { border-top: 0; }
+  .acc.open { background: var(--bloque); margin: 0 -8px; padding: 11px 10px; border-radius: 4px; }
+  .acc-resp { font-size: 12px; color: var(--tinta-2); padding: 0 10px 12px; margin: 0 -8px;
+    background: var(--bloque); border-radius: 0 0 4px 4px; }
+
+  /* timeline foundation */
+  .tl { list-style: none; margin: 12px 0 0; padding: 0; }
+  .tl li { display: grid; grid-template-columns: 54px 16px 1fr; gap: 10px; padding: 0 0 16px; position: relative; }
+  .tl .hora { font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; font-size: 11px;
+    color: var(--tinta-2); text-align: right; padding-top: 2px; }
+  .tl .punto { width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--linea-fuerte);
+    background: var(--papel); margin: 4px auto 0; }
+  .tl li::before { content: ""; position: absolute; left: 61px; top: 16px; bottom: 0; width: 2px;
+    background: var(--linea); }
+  .tl li:last-child::before { display: none; }
+  .tl h4 { margin: 0 0 2px; font-size: 13px; }
+  .tl p { margin: 0; font-size: 12px; color: var(--tinta-2); }
+
+  /* stats */
+  .strip { display: flex; flex-wrap: wrap; gap: 10px 26px; align-items: center; justify-content: center;
+    font-size: 12px; color: var(--tinta-2); }
+  .strip .dato strong { display: block; font-size: 17px; color: var(--tinta); }
+
+  /* mapa contacto */
+  .mapa { min-height: 190px; }
+
+  /* pasos cotizacion */
+  .pasos { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--tinta-2); flex-wrap: wrap; }
+  .pasos .p { display: flex; align-items: center; gap: 6px; }
+  .pasos .n { width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid var(--linea-fuerte);
+    display: inline-flex; align-items: center; justify-content: center; font-size: 11px;
+    font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; }
+  .pasos .p.act { color: var(--tinta); font-weight: 600; }
+  .pasos .p.act .n { border-color: var(--tinta); background: var(--btn); color: var(--btn-texto); }
+  .pasos .sep { width: 26px; height: 1px; background: var(--linea-fuerte); }
+
+  /* crew */
+  .crew { text-align: center; }
+  .crew .img { height: 90px; border-radius: 50%; width: 90px; margin: 0 auto 8px; }
+  .crew strong { font-size: 13px; display: block; }
+  .crew span { font-size: 11px; color: var(--tinta-2); }
+
+  /* artículo / tips */
+  .art-card { border: 1px solid var(--linea-fuerte); border-radius: 5px; overflow: hidden;
+    display: grid; grid-template-columns: 120px 1fr; }
+  .art-card .img { border: 0; border-right: 1px solid var(--linea); border-radius: 0; }
+  .art-card .cuerpo { padding: 12px; }
+
+  @media (max-width: 1000px) {
+    .fila { grid-template-columns: 1fr; }
+    .nota { position: static; }
+  }
+  @media (max-width: 760px) {
+    .grid-3, .grid-4, .form-grid { grid-template-columns: 1fr 1fr; }
+    .grid-2 { grid-template-columns: 1fr; }
+    .art-card { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 520px) {
+    .grid-3, .grid-4, .form-grid { grid-template-columns: 1fr; }
+  }
+</style>
+
+<div class="marco">
+  <header class="doc">
+    <p class="eyebrow">Hispaniola Aquatic Adventures · Rediseño web · 2026-07-11</p>
+    <h1>Wireframes: las 11 páginas restantes</h1>
+    <p>Tercera y última entrega de wireframes. Cubre todo lo que no estaba en la home ni en
+    la ficha/booking: las <strong>5 páginas con peso comercial</strong> (eventos, bodas, MICE,
+    nosotros, reserva directa) y las <strong>6 de soporte</strong> (sostenibilidad, contacto,
+    agentes, tips, FAQ, blog). Las de soporte no son de segunda: son las que sostienen la
+    confianza y el SEO que alimentan al funnel.</p>
+
+    <p class="etq" style="margin-top:22px;">Arquitectura propuesta — de 17 páginas a 15, sin perder nada</p>
+    <div class="scroll-x">
+      <table class="ia-tabla">
+        <tr><th>Página actual</th><th>Acción</th><th>Por qué</th></tr>
+        <tr><td>Events &amp; Celebrations</td><td class="accion"><span class="tag mantiene">rehace</span></td>
+          <td>Se convierte en el <strong>hub de eventos</strong> con las 6 ocasiones y un solo funnel de cotización.</td></tr>
+        <tr><td>Wedding Groups</td><td class="accion"><span class="tag mantiene">rehace</span></td>
+          <td>Landing propia — es el segmento de mayor ticket y tiene premios WeddingWire que hoy nadie ve.</td></tr>
+        <tr><td>MICE</td><td class="accion"><span class="tag mantiene">rehace</span></td>
+          <td>Landing B2B con lenguaje corporativo (capacidad, factura, coordinador).</td></tr>
+        <tr><td>About Us (+ Crew / Fleet / Foundation)</td><td class="accion"><span class="tag mantiene">rehace</span></td>
+          <td>Una página con anclas. La Fundación gana peso: es el diferenciador que nadie más tiene.</td></tr>
+        <tr><td>Why book with us <span class="meta">+</span> Competitive Advantage</td>
+          <td class="accion"><span class="tag fusion">fusión</span></td>
+          <td><strong>Dos páginas que dicen lo mismo.</strong> Se funden en “Reserva directa” — la respuesta a Viator.</td></tr>
+        <tr><td>Sustainability</td><td class="accion"><span class="tag mantiene">rehace</span></td>
+          <td>Absorbe “Our Foundation” como contenido profundo; About solo la resume y enlaza.</td></tr>
+        <tr><td>Contact</td><td class="accion"><span class="tag mantiene">rehace</span></td>
+          <td>Deja de ser un formulario huérfano: WhatsApp primero, mapa real, horarios.</td></tr>
+        <tr><td>Travel Agents</td><td class="accion"><span class="tag mantiene">rehace</span></td>
+          <td>Canal B2B con comisión — hoy es solo un formulario sin propuesta de valor.</td></tr>
+        <tr><td>TIPS for Punta Cana</td><td class="accion"><span class="tag fusion">→ blog</span></td>
+          <td>Pasa a ser el primer artículo del <strong>blog/guías</strong>: motor SEO del sitio.</td></tr>
+        <tr><td>FAQ's</td><td class="accion"><span class="tag mantiene">rehace</span></td>
+          <td>Buscable, por categorías, con schema FAQ para Google.</td></tr>
+        <tr><td>—</td><td class="accion"><span class="tag nueva">nueva</span></td>
+          <td><strong>Blog / Guías de Punta Cana</strong>: índice + plantilla de artículo. Hoy el sitio no tiene ninguna vía de captación orgánica que no sea la home.</td></tr>
+      </table>
+    </div>
+  </header>
+
+  <!-- ================= PARTE A: COMERCIALES ================= -->
+  <h2 class="parte"><span class="mono">Parte A · Peso comercial</span>Eventos, bodas, MICE, nosotros y reserva directa
+    <span class="meta-p">Segunda línea de negocio (ticket alto, decisión larga) + las dos páginas que sostienen el argumento de venta.</span></h2>
+
+  <!-- A1 · EVENTOS HUB -->
+  <section class="fila">
+    <div class="wire">
+      <div class="zona">
+        <p class="meta">Inicio / Eventos</p>
+        <div class="grid-2" style="margin-top:8px; align-items:center;">
+          <div>
+            <p class="etq">Eventos privados a bordo</p>
+            <h2 class="h-wire" style="font-size:26px;">Celebrarlo en el mar cambia el recuerdo</h2>
+            <p class="sub-wire" style="font-size:13px;">Catamarán privado para tu grupo: comida hecha
+            a bordo, barra, música y una tripulación que se encarga de todo. De 10 a 120 personas.</p>
+            <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
+              <span class="btn-w">Pedir cotización</span>
+              <span class="btn-w2">💬 WhatsApp directo</span>
+            </div>
+            <p class="meta" style="margin-top:8px;">Respuesta en menos de 24 h · Desde US$ 55/persona</p>
+          </div>
+          <div class="img" style="min-height:190px;">Foto — brindis a bordo</div>
+        </div>
+      </div>
+      <div class="zona strip">
+        <span class="dato"><strong>120</strong> personas máx.</span>
+        <span class="dato"><strong>3-4 h</strong> de navegación</span>
+        <span class="dato"><strong>91.607</strong> invitados felices</span>
+        <span class="meta">[WeddingWire Couples' Choice 18-21] [TripAdvisor #1]</span>
+      </div>
+      <div class="zona">
+        <p class="etq">¿Qué celebras?</p>
+        <div class="grid-3">
+          <div class="card"><div class="img">Foto</div><div class="cuerpo">
+            <strong>Bodas y pre-boda</strong><span class="meta">Ceremonia, welcome party o despedida
+            del grupo.</span><div class="pie"><span class="btn-w2">Ver bodas →</span></div></div></div>
+          <div class="card"><div class="img">Foto</div><div class="cuerpo">
+            <strong>Corporativo / MICE</strong><span class="meta">Incentivos, team building, cierres
+            de convención.</span><div class="pie"><span class="btn-w2">Ver MICE →</span></div></div></div>
+          <div class="card"><div class="img">Foto</div><div class="cuerpo">
+            <strong>Cumpleaños</strong><span class="meta">Decoración, pastel y la playlist que
+            elijas.</span><div class="pie"><span class="btn-w2">Cotizar →</span></div></div></div>
+          <div class="card"><div class="img">Foto</div><div class="cuerpo">
+            <strong>Aniversarios</strong><span class="meta">Íntimo o con toda la familia.</span>
+            <div class="pie"><span class="btn-w2">Cotizar →</span></div></div></div>
+          <div class="card"><div class="img">Foto</div><div class="cuerpo">
+            <strong>Despedidas de soltero/a</strong><span class="meta">Barco entero, solo tu grupo.</span>
+            <div class="pie"><span class="btn-w2">Cotizar →</span></div></div></div>
+          <div class="card"><div class="img">Foto</div><div class="cuerpo">
+            <strong>Reuniones familiares</strong><span class="meta">Multi-generación: niños y abuelos
+            a bordo.</span><div class="pie"><span class="btn-w2">Cotizar →</span></div></div></div>
+        </div>
+      </div>
+      <div class="zona">
+        <p class="etq">Cómo funciona</p>
+        <div class="pasos" style="margin-bottom:12px;">
+          <span class="p act"><span class="n">1</span> Nos cuentas tu evento</span><span class="sep"></span>
+          <span class="p"><span class="n">2</span> Cotización en 24 h</span><span class="sep"></span>
+          <span class="p"><span class="n">3</span> Ajustamos el detalle</span><span class="sep"></span>
+          <span class="p"><span class="n">4</span> Reserva con depósito</span>
+        </div>
+        <div class="grid-4">
+          <div class="benef"><h4>Barco entero</h4><p>Solo tu grupo. Sin desconocidos a bordo.</p></div>
+          <div class="benef"><h4>Comida a bordo</h4><p>Menú a medida desde la cocina flotante.</p></div>
+          <div class="benef"><h4>Barra y música</h4><p>Tu playlist o DJ. Barra abierta opcional.</p></div>
+          <div class="benef"><h4>Coordinación</h4><p>Una persona dedicada de principio a fin.</p></div>
+        </div>
+      </div>
+      <div class="zona grid-2" style="align-items:start;">
+        <div>
+          <p class="etq">Cuéntanos tu evento</p>
+          <div class="form-grid">
+            <div class="campo"><label>Nombre</label><div class="input"></div></div>
+            <div class="campo"><label>Email</label><div class="input"></div></div>
+            <div class="campo"><label>WhatsApp</label><div class="input">🇺🇸 +1 ▾</div></div>
+            <div class="campo"><label>Tipo de evento</label><div class="input">Boda ▾</div></div>
+            <div class="campo"><label>Fecha (aprox.)</label><div class="input">📅</div></div>
+            <div class="campo"><label>Nº de invitados</label><div class="input">— +</div></div>
+          </div>
+          <div class="campo" style="margin-top:10px;"><label>¿Qué tienes en mente?</label>
+            <div class="input alto">Horario, decoración, menú, música…</div></div>
+          <span class="btn-w btn-block" style="margin-top:12px;">Pedir mi cotización</span>
+          <p class="meta" style="text-align:center; margin-top:6px;">Te respondemos en menos de 24 h.
+          ¿Con prisa? Escríbenos por WhatsApp.</p>
+        </div>
+        <div>
+          <p class="etq">Lo que dicen los grupos</p>
+          <div class="quote" style="margin-bottom:10px;"><p>"Quote de una boda / evento corporativo real."</p>
+            <span class="meta">★★★★★ · WeddingWire · 2025</span></div>
+          <div class="img" style="height:120px;">Galería de eventos (8-10 fotos)</div>
+          <p class="meta" style="margin-top:8px;">Ver galería completa de eventos →</p>
+        </div>
+      </div>
+    </div>
+    <aside class="nota">
+      <h3><span class="pin">A1</span> Eventos — el hub</h3>
+      <p class="url">/eventos</p>
+      <p><strong>La página madre de la segunda línea de negocio.</strong> Hoy los eventos están
+      dispersos: 4 tarjetas sueltas en la home (cumpleaños, bodas, aniversarios, despedidas)
+      + una página Events + Weddings + MICE, sin conexión entre sí.</p>
+      <p>Las 6 ocasiones en un grid: bodas y MICE llevan a su landing propia; las otras 4
+      abren el mismo formulario con el tipo pre-seleccionado.</p>
+      <p><strong>"Cómo funciona" en 4 pasos</strong> baja la ansiedad de un producto sin precio
+      cerrado: el visitante entiende que pedir cotización no le compromete.</p>
+      <p>El formulario es el mismo que ya existe (tipo, fecha, nº personas) pero con
+      <strong>promesa de respuesta explícita: "menos de 24 h"</strong> — hoy no dice nada, y el
+      silencio mata la conversión B2B.</p>
+    </aside>
+  </section>
+
+  <!-- A2 · BODAS -->
+  <section class="fila">
+    <div class="wire">
+      <div class="zona">
+        <p class="meta">Inicio / Eventos / Bodas</p>
+        <div class="grid-2" style="margin-top:8px; align-items:center;">
+          <div>
+            <p class="etq">Bodas y celebraciones nupciales</p>
+            <h2 class="h-wire" style="font-size:26px;">Vuestro "sí" con el Caribe de fondo</h2>
+            <p class="sub-wire" style="font-size:13px;">Ceremonia a bordo, welcome party para los
+            invitados que llegan, o la despedida del grupo el último día. El barco es vuestro.</p>
+            <div style="display:flex; gap:12px; align-items:center; margin-top:12px; flex-wrap:wrap;">
+              <span class="stars">★★★★★</span>
+              <span class="meta"><strong>Couples' Choice WeddingWire 2018-2021</strong></span>
+            </div>
+            <span class="btn-w" style="margin-top:12px;">Pedir cotización de boda</span>
+          </div>
+          <div class="img" style="min-height:200px;">Foto — pareja en cubierta</div>
+        </div>
+      </div>
+      <div class="zona">
+        <p class="etq">Tres momentos, tres formatos</p>
+        <div class="grid-3">
+          <div class="card"><div class="img">Foto</div><div class="cuerpo">
+            <strong>Ceremonia a bordo</strong>
+            <span class="meta">Íntima, hasta 40 invitados. Decoración, oficiante y brindis.</span></div></div>
+          <div class="card"><div class="img">Foto</div><div class="cuerpo">
+            <strong>Welcome party</strong>
+            <span class="meta">Rompe el hielo entre las dos familias el día antes.</span></div></div>
+          <div class="card"><div class="img">Foto</div><div class="cuerpo">
+            <strong>Despedida del grupo</strong>
+            <span class="meta">El último día, todos juntos, sin protocolo.</span></div></div>
+        </div>
+      </div>
+      <div class="zona grid-2" style="align-items:start;">
+        <div>
+          <p class="etq">Qué incluye</p>
+          <div class="grid-2">
+            <div class="benef"><h4>Barco privado</h4><p>Hasta 120 personas.</p></div>
+            <div class="benef"><h4>Menú a medida</h4><p>Con la novia/novio, no de catálogo.</p></div>
+            <div class="benef"><h4>Decoración</h4><p>Flores, arco, telas — coordinado.</p></div>
+            <div class="benef"><h4>Fotografía</h4><p>Fotógrafo a bordo (opcional).</p></div>
+            <div class="benef"><h4>Barra abierta</h4><p>Cóctel de bienvenida en coco.</p></div>
+            <div class="benef"><h4>Coordinadora</h4><p>Una persona vuestra de principio a fin.</p></div>
+          </div>
+          <p class="meta" style="margin-top:8px;">Trabajamos con los wedding planners de la zona.
+          ¿Ya tenéis uno? Nos coordinamos con él.</p>
+        </div>
+        <div>
+          <p class="etq">Bodas reales</p>
+          <div class="img" style="height:150px;">Galería de bodas (mosaico)</div>
+          <div class="quote" style="margin-top:10px;"><p>"Quote de una pareja real — la boda que
+          mejor cuente la coordinación y el trato."</p>
+          <span class="meta">★★★★★ · WeddingWire</span></div>
+        </div>
+      </div>
+      <div class="zona banda-cta">
+        <div><h3 class="h-wire" style="font-size:18px;">Contadnos vuestra fecha</h3>
+          <p class="meta" style="margin:4px 0 0;">Respuesta en menos de 24 h · Sin compromiso</p></div>
+        <div style="display:flex; gap:10px;">
+          <span class="btn-w">Pedir cotización</span><span class="btn-w2">💬 WhatsApp</span>
+        </div>
+      </div>
+    </div>
+    <aside class="nota">
+      <h3><span class="pin">A2</span> Bodas — el ticket más alto</h3>
+      <p class="url">/eventos/bodas</p>
+      <p>El activo desperdiciado: <strong>4 años seguidos de Couples' Choice en WeddingWire</strong>,
+      hoy un logo pixelado en una fila de badges. Aquí es el titular de credibilidad.</p>
+      <p>Insight de producto: el negocio no es solo "casarse a bordo" — son <strong>los tres
+      momentos alrededor de una destination wedding</strong> (welcome party, ceremonia, despedida).
+      Vender los tres multiplica las oportunidades por boda.</p>
+      <p>Mención explícita a los <strong>wedding planners de la zona</strong>: son el canal de
+      recomendación real en Punta Cana, y hoy la web no les habla.</p>
+      <p>Copy en plural ("vuestro", "contadnos") — se le habla a una pareja, no a un usuario.</p>
+    </aside>
+  </section>
+
+  <!-- A3 · MICE -->
+  <section class="fila">
+    <div class="wire">
+      <div class="zona">
+        <p class="meta">Inicio / Eventos / Empresas</p>
+        <div class="grid-2" style="margin-top:8px; align-items:center;">
+          <div>
+            <p class="etq">MICE · Grupos corporativos</p>
+            <h2 class="h-wire" style="font-size:26px;">La actividad que sí recuerdan de la convención</h2>
+            <p class="sub-wire" style="font-size:13px;">Incentivos, team building y cierres de evento
+            en catamarán privado. Coordinación con tu DMC o directamente contigo.</p>
+            <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
+              <span class="btn-w">Solicitar propuesta</span>
+              <span class="btn-w2">⬇ Dossier corporativo (PDF)</span>
+            </div>
+          </div>
+          <div class="img" style="min-height:190px;">Foto — grupo corporativo a bordo</div>
+        </div>
+      </div>
+      <div class="zona strip">
+        <span class="dato"><strong>120</strong> pax por barco</span>
+        <span class="dato"><strong>Multi-barco</strong> para grupos mayores</span>
+        <span class="dato"><strong>Factura</strong> fiscal RD / internacional</span>
+        <span class="dato"><strong>Seguro</strong> y permisos al día</span>
+      </div>
+      <div class="zona">
+        <p class="etq">Formatos</p>
+        <div class="grid-3">
+          <div class="card"><div class="img">Foto</div><div class="cuerpo"><strong>Incentivo</strong>
+            <span class="meta">El premio del año para el equipo comercial.</span></div></div>
+          <div class="card"><div class="img">Foto</div><div class="cuerpo"><strong>Team building</strong>
+            <span class="meta">Regata, retos de snorkel, dinámicas a bordo.</span></div></div>
+          <div class="card"><div class="img">Foto</div><div class="cuerpo"><strong>Cierre de convención</strong>
+            <span class="meta">Cóctel de despedida navegando al atardecer.</span></div></div>
+        </div>
+      </div>
+      <div class="zona">
+        <p class="etq">Lo que un organizador necesita saber</p>
+        <div class="grid-4">
+          <div class="benef"><h4>Capacidad y flota</h4><p>Nº de barcos, aforo real por embarcación.</p></div>
+          <div class="benef"><h4>Plan B por clima</h4><p>Política de reprogramación por escrito.</p></div>
+          <div class="benef"><h4>Logística</h4><p>Traslados desde los hoteles sede, horarios cerrados.</p></div>
+          <div class="benef"><h4>Facturación</h4><p>Condiciones de pago corporativas y factura formal.</p></div>
+        </div>
+      </div>
+      <div class="zona grid-2" style="align-items:start;">
+        <div>
+          <p class="etq">Solicita tu propuesta</p>
+          <div class="form-grid">
+            <div class="campo"><label>Empresa / DMC</label><div class="input"></div></div>
+            <div class="campo"><label>Contacto</label><div class="input"></div></div>
+            <div class="campo"><label>Email corporativo</label><div class="input"></div></div>
+            <div class="campo"><label>Teléfono</label><div class="input"></div></div>
+            <div class="campo"><label>Nº de participantes</label><div class="input"></div></div>
+            <div class="campo"><label>Fechas</label><div class="input">📅 rango</div></div>
+          </div>
+          <div class="campo" style="margin-top:10px;"><label>Objetivo del evento</label>
+            <div class="input alto">Incentivo, team building, cierre…</div></div>
+          <span class="btn-w btn-block" style="margin-top:12px;">Enviar solicitud</span>
+        </div>
+        <div>
+          <p class="etq">Han navegado con nosotros</p>
+          <div class="grid-3">
+            <div class="img" style="height:44px;">Logo</div><div class="img" style="height:44px;">Logo</div>
+            <div class="img" style="height:44px;">Logo</div><div class="img" style="height:44px;">Logo</div>
+            <div class="img" style="height:44px;">Logo</div><div class="img" style="height:44px;">Logo</div>
+          </div>
+          <div class="quote" style="margin-top:10px;"><p>"Quote de un organizador / DMC."</p>
+            <span class="meta">Nombre · Cargo · Empresa</span></div>
+        </div>
+      </div>
+    </div>
+    <aside class="nota">
+      <h3><span class="pin">A3</span> MICE — el único público B2B</h3>
+      <p class="url">/eventos/empresas</p>
+      <p>Aquí <strong>no decide un turista, decide un organizador</strong> que responde ante su
+      jefe. El copy cambia de emocional a operativo: aforo, plan B por clima, seguros,
+      facturación, logística de traslados. Eso es lo que le hace elegirte.</p>
+      <p><strong>Dossier PDF descargable</strong> = el activo que un organizador reenvía por
+      email a su comité. Hoy el sitio tiene un PDF ("Quick Guide") pero para turistas.</p>
+      <p>Logos de empresas y quote de un DMC: la prueba social B2B es distinta de las
+      estrellas de TripAdvisor.</p>
+      <p><strong>Dato a pedir al cliente:</strong> ¿pueden operar multi-barco? Es lo que abre
+      grupos de 200+ y hoy no se comunica.</p>
+    </aside>
+  </section>
+
+  <!-- A4 · NOSOTROS -->
+  <section class="fila">
+    <div class="wire">
+      <div class="zona">
+        <p class="meta">Inicio / Nosotros</p>
+        <div class="grid-2" style="margin-top:8px; align-items:center;">
+          <div>
+            <p class="etq">Nosotros</p>
+            <h2 class="h-wire" style="font-size:26px;">Los que llevamos 4.454 días saliendo a navegar</h2>
+            <p class="sub-wire" style="font-size:13px;">Hispaniola nació para hacer lo contrario del
+            tour masificado: barcos a media capacidad, comida hecha a bordo y un arrecife que
+            estamos reconstruyendo con nuestras manos.</p>
+          </div>
+          <div class="img" style="min-height:180px;">Foto — la tripulación completa</div>
+        </div>
+        <p class="meta" style="margin-top:12px;">Anclas: La tripulación · La flota · La fundación</p>
+      </div>
+      <div class="zona strip">
+        <span class="dato"><strong>4.454</strong> días navegados</span>
+        <span class="dato"><strong>91.607</strong> clientes</span>
+        <span class="dato"><strong>#1</strong> TripAdvisor · 7 años</span>
+        <span class="dato"><strong>2016</strong> plantando coral</span>
+      </div>
+      <div class="zona">
+        <p class="etq" id="crew">La tripulación</p>
+        <p class="sub-wire" style="font-size:13px; margin-bottom:12px;">No somos un call center con
+        barcos. Estas son las caras que te van a recibir en el muelle.</p>
+        <div class="grid-4">
+          <div class="crew"><div class="img">Foto</div><strong>Nombre</strong><span>Capitán</span></div>
+          <div class="crew"><div class="img">Foto</div><strong>Nombre</strong><span>Bióloga marina</span></div>
+          <div class="crew"><div class="img">Foto</div><strong>Nombre</strong><span>Chef a bordo</span></div>
+          <div class="crew"><div class="img">Foto</div><strong>Nombre</strong><span>Guía de snorkel</span></div>
+        </div>
+      </div>
+      <div class="zona">
+        <p class="etq" id="fleet">La flota</p>
+        <div class="grid-3">
+          <div class="card"><div class="img">Foto barco</div><div class="cuerpo">
+            <strong>Catamarán [nombre]</strong>
+            <span class="meta">Aforo 70 · Reservamos máx. 25 · 1 baño · WiFi · tobogán</span></div></div>
+          <div class="card"><div class="img">Foto barco</div><div class="cuerpo">
+            <strong>Catamarán [nombre]</strong>
+            <span class="meta">Aforo 120 · Privados y eventos · 1 baño · cocina flotante</span></div></div>
+          <div class="card"><div class="img">Foto barco</div><div class="cuerpo">
+            <strong>La cocina flotante</strong>
+            <span class="meta">Nuestra plataforma de cocina: comida recién hecha en medio del mar.</span></div></div>
+        </div>
+      </div>
+      <div class="zona grid-2" style="align-items:start;">
+        <div>
+          <p class="etq" id="foundation">La fundación</p>
+          <h3 class="h-wire" style="font-size:17px;">Ecological Bavaro Reefs</h3>
+          <ul class="tl">
+            <li><span class="hora">2016</span><span class="punto"></span>
+              <div><h4>Empezamos a plantar</h4><p>Primeras estructuras artificiales de arrecife.</p></div></li>
+            <li><span class="hora">Hoy</span><span class="punto"></span>
+              <div><h4>Top-3 de RD</h4><p>El Ministerio de Medio Ambiente lo reconoce entre los 3 mayores
+              proyectos de jardinería de coral del país.</p></div></li>
+            <li><span class="hora">Cada tour</span><span class="punto"></span>
+              <div><h4>Tú lo visitas</h4><p>El snorkel del tour ocurre EN el vivero. Nuestra bióloga te
+              explica qué estás viendo.</p></div></li>
+          </ul>
+          <span class="btn-w2" style="margin-top:8px;">Ver Sostenibilidad →</span>
+        </div>
+        <div class="img" style="min-height:230px;">Foto — vivero de coral / bióloga trabajando</div>
+      </div>
+      <div class="zona banda-cta">
+        <h3 class="h-wire" style="font-size:18px;">¿Vienes a navegar con nosotros?</h3>
+        <span class="btn-w">Ver tours</span>
+      </div>
+    </div>
+    <aside class="nota">
+      <h3><span class="pin">A4</span> Nosotros — con anclas, no 3 páginas</h3>
+      <p class="url">/nosotros <span class="meta">(#tripulacion #flota #fundacion)</span></p>
+      <p>Hoy los 3 sub-ítems del menú apuntan a la misma página y <strong>dos de ellos al mismo
+      ancla roto</strong> (Our Fleet → #OurCrew). Una página, tres anclas reales.</p>
+      <p><strong>La tripulación con cara y nombre</strong> es lo que convierte "un tour" en "esta
+      gente". La bióloga marina es un personaje de marca, no una línea de texto.</p>
+      <p>La flota con datos honestos: <strong>"aforo 70, reservamos máx. 25"</strong> — así se
+      demuestra el diferenciador de grupos pequeños en vez de afirmarlo.</p>
+      <p>La fundación se resume aquí y se desarrolla en Sostenibilidad (B1).</p>
+    </aside>
+  </section>
+
+  <!-- A5 · RESERVA DIRECTA -->
+  <section class="fila">
+    <div class="wire">
+      <div class="zona">
+        <p class="meta">Inicio / Reserva directa</p>
+        <h2 class="h-wire" style="font-size:26px; margin-top:8px;">Lo mismo cuesta igual. Aquí incluye más.</h2>
+        <p class="sub-wire" style="font-size:13px;">Nos vas a encontrar en Viator, TripAdvisor y en la
+        recepción de tu hotel. El precio es el mismo. La diferencia es lo que pasa cuando reservas
+        con nosotros directamente.</p>
+      </div>
+      <div class="zona">
+        <div class="scroll-x">
+          <table class="vs">
+            <tr><th style="width:34%;"></th><th class="destaca">Reservando aquí</th>
+              <th>Portal / agencia / recepción</th></tr>
+            <tr><td>Precio del tour</td><td class="si">US$ 114</td><td class="no">US$ 114 — igual</td></tr>
+            <tr><td>Pagas hoy</td><td class="si">Solo 25% (US$ 28,50)</td><td class="no">100% por adelantado</td></tr>
+            <tr><td>El resto</td><td class="si">En efectivo a bordo, con 5% de descuento</td><td class="no">—</td></tr>
+            <tr><td>Eliges tu plato</td><td class="si">Sí, uno por persona, con foto</td><td class="no">No</td></tr>
+            <tr><td>Cambios de última hora</td><td class="si">Por WhatsApp con el equipo del barco</td>
+              <td class="no">Formulario / call center</td></tr>
+            <tr><td>Cliente repetidor</td><td class="si">5% de descuento</td><td class="no">No aplica</td></tr>
+            <tr><td>Reservas con 30+ días</td><td class="si">5% de descuento</td><td class="no">No aplica</td></tr>
+            <tr><td>Mal clima</td><td class="si">Reembolso total o cambio de fecha</td>
+              <td class="no">Según política del portal</td></tr>
+          </table>
+        </div>
+        <p class="meta" style="margin-top:8px;">Los descuentos son acumulables hasta un máximo del 15%.</p>
+      </div>
+      <div class="zona">
+        <p class="etq">Y además, lo de siempre</p>
+        <div class="grid-4">
+          <div class="benef"><h4>Cancelación gratis</h4><p>Hasta 7 días antes, sin preguntas.</p></div>
+          <div class="benef"><h4>Confirmación instantánea</h4><p>Voucher al email y al WhatsApp.</p></div>
+          <div class="benef"><h4>Pago seguro</h4><p>Stripe. Tarjeta o PayPal.</p></div>
+          <div class="benef"><h4>Somos el operador</h4><p>No un intermediario: el barco es nuestro.</p></div>
+        </div>
+      </div>
+      <div class="zona banda-cta">
+        <h3 class="h-wire" style="font-size:18px;">Reserva directo y paga solo el 25% hoy</h3>
+        <span class="btn-w">Ver disponibilidad</span>
+      </div>
+    </div>
+    <aside class="nota">
+      <h3><span class="pin">A5</span> Reserva directa <span class="tag fusion">fusión</span></h3>
+      <p class="url">/reserva-directa <span class="meta">(fusiona why-book-with-us + competitive-advantage)</span></p>
+      <p><strong>La página más importante de esta entrega.</strong> El hallazgo central del
+      benchmark: Viator vende el mismo tour al mismo precio ($114) y la web no da ni una
+      razón visible para reservar directo.</p>
+      <p>La tabla comparativa es <strong>honesta con el precio</strong> ("cuesta igual") y por eso
+      es creíble cuando enumera lo que cambia. Ese es el tono que convierte.</p>
+      <p>Hoy esto vive en <strong>dos páginas distintas que dicen lo mismo</strong>, y una de
+      ellas solo se alcanza desde un badge naranja tipo sticker en el hero. Se fusionan y
+      se enlazan desde home, fichas y checkout.</p>
+      <p><strong>Verificar con el cliente</strong> si los descuentos (5+5+5) son realmente
+      acumulables y hasta qué tope.</p>
+    </aside>
+  </section>
+
+  <!-- ================= PARTE B: SOPORTE ================= -->
+  <h2 class="parte"><span class="mono">Parte B · Soporte</span>Sostenibilidad, contacto, agentes, FAQ, blog
+    <span class="meta-p">No venden directamente, pero sostienen la confianza y traen el tráfico orgánico. Se diseñan con el mismo cuidado.</span></h2>
+
+  <!-- B1 · SOSTENIBILIDAD -->
+  <section class="fila">
+    <div class="wire">
+      <div class="zona">
+        <p class="meta">Inicio / Sostenibilidad</p>
+        <div class="grid-2" style="margin-top:8px; align-items:center;">
+          <div>
+            <p class="etq">Sostenibilidad</p>
+            <h2 class="h-wire" style="font-size:26px;">Llevamos gente al arrecife que estamos reconstruyendo</h2>
+            <p class="sub-wire" style="font-size:13px;">No es un sello en el pie de página. Es el
+            sitio exacto donde haces snorkel en nuestros tours.</p>
+          </div>
+          <div class="img" style="min-height:190px;">Foto — coral plantado, antes/después</div>
+        </div>
+      </div>
+      <div class="zona strip">
+        <span class="dato"><strong>2016</strong> primer coral plantado</span>
+        <span class="dato"><strong>Top 3</strong> proyectos de RD</span>
+        <span class="dato"><strong>0</strong> plástico a bordo</span>
+        <span class="dato"><strong>[N]</strong> corales vivos <span class="meta">← dato a pedir</span></span>
+      </div>
+      <div class="zona grid-2" style="align-items:start;">
+        <div>
+          <p class="etq">Ecological Bavaro Reefs</p>
+          <p class="sub-wire" style="font-size:13px;">Qué es la jardinería de coral, cómo se planta,
+          por qué funciona. Explicado por nuestra bióloga marina en 3-4 párrafos cortos con
+          fotos del proceso — no un muro de texto.</p>
+          <div class="grid-3" style="margin-top:12px;">
+            <div class="img" style="height:70px;">Vivero</div>
+            <div class="img" style="height:70px;">Plantado</div>
+            <div class="img" style="height:70px;">Crecido</div>
+          </div>
+          <p class="meta" style="margin-top:8px;">Reconocido por el Ministerio de Medio Ambiente
+          de la República Dominicana.</p>
+        </div>
+        <div>
+          <p class="etq">Lo que hacemos a bordo</p>
+          <div class="grid-2">
+            <div class="benef"><h4>Cero plástico</h4><p>El coco-loco va en un coco de verdad. Nada
+            desechable.</p></div>
+            <div class="benef"><h4>Protector biodegradable</h4><p>Te lo pedimos antes de entrar al agua
+            — el químico mata el coral.</p></div>
+            <div class="benef"><h4>Snorkel sin tocar</h4><p>Briefing obligatorio: se mira, no se pisa.</p></div>
+            <div class="benef"><h4>Limpieza de playa</h4><p>Jornadas con la comunidad de Bávaro.</p></div>
+          </div>
+        </div>
+      </div>
+      <div class="zona banda-cta">
+        <div><h3 class="h-wire" style="font-size:18px;">Ven a ver el arrecife</h3>
+          <p class="meta" style="margin:4px 0 0;">Todos nuestros tours de snorkel paran en el vivero.</p></div>
+        <span class="btn-w">Ver tours</span>
+      </div>
+    </div>
+    <aside class="nota">
+      <h3><span class="pin">B1</span> Sostenibilidad — de sello a prueba</h3>
+      <p class="url">/sostenibilidad <span class="meta">(absorbe "Our Foundation")</span></p>
+      <p>Hoy "ECO FRIENDLY / NO PLASTIC" es una <strong>banda decorativa repetida en todas
+      las páginas</strong>. Eso es greenwashing visual. La sustancia real (proyecto top-3 del
+      país, avalado por el Ministerio) merece la página.</p>
+      <p>El giro clave del copy: <strong>la sostenibilidad no es un extra moral, es parte del
+      producto</strong> — el arrecife que reconstruyes es donde el cliente hace snorkel. Por eso
+      la página cierra vendiendo tours, sin cinismo.</p>
+      <p><strong>Datos a pedir al cliente:</strong> nº de corales plantados, m² restaurados,
+      especies. Un número real vale más que tres párrafos.</p>
+    </aside>
+  </section>
+
+  <!-- B2 · CONTACTO -->
+  <section class="fila">
+    <div class="wire">
+      <div class="zona">
+        <p class="meta">Inicio / Contacto</p>
+        <h2 class="h-wire" style="font-size:24px; margin-top:8px;">Hablas con nosotros, no con un call center</h2>
+      </div>
+      <div class="zona grid-3">
+        <div class="benef"><h4>💬 WhatsApp — lo más rápido</h4>
+          <p>+1-829-305-2804 · Respondemos en minutos, 8:00-20:00 (GMT-4).</p>
+          <span class="btn-w" style="margin-top:8px;">Abrir WhatsApp</span></div>
+        <div class="benef"><h4>☎ Teléfono</h4>
+          <p>Toll free EE.UU./Canadá: 1-800-657-0016<br>Local RD: +1-829-305-2804</p></div>
+        <div class="benef"><h4>✉ Email</h4>
+          <p>Para cotizaciones de eventos y agencias. Respuesta en menos de 24 h.</p></div>
+      </div>
+      <div class="zona grid-2" style="align-items:start;">
+        <div>
+          <p class="etq">Escríbenos</p>
+          <div class="form-grid">
+            <div class="campo"><label>Nombre</label><div class="input"></div></div>
+            <div class="campo"><label>Email</label><div class="input"></div></div>
+          </div>
+          <div class="campo" style="margin-top:10px;"><label>¿Sobre qué?</label>
+            <div class="input">Reserva existente · Nuevo tour · Evento · Agencia · Otro ▾</div></div>
+          <div class="campo" style="margin-top:10px;"><label>Mensaje</label>
+            <div class="input alto"></div></div>
+          <span class="btn-w btn-block" style="margin-top:12px;">Enviar mensaje</span>
+          <p class="meta" style="margin-top:8px;">¿Ya tienes una reserva? Ten a mano tu código
+          (HSP-XXXX-XXXX) y te ayudamos más rápido.</p>
+        </div>
+        <div>
+          <p class="etq">Dónde estamos</p>
+          <div class="img mapa">Mapa interactivo — Plaza Bibijagua, Bávaro</div>
+          <div class="benef" style="margin-top:10px;">
+            <h4>Plaza Bibijagua, Bávaro</h4>
+            <p>Punta Cana, República Dominicana.<br>
+            <strong>Ojo:</strong> esta es la oficina. El día del tour te recogemos en tu hotel —
+            no vengas aquí.</p>
+            <span class="btn-w2" style="margin-top:8px;">Cómo llegar →</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <aside class="nota">
+      <h3><span class="pin">B2</span> Contacto — WhatsApp primero</h3>
+      <p class="url">/contacto</p>
+      <p>El turista en destino <strong>no rellena formularios: abre WhatsApp</strong>. Es el canal
+      real del negocio (está en cada página) pero la página de contacto lo trata como
+      uno más. Aquí es la primera opción, con horario y promesa de respuesta.</p>
+      <p>El selector "¿Sobre qué?" <strong>enruta el mensaje</strong> (reserva existente vs evento
+      vs agencia) y de paso le pide el código de reserva — reduce el ida y vuelta.</p>
+      <p><strong>La aclaración "no vengas a la oficina, te recogemos en el hotel"</strong> parece
+      menor y evita un porcentaje real de incidencias el día del tour.</p>
+    </aside>
+  </section>
+
+  <!-- B3 · AGENTES -->
+  <section class="fila">
+    <div class="wire">
+      <div class="zona">
+        <p class="meta">Inicio / Agentes de viaje</p>
+        <div class="grid-2" style="margin-top:8px; align-items:center;">
+          <div>
+            <p class="etq">Travel Agents · Programa profesional</p>
+            <h2 class="h-wire" style="font-size:24px;">Vende una excursión por la que te den las gracias</h2>
+            <p class="sub-wire" style="font-size:13px;">Comisión, tarifas netas y un contacto real para
+            cuando tu cliente te escriba un domingo.</p>
+            <span class="btn-w" style="margin-top:12px;">Registrarme como agente</span>
+          </div>
+          <div class="img" style="min-height:170px;">Foto — clientes felices a bordo</div>
+        </div>
+      </div>
+      <div class="zona">
+        <p class="etq">Qué te damos</p>
+        <div class="grid-4">
+          <div class="benef"><h4>Comisión</h4><p>[%] por reserva confirmada. <span class="meta">← dato a
+            confirmar</span></p></div>
+          <div class="benef"><h4>Tarifas netas</h4><p>Precio neto para que tú pongas tu margen.</p></div>
+          <div class="benef"><h4>Material de venta</h4><p>Fotos, fichas y videos listos para tu cliente.</p></div>
+          <div class="benef"><h4>Contacto directo</h4><p>Un WhatsApp que te responde una persona.</p></div>
+        </div>
+      </div>
+      <div class="zona grid-2" style="align-items:start;">
+        <div>
+          <p class="etq">Registro de agencia</p>
+          <div class="form-grid">
+            <div class="campo"><label>Agencia</label><div class="input"></div></div>
+            <div class="campo"><label>Contacto</label><div class="input"></div></div>
+            <div class="campo"><label>Email</label><div class="input"></div></div>
+            <div class="campo"><label>WhatsApp</label><div class="input"></div></div>
+            <div class="campo"><label>País</label><div class="input">▾</div></div>
+            <div class="campo"><label>Web / IATA (opc.)</label><div class="input"></div></div>
+          </div>
+          <span class="btn-w btn-block" style="margin-top:12px;">Enviar registro</span>
+          <p class="meta" style="margin-top:6px;">Validamos tu agencia y te enviamos las tarifas
+          netas en menos de 48 h.</p>
+        </div>
+        <div>
+          <p class="etq">Cómo funciona</p>
+          <ul class="tl">
+            <li><span class="hora">1</span><span class="punto"></span>
+              <div><h4>Te registras</h4><p>Validamos la agencia.</p></div></li>
+            <li><span class="hora">2</span><span class="punto"></span>
+              <div><h4>Recibes tarifas</h4><p>Netas, con tu material de venta.</p></div></li>
+            <li><span class="hora">3</span><span class="punto"></span>
+              <div><h4>Reservas por tu canal</h4><p>Con tu código de agente.</p></div></li>
+            <li><span class="hora">4</span><span class="punto"></span>
+              <div><h4>Cobras tu comisión</h4><p>Liquidación mensual.</p></div></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <aside class="nota">
+      <h3><span class="pin">B3</span> Agentes de viaje</h3>
+      <p class="url">/agentes</p>
+      <p>Hoy es <strong>un formulario de registro sin ninguna propuesta de valor</strong>: le pides
+      datos a un profesional sin decirle qué gana. Nadie lo rellena.</p>
+      <p>El agente necesita 3 cosas: <strong>cuánto gano, a qué precio vendo, y quién me
+      atiende si algo sale mal.</strong> La página responde las tres antes del formulario.</p>
+      <p>Los concierges de hotel y los wedding planners de la zona son el mismo canal —
+      esta página también les habla a ellos.</p>
+      <p><strong>Datos a confirmar:</strong> % de comisión y si la liquidación es mensual.</p>
+    </aside>
+  </section>
+
+  <!-- B4 · FAQ -->
+  <section class="fila">
+    <div class="wire">
+      <div class="zona">
+        <p class="meta">Inicio / Preguntas frecuentes</p>
+        <h2 class="h-wire" style="font-size:24px; margin-top:8px;">Preguntas frecuentes</h2>
+        <div class="campo" style="margin-top:10px; max-width:420px;">
+          <div class="input">🔍 Busca tu pregunta…</div></div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;">
+          <span class="chip ok">Reservas y pagos</span><span class="chip">Antes del tour</span>
+          <span class="chip">A bordo</span><span class="chip">Comida</span>
+          <span class="chip">Clima y cancelaciones</span><span class="chip">Niños y accesibilidad</span>
+        </div>
+      </div>
+      <div class="zona">
+        <p class="etq">Reservas y pagos</p>
+        <div class="acc open"><strong>¿Puedo pagar solo una parte ahora?</strong><span>−</span></div>
+        <p class="acc-resp">Sí. Confirmas con el 25% y pagas el resto el día del tour, en efectivo
+        (con 5% de descuento) o con tarjeta desde tu voucher. → <u>Reserva directa</u></p>
+        <div class="acc"><span>¿Qué pasa si cancelo?</span><span>+</span></div>
+        <div class="acc"><span>¿Puedo cambiar la fecha?</span><span>+</span></div>
+        <div class="acc"><span>¿Cuánto efectivo debo llevar?</span><span>+</span></div>
+      </div>
+      <div class="zona">
+        <p class="etq">Clima y cancelaciones</p>
+        <div class="acc"><span>¿Y si llueve el día de mi tour?</span><span>+</span></div>
+        <div class="acc"><span>¿Se cancela por mar picado?</span><span>+</span></div>
+        <p class="meta" style="margin-top:8px;">[…resto de categorías con el mismo patrón]</p>
+      </div>
+      <div class="zona banda-cta">
+        <div><h3 class="h-wire" style="font-size:17px;">¿No está tu pregunta?</h3>
+          <p class="meta" style="margin:4px 0 0;">Escríbenos por WhatsApp — respondemos en minutos.</p></div>
+        <span class="btn-w">💬 Preguntar por WhatsApp</span>
+      </div>
+    </div>
+    <aside class="nota">
+      <h3><span class="pin">B4</span> FAQ — buscable y con schema</h3>
+      <p class="url">/faq</p>
+      <p>Buscador + categorías. La FAQ es una <strong>herramienta de conversión</strong>: cada
+      respuesta que despeja una objeción (clima, efectivo, niños) enlaza al tour o a
+      Reserva directa.</p>
+      <p><strong>Schema.org FAQPage</strong> obligatorio: es la forma más barata de aparecer en
+      los resultados enriquecidos de Google para "punta cana catamaran what to bring".</p>
+      <p>Las 4-5 preguntas más críticas se duplican <em>dentro</em> de cada ficha de tour
+      (ver wireframe A5 de la entrega anterior). Aquí vive el catálogo completo.</p>
+    </aside>
+  </section>
+
+  <!-- B5 · BLOG / TIPS -->
+  <section class="fila">
+    <div class="wire">
+      <div class="zona">
+        <p class="meta">Inicio / Guías de Punta Cana</p>
+        <h2 class="h-wire" style="font-size:24px; margin-top:8px;">Guías para no equivocarte con tu excursión</h2>
+        <p class="sub-wire" style="font-size:13px;">Escritas por gente que lleva 12 años en el agua
+        aquí. Sin humo comercial.</p>
+      </div>
+      <div class="zona">
+        <div class="grid-2" style="align-items:start;">
+          <div class="card">
+            <div class="img" style="height:130px;">Foto destacada</div>
+            <div class="cuerpo">
+              <span class="chip">Destacado</span>
+              <strong>Cómo elegir tour de catamarán en Punta Cana (y no acabar en un party boat de 200)</strong>
+              <span class="meta">La guía honesta: qué preguntar, qué señales de alarma, qué está
+              incluido de verdad. — 6 min de lectura</span>
+              <div class="pie"><span class="btn-w2">Leer guía →</span>
+                <span class="meta">⬇ También en PDF</span></div>
+            </div>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <div class="art-card"><div class="img">Foto</div><div class="cuerpo">
+              <strong style="font-size:13px;">Qué llevar a un tour de snorkel</strong>
+              <p class="meta" style="margin:4px 0 0;">Protector biodegradable, efectivo, y las 3 cosas
+              que todos olvidan.</p></div></div>
+            <div class="art-card"><div class="img">Foto</div><div class="cuerpo">
+              <strong style="font-size:13px;">Mejor época para navegar en Punta Cana</strong>
+              <p class="meta" style="margin:4px 0 0;">Mes a mes: mar, lluvia, veda de langosta.</p></div></div>
+            <div class="art-card"><div class="img">Foto</div><div class="cuerpo">
+              <strong style="font-size:13px;">Saona, Cabeza de Toro o piscina natural</strong>
+              <p class="meta" style="margin:4px 0 0;">Qué verás en cada una y cuál te conviene.</p></div></div>
+            <div class="art-card"><div class="img">Foto</div><div class="cuerpo">
+              <strong style="font-size:13px;">Snorkel por primera vez: no hace falta saber nadar</strong>
+              <p class="meta" style="margin:4px 0 0;">Cómo lo hacemos con principiantes.</p></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="zona banda-cta">
+        <div><h3 class="h-wire" style="font-size:17px;">¿Listo para reservar?</h3>
+          <p class="meta" style="margin:4px 0 0;">Todos nuestros tours, con cancelación gratis.</p></div>
+        <span class="btn-w">Ver tours</span>
+      </div>
+    </div>
+    <aside class="nota">
+      <h3><span class="pin">B5</span> Guías / Blog <span class="tag nueva">nueva</span></h3>
+      <p class="url">/guias <span class="meta">(absorbe "TIPS for Punta Cana")</span></p>
+      <p>El contenido ya existe: hay un PDF ("Quick Guide for Excursion Shopping") que hoy
+      se ofrece en un <strong>modal que interrumpe la home</strong>. Ese PDF es un buen artículo
+      disfrazado de pop-up molesto.</p>
+      <p>Convertido en <strong>guías indexables</strong>, se vuelve el motor SEO del sitio: capta al
+      turista que busca "qué llevar a un tour de snorkel" <em>antes</em> de haber elegido
+      operador, y lo lleva al funnel.</p>
+      <p>Cada artículo cierra con CTA al tour relevante. El PDF sigue existiendo como
+      descarga (captura de email), pero no asalta a nadie.</p>
+      <p><strong>Plantilla de artículo</strong>: hero + índice + cuerpo + CTA lateral al tour +
+      artículos relacionados.</p>
+    </aside>
+  </section>
+
+  <!-- CIERRE -->
+  <section class="fila">
+    <div class="wire">
+      <div class="zona">
+        <p class="etq">Cierre — lo que hay que preguntarle al cliente</p>
+        <div class="grid-3">
+          <div class="benef"><h4>Isla Saona</h4><p>Precio, duración y capacidad. Falta en toda la web
+            y sin eso no se puede cerrar la home ni la ficha.</p></div>
+          <div class="benef"><h4>MICE multi-barco</h4><p>¿Pueden operar 2+ barcos a la vez? Abre grupos
+            de 200+.</p></div>
+          <div class="benef"><h4>Comisión de agentes</h4><p>% y forma de liquidación.</p></div>
+          <div class="benef"><h4>Descuentos acumulables</h4><p>¿5+5+5 se suman? ¿Tope real?</p></div>
+          <div class="benef"><h4>Datos de la fundación</h4><p>Corales plantados, m² restaurados. Un
+            número real cambia la página.</p></div>
+          <div class="benef"><h4>Motor de reservas</h4><p><strong>La decisión crítica</strong>: ¿xpotours se
+            reemplaza, se re-skinea o se convive con él?</p></div>
+        </div>
+      </div>
+    </div>
+    <aside class="nota">
+      <h3><span class="pin">✓</span> Wireframes completos</h3>
+      <p>Con esta entrega el sitio entero está wireframeado: <strong>home + ficha de tour +
+      booking (4 pasos) + estas 11 páginas</strong>.</p>
+      <p>Lo que queda antes de Figma son <strong>datos del cliente</strong>, no decisiones de
+      diseño. Estos 6 huecos son los que pueden frenar el diseño visual.</p>
+    </aside>
+  </section>
+</div>
