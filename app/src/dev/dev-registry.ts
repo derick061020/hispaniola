@@ -51,6 +51,25 @@ export const devSections: DevSection[] = [
       },
     ],
   },
+  {
+    title: 'Home — Shell',
+    screens: [
+      {
+        title: 'Header + Footer',
+        route: '/',
+        status: 'done',
+        description:
+          'Topbar (WhatsApp + idiomas), nav con megamenús Tours/Eventos, dropdowns Nosotros/Ayuda, CTA Reservar, menú móvil con acordeón, y footer de 4 columnas.',
+        states: [
+          { label: 'Megamenú: Tours', kind: 'estado', to: '/?dev-mega=tours' },
+          { label: 'Megamenú: Eventos', kind: 'estado', to: '/?dev-mega=eventos' },
+          { label: 'Dropdown: Nosotros', kind: 'estado', to: '/?dev-mega=nosotros' },
+          { label: 'Dropdown: Ayuda', kind: 'estado', to: '/?dev-mega=ayuda' },
+          { label: 'Menú móvil abierto', kind: 'variante', to: '/?dev-movil=abierto', note: 'Ver mejor con el viewport en modo móvil.' },
+        ],
+      },
+    ],
+  },
 ]
 
 export function devStats() {
