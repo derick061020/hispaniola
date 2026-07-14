@@ -157,25 +157,38 @@ export function formatoDinero(n: number | null): string {
   return 'US$ ' + n.toLocaleString('en-US', { maximumFractionDigits: 2 })
 }
 
-export type TickerItem = { id: string; nombre: string; meta: string; foto: string }
+/** Card del ticker del hero. Son DOS especies, no una: el tour se compra (tiene
+ *  precio, duración y aforo) y la ocasión se cotiza (no tiene precio publicado).
+ *  La unión discriminada lo hace explícito → 2 variantes del componente Figma. */
+export type TickerItem =
+  | {
+      tipo: 'tour'
+      id: string
+      nombre: string
+      foto: string
+      /** null = sin precio publicado (Isla Saona) */
+      precioDesde: number | null
+      duracion: string
+      /** null = sin tope publicado */
+      maxPax: number | null
+    }
+  | { tipo: 'ocasion'; id: string; nombre: string; foto: string }
+
+export type TickerTour = Extract<TickerItem, { tipo: 'tour' }>
 
 // Ticker del hero (v3): los 4 tours + las 6 ocasiones, todo lo que lleva a
 // una ficha propia (PLAN-v3.md §7). Reemplaza a la baraja de v2.
 export const TICKER_ITEMS: TickerItem[] = [
   ...TOURS.map(
     (t): TickerItem => ({
+      tipo: 'tour',
       id: t.slug,
       nombre: t.nombre,
-      meta: t.precioLight !== null ? `Desde ${formatoDinero(t.precioLight)} · ${t.duracionCorta}` : t.duracionCorta,
       foto: t.foto,
+      precioDesde: t.precioLight,
+      duracion: t.duracionCorta,
+      maxPax: t.maxPax,
     }),
   ),
-  ...OCASIONES.map(
-    (o): TickerItem => ({
-      id: o.tipo,
-      nombre: o.nombre,
-      meta: 'Evento privado',
-      foto: o.foto,
-    }),
-  ),
+  ...OCASIONES.map((o): TickerItem => ({ tipo: 'ocasion', id: o.tipo, nombre: o.nombre, foto: o.foto })),
 ]

@@ -69,6 +69,9 @@
   /* v2: el hero deja de ir a sangre y vive en un contenedor redondeado
      (refs Journeo y Vacationeeze). */
   --radius-hero: 1.75rem; /* 28px */
+  /* v3: notch del header (estilo MacBook) — radio de las esquinas de abajo
+     del notch Y del "amague" cóncavo de arriba, ver componentes.css. */
+  --radius-notch: 1.25rem; /* 20px */
   --radius-foto: 0.375rem; /* 6px — foto dentro del passe-partout del photo-stack */
 
   /* ---------- Sombra (regla B: sombra suave, a diferencia de Eventus/Synexia) --- */
@@ -95,7 +98,25 @@
 
   /* Medidas de las cards del ticker. */
   --spacing-ticker-alto: 4.25rem; /* 68px */
+  --spacing-ticker-ancho: 18rem; /* 288px — cabe "Desde US$ 55 · 3-4 h · máx. 120" sin cortar */
   --spacing-ticker-gap: 1rem;
+  /* Aire vertical del wrapper (antes solo para shadow-card; PLAN-v3.md §10.3
+     §2 subió el valor: una card a --ticker-dock-escala-max crece y su sombra
+     escala con ella, así que ahora tiene que caber TAMBIÉN eso). */
+  --spacing-ticker-aire: 2.5rem; /* 40px */
+
+  /* Hover "dock" del ticker (PLAN-v3.md §10) — FUENTE del prototipo de Figma
+     (mismo trato que --ticker-duracion): estas constantes son las que definen
+     la curva, no números sueltos en el hook.
+     La curva es NÚCLEO (estrecho, se lleva el grueso → el hover manda) +
+     HOMBRO (ancho y bajo → las vecinas lejanas acompañan en sordina). Una sola
+     campana no vale: es plana en el pico y la vecina inmediata empataba con el
+     hover (§10.1). */
+  --ticker-dock-escala-max: 1.12; /* escala de la card hovereada — sutil, no macOS real */
+  --ticker-dock-radio: 3.5; /* HOMBRO: alcance total, en PASOS de card (ancho + gap) */
+  --ticker-dock-radio-nucleo: 1.28; /* NÚCLEO: alcance del pico, en pasos — muere antes de la vecina */
+  --ticker-dock-nucleo: 0.82; /* fracción del crecimiento que se lleva el núcleo */
+  --ticker-dock-transicion: 140ms; /* seguimiento amortiguado al mover el puntero */
 }
 
 body {

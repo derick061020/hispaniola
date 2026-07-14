@@ -105,11 +105,26 @@ export function Hero() {
                 </div>
               </div>
             </div>
+          </div>
 
-            {/* Ticker — tours + ocasiones, en loop infinito, anclado al pie */}
-            <div className="pb-6 sm:pb-8">
-              <TickerHero />
-            </div>
+          {/* Ticker — tours + ocasiones, en loop infinito. A caballo sobre el
+              borde inferior del hero: mitad sobre el video, mitad sobre la
+              siguiente sección (translate-y-1/2 sobre el propio alto).
+              A SANGRE: el `<section>` tiene padding lateral
+              (--spacing-hero-margen) para el box redondeado, pero el ticker
+              tiene que llegar al borde real de la pantalla — si no, las
+              cards se recortan 8-12px ANTES del borde y se ve como si
+              desaparecieran contra una pared invisible en vez de deslizarse
+              fuera de la pantalla.
+              ⚠️ `left-1/2 -translate-x-1/2` NO sirve aquí: ese `50%` se
+              calcula sobre el ancho de `.rounded-hero` (ya angosto por el
+              padding del hero), no sobre el viewport, así que queda
+              descuadrado por el propio margen que se quiere ignorar. La
+              técnica que SÍ es independiente del contenedor padre es
+              `w-screen` + `margin-left: calc(50% - 50vw)` (con `left-0`
+              explícito para que no quede "over-constrained" con el ancho). */}
+          <div className="absolute bottom-0 left-0 z-20 ml-[calc(50%-50vw)] w-screen translate-y-1/2">
+            <TickerHero />
           </div>
         </div>
       </section>

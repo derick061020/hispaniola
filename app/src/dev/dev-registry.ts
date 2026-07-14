@@ -73,7 +73,7 @@ export const devSections: DevSection[] = [
         route: '/',
         status: 'done',
         description:
-          'v3: video de fondo (el mismo que usa el hero de la web original), contenido centrado y ticker horizontal en loop infinito con los 4 tours + las 6 ocasiones (sustituye a la baraja de v2). CTA sticky en móvil.',
+          'v3: video de fondo (el mismo que usa el hero de la web original), contenido centrado y ticker horizontal en loop infinito con los 4 tours + las 6 ocasiones (sustituye a la baraja de v2). El ticker va a caballo sobre el borde inferior del hero (mitad sobre el video, mitad sobre la cinta de stats). Su card tiene 2 VARIANTES: «tour» (precio desde, en navy semibold, + duración + aforo máx.) y «ocasión» (chip aqua «Evento privado», porque no hay precio publicado — se cotiza). CTA sticky en móvil.',
         states: [
           {
             label: 'Video congelado en el poster',
@@ -92,6 +92,12 @@ export const devSections: DevSection[] = [
             kind: 'variante',
             to: '/?dev-ticker=estatico',
             note: 'Simula prefers-reduced-motion: sin loop, fila navegable a mano (overflow-x: auto).',
+          },
+          {
+            label: 'Dock activo (hover)',
+            kind: 'variante',
+            to: '/?dev-dock=activo',
+            note: 'Congela el hover "dock" (PLAN-v3.md §10) en su punto máximo sobre la 3ª card, sin depender de un puntero real → frame para Figma. Pausa la pista igual que ?dev-ticker=pausado.',
           },
         ],
       },

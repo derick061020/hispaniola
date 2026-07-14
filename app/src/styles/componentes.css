@@ -59,14 +59,22 @@
    margin en cada card (PLAN-v3.md §7.3).
    ============================================================ */
 
+/* overflow: hidden recorta la copia duplicada de la pista (necesario para el
+   loop). overflow-x: hidden + overflow-y: visible NO sirve aquí: el spec
+   fuerza el eje "visible" a "auto" en cuanto el otro eje no lo es, y "auto"
+   sigue recortando la box-shadow igual que "hidden". La solución real es
+   darle aire vertical a la caja (padding-block) para que la sombra quepa
+   dentro del área antes de llegar al borde que se recorta — y con el dock
+   (PLAN-v3.md §10.3) la card crece hasta --ticker-dock-escala-max y su
+   sombra crece con ella, por eso el aire es --spacing-ticker-aire y no un
+   valor pensado solo para la sombra en reposo. */
 .ticker-wrapper {
   overflow: hidden;
-  mask-image: linear-gradient(90deg, transparent, black 5%, black 95%, transparent);
+  padding-block: var(--spacing-ticker-aire);
 }
 
 .ticker-wrapper--estatico {
   overflow-x: auto;
-  mask-image: none;
 }
 
 /* Sin la segunda copia (estatico/reduced-motion), la animacion no tiene a
@@ -98,12 +106,75 @@
   }
 }
 
+/* Hover "dock" (PLAN-v3.md §10) — el JS (use-ticker-dock.ts) solo escribe
+   las custom properties --dock-x / --dock-escala; translate/scale van
+   SEPARADOS de `transform` a propósito, para no pisar ningún transform que
+   la card pudiera necesitar por otro motivo. Al salir del hover, el JS BORRA
+   las properties (vuelven al fallback `0px` / `1`) y es esta misma
+   transition la que las trae de vuelta a casa — no hay JS animando el
+   regreso. */
 .ticker-card {
   margin-right: var(--spacing-ticker-gap);
+  translate: var(--dock-x, 0px) 0;
+  scale: var(--dock-escala, 1);
+  transition:
+    translate var(--ticker-dock-transicion) ease-out,
+    scale var(--ticker-dock-transicion) ease-out;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .ticker-pista {
     animation: none;
   }
+
+  .ticker-card {
+    transition: none;
+  }
+}
+
+/* ============================================================
+   Notch del header (v3) — el contenedor de los tabs del menú (Tours,
+   Eventos...) "cuelga" del borde superior del hero, como el notch de la
+   cámara de una MacBook: blanco, pegado al borde, con las esquinas de ABAJO
+   redondeadas (convexas, se mete en el video) y un remate CÓNCAVO arriba,
+   justo donde el lateral del notch se junta con la línea borde-del-hero
+   (blanco arriba, en el margen con el body — video abajo, dentro del hero).
+
+   POR QUÉ ES CSS A MEDIDA: un `border-radius` normal en las 2 esquinas de
+   arriba haría un rectángulo con esquinas convexas ahí, que se lee como un
+   recorte pegado con costura. El notch real "talla" el remate al revés: la
+   curva se dobla hacia adentro del notch en vez de hacia afuera. Se
+   consigue con un radial-gradient en dos cuadraditos a los lados del notch:
+   dentro del radio = transparente (se ve el video); fuera = blanco (el
+   notch "sigue"). Solo aplica en desktop — en móvil el <nav> ya está oculto.
+
+   ⚠️ El centro del círculo NO va en la esquina que toca al notch (eso da un
+   círculo con costura — el error que se vio la primera vez: la tangente del
+   arco quedaba perpendicular al lateral recto del notch, no paralela, así
+   que se notaba el punto de unión). El centro va en la esquina OPUESTA
+   (fuera del notch): así el arco es tangente a la vez a la pared vertical
+   del notch Y a la línea horizontal del borde del hero — la curva entra y
+   sale en línea recta, sin costura.
+   ============================================================ */
+
+.notch-menu {
+  border-radius: 0 0 var(--radius-notch) var(--radius-notch);
+}
+
+.notch-esquina {
+  position: absolute;
+  top: 0;
+  width: var(--radius-notch);
+  height: var(--radius-notch);
+  pointer-events: none;
+}
+
+.notch-esquina--izquierda {
+  right: 100%;
+  background: radial-gradient(circle at bottom left, transparent var(--radius-notch), var(--color-papel) calc(var(--radius-notch) + 1px));
+}
+
+.notch-esquina--derecha {
+  left: 100%;
+  background: radial-gradient(circle at bottom right, transparent var(--radius-notch), var(--color-papel) calc(var(--radius-notch) + 1px));
 }

@@ -42,100 +42,119 @@ export function Header({ variante = 'solida' }: { variante?: 'solida' | 'sobreVi
   const toggle = (id: MenuId) => setMenuAbierto((actual) => (actual === id ? null : id))
 
   const sobreVideo = variante === 'sobreVideo'
+  // Los tabs del menú SIEMPRE viven sobre blanco: el fondo bg-papel del
+  // header entero en 'solida', o el notch blanco en 'sobreVideo' — nunca
+  // directo sobre el video. Por eso el texto es navy en los dos casos.
+  const claseLink = 'rounded-lg px-3 py-2 text-sm font-medium text-navy transition-colors hover:bg-papel-hueso'
+  const claseLinkAbierto = 'bg-papel-hueso'
   // Los paneles de megamenú/dropdown NUNCA cambian: son cards bg-papel con
   // sombra sobre cualquier fondo (foto, video o página sólida) — es el mismo
   // componente que viajará a Figma.
-  const claseLink = sobreVideo
-    ? 'rounded-lg px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-white/10'
-    : 'rounded-lg px-3 py-2 text-sm font-medium text-navy transition-colors hover:bg-papel-hueso'
-  const claseLinkAbierto = sobreVideo ? 'bg-white/15' : 'bg-papel-hueso'
+
+  const tabs = (
+    <>
+      <div className="relative">
+        <button
+          type="button"
+          onClick={() => toggle('tours')}
+          className={`${claseLink} ${menuAbierto === 'tours' ? claseLinkAbierto : ''}`}
+        >
+          Tours ▾
+        </button>
+        {menuAbierto === 'tours' ? (
+          <div className="absolute left-0 top-full mt-2 rounded-card bg-papel shadow-card ring-1 ring-linea">
+            <MegaTours />
+          </div>
+        ) : null}
+      </div>
+
+      <div className="relative">
+        <button
+          type="button"
+          onClick={() => toggle('eventos')}
+          className={`${claseLink} ${menuAbierto === 'eventos' ? claseLinkAbierto : ''}`}
+        >
+          Eventos ▾
+        </button>
+        {menuAbierto === 'eventos' ? (
+          <div className="absolute left-0 top-full mt-2 rounded-card bg-papel shadow-card ring-1 ring-linea">
+            <MegaEventos />
+          </div>
+        ) : null}
+      </div>
+
+      <div className="relative">
+        <button
+          type="button"
+          onClick={() => toggle('nosotros')}
+          className={`${claseLink} ${menuAbierto === 'nosotros' ? claseLinkAbierto : ''}`}
+        >
+          Nosotros ▾
+        </button>
+        {menuAbierto === 'nosotros' ? (
+          <div className="absolute left-0 top-full mt-2 flex w-60 flex-col gap-0.5 rounded-card bg-papel p-2 shadow-card ring-1 ring-linea">
+            <EnlacePrototipo className="rounded-lg px-3 py-2 text-sm font-medium text-navy hover:bg-papel-hueso">
+              La tripulación y la flota
+            </EnlacePrototipo>
+            <EnlacePrototipo className="rounded-lg px-3 py-2 text-sm font-medium text-navy hover:bg-papel-hueso">
+              El arrecife que reconstruimos
+            </EnlacePrototipo>
+          </div>
+        ) : null}
+      </div>
+
+      <EnlacePrototipo className={claseLink}>Guías</EnlacePrototipo>
+
+      <div className="relative">
+        <button
+          type="button"
+          onClick={() => toggle('ayuda')}
+          className={`${claseLink} ${menuAbierto === 'ayuda' ? claseLinkAbierto : ''}`}
+        >
+          Ayuda ▾
+        </button>
+        {menuAbierto === 'ayuda' ? (
+          <div className="absolute right-0 top-full mt-2 flex w-56 flex-col gap-0.5 rounded-card bg-papel p-2 shadow-card ring-1 ring-linea">
+            <EnlacePrototipo className="rounded-lg px-3 py-2 text-sm font-medium text-navy hover:bg-papel-hueso">
+              Preguntas frecuentes
+            </EnlacePrototipo>
+            <a href="https://wa.me/18293052804" target="_blank" rel="noopener" className="rounded-lg px-3 py-2 text-sm font-medium text-navy hover:bg-papel-hueso">
+              Contacto y WhatsApp
+            </a>
+            <EnlacePrototipo className="rounded-lg px-3 py-2 text-sm font-medium text-navy hover:bg-papel-hueso">
+              Gestionar mi reserva
+            </EnlacePrototipo>
+          </div>
+        ) : null}
+      </div>
+    </>
+  )
 
   return (
     <header className={sobreVideo ? '' : 'sticky top-0 z-40 bg-papel'}>
       {/* Topbar (WhatsApp + idioma) retirada — vuelve como botones flotantes
           (pendiente, ver conversación 2026-07-14). */}
       <div
-        className={`flex items-center justify-between px-5 py-3 ${sobreVideo ? '' : 'border-b border-linea'}`}
+        className={`relative flex items-center justify-between px-5 py-3 ${sobreVideo ? '' : 'border-b border-linea'}`}
         ref={navRef}
       >
         <Logo sobreOscuro={sobreVideo} />
 
-        <nav className="hidden items-center gap-1 md:flex">
-          <div className="relative">
-            <button
-              type="button"
-              onClick={() => toggle('tours')}
-              className={`${claseLink} ${menuAbierto === 'tours' ? claseLinkAbierto : ''}`}
-            >
-              Tours ▾
-            </button>
-            {menuAbierto === 'tours' ? (
-              <div className="absolute left-0 top-full mt-2 rounded-card bg-papel shadow-card ring-1 ring-linea">
-                <MegaTours />
-              </div>
-            ) : null}
+        {sobreVideo ? (
+          // Notch tipo MacBook (solo desktop — en móvil el <nav> ya está
+          // oculto): "cuelga" del borde superior del hero, ancho = el
+          // contenido de los tabs. Ver componentes.css para el porqué del
+          // remate cóncavo (no es un border-radius normal).
+          <div className="absolute left-1/2 top-0 hidden w-max -translate-x-1/2 md:block">
+            <nav className="notch-menu relative flex w-max items-center gap-1 whitespace-nowrap bg-papel px-2 py-2 shadow-card">
+              <span className="notch-esquina notch-esquina--izquierda" aria-hidden="true" />
+              <span className="notch-esquina notch-esquina--derecha" aria-hidden="true" />
+              {tabs}
+            </nav>
           </div>
-
-          <div className="relative">
-            <button
-              type="button"
-              onClick={() => toggle('eventos')}
-              className={`${claseLink} ${menuAbierto === 'eventos' ? claseLinkAbierto : ''}`}
-            >
-              Eventos ▾
-            </button>
-            {menuAbierto === 'eventos' ? (
-              <div className="absolute left-0 top-full mt-2 rounded-card bg-papel shadow-card ring-1 ring-linea">
-                <MegaEventos />
-              </div>
-            ) : null}
-          </div>
-
-          <div className="relative">
-            <button
-              type="button"
-              onClick={() => toggle('nosotros')}
-              className={`${claseLink} ${menuAbierto === 'nosotros' ? claseLinkAbierto : ''}`}
-            >
-              Nosotros ▾
-            </button>
-            {menuAbierto === 'nosotros' ? (
-              <div className="absolute left-0 top-full mt-2 flex w-60 flex-col gap-0.5 rounded-card bg-papel p-2 shadow-card ring-1 ring-linea">
-                <EnlacePrototipo className="rounded-lg px-3 py-2 text-sm font-medium text-navy hover:bg-papel-hueso">
-                  La tripulación y la flota
-                </EnlacePrototipo>
-                <EnlacePrototipo className="rounded-lg px-3 py-2 text-sm font-medium text-navy hover:bg-papel-hueso">
-                  El arrecife que reconstruimos
-                </EnlacePrototipo>
-              </div>
-            ) : null}
-          </div>
-
-          <EnlacePrototipo className={claseLink}>Guías</EnlacePrototipo>
-
-          <div className="relative">
-            <button
-              type="button"
-              onClick={() => toggle('ayuda')}
-              className={`${claseLink} ${menuAbierto === 'ayuda' ? claseLinkAbierto : ''}`}
-            >
-              Ayuda ▾
-            </button>
-            {menuAbierto === 'ayuda' ? (
-              <div className="absolute right-0 top-full mt-2 flex w-56 flex-col gap-0.5 rounded-card bg-papel p-2 shadow-card ring-1 ring-linea">
-                <EnlacePrototipo className="rounded-lg px-3 py-2 text-sm font-medium text-navy hover:bg-papel-hueso">
-                  Preguntas frecuentes
-                </EnlacePrototipo>
-                <a href="https://wa.me/18293052804" target="_blank" rel="noopener" className="rounded-lg px-3 py-2 text-sm font-medium text-navy hover:bg-papel-hueso">
-                  Contacto y WhatsApp
-                </a>
-                <EnlacePrototipo className="rounded-lg px-3 py-2 text-sm font-medium text-navy hover:bg-papel-hueso">
-                  Gestionar mi reserva
-                </EnlacePrototipo>
-              </div>
-            ) : null}
-          </div>
-        </nav>
+        ) : (
+          <nav className="hidden items-center gap-1 md:flex">{tabs}</nav>
+        )}
 
         <div className="flex items-center gap-2">
           <span className="hidden sm:inline-flex">

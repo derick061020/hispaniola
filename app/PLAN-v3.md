@@ -342,3 +342,513 @@ Con Playwright, en `/` y `/fundaciones`, a **390 / 768 / 1440 px**:
 3. **Fotos de las ocasiones en el ticker:** provisionales de la galería real —
    ¿pedimos al cliente fotos de eventos reales (bodas/cumpleaños a bordo)?
 4. Siguen abiertas de v2: intensidad del coral `#EF5B44` y base blanca vs. crema.
+
+---
+
+## §10 · V3-F7 — El hover «dock» del ticker
+
+Estado: **implementado** (`use-ticker-dock.ts` + `componentes.css` + `tokens.css`).
+Verificado con Playwright: geometría sin solapes (gaps de 16px intactos en
+todo el barrido), sombra sin recorte a escala máxima, dock desactivado en
+`?dev-ticker=estatico` (trampa №4), `pointerleave` limpia las 3 properties, y
+sin overflow-x de página a 390px. Pendiente: QA visual final de Samuel.
+
+### 10.0 Ya hecho — las dos variantes de card
+
+La card del ticker dejó de ser una fila uniforme. Son **dos especies** y el tipo
+`TickerItem` es ahora una unión discriminada (`tipo: 'tour' | 'ocasion'`) → 2
+variantes del componente de Figma:
+
+- **Tour:** `Desde **US$ 99** · 4 h · máx. 25`. El precio lidera en navy semibold
+  (es el único dato de compra); duración y aforo van detrás en `navy-soft`. El
+  **aforo** es el dato que de verdad distingue un tour de otro, y además es la
+  promesa de marca (la cinta de stats dice «≤35% de la capacidad del barco»).
+- **Ocasión:** chip `aqua-tint` / `aqua-dark` con «Evento privado» — no hay precio
+  publicado (todas se cotizan) y no se inventa uno. Es el único punto de color de
+  la card, y da el contraste que separa las dos especies de un vistazo en la
+  pista: **número fuerte = tour, chip aqua = ocasión**.
+
+⚠️ Se descartó el rating con estrellas: los 4 tours comparten `rating: 4.9` y
+`resenas: 1782` en `datos.js`, y las ocasiones no tienen rating. Serían 4 cards
+repitiendo el mismo 4.9 justo debajo del hero, que ya lo dice en grande. Un chip
+de **categoría** que se repite está bien (agrupa); una **métrica por-card**
+idéntica repetida miente. Es la diferencia que justifica una y descarta la otra.
+
+El ancho de card pasó a `--spacing-ticker-ancho: 18rem` (uniforme, medido para
+que quepa «Desde US$ 55 · 3-4 h · máx. 120» sin truncar). **El ancho uniforme es
+un requisito del dock**, no una casualidad: la geometría de §10.2 asume `W` igual
+para todas.
+
+### 10.1 La idea — una función continua, no reglas de hermanos
+
+Como el Dock de macOS. La escala de cada card **no** sale de reglas por hermano
+(`+ .card`, `nth-child`…) sino de una **función continua de la distancia
+horizontal entre el puntero y el centro de la card**. Eso es exactamente lo que
+pidió Samuel («no solo los hermanos directos sino los siguientes también»): no
+hay 2 anillos ni 3, hay una curva, y los anillos salen solos.
+
+**Curva: NÚCLEO estrecho + HOMBRO ancho** — dos campanas coseno sumadas:
+
+```
+campana(d, r) = (1 + cos(π · d / r)) / 2     si d < r ;  0 si d ≥ r
+
+forma(d) = peso · campana(d, Rnucleo) + (1 − peso) · campana(d, Rhombro)
+escala(d) = 1 + (sMax − 1) · forma(d)
+```
+
+Con `d` = |puntero.x − centro.x|. Se usa **coseno** y no una rampa lineal porque
+su derivada es **0 en los dos extremos**: las cards entran y salen de la zona de
+influencia sin costura (con una rampa se ve el borde exacto donde el efecto
+«empieza», y con un pico triangular se ve un codo en la card hovereada).
+
+⚠️ **Una sola campana NO sirve — es el error que se cometió primero.** La campana
+es *plana en el pico*, así que la vecina inmediata (que está a solo 1/3 del radio)
+se llevaba el **75%** del crecimiento: el hover no mandaba, **empataba** con ella,
+y el crecimiento de los hermanos se veía «demasiado fluido». Partir el crecimiento
+en dos campanas resuelve las dos mitades del pedido a la vez:
+
+- **Núcleo** (radio corto, se lleva `peso` del crecimiento): **muere antes de
+  llegar a la vecina** → es lo que hace que el hover sea claramente el más grande.
+- **Hombro** (radio largo, el resto): es lo que deja que la 2ª y la 3ª vecina
+  sigan reaccionando, pero ya en sordina.
+
+**Constantes** (`sMax` = 1.12, `Rhombro` = 3.5 pasos, `Rnucleo` = 1.4 pasos,
+`peso` = 0.75; paso = ancho + gap = 288 + 16 = 304 px):
+
+| distancia | escala | del crecimiento máx. |
+|---|---|---|
+| card hovereada | **1.120** | **100%** |
+| vecina inmediata | 1.041 | 34% |
+| 2ª vecina | 1.012 | 10% |
+| 3ª vecina | 1.002 | 1% |
+| 4ª en adelante | 1.000 | 0% |
+
+Son las escalas que viajarán a Figma como variantes.
+
+⚠️ **`sMax` = 1.3 (probado primero) se descartó por exagerado.** Con texto y
+precio dentro de la card, un dock al 130% real de macOS se lee caricaturesco,
+no premium — el efecto tiene que sentirse como un matiz, no un salto.
+
+### 10.2 El empuje — por qué no basta con escalar
+
+Si solo se escala, la card hovereada crece `288 · 0.12 ≈ 35 px` y **se come a
+sus vecinas** (les tapa foto y texto). En el Dock real los iconos se
+**apartan**. Hay que desplazarlas.
+
+Para las **20 cards del DOM** (las 10 reales + las 10 de la copia duplicada —
+⚠️ se tratan como **un solo array plano**, si no la costura del loop se rompe),
+con `W` = ancho de card, `c_i` = centro base y `P` = x del puntero:
+
+```
+d_i = |P − c_i|
+s_i = escala(d_i)
+
+// desplazamiento del centro de i si ancláramos en el extremo izquierdo:
+D_i = Σ_{j<i} W·(s_j − 1)  +  W·(s_i − 1)/2
+
+// crecimiento que queda a la IZQUIERDA del puntero (fracción incluida):
+A   = Σ_j  W·(s_j − 1) · clamp01( (P − (c_j − W/2)) / W )
+
+// traslación final de la card i:
+t_i = D_i − A
+```
+
+`A` es el ancla: garantiza que **el punto bajo el cursor no se desliza**. Y es
+**continuo en `P`** — por eso se usa la fracción y no «la card hovereada», que al
+cruzar de una card a la siguiente daría un salto de toda la pista.
+
+Se aplica con las propiedades **separadas** `translate` / `scale` (no `transform`),
+que componen en el orden correcto y no pisan nada:
+
+```css
+.ticker-card {
+  translate: var(--dock-x, 0px) 0;
+  scale: var(--dock-escala, 1);
+  transition: translate var(--ticker-dock-transicion) ease-out,
+              scale     var(--ticker-dock-transicion) ease-out;
+}
+```
+
+El JS escribe `--dock-x` y `--dock-escala` por card; al salir, los **borra** y la
+misma `transition` las devuelve a casa solas. La `transition` corta (≈140 ms)
+sobre valores que se reescriben en cada `pointermove` produce el «seguimiento
+amortiguado» que hace que se sienta vivo y no rígido.
+
+`z-index = round(s_i · 100)` en JS (con el empuje no se solapan, pero las sombras
+sí, y la grande debe ir encima).
+
+### 10.3 ⚠️ Las cuatro trampas
+
+1. **La pausa del hover es LOAD-BEARING.** `.ticker-wrapper:hover .ticker-pista {
+   animation-play-state: paused }` ya existe, y ahora el dock **depende** de ella:
+   congela la pista → la geometría deja de moverse → los centros `c_i` se pueden
+   medir **una sola vez** en `mouseenter` (con `getBoundingClientRect`, mejor
+   dentro de un `requestAnimationFrame` para que la pausa ya haya aplicado) y
+   luego solo se sigue el puntero. Si alguien quita esa pausa, hay que medir en
+   cada frame. No tocarla sin saber esto.
+2. **El aire vertical se queda corto.** `.ticker-wrapper` tiene `overflow: hidden`
+   (lo pide el loop) y tenía `padding-block: 1.5rem` (24 px), calculado solo para
+   la sombra en reposo. Una card en hover crece **y su sombra escala con ella**
+   → **se recorta** si el padding no da margen. Subió a
+   `--spacing-ticker-aire: 2.5rem` (40 px) y se renombró `--spacing-ticker-sombra`
+   (ya no es solo para la sombra) — generoso a propósito: cubre tanto el `sMax`
+   final (1.12, crecimiento pequeño) como el 1.3 que se probó primero y se
+   descartó, sin tener que retocarlo si `sMax` vuelve a subir. El padding debe
+   seguir siendo **simétrico**: el `translate-y-1/2` del hero centra el wrapper
+   por su alto, así que con padding simétrico las cards siguen cayendo justo
+   sobre la costura hero/stats.
+3. **Texto borroso al escalar.** Si la card recibe capa de compositor
+   (`will-change: transform`), el navegador rasteriza a 1× y luego amplía → texto
+   borroso a 1.3×. **No poner `will-change`**; dejar que Chrome re-rasterice.
+   Verificar la nitidez a escala máxima con `?dev-dock`; si aún se ve blando,
+   bajar `sMax` antes que meter hacks.
+4. **`estatico` no lleva dock.** Con `?dev-ticker=estatico` / reduced-motion el
+   wrapper es `overflow-x: auto` y se scrollea a mano → los centros cambian sin
+   `mouseenter`. El dock **no se engancha** en ese modo (ni con
+   `prefers-reduced-motion: reduce`, ni en táctil: guardar con
+   `matchMedia('(hover: hover)')`). Con `?dev-ticker=pausado` **sí** funciona —
+   hace falta para el frame de Figma.
+
+### 10.4 Tokens nuevos (`styles/tokens.css`)
+
+Son la **fuente** del prototipo de Figma, como `--ticker-duracion`. Nada de
+números a ojo en el hook:
+
+```css
+--ticker-dock-escala-max: 1.12;   /* escala de la card hovereada — sutil, no macOS real */
+--ticker-dock-radio: 3.5;         /* HOMBRO: alcance total, EN PASOS de card */
+--ticker-dock-radio-nucleo: 1.4;  /* NÚCLEO: alcance del pico, en pasos */
+--ticker-dock-nucleo: 0.75;       /* fracción del crecimiento que se lleva el núcleo */
+--ticker-dock-transicion: 140ms;  /* seguimiento amortiguado */
+--spacing-ticker-aire: 2.5rem;    /* ⬅ renombra --spacing-ticker-sombra (24px → 40px) */
+```
+
+Los dos knobs para afinar el «feel»: **`--ticker-dock-nucleo` sube → el hover
+manda más** (los hermanos se aplanan); **`--ticker-dock-radio` sube → la onda
+llega más lejos** (más hermanos acompañan).
+
+El radio se declara en **pasos de card** (no en px) para que siga siendo correcto
+si cambia `--spacing-ticker-ancho`; el hook lo convierte:
+`R_px = radio · (anchoCard + gap)`, leyendo ambos de `getComputedStyle`.
+
+### 10.5 Archivos
+
+- `styles/tokens.css` — los 4 tokens de arriba.
+- `styles/componentes.css` — `translate`/`scale`/`transition` en `.ticker-card`;
+  `padding-block` del wrapper → `--spacing-ticker-aire`. Comentar **por qué** es
+  CSS a medida (misma convención que el resto del archivo).
+- `components/home/use-ticker-dock.ts` — **nuevo**. El hook: `mouseenter` (medir),
+  `pointermove` (`{ passive: true }`, throttle a un `rAF`), `mouseleave` (limpiar).
+  20 cards × 2 custom props por frame: barato, no hace falta optimizar más.
+- `components/home/ticker-hero.tsx` — `ref` en el wrapper + llamada al hook.
+- `dev/dev-registry.ts` — el estado nuevo (§10.6), **en el mismo commit**.
+
+### 10.6 Dev Mode (mismo commit — regla del proyecto)
+
+`?dev-dock=activo` → simula el puntero en el centro de la 3ª card visible y deja
+el dock **congelado** en su estado máximo. No es un capricho: es el **frame que
+viaja a Figma** (un efecto continuo guiado por el puntero no se captura de otra
+forma) y es cómo se verifica la trampa №3 (nitidez del texto). La línea que lo
+lee va marcada `// [dev-mode]`. Se registra como estado de la screen «Hero
+inmersivo + ticker».
+
+### 10.7 Traspaso a Figma
+
+Figma **no** tiene funciones continuas de distancia: el dock no se «traduce», se
+**congela**. Según el playbook `animaciones-a-figma`:
+
+- Card = componente con propiedad de variante `escala: 100 / 122 / 130` (los
+  valores salen de la tabla de §10.1 — de los tokens, no del ojo).
+- Del ticker se entregan **dos frames**: «reposo» (`?dev-ticker=pausado`) y «dock
+  activo» (`?dev-dock=activo`), y una nota en el componente explicando que en
+  código la escala es continua y que **estas 3 variantes son un muestreo de la
+  curva**, no la curva.
+
+### 10.8 Verificación (Playwright, antes de dar por cerrada la fase)
+
+1. Barrer el puntero por la pista y comprobar que **ninguna** card se solapa con
+   la vecina: `rect.left` de la card `i` ≥ `rect.right` de la `i−1` en todo el
+   barrido. Es la prueba de que la fórmula de `A` está bien.
+2. Al cruzar del centro de una card al de la siguiente, **la pista no salta**:
+   la card más lejana (fuera del radio) no puede moverse más de ~1 px entre dos
+   frames contiguos.
+3. Con `?dev-dock=activo`: la sombra de la card grande **no está recortada** por
+   el wrapper (comparar `rect` de la card escalada contra el del wrapper), y el
+   texto se lee nítido.
+4. La costura del loop sigue siendo invisible con el dock activo cerca del punto
+   de empalme entre las dos copias.
+5. Sin dock en móvil/táctil y con `prefers-reduced-motion: reduce`.
+
+---
+
+## §11 · V3-F8 — Notch dinámico: los menús viven DENTRO del notch
+
+Estado: **planificado** (pedido de Samuel, 2026-07-14). **Experimental por
+declaración explícita**: «esto quiero ver si funciona, pero puede que tengamos
+que volver a esta versión si no me convence».
+
+La idea en una frase: como la Dynamic Island de Apple, pero sobre nuestro notch
+MacBook — al abrir Tours/Eventos/Nosotros/Ayuda, el panel deja de ser una card
+flotante debajo del botón: **el notch entero se expande** (ancho y alto,
+animado) y el contenido del menú se muestra dentro del notch expandido. Al
+cerrar, se encoge de vuelta a la fila de tabs. Al cambiar de tab con otro
+abierto, el notch **morfea de un tamaño al otro** sin pasar por cerrado.
+
+### 11.0 Punto de retorno (obligatorio ANTES de tocar nada)
+
+El notch estático actual (con el remate cóncavo tangente ya corregido) está
+**sin commitear**. Primer paso de la fase: **pedir OK a Samuel** (instrucción
+vigente 2026-07-14: él avisa cuándo se commitea) y hacer un commit del estado
+actual + tag local `v3.1-notch-estatico`. Ese es el punto de vuelta:
+
+```bash
+git reset --hard v3.1-notch-estatico
+```
+
+**Sin ese commit no se empieza** — el experimento necesita una frontera limpia.
+Toda la fase después es UN commit: `Hero v3-F8: notch dinámico (menús dentro
+del notch)` — también pidiendo OK antes de hacerlo.
+
+### 11.1 Anatomía nueva — tres capas, y por qué
+
+Hoy el notch es un solo `<nav class="notch-menu">` con las esquinas dentro y
+los paneles colgando `absolute` de cada botón. Pasa a **componente propio**
+`src/components/home/notch-menu.tsx` (un componente React = un futuro
+componente Figma; el notch con sus 5 variantes lo es de pleno derecho):
+
+```tsx
+// header.tsx (rama sobreVideo) — el wrapper centrado sube a z-30:
+// expandido, el notch debe pintar por encima del contenido del hero
+// y del ticker (z-20).
+<div className="absolute left-1/2 top-0 z-30 hidden -translate-x-1/2 md:block">
+  <NotchMenu abierto={menuAbierto} tabs={tabs} />
+</div>
+```
+
+```tsx
+// notch-menu.tsx — estructura interna:
+<div className="relative w-max">                        {/* capa 1: marco */}
+  <span className="notch-esquina notch-esquina--izquierda" aria-hidden="true" />
+  <span className="notch-esquina notch-esquina--derecha" aria-hidden="true" />
+  <nav ref={cajaRef}
+       className="notch-caja flex flex-col items-center bg-papel shadow-card">
+    <div ref={tabsRef}
+         className="flex w-max items-center gap-1 whitespace-nowrap px-2 py-2">
+      {tabs}                                            {/* capa 2: tabs */}
+    </div>
+    {abierto ? (
+      <div key={abierto} ref={panelRef} className="notch-panel w-max">
+        <PanelMenu id={abierto} />                      {/* capa 3: panel */}
+      </div>
+    ) : null}
+  </nav>
+</div>
+```
+
+**⚠️ Trampa №5 — `overflow: hidden` se comería las esquinas cóncavas.** La caja
+que anima tamaño NECESITA `overflow: hidden` (si no, durante el morph el panel
+se ve desbordando la caja pequeña). Pero `.notch-esquina` vive FUERA de la caja
+(`right: 100%` / `left: 100%`) — como hija de la caja, el overflow la
+recortaría. Por eso las esquinas son **hermanas** de la caja, dentro del marco
+`relative w-max` que no recorta. El marco es shrink-to-fit alrededor de la
+caja, así que su ancho sigue al ancho animado de la caja **en cada frame** y
+las esquinas viajan pegadas a los bordes del notch durante el morph, gratis.
+
+**Por qué `flex flex-col items-center` en la caja:** los tabs y el panel se
+centran respecto a la caja. Como el wrapper está centrado en la página
+(`left-1/2 -translate-x-1/2`, y el translate se resuelve contra el ancho
+ACTUAL en cada frame), la caja crece simétrica alrededor de su centro fijo →
+**los tabs no se mueven ni un píxel al abrir** (el detalle que vende el efecto:
+la caja crece alrededor de unos tabs quietos). Además, centrado flex "unsafe"
+(el default) hace que un panel más ancho que la caja a mitad de morph desborde
+por los DOS lados por igual → el recorte del overflow es simétrico y el panel
+se "revela" desde el centro.
+
+`key={abierto}` en el panel: al cambiar de tab el panel se re-monta y la
+animación de entrada (§11.2) se reproduce de nuevo.
+
+La clase `.notch-menu` desaparece (su `border-radius` se muda a `.notch-caja`).
+
+### 11.2 El morph — medir con JS, animar con CSS
+
+`width`/`height` no se pueden transicionar hacia `auto`/`max-content` (el
+`interpolate-size` de CSS es demasiado nuevo para fiarse). Patrón: **JS mide,
+CSS anima** — el mismo reparto de papeles que el dock (§10): el JS solo escribe
+custom properties, la transición vive en CSS.
+
+En `notch-menu.tsx`, un `useLayoutEffect` sobre `[abierto]`:
+
+```
+ancho = max(tabsRef.offsetWidth, panelRef?.offsetWidth ?? 0)
+alto  = tabsRef.offsetHeight + (panelRef?.offsetHeight ?? 0)
+cajaRef.style.setProperty('--notch-ancho', `${ancho}px`)
+cajaRef.style.setProperty('--notch-alto',  `${alto}px`)
+```
+
+y un `ResizeObserver` sobre tabs y panel que re-ejecuta la misma medición
+(cubre resize del viewport — los megamenús miden `92vw` — y el reflow cuando
+carga Poppins).
+
+**⚠️ Trampa №6 — medir el tamaño intrínseco, no el recortado.** Para que
+`offsetWidth` del panel dé su ancho REAL aunque la caja aún esté pequeña, el
+panel lleva `w-max` (no se deja apretar por la caja; el overflow lo recorta
+mientras tanto). Los megamenús ya traen ancho propio (`min(92vw, 880px)` /
+`min(92vw, 620px)`), los dropdowns `w-60`/`w-56`.
+
+**⚠️ Trampa №7 — sin flash en el primer paint.** `useLayoutEffect` corre ANTES
+del primer paint: las properties ya están puestas cuando el navegador pinta →
+ni se ve un notch a tamaño 0 ni se anima nada al cargar. Fallback en CSS por si
+acaso: `width: var(--notch-ancho, max-content)`.
+
+CSS (`componentes.css`, sección nueva documentando este porqué):
+
+```css
+.notch-caja {
+  width: var(--notch-ancho, max-content);
+  height: var(--notch-alto, auto);
+  overflow: hidden;
+  border-radius: 0 0 var(--radius-notch) var(--radius-notch);
+  transition:
+    width var(--notch-transicion) var(--notch-easing),
+    height var(--notch-transicion) var(--notch-easing);
+}
+
+/* El contenido entra en fade cuando la caja ya va llegando (el delay evita
+   ver el panel entero recortado a mitad de morph). Derivado del token con
+   calc() — cero números nuevos. */
+.notch-panel {
+  animation: notch-panel-entrada calc(var(--notch-transicion) * 2 / 3) var(--notch-easing) both;
+  animation-delay: calc(var(--notch-transicion) / 3);
+}
+
+@keyframes notch-panel-entrada {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .notch-caja { transition: none; }
+  .notch-panel { animation: none; }
+}
+```
+
+Sí, transicionar `width`/`height` provoca layout en cada frame — y aquí está
+BIEN: es un solo elemento pequeño, es un prototipo, y la alternativa
+(`transform: scale`) deformaría el contenido. No "optimizar" esto.
+
+**El cierre es la versión simple a propósito:** al cerrar, el panel se
+desmonta al instante y la caja blanca se encoge vacía (~300 ms). Se ve digno
+porque la caja es blanca. Si a Samuel el cierre le parece brusco, el
+refinamiento (mantener el panel montado con fade-out hasta `transitionend`) se
+hace DESPUÉS, como retoque pedido — no de serie, que es donde nacen los bugs
+de estados fantasma.
+
+### 11.3 Los cuatro paneles, adaptados al notch
+
+Regla general: **el notch ES el chrome ahora**. Los paneles pierden la card
+flotante (`rounded-card bg-papel shadow-card ring-1 ring-linea` que hoy pone
+`header.tsx`) — dentro del notch van a pelo, separados de los tabs por un
+hairline `border-t border-linea` en `.notch-panel` (eco del `border-b` que el
+header sólido siempre tuvo). Si en pantalla el hairline estorba, quitarlo es
+una línea — decisión visual de Samuel.
+
+- **`MegaTours` / `MegaEventos`:** sin cambios internos — su grid, fotos y
+  anchos (`min(92vw, 880px)` / `min(92vw, 620px)`) ya funcionan como contenido
+  del notch. El notch expandido a 880px es el estado más ancho del sistema.
+- **Nosotros / Ayuda:** hoy son JSX inline en `header.tsx`. Se extraen a
+  `src/components/home/dropdown-nosotros.tsx` y `dropdown-ayuda.tsx` (un
+  componente = un futuro componente Figma), conservando SOLO el layout interno
+  (`w-60`/`w-56`, `p-2`, `flex flex-col gap-0.5` y sus links) — el chrome se
+  queda en el wrapper de la rama `solida`.
+- **`PanelMenu`** (dentro de `notch-menu.tsx`): el mapa `MenuId → panel`. El
+  tipo `MenuId` se exporta desde `header.tsx` y se consume con `import type`
+  (sin ciclo en runtime).
+- **La rama `solida` no muere:** conserva los paneles flotantes de siempre
+  (ahora importando los dropdowns extraídos). Es la variante para futuros usos
+  fuera del hero y no se toca su comportamiento.
+- **A11y de paso:** los 4 botones trigger ganan
+  `aria-expanded={menuAbierto === id}` (en ambas variantes). El cierre por
+  Escape y click-fuera ya funciona y no se toca: el notch sigue viviendo
+  dentro de `navRef`.
+
+### 11.4 El detalle Apple: logo y «Reservar» se apartan
+
+A 1024px de viewport, un notch de 880px deja ~72px por lado: **pisa el logo y
+el botón Reservar**. En vez de encoger los megamenús, se copia el gesto de la
+Dynamic Island (cuando se expande, los iconos de estado se desvanecen): con
+cualquier menú abierto en `sobreVideo`, el logo y el grupo de la derecha pasan
+a `opacity-0 pointer-events-none` con
+`transition-opacity [transition-duration:var(--notch-transicion)]`, y vuelven
+al cerrar. El menú abierto es transitorio y contiene sus propios caminos a la
+reserva — no se pierde nada. (Si a Samuel no le gusta el fade, la alternativa
+es capar el ancho de los megamenús; se decide viéndolo.)
+
+### 11.5 Tokens nuevos (`styles/tokens.css`)
+
+Fuente del prototipo de Figma, como `--ticker-duracion`:
+
+```css
+--notch-transicion: 300ms;                       /* morph ancho/alto del notch */
+--notch-easing: cubic-bezier(0.32, 0.72, 0, 1);  /* arranque vivo, aterrizaje suave (curva estilo Apple) */
+```
+
+El fade de entrada del panel y el fade del logo/Reservar derivan de estos dos
+con `calc()` — ningún número nuevo fuera de tokens.
+
+### 11.6 Dev Mode (mismo commit — regla del proyecto)
+
+Los deep-links `?dev-mega=tours|eventos|nosotros|ayuda` **ya existen y ahora
+abren el notch expandido** (el estado llega por el mismo `setMenuAbierto`) —
+son, sin tocarlos, los 4 frames de Figma del notch abierto. En
+`dev-registry.ts`, mismo commit:
+
+- Description de «Header + Footer»: los menús ya no son cards flotantes — el
+  notch se expande y los contiene (estilo Dynamic Island).
+- Nota en cada estado `dev-mega`: «abre el notch expandido (v3-F8)».
+
+`/fundaciones`: añadir `--notch-transicion` / `--notch-easing` al párrafo de
+Movimiento (junto a `--ticker-duracion` y los `--ticker-dock-*`).
+
+### 11.7 Traspaso a Figma (anotar en `notch-menu.tsx` y README)
+
+El notch es un **componente interactivo de 5 variantes**: `cerrado`, `tours`,
+`eventos`, `nosotros`, `ayuda`. Transición entre variantes: Smart Animate,
+duración = `--notch-transicion`, easing = curva custom con los 4 valores del
+token. Nombres de capa idénticos entre variantes (regla Smart Animate): la
+caja, la fila de tabs y el slot del panel conservan nombre; cambia solo el
+contenido del slot. Las esquinas cóncavas van como vectores fijos fuera de la
+caja. El fade del logo/Reservar se anota como parte de la misma transición.
+
+### 11.8 Verificación (Playwright, antes de dar por cerrada la fase)
+
+A 768 / 1024 / 1440 px:
+
+1. **Los tabs no se mueven al abrir**: `getBoundingClientRect` del botón
+   «Tours ▾» cerrado vs. abierto → idéntico (±1px). Es LA prueba del efecto.
+2. Con cada `?dev-mega=…`: el panel completo queda dentro de la caja tras la
+   transición (rect del panel ⊆ rect de la caja), las esquinas cóncavas se ven
+   pegadas a los bordes del notch expandido, y nada recortado.
+3. Morph directo tours → eventos (dos clicks): la caja pasa de 880 a 620 de
+   ancho SIN pasar por el estado cerrado (capturas durante la transición — la
+   captura es la fuente de verdad para movimiento, lección del cerebro).
+4. Logo y Reservar: `opacity: 0` con menú abierto, vuelven al cerrar, y no
+   interceptan clicks mientras están ocultos.
+5. Escape y click-fuera cierran; click DENTRO del panel no cierra.
+6. `prefers-reduced-motion: reduce` (con `emulateMedia`, no solo el dev-flag):
+   abre/cierra instantáneo, sin transición ni fade.
+7. 0 errores de consola (full reload antes de creer en uno — HMR stale), 0
+   overflow-x de página, `tsc` y `npm run build` limpios, grep de valores
+   mágicos fuera de `tokens.css`/`fundaciones.tsx`/`src/dev/`.
+8. Móvil (390px): nada de esto aplica ni se cuela — el notch sigue `hidden`
+   bajo `md:` y `MenuMovil` intacto.
+
+### 11.9 Fuera de alcance de esta fase (no mezclar)
+
+- Los pendientes previos del header/hero: fila del header con max-width
+  (logo/Reservar muy a los extremos) y retipografiado del H1 (3 líneas) +
+  lead (2 líneas). Son otra fase — no colarlos en este commit.
+- Botones flotantes de WhatsApp/idioma (pendiente desde la retirada de la
+  topbar).
+- Abrir menús por hover: se mantiene el click. Cambiarlo es otra conversación.
+- El refinamiento del cierre con fade-out (§11.2) — solo si Samuel lo pide
+  tras verlo.
