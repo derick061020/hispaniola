@@ -48,3 +48,62 @@
     transition: none;
   }
 }
+
+/* ============================================================
+   Ticker del hero (v3) — pie del hero, loop infinito de cards.
+
+   POR QUÉ ES CSS A MEDIDA: la pista se duplica 2x en el JSX y se desplaza
+   con `translate: -50% 0`; para que el loop sea invisible, la separación
+   entre cards NO puede ir como `gap` en la pista (el -50% no cae justo al
+   inicio de la segunda copia y el loop "salta" un medio-gap) — va como
+   margin en cada card (PLAN-v3.md §7.3).
+   ============================================================ */
+
+.ticker-wrapper {
+  overflow: hidden;
+  mask-image: linear-gradient(90deg, transparent, black 5%, black 95%, transparent);
+}
+
+.ticker-wrapper--estatico {
+  overflow-x: auto;
+  mask-image: none;
+}
+
+/* Sin la segunda copia (estatico/reduced-motion), la animacion no tiene a
+   donde interpolar -50% -- se queda "comiendose" la unica copia real y
+   salta al reiniciar el loop. Hay que apagarla explicitamente. */
+.ticker-wrapper--estatico .ticker-pista {
+  animation: none;
+}
+
+.ticker-pista {
+  display: flex;
+  width: max-content;
+  animation: ticker-desfile var(--ticker-duracion) linear infinite;
+}
+
+.ticker-pista--pausada {
+  animation-play-state: paused;
+}
+
+/* Hover del wrapper (no de cada card): pausa toda la pista para poder leer
+   o clicar cualquier card sin perseguirla. */
+.ticker-wrapper:hover .ticker-pista {
+  animation-play-state: paused;
+}
+
+@keyframes ticker-desfile {
+  to {
+    translate: -50% 0;
+  }
+}
+
+.ticker-card {
+  margin-right: var(--spacing-ticker-gap);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ticker-pista {
+    animation: none;
+  }
+}

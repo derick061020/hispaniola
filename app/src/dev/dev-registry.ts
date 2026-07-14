@@ -69,11 +69,11 @@ export const devSections: DevSection[] = [
         ],
       },
       {
-        title: 'Hero + baraja de tours',
+        title: 'Hero inmersivo + ticker',
         route: '/',
         status: 'done',
         description:
-          'v3: video de fondo (el mismo que usa el hero de la web original) + baraja de los 4 tours en rotación, que sustituye al buscador de disponibilidad. Cada card es un producto con precio y CTA. CTA sticky en móvil.',
+          'v3: video de fondo (el mismo que usa el hero de la web original), contenido centrado y ticker horizontal en loop infinito con los 4 tours + las 6 ocasiones (sustituye a la baraja de v2). CTA sticky en móvil.',
         states: [
           {
             label: 'Video congelado en el poster',
@@ -82,19 +82,16 @@ export const devSections: DevSection[] = [
             note: 'Pausa el video de fondo en su primer frame → es EL FRAME que viaja a Figma (a Figma no va video, va el poster).',
           },
           {
-            label: 'Baraja: Semi-Privado',
-            kind: 'estado',
-            to: '/?dev-baraja=semi-privado',
-            note: 'Congela esa card como activa y DETIENE el auto-avance → frame limpio para Figma.',
-          },
-          { label: 'Baraja: Snorkel Lovers', kind: 'estado', to: '/?dev-baraja=snorkel-lovers' },
-          { label: 'Baraja: Charter Privado', kind: 'estado', to: '/?dev-baraja=charter-privado' },
-          { label: 'Baraja: Isla Saona', kind: 'estado', to: '/?dev-baraja=isla-saona' },
-          {
-            label: 'Baraja estática (reduced-motion)',
+            label: 'Ticker pausado',
             kind: 'variante',
-            to: '/?dev-baraja=estatica',
-            note: 'Simula prefers-reduced-motion: sin auto-avance, la baraja solo responde a clic.',
+            to: '/?dev-ticker=pausado',
+            note: 'Detiene la pista del ticker → frame limpio para Figma.',
+          },
+          {
+            label: 'Ticker estático (reduced-motion)',
+            kind: 'variante',
+            to: '/?dev-ticker=estatico',
+            note: 'Simula prefers-reduced-motion: sin loop, fila navegable a mano (overflow-x: auto).',
           },
         ],
       },

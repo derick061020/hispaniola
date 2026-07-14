@@ -94,9 +94,9 @@ export function FundacionesPage() {
             <p className="font-mono text-[11px] text-navy-soft">--radius-card · 16px</p>
           </div>
           <div>
-            <div className="h-20 rounded-hero bg-papel shadow-baraja" />
-            <p className="mt-2 text-sm font-medium text-navy">Baraja (activa)</p>
-            <p className="font-mono text-[11px] text-navy-soft">--shadow-baraja</p>
+            <div className="h-20 rounded-card bg-papel shadow-card" />
+            <p className="mt-2 text-sm font-medium text-navy">Ticker (card)</p>
+            <p className="font-mono text-[11px] text-navy-soft">--shadow-card · --radius-card</p>
           </div>
           <div>
             <div className="h-20 rotate-[-4deg] rounded-foto bg-papel p-1.5 shadow-polaroid">
@@ -110,9 +110,8 @@ export function FundacionesPage() {
           Ritmo vertical: <code>--spacing-seccion</code> 7rem (desktop) /{' '}
           <code>--spacing-seccion-sm</code> 4rem (móvil) — cableados como{' '}
           <code>py-seccion</code> en las secciones (en v1 el token existía pero nadie lo usaba).
-          Movimiento de la baraja: <code>--baraja-intervalo</code> 4000ms ·{' '}
-          <code>--baraja-transicion</code> 600ms — <strong>de aquí salen los delays del
-          prototipo de Figma</strong>, no de ojo.
+          Movimiento del ticker: <code>--ticker-duracion</code> 45s — <strong>de aquí sale
+          la duración del prototipo de Figma</strong>, no de ojo.
         </p>
       </section>
 

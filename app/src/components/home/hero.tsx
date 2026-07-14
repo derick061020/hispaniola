@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
 import { Boton } from '@/components/ui/boton'
 import { Header } from './header'
-import { BarajaHero } from './baraja-hero'
+import { TickerHero } from './ticker-hero'
 import { useDevFlag } from '@/dev/use-dev-flag'
 
-// Hero v3 — «inmersivo» (app/PLAN-v3.md). Cambio clave frente a v2: el Header
-// pasa a vivir DENTRO del box del hero (antes era una barra hermana sticky).
+// Hero v3 — «inmersivo» (app/PLAN-v3.md). Cambios frente a v2: el Header pasa
+// a vivir DENTRO del box del hero (antes era una barra hermana sticky), y la
+// baraja de tours se retira del todo a favor de un ticker horizontal al pie
+// del hero (con los 4 tours + las 6 ocasiones — ver ticker-hero.tsx).
 //
 // ⚠️ Trampa evitada (PLAN-v3.md §4): el box redondeado YA NO lleva
 // `overflow-hidden` — si lo llevara, recortaría los megamenús del header
@@ -68,11 +70,7 @@ export function Hero() {
           <div className="relative z-10">
             <Header variante="sobreVideo" />
 
-            {/* v3: contenido centrado (antes en grid a 2 columnas con la
-                baraja al lado). La baraja queda debajo, centrada, SOLO como
-                paso intermedio: F5 la retira del todo y pone el ticker
-                anclado al pie del hero (PLAN-v3.md §6-7). */}
-            <div className="px-6 py-12 text-center sm:px-10 sm:py-16 lg:py-20">
+            <div className="px-6 pb-10 pt-12 text-center sm:px-10 sm:pt-16 lg:pt-20">
               <div className="mx-auto max-w-3xl">
                 <p className="text-eyebrow font-semibold uppercase tracking-[0.14em] text-white/90">
                   Punta Cana · Bávaro
@@ -106,11 +104,11 @@ export function Hero() {
                   </p>
                 </div>
               </div>
+            </div>
 
-              {/* Baraja de tours — el escaparate que sustituye al buscador */}
-              <div className="mt-10 flex justify-center">
-                <BarajaHero />
-              </div>
+            {/* Ticker — tours + ocasiones, en loop infinito, anclado al pie */}
+            <div className="pb-6 sm:pb-8">
+              <TickerHero />
             </div>
           </div>
         </div>

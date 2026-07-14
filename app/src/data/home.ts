@@ -99,18 +99,83 @@ export type Ocasion = {
   meta: string
   /** landings propias (Bodas, MICE) vs. deep-link al formulario del hub de eventos */
   esLanding: boolean
+  /** nombre de archivo en /fotos (sin extensión) */
+  foto: string
 }
 
+// Fotos PROVISIONALES: no existe shooting propio de eventos (bodas,
+// cumpleaños...), así que se reutilizan fotos reales de la galería de
+// charter-privado que mejor encajan con cada ocasión. Pendiente pedirle al
+// cliente fotos reales de eventos (ver app/PLAN-v3.md §9).
 export const OCASIONES: Ocasion[] = [
-  { tipo: 'boda', nombre: 'Bodas y pre-boda', meta: 'Ceremonia, welcome party o despedida del grupo.', esLanding: true },
-  { tipo: 'mice', nombre: 'Corporativo / MICE', meta: 'Incentivos, team building, cierres de convención.', esLanding: true },
-  { tipo: 'cumpleanos', nombre: 'Cumpleaños', meta: 'Decoración, pastel y la playlist que elijas.', esLanding: false },
-  { tipo: 'aniversario', nombre: 'Aniversarios', meta: 'Íntimo o con toda la familia.', esLanding: false },
-  { tipo: 'despedida', nombre: 'Despedidas de soltero/a', meta: 'Barco entero, solo tu grupo.', esLanding: false },
-  { tipo: 'reunion', nombre: 'Reuniones familiares', meta: 'Multi-generación: niños y abuelos a bordo.', esLanding: false },
+  {
+    tipo: 'boda',
+    nombre: 'Bodas y pre-boda',
+    meta: 'Ceremonia, welcome party o despedida del grupo.',
+    esLanding: true,
+    foto: 'galeria-charter-privado-5',
+  },
+  {
+    tipo: 'mice',
+    nombre: 'Corporativo / MICE',
+    meta: 'Incentivos, team building, cierres de convención.',
+    esLanding: true,
+    foto: 'galeria-charter-privado-3',
+  },
+  {
+    tipo: 'cumpleanos',
+    nombre: 'Cumpleaños',
+    meta: 'Decoración, pastel y la playlist que elijas.',
+    esLanding: false,
+    foto: 'galeria-charter-privado-1',
+  },
+  {
+    tipo: 'aniversario',
+    nombre: 'Aniversarios',
+    meta: 'Íntimo o con toda la familia.',
+    esLanding: false,
+    foto: 'galeria-charter-privado-7',
+  },
+  {
+    tipo: 'despedida',
+    nombre: 'Despedidas de soltero/a',
+    meta: 'Barco entero, solo tu grupo.',
+    esLanding: false,
+    foto: 'galeria-charter-privado-2',
+  },
+  {
+    tipo: 'reunion',
+    nombre: 'Reuniones familiares',
+    meta: 'Multi-generación: niños y abuelos a bordo.',
+    esLanding: false,
+    foto: 'galeria-charter-privado-6',
+  },
 ]
 
 export function formatoDinero(n: number | null): string {
   if (n === null) return '—'
   return 'US$ ' + n.toLocaleString('en-US', { maximumFractionDigits: 2 })
 }
+
+export type TickerItem = { id: string; nombre: string; meta: string; foto: string }
+
+// Ticker del hero (v3): los 4 tours + las 6 ocasiones, todo lo que lleva a
+// una ficha propia (PLAN-v3.md §7). Reemplaza a la baraja de v2.
+export const TICKER_ITEMS: TickerItem[] = [
+  ...TOURS.map(
+    (t): TickerItem => ({
+      id: t.slug,
+      nombre: t.nombre,
+      meta: t.precioLight !== null ? `Desde ${formatoDinero(t.precioLight)} · ${t.duracionCorta}` : t.duracionCorta,
+      foto: t.foto,
+    }),
+  ),
+  ...OCASIONES.map(
+    (o): TickerItem => ({
+      id: o.tipo,
+      nombre: o.nombre,
+      meta: 'Evento privado',
+      foto: o.foto,
+    }),
+  ),
+]
