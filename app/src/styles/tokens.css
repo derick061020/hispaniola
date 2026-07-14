@@ -43,9 +43,9 @@
   --font-cuerpo: 'Poppins', ui-sans-serif, system-ui, sans-serif;
 
   /* Tamaños con nombre — espejo de futuros text styles en Figma */
-  /* v3-F12: sube de 3.5rem — con el contenedor ensanchado a max-w-4xl (antes
-     max-w-xl del propio H1, 576px) cabe más grande y sigue envolviendo en las
-     3 líneas que pedía Samuel (4 antes, medido con Playwright). */
+  /* v3-F13: 3.75rem se mantiene (subió de 3.5rem en F12) — lo que llevó el H1
+     a 2 líneas (PLAN-v3.md §15.6) fue ensanchar la COLUMNA del H1, no este
+     tamaño. */
   --text-hero: 3.75rem; /* claim del hero */
   --text-hero--line-height: 1.12;
   /* Poppins es MUCHO más ancha que la Lora que usábamos: a 3.5rem el titular
@@ -86,6 +86,16 @@
   --shadow-card: 0 4px 16px rgb(11 37 69 / 8%);
   --shadow-hero: 0 8px 28px rgb(11 37 69 / 25%);
   --shadow-polaroid: 0 14px 34px rgb(11 37 69 / 18%); /* foto del photo-stack */
+  /* v3-F13: halo del CTA principal (PLAN-v3.md §15.8) — --color-coral al 35%,
+     a mano: no se puede meter var(--color-coral) dentro de rgb(). Si el coral
+     cambia, este token NO se entera solo. */
+  --shadow-cta: 0 10px 30px rgb(239 91 68 / 35%);
+
+  /* ---------- Contenedor de página ---------- */
+  /* v3-F13: ancho de contenido compartido por el header y las 9 secciones
+     (PLAN-v3.md §15.3) — antes max-w-6xl (72rem/1152px) por inercia del
+     default de Tailwind. Genera la utilidad max-w-contenido. */
+  --container-contenido: 87.5rem; /* 1400px */
 
   /* ---------- Spacing de sección ---------- */
   --spacing-seccion: 7rem; /* v2: sube de 5rem — el "aire" de la ref. Journeo */
@@ -95,6 +105,14 @@
      pero conserva el radio (PLAN-v3.md §6). */
   --spacing-hero-margen: 0.5rem; /* 8px — móvil */
   --spacing-hero-margen-sm: 0.75rem; /* 12px — desktop */
+  /* v3-F13: alto del hero en desktop (PLAN-v3.md §15.5) — svh, NO vh ni dvh:
+     vh es el viewport GRANDE en móvil (barra de URL escondida) y el hero
+     mediría más que la pantalla real; dvh cambia mientras se scrollea y haría
+     bailar al ticker que va a caballo del borde. svh es la medida garantizada,
+     sin saltos. Es un MÍNIMO (min-height): si el contenido natural del hero
+     crece, el 78% deja de cumplirse en silencio — ver la Trampa №1 de §15.10.
+     Solo aplica en desktop (sm:); en móvil el contenido manda. */
+  --spacing-hero-alto: 78svh;
 
   /* ---------- Movimiento (v3) ----------
      ⚠️ Estas constantes son la FUENTE del prototipo de Figma: los delays del
@@ -147,11 +165,29 @@
   --premio-opacidad: 0.72; /* en reposo, ya en gris */
   --premio-transicion: 240ms; /* vuelta al color al pasar el ratón */
 
+  /* Padding superior de la banda de premios. ⚠️ NO es "el aire sobre los
+     logos": el ticker es `absolute` y CUELGA media card por fuera del hero
+     (--spacing-ticker-alto / 2 = 34px), cayendo DENTRO de este padding sin
+     empujarlo. Así que el padding tiene que ABSORBER ese vuelo antes de
+     empezar a dar aire — de ahí el calc(): el hueco real que ve el ojo es
+     solo el segundo sumando. Contarlos como si se sumaran fue el error de la
+     tabla de §15.5 (padding 32px − vuelo 34px = −2px: las cards del ticker
+     tocaban el eyebrow). Si crece la card del ticker, este padding crece con
+     ella y el hueco no se entera. */
+  --spacing-premios-aire: calc(var(--spacing-ticker-alto) / 2 + 3rem); /* 34px de vuelo + 48px de hueco real */
+
   /* Panel de dropdown simple (Nosotros/Ayuda) dentro del notch (PLAN-v3.md
      §12.4). ⚠️ TIENE que ser mayor que la fila de tabs (457px medidos) o la
      caja del notch se queda en el ancho de los tabs y el panel flota
-     centrado con aire muerto a los lados — el bug que esta fase arregla. */
-  --spacing-notch-panel: 32rem; /* 512px */
+     centrado con aire muerto a los lados — el bug que esta fase arregla.
+     v3-F13: sube de 32rem (512px) a 39rem (624px, pedido de Samuel) — a 512px
+     las 2 columnas iban apretadas (PLAN-v3.md §15.2). */
+  --spacing-notch-panel: 39rem; /* 624px */
+  /* v3-F13: variante compacta para md–lg (PLAN-v3.md §15.4) — el notch está
+     centrado y crece simétrico; a 768–1023px el sitio libre antes de tapar el
+     logo/Reservar no llega a 624px. Mismo ancho que ya usan los megamenús en
+     ese rango por esta misma razón (mega-tours.tsx, mega-eventos.tsx). */
+  --spacing-notch-panel-compacto: 28rem; /* 448px */
 }
 
 body {

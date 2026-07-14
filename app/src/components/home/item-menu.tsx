@@ -22,6 +22,12 @@ const ICONOS: Record<string, ComponentType<{ className?: string }>> = {
 // blanca → gris) a propósito: si el chip se quedara gris dentro del hover
 // (también gris), los dos se fundirían en una sola mancha y el chip
 // "desaparecería" bajo el ratón.
+//
+// v3-F13 (PLAN-v3.md §15.4): entre md y lg el panel va en su variante
+// compacta (448px, sin sitio para 2 columnas con descripción — cada celda
+// daría ~160px, 6 líneas de texto). La descripción se oculta ahí (`hidden
+// lg:block`), quedando chip + título — misma decisión que ya tomó Samuel
+// para el móvil, aplicada a la franja donde el ancho tampoco da.
 export function ItemMenu({ item }: { item: ItemNav }) {
   const Icono = ICONOS[item.id]
   return (
@@ -31,7 +37,7 @@ export function ItemMenu({ item }: { item: ItemNav }) {
       </span>
       <span className="min-w-0">
         <span className="block font-display text-sm font-semibold text-navy">{item.nombre}</span>
-        <span className="mt-0.5 block text-xs text-navy-soft">{item.descripcion}</span>
+        <span className="mt-0.5 hidden text-xs text-navy-soft lg:block">{item.descripcion}</span>
       </span>
     </EnlacePrototipo>
   )

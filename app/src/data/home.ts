@@ -209,7 +209,12 @@ export type Stat = { valor: string; label: string }
 export const STATS: Stat[] = [
   { valor: '91.607', label: 'clientes felices' },
   { valor: '4.454', label: 'días navegados' },
-  { valor: '≤35%', label: 'de la capacidad del barco' },
+  // v3-F13 (PLAN-v3.md §15.7): "de la capacidad del barco" (24 car.) partía en
+  // 2 líneas contra los otros 3 labels — "aforo" ya es vocabulario del
+  // proyecto (aforo máx. en las cards del ticker y en el megamenú de Tours),
+  // no introduce una palabra nueva. El dato no cambia (≤35% de
+  // NOTAS['home-stats']).
+  { valor: '≤35%', label: 'del aforo del barco' },
   { valor: '0', label: 'plástico a bordo' },
 ]
 

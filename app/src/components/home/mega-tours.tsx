@@ -9,11 +9,12 @@ export function MegaTours() {
     // Ancho responsivo, no solo "min(92vw, …)": entre md y xl el notch
     // centrado no tiene sitio para un megamenú ancho sin tapar el logo/Reservar
     // — en ese rango va a 2 columnas y más angosto. Desde xl (1280px) vuelve a
-    // 4 columnas, pero el margen libre ya NO crece con el viewport (header.tsx
-    // capa la fila a max-w-6xl): medido con Playwright, se estabiliza en ~890px
-    // de sobra a cada lado desde 1280px en adelante — 50rem dejan margen real,
-    // 55rem (el valor original, antes del max-w-6xl) ya rozaba el límite.
-    <div className="grid w-[min(92vw,28rem)] grid-cols-2 gap-3 p-4 xl:w-[min(92vw,50rem)] xl:grid-cols-4">
+    // 4 columnas.
+    // v3-F13 (PLAN-v3.md §15.4): 55rem restaurado — con la fila del header
+    // ensanchada a max-w-contenido (1400px, antes max-w-6xl/1152px) el margen
+    // libre a cada lado del notch vuelve a crecer con el viewport; a 1280px
+    // sobran ~968px, de sobra para 880px (55rem) con margen real.
+    <div className="grid w-[min(92vw,28rem)] grid-cols-2 gap-3 p-4 xl:w-[min(92vw,55rem)] xl:grid-cols-4">
       {TOURS.map((t) => (
         <EnlacePrototipo
           key={t.slug}

@@ -7,7 +7,7 @@ import { TourCard } from './tour-card'
 export function ToursGrid() {
   return (
     <section id="tours" className="scroll-mt-20 px-5 py-seccion-sm sm:px-10 sm:py-seccion">
-      <div className="mx-auto max-w-6xl">
+      <div className="mx-auto max-w-contenido">
         <Etiqueta>Nuestros tours</Etiqueta>
         <h2 className="mt-3 font-display text-h2 font-semibold text-navy">Elige tu día en el Caribe</h2>
 

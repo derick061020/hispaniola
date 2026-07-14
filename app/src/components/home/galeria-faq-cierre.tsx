@@ -30,7 +30,7 @@ export function GaleriaFaqCierre() {
 
   return (
     <section className="bg-papel-hueso px-5 py-seccion-sm sm:px-10 sm:py-seccion">
-      <div className="mx-auto max-w-6xl">
+      <div className="mx-auto max-w-contenido">
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-2">
           <div>
             <Etiqueta>El día, en imágenes</Etiqueta>

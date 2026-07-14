@@ -6,7 +6,7 @@ import { Etiqueta } from '@/components/ui/etiqueta'
 export function EventosBanda() {
   return (
     <section className="px-5 py-seccion-sm sm:px-10">
-      <div className="mx-auto max-w-6xl">
+      <div className="mx-auto max-w-contenido">
         <div className="flex flex-col gap-5 rounded-card bg-navy p-7 sm:flex-row sm:items-center sm:justify-between sm:p-9">
           <div className="max-w-lg">
             <Etiqueta sobreOscuro>Eventos privados</Etiqueta>

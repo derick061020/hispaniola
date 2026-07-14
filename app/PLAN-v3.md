@@ -1771,3 +1771,169 @@ medidas de las que ya hay. Los `?dev-mega=*` y `?dev-movil=abierto` siguen valie
 
 **Cierre**: `tsc` limpio, `npm run build` limpio, 0 errores de consola.
 
+### 15.12 Corrección tras revisión — el ticker cae DENTRO del padding
+
+**El error de la tabla de §15.5.** Esa tabla listaba «mitad visible de la card
+del ticker (34px)» y «padding-top de la sección de premios» como dos filas que
+se SUMAN. No se suman: el ticker es `absolute` (cuelga del borde del hero) y por
+tanto **no empuja nada** — cae *dentro* del padding de la banda de premios. Con
+`pt-8` (32px), el hueco real entre la card del ticker y los logos era de
+**−2px**: las cards tocaban el eyebrow. Es exactamente lo que Samuel vio.
+
+**El arreglo**, en dos partes:
+
+1. **Se retira el eyebrow «Reconocido por»** (decisión de Samuel). 7 badges de
+   premios en fila ya dicen lo que son, y el texto + su margen costaban 30px del
+   presupuesto vertical — justo lo que hacía falta para separar la banda.
+2. **El padding pasa a absorber el vuelo antes de dar aire**, con un token que
+   lo deja dicho:
+
+```css
+--spacing-premios-aire: calc(var(--spacing-ticker-alto) / 2 + 3rem);
+/*                           └ 34px de vuelo del ticker ┘   └ 48px de hueco real ┘ */
+```
+
+El `calc()` no es coquetería: si algún día crece la card del ticker
+(`--spacing-ticker-alto`), el padding crece con ella y **el hueco de 48px no se
+entera**. Un `pt-20` a pelo se rompería en silencio.
+
+**Presupuesto corregido** (bajo el borde del hero): 34 (vuelo) + 48 (hueco) + 64
+(logos) = **146px**, contra los 204px del original. Verificado: el hueco es de
+**48px exactos en todas las resoluciones** y los logos entran enteros en el fold
+en 1366×768, 1280×800, 1440×900, 1600×1200 y 1920×1080.
+
+⚠️ **Límite conocido**: en viewports **cortos Y estrechos** (1024×768, 1280×720)
+el H1 envuelve a 3 líneas y el contenido natural del hero supera el 78% (sube a
+84–87%) — la Trampa №1 de §15.10 en acción. Ahí los logos arrancan 40–60px por
+debajo del fold. El hueco de 48px sigue intacto; lo que no cabe es el conjunto.
+Si Samuel quiere cubrir también ese caso, hay que recortar más el hero (no el
+gap).
+
+---
+
+## §16 · V3-F14 — El megamenú de Eventos: foto editorial + lista
+
+### 16.0 Punto de retorno
+
+F13 (§15) está **sin comitear** al escribir esto (incluye el catamarán del CTA,
+§15.8+). Se comitea primero — ese commit es el punto de retorno — y F14 arranca
+encima, como fase propia.
+
+### 16.1 El diagnóstico (por qué «horrible» tiene razón)
+
+El panel actual de Eventos es el único menú del sitio **sin una sola imagen**,
+vendiendo lo más visual que ofrece el negocio (una boda en un barco). Y encima
+con **dos jerarquías tipográficas distintas** pegadas por una divisoria
+vertical: 2 cards grises (las landings) contra 4 líneas de texto plano. Al
+lado del megamenú de Tours (4 cards con foto), Eventos se lee como el menú
+pobre. Tres males: puro texto, separación rara, cero apetito.
+
+**Decisión de Samuel (2026-07-14, con preview):** de las 3 opciones (grid 3×2
+tipo Tours / foto grande + lista / 2 destacadas + 4 mini-cards) eligió
+**foto grande + lista** — una imagen editorial protagonista a la izquierda con
+CTA de cotización, y las 6 ocasiones en lista con mini-thumbnail a la derecha.
+
+### 16.2 Anatomía (desde xl)
+
+```
+┌─────────────────────────────────────────────────┐
+│ ┌──────────────┐   ┌📷┐ Bodas y pre-boda        │
+│ │              │        Ceremonia, welcome…     │
+│ │  FOTO        │   ┌📷┐ Corporativo / MICE      │
+│ │  (charter,   │        Incentivos, team…       │
+│ │  gradiente   │   ┌📷┐ Cumpleaños              │
+│ │  navy abajo) │        Decoración, pastel…     │
+│ │              │   ┌📷┐ Aniversarios            │
+│ │ Charter      │   ┌📷┐ Despedidas de soltero/a │
+│ │ completo…    │   ┌📷┐ Reuniones familiares    │
+│ │ [Cotizar →]  │                                │
+│ └──────────────┘                                │
+└─────────────────────────────────────────────────┘
+   ~40% del ancho        ~60% del ancho
+```
+
+- **Columna izquierda — el panel destacado.** `galeria-charter-privado-4`
+  (catamarán fondeado frente a playa de palmeras — la más escénica de la
+  galería) a sangre en su columna, `object-cover`, esquinas `rounded-card`.
+  Encima, apoyado al pie sobre un **gradiente navy** (mismo patrón que el
+  overlay inferior del hero, con `--color-overlay-hero`): el texto de
+  `EventosBanda` — «Charter completo con comida, barra libre y coordinación.
+  Hasta 120 personas.» — y el CTA **«Pedir cotización»** (el link estilo
+  outline blanco que ya usa EventosBanda, o texto + flecha; a criterio visual,
+  pero SIN inventar copy). La columna **se estira a la altura de la lista**
+  (grid `items-stretch`): cero números mágicos de altura.
+- **Columna derecha — la lista.** Las 6 `OCASIONES` en su orden de data (las
+  2 landings ya van primeras). Cada fila: thumbnail `size-12 rounded-lg`
+  (`o.foto`, `object-cover`) + nombre (`font-display text-sm font-semibold`)
+  + `o.meta` en `text-xs text-navy-soft`. Hover: `bg-papel-hueso` en la fila
+  (paridad con ItemMenu). **Sin distinción visual landing/no-landing**: esa
+  jerarquía era el origen de la «separación rara»; el destino distinto
+  (landing vs. formulario del hub) es asunto de la página de destino, no del
+  menú. `esLanding` se queda en data, intacto.
+
+### 16.3 Contenido: todo existe ya — cero strings nuevos
+
+| pieza | fuente |
+|---|---|
+| foto grande | `galeria-charter-privado-4` (ya en `/fotos`, ya usada en la pila de galería — repetir foto entre secciones ya pasa en el sitio) |
+| texto del panel | `EventosBanda` (hero.tsx no: eventos-banda.tsx): «Charter completo con comida, barra libre y coordinación. Hasta 120 personas.» |
+| CTA | «Pedir cotización» (EventosBanda) |
+| eyebrow (opcional) | «Eventos privados» (la `Etiqueta` de EventosBanda) |
+| 6 filas | `OCASIONES` (nombre + meta + foto — las fotos son las provisionales de charter-privado, §9 sigue pendiente de shooting real del cliente) |
+
+Los thumbnails son **las mismas fotos que ya carga el ticker** → llegan del
+caché del navegador, el panel no parpadea al abrir.
+
+### 16.4 Anchos responsive
+
+- **Desde xl**: `xl:w-[min(92vw,40rem)]` (640px — sube de 38.75rem; la foto
+  necesita columna real). Grid `grid-cols-[2fr_3fr]`. 640px < 880px del
+  megamenú de Tours ya verificado sin solape → no hay riesgo nuevo, pero se
+  re-verifica igual (§16.6).
+- **md–xl (compacto)**: se queda en `w-[min(92vw,28rem)]` y **la columna de
+  la foto se oculta** (`hidden xl:flex`): queda la lista sola, que con los
+  thumbnails ya no es «puro texto». A 448px la lista respira; la foto grande
+  ahí solo estorbaría.
+- El patrón `min(92vw, …)` con valor arbitrario es el ya establecido en
+  mega-tours/mega-eventos (un `min()` responsive no cabe en un token simple).
+
+### 16.5 Archivos
+
+| archivo | qué cambia |
+|---|---|
+| `components/home/mega-eventos.tsx` | reescritura completa: grid foto+lista, fuera la divisoria y las 2 jerarquías |
+| `dev/dev-registry.ts` | actualizar nota de «Megamenú: Eventos» (mismo commit, regla de siempre) |
+
+Nada más: ni tokens nuevos (todo sale de los que hay), ni data nueva, ni
+componentes compartidos nuevos — la fila de ocasión vive dentro de
+mega-eventos.tsx (si algún día la quiere otro menú, se extrae entonces).
+
+### 16.6 Trampas
+
+1. **Texto sobre foto = overlay obligatorio.** Sin el gradiente navy al pie,
+   el copy blanco muere contra la arena/cielo de la foto. Mismo patrón (y
+   mismo token) que el overlay inferior del hero.
+2. **La foto es decorativa** (`alt=""`): el contenido está en el texto de al
+   lado. Los thumbnails igual.
+3. **El panel crece en alto** (6 filas + foto ≈ más alto que el actual): el
+   morph del notch lo mide el ResizeObserver de notch-menu.tsx solo, pero
+   verificar que al abrir Eventos el notch expandido **no llegue al ticker**
+   en pantallas cortas (800px de alto).
+4. **`?dev-mega=eventos` debe seguir funcionando** — es el deep-link del
+   glosario y el frame que viaja a Figma.
+5. **No tocar `OCASIONES`**: el ticker y el menú móvil consumen la misma
+   data. Cambiarle un campo por comodidad del menú rompería a los otros dos.
+
+### 16.7 Verificación (Playwright)
+
+1. **xl (1280/1440)**: panel de 640px, foto visible con texto legible encima
+   del gradiente, 6 filas con thumbnail. Sin tapar logo/Reservar
+   (`elementFromPoint`). El notch abraza el panel sin aire muerto.
+2. **md–lg (768/1024)**: lista sola a 448px, sin foto grande, thumbnails
+   visibles. Sin solapes.
+3. **Alto**: con Eventos abierto a 1280×800, el borde inferior del notch queda
+   a ≥24px del ticker.
+4. **Fotos**: 0 errores 404 en consola; los thumbnails pintan (naturalWidth>0).
+5. `?dev-mega=eventos` abre el estado. Hover de fila = papel-hueso.
+6. `tsc` + `build` limpios, 0 overflow-x.
+

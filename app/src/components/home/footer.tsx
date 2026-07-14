@@ -5,7 +5,7 @@ import { Logo } from '@/components/ui/logo'
 export function Footer() {
   return (
     <footer className="bg-navy px-5 pb-6 pt-14 text-white">
-      <div className="mx-auto grid max-w-6xl grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mx-auto grid max-w-contenido grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
         <div>
           <Logo className="!text-white" />
           <p className="mt-3 text-sm text-white/70">
@@ -74,7 +74,7 @@ export function Footer() {
         </div>
       </div>
 
-      <div className="mx-auto mt-12 max-w-6xl border-t border-white/10 pt-5 text-xs text-white/40">
+      <div className="mx-auto mt-12 max-w-contenido border-t border-white/10 pt-5 text-xs text-white/40">
         © {new Date().getFullYear()} Hispaniola Aquatic Adventures.
       </div>
     </footer>

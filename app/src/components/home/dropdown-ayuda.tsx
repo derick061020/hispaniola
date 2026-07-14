@@ -5,9 +5,12 @@ import { ItemMenu } from './item-menu'
 // ítems dejan un hueco en la 4ª celda: decisión de Samuel (2026-07-14), se
 // queda vacío — sin `col-span` ni un destino inventado para cuadrar la
 // rejilla (§12.3).
+//
+// v3-F13 (PLAN-v3.md §15.4): mismo ajuste que DropdownNosotros — compacto
+// (448px) entre md y lg, 624px desde lg.
 export function DropdownAyuda() {
   return (
-    <div className="grid w-notch-panel grid-cols-2 gap-1 p-3">
+    <div className="grid w-notch-panel-compacto grid-cols-2 gap-1 p-3 lg:w-notch-panel">
       {NAV_AYUDA.map((item) => (
         <ItemMenu key={item.id} item={item} />
       ))}

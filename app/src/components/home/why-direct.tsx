@@ -14,7 +14,7 @@ const BENEFICIOS = [
 export function WhyDirect() {
   return (
     <section className="bg-papel-hueso px-5 py-seccion-sm sm:px-10 sm:py-seccion">
-      <div className="mx-auto max-w-6xl">
+      <div className="mx-auto max-w-contenido">
         <Etiqueta>Reserva directa</Etiqueta>
         <h2 className="mt-3 max-w-2xl font-display text-h2 font-semibold text-navy">
           ¿Por qué reservar aquí y no en un portal?

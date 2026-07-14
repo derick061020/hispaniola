@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { ArrowRight, Check } from 'lucide-react'
 import { Boton } from '@/components/ui/boton'
 import { Header } from './header'
 import { TickerHero } from './ticker-hero'
@@ -24,6 +25,14 @@ export function Hero() {
     if (v === 'poster') setForzarPoster(true)
   })
 
+  // [dev-mode] ?dev-cta=hover congela el catamarán FUERA del botón, sin
+  // depender de un puntero real → es el frame que viaja a Figma (igual que
+  // ?dev-dock=activo con el hover del ticker). Ver dev-registry.ts
+  const [forzarCatamaran, setForzarCatamaran] = useState(false)
+  useDevFlag('dev-cta', (v) => {
+    if (v === 'hover') setForzarCatamaran(true)
+  })
+
   const reducirMovimiento =
     typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
@@ -40,7 +49,16 @@ export function Hero() {
   return (
     <>
       <section id="hero" className="px-hero-margen pt-hero-margen sm:px-hero-margen-sm sm:pt-hero-margen-sm">
-        <div className="relative rounded-hero">
+        {/* v3-F13 (PLAN-v3.md §15.5): flex-col + min-h-hero-alto (78svh, solo
+            desde sm — en móvil el contenido manda) para que el hero ocupe
+            ~78% del alto de pantalla y deje ver la banda de premios sin
+            scroll. svh, no vh/dvh: vh es el viewport GRANDE en móvil (la
+            barra de URL escondida) y dvh baila mientras se scrollea, con el
+            ticker a caballo del borde inferior. min-height es un MÍNIMO: si
+            el contenido natural crece, el 78% deja de cumplirse en silencio
+            (Trampa §15.10 №1) — por eso el padding del bloque de contenido
+            se recortó (más abajo) para mantenerlo por debajo del techo. */}
+        <div className="relative flex flex-col rounded-hero sm:min-h-hero-alto">
           <div className="absolute inset-0 overflow-hidden rounded-hero">
             <video
               ref={videoRef}
@@ -68,7 +86,7 @@ export function Hero() {
             />
           </div>
 
-          <div className="relative z-10">
+          <div className="relative z-10 flex flex-1 flex-col">
             <Header variante="sobreVideo" />
 
             {/* La pirámide de confianza (PLAN-v3.md §14): el rating (lo más
@@ -77,23 +95,26 @@ export function Hero() {
                 ya la dice ("...de Punta Cana..."). Los 4 stats bajan aquí
                 desde su propia sección: los números son la prueba que debe
                 acompañar al CTA, no vivir solos en una pantalla aparte. */}
-            {/* pb-16, no pb-10: con la fila de stats nueva (§14.3) el bloque
-                de contenido baja y el CTA quedaba a 6px del ticker (medido
-                en navegador) — bajo el mínimo de 24px de la Trampa №10.
-                px-4 en vez de px-6 (móvil, PLAN-v3.md §11/pendientes): con
-                solo 8px menos de aire por lado el H1 pasa de 6 a 4 líneas
-                (medido con Playwright) — el resto del bloque no lo necesita,
-                pero es un único padding compartido por toda la columna. */}
-            <div className="px-4 pb-16 pt-12 text-center sm:px-10 sm:pt-16 lg:pt-20">
-              {/* v3-F12: max-w-4xl, no max-w-3xl — el H1 ya no lleva su propio
-                  max-w-xl (576px, heredado de cuando el hero llevaba grid de 2
-                  columnas en v2): a 768px el titular envolvía en 4 líneas con
-                  el tamaño nuevo (3.75rem); medido con Playwright, a 896px
-                  (max-w-4xl) vuelve a envolver en 3. La lead pasó de max-w-md
-                  a max-w-xl por la misma razón (era 3 líneas, ahora 2). El
-                  resto del bloque (rating, stats, CTA) no tiene max-width
-                  propio — se queda igual de centrado, con más aire. */}
-              <div className="mx-auto max-w-4xl">
+            {/* v3-F13 (PLAN-v3.md §15.5): flex-1 + justify-center reparte el
+                aire sobrante del min-h-hero-alto entre Header y este bloque;
+                pt-8 sm:pt-10 (antes pt-12 sm:pt-16 lg:pt-20) recorta el
+                presupuesto vertical que el 78% necesita para dejar ver la
+                banda de premios sin scroll — no es cosmético, es el ajuste
+                que evita que el contenido natural supere el mínimo (Trampa
+                §15.10 №1). pb-16: con la fila de stats (§14.3) el CTA queda a
+                más de 24px del ticker (mínimo de la Trampa №10). px-4 en vez
+                de px-6 (móvil): el H1 gana algo de ancho extra. */}
+            <div className="flex flex-1 flex-col justify-center px-4 pb-16 pt-8 text-center sm:px-10 sm:pt-10">
+              {/* v3-F13 (PLAN-v3.md §15.6): max-w-5xl (antes max-w-4xl/896px,
+                  F12) — a 896px el titular envolvía en 3 líneas con el
+                  tamaño de 3.75rem; medido con Playwright, a 1024px
+                  (max-w-5xl) envuelve en 2. text-balance reparte las 2 líneas
+                  parejas en vez de dejar una larga y un rabo corto — no
+                  existe en Figma, el salto de línea se replica a mano al
+                  preparar el frame. La lead se queda en max-w-xl (2 líneas,
+                  sin cambios desde F12). El resto del bloque (rating, stats,
+                  CTA) no tiene max-width propio. */}
+              <div className="mx-auto max-w-5xl">
                 <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm text-white">
                   <span className="text-amber-300">★★★★★</span>
                   <span>
@@ -106,7 +127,7 @@ export function Hero() {
                     Premios Viator 22-24
                   </span>
                 </div>
-                <h1 className="mt-3 font-display text-hero-movil font-semibold text-white sm:text-hero">
+                <h1 className="mt-3 text-balance font-display text-hero-movil font-semibold text-white sm:text-hero">
                   Los catamaranes originales de Punta Cana, en grupos pequeños
                 </h1>
                 <p className="mx-auto mt-4 max-w-xl text-lead text-white/90">
@@ -118,17 +139,72 @@ export function Hero() {
                   {STATS.map((s) => (
                     <div key={s.label} className="text-center">
                       <p className="font-display text-stat font-semibold text-white">{s.valor}</p>
-                      <p className="mx-auto mt-1 max-w-[16ch] text-xs text-white/80">{s.label}</p>
+                      {/* v3-F13 (PLAN-v3.md §15.7): whitespace-nowrap (antes
+                          max-w-[16ch]) — el label más largo ("del aforo del
+                          barco", ajustado en data/home.ts) ya cabe en una
+                          línea; con el clamp de caracteres, "de la capacidad
+                          del barco" partía en 2 y desalineaba la fila. */}
+                      <p className="mx-auto mt-1 whitespace-nowrap text-xs text-white/80">{s.label}</p>
                     </div>
                   ))}
                 </div>
 
-                <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-                  <Boton href="#tours">Ver disponibilidad</Boton>
-                  <p className="text-xs text-white/90">
-                    ✓ Cancelación gratis hasta 7 días antes
-                    <br />✓ Confirma con solo 25% de depósito
-                  </p>
+                {/* v3-F13 (PLAN-v3.md §15.8): columna, no fila — el botón
+                    gana peso (tamaño="lg": más ancho, halo --shadow-cta,
+                    icono) y los 2 checks bajan debajo, uno junto al otro con
+                    una divisoria de 1px (oculta en móvil: apilados, una
+                    divisoria vertical entre filas no se lee). Iconos de
+                    lucide (ya usados en item-menu.tsx/menu-movil.tsx), no un
+                    "✓" de texto. */}
+                <div className="mt-8 flex flex-col items-center gap-4">
+                  {/* El catamarán REAL del cliente (recorte de
+                      hero-catamaran-2.webp) sale navegando por el borde
+                      derecho del CTA al pasar el ratón — hacia donde apunta la
+                      flecha del botón. Va espejado: en la foto original navega
+                      hacia la izquierda y saldría de espaldas.
+
+                      ⚠️ Vive FUERA del botón (hermano, no hijo) porque un hijo
+                      NUNCA se pinta por detrás del fondo de su padre: dentro
+                      del <a> el barco aparecería ENCIMA del coral desde el
+                      primer frame, en vez de asomar desde detrás. Como hermano
+                      anterior en el DOM y con el botón en `relative` (los dos
+                      posicionados → gana el último del DOM), el botón lo tapa
+                      mientras está dentro de sus límites: el propio fondo del
+                      botón es la puerta por la que sale.
+
+                      El barco es MÁS ALTO que el botón, así que en reposo
+                      asomaría por arriba y por abajo — de ahí el opacity-0
+                      (no basta con esconderlo detrás). Decorativo: alt vacío y
+                      aria-hidden. Con prefers-reduced-motion no se mueve ni
+                      aparece; no se pierde nada. */}
+                  <span className="group relative inline-flex">
+                    <img
+                      src="/fotos/catamaran-recorte.webp"
+                      alt=""
+                      aria-hidden="true"
+                      width={276}
+                      height={360}
+                      className={`pointer-events-none absolute right-0 top-1/2 h-28 w-auto -translate-y-[58%] opacity-0 transition-all duration-500 ease-out motion-safe:group-hover:translate-x-20 motion-safe:group-hover:opacity-100 ${
+                        forzarCatamaran ? 'translate-x-20 opacity-100' : '' // [dev-mode]
+                      }`}
+                    />
+                    <Boton href="#tours" tamaño="lg" className="relative">
+                      Ver disponibilidad
+                      <ArrowRight className="size-5" aria-hidden="true" />
+                    </Boton>
+                  </span>
+
+                  <div className="flex flex-col items-center gap-2 text-xs text-white/90 sm:flex-row sm:gap-4">
+                    <span className="flex items-center gap-1.5">
+                      <Check className="size-4 shrink-0" strokeWidth={3} aria-hidden="true" />
+                      Cancelación gratis hasta 7 días antes
+                    </span>
+                    <span className="hidden h-4 w-px bg-white/30 sm:block" aria-hidden="true" />
+                    <span className="flex items-center gap-1.5">
+                      <Check className="size-4 shrink-0" strokeWidth={3} aria-hidden="true" />
+                      Confirma con solo 25% de depósito
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
