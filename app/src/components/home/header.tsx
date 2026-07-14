@@ -128,7 +128,7 @@ export function Header({ variante = 'solida' }: { variante?: 'solida' | 'sobreVi
       {/* Topbar (WhatsApp + idioma) retirada — vuelve como botones flotantes
           (pendiente, ver conversación 2026-07-14). */}
       <div
-        className={`relative flex items-center justify-between px-5 py-3 ${sobreVideo ? '' : 'border-b border-linea'}`}
+        className={`relative mx-auto flex max-w-6xl items-center justify-between px-5 py-3 ${sobreVideo ? '' : 'border-b border-linea'}`}
         ref={navRef}
       >
         <Logo sobreOscuro={sobreVideo} />

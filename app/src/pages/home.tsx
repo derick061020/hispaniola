@@ -1,5 +1,5 @@
 import { Hero } from '@/components/home/hero'
-import { Stats } from '@/components/home/stats'
+import { Premios } from '@/components/home/premios'
 import { ToursGrid } from '@/components/home/tours-grid'
 import { WhyDirect } from '@/components/home/why-direct'
 import { Diferenciadores } from '@/components/home/diferenciadores'
@@ -14,7 +14,7 @@ export function HomePage() {
   return (
     <div className="pb-16 md:pb-0">
       <Hero />
-      <Stats />
+      <Premios />
       <ToursGrid />
       <WhyDirect />
       <Diferenciadores />

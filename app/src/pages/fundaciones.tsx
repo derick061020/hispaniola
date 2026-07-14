@@ -75,6 +75,10 @@ export function FundacionesPage() {
             </p>
             <p className="font-mono text-[11px] text-navy-soft">--text-eyebrow · Poppins caps</p>
           </div>
+          <div>
+            <p className="text-stat font-display font-semibold text-navy">91.607</p>
+            <p className="font-mono text-[11px] text-navy-soft">--text-stat · Poppins (v3-F11: vive en el hero, junto al CTA)</p>
+          </div>
         </div>
       </section>
 

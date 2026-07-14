@@ -274,3 +274,35 @@
     transition: none;
   }
 }
+
+/* ============================================================
+   Menú móvil como objeto (v3-F10, PLAN-v3.md §13) — antes era una pantalla
+   `fixed inset-0` que sustituía a la página; ahora es una hoja con el mismo
+   margen y radio del hero, sobre un scrim, que CAE desde arriba (no sube
+   desde abajo como un bottom sheet: en desktop los menús salen del notch, en
+   el header, así que en móvil deben salir del mismo sitio — el origen real).
+
+   Reutiliza los tokens del notch (--notch-transicion/--notch-easing): misma
+   familia de movimiento en las dos pantallas — si se afina la curva del
+   notch, el móvil la hereda solo. */
+.menu-hoja {
+  transform-origin: top center;
+  animation: menu-hoja-entrada var(--notch-transicion) var(--notch-easing);
+}
+
+@keyframes menu-hoja-entrada {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu-hoja {
+    animation: none;
+  }
+}

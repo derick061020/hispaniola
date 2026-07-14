@@ -3,6 +3,7 @@ import { Boton } from '@/components/ui/boton'
 import { Header } from './header'
 import { TickerHero } from './ticker-hero'
 import { useDevFlag } from '@/dev/use-dev-flag'
+import { STATS } from '@/data/home'
 
 // Hero v3 — «inmersivo» (app/PLAN-v3.md). Cambios frente a v2: el Header pasa
 // a vivir DENTRO del box del hero (antes era una barra hermana sticky), y la
@@ -70,26 +71,30 @@ export function Hero() {
           <div className="relative z-10">
             <Header variante="sobreVideo" />
 
-            <div className="px-6 pb-10 pt-12 text-center sm:px-10 sm:pt-16 lg:pt-20">
-              <div className="mx-auto max-w-3xl">
-                <p className="text-eyebrow font-semibold uppercase tracking-[0.14em] text-white/90">
-                  Punta Cana · Bávaro
-                </p>
-                {/* Sin max-w propio: llena el contenedor (max-w-3xl = 768px). Con
-                    el max-w-xl que tenía (576px) el titular partía en CUATRO líneas
-                    de 63px; medido en navegador, 768px es el umbral exacto al que
-                    cae a TRES. Son 63px menos de hero — los justos para que la cinta
-                    de stats y los premios entren en el primer vistazo. La escala
-                    tipográfica no se toca: el token --text-hero sigue mandando. */}
-                <h1 className="mt-3 font-display text-hero-movil font-semibold text-white sm:text-hero">
-                  Los catamaranes originales de Punta Cana, en grupos pequeños
-                </h1>
-                <p className="mx-auto mt-4 max-w-md text-lead text-white/90">
-                  Snorkel en un vivero de coral real, cocina flotante con menú a tu elección y barcos a
-                  media capacidad. Desde 2012.
-                </p>
-
-                <div className="mt-6 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm text-white">
+            {/* La pirámide de confianza (PLAN-v3.md §14): el rating (lo más
+                condensado) sube arriba del título, en el slot donde vivía el
+                eyebrow de localización — la localización no se pierde, el H1
+                ya la dice ("...de Punta Cana..."). Los 4 stats bajan aquí
+                desde su propia sección: los números son la prueba que debe
+                acompañar al CTA, no vivir solos en una pantalla aparte. */}
+            {/* pb-16, no pb-10: con la fila de stats nueva (§14.3) el bloque
+                de contenido baja y el CTA quedaba a 6px del ticker (medido
+                en navegador) — bajo el mínimo de 24px de la Trampa №10.
+                px-4 en vez de px-6 (móvil, PLAN-v3.md §11/pendientes): con
+                solo 8px menos de aire por lado el H1 pasa de 6 a 4 líneas
+                (medido con Playwright) — el resto del bloque no lo necesita,
+                pero es un único padding compartido por toda la columna. */}
+            <div className="px-4 pb-16 pt-12 text-center sm:px-10 sm:pt-16 lg:pt-20">
+              {/* v3-F12: max-w-4xl, no max-w-3xl — el H1 ya no lleva su propio
+                  max-w-xl (576px, heredado de cuando el hero llevaba grid de 2
+                  columnas en v2): a 768px el titular envolvía en 4 líneas con
+                  el tamaño nuevo (3.75rem); medido con Playwright, a 896px
+                  (max-w-4xl) vuelve a envolver en 3. La lead pasó de max-w-md
+                  a max-w-xl por la misma razón (era 3 líneas, ahora 2). El
+                  resto del bloque (rating, stats, CTA) no tiene max-width
+                  propio — se queda igual de centrado, con más aire. */}
+              <div className="mx-auto max-w-4xl">
+                <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm text-white">
                   <span className="text-amber-300">★★★★★</span>
                   <span>
                     <strong>4.9</strong> · 1.782 reseñas
@@ -100,6 +105,22 @@ export function Hero() {
                   <span className="rounded-chip bg-white/15 px-2.5 py-1 text-xs font-medium backdrop-blur-sm">
                     Premios Viator 22-24
                   </span>
+                </div>
+                <h1 className="mt-3 font-display text-hero-movil font-semibold text-white sm:text-hero">
+                  Los catamaranes originales de Punta Cana, en grupos pequeños
+                </h1>
+                <p className="mx-auto mt-4 max-w-xl text-lead text-white/90">
+                  Snorkel en un vivero de coral real, cocina flotante con menú a tu elección y barcos a
+                  media capacidad. Desde 2012.
+                </p>
+
+                <div className="mt-6 flex flex-wrap items-start justify-center gap-x-10 gap-y-4">
+                  {STATS.map((s) => (
+                    <div key={s.label} className="text-center">
+                      <p className="font-display text-stat font-semibold text-white">{s.valor}</p>
+                      <p className="mx-auto mt-1 max-w-[16ch] text-xs text-white/80">{s.label}</p>
+                    </div>
+                  ))}
                 </div>
 
                 <div className="mt-8 flex flex-wrap items-center justify-center gap-4">

@@ -157,6 +157,62 @@ export function formatoDinero(n: number | null): string {
   return 'US$ ' + n.toLocaleString('en-US', { maximumFractionDigits: 2 })
 }
 
+export type ItemNav = { id: string; nombre: string; descripcion: string }
+
+// Nosotros (PLAN-v3.md §12.2) — fuente: TRIPULACION (4 roles) + FLOTA (3
+// entradas) del prototipo para el primer ítem; el itinerario de semi-privado
+// ("Arrecife de Cabeza de Toro: proyecto de restauración top-3 de RD") para
+// el segundo. El icono se mapea por `id` en item-menu.tsx (presentación, no
+// contenido — así este archivo no importa React).
+export const NAV_NOSOTROS: ItemNav[] = [
+  {
+    id: 'tripulacion',
+    nombre: 'La tripulación y la flota',
+    descripcion: 'Capitán, bióloga marina, chef a bordo y guía de snorkel. Dos catamaranes y la cocina flotante.',
+  },
+  {
+    id: 'arrecife',
+    nombre: 'El arrecife que reconstruimos',
+    descripcion: 'El vivero de coral de Cabeza de Toro: proyecto de restauración top-3 del país.',
+  },
+]
+
+// Ayuda (PLAN-v3.md §12.2) — FAQ_CATEGORIAS del prototipo: 6 categorías, 14
+// preguntas (contadas). NOTAS['mi-reserva'] para el segundo ítem. "Contacto"
+// (ya no "Contacto y WhatsApp", decisión de Samuel 2026-07-14) lleva a la
+// página /contacto del prototipo — WhatsApp con horario, teléfono, email y
+// formulario, no solo el enlace directo a WhatsApp que tenía antes.
+// ⚠️ El grid de 2 columnas deja un hueco en la 4ª celda con estos 3 ítems —
+// decisión de Samuel: se queda vacío, sin `col-span` ni relleno inventado.
+export const NAV_AYUDA: ItemNav[] = [
+  {
+    id: 'faq',
+    nombre: 'Preguntas frecuentes',
+    descripcion: '14 preguntas: reservas y pagos, qué llevar, comida, clima, niños.',
+  },
+  {
+    id: 'reserva',
+    nombre: 'Gestionar mi reserva',
+    descripcion: 'Cambia tu menú o paga el saldo pendiente. Solo con tu código, sin cuenta.',
+  },
+  {
+    id: 'contacto',
+    nombre: 'Contacto',
+    descripcion: 'WhatsApp, teléfono y formulario. Respondemos en minutos, de 8:00 a 20:00.',
+  },
+]
+
+// Cinta de confianza — vivía enterrada en la ficha del wireframe (ver
+// NOTAS['home-stats'] del prototipo). v3-F11: sube al hero, entre el
+// subtítulo y el CTA (PLAN-v3.md §14).
+export type Stat = { valor: string; label: string }
+export const STATS: Stat[] = [
+  { valor: '91.607', label: 'clientes felices' },
+  { valor: '4.454', label: 'días navegados' },
+  { valor: '≤35%', label: 'de la capacidad del barco' },
+  { valor: '0', label: 'plástico a bordo' },
+]
+
 export type Premio = {
   id: string
   /** Texto del premio — es el `alt` de la imagen: describe lo que el badge DICE,
@@ -194,25 +250,29 @@ export const PREMIOS: Premio[] = [
     id: 'weddingwire',
     nombre: "WeddingWire — Couples' Choice Awards 2018-2021",
     foto: 'premio-weddingwire',
-    ancho: 96,
-    alto: 96,
+    ancho: 128,
+    alto: 128,
   },
   {
     id: 'ltg',
     nombre: 'LTG Global Awards 2021/22 — Ganador: Aquatic Tour Operator of the Year, República Dominicana',
     foto: 'premio-ltg',
-    ancho: 239,
-    alto: 96,
+    ancho: 318,
+    alto: 128,
   },
-  { id: 'viator-2022', nombre: 'Viator Experience Award 2022', foto: 'premio-viator-2022', ancho: 84, alto: 96 },
-  { id: 'viator-2023', nombre: 'Viator Experience Award 2023', foto: 'premio-viator-2023', ancho: 84, alto: 96 },
-  { id: 'viator-2024', nombre: 'Viator Experience Awards 2024', foto: 'premio-viator-2024', ancho: 84, alto: 96 },
+  // TripAdvisor y los Viator: nativo 82px / 109px de alto — no llegan a 128
+  // (2× de --spacing-premio-alto), así que se exportan a su nativo y NO se
+  // upscalean (PLAN-v3.md §14.4, Trampa №11). Pendiente pedirle al cliente
+  // los assets en alta (§9).
+  { id: 'viator-2022', nombre: 'Viator Experience Award 2022', foto: 'premio-viator-2022', ancho: 95, alto: 109 },
+  { id: 'viator-2023', nombre: 'Viator Experience Award 2023', foto: 'premio-viator-2023', ancho: 95, alto: 109 },
+  { id: 'viator-2024', nombre: 'Viator Experience Awards 2024', foto: 'premio-viator-2024', ancho: 95, alto: 109 },
   {
     id: 'luxury-travel-guide',
     nombre: 'Luxury Travel Guide — The Americas Awards 2016, Ganador: Tour Operator of the Year, Punta Cana',
     foto: 'premio-luxury-travel-guide',
-    ancho: 290,
-    alto: 96,
+    ancho: 387,
+    alto: 128,
   },
 ]
 

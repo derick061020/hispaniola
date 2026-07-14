@@ -342,6 +342,11 @@ Con Playwright, en `/` y `/fundaciones`, a **390 / 768 / 1440 px**:
 3. **Fotos de las ocasiones en el ticker:** provisionales de la galería real —
    ¿pedimos al cliente fotos de eventos reales (bodas/cumpleaños a bordo)?
 4. Siguen abiertas de v2: intensidad del coral `#EF5B44` y base blanca vs. crema.
+5. **Premios (v3-F9):** pedir al cliente (a) los assets en ALTA de TripAdvisor
+   y Viator — los de su web no dan para 2× a 64px de display (§14.4) — y
+   (b) las URLs verificables de cada premio/perfil, para hacer los badges
+   clicables (la mitad pendiente de la crítica de la auditoría: «sin enlaces
+   verificables»).
 
 ---
 
@@ -894,3 +899,875 @@ A 768 / 1024 / 1440 px:
 - Abrir menús por hover: se mantiene el click. Cambiarlo es otra conversación.
 - El refinamiento del cierre con fade-out (§11.2) — solo si Samuel lo pide
   tras verlo.
+
+---
+
+## §14 · V3-F11 — La pirámide de confianza sube un nivel: rating sobre el título, stats al hero, premios protagonistas
+
+Estado: **planificado** (pedido de Samuel, 2026-07-14). **Escrito para ejecutarse
+con Sonnet.**
+
+⚠️ **Enfoque descartado por Samuel — no volver a intentarlo:** meter stats +
+logos bajo el fold COMPACTANDO (titular del hero a 3 líneas para acortarlo,
+márgenes de la banda de premios recortados). Se rechazó explícitamente: el hero
+no se achica (al contrario: **Samuel planea hacerlo MÁS ALTO** después), y
+apilar dos bloques comprimidos no es una solución, es una concesión. La
+solución es estructural: cada señal de confianza sube un nivel de jerarquía y
+la sección post-hero deja de ser una pila.
+
+### 14.0 El pedido, traducido
+
+| # | Pedido de Samuel | Traducción técnica |
+|---|---|---|
+| 1 | Quitar «PUNTA CANA · BÁVARO» | El eyebrow de localización desaparece. La localización NO se pierde: el H1 ya dice «…de Punta Cana…» (constancia, no optimización en silencio — decisión de Samuel 2026-07-14) |
+| 2 | Las estrellas 4.9 + reseñas + los 2 chips (TripAdvisor 7 años, Premios Viator) suben ARRIBA del título, a donde estaba el eyebrow | La fila de confianza completa se muda tal cual (son chips de TEXTO y así se quedan — no se convierten en imágenes) al slot del eyebrow, encima del H1 |
+| 3 | Donde estaba esa fila → los 4 stats | Los stats SUBEN AL HERO: fila blanca sobre el video, entre el subtítulo y el CTA, con las cifras a escala contenida (no compiten con el H1) |
+| 4 | Donde estaban los stats → los logos de premios, más grandes | La sección post-hero pasa a ser SOLO la banda de premios: `stats.tsx` muere, nace `premios.tsx`, logos de 48px → 64px |
+
+### 14.1 Antes / después
+
+```
+HOY                                   NUEVO
+────────────────────────────────      ────────────────────────────────
+PUNTA CANA · BÁVARO                   ★★★★★ 4.9 · 1.782 reseñas
+H1                                      [#1 TripAdvisor · 7 años] [Premios Viator 22-24]
+subtítulo                             H1  (intacto: max-w-xl, mismas líneas)
+★★★★★ 4.9 · 1.782 reseñas + chips     subtítulo
+CTA + bullets                         91.607 clientes · 4.454 días · ≤35% barco · 0 plástico
+(ticker al pie)                       CTA + bullets
+────────────────────────────────      (ticker al pie)
+SECCIÓN: 4 cifras GIGANTES            ────────────────────────────────
+  + border + RECONOCIDO POR           SECCIÓN: RECONOCIDO POR
+  + 7 logos 48px                        + 7 logos 64px  ← y nada más
+```
+
+La lógica de la pirámide: el rating con sus 2 menciones (lo más condensado) va
+arriba del todo; los números (la prueba en cifras) van sobre el video, junto al
+CTA que deben empujar; los badges (la prueba visual, lo que MÁS le importa a
+Samuel) se quedan con una sección entera para ellos solos, más grandes. Nada se
+repite en dos sitios.
+
+El hero crece ~50px de contenido con el cambio — **bien**: va en la dirección
+del hero más alto que Samuel planea. Presupuesto del fold a 1080p (viewport
+~950px): hero ~745 + padding de sección 64 + eyebrow 12 + gap 28 + logos 64 →
+los logos acaban ≈ **913px** ✓. La banda de premios, al quedarse sola, cabe
+bajo el hero incluso si éste crece otros ~35px.
+
+### 14.2 F11-a — Los datos (`src/data/home.ts`)
+
+`STATS` vive hardcodeado en `stats.tsx` y ahora lo necesita el hero → se muda a
+`data/home.ts` (es contenido canónico: viene de `NOTAS['home-stats']` del
+prototipo):
+
+```ts
+export type Stat = { valor: string; label: string }
+export const STATS: Stat[] = [
+  { valor: '91.607', label: 'clientes felices' },
+  { valor: '4.454', label: 'días navegados' },
+  { valor: '≤35%', label: 'de la capacidad del barco' },
+  { valor: '0', label: 'plástico a bordo' },
+]
+```
+
+Los textos NO se retocan (ni acortar labels «para que quepan»: el wrap está
+previsto en 14.3).
+
+### 14.3 F11-b — El hero (`hero.tsx` + `tokens.css`)
+
+1. **Fuera el eyebrow** «Punta Cana · Bávaro» (el `<p className="text-eyebrow …">`).
+2. **La fila de confianza sube** al slot del eyebrow: el bloque completo de
+   `★★★★★` + `4.9 · 1.782 reseñas` + los 2 chips `bg-white/15` se mueve encima
+   del H1 **sin tocar sus clases internas** (misma fila, otra posición). Pierde
+   su `mt-6` (ahora es el primer elemento); el `mt-3` del H1 pasa a ser la
+   separación fila→título (si respira poco, subir a `mt-4` — a ojo de Samuel).
+3. **Los stats entran** donde estaba la fila: entre el subtítulo y el CTA.
+
+```tsx
+<div className="mt-6 flex flex-wrap items-start justify-center gap-x-10 gap-y-4">
+  {STATS.map((s) => (
+    <div key={s.label} className="text-center">
+      <p className="font-display text-stat font-semibold text-white">{s.valor}</p>
+      <p className="mx-auto mt-1 max-w-[16ch] text-xs text-white/80">{s.label}</p>
+    </div>
+  ))}
+</div>
+```
+
+**⚠️ Trampa №8 — el token `--text-stat` cambia de valor, no de nombre.** La
+cifra a 2.75rem era para una sección en blanco; dentro del hero competiría con
+el H1 (3.5rem). El token pasa a `--text-stat: 1.5rem` (line-height 1.1 se
+queda). Se conserva el NOMBRE porque sigue siendo «la cifra de stat» — en Figma
+es el mismo text style con nuevo valor, no un style nuevo. Comentar el porqué
+en `tokens.css` y actualizar la muestra de la type scale en `fundaciones.tsx`
+(grep `text-stat` ahí). El uso `text-hero-movil` que `stats.tsx` le daba a las
+cifras en móvil muere con la sección — verificar con grep que nada más lo
+pierde.
+
+**⚠️ Trampa №9 — contraste sobre video.** Los stats van en blanco sobre el
+video con overlay del 45%. Verificar legibilidad contra el POSTER
+(`?dev-hero=poster` — es el frame canónico, y es el frame que viaja a Figma).
+Si falla, se ajusta `--color-overlay-hero` (el token), jamás un valor inline.
+
+**⚠️ Trampa №10 — el CTA y el ticker deben seguir respirando.** El contenido
+del hero gana una fila: el bloque del CTA baja y el ticker (absolute al pie,
+`translate-y-1/2`) puede acercársele. Tras el cambio, medir: entre el bottom
+del bloque CTA+bullets y el top de las cards del ticker deben quedar **≥ 24px**
+a 1440px. Si no, subir el `pb-10` del bloque de contenido a `pb-14`/`pb-16`.
+
+**Móvil (390px):** la fila de confianza arriba del título hará wrap a 2-3
+líneas — se acepta de partida (wrap centrado, ya lo hace hoy) y se captura
+screenshot para que Samuel juzgue si arriba pesa demasiado. Los stats harán
+wrap a 2×2 solos (flex-wrap + `text-center`); verificar que ninguna cifra
+queda huérfana en una fila de 3+1.
+
+### 14.4 F11-c — La banda de premios (`stats.tsx` → `premios.tsx`)
+
+- Renombrar archivo y componente: `stats.tsx` → **`premios.tsx`**, `Stats` →
+  `Premios` (un componente = un futuro componente Figma, y este ya no es «la
+  sección de stats»). `home.tsx`: `<Stats />` → `<Premios />` en el mismo sitio
+  (el ticker sigue cayendo a caballo sobre una banda blanca — nada cambia ahí).
+- El contenido queda: eyebrow «Reconocido por» + `<ul>` de los 7 logos. El
+  `border-t` + `mt-12` + `pt-10` internos MUEREN (separaban logos de unas
+  cifras que ya no están). El chrome de sección se queda:
+  `border-b border-linea bg-papel px-5 py-seccion-sm sm:px-10`.
+- **Logos más grandes:** `--spacing-premio-alto: 3rem → 4rem` (64px),
+  `--spacing-premio-alto-movil: 2.5rem → 3rem` (48px). Los gaps de la fila
+  suben en proporción (`gap-x-10 sm:gap-x-12`).
+
+**⚠️ Trampa №11 — los assets hay que re-exportarlos, y algunos NO dan para 2×.**
+Los webp actuales se exportaron a 96px de alto (2× del display de 48). A 64px
+de display hacen falta 128px, así que se re-exportan desde los originales de la
+web del cliente (`hispaniolaaquaticadventures.com/images/awards/`):
+
+| webp | origen | nativo | exportar a |
+|---|---|---|---|
+| premio-tripadvisor | `ranking_en.png` | 222×82 | **nativo (82)** — no llega a 128, NO upscalear |
+| premio-weddingwire | `wedding_wire2018-2021.png` | 250×250 | 128 de alto |
+| premio-ltg | `LTG-Award-2021-2022.jpg` | 1147×461 | 128 de alto |
+| premio-viator-2022/23/24 | `viator2022/3/4.png` | 95×109 | **nativo (109)** — no llega a 128, NO upscalear |
+| premio-luxury-travel-guide | `award2016.jpg` | 734×243 | 128 de alto |
+
+Regla: exportar a `min(nativo, 2×display)` — ampliar por encima del nativo solo
+emborrona. Actualizar `ancho`/`alto` en `PREMIOS` (data/home.ts) con las
+dimensiones nuevas de cada webp (reservan el hueco — CLS). TripAdvisor y los
+Viator quedarán por debajo de 2×: limitación del material de origen, apuntada
+en §9 para pedirle al cliente los assets en alta.
+
+El tratamiento gris + color al hover (`.premio-logo`, decidido por Samuel) no
+se toca.
+
+### 14.5 Dev Mode (en el mismo commit de cada fase — regla del proyecto)
+
+- Screen «Hero inmersivo + ticker»: description gana «fila de rating+premios
+  ARRIBA del título (sustituye al eyebrow de localización), stats sobre el
+  video entre subtítulo y CTA».
+- Screen «Cinta de stats + premios» → renombrar a **«Banda de premios»**:
+  description = solo los 7 logos, 64px, gris→color al hover; los stats ya no
+  viven aquí sino en el hero.
+- `/fundaciones`: actualizar la muestra de `--text-stat` (2.75rem → 1.5rem).
+
+### 14.6 Traspaso a Figma
+
+- El componente **Hero** gana dos filas nuevas (rating arriba, stats abajo) —
+  mismas capas en todas las variantes (regla Smart Animate del ticker/§7.5 no
+  se ve afectada: el ticker no cambia).
+- **`premios.tsx`** = componente «Banda de premios»: 7 instancias de un
+  componente `PremioLogo` con variante `reposo` (gris 72%) / `hover` (color).
+- El text style **stat** cambia de valor (44 → 24) en las variables del
+  traspaso — mismo nombre, anotar el cambio.
+
+### 14.7 Verificación (Playwright, antes de dar por cerrada la fase)
+
+A 390 / 768 / 1440 / 1920×950:
+
+1. El hero muestra TODO su contenido nuevo sin recortes: fila de confianza
+   arriba, H1 intacto (mismas líneas que hoy: el `max-w-xl` NO se toca), stats
+   legibles, CTA con ≥24px de aire sobre las cards del ticker.
+2. Contraste de los stats contra el poster (`?dev-hero=poster`) — captura para
+   Samuel; si duda, se ajusta el token de overlay.
+3. A 1920×950: la banda de premios entra completa bajo el hero (fin de los
+   logos ≤ 950px — presupuesto de 14.1). A 1440×800 los premios pueden quedar
+   parcialmente bajo el fold: se acepta (el rating y los stats ya están EN el
+   hero, que es lo que Samuel pidió proteger).
+4. Los 7 webp re-exportados cargan (0 × 404), nítidos a 64px en pantalla 2×
+   (los que dan), y `ancho`/`alto` del data coinciden con el archivo real.
+5. Móvil 390px: stats en 2×2 limpio, fila de confianza en wrap centrado
+   (screenshot para Samuel), 0 overflow-x.
+6. `grep -rn "STATS" app/src` → solo `data/home.ts` y `hero.tsx`;
+   `grep -rn "stats" app/src/components` → 0 (el archivo ya no existe);
+   0 errores de consola (full reload, no HMR), `tsc` y `npm run build` limpios.
+
+---
+
+## §12 · V3-F9 — El interior del notch (1): los dropdowns simples
+
+Estado: **planificado** (pedido de Samuel, 2026-07-14, viendo la v3-F8 en
+pantalla: «los tabs que tienen dropdown simple… se ve mal»). Primera de las dos
+fases del **interior** del menú dinámico: aquí van Nosotros y Ayuda (los
+dropdowns de texto plano). Los megamenús Tours/Eventos son la fase siguiente y
+**no se tocan en ésta**.
+
+### 12.0 El diagnóstico — no es el contenido, es el ancho
+
+Medido con Playwright a 1440px, con el notch abierto:
+
+| | ancho |
+|---|---|
+| fila de tabs (Tours…Ayuda) | **457 px** |
+| panel «Nosotros» (`w-60`) | 240 px |
+| panel «Ayuda» (`w-56`) | 224 px |
+
+La caja del notch mide `max(tabs, panel)` (§11.2) → se queda en los **457 px de
+los tabs**, y el panel, la mitad de ancho y centrado, deja ~110 px de blanco
+muerto a cada lado. Eso es lo que se ve mal: no es que el contenido sea pobre,
+es que **el panel no manda sobre la caja**. Es un problema que los megamenús no
+tienen (880/620 px, mucho más anchos que los tabs) — por eso solo se nota en
+estos dos.
+
+De ahí las dos mitades del arreglo, en este orden:
+
+1. El panel pasa a ser **más ancho que la fila de tabs**, para que la caja lo
+   abrace y desaparezca el aire muerto.
+2. Ese ancho hay que **llenarlo con algo que valga la pena** — de ahí el grid de
+   2 columnas con icono + título + descripción que pide Samuel.
+
+### 12.1 El patrón del ítem — chip cuadrado gris, no círculo aqua
+
+Decisión de Samuel (2026-07-14): el icono va en un **cuadrado con radio y fondo
+gris sutil**, no en el círculo aqua de `WhyDirect`. Se hereda de aquel patrón la
+estructura (chip + título + descripción) pero no su color: el aqua se queda para
+la home, y el menú se mantiene neutro.
+
+```tsx
+<EnlacePrototipo className="group flex gap-3 rounded-lg p-3 transition-colors hover:bg-papel-hueso">
+  <span className="grid size-10 shrink-0 place-items-center rounded-btn bg-papel-hueso text-navy-soft
+                   transition-colors group-hover:bg-papel group-hover:text-aqua-dark">
+    <Icono className="size-5" />
+  </span>
+  <span className="min-w-0">
+    <span className="block font-display text-sm font-semibold text-navy">{nombre}</span>
+    <span className="mt-0.5 block text-xs text-navy-soft">{descripcion}</span>
+  </span>
+</EnlacePrototipo>
+```
+
+**El hover se invierte, y no es un capricho:** en reposo, chip **gris sobre fila
+blanca**; al pasar el ratón, la fila se vuelve `papel-hueso` y el chip se va a
+**blanco** (con el icono en aqua). Sin esa inversión el chip **desaparecería
+dentro del hover** — los dos son `papel-hueso`, se fundirían en una sola mancha
+gris. Es el único punto donde entra el aqua, y entra como acento de un icono de
+20px: cuentagotas, dentro del guardarraíl (`direccion-visual.md` §6).
+
+Radio del chip: `rounded-btn` (10px, `--radius-btn`) — el radio que ya tienen los
+botones. No se inventa uno nuevo para esto.
+
+Fondo `hover:bg-papel-hueso` en la fila (no la card con `ring` de MegaTours): son
+**enlaces**, no productos. Con marco se leerían como 5 fichas de tour, que es
+justo lo que no son.
+
+**Iconos** (`lucide-react`, ya es dependencia; los 5 nombres verificados contra la
+versión instalada, 1.24): `Users` (tripulación/flota), `Fish` (arrecife),
+`CircleHelp` (FAQ), `MessageCircle` (contacto), `TicketCheck` (mi reserva).
+
+### 12.2 Las descripciones — de dónde sale cada una
+
+⚠️ **Ni una frase se inventa** (regla del proyecto). Cada descripción se deriva de
+contenido que ya existe en `prototipo/datos.js`, y el comentario del código deja
+la fuente por escrito:
+
+| Ítem | Descripción | Fuente |
+|---|---|---|
+| La tripulación y la flota | «Capitán, bióloga marina, chef a bordo y guía de snorkel. Dos catamaranes y la cocina flotante.» | `TRIPULACION` (4 roles) + `FLOTA` (3 entradas) |
+| El arrecife que reconstruimos | «El vivero de coral de Cabeza de Toro: proyecto de restauración top-3 del país.» | itinerario de `semi-privado`: «Arrecife de Cabeza de Toro: proyecto de restauración top-3 de RD» |
+| Preguntas frecuentes | «14 preguntas: reservas y pagos, qué llevar, comida, clima, niños.» | `FAQ_CATEGORIAS` — 6 categorías, 14 preguntas (contadas) |
+| Contacto | «WhatsApp, teléfono y formulario. Respondemos en minutos, de 8:00 a 20:00.» | página `/contacto` del prototipo (`renderContacto`): «Respondemos en minutos, 8:00-20:00 (GMT-4)» |
+| Gestionar mi reserva | «Cambia tu menú o paga el saldo pendiente. Solo con tu código, sin cuenta.» | `NOTAS['mi-reserva']` |
+
+⚠️ Ojo con la última: **no** decir «cambia tu fecha». El cambio de fecha, según la
+FAQ, se hace **por WhatsApp**, no desde Mi Reserva (`FAQ_CATEGORIAS.reservas`) —
+prometer eso en el menú sería una promesa que la página no sostiene, que es
+exactamente el pecado que `NOTAS['mi-reserva']` dice haber venido a arreglar.
+
+### 12.3 El grid de 2 columnas — y «Contacto» deja de ser un enlace a WhatsApp
+
+Decisión de Samuel (2026-07-14): **2 columnas limpias, y el hueco no es
+problema.** Nada de `col-span` ni de rellenos:
+
+```
+NOSOTROS                          AYUDA
+┌──────────────┬──────────────┐   ┌──────────────────┬──────────────────┐
+│ La tripulac. │ El arrecife  │   │ Preg. frecuentes │ Gestionar mi res.│
+│ y la flota   │ que reconstr.│   ├──────────────────┼──────────────────┤
+└──────────────┴──────────────┘   │ Contacto         │                  │
+                                  └──────────────────┴──────────────────┘
+```
+
+**Y el cambio de fondo, que no es cosmético:** el ítem deja de ser «Contacto y
+WhatsApp» (un `<a href="wa.me/…">` que sacaba al usuario de la web desde el
+propio menú) y pasa a ser **«Contacto» → la página `/contacto`**, que ya existe
+en el prototipo y tiene todo lo que hacía falta: WhatsApp con horario, teléfono
+toll-free de EE.UU./Canadá, email, formulario y la dirección de la oficina (con
+el aviso de que el día del tour te recogen en el hotel, que no vayas allí).
+
+Es mejor menú: el usuario que abre «Ayuda» no siempre quiere WhatsApp — quiere
+*una vía*. La página se las ofrece todas; el enlace directo solo ofrecía una, y
+además rompía la sesión. El acceso de un toque a WhatsApp no se pierde: vuelve
+como **botón flotante**, que ya estaba pendiente desde que se retiró la topbar.
+
+⚠️ **Alternativa evaluada y descartada:** meter un 4º destino real para cuadrar la
+rejilla. El prototipo tiene la página `/agentes` («Agentes de viaje»), sin usar
+en el nav. Es **B2B** — no pinta nada en un menú de Ayuda dirigido al turista, y
+el wireframe la dejó fuera del nav a propósito. Se queda fuera.
+
+### 12.4 Tokens (`styles/tokens.css`)
+
+```css
+/* Ancho del panel de dropdown simple (Nosotros/Ayuda) dentro del notch.
+   ⚠️ TIENE que ser mayor que la fila de tabs (457px medidos) o la caja se queda
+   en el ancho de los tabs y el panel flota centrado con aire muerto a los
+   lados — que es exactamente el bug que esta fase viene a arreglar (§12.0). */
+--spacing-notch-panel: 32rem; /* 512px */
+```
+
+Un solo token: las 2 columnas salen de dividirlo, no de un segundo número.
+
+### 12.5 Archivos
+
+- `data/home.ts` — **nuevos exports `NAV_NOSOTROS` / `NAV_AYUDA`** (`{ id,
+  nombre, descripcion }`). El contenido vive en los datos, como todo lo demás;
+  el **icono se mapea en el componente** (`id → LucideIcon`), que es
+  presentación, no contenido — y así `data/` no importa React.
+- `components/home/item-menu.tsx` — **nuevo**. El ítem de §12.1 (chip + título +
+  descripción). Sin variantes de ancho: las 2 columnas son todas iguales.
+- `dropdown-nosotros.tsx` / `dropdown-ayuda.tsx` — de lista de links a grid de 2
+  columnas de `ItemMenu`, con `w-notch-panel` y `p-4` (el padding de los
+  megamenús, no el `p-2` de una lista). En Ayuda, el ítem de WhatsApp pasa a ser
+  «Contacto» → `EnlacePrototipo` (la página `/contacto` vive en el prototipo);
+  **desaparece el `<a href="wa.me/…">`** del menú.
+- `menu-movil.tsx` — consume `NAV_NOSOTROS`/`NAV_AYUDA` en vez de repetir los
+  links a mano (hoy son una **tercera copia** de los mismos textos). El acordeón
+  **no cambia de aspecto en esta fase**: solo nombres, sin descripción (decisión
+  de Samuel). Su rediseño es el §13, en commit aparte. ⚠️ Aquí también hay que
+  cambiar «Contacto y WhatsApp» por «Contacto», o el móvil queda contradiciendo
+  al desktop.
+- `dev/dev-registry.ts` — §12.6.
+
+**No se toca `notch-menu.tsx`:** el panel es un slot y esta fase solo cambia lo
+que va dentro. Si el morph necesitara un ajuste para que esto entre, sería señal
+de que la anatomía de §11.1 estaba mal — y no lo está.
+
+### 12.6 Dev Mode (mismo commit — regla del proyecto)
+
+**No hace falta ningún estado nuevo**: `?dev-mega=nosotros` y `?dev-mega=ayuda`
+ya existen y ahora muestran el panel nuevo — son, tal cual, los 2 frames de
+Figma. Solo se actualizan sus notas en el registry («panel de 2 columnas con
+chip de icono + descripción»).
+
+### 12.7 Traspaso a Figma
+
+- `ItemMenu` = un componente, con un slot de icono (los 5 iconos, como
+  componentes de icono sueltos) y **2 estados**: reposo (chip gris sobre blanco)
+  y hover (fila gris, chip blanco, icono aqua) — la inversión de §12.1 hay que
+  construirla en Figma como estado de hover del componente, no como dos
+  componentes distintos.
+- Nosotros y Ayuda son 2 de las 5 variantes del notch que §11.7 ya declaró: esta
+  fase **no añade variantes**, rellena dos que estaban pobres.
+
+### 12.8 Verificación (Playwright, antes de cerrar la fase)
+
+1. **La caja abraza al panel** — la prueba de que §12.0 está resuelto: con
+   `?dev-mega=nosotros` y `?dev-mega=ayuda`, el `rect` del panel ≈ el `rect` de
+   la caja (misma anchura ±1px). Hoy sobran ~110px por lado; después, 0.
+2. Los tabs **siguen sin moverse** al abrir (no romper §11.8.1 — la caja ahora
+   crece también a lo ancho en estos dos menús, que antes no lo hacían).
+3. Nada recortado por el `overflow:hidden` tras el morph, a 768 / 1024 / 1440. A
+   768 el panel (512px) **no puede** tapar logo ni Reservar — comprobarlo: es el
+   mismo riesgo que obligó a los megamenús a 2 columnas en F8.
+4. Morph directo de un dropdown a un megamenú (nosotros → tours): la caja pasa de
+   512 a 880 sin pasar por cerrado.
+5. **El hover del ítem**: con el ratón encima, el chip NO se funde con la fila
+   (los dos serían `papel-hueso` sin la inversión de §12.1). Se comprueba con
+   captura, no leyendo estilos.
+6. Móvil (390px): el acordeón de `MenuMovil` sigue igual tras consumir los datos
+   compartidos — **es el punto donde un refactor de datos rompe sin avisar**.
+7. 0 errores de consola, 0 overflow-x, `tsc` y `npm run build` limpios.
+
+### 12.9 Decisiones cerradas y fuera de alcance
+
+**Cerradas por Samuel (2026-07-14):**
+
+- Grid de 2 columnas, **el hueco de Ayuda se queda vacío** — sin `col-span` ni
+  cuarto ítem de relleno.
+- «Contacto y WhatsApp» → **«Contacto»**, a la página `/contacto` (§12.3).
+- Icono en **chip cuadrado gris**, no círculo aqua (§12.1).
+- El número `+1 829 305 2804` **es el correcto** (confirmado) — pero ya no se
+  muestra en el menú. Queda anotado aquí para los **botones flotantes**, que es
+  donde volverá el acceso directo a WhatsApp.
+- «Agentes de viaje» (`/agentes`): **fuera del menú**, es B2B.
+- Móvil: **sin descripciones** en el acordeón.
+
+**Fuera de alcance de esta fase:** los megamenús Tours/Eventos (fase siguiente),
+el rediseño del menú móvil (§13, commit aparte), y los pendientes de siempre
+(max-width de la fila del header, H1 a 3 líneas / lead a 2, botones flotantes).
+
+---
+
+## §13 · V3-F10 — El menú móvil como objeto
+
+Estado: **planificado** (pedido de Samuel, 2026-07-14: «al igual que el hero, que
+no llega a sangre, podemos hacer eso con el menú móvil, que se sienta como un
+objeto que se despliega»). **Commit aparte de F9** — es otro componente y otro
+riesgo.
+
+### 13.1 El diagnóstico
+
+`MenuMovil` es hoy un `fixed inset-0 bg-papel` — una **pantalla** que sustituye a
+la página, no un objeto que se despliega sobre ella. Aparece y desaparece de
+golpe (montaje/desmontaje seco, sin transición). Es lo único del sitio que
+todavía va a sangre, justo ahora que el hero, el ticker y el notch construyen la
+idea contraria: **cosas con margen, radio y borde que viven sobre el fondo**.
+
+Y al auditarlo aparecen tres fallos de UX que no son estéticos:
+
+1. **El fondo sigue scrolleando detrás** del menú abierto (no hay bloqueo del
+   scroll del `body`). Se cierra el menú y la página está en otro sitio.
+2. **`Escape` no cierra** (el desktop sí lo hace desde F8 — el móvil no).
+3. **No hay foco atrapado**: con teclado (o lector de pantalla) se puede tabular
+   fuera del menú abierto, hacia la página de detrás.
+
+### 13.2 El objeto — mismo margen y mismo radio que el hero
+
+El panel deja de ser pantalla completa y pasa a ser una **hoja** con el mismo
+margen y el mismo radio del hero (los tokens ya existen: no se inventa nada):
+
+```tsx
+{/* Scrim: oscurece la página y cierra al tocarlo */}
+<div className="fixed inset-0 z-50 bg-navy/40 backdrop-blur-sm md:hidden" onClick={onCerrar} />
+
+{/* La hoja: margen + radio del hero → el mismo lenguaje que el resto del sitio */}
+<div className="menu-hoja fixed inset-hero-margen z-50 flex flex-col overflow-hidden
+                rounded-hero bg-papel shadow-hero md:hidden" role="dialog" aria-modal="true">
+```
+
+- Margen: `--spacing-hero-margen` (8px) — **el mismo del hero**, para que la hoja
+  quede alineada con el borde del box de arriba. Es lo que hace que se lea como
+  parte del mismo sistema y no como un modal genérico.
+- Radio: `--radius-hero` (28px). Sombra: `--shadow-hero` (la que ya usa el hero).
+- Scrim `bg-navy/40` + `backdrop-blur-sm`: la página se ve detrás, atenuada —
+  que es lo que convierte al menú en **objeto encima** y no en pantalla nueva.
+
+### 13.3 El despliegue — sale del header, como el notch
+
+En desktop, los menús **salen del notch**. En móvil deben salir del mismo sitio:
+el header. Por eso la hoja no entra desde abajo (patrón «bottom sheet», que aquí
+mentiría sobre su origen) sino que **cae desde arriba**, con origen en el borde
+superior:
+
+```css
+.menu-hoja {
+  animation: menu-hoja-entrada var(--notch-transicion) var(--notch-easing);
+  transform-origin: top center;
+}
+
+@keyframes menu-hoja-entrada {
+  from { opacity: 0; transform: translateY(-8px) scale(0.98); }
+  to   { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu-hoja { animation: none; }
+}
+```
+
+Reutiliza **los tokens del notch** (`--notch-transicion`, `--notch-easing`): la
+misma familia de movimiento en las dos pantallas. Si un día se afina la curva del
+notch, el móvil la hereda solo — que es precisamente para lo que se hicieron
+tokens de movimiento.
+
+### 13.4 Los tres fallos de UX (§13.1), arreglados
+
+1. **Bloqueo de scroll**: `useEffect` mientras esté abierto →
+   `document.body.style.overflow = 'hidden'`, restaurado en el cleanup.
+   ⚠️ Guardar y restaurar el valor **previo**, no asumir `''` — el CTA sticky del
+   hero y un futuro botón flotante pueden querer tocar lo mismo.
+2. **Escape cierra**: mismo `keydown` que ya tiene el header (F8). Se puede
+   copiar el patrón exacto de `header.tsx`.
+3. **Foco**: `role="dialog"` + `aria-modal="true"` + foco al botón de cerrar al
+   abrir, y devuelto al botón de hamburguesa al cerrar. Foco atrapado dentro de
+   la hoja (un ciclo de `Tab` sencillo, sin librería).
+4. **Cerrar tocando el scrim** (además de la X): es lo que la gente hace por
+   instinto con un objeto.
+
+### 13.5 Archivos
+
+- `components/home/menu-movil.tsx` — scrim + hoja + los 4 arreglos de §13.4.
+- `styles/componentes.css` — `.menu-hoja` (§13.3), con el porqué documentado.
+- `dev/dev-registry.ts` — el estado `?dev-movil=abierto` **ya existe**; se
+  actualiza su nota («hoja con el margen y el radio del hero, sobre scrim»).
+
+**Sin tokens nuevos:** margen, radio, sombra, duración y easing salen todos de
+tokens que ya existen. Si al verlo hiciera falta un margen propio para el móvil,
+**se crea el token** (`--spacing-menu-margen`), nunca un valor suelto.
+
+### 13.6 Verificación (Playwright, a 390px)
+
+1. La hoja **no llega al borde**: hay `--spacing-hero-margen` por los 4 lados, y
+   se ve el scrim alrededor.
+2. Con el menú abierto, **el fondo no scrollea**: `window.scrollY` no cambia al
+   hacer scroll sobre el scrim. Al cerrar, la página sigue donde estaba.
+3. `Escape` cierra. Tocar el scrim cierra. Tocar dentro de la hoja **no** cierra.
+4. El acordeón sigue funcionando (una sección abierta a la vez) y el CTA
+   «Reservar ahora» sigue anclado abajo, dentro de la hoja.
+5. `prefers-reduced-motion: reduce` (con `emulateMedia`): aparece sin animación.
+6. La hoja **cabe**: con las 4 secciones y el CTA, a 390×844 no se corta el
+   contenido — el cuerpo scrollea **dentro** de la hoja, no la página.
+7. 0 errores de consola, 0 overflow-x, `tsc` y `build` limpios.
+
+---
+
+## §15 · V3-F13 — Aire: página ancha, hero a media pantalla, CTA con peso
+
+> **Nota de numeración.** No hay «§ de F12»: la fase F12 (header capado a
+> `max-w-6xl`, H1 a 3 líneas, lead a 2) se ejecutó al vuelo, sin sección de plan,
+> y solo vive en comentarios de código. **Esta fase la revisa**: Samuel quiere la
+> página **más ancha** (1400px, no 1152) y el H1 en **2 líneas** (no 3). Los
+> comentarios `v3-F12` de `hero.tsx` y `tokens.css` que citan medidas viejas
+> («a 896px envuelve en 3 líneas», «la fila se capa a max-w-6xl») **quedan
+> mintiendo** — hay que reescribirlos, no dejarlos.
+
+### 15.0 Punto de retorno
+
+Esta fase **empieza con el árbol limpio**: F9 + F10 + F11 + F12 están sin
+comitear. Se comitean primero (ese commit es el punto de retorno) y F13 arranca
+encima. Si algo de esta fase no convence, `git revert` de un solo commit lo
+devuelve todo.
+
+### 15.1 El pedido, traducido
+
+| # | Lo que pide Samuel | Lo que es, técnicamente |
+|---|---|---|
+| 1 | «El max-width del header y de toda la página, más amplio: ~1400px» | Un token de contenedor nuevo, aplicado en las 9 secciones + header |
+| 2 | «El H1 en 2 líneas» | Ensanchar la columna del H1 (hoy 896px → 3 líneas) |
+| 3 | «El notch de Nosotros/Ayuda a 624px» | `--spacing-notch-panel` 32rem → 39rem **+ variante compacta** (§15.4) |
+| 4 | «El hero a ~78% del alto de pantalla, dejando ver los logos» | `min-height` en `svh` **+ presupuesto vertical** (§15.5) |
+| 5 | «"de la capacidad del barco" sin salto de línea» | Reescribir el label y quitarle el clamp de `16ch` |
+| 6 | «CTA más ancho y llamativo; los 2 checks debajo, en fila, con SVG y divisoria» | Variante `lg` de `Boton` + reordenar el bloque de CTA |
+
+Los 6 son **independientes entre sí salvo 1↔3** (ensanchar la fila del header
+cambia el sitio libre del notch — ver §15.4). Se pueden ejecutar en este orden.
+
+### 15.2 Tokens nuevos (todos, de una vez)
+
+En `tokens.css`, dentro de `@theme`:
+
+```css
+/* Ancho de contenido — el MISMO para el header y para todas las secciones:
+   es la retícula de la página (en Figma, el layout grid). Sube de 72rem
+   (max-w-6xl, el default de Tailwind que veníamos usando por inercia). */
+--container-contenido: 87.5rem; /* 1400px */
+
+/* Alto del hero (§15.5). svh, NO vh ni dvh — ver la trampa №2. */
+--spacing-hero-alto: 78svh;
+
+/* Panel de dropdown simple dentro del notch. 39rem, no 32: a 512px las 2
+   columnas iban apretadas. ⚠️ Sigue teniendo que ser MAYOR que la fila de
+   tabs (457px) — ver §12.4. */
+--spacing-notch-panel: 39rem; /* 624px */
+--spacing-notch-panel-compacto: 28rem; /* 448px — md–lg, ver §15.4 */
+
+/* Halo del CTA principal. Es --color-coral al 35% (mismo patrón literal que
+   --shadow-card, que lleva el navy a mano: no se puede meter una var() dentro
+   de rgb()). Existe para que el botón despegue del video sin subirle el
+   tamaño hasta lo hortera. */
+--shadow-cta: 0 10px 30px rgb(239 91 68 / 35%);
+```
+
+`--container-*` es el namespace que alimenta a `max-w-*` en Tailwind v4 → el
+token de arriba genera `max-w-contenido` solo. `--spacing-*` alimenta a
+`min-h-*`/`w-*` → `min-h-hero-alto`, `w-notch-panel`, `w-notch-panel-compacto`.
+**No inventar utilidades arbitrarias (`max-w-[1400px]`) para nada de esto**: son
+variables de Figma, tienen que tener nombre.
+
+### 15.3 Ancho de página: 1152 → 1400
+
+Sustituir `max-w-6xl` por `max-w-contenido` en **10 sitios**: `header.tsx`,
+`premios.tsx`, `tours-grid.tsx`, `why-direct.tsx`, `diferenciadores.tsx`,
+`reviews.tsx`, `eventos-banda.tsx`, `galeria-faq-cierre.tsx` y `footer.tsx` (×2).
+
+**No tocar** los `max-w-*` que no son la retícula de página: `dev/dev-mode.tsx`
+(un modal), `pages/fundaciones.tsx` (una página de swatches) y los `max-w-*`
+internos del hero (§15.6).
+
+El padding lateral (`px-5 sm:px-10`) se queda como está: a 1400px de contenido
+el aire de los lados lo pone ya el propio viewport.
+
+⚠️ **Revisar a ojo** las 2 secciones donde ensanchar cambia proporciones, no solo
+márgenes: `diferenciadores` (grid de 2 columnas → la foto se estira 124px más) y
+`premios` (los 7 logos ya caben en 1 fila a 1152; a 1400 caben más holgados ✓,
+el comentario del componente que justifica el `6xl` **hay que actualizarlo**).
+
+### 15.4 El notch: 624px, y por qué eso obliga a una variante compacta
+
+**Va como `width` del panel, no como `min-width` de la caja.** La caja del notch
+mide `max(ancho de tabs, ancho del panel)` (`notch-menu.tsx`, el `useLayoutEffect`)
+— si el panel mide 624px, la caja mide 624px. Un `min-width` en la caja haría lo
+mismo por un camino más largo, y además rompería el estado cerrado (la caja
+volvería a 624px con los tabs flotando dentro). Así que: `w-notch-panel` en
+`dropdown-nosotros.tsx` y `dropdown-ayuda.tsx`, y el token hace el resto.
+
+**El problema:** el notch está **centrado** y la caja crece **simétrica**. El
+sitio libre a cada lado antes de tapar el logo o el botón «Reservar» es:
+
+```
+libre = anchoFila − 2 × (px-5 + max(ancho logo, ancho Reservar) + holgura)
+      ≈ anchoFila − 312    (logo y Reservar miden ~112px los dos; holgura 24px)
+```
+
+| viewport | ancho de fila | libre para el notch | ¿caben 624px? |
+|---|---|---|---|
+| 768 (`md`) | 768 | ~456 px | **NO** — se come el logo |
+| 900 | 900 | ~588 px | NO |
+| 1024 (`lg`) | 1024 | ~712 px | **SÍ** |
+| 1280 (`xl`) | 1280 | ~968 px | SÍ |
+| ≥1400 | 1400 (capado) | ~1088 px | SÍ |
+
+→ **El panel ancho arranca en `lg`, no en `md`.** Debajo de `lg` va
+`w-notch-panel-compacto` (448px, el mismo ancho que ya usan los megamenús en ese
+rango por esta misma razón). Y a 448px las 2 columnas **no tienen sitio para la
+descripción** (cada celda daría ~160px de texto → 6 líneas): en `md`–`lg` la
+descripción se oculta (`hidden lg:block` en `item-menu.tsx`), quedando chip +
+título. Es la misma decisión que ya tomó Samuel para el móvil, aplicada a la
+franja donde el ancho no da.
+
+```tsx
+// dropdown-nosotros.tsx / dropdown-ayuda.tsx
+<div className="grid w-notch-panel-compacto grid-cols-2 gap-1 p-3 lg:w-notch-panel">
+```
+
+**Bonus que se cobra solo:** ensanchar la fila del header a 1400 devuelve sitio a
+los megamenús. `MegaTours` bajó a `50rem` en F8 **porque la fila estaba capada a
+1152**; con 968px libres a 1280 puede **volver a `55rem`** (880px, con 88px de
+margen real). Restaurarlo y verificar. `MegaEventos` (38.75rem) se queda igual.
+
+### 15.5 El alto del hero: 78%, y el presupuesto vertical
+
+**`svh`, no `vh` ni `dvh`.** `vh` en móvil es el viewport GRANDE (barra de URL
+escondida) → el hero mide más que la pantalla real y los logos nunca entran.
+`dvh` cambia mientras scrolleas → el hero se reflowea y el ticker (que va a
+caballo del borde) baila. `svh` es el viewport pequeño: la medida garantizada,
+sin saltos. En desktop los tres valen lo mismo.
+
+Va como **`min-height` en la caja del hero** (el div `.rounded-hero`), no en el
+`<section>`: el `<section>` solo aporta el margen exterior. Y la caja pasa a ser
+columna flex para que el aire sobrante se reparta:
+
+```tsx
+<div className="relative flex min-h-hero-alto flex-col rounded-hero">
+  {/* capa de media: absolute, no participa del flex ✓ */}
+  <div className="relative z-10 flex flex-1 flex-col">
+    <Header variante="sobreVideo" />
+    <div className="flex flex-1 flex-col justify-center px-4 pb-16 pt-8 ...">
+```
+
+**El presupuesto — esto es lo que hace o rompe el pedido.** «Que se vean los
+logos» significa que, bajo el borde inferior del hero, todo esto tiene que caber
+en el 22% restante:
+
+| bajo el hero | px |
+|---|---|
+| mitad visible de la card del ticker (68px centrada en el borde) | 34 |
+| `padding-top` de la sección de premios | 64 (hoy: `py-seccion-sm`) |
+| eyebrow «Reconocido por» | ~14 |
+| `mt-7` entre eyebrow y logos | 28 |
+| alto de los logos | 64 |
+| **total** | **204** |
+
+Con eso, `hero + 12 (margen) + 204 ≤ alto de pantalla` → **el 78% solo cuadra en
+pantallas de ≥982px de alto.** En un portátil de 1280×800 los logos se salen ~40px.
+Dos ajustes lo arreglan sin tocar el 78%:
+
+1. **Premios**: `py-seccion-sm` → `pt-8 pb-seccion-sm` (padding superior 64→32) y
+   `mt-7` → `mt-4` entre eyebrow y logos. Total bajo el hero: **160px**.
+2. **Hero**: bajar su padding superior (`pt-12 sm:pt-16 lg:pt-20` → `pt-8 sm:pt-10`).
+   ⚠️ **Esto no es cosmético, es obligatorio**: `min-height` es un MÍNIMO — si el
+   contenido natural mide más que el 78%, el hero crece y el 78% no existe. Con el
+   H1 en 2 líneas (−67px) y el CTA reordenado, el contenido natural queda en
+   ~606px, por debajo de los 624px que pide el 78% a 800px de alto → **manda el
+   min-height, que es lo que Samuel pidió**. El aire que se quita del padding lo
+   devuelve el `justify-center`.
+
+**Criterio de aceptación** (medir, no mirar): a **1440×900** los logos se ven
+**enteros** sin scroll; a **1280×800**, enteros o casi (≥80% de su alto). A
+1366×768 se aceptan asomando. Si no sale, el ajuste va **en los paddings del
+premio y del hero**, nunca bajando el 78% (es el número que pidió Samuel).
+
+### 15.6 El H1 en 2 líneas
+
+Hoy: columna de `max-w-4xl` (896px) + `--text-hero: 3.75rem` → **3 líneas**.
+El titular son 58 caracteres; a 60px de Poppins semibold necesita ~1000–1100px de
+caja para partirse en 2.
+
+- Subir la columna del H1: `max-w-4xl` → **`max-w-5xl`** (1024px) y **medir**
+  (`h1.offsetHeight / lineHeight`). Si siguen saliendo 3 líneas, subir a
+  `max-w-6xl` (1152px). **Parar en la primera que dé 2** — no ensanchar «por si
+  acaso»: cuanto más ancha la caja, más lejos queda el H1 de la lead y del CTA.
+- Añadir **`text-balance`** al H1: con 2 líneas, `text-wrap: balance` las deja
+  parejas en vez de dejar una línea larga y un rabo corto.
+- La **lead** se queda en `max-w-xl` (2 líneas ✓, verificado en F12). Si al
+  ensanchar el H1 se lee demasiado estrecha por contraste, subirla a `max-w-2xl`
+  **solo si sigue dando 2 líneas**.
+- **Móvil no cambia**: `--text-hero-movil` (2.25rem) y sus 4 líneas se quedan —
+  a 390px las 2 líneas son físicamente imposibles (comprobado en F12 con todos
+  los tamaños de 28 a 44px).
+
+⚠️ **Para el traspaso a Figma**: `text-balance` no existe en Figma. Cuando se
+lleve el H1, el salto de línea se hace **a mano** en el punto donde el navegador
+lo dejó (anotarlo al preparar el frame).
+
+### 15.7 El stat que se parte
+
+`{ valor: '≤35%', label: 'de la capacidad del barco' }` se parte en 2 líneas
+porque los 4 labels comparten un `max-w-[16ch]` y ese mide 24 caracteres.
+
+- **Copy**: `de la capacidad del barco` → **`del aforo del barco`** (19 car.).
+  «Aforo» ya es el vocabulario del proyecto (`aforo máx.` en las cards del ticker
+  y en el megamenú de Tours), así que no introduce una palabra nueva: la reusa.
+  El dato no cambia (sigue siendo el ≤35% de `NOTAS['home-stats']`).
+- **Layout**: quitar `max-w-[16ch]` y poner `whitespace-nowrap` en el `<p>` del
+  label. Con eso **los 4 labels pasan a una línea** (el más largo, 19 car. ≈
+  114px a 12px), la fila de stats queda en una sola altura y el hero **recupera
+  ~16px de presupuesto vertical** (§15.5, que van justos).
+- Verificar a **390px** que la fila sigue envolviendo limpia (2×2) y no desborda.
+
+Si Samuel prefiere conservar el copy original, `whitespace-nowrap` **solo** ya
+resuelve el salto — pero el label largo desequilibra la fila. La recomendación es
+el cambio de copy.
+
+### 15.8 El CTA: peso al botón, los checks debajo
+
+**Hoy** (`hero.tsx`): botón y checks van **en fila**, y los checks son un `<p>`
+con el carácter `✓` y un `<br />`. Se pide: botón más ancho y llamativo, checks
+**debajo**, **uno al lado del otro**, con **icono SVG real** y **divisoria**.
+
+**1. `Boton` gana una variante de tamaño** (`ui/boton.tsx`) — no un botón nuevo:
+es el mismo componente de Figma con una property `tamaño`.
+
+```tsx
+const clases = 'inline-flex items-center justify-center gap-2 rounded-btn bg-coral font-semibold text-white transition hover:bg-coral-dark'
+const tamaños = {
+  md: 'px-5 py-3 text-sm shadow-sm',
+  lg: 'px-8 py-4 text-base shadow-cta hover:-translate-y-0.5', // CTA principal
+}
+```
+- `gap-2` en la base: permite meter un icono como hijo sin tocar nada más.
+- `shadow-cta` (§15.2) es el halo coral: es lo que lo hace saltar sobre el video
+  sin recurrir a una animación de pulso (hortera, y hay que apagarla con
+  `prefers-reduced-motion`).
+- `hover:-translate-y-0.5`: el botón se levanta. Guardarraíl de movimiento en
+  `componentes.css` si hace falta apagarlo con reduced-motion.
+- **El resto de botones no cambia**: `md` sigue siendo el default (header
+  «Reservar», CTA sticky móvil, «Reservar ahora» del menú móvil).
+
+**2. El bloque del hero pasa a columna** (botón arriba, checks debajo):
+
+```tsx
+<div className="mt-8 flex flex-col items-center gap-4">
+  <Boton href="#tours" tamaño="lg">
+    Ver disponibilidad
+    <ArrowRight className="size-5" aria-hidden="true" />
+  </Boton>
+
+  <div className="flex flex-col items-center gap-2 text-xs text-white/90 sm:flex-row sm:gap-4">
+    <span className="flex items-center gap-1.5">
+      <Check className="size-4 shrink-0" strokeWidth={3} aria-hidden="true" />
+      Cancelación gratis hasta 7 días antes
+    </span>
+    <span className="hidden h-4 w-px bg-white/30 sm:block" aria-hidden="true" />
+    <span className="flex items-center gap-1.5">
+      <Check className="size-4 shrink-0" strokeWidth={3} aria-hidden="true" />
+      Confirma con solo 25% de depósito
+    </span>
+  </div>
+</div>
+```
+
+- Iconos de **lucide** (`Check`, `ArrowRight`) — la librería que ya usa el
+  proyecto (`item-menu.tsx`, `menu-movil.tsx`), no un SVG suelto.
+- La divisoria es un `<span>` de 1px, **no** `divide-x`: en móvil los checks se
+  apilan y una divisoria vertical entre filas apiladas se ve rota. Por eso
+  `hidden sm:block` — aparece solo cuando de verdad van uno al lado del otro.
+- «Más ancho» sale del `px-8 py-4` + el texto y el icono; **no** se le pone un
+  `min-width` a mano. Si al verlo Samuel lo quiere aún más ancho, ahí sí entra un
+  token (`--spacing-cta-min`), nunca un `w-[280px]`.
+
+### 15.9 Archivos y Dev Mode
+
+| archivo | qué cambia |
+|---|---|
+| `styles/tokens.css` | 5 tokens nuevos/cambiados (§15.2) + reescribir el comentario `v3-F12` de `--text-hero` |
+| `components/ui/boton.tsx` | variante `tamaño: 'md' \| 'lg'` |
+| `components/home/hero.tsx` | `min-h-hero-alto` + flex, paddings, columna del H1, `text-balance`, bloque de CTA, label del stat |
+| `components/home/header.tsx` | `max-w-6xl` → `max-w-contenido` |
+| `components/home/item-menu.tsx` | descripción `hidden lg:block` |
+| `dropdown-nosotros.tsx` / `dropdown-ayuda.tsx` | `w-notch-panel-compacto lg:w-notch-panel` |
+| `components/home/mega-tours.tsx` | `xl:w-[min(92vw,55rem)]` (restaurado) + comentario nuevo |
+| `components/home/premios.tsx` | `max-w-contenido`, `pt-8`, `mt-4` + comentario nuevo |
+| `data/home.ts` | label del stat: `del aforo del barco` |
+| `tours-grid` · `why-direct` · `diferenciadores` · `reviews` · `eventos-banda` · `galeria-faq-cierre` · `footer` | `max-w-6xl` → `max-w-contenido` |
+| `dev/dev-registry.ts` | actualizar descripciones de «Header + Footer», «Hero» y «Banda de premios» |
+
+**Sin estados nuevos de Dev Mode**: esta fase no añade interacciones, cambia
+medidas de las que ya hay. Los `?dev-mega=*` y `?dev-movil=abierto` siguen valiendo.
+
+### 15.10 Trampas
+
+1. **`min-height` es un mínimo, no una altura.** Si el contenido natural del hero
+   crece (una línea más de H1, un stat que envuelve), el 78% deja de cumplirse en
+   silencio. Por eso §15.5 exige bajar el padding y §15.7 exige los labels en una
+   línea: es lo que mantiene el contenido por debajo del techo.
+2. **`vh` mata el pedido en móvil** (viewport grande = hero más alto que la
+   pantalla → los logos nunca entran) y **`dvh` lo hace bailar** (reflow al
+   scrollear, con el ticker a caballo del borde). `svh`.
+3. **624px no caben a 768px.** El notch crece simétrico desde el centro: sin la
+   variante compacta de §15.4, el panel se come el logo. Verificar SIEMPRE con el
+   menú **abierto** — cerrado no se nota.
+4. **Ensanchar la fila del header mueve el logo y el «Reservar» hacia afuera** →
+   los megamenús ganan sitio (bien), pero la geometría que se verificó en F8 ya no
+   vale: **hay que re-verificarla entera**.
+5. **Los comentarios `v3-F12` mienten después de esta fase.** Citan «max-w-6xl» y
+   «a 896px envuelve en 3 líneas». Reescribirlos o borrarlos: un comentario que
+   documenta una medida que ya no existe es peor que no tener comentario.
+6. **`shadow-cta` lleva el coral a mano** (`rgb(239 91 68 / 35%)`) porque no se
+   puede meter `var(--color-coral)` dentro de `rgb()`. Si algún día cambia el
+   coral, este token **no se entera solo** — dejarlo dicho en el comentario.
+
+### 15.11 Verificación (Playwright)
+
+**Anchos** (1440 y 1920):
+1. Las 9 secciones y el header comparten borde izquierdo y derecho: el contenido
+   mide 1400px y está centrado. 0 overflow-x.
+
+**Notch** (con cada menú ABIERTO, a 768 / 1024 / 1280 / 1440):
+2. Ni el logo ni el botón «Reservar» quedan tapados —
+   `document.elementFromPoint()` sobre el logo devuelve el logo, no el panel.
+3. Nosotros y Ayuda miden **624px** desde `lg`, y 448px (sin descripciones) entre
+   `md` y `lg`. La caja del notch los abraza: **sin aire muerto a los lados**.
+4. `MegaTours` a 55rem desde `xl`, sin tapar nada.
+
+**Hero** (1440×900 · 1280×800 · 1366×768 · 390×844):
+5. El hero mide **~78% del alto del viewport** en desktop (±2%).
+6. **Los logos de premios se ven sin scrollear** a 1440×900 (enteros) y a
+   1280×800 (≥80%). Captura de pantalla como prueba, no solo el número.
+7. El H1 son **2 líneas** en desktop; la lead, **2**. Medido, no a ojo.
+8. La fila de stats: **4 labels de una línea**, ninguno partido.
+9. En móvil el hero no se corta ni deja hueco: el contenido manda (min-height
+   inactivo) y el ticker sigue a caballo del borde.
+
+**CTA**:
+10. Botón grande con halo e icono; los 2 checks **debajo**, en fila con la
+    divisoria a 1440; **apilados y sin divisoria** a 390.
+11. `prefers-reduced-motion: reduce` (`emulateMedia`): el hover del botón no se
+    desplaza.
+
+**Cierre**: `tsc` limpio, `npm run build` limpio, 0 errores de consola.
+
