@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Menu, MessageCircle } from 'lucide-react'
+import { Menu } from 'lucide-react'
 import { Logo } from '@/components/ui/logo'
 import { Boton } from '@/components/ui/boton'
 import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
@@ -52,20 +52,8 @@ export function Header({ variante = 'solida' }: { variante?: 'solida' | 'sobreVi
 
   return (
     <header className={sobreVideo ? '' : 'sticky top-0 z-40 bg-papel'}>
-      <div
-        className={`flex items-center justify-between px-5 py-1.5 text-xs text-white ${sobreVideo ? 'bg-navy/70 backdrop-blur-sm' : 'bg-navy'}`}
-      >
-        <a href="https://wa.me/18293052804" target="_blank" rel="noopener" className="flex items-center gap-1.5 hover:text-aqua">
-          <MessageCircle className="size-3.5" />
-          WhatsApp +1 829 305 2804
-        </a>
-        <div className="hidden items-center gap-1.5 sm:flex">
-          <span className="font-semibold text-white">ES</span>
-          <span className="text-white/40">·</span>
-          <span className="text-white/60">EN</span>
-        </div>
-      </div>
-
+      {/* Topbar (WhatsApp + idioma) retirada — vuelve como botones flotantes
+          (pendiente, ver conversación 2026-07-14). */}
       <div
         className={`flex items-center justify-between px-5 py-3 ${sobreVideo ? '' : 'border-b border-linea'}`}
         ref={navRef}
