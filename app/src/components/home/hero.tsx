@@ -1,6 +1,8 @@
+import { useEffect, useRef, useState } from 'react'
 import { Boton } from '@/components/ui/boton'
 import { Header } from './header'
 import { BarajaHero } from './baraja-hero'
+import { useDevFlag } from '@/dev/use-dev-flag'
 
 // Hero v3 — «inmersivo» (app/PLAN-v3.md). Cambio clave frente a v2: el Header
 // pasa a vivir DENTRO del box del hero (antes era una barra hermana sticky).
@@ -11,21 +13,54 @@ import { BarajaHero } from './baraja-hero'
 // vive en una capa interna propia (`absolute inset-0 overflow-hidden`);
 // el header y el contenido viven en la capa de encima, sin recorte.
 export function Hero() {
+  const videoRef = useRef<HTMLVideoElement>(null)
+  // [dev-mode] ?dev-hero=poster congela el video en el poster — es el frame
+  // que viaja a Figma (a Figma no va video, va el poster). Ver dev-registry.ts
+  const [forzarPoster, setForzarPoster] = useState(false)
+  useDevFlag('dev-hero', (v) => {
+    if (v === 'poster') setForzarPoster(true)
+  })
+
+  const reducirMovimiento =
+    typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video) return
+    if (forzarPoster || reducirMovimiento) {
+      video.pause()
+    } else {
+      video.play().catch(() => {})
+    }
+  }, [forzarPoster, reducirMovimiento])
+
   return (
     <>
       <section id="hero" className="px-4 pt-4 sm:px-6 sm:pt-6">
         <div className="relative rounded-hero">
           <div className="absolute inset-0 overflow-hidden rounded-hero">
-            <img
-              src="/fotos/hero-catamaran-2.webp"
-              alt="Catamarán navegando en aguas turquesas frente a Punta Cana"
+            <video
+              ref={videoRef}
               className="absolute inset-0 size-full object-cover"
-            />
+              poster="/fotos/hero-video-poster.webp"
+              autoPlay={!reducirMovimiento && !forzarPoster}
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              aria-hidden="true"
+            >
+              <source src="/video/hero.mp4" type="video/mp4" />
+            </video>
+            {/* Overlay uniforme (ya no lateral: el contenido va centrado,
+                PLAN-v3.md §6) + gradiente vertical inferior para asentar el
+                ticker (PLAN-v3.md §7). Solo tokens — si el contraste falla
+                en QA, se ajusta el token, no un valor inline. */}
+            <div className="absolute inset-0 bg-overlay-hero" />
             <div
               className="absolute inset-0"
               style={{
-                background:
-                  'linear-gradient(90deg, var(--color-overlay-hero) 0%, var(--color-overlay-hero) 40%, var(--color-overlay-hero-suave) 75%, transparent 100%)',
+                background: 'linear-gradient(180deg, transparent 45%, var(--color-overlay-hero) 100%)',
               }}
             />
           </div>

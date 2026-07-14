@@ -73,8 +73,14 @@ export const devSections: DevSection[] = [
         route: '/',
         status: 'done',
         description:
-          'v2: hero en contenedor redondeado (ya no a sangre) y baraja de los 4 tours en rotación, que sustituye al buscador de disponibilidad. Cada card es un producto con precio y CTA. CTA sticky en móvil.',
+          'v3: video de fondo (el mismo que usa el hero de la web original) + baraja de los 4 tours en rotación, que sustituye al buscador de disponibilidad. Cada card es un producto con precio y CTA. CTA sticky en móvil.',
         states: [
+          {
+            label: 'Video congelado en el poster',
+            kind: 'variante',
+            to: '/?dev-hero=poster',
+            note: 'Pausa el video de fondo en su primer frame → es EL FRAME que viaja a Figma (a Figma no va video, va el poster).',
+          },
           {
             label: 'Baraja: Semi-Privado',
             kind: 'estado',
