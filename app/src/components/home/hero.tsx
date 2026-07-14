@@ -36,7 +36,7 @@ export function Hero() {
 
   return (
     <>
-      <section id="hero" className="px-4 pt-4 sm:px-6 sm:pt-6">
+      <section id="hero" className="px-hero-margen pt-hero-margen sm:px-hero-margen-sm sm:pt-hero-margen-sm">
         <div className="relative rounded-hero">
           <div className="absolute inset-0 overflow-hidden rounded-hero">
             <video
@@ -68,21 +68,24 @@ export function Hero() {
           <div className="relative z-10">
             <Header variante="sobreVideo" />
 
-            <div className="grid grid-cols-1 items-center gap-10 px-6 py-12 sm:px-10 sm:py-16 lg:grid-cols-[1.1fr_auto] lg:gap-14 lg:py-20">
-              {/* Columna de texto */}
-              <div>
+            {/* v3: contenido centrado (antes en grid a 2 columnas con la
+                baraja al lado). La baraja queda debajo, centrada, SOLO como
+                paso intermedio: F5 la retira del todo y pone el ticker
+                anclado al pie del hero (PLAN-v3.md §6-7). */}
+            <div className="px-6 py-12 text-center sm:px-10 sm:py-16 lg:py-20">
+              <div className="mx-auto max-w-3xl">
                 <p className="text-eyebrow font-semibold uppercase tracking-[0.14em] text-white/90">
                   Punta Cana · Bávaro
                 </p>
-                <h1 className="mt-3 max-w-xl font-display text-hero-movil font-semibold text-white sm:text-hero">
+                <h1 className="mx-auto mt-3 max-w-xl font-display text-hero-movil font-semibold text-white sm:text-hero">
                   Los catamaranes originales de Punta Cana, en grupos pequeños
                 </h1>
-                <p className="mt-4 max-w-md text-lead text-white/90">
+                <p className="mx-auto mt-4 max-w-md text-lead text-white/90">
                   Snorkel en un vivero de coral real, cocina flotante con menú a tu elección y barcos a
                   media capacidad. Desde 2012.
                 </p>
 
-                <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-white">
+                <div className="mt-6 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm text-white">
                   <span className="text-amber-300">★★★★★</span>
                   <span>
                     <strong>4.9</strong> · 1.782 reseñas
@@ -95,7 +98,7 @@ export function Hero() {
                   </span>
                 </div>
 
-                <div className="mt-8 flex flex-wrap items-center gap-4">
+                <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
                   <Boton href="#tours">Ver disponibilidad</Boton>
                   <p className="text-xs text-white/90">
                     ✓ Cancelación gratis hasta 7 días antes
@@ -105,7 +108,7 @@ export function Hero() {
               </div>
 
               {/* Baraja de tours — el escaparate que sustituye al buscador */}
-              <div className="flex justify-center lg:justify-end">
+              <div className="mt-10 flex justify-center">
                 <BarajaHero />
               </div>
             </div>

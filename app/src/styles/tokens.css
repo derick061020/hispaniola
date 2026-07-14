@@ -82,6 +82,11 @@
   --spacing-seccion: 7rem; /* v2: sube de 5rem — el "aire" de la ref. Journeo */
   --spacing-seccion-sm: 4rem;
 
+  /* v3: el hero reduce su margen con los extremos del body — casi a sangre,
+     pero conserva el radio (PLAN-v3.md §6). */
+  --spacing-hero-margen: 0.5rem; /* 8px — móvil */
+  --spacing-hero-margen-sm: 0.75rem; /* 12px — desktop */
+
   /* ---------- Movimiento (v2) ----------
      ⚠️ Estas constantes son la FUENTE del prototipo de Figma: los delays del
      componente interactivo salen de aquí, no "a ojo" (playbook animaciones-a-figma,
