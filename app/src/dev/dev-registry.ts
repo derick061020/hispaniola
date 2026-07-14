@@ -59,7 +59,7 @@ export const devSections: DevSection[] = [
         route: '/',
         status: 'done',
         description:
-          'Topbar (WhatsApp + idiomas), nav con megamenús Tours/Eventos, dropdowns Nosotros/Ayuda, CTA Reservar, menú móvil con acordeón, y footer de 4 columnas.',
+          'v3: el header vive DENTRO del box del hero (variante sobreVideo, transparente sobre el video). Topbar (WhatsApp + idiomas), nav con megamenús Tours/Eventos, dropdowns Nosotros/Ayuda, CTA Reservar, menú móvil con acordeón, y footer de 4 columnas.',
         states: [
           { label: 'Megamenú: Tours', kind: 'estado', to: '/?dev-mega=tours' },
           { label: 'Megamenú: Eventos', kind: 'estado', to: '/?dev-mega=eventos' },

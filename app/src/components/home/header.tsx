@@ -10,7 +10,11 @@ import { useDevFlag } from '@/dev/use-dev-flag'
 
 type MenuId = 'tours' | 'eventos' | 'nosotros' | 'ayuda'
 
-export function Header() {
+// v3: el header vive DENTRO del box del hero (app/PLAN-v3.md §4), así que
+// necesita una variante transparente sobre el video. 'solida' (default) es
+// la barra opaca de siempre; 'sobreVideo' quita el fondo blanco/sticky y
+// pasa el texto a blanco para leerse sobre el video del hero.
+export function Header({ variante = 'solida' }: { variante?: 'solida' | 'sobreVideo' }) {
   const [menuAbierto, setMenuAbierto] = useState<MenuId | null>(null)
   const [movilAbierto, setMovilAbierto] = useState(false)
   const navRef = useRef<HTMLDivElement>(null)
@@ -37,9 +41,20 @@ export function Header() {
 
   const toggle = (id: MenuId) => setMenuAbierto((actual) => (actual === id ? null : id))
 
+  const sobreVideo = variante === 'sobreVideo'
+  // Los paneles de megamenú/dropdown NUNCA cambian: son cards bg-papel con
+  // sombra sobre cualquier fondo (foto, video o página sólida) — es el mismo
+  // componente que viajará a Figma.
+  const claseLink = sobreVideo
+    ? 'rounded-lg px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-white/10'
+    : 'rounded-lg px-3 py-2 text-sm font-medium text-navy transition-colors hover:bg-papel-hueso'
+  const claseLinkAbierto = sobreVideo ? 'bg-white/15' : 'bg-papel-hueso'
+
   return (
-    <header className="sticky top-0 z-40 bg-papel">
-      <div className="flex items-center justify-between bg-navy px-5 py-1.5 text-xs text-white">
+    <header className={sobreVideo ? '' : 'sticky top-0 z-40 bg-papel'}>
+      <div
+        className={`flex items-center justify-between px-5 py-1.5 text-xs text-white ${sobreVideo ? 'bg-navy/70 backdrop-blur-sm' : 'bg-navy'}`}
+      >
         <a href="https://wa.me/18293052804" target="_blank" rel="noopener" className="flex items-center gap-1.5 hover:text-aqua">
           <MessageCircle className="size-3.5" />
           WhatsApp +1 829 305 2804
@@ -51,15 +66,18 @@ export function Header() {
         </div>
       </div>
 
-      <div className="flex items-center justify-between border-b border-linea px-5 py-3" ref={navRef}>
-        <Logo />
+      <div
+        className={`flex items-center justify-between px-5 py-3 ${sobreVideo ? '' : 'border-b border-linea'}`}
+        ref={navRef}
+      >
+        <Logo sobreOscuro={sobreVideo} />
 
         <nav className="hidden items-center gap-1 md:flex">
           <div className="relative">
             <button
               type="button"
               onClick={() => toggle('tours')}
-              className={`rounded-lg px-3 py-2 text-sm font-medium text-navy transition-colors hover:bg-papel-hueso ${menuAbierto === 'tours' ? 'bg-papel-hueso' : ''}`}
+              className={`${claseLink} ${menuAbierto === 'tours' ? claseLinkAbierto : ''}`}
             >
               Tours ▾
             </button>
@@ -74,7 +92,7 @@ export function Header() {
             <button
               type="button"
               onClick={() => toggle('eventos')}
-              className={`rounded-lg px-3 py-2 text-sm font-medium text-navy transition-colors hover:bg-papel-hueso ${menuAbierto === 'eventos' ? 'bg-papel-hueso' : ''}`}
+              className={`${claseLink} ${menuAbierto === 'eventos' ? claseLinkAbierto : ''}`}
             >
               Eventos ▾
             </button>
@@ -89,7 +107,7 @@ export function Header() {
             <button
               type="button"
               onClick={() => toggle('nosotros')}
-              className={`rounded-lg px-3 py-2 text-sm font-medium text-navy transition-colors hover:bg-papel-hueso ${menuAbierto === 'nosotros' ? 'bg-papel-hueso' : ''}`}
+              className={`${claseLink} ${menuAbierto === 'nosotros' ? claseLinkAbierto : ''}`}
             >
               Nosotros ▾
             </button>
@@ -105,15 +123,13 @@ export function Header() {
             ) : null}
           </div>
 
-          <EnlacePrototipo className="rounded-lg px-3 py-2 text-sm font-medium text-navy hover:bg-papel-hueso">
-            Guías
-          </EnlacePrototipo>
+          <EnlacePrototipo className={claseLink}>Guías</EnlacePrototipo>
 
           <div className="relative">
             <button
               type="button"
               onClick={() => toggle('ayuda')}
-              className={`rounded-lg px-3 py-2 text-sm font-medium text-navy transition-colors hover:bg-papel-hueso ${menuAbierto === 'ayuda' ? 'bg-papel-hueso' : ''}`}
+              className={`${claseLink} ${menuAbierto === 'ayuda' ? claseLinkAbierto : ''}`}
             >
               Ayuda ▾
             </button>
@@ -141,7 +157,7 @@ export function Header() {
             type="button"
             onClick={() => setMovilAbierto(true)}
             aria-label="Menú"
-            className="grid size-10 place-items-center rounded-lg text-navy hover:bg-papel-hueso md:hidden"
+            className={`grid size-10 place-items-center rounded-lg md:hidden ${sobreVideo ? 'text-white hover:bg-white/10' : 'text-navy hover:bg-papel-hueso'}`}
           >
             <Menu className="size-5" />
           </button>
