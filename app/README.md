@@ -5,25 +5,40 @@ React para trasladarse después a Figma vía MCP (mismo flujo que Eventus y
 Synexia — ver playbook `codigo-a-figma` del cerebro).
 
 - [`PLAN.md`](./PLAN.md) — cómo se construyó la home (v1, tag `v1.0-home-diseno`).
-- [`PLAN-v2.md`](./PLAN-v2.md) — **la versión actual**: dirección «Boutique
-  luminoso» (tag `v2.0-home-boutique`). Hero con baraja de tours en rotación,
-  photo-stack, más aire y Poppins en toda la web.
+- [`PLAN-v2.md`](./PLAN-v2.md) — dirección «Boutique luminoso» (tag
+  `v2.0-home-boutique`). Photo-stack, más aire y Poppins en toda la web.
+- [`PLAN-v3.md`](./PLAN-v3.md) — **la versión actual**: hero «inmersivo» (tag
+  `v3.0-hero-inmersivo`). Header integrado en el hero, video de fondo,
+  contenido centrado y un ticker horizontal (sustituye a la baraja de v2).
 
-## Lo que hay que saber de la v2
+## Lo que hay que saber de la v3
 
-- **El hero ya no lleva buscador de disponibilidad**: lo sustituye una **baraja
-  de los 4 tours** que rota sola cada 4s (la activa está al frente; al avanzar
-  sube, encoge y se va al final de la cola). Cada card es un producto real con
-  precio y CTA — es decir, la baraja *asume* el papel de camino a la reserva
-  que tenía el buscador. Se conservan el CTA primario, el sticky de móvil y el
-  grid de tours debajo.
-- **Congelar la baraja** (imprescindible para el traspaso a Figma): `?dev-baraja=semi-privado`
-  · `=snorkel-lovers` · `=charter-privado` · `=isla-saona` · `=estatica`.
-  Cada deep-link fija esa card como activa **y detiene el auto-avance**.
-- La baraja es un **loop infinito** → en Figma va como *componente interactivo*
-  con una variante por card, no como cadena de frames (playbook
-  [[animaciones-a-figma]]). Los delays salen de los tokens `--baraja-*`, no
-  "a ojo": si cambias el token, cambia el prototipo de Figma.
+- **El header vive DENTRO del box del hero** (antes era una barra hermana
+  sticky): variante transparente sobre el video, y por eso deja de ser
+  sticky en desktop. El box del hero ya NO lleva `overflow-hidden` — el
+  recorte de la media vive en una capa interna propia, para que los
+  megamenús (absolute) no queden recortados.
+- **El fondo del hero es un video**, no una foto: el mismo que usa
+  `hispaniolaaquaticadventures.com` en su hero real (no el popup de la
+  presentadora que se auto-abre en la home actual — ver PLAN-v3.md §1).
+  Recortado a 16.5s, mudo, en loop. `?dev-hero=poster` lo congela en el
+  primer frame — **ese poster es el frame que viaja a Figma** (a Figma no va
+  video).
+- **El contenido del hero va centrado** (título, párrafo, CTA), ya no en dos
+  columnas.
+- **La baraja de v2 se retiró por completo** y la sustituye un **ticker
+  horizontal en loop infinito** al pie del hero: los 4 tours + las 6
+  ocasiones (bodas, MICE, cumpleaños, aniversarios, despedidas, reuniones),
+  cada card enlaza a su ficha y conserva el precio. Fotos de las ocasiones:
+  **provisionales** (reutilizadas de la galería real de charter-privado; no
+  existe shooting propio de eventos — ver `src/data/home.ts`).
+  - `?dev-ticker=pausado` detiene la pista → frame limpio para Figma.
+  - `?dev-ticker=estatico` simula `prefers-reduced-motion`: sin loop, fila
+    navegable a mano.
+  - El ticker es un **loop infinito** → en Figma va como *componente
+    interactivo* (variante pista-en-0 / pista-en--50%) con Smart Animate
+    Linear, no como cadena de frames (playbook [[animaciones-a-figma]]). La
+    duración sale del token `--ticker-duracion`, no "a ojo".
 
 ## Cómo correrlo
 
@@ -54,24 +69,28 @@ Abre `http://localhost:5173` (o el puerto que indique Vite). Requiere Node 18+.
 ## Stack
 
 Vite + React + TypeScript + Tailwind CSS v4 + React Router. Sin librerías de
-UI ni de animación (todo componente es propio; la baraja son transiciones CSS
-+ un `setInterval`). Iconos: `lucide-react`. Fuente self-hosted vía
-`@fontsource`: **Poppins**, en titulares y cuerpo.
+UI ni de animación (todo componente es propio; el ticker es un `@keyframes`
+CSS con la pista duplicada, la pausa al hover es CSS puro). Iconos:
+`lucide-react`. Fuente self-hosted vía `@fontsource`: **Poppins**, en
+titulares y cuerpo.
 
 ## Estructura
 
 ```
 app/
-├── PLAN.md                 ← plan de ejecución por fases (F0-F7)
-├── public/fotos/           ← 35 fotos reales extraídas de la web actual
+├── PLAN.md                  ← plan de ejecución v1 (F0-F7)
+├── PLAN-v2.md                ← plan v2 «Boutique luminoso»
+├── PLAN-v3.md                ← plan v3 «Hero inmersivo» (actual)
+├── public/fotos/            ← fotos reales extraídas de la web actual
+├── public/video/hero.mp4    ← video de fondo del hero (asset del cliente)
 └── src/
     ├── styles/tokens.css      ← TODOS los tokens (Tailwind v4 @theme)
-    ├── styles/componentes.css ← CSS a medida (el hover del photo-stack; ahí
-    │                             está explicado por qué no son utilidades)
-    ├── data/home.ts           ← contenido (tours, platos, ocasiones), portado
-    │                             de prototipo/datos.js
+    ├── styles/componentes.css ← CSS a medida (hover del photo-stack, loop
+    │                             del ticker; ahí está explicado el porqué)
+    ├── data/home.ts           ← contenido (tours, platos, ocasiones, ticker),
+    │                             portado de prototipo/datos.js
     ├── components/ui/         ← Boton, Logo, Etiqueta, PilaFotos, EnlacePrototipo
-    ├── components/home/       ← una sección de la home por archivo (+ BarajaHero)
+    ├── components/home/       ← una sección de la home por archivo (+ TickerHero)
     ├── dev/                   ← Dev Mode (glosario navegable, NO va a Figma)
     └── pages/
         ├── home.tsx           ← compone todas las secciones

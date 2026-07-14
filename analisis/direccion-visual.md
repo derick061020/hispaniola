@@ -187,3 +187,39 @@ blacktomato.com · hispaniolaaquaticadventures.com. Capturas:
 Referencias v2 (2026-07-13, pasadas por Samuel en el chat): Journeo · Vacationeeze ·
 Wanderlust · ExploreX. **Pendiente**: guardarlas en
 `analisis/referencias-visuales/v2/` (llegaron pegadas en el chat, no como archivos).
+
+## 8. Iteración v3 — «Hero inmersivo» (2026-07-14)
+
+Con la v2 vista en el navegador, Samuel pidió iterar solo header + hero: integrar el
+header en el box del hero, usar como fondo **el video real del hero** de la web
+actual (no una foto), reducir el margen del hero con los extremos del body, centrar
+el contenido (título, párrafo, botones) y sustituir la baraja vertical de v2 por un
+**ticker horizontal** con los 4 tours + las 6 ocasiones de eventos, en loop infinito
+al pie del hero.
+
+**El video**: la web actual usa `mb.YTPlayer` (jQuery) para poner un YouTube como
+fondo del hero — el ID activo es `0q360IlZaX0` (los anteriores están comentados en
+el HTML como versiones reemplazadas en 2020). Esto es distinto del popup que se
+auto-abre en la home (`K65cchLFwRs`, una presentadora con subtítulos incrustados en
+todo el metraje — se investigó primero por error y se descartó: sin tramo limpio
+utilizable). YouTube solo entrega ambos videos a 360p en cualquier cliente
+(limitación SABR vigente en 2026, no del video en sí). Del video de fondo real se
+recortaron 16.5s limpios (23.5s-40s): catamaranes anclados → navegando en formación
+→ toma cercana con estela → snorkel desde arriba → arrecife con peces. Mudo,
+comprimido a 3.8 MB.
+
+⚠️ **Consecuencia de conversión registrada (continúa la cadena de v2)**: el ticker
+es más pequeño que la baraja (sin botón de CTA propio por card), así que cada card
+**conserva el precio** y enlaza a su ficha — sigue sin perderse el camino a la
+reserva. Se conservan intactos el CTA primario centrado, el CTA sticky de móvil y el
+grid de tours debajo. La baraja de v2 se retira del todo (componente y tokens).
+
+Plan de ejecución: **`app/PLAN-v3.md`** (6 fases, commit por fase, tag
+`v3.0-hero-inmersivo`). El ticker es la segunda animación del proyecto → mismo
+tratamiento que la baraja en el traspaso a Figma ([[animaciones-a-figma]]): loop
+infinito = componente interactivo, congelable como frame vía `?dev-ticker=pausado` /
+`?dev-hero=poster`.
+
+Decisiones abiertas para cuando se vea en pantalla (PLAN-v3.md §9): si el header
+necesita un estado "sticky fantasma" en desktop (al integrarse en el hero deja de
+serlo), y las de siempre desde v2 (intensidad del coral, base blanca vs. crema).

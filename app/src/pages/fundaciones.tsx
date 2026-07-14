@@ -16,7 +16,7 @@ export function FundacionesPage() {
     <main className="mx-auto max-w-4xl px-6 py-12">
       <p className="text-xs font-semibold uppercase tracking-wide text-aqua-dark">Fundaciones — F0</p>
       <h1 className="mt-2 font-display text-h2 font-semibold text-navy">
-        v2 — Boutique luminoso
+        v3 — Hero inmersivo
       </h1>
       <p className="mt-2 max-w-prose text-navy-sub">
         Tokens de <code className="text-sm">src/styles/tokens.css</code>. El aqua se usa con
@@ -80,7 +80,7 @@ export function FundacionesPage() {
 
       <section className="mt-12">
         <h2 className="text-sm font-semibold uppercase tracking-wide text-navy-soft">
-          Forma y sombra — v2 «Boutique luminoso»
+          Forma y sombra — v3 «Hero inmersivo»
         </h2>
         <div className="mt-4 grid grid-cols-2 gap-6 rounded-card bg-papel p-6 ring-1 ring-linea sm:grid-cols-4">
           <div>
