@@ -157,10 +157,6 @@
    sale en línea recta, sin costura.
    ============================================================ */
 
-.notch-menu {
-  border-radius: 0 0 var(--radius-notch) var(--radius-notch);
-}
-
 .notch-esquina {
   position: absolute;
   top: 0;
@@ -177,4 +173,104 @@
 .notch-esquina--derecha {
   left: 100%;
   background: radial-gradient(circle at bottom right, transparent var(--radius-notch), var(--color-papel) calc(var(--radius-notch) + 1px));
+}
+
+/* ============================================================
+   Notch dinámico (v3-F8, PLAN-v3.md §11) — al abrir un menú (Tours,
+   Eventos...) la caja del notch se EXPANDE (ancho y alto) y el panel del
+   menú se muestra DENTRO, en vez de colgar como card flotante debajo del
+   botón — como la Dynamic Island de Apple, pero sobre nuestro notch MacBook.
+
+   POR QUÉ ES CSS A MEDIDA: `width`/`height` no se pueden transicionar hacia
+   `auto`/`max-content` — el navegador no sabe interpolar hacia un valor que
+   no es un número fijo. El reparto es el mismo que el dock del ticker
+   (§10): JS mide el tamaño real de tabs + panel (notch-menu.tsx) y solo
+   escribe --notch-ancho/--notch-alto; la transición vive aquí, en CSS.
+
+   ⚠️ El overflow:hidden va en LA CAJA, no en el marco que la envuelve — las
+   esquinas cóncavas (.notch-esquina, arriba) viven fuera de la caja
+   (posicionadas contra el marco) precisamente para no quedar recortadas por
+   ese overflow, que existe solo para contener el panel durante el morph. */
+.notch-caja {
+  width: var(--notch-ancho, max-content);
+  height: var(--notch-alto, auto);
+  overflow: hidden;
+  border-radius: 0 0 var(--radius-notch) var(--radius-notch);
+  transition:
+    width var(--notch-transicion) var(--notch-easing),
+    height var(--notch-transicion) var(--notch-easing);
+}
+
+/* El panel entra en fade cuando la caja ya va llegando a su tamaño final —
+   el delay evita ver el contenido recortado a mitad de morph. Todo sale de
+   --notch-transicion con calc(): cero números nuevos a ojo. */
+.notch-panel {
+  animation: notch-panel-entrada calc(var(--notch-transicion) * 2 / 3) var(--notch-easing) both;
+  animation-delay: calc(var(--notch-transicion) / 3);
+}
+
+@keyframes notch-panel-entrada {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .notch-caja {
+    transition: none;
+  }
+
+  .notch-panel {
+    animation: none;
+  }
+}
+
+/* ============================================================
+   Cinta de premios (dentro de la sección de stats).
+
+   POR QUÉ ES CSS A MEDIDA: los 7 badges vienen de 5 familias cromáticas que
+   no tienen nada que ver entre sí (bloque navy del LTG, cuadrado de marco
+   amarillo de WeddingWire, verdes de Viator y TripAdvisor, dorado del Luxury
+   Travel Guide). Puestos a todo color en fila se leen como 7 objetos sueltos
+   —exactamente lo que la auditoría critica de la web actual— en vez de como
+   UNA cinta de confianza. Desaturarlos los unifica y respeta el guardarraíl
+   de la dirección B (direccion-visual.md §6): el color lo ponen las FOTOS,
+   no los badges.
+
+   El color real vuelve al pasar el ratón: quien quiera inspeccionar un premio
+   lo ve tal cual es, y el gris no se lee como "logo apagado" sino como una
+   decisión. Solo con puntero real — en táctil no hay hover que recompensar,
+   así que ahí el badge se queda en su gris (es textura de confianza, no un
+   control). */
+
+.premio-logo {
+  height: var(--spacing-premio-alto-movil);
+  width: auto;
+  filter: grayscale(1);
+  opacity: var(--premio-opacidad);
+  transition:
+    filter var(--premio-transicion) ease-out,
+    opacity var(--premio-transicion) ease-out;
+}
+
+@media (min-width: 640px) {
+  .premio-logo {
+    height: var(--spacing-premio-alto);
+  }
+}
+
+@media (hover: hover) {
+  .premio-logo:hover {
+    filter: grayscale(0);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .premio-logo {
+    transition: none;
+  }
 }

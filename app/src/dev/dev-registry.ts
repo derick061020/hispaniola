@@ -59,12 +59,12 @@ export const devSections: DevSection[] = [
         route: '/',
         status: 'done',
         description:
-          'v3: el header vive DENTRO del box del hero (variante sobreVideo, transparente sobre el video). Sin topbar (WhatsApp + idioma se resuelven aparte con botones flotantes — pendiente). Nav con megamenús Tours/Eventos, dropdowns Nosotros/Ayuda, CTA Reservar, menú móvil con acordeón, y footer de 4 columnas.',
+          'v3: el header vive DENTRO del box del hero (variante sobreVideo, transparente sobre el video). Sin topbar (WhatsApp + idioma se resuelven aparte con botones flotantes — pendiente). v3-F8: los megamenús/dropdowns ya no son cards flotantes — el notch se EXPANDE (ancho y alto, animado) y los contiene, estilo Dynamic Island. CTA Reservar, menú móvil con acordeón, y footer de 4 columnas.',
         states: [
-          { label: 'Megamenú: Tours', kind: 'estado', to: '/?dev-mega=tours' },
-          { label: 'Megamenú: Eventos', kind: 'estado', to: '/?dev-mega=eventos' },
-          { label: 'Dropdown: Nosotros', kind: 'estado', to: '/?dev-mega=nosotros' },
-          { label: 'Dropdown: Ayuda', kind: 'estado', to: '/?dev-mega=ayuda' },
+          { label: 'Megamenú: Tours', kind: 'estado', to: '/?dev-mega=tours', note: 'Abre el notch expandido (v3-F8), no una card flotante.' },
+          { label: 'Megamenú: Eventos', kind: 'estado', to: '/?dev-mega=eventos', note: 'Abre el notch expandido (v3-F8), no una card flotante.' },
+          { label: 'Dropdown: Nosotros', kind: 'estado', to: '/?dev-mega=nosotros', note: 'Abre el notch expandido (v3-F8), no una card flotante.' },
+          { label: 'Dropdown: Ayuda', kind: 'estado', to: '/?dev-mega=ayuda', note: 'Abre el notch expandido (v3-F8), no una card flotante.' },
           { label: 'Menú móvil abierto', kind: 'variante', to: '/?dev-movil=abierto', note: 'Ver mejor con el viewport en modo móvil.' },
         ],
       },
@@ -107,10 +107,11 @@ export const devSections: DevSection[] = [
     title: 'Home — Confianza y catálogo',
     screens: [
       {
-        title: 'Cinta de stats',
+        title: 'Cinta de stats + premios',
         route: '/',
         status: 'done',
-        description: '4 cifras (clientes, días navegados, % de capacidad, plástico) + reconocimiento en TripAdvisor/Viator/WeddingWire/LTG.',
+        description:
+          '4 cifras (clientes, días navegados, % de capacidad, plástico) + la CINTA DE PREMIOS: los 7 badges reales de la web actual (TripAdvisor #1, WeddingWire 2018-21, LTG Global 2021/22, Viator 2022/23/24, Luxury Travel Guide 2016), descargados de la web del cliente y no recreados. Sustituyen a la antigua línea de texto "Reconocido en...". Van en gris + 55% de opacidad en reposo y recuperan su color real al pasar el ratón: son 5 familias cromáticas distintas y a todo color se leen como 7 objetos sueltos, no como una cinta (el guardarraíl de la dirección B: el color lo ponen las fotos, no los badges).',
         states: [],
       },
       {

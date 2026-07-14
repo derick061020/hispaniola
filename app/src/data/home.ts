@@ -157,6 +157,65 @@ export function formatoDinero(n: number | null): string {
   return 'US$ ' + n.toLocaleString('en-US', { maximumFractionDigits: 2 })
 }
 
+export type Premio = {
+  id: string
+  /** Texto del premio — es el `alt` de la imagen: describe lo que el badge DICE,
+   *  porque el badge es una imagen y su contenido no es texto seleccionable. */
+  nombre: string
+  /** nombre de archivo en /premios (sin extensión) */
+  foto: string
+  /** Dimensiones intrínsecas del webp — van al <img> para reservar el hueco y
+   *  que la cinta no dé un salto de layout (CLS) al cargar los 7 logos. */
+  ancho: number
+  alto: number
+}
+
+// Los 7 premios reales de la web actual (imágenes descargadas de
+// hispaniolaaquaticadventures.com/images/awards/, no stock ni recreaciones).
+//
+// La auditoría (analisis/auditoria-web-actual.md §"Señales de confianza") los
+// marcó como ACTIVO DESAPROVECHADO: en la web actual viven frente al hero en
+// imágenes pequeñas de baja resolución, sin números que los acompañen. Aquí
+// suben a la cinta de stats, que es justo la sección de "demostrar" — los
+// premios al lado de las cifras (91.607 clientes, 4.9★) se refuerzan entre sí.
+//
+// ⚠️ Siguen SIN enlaces verificables (la otra mitad de la crítica de la
+// auditoría): no tenemos las URLs de los perfiles/premios y no se inventan.
+// Pendiente pedírselas al cliente (ver app/PLAN-v3.md §9).
+export const PREMIOS: Premio[] = [
+  {
+    id: 'tripadvisor',
+    nombre: 'TripAdvisor — #1 en actividades acuáticas de Bávaro / Punta Cana durante más de 7 años',
+    foto: 'premio-tripadvisor',
+    ancho: 222,
+    alto: 82,
+  },
+  {
+    id: 'weddingwire',
+    nombre: "WeddingWire — Couples' Choice Awards 2018-2021",
+    foto: 'premio-weddingwire',
+    ancho: 96,
+    alto: 96,
+  },
+  {
+    id: 'ltg',
+    nombre: 'LTG Global Awards 2021/22 — Ganador: Aquatic Tour Operator of the Year, República Dominicana',
+    foto: 'premio-ltg',
+    ancho: 239,
+    alto: 96,
+  },
+  { id: 'viator-2022', nombre: 'Viator Experience Award 2022', foto: 'premio-viator-2022', ancho: 84, alto: 96 },
+  { id: 'viator-2023', nombre: 'Viator Experience Award 2023', foto: 'premio-viator-2023', ancho: 84, alto: 96 },
+  { id: 'viator-2024', nombre: 'Viator Experience Awards 2024', foto: 'premio-viator-2024', ancho: 84, alto: 96 },
+  {
+    id: 'luxury-travel-guide',
+    nombre: 'Luxury Travel Guide — The Americas Awards 2016, Ganador: Tour Operator of the Year, Punta Cana',
+    foto: 'premio-luxury-travel-guide',
+    ancho: 290,
+    alto: 96,
+  },
+]
+
 /** Card del ticker del hero. Son DOS especies, no una: el tour se compra (tiene
  *  precio, duración y aforo) y la ocasión se cotiza (no tiene precio publicado).
  *  La unión discriminada lo hace explícito → 2 variantes del componente Figma. */

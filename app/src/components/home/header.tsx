@@ -5,10 +5,13 @@ import { Boton } from '@/components/ui/boton'
 import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
 import { MegaTours } from './mega-tours'
 import { MegaEventos } from './mega-eventos'
+import { DropdownNosotros } from './dropdown-nosotros'
+import { DropdownAyuda } from './dropdown-ayuda'
 import { MenuMovil } from './menu-movil'
+import { NotchMenu } from './notch-menu'
 import { useDevFlag } from '@/dev/use-dev-flag'
 
-type MenuId = 'tours' | 'eventos' | 'nosotros' | 'ayuda'
+export type MenuId = 'tours' | 'eventos' | 'nosotros' | 'ayuda'
 
 // v3: el header vive DENTRO del box del hero (app/PLAN-v3.md §4), así que
 // necesita una variante transparente sobre el video. 'solida' (default) es
@@ -47,20 +50,41 @@ export function Header({ variante = 'solida' }: { variante?: 'solida' | 'sobreVi
   // directo sobre el video. Por eso el texto es navy en los dos casos.
   const claseLink = 'rounded-lg px-3 py-2 text-sm font-medium text-navy transition-colors hover:bg-papel-hueso'
   const claseLinkAbierto = 'bg-papel-hueso'
-  // Los paneles de megamenú/dropdown NUNCA cambian: son cards bg-papel con
-  // sombra sobre cualquier fondo (foto, video o página sólida) — es el mismo
-  // componente que viajará a Figma.
 
-  const tabs = (
+  // Botón de un tab — idéntico en las 2 variantes (mismo texto/estado); lo
+  // que cambia es dónde va su panel (PLAN-v3.md §11.1): colgado del propio
+  // botón en 'solida', dentro del notch compartido en 'sobreVideo'.
+  const botonTab = (id: MenuId, label: string) => (
+    <button
+      key={id}
+      type="button"
+      onClick={() => toggle(id)}
+      aria-expanded={menuAbierto === id}
+      className={`${claseLink} ${menuAbierto === id ? claseLinkAbierto : ''}`}
+    >
+      {label}
+    </button>
+  )
+
+  // 'sobreVideo': solo botones — el panel activo lo renderiza NotchMenu
+  // dentro de la caja que se expande, no un elemento colgado del botón.
+  const tabsBotones = (
+    <>
+      {botonTab('tours', 'Tours ▾')}
+      {botonTab('eventos', 'Eventos ▾')}
+      {botonTab('nosotros', 'Nosotros ▾')}
+      <EnlacePrototipo className={claseLink}>Guías</EnlacePrototipo>
+      {botonTab('ayuda', 'Ayuda ▾')}
+    </>
+  )
+
+  // 'solida': cada botón envuelve su propio panel flotante — sin cambios de
+  // comportamiento frente a antes de F8, solo con los dropdowns ya extraídos
+  // a sus propios componentes (§11.3).
+  const tabsConPaneles = (
     <>
       <div className="relative">
-        <button
-          type="button"
-          onClick={() => toggle('tours')}
-          className={`${claseLink} ${menuAbierto === 'tours' ? claseLinkAbierto : ''}`}
-        >
-          Tours ▾
-        </button>
+        {botonTab('tours', 'Tours ▾')}
         {menuAbierto === 'tours' ? (
           <div className="absolute left-0 top-full mt-2 rounded-card bg-papel shadow-card ring-1 ring-linea">
             <MegaTours />
@@ -69,13 +93,7 @@ export function Header({ variante = 'solida' }: { variante?: 'solida' | 'sobreVi
       </div>
 
       <div className="relative">
-        <button
-          type="button"
-          onClick={() => toggle('eventos')}
-          className={`${claseLink} ${menuAbierto === 'eventos' ? claseLinkAbierto : ''}`}
-        >
-          Eventos ▾
-        </button>
+        {botonTab('eventos', 'Eventos ▾')}
         {menuAbierto === 'eventos' ? (
           <div className="absolute left-0 top-full mt-2 rounded-card bg-papel shadow-card ring-1 ring-linea">
             <MegaEventos />
@@ -84,21 +102,10 @@ export function Header({ variante = 'solida' }: { variante?: 'solida' | 'sobreVi
       </div>
 
       <div className="relative">
-        <button
-          type="button"
-          onClick={() => toggle('nosotros')}
-          className={`${claseLink} ${menuAbierto === 'nosotros' ? claseLinkAbierto : ''}`}
-        >
-          Nosotros ▾
-        </button>
+        {botonTab('nosotros', 'Nosotros ▾')}
         {menuAbierto === 'nosotros' ? (
-          <div className="absolute left-0 top-full mt-2 flex w-60 flex-col gap-0.5 rounded-card bg-papel p-2 shadow-card ring-1 ring-linea">
-            <EnlacePrototipo className="rounded-lg px-3 py-2 text-sm font-medium text-navy hover:bg-papel-hueso">
-              La tripulación y la flota
-            </EnlacePrototipo>
-            <EnlacePrototipo className="rounded-lg px-3 py-2 text-sm font-medium text-navy hover:bg-papel-hueso">
-              El arrecife que reconstruimos
-            </EnlacePrototipo>
+          <div className="absolute left-0 top-full mt-2 rounded-card bg-papel shadow-card ring-1 ring-linea">
+            <DropdownNosotros />
           </div>
         ) : null}
       </div>
@@ -106,24 +113,10 @@ export function Header({ variante = 'solida' }: { variante?: 'solida' | 'sobreVi
       <EnlacePrototipo className={claseLink}>Guías</EnlacePrototipo>
 
       <div className="relative">
-        <button
-          type="button"
-          onClick={() => toggle('ayuda')}
-          className={`${claseLink} ${menuAbierto === 'ayuda' ? claseLinkAbierto : ''}`}
-        >
-          Ayuda ▾
-        </button>
+        {botonTab('ayuda', 'Ayuda ▾')}
         {menuAbierto === 'ayuda' ? (
-          <div className="absolute right-0 top-full mt-2 flex w-56 flex-col gap-0.5 rounded-card bg-papel p-2 shadow-card ring-1 ring-linea">
-            <EnlacePrototipo className="rounded-lg px-3 py-2 text-sm font-medium text-navy hover:bg-papel-hueso">
-              Preguntas frecuentes
-            </EnlacePrototipo>
-            <a href="https://wa.me/18293052804" target="_blank" rel="noopener" className="rounded-lg px-3 py-2 text-sm font-medium text-navy hover:bg-papel-hueso">
-              Contacto y WhatsApp
-            </a>
-            <EnlacePrototipo className="rounded-lg px-3 py-2 text-sm font-medium text-navy hover:bg-papel-hueso">
-              Gestionar mi reserva
-            </EnlacePrototipo>
+          <div className="absolute right-0 top-full mt-2 rounded-card bg-papel shadow-card ring-1 ring-linea">
+            <DropdownAyuda />
           </div>
         ) : null}
       </div>
@@ -141,19 +134,11 @@ export function Header({ variante = 'solida' }: { variante?: 'solida' | 'sobreVi
         <Logo sobreOscuro={sobreVideo} />
 
         {sobreVideo ? (
-          // Notch tipo MacBook (solo desktop — en móvil el <nav> ya está
-          // oculto): "cuelga" del borde superior del hero, ancho = el
-          // contenido de los tabs. Ver componentes.css para el porqué del
-          // remate cóncavo (no es un border-radius normal).
-          <div className="absolute left-1/2 top-0 hidden w-max -translate-x-1/2 md:block">
-            <nav className="notch-menu relative flex w-max items-center gap-1 whitespace-nowrap bg-papel px-2 py-2 shadow-card">
-              <span className="notch-esquina notch-esquina--izquierda" aria-hidden="true" />
-              <span className="notch-esquina notch-esquina--derecha" aria-hidden="true" />
-              {tabs}
-            </nav>
+          <div className="absolute left-1/2 top-0 z-30 hidden w-max -translate-x-1/2 md:block">
+            <NotchMenu abierto={menuAbierto} tabs={tabsBotones} />
           </div>
         ) : (
-          <nav className="hidden items-center gap-1 md:flex">{tabs}</nav>
+          <nav className="hidden items-center gap-1 md:flex">{tabsConPaneles}</nav>
         )}
 
         <div className="flex items-center gap-2">

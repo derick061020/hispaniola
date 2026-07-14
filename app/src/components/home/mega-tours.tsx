@@ -6,7 +6,11 @@ import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
 // Cada card es EnlacePrototipo: la ficha de tour vive en prototipo/, no aquí.
 export function MegaTours() {
   return (
-    <div className="grid grid-cols-2 gap-3 p-4 sm:grid-cols-4" style={{ width: 'min(92vw, 880px)' }}>
+    // Ancho responsivo, no solo "min(92vw, …)": entre md y xl el notch
+    // centrado no tiene sitio para 880px sin tapar el logo/Reservar (verificado
+    // con Playwright a 768-1024px) — en ese rango va a 2 columnas y más angosto;
+    // desde xl (1280px) hay margen de sobra y vuelve a 4 columnas a 880px.
+    <div className="grid w-[min(92vw,28rem)] grid-cols-2 gap-3 p-4 xl:w-[min(92vw,55rem)] xl:grid-cols-4">
       {TOURS.map((t) => (
         <EnlacePrototipo
           key={t.slug}

@@ -114,9 +114,28 @@
      hover (§10.1). */
   --ticker-dock-escala-max: 1.12; /* escala de la card hovereada — sutil, no macOS real */
   --ticker-dock-radio: 3.5; /* HOMBRO: alcance total, en PASOS de card (ancho + gap) */
-  --ticker-dock-radio-nucleo: 1.28; /* NÚCLEO: alcance del pico, en pasos — muere antes de la vecina */
-  --ticker-dock-nucleo: 0.82; /* fracción del crecimiento que se lleva el núcleo */
+  --ticker-dock-radio-nucleo: 1.27; /* NÚCLEO: alcance del pico, en pasos — muere antes de la vecina */
+  --ticker-dock-nucleo: 0.87; /* fracción del crecimiento que se lleva el núcleo */
   --ticker-dock-transicion: 140ms; /* seguimiento amortiguado al mover el puntero */
+
+  /* Notch dinámico (PLAN-v3.md §11) — FUENTE del prototipo de Figma: la
+     duración/easing del componente interactivo (Smart Animate) salen de aquí. */
+  --notch-transicion: 300ms; /* morph de ancho/alto al abrir/cerrar un menú */
+  --notch-easing: cubic-bezier(0.32, 0.72, 0, 1); /* arranque vivo, aterrizaje suave */
+
+  /* Cinta de premios (dentro de la sección de stats). Los 7 badges son MUY
+     heterogéneos (bloque navy del LTG, cuadrado amarillo de WeddingWire,
+     verdes de Viator/TripAdvisor, dorado de Luxury Travel Guide): se
+     normalizan a una sola ALTURA y se desaturan en reposo — el guardarraíl de
+     la dirección B dice que el color lo ponen las fotos, no los badges. */
+  --spacing-premio-alto: 3rem; /* 48px — desktop */
+  --spacing-premio-alto-movil: 2.5rem; /* 40px */
+  /* ⚠️ No bajar de ~0.7: los badges no pesan lo mismo en gris. Los oscuros
+     (el bloque navy del LTG) aguantan cualquier opacidad, pero los claros
+     (Luxury Travel Guide, TripAdvisor — texto fino sobre blanco) se
+     DESVANECEN contra el papel. A 0.55 el Luxury Travel Guide desaparecía. */
+  --premio-opacidad: 0.72; /* en reposo, ya en gris */
+  --premio-transicion: 240ms; /* vuelta al color al pasar el ratón */
 }
 
 body {

@@ -1,3 +1,5 @@
+import { PREMIOS } from '@/data/home'
+
 // Cinta de confianza — estos datos hoy están enterrados en la ficha del
 // wireframe (ver NOTAS['home-stats'] del prototipo); aquí suben a la home.
 const STATS = [
@@ -21,9 +23,31 @@ export function Stats() {
           </div>
         ))}
       </div>
-      <p className="mt-8 text-center text-xs text-navy-soft">
-        Reconocido en TripAdvisor · Viator · WeddingWire · LTG Awards
-      </p>
+
+      {/* Los 7 premios reales (data/home.ts). Sustituyen a la línea de texto
+          "Reconocido en TripAdvisor · Viator · WeddingWire · LTG Awards", que
+          decía lo mismo pero pidiéndole al lector que se fiara de nuestra
+          palabra: el badge ES la prueba. Van aquí, junto a las cifras, porque
+          es LA sección de demostrar — premios y números se refuerzan. */}
+      <div className="mx-auto mt-8 max-w-5xl border-t border-linea pt-7">
+        <p className="text-center text-eyebrow font-semibold uppercase tracking-[0.14em] text-navy-soft">
+          Reconocido por
+        </p>
+        <ul className="mt-5 flex flex-wrap items-center justify-center gap-x-8 gap-y-6 sm:gap-x-10">
+          {PREMIOS.map((premio) => (
+            <li key={premio.id}>
+              <img
+                src={`/premios/${premio.foto}.webp`}
+                alt={premio.nombre}
+                width={premio.ancho}
+                height={premio.alto}
+                loading="lazy"
+                className="premio-logo"
+              />
+            </li>
+          ))}
+        </ul>
+      </div>
     </section>
   )
 }

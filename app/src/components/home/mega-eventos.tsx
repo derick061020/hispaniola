@@ -10,7 +10,10 @@ export function MegaEventos() {
   const resto = OCASIONES.filter((o) => !o.esLanding)
 
   return (
-    <div className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-[1fr_1.2fr]" style={{ width: 'min(92vw, 620px)' }}>
+    // Mismo ajuste que MegaTours: angosto entre md y xl para no tapar el
+    // logo/Reservar del notch centrado; el ancho completo (620px) solo desde
+    // xl, donde ya hay margen de sobra a los lados.
+    <div className="grid w-[min(92vw,28rem)] grid-cols-1 gap-4 p-4 sm:grid-cols-[1fr_1.2fr] xl:w-[min(92vw,38.75rem)]">
       <div className="flex flex-col gap-2">
         {landings.map((o) => (
           <EnlacePrototipo

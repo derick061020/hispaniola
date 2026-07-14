@@ -412,18 +412,21 @@ en dos campanas resuelve las dos mitades del pedido a la vez:
 - **Hombro** (radio largo, el resto): es lo que deja que la 2ª y la 3ª vecina
   sigan reaccionando, pero ya en sordina.
 
-**Constantes** (`sMax` = 1.12, `Rhombro` = 3.5 pasos, `Rnucleo` = 1.4 pasos,
-`peso` = 0.75; paso = ancho + gap = 288 + 16 = 304 px):
+**Constantes** (`sMax` = 1.12, `Rhombro` = 3.5 pasos, `Rnucleo` = 1.27 pasos,
+`peso` = 0.87; paso = ancho + gap = 288 + 16 = 304 px):
 
 | distancia | escala | del crecimiento máx. |
 |---|---|---|
 | card hovereada | **1.120** | **100%** |
-| vecina inmediata | 1.041 | 34% |
-| 2ª vecina | 1.012 | 10% |
-| 3ª vecina | 1.002 | 1% |
+| vecina inmediata | 1.024 | 20% |
+| 2ª vecina | 1.006 | 5% |
+| 3ª vecina | 1.001 | 0.6% |
 | 4ª en adelante | 1.000 | 0% |
 
-Son las escalas que viajarán a Figma como variantes.
+Son las escalas que viajarán a Figma como variantes. `Rhombro` se dejó fijo desde
+la primera pasada: como el núcleo no le llega nada a la 2ª/3ª vecina, es el único
+parámetro que controla esas dos casillas, y tocar solo `peso` + `Rnucleo` basta
+para afinar «cuánto manda el hover» sin descuadrar el resto de la cola.
 
 ⚠️ **`sMax` = 1.3 (probado primero) se descartó por exagerado.** Con texto y
 precio dentro de la card, un dock al 130% real de macOS se lee caricaturesco,
@@ -557,7 +560,7 @@ inmersivo + ticker».
 Figma **no** tiene funciones continuas de distancia: el dock no se «traduce», se
 **congela**. Según el playbook `animaciones-a-figma`:
 
-- Card = componente con propiedad de variante `escala: 100 / 122 / 130` (los
+- Card = componente con propiedad de variante `escala: 100 / 103 / 109 / 112` (los
   valores salen de la tabla de §10.1 — de los tokens, no del ojo).
 - Del ticker se entregan **dos frames**: «reposo» (`?dev-ticker=pausado`) y «dock
   activo» (`?dev-dock=activo`), y una nota en el componente explicando que en
@@ -578,6 +581,45 @@ Figma **no** tiene funciones continuas de distancia: el dock no se «traduce», 
 4. La costura del loop sigue siendo invisible con el dock activo cerca del punto
    de empalme entre las dos copias.
 5. Sin dock en móvil/táctil y con `prefers-reduced-motion: reduce`.
+
+### 10.9 A sangre — el ticker toca el borde real de la pantalla
+
+Pedido de Samuel viendo el resultado: si el ticker se recorta ANTES del borde
+real de la pantalla, las cards parecen desaparecer contra una pared invisible en
+vez de deslizarse fuera de ella. `<section id="hero">` tiene padding lateral
+(`--spacing-hero-margen`) para el box redondeado, así que por defecto el ticker
+hereda ese mismo inset.
+
+⚠️ **Dos técnicas descartadas, en orden — las dos rompen exactamente donde no se
+esperaba:**
+
+1. `left-1/2` + `-translate-x-1/2` (el truco clásico de centrar un elemento
+   ancho de sobra): `left: 50%` se resuelve contra el ancho del **containing
+   block**, que aquí es `.rounded-hero` — ya angosto por el padding que se
+   quiere ignorar. Resultado: queda descuadrado por el propio margen que
+   intenta cancelar.
+2. `w-screen` (`100vw`) + `margin-left: calc(50% - 50vw)` (el truco "full-bleed
+   robusto", que sí es independiente del padre): en desktop, con scrollbar
+   clásica (no overlay), `100vw` **incluye el ancho de la scrollbar** —
+   ~15px más ancho que el área visible real (`100%` / `document.documentElement.
+   clientWidth`). El ticker terminaba más ancho que la página → overflow-x de
+   página. Es exactamente el riesgo que §7.3/§8 ya avisaban vigilar en este
+   componente, y aquí se materializó.
+
+**La que sí funciona:** en vez de perseguir el borde del viewport con `vw`,
+cancelar el padding EXACTO que lo causó, con el mismo token que lo puso:
+
+```css
+inset-x: calc(var(--spacing-hero-margen) * -1);
+/* sm: */ inset-x: calc(var(--spacing-hero-margen-sm) * -1);
+```
+
+Sin `vw`, sin transform, sin depender del ancho de la scrollbar — funciona para
+cualquier ancho de scrollbar (0 en móvil/overlay, ~15-17px en desktop clásico)
+porque nunca la mide: solo deshace el padding que el propio hero le puso.
+Verificado con Playwright en 390px y 1440px: `wrapperLeft = 0`,
+`wrapperRight` = ancho de página exacto, `scrollWidth === clientWidth` (cero
+overflow-x) en los dos.
 
 ---
 

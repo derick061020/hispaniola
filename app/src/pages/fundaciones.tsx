@@ -110,8 +110,10 @@ export function FundacionesPage() {
           Ritmo vertical: <code>--spacing-seccion</code> 7rem (desktop) /{' '}
           <code>--spacing-seccion-sm</code> 4rem (móvil) — cableados como{' '}
           <code>py-seccion</code> en las secciones (en v1 el token existía pero nadie lo usaba).
-          Movimiento del ticker: <code>--ticker-duracion</code> 45s — <strong>de aquí sale
-          la duración del prototipo de Figma</strong>, no de ojo.
+          Movimiento del ticker: <code>--ticker-duracion</code> 45s y el dock{' '}
+          <code>--ticker-dock-*</code>; morph del notch dinámico:{' '}
+          <code>--notch-transicion</code> 300ms / <code>--notch-easing</code> — <strong>de aquí
+          sale la duración y el easing del prototipo de Figma</strong>, no de ojo.
         </p>
       </section>
 

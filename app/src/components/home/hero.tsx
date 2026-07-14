@@ -75,7 +75,13 @@ export function Hero() {
                 <p className="text-eyebrow font-semibold uppercase tracking-[0.14em] text-white/90">
                   Punta Cana · Bávaro
                 </p>
-                <h1 className="mx-auto mt-3 max-w-xl font-display text-hero-movil font-semibold text-white sm:text-hero">
+                {/* Sin max-w propio: llena el contenedor (max-w-3xl = 768px). Con
+                    el max-w-xl que tenía (576px) el titular partía en CUATRO líneas
+                    de 63px; medido en navegador, 768px es el umbral exacto al que
+                    cae a TRES. Son 63px menos de hero — los justos para que la cinta
+                    de stats y los premios entren en el primer vistazo. La escala
+                    tipográfica no se toca: el token --text-hero sigue mandando. */}
+                <h1 className="mt-3 font-display text-hero-movil font-semibold text-white sm:text-hero">
                   Los catamaranes originales de Punta Cana, en grupos pequeños
                 </h1>
                 <p className="mx-auto mt-4 max-w-md text-lead text-white/90">
@@ -116,14 +122,21 @@ export function Hero() {
               cards se recortan 8-12px ANTES del borde y se ve como si
               desaparecieran contra una pared invisible en vez de deslizarse
               fuera de la pantalla.
-              ⚠️ `left-1/2 -translate-x-1/2` NO sirve aquí: ese `50%` se
-              calcula sobre el ancho de `.rounded-hero` (ya angosto por el
-              padding del hero), no sobre el viewport, así que queda
-              descuadrado por el propio margen que se quiere ignorar. La
-              técnica que SÍ es independiente del contenedor padre es
-              `w-screen` + `margin-left: calc(50% - 50vw)` (con `left-0`
-              explícito para que no quede "over-constrained" con el ancho). */}
-          <div className="absolute bottom-0 left-0 z-20 ml-[calc(50%-50vw)] w-screen translate-y-1/2">
+              ⚠️ Dos técnicas descartadas, en orden:
+              1) `left-1/2 -translate-x-1/2`: el `50%` se calcula sobre el
+                 ancho de `.rounded-hero` (ya angosto por el padding del
+                 hero), no sobre el viewport → queda descuadrado por el
+                 propio margen que se quiere ignorar.
+              2) `w-screen` (100vw): en desktop, con scrollbar clásica, 100vw
+                 incluye el ancho de la scrollbar (aquí, 15px) — más ancho
+                 que el área visible real (`100%`/`clientWidth`) → overflow-x
+                 de página, el mismo que el propio PLAN-v3.md §8 avisaba
+                 vigilar en este componente.
+              La que sí funciona, sin vw ni transforms: cancelar el padding
+              EXACTO del hero con el mismo token que lo puso (inset negativo),
+              así el ticker queda flush con el borde real del layout sea cual
+              sea el ancho de la scrollbar. */}
+          <div className="absolute bottom-0 z-20 inset-x-[calc(var(--spacing-hero-margen)*-1)] sm:inset-x-[calc(var(--spacing-hero-margen-sm)*-1)] translate-y-1/2">
             <TickerHero />
           </div>
         </div>
