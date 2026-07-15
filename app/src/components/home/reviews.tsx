@@ -180,7 +180,7 @@ export function Reviews() {
             onPointerEnter={() => setPausado(true)}
             onPointerLeave={() => setPausado(false)}
           >
-            <div className="reviews-step-container flex-1 overflow-hidden">
+            <div className="reviews-step-container overflow-hidden">
               <div
                 className={`reviews-step-track ${noTransition ? '' : 'reviews-step-track--animated'}`}
                 style={{ transform: `translateY(calc(-${index} * (var(--reviews-card-alto) + var(--reviews-step-gap))))` }}
