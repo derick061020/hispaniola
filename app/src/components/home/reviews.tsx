@@ -57,15 +57,16 @@ function Iniciales({ nombre }: { nombre: string }) {
 function ReviewCard({ review }: { review: Review }) {
   return (
     <div className="relative flex h-full flex-col justify-between rounded-card bg-papel-hueso p-6 lg:p-7">
-      {/* Comilla decorativa de fondo — grande, serif, color navy al 10%,
-          no seleccionable y oculta para lectores de pantalla. Posicionada
-          en el top-right con 32px de separación del borde derecho
-          (`right-8` = 2rem = 32px). Hace referencia visual de que es un
-          quote sin competir con el texto (el inline &ldquo;…&rdquo; del
-          texto sigue delimitando la cita). */}
+      {/* Comilla decorativa de fondo — más grande (50% sobre la versión
+          anterior: 14rem → 21rem = 336px), con margin negativo hacia
+          arriba (-top-12 / lg:-top-16) para que la parte superior
+          sobresalga por encima del card, y más transparente
+          (text-navy/5 vs /10 anterior) para que se sienta como un
+          watermark editorial sin competir con el texto. Sigue siendo
+          no seleccionable y oculta para lectores de pantalla. */}
       <span
         aria-hidden="true"
-        className="pointer-events-none absolute right-8 -top-2 select-none font-serif text-[14rem] leading-none text-navy/10 lg:-top-3"
+        className="pointer-events-none absolute right-8 -top-12 select-none font-serif text-[21rem] leading-none text-navy/5 lg:-top-16"
       >
         &ldquo;
       </span>
