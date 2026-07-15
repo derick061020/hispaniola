@@ -223,22 +223,26 @@
   --carrusel-transicion: 600ms; /* deslizado de una foto a la siguiente */
   --carrusel-easing: cubic-bezier(0.4, 0, 0.2, 1);
 
-  /* Slider vertical de «Reseñas verificadas» (v5, pedido de Samuel
-     2026-07-15) — 2 reseñas visibles a la vez, pista duplicada 2x,
-     translateY -50% en bucle. Mismo patrón que el ticker del hero
-     (--ticker-*) y que las olas del CTA (--cta-ola-*): el loop infinito
-     se traduce a Figma como componente interactivo (playbook
-     animaciones-a-figma), y los delays salen de aquí, no "a ojo".
-     Pausa al hover; prefers-reduced-motion → scroll manual (mecánica
-     en componentes.css). */
-  /* 5 reseñas × 5s cada una = 25s de ciclo completo (el "salto" entre
-     la última y la primera se ve natural porque el contenido es distinto
-     pero el ritmo se mantiene — ver QUOTES en data/home.ts). */
-  --reviews-duracion: 25s;
-  --spacing-review-alto: 18rem; /* 288px — alto de cada card (puede ser
-                                    un pelín más en pantallas grandes,
-                                    lo decide el clamp en el CSS) */
-  --spacing-review-gap: 1.5rem; /* 24px entre cards */
+  /* Slider step-based de «Reseñas verificadas» (v6, pedido de Pedro
+     2026-07-15) — carrusel que avanza 1 slot, espera, avanza otro.
+     NO es un ticker continuo: la pista está duplicada 2x (mismo truco
+     que el ticker del hero) y el wrap se hace invisible saltando a
+     la posición 0 sin transition (mecánica en reviews.tsx → useEffect
+     del wrap, con setTimeout + doble rAF para reactivar la transition
+     tras el salto). Los delays y la geometría del slot salen de aquí,
+     no "a ojo" en el hook.
+     Pausa al hover; prefers-reduced-motion → scroll manual. */
+  /* 5 reseñas × 5s de intervalo entre pasos = 25s de ciclo completo. */
+  --reviews-step-intervalo: 5s;
+  --reviews-step-transicion: 700ms; /* avance entre slots — easing
+                                       cubic-bezier(0.4, 0, 0.2, 1) en
+                                       el CSS (mismo que el carrusel
+                                       de la TourCard). */
+  --reviews-card-alto: 18rem; /* 288px — alto de cada card de testimonio.
+                                  Es el alto del slot (sumado al gap
+                                  --reviews-step-gap, da la altura de
+                                  1 card + 1 espacio en la pista). */
+  --reviews-step-gap: 1.5rem; /* 24px entre cards de la pista */
 
   /* Cinta de premios (dentro de la sección de stats). Los 7 badges son MUY
      heterogéneos (bloque navy del LTG, cuadrado amarillo de WeddingWire,

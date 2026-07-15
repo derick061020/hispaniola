@@ -1132,83 +1132,69 @@
 }
 
 /* ============================================================
-   Reviews slider (v5, pedido de Samuel 2026-07-15) — slider vertical
-   auto-rotante de la sección «Reseñas verificadas». 2 cards visibles a
-   la vez, en bucle infinito que va bajando (la pista está duplicada 2x
-   y la animación traduce -50% en Y, mismo patrón que el ticker del hero
-   y las olas del CTA).
+   Reviews step carousel (v6, pedido de Pedro 2026-07-15) — carrusel
+   step-based de la sección «Reseñas verificadas»: avanza 1 slot,
+   espera, avanza otro. NO es un ticker continuo. La pista está
+   duplicada 2x (mismo truco que el ticker del hero y las olas del CTA)
+   y el wrap se hace invisible saltando a la posición 0 sin transition
+   (mecánica en reviews.tsx → useEffect del wrap, con setTimeout +
+   rAF para reactivar la transition tras el salto).
 
-   POR QUÉ ES CSS A MEDIDA: el loop infinito vertical con pista duplicada
-   se traduce a Figma como componente interactivo (playbook
-   animaciones-a-figma). Implementarlo con estado React (index +
-   setInterval) perdería la fuente de verdad de las constantes y haría el
-   traspaso más difícil. Aquí el bucle es 100% declarativo.
+   POR QUÉ ES CSS A MEDIDA + estado React (no solo CSS): el paso
+   discreto + wrap invisible no se puede expresar con keyframes
+   continuas; necesitamos control JS sobre el índice. PERO la
+   transición entre pasos es CSS puro (transition en
+   .reviews-step-track--animated), los delays salen de tokens.css
+   (--reviews-step-*), y el layout (altura de cada slot, gap) sale
+   de los mismos tokens.
 
    Trampa del -50% (misma que el ticker horizontal): si el gap va como
-   `gap` en la pista, el -50% no cae EXACTO al inicio de la segunda copia
-   — el loop "salta". La separación va como `margin-bottom` en CADA slot
-   (no en la última, no en la primera: en TODAS), y la pista sin gap. Así
-   la suma (altura × N) + (margin × N) = 50% del track duplicado, y el
-   empalme del loop es invisible.
+   `gap` en la pista, el wrap "salta". La separación va como
+   `margin-bottom` en CADA slot (no en la última, no en la primera: en
+   TODAS), y la pista sin gap. Así la suma (altura × N) +
+   (margin × N) = la altura exacta de N slots, y el empalme del wrap
+   con la pista duplicada es invisible.
    ============================================================ */
 
-.reviews-slider {
+.reviews-step-container {
+  /* Altura = 2 cards (--reviews-card-alto) + 1 gap
+     (--reviews-step-gap) — la ventana visible muestra 2 cards en todo
+     momento. */
+  height: calc(2 * var(--reviews-card-alto) + var(--reviews-step-gap));
   overflow: hidden;
-  /* Altura = 2 cards (--spacing-review-alto) + 1 gap (--spacing-review-gap)
-     — exactamente lo que cabe en la ventana visible. */
-  height: calc(2 * var(--spacing-review-alto) + var(--spacing-review-gap));
   position: relative;
 }
 
-.reviews-slider-track {
+.reviews-step-track {
   display: flex;
   flex-direction: column;
-  animation: reviews-slide var(--reviews-duracion) linear infinite;
   will-change: transform;
 }
 
-.reviews-slider-slot {
-  height: var(--spacing-review-alto);
-  margin-bottom: var(--spacing-review-gap);
+.reviews-step-track--animated {
+  /* Solo se aplica cuando no estamos en el wrap (noTransition desactiva
+     la transición para el salto invisible del wrap). */
+  transition: transform var(--reviews-step-transicion) cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.reviews-step-slot {
+  height: var(--reviews-card-alto);
+  margin-bottom: var(--reviews-step-gap);
   flex-shrink: 0;
 }
-.reviews-slider-slot:last-child {
-  /* El margin del ÚLTIMO slot también suma al total — sin esto el -50%
-     caería antes del inicio de la segunda copia y el loop saltaría. */
-  margin-bottom: var(--spacing-review-gap);
+.reviews-step-slot:last-child {
+  /* El margin del ÚLTIMO slot también suma al total — sin esto la suma
+     (cardHeight + margin) no es constante entre slots y la transición
+     se descuadra al final de la pista. */
+  margin-bottom: var(--reviews-step-gap);
 }
 
-@keyframes reviews-slide {
-  from {
-    transform: translateY(0);
-  }
-  to {
-    transform: translateY(-50%);
-  }
-}
-
-/* Pausa al hover (mismo patrón que el ticker). Se aplica a cualquier
-   descendiente del contenedor, no solo al track — si el cursor entra en
-   el área de un slot (que está dentro del contenedor), también pausa. */
-@media (hover: hover) {
-  .reviews-slider:hover .reviews-slider-track {
-    animation-play-state: paused;
-  }
-  .reviews-slider--pausado .reviews-slider-track {
-    animation-play-state: paused;
-  }
-}
-
-/* Con prefers-reduced-motion: sin animación, la pista es scrollable a
-   mano. Mostrar 2 cards de alto + un poquito más para que se note que se
-   puede scrollear — sin esto, con la altura exacta de 2 cards no hay
-   pista visual de que hay más contenido. */
+/* Con prefers-reduced-motion: sin auto-advance, la pista es scrollable
+   a mano. Mostrar 3 cards de alto + 2 gaps para que se note que hay
+   más contenido. */
 @media (prefers-reduced-motion: reduce) {
-  .reviews-slider-track {
-    animation: none;
-  }
-  .reviews-slider {
+  .reviews-step-container {
     overflow-y: auto;
-    height: calc(3 * var(--spacing-review-alto) + 2 * var(--spacing-review-gap));
+    height: calc(3 * var(--reviews-card-alto) + 2 * var(--reviews-step-gap));
   }
 }
