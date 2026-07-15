@@ -17,6 +17,15 @@ export type Tour = {
   descripcionCorta: string
   /** nombre de archivo en /fotos (sin extensión) */
   foto: string
+  /** v3-F20 (§18): galería real del servicio (varios /fotos) para el carrusel
+   *  de la card del grid. Solo la tienen los 3 productos del escaparate
+   *  (semi-privado, snorkel-lovers, charter-privado); Isla Saona no tiene
+   *  galería → se queda FUERA del grid (pero sigue en ticker/megamenú/footer/
+   *  móvil, que solo usan `foto`). */
+  galeria?: string[]
+  /** v3-F20: 3 «incluye» cortos, chips de la card. Portados VERBATIM de los
+   *  títulos de `incluye` de prototipo/datos.js (no inventados). */
+  destacados?: string[]
 }
 
 export const TOURS: Tour[] = [
@@ -33,6 +42,14 @@ export const TOURS: Tour[] = [
     descripcionCorta:
       'Snorkel en vivero de coral con bióloga marina, playa desierta con coco-loco y comida hecha a bordo. Máximo 25 personas en un barco para 70.',
     foto: 'tour-semi-privado',
+    galeria: [
+      'galeria-semi-privado-1',
+      'galeria-semi-privado-2',
+      'galeria-semi-privado-3',
+      'galeria-semi-privado-4',
+      'galeria-semi-privado-5',
+    ],
+    destacados: ['Equipo de snorkel', 'Comida + bebidas', 'Bióloga marina'],
   },
   {
     slug: 'snorkel-lovers',
@@ -47,6 +64,14 @@ export const TOURS: Tour[] = [
     descripcionCorta:
       'La versión familiar del Semi-Privado: mismo vivero de coral, misma cocina flotante, para que niños y adultos disfruten juntos el día en el mar.',
     foto: 'tour-snorkel-lovers',
+    galeria: [
+      'galeria-snorkel-lovers-1',
+      'galeria-snorkel-lovers-2',
+      'galeria-snorkel-lovers-3',
+      'galeria-snorkel-lovers-4',
+      'galeria-snorkel-lovers-5',
+    ],
+    destacados: ['Equipo de snorkel', 'Comida + bebidas', 'Guía de snorkel'],
   },
   {
     slug: 'charter-privado',
@@ -56,11 +81,19 @@ export const TOURS: Tour[] = [
     rating: 4.9,
     resenas: 1782,
     maxPax: 120,
-    precioLight: 55,
+    precioLight: 75,
     booking: 'cotizacion',
     descripcionCorta:
       'El barco completo, solo para tu grupo: familia, amigos, o una celebración. Ruta y horario a tu medida, desde 10 personas.',
     foto: 'tour-charter-privado',
+    galeria: [
+      'galeria-charter-privado-1',
+      'galeria-charter-privado-2',
+      'galeria-charter-privado-3',
+      'galeria-charter-privado-4',
+      'galeria-charter-privado-5',
+    ],
+    destacados: ['Barco entero', 'Comida a medida', 'Coordinación dedicada'],
   },
   {
     slug: 'isla-saona',
@@ -150,6 +183,30 @@ export const OCASIONES: Ocasion[] = [
     esLanding: false,
     foto: 'galeria-charter-privado-6',
   },
+]
+
+export type IncluyeItem = { id: string; titulo: string; texto: string }
+
+// Sección «Incluye» (v3-F19) — portado del bloque "...all our cruises include:"
+// de la HOME de la web actual (9 ítems), traducido fiel. Se QUITA el 9º
+// ("Service — Award winning VIP Service and for sure lots of fun") por
+// decisión de Samuel (2026-07-15): con 8 la sección queda en 2 columnas
+// parejas de 4 cards a cada lado del catamarán. Donde datos.js ya tenía
+// vocabulario para el mismo concepto (coco-loco, cocina flotante, vivero de
+// coral) se usa ese, no una segunda traducción. Los "($)" de la web actual
+// (transporte, fotos HD) no se copian: ese matiz ya vive en `noIncluido` de
+// cada tour (fotos HD US$ 20 · suplemento desde Casa de Campo).
+// El icono se mapea por `id` en incluye-crucero.tsx (presentación, no
+// contenido — así este archivo sigue sin importar React).
+export const INCLUYE_CRUCERO: IncluyeItem[] = [
+  { id: 'snorkel', titulo: 'Snorkel', texto: 'Experiencia increíble en un vivero de coral real. Todo el equipo incluido.' },
+  { id: 'transporte', titulo: 'Transporte', texto: 'Ida y vuelta desde tu hotel, en bus cómodo con aire acondicionado.' },
+  { id: 'entretenimiento', titulo: 'Entretenimiento a bordo', texto: 'Música, actividades y una tripulación cercana y con energía.' },
+  { id: 'wifi', titulo: 'WiFi', texto: 'WiFi a bordo durante toda la excursión.' },
+  { id: 'comida', titulo: 'Comida fresca', texto: 'Frutas, mini-croissants y mariscos recién hechos en la cocina flotante.' },
+  { id: 'bebidas', titulo: 'Bebidas', texto: 'Cerveza nacional, ron añejo de 7 años, vodka, jugo de naranja y refrescos.' },
+  { id: 'playa', titulo: 'Playa desierta', texto: 'Parada con coco-loco (el cóctel típico) y coco para comer.' },
+  { id: 'fotos', titulo: 'Fotos', texto: 'De todo el tour, con GoPro también en el snorkel — se descargan de nuestro Facebook sin costo.' },
 ]
 
 export function formatoDinero(n: number | null): string {
@@ -281,6 +338,58 @@ export const PREMIOS: Premio[] = [
   },
 ]
 
+// ─────────────────────────────────────────────────────────────────────────
+// Sección "Experiencia" (bajo la banda de premios) — v3-F18, pedido de Samuel.
+//
+// El copy es una SÍNTESIS del bloque real de la web actual
+// (hispaniolaaquaticadventures.com, "Punta Cana's most complete catamaran
+// experience"): 6 párrafos en inglés condensados a 3 frases + un cierre, en
+// español (el resto de la home ya es español). NO es copy inventado: es el
+// mismo argumento del cliente, resumido — el argumento del "no es un party
+// boat" lo PROMETE aquí y lo PRUEBA luego la sección Diferenciadores.
+// ⚠️ Pendiente reconciliar con datos.js (fuente canónica): este texto todavía
+// no vive allí (ver CLAUDE.md — copy se porta de datos.js).
+//
+// Cada frase es un array de segmentos: `fuerte` = navy, resalta; si no, gris
+// (navy-sub). El alternado gris/negro del "texto grande" es la referencia que
+// aportó Samuel ("Who we are" de Journeo). Cada frase es un bloque para que el
+// reveal de scroll (use-experiencia-scroll.ts) las escalone una a una.
+export type SegmentoNarrativa = { t: string; fuerte?: boolean }
+
+export const EXPERIENCIA_NARRATIVA: SegmentoNarrativa[][] = [
+  [
+    { t: 'No es solo un paseo en barco.', fuerte: true },
+    { t: ' Es una experiencia caribeña ' },
+    { t: 'cuidada al detalle.', fuerte: true },
+  ],
+  [
+    { t: 'Navegamos a ' },
+    { t: 'rincones que las rutas de siempre no visitan', fuerte: true },
+    { t: ', y comes lo que se ' },
+    { t: 'cocina a bordo, recién hecho.', fuerte: true },
+  ],
+  [
+    { t: 'Desde que llegas, ' },
+    { t: 'te tratamos como familia', fuerte: true },
+    { t: ' — nunca como un pasajero más.' },
+  ],
+]
+
+export const EXPERIENCIA_KICKER = 'Sin costes ocultos. Sin barcos abarrotados.'
+
+// Fotos REALES de la web actual (no stock). Las 3 cuentan el argumento: el
+// vivero de coral (rincones que no visitan las rutas de siempre), la cocina a
+// bordo (langosta recién servida) y el catamarán fondeado (la navegación).
+// Ninguna se repite con Diferenciadores (snorkel-lovers-6) ni con la galería
+// del cierre. El ORDEN es el del reveal escalonado (fondo → frente).
+export type FotoExperiencia = { foto: string; alt: string }
+
+export const EXPERIENCIA_FOTOS: FotoExperiencia[] = [
+  { foto: 'galeria-semi-privado-1', alt: 'Huéspedes frente al vivero de coral del proyecto de restauración' },
+  { foto: 'galeria-charter-privado-1', alt: 'La tripulación sirviendo langosta recién hecha a bordo' },
+  { foto: 'galeria-snorkel-lovers-2', alt: 'El catamarán de Hispaniola fondeado sobre agua turquesa' },
+]
+
 /** Card del ticker del hero. Son DOS especies, no una: el tour se compra (tiene
  *  precio, duración y aforo) y la ocasión se cotiza (no tiene precio publicado).
  *  La unión discriminada lo hace explícito → 2 variantes del componente Figma. */
@@ -316,3 +425,28 @@ export const TICKER_ITEMS: TickerItem[] = [
   ),
   ...OCASIONES.map((o): TickerItem => ({ tipo: 'ocasion', id: o.tipo, nombre: o.nombre, foto: o.foto })),
 ]
+
+// ─────────────────────────────────────────────────────────────────────────
+// Sección «Reserva directa» (why-direct v2 — «dos boletos, mismo precio»,
+// pedido de Samuel 2026-07-15).
+//
+// Copy portado de la v1 de la sección (que ya lo había portado del wireframe
+// — ver NOTAS['home-why-direct'] del prototipo): los 4 beneficios + el
+// reembolso, que SUBE del pie de la sección a 5ª línea del boleto directo.
+// Los "iconos" de la v1 (25% / −5% / 🍽 / 💬) se retiran: la metáfora del
+// boleto no los necesita.
+export type BeneficioDirecto = { id: string; titulo: string; texto: string }
+
+export const BENEFICIOS_DIRECTO: BeneficioDirecto[] = [
+  { id: 'deposito', titulo: 'Confirma con 25%', texto: 'Paga el depósito hoy y el resto en efectivo el día del tour.' },
+  { id: 'cash', titulo: 'Descuento en cash', texto: '5% extra si el saldo lo pagas en efectivo a bordo.' },
+  { id: 'menu', titulo: 'Elige tu menú', texto: 'Langosta, Angus o vegetariano: solo reservando directo eliges plato por persona.' },
+  { id: 'whatsapp', titulo: 'WhatsApp directo', texto: 'Hablas con el equipo del barco, no con un call center.' },
+  { id: 'reembolso', titulo: 'Reembolso total', texto: 'Por mal clima o cancelando con 7 días.' },
+]
+
+// El tour que viaja impreso en los DOS boletos de la comparación: el buque
+// insignia (Semi-Privado Premium). Mismo nombre y mismo precio en ambos a
+// propósito — la tesis de la sección es que lo que cambia es lo que viene
+// DESPUÉS del precio.
+export const BOLETO_TOUR = TOURS[0]

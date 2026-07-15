@@ -276,6 +276,344 @@
 }
 
 /* ============================================================
+   CTA «mar» del hero — el botón grande de "Ver disponibilidad" es un mar:
+   dos capas de olas derivan en bucle al pie (siempre, no solo en hover) y el
+   catamarán REAL del cliente (recorte de hero-catamaran-2.webp, espejado
+   para navegar hacia la flecha) vive DENTRO del botón, en un hueco que NACE
+   EN 0 y se EXPANDE al pasar el ratón (v3-F14.1, feedback de Samuel: antes el
+   hueco estaba siempre reservado y se veía como un vacío de ~120px a la
+   derecha del texto en reposo). El barco ZARPA a la vez que el hueco crece.
+
+   POR QUÉ ES CSS A MEDIDA: el truco entero es una ventana de recorte
+   ASIMÉTRICA — cerrada por abajo (el casco se corta en el borde inferior del
+   botón, que con las olas encima se lee como línea de flotación) y abierta
+   por arriba (el mástil asoma POR FUERA del botón). `overflow: hidden`
+   recorta por los 4 lados, así que la ventana se estira hacia arriba (top
+   negativo: un alto de barco entero de cielo) para que su borde superior
+   nunca toque al barco — solo "muerde" el de abajo. La iteración anterior
+   (barco hermano por DETRÁS del botón, saliendo lateral) se retiró: se veía
+   fuera del botón pisando lo de alrededor (feedback de Samuel, 2026-07-14).
+
+   Las olas: la FORMA la pone un mask (SVG data-URI de una longitud de onda,
+   en repeat-x), el COLOR lo pone el background del span en el JSX (white/N,
+   la misma familia que los chips del hero). El loop desplaza mask-position
+   exactamente UNA longitud de onda → el empalme es invisible, mismo
+   principio que el -50% de la pista del ticker. */
+
+.cta-barco-ventana {
+  position: absolute;
+  right: var(--spacing-cta-barco-orilla);
+  bottom: 0;
+  top: calc(var(--spacing-cta-barco-alto) * -1); /* cielo: nunca recorta arriba */
+  width: var(--spacing-cta-barco-hueco);
+  overflow: hidden;
+  pointer-events: none; /* se hereda al barco: nada estorba el click del botón */
+}
+
+.cta-barco {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  height: var(--spacing-cta-barco-alto);
+  width: auto;
+  /* Amarrado: un barco entero por debajo de la línea de flotación → la
+     ventana lo recorta del todo. El hover solo cambia esta translate; el
+     regreso lo trae esta misma transition (patrón del dock del ticker). */
+  translate: -50% 100%;
+  transition: translate var(--cta-barco-transicion) var(--cta-barco-easing);
+
+  /* Balanceo infinito (pedido de Samuel): cabecea despacio, como fondeado en
+     la ola. Pivota en la LÍNEA DE FLOTACIÓN (bottom center) — un barco gira
+     sobre el agua, no sobre su centro de masas; con el origen por defecto el
+     casco se columpiaría lateralmente en vez de escorar.
+
+     ⚠️ Va en `rotate`, NO en `transform`: son propiedades independientes, así
+     que esta animación y la transition de `translate` (el zarpado) conviven
+     sin pisarse. Metidas ambas en `transform`, la animación ganaría siempre y
+     el barco no zarparía nunca. Corre SIEMPRE (también amarrado, donde la
+     ventana lo oculta): así al asomar ya viene cabeceando a mitad de ciclo,
+     en vez de arrancar el vaivén desde cero delante del usuario. */
+  transform-origin: bottom center;
+  animation: cta-barco-balanceo var(--cta-barco-balanceo-duracion) ease-in-out infinite alternate;
+}
+
+@keyframes cta-barco-balanceo {
+  from {
+    rotate: calc(var(--cta-barco-balanceo-angulo) * -1);
+  }
+  to {
+    rotate: var(--cta-barco-balanceo-angulo);
+  }
+}
+
+/* Zarpa: sube hasta dejar solo el calado bajo el agua. Solo con puntero real
+   (en táctil no hay hover — el barco no aparece y el hueco tampoco existe). */
+@media (hover: hover) {
+  .cta-mar:hover .cta-barco {
+    translate: -50% var(--spacing-cta-barco-calado);
+  }
+}
+
+/* [dev-mode] ?dev-cta=hover congela el barco zarpado sin puntero real. */
+.cta-mar--forzado .cta-barco {
+  translate: -50% var(--spacing-cta-barco-calado);
+}
+
+/* El hueco del barco es PADDING, no un flex item vacío (v3-F14.1, 2ª pasada).
+   Con un `<span>` de ancho 0 el botón seguía sin centrar el texto: aunque
+   midiera 0, era un flex item y el `gap-2` del botón (boton.tsx) le seguía
+   metiendo 8px por la derecha — los que Samuel veía descuadrando el reposo.
+   Como padding, en reposo el botón es EXACTAMENTE simétrico (padding-right =
+   padding-left = --spacing-cta-barco-orilla = px-8) y no hay elemento al que
+   aplicarle gap.
+
+   Gana a la utilidad `px-8` de tamaño lg sin !important: componentes.css va
+   SIN @layer, y el CSS sin capa siempre pisa al de una capa (las utilidades
+   de Tailwind viven en @layer utilities), da igual el orden de import. */
+.cta-mar {
+  padding-right: var(--spacing-cta-barco-orilla);
+  transition:
+    padding-right var(--cta-barco-transicion) var(--cta-barco-easing),
+    background-color 150ms ease-out;
+}
+
+/* Al hover el botón se ENSANCHA para abrirle sitio al barco, al mismo ritmo
+   al que zarpa (misma transición y easing). Solo con puntero real: en táctil
+   el botón no crece ni guarda un vacío. */
+@media (hover: hover) {
+  .cta-mar:hover {
+    padding-right: calc(var(--spacing-cta-barco-orilla) + var(--spacing-cta-barco-hueco));
+  }
+}
+
+.cta-mar--forzado {
+  padding-right: calc(var(--spacing-cta-barco-orilla) + var(--spacing-cta-barco-hueco));
+}
+
+/* Bandada de gaviotas (pedido de Samuel) — capa propia SIN recorte, anclada
+   al mismo sitio que la ventana del barco pero más ancha y más alta: los
+   pájaros vuelan por encima del botón y por fuera de sus lados, cosa que la
+   ventana (overflow:hidden, para cortar el casco en la línea de flotación)
+   jamás permitiría. Se dimensiona con los tokens DEL BARCO, no con números
+   propios: la bandada acompaña al barco, así que si el barco crece o se
+   estrecha, la bandada le sigue sola. */
+/* `bottom: 100%` = el borde inferior de la capa se apoya EXACTAMENTE en el
+   borde superior del botón: la bandada vuela por el cielo, nunca por encima
+   de la cara coral (un pájaro sobre el botón se lee como una pegatina, no
+   como un pájaro). Y el alto está topado: por encima de esta franja empieza
+   la fila de stats, y los pájaros se leían como suciedad sobre el texto. */
+.cta-pajaros {
+  position: absolute;
+  bottom: 100%;
+  right: var(--spacing-cta-barco-orilla);
+  width: calc(var(--spacing-cta-barco-hueco) * 1.5);
+  height: var(--spacing-cta-pajaro-cielo);
+  pointer-events: none;
+  color: white;
+}
+
+.cta-pajaro {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: calc(var(--spacing-cta-pajaro-ancho) * var(--s));
+  height: auto;
+  opacity: 0;
+  /* El video de fondo tiene zonas de agua clara: sin esta sombra, un trazo
+     blanco de 1,5px se pierde justo donde más brilla. */
+  filter: drop-shadow(0 1px 2px rgb(11 37 69 / 45%));
+  /* Aparecen ESCALONADOS (--d por pájaro) y un pelín después de que el barco
+     empiece a zarpar: primero el barco, luego lo que lo rodea. */
+  transition: opacity var(--cta-pajaro-aparicion) ease-out;
+  transition-delay: var(--d);
+  /* Deriva infinita — corre SIEMPRE (también invisible, como el balanceo del
+     barco): al aparecer ya vienen volando a mitad de trayecto, no arrancan
+     de cero. Cada uno con su fase (--d) para que la bandada no vaya a
+     compás. En `translate`, propiedad independiente de `rotate`/`transform`. */
+  animation: cta-pajaro-vuelo var(--cta-pajaro-vuelo-duracion) ease-in-out infinite alternate;
+  animation-delay: var(--d);
+}
+
+@keyframes cta-pajaro-vuelo {
+  from {
+    translate: 0 0;
+  }
+  to {
+    translate: var(--spacing-cta-pajaro-deriva) calc(var(--spacing-cta-pajaro-deriva) * -0.6);
+  }
+}
+
+@media (hover: hover) {
+  .cta-mar:hover .cta-pajaro {
+    opacity: 0.9;
+  }
+}
+
+.cta-mar--forzado .cta-pajaro {
+  opacity: 0.9;
+}
+
+.cta-ola {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: var(--spacing-cta-ola-alto);
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 10'%3E%3Cpath d='M0 5Q6 1 12 5T24 5V10H0Z'/%3E%3C/svg%3E");
+  mask-repeat: repeat-x;
+  mask-size: var(--spacing-cta-ola-largo) 100%;
+  animation: cta-ola-deriva var(--cta-ola-duracion) linear infinite;
+}
+
+/* Capa del fondo: más alta, más lenta y en CONTRA — el desfase entre las dos
+   es lo que se lee como agua, y no como una cenefa deslizándose. */
+.cta-ola--fondo {
+  height: calc(var(--spacing-cta-ola-alto) * 1.7);
+  animation-duration: calc(var(--cta-ola-duracion) * 1.9);
+  animation-direction: reverse;
+}
+
+@keyframes cta-ola-deriva {
+  from {
+    mask-position: 0 0;
+  }
+  to {
+    mask-position: var(--spacing-cta-ola-largo) 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cta-ola {
+    animation: none; /* las olas se quedan como textura estática */
+  }
+
+  .cta-barco {
+    transition: none;
+    animation: none; /* ni balanceo */
+    rotate: 0deg;
+  }
+
+  /* Sin movimiento el barco no zarpa (aparecería de golpe): amarrado se queda. */
+  .cta-mar:hover .cta-barco {
+    translate: -50% 100%;
+  }
+
+  /* Y sin barco, el botón tampoco se ensancha para hacerle sitio. */
+  .cta-mar:hover {
+    padding-right: var(--spacing-cta-barco-orilla);
+  }
+
+  /* Sin barco no hay bandada: los pájaros existen para acompañarlo. */
+  .cta-pajaro {
+    animation: none;
+    transition: none;
+  }
+
+  .cta-mar:hover .cta-pajaro {
+    opacity: 0;
+  }
+}
+
+/* ============================================================
+   Animación del H1 del hero — PRUEBA, 4ª iteración (Samuel, 2026-07-14).
+   El destello de luz (background-clip: text) se descartó. De las 2 opciones
+   que quedaron vivas, ambas se quedan pero YA NO cubren todo el titular —
+   las dos se restringen a la misma frase, «catamaranes originales»:
+
+     · «ola por palabras»: antes flotaban las 9 palabras del titular; ahora
+       solo estas 2 (--i: 0 y 1) — el resto es texto quieto.
+     · «subrayado de ola viva»: sigue igual que en la iteración anterior, ciñe
+       la onda a esa misma frase (las 2 palabras dentro de UN .titulo-subrayado
+       para que la onda corra continua bajo ambas, no partida por palabra).
+
+   Con el efecto entero confinado a una frase, el salto de línea vuelve a
+   `text-balance` en el H1 (hero.tsx) — ya no hace falta fijarlo a mano,
+   ninguna línea entera necesita ya su propio tratamiento. */
+
+/* --- Ola por palabras (solo «catamaranes originales») --- */
+
+/* inline-block es OBLIGATORIO, no cosmético: `translate` (como `transform`) NO
+   se aplica a cajas inline no reemplazadas. Con las palabras en inline puro,
+   la animación existiría en el CSSOM y no movería un solo píxel.
+
+   ⚠️ Trampa (probada en pantalla): un espacio de separación puesto DENTRO de
+   un span inline-block, justo antes de su `</span>`, se recorta — el navegador
+   trata el contenido del inline-block como su propia línea, y el espacio en
+   blanco al FINAL de una línea se colapsa. Resultado real: "Los catamaranes"
+   se pegaba en "Loscatamaranes". El espacio de separación tiene que ir FUERA de
+   cada .titulo-palabra, como hermano `{' '}` entre un span y el siguiente
+   (hero.tsx) — ahí no está al borde de ninguna línea, así que sobrevive. */
+.titulo-palabra {
+  display: inline-block;
+  animation: titulo-palabra-flota var(--titulo-ola-duracion) ease-in-out infinite;
+  /* El retardo escalonado (--i lo pone el JSX) ES la ola: cada palabra empieza
+     su flotación un pelín después que la anterior, y la cresta viaja. */
+  animation-delay: calc(var(--i) * var(--titulo-ola-paso));
+}
+
+@keyframes titulo-palabra-flota {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 calc(var(--titulo-ola-amplitud) * -1);
+  }
+}
+
+/* --- Subrayado de ola viva (solo «catamaranes originales») --- */
+
+/* inline-block para que la caja se ciña al ANCHO DEL TEXTO: si fuera bloque, el
+   subrayado se estiraría hasta los bordes de la columna del H1 y quedaría
+   flotando por fuera de la frase. */
+.titulo-subrayado {
+  position: relative;
+  display: inline-block;
+}
+
+/* La FORMA la pone un mask (SVG data-URI de una longitud de onda, en repeat-x)
+   y el COLOR el background — la misma técnica que las olas del CTA. El loop
+   desplaza el mask exactamente UNA longitud de onda, así que el empalme es
+   invisible (mismo principio que el -50% de la pista del ticker). */
+.titulo-ola {
+  position: absolute;
+  left: 0;
+  right: 0;
+  /* v3-F14.5 (Samuel, 2026-07-14): sube de -1.1 a -0.75 — con el efecto ya
+     confinado a «catamaranes originales» (antes cubría «grupos pequeños»,
+     con descendentes de 'g'/'q'/'p' más profundos), la onda puede vivir más
+     cerca de la caja de texto sin rozar el único descendente de la frase (la
+     'g' de "originales"). */
+  bottom: calc(var(--spacing-titulo-subrayado-alto) * -0.75);
+  height: var(--spacing-titulo-subrayado-alto);
+  background-color: var(--color-titulo-ola);
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 10'%3E%3Cpath d='M0 5Q6 0 12 5T24 5' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E");
+  mask-repeat: repeat-x;
+  mask-size: var(--spacing-titulo-subrayado-largo) 100%;
+  animation: titulo-ola-fluye var(--titulo-subrayado-duracion) linear infinite;
+}
+
+@keyframes titulo-ola-fluye {
+  from {
+    mask-position: 0 0;
+  }
+  to {
+    mask-position: var(--spacing-titulo-subrayado-largo) 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .titulo-palabra {
+    animation: none;
+  }
+
+  /* El subrayado se queda: es una onda dibujada, no un movimiento. Solo deja
+     de fluir. */
+  .titulo-ola {
+    animation: none;
+  }
+}
+
+/* ============================================================
    Menú móvil como objeto (v3-F10, PLAN-v3.md §13) — antes era una pantalla
    `fixed inset-0` que sustituía a la página; ahora es una hoja con el mismo
    margen y radio del hero, sobre un scrim, que CAE desde arriba (no sube
@@ -304,5 +642,491 @@
 @media (prefers-reduced-motion: reduce) {
   .menu-hoja {
     animation: none;
+  }
+}
+
+/* ============================================================
+   Sección «Incluye» (v3-F19.2, rediseño pedido de Samuel 2026-07-15) —
+   editorial inmersiva: océano oscuro a sangre (corte limpio, sin fundidos),
+   el catamarán CENITAL bajando por el centro AL SCROLLEAR, y los 8 ítems
+   como texto numerado (01/ … 08/) sobre el agua, sin cajas. Ref. de Samuel:
+   "WHAT'S INCLUDED".
+
+   REPARTO CSS ↔ JS (playbook animaciones-a-figma): el hook (use-incluye-scroll.ts)
+   solo escribe la posición del barco (--barco-y, en fracción del alto de la
+   sección) y el estado de reveal de cada ítem; TODA la geometría en reposo, el
+   cabeceo en bucle y los estados de reduced-motion viven aquí. El barco separa
+   `translate` (lo pone el scroll) de `rotate` (el cabeceo en bucle) — dos
+   longhands que no se pisan, igual que el barco del CTA «mar».
+   ============================================================ */
+
+/* La capa que RECORTA el océano — inset-0 de la sección, overflow hidden. El
+   barco vive FUERA de esta capa (en la de contenido, sin recorte) para poder
+   asomar por encima del océano al arrancar el descenso ("empieza fuera del
+   video", pedido de Samuel) — mismo reparto media/contenido que el hero. */
+.incluye-oceano {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+/* El barco cenital. MÓVIL (base): en el flujo, centrado arriba del bloque,
+   solo cabeceo — no desciende (down-the-middle no cabe en una columna
+   estrecha; ahí el barco es la pieza de apertura y los ítems van en lista).
+   DESKTOP (lg): sale del flujo y corre por el centro DESCENDIENDO — el hook
+   escribe --barco-y (fracción del alto de la sección: -0.15 arriba →
+   1.05 abajo), el `translate` la lleva a px (× --incluye-alto-px) y resta un
+   50% de su propio alto para que --barco-y sea la fracción de su CENTRO. El
+   cabeceo vive en `rotate` (longhand aparte) para no pisar ese translate. */
+.incluye-barco {
+  display: block;
+  margin-inline: auto;
+  filter: var(--incluye-barco-sombra);
+  animation: incluye-barco-cabeceo var(--incluye-barco-balanceo-duracion) ease-in-out infinite alternate;
+}
+
+@media (min-width: 1024px) {
+  .incluye-barco {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    margin-inline: 0;
+    translate: -50% calc(var(--barco-y, 0) * var(--incluye-alto-px, 100vh) - 50%);
+    will-change: translate;
+  }
+}
+
+@keyframes incluye-barco-cabeceo {
+  from {
+    rotate: calc(var(--incluye-barco-balanceo-angulo) * -1);
+  }
+  to {
+    rotate: var(--incluye-barco-balanceo-angulo);
+  }
+}
+
+/* Ítem editorial: número aqua pálido + título blanco + descripción tenue,
+   directamente sobre el agua (sin caja). El estado inicial del reveal
+   (opacity 0 + subida) lo pinta el hook con GSAP; en reposo/reduced-motion es
+   el estado natural de aquí (visible). */
+.incluye-item {
+  max-width: 22rem;
+}
+
+/* Desktop: cada ítem ocupa su propia FILA (--fila = 1..8) y alterna de LADO
+   (--col = 1 izquierda / 3 derecha, con la 2 reservada al barco). Uno por
+   fila hace que casquen en DIAGONAL — el zig-zag de la referencia — sin
+   maths de stagger: cada ítem cae un paso (--spacing-incluye-fila) bajo el
+   anterior. Los de la izquierda alinean su texto a la DERECHA y los de la
+   derecha a la IZQUIERDA: ambos apuntan al barco que baja por el centro.
+   Las custom props --col/--fila las pone el JSX inline (inertes en móvil,
+   donde no hay grid). */
+@media (min-width: 1024px) {
+  .incluye-item {
+    grid-column: var(--col);
+    grid-row: var(--fila);
+  }
+
+  .incluye-item--izquierda {
+    justify-self: end;
+    text-align: right;
+  }
+
+  .incluye-item--derecha {
+    justify-self: start;
+    text-align: left;
+  }
+}
+
+.incluye-numero {
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--incluye-numero-color);
+  letter-spacing: 0.02em;
+}
+
+/* Sombra de texto suave: sobre agua con brillos, el blanco necesita despegar
+   del fondo aunque el overlay ya oscurezca (mismo problema que las gaviotas
+   del CTA sobre agua clara). No es una caja — es legibilidad. */
+.incluye-item-titulo,
+.incluye-item-texto {
+  text-shadow: 0 1px 12px rgb(6 18 33 / 55%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .incluye-barco {
+    animation: none; /* sin cabeceo; el descenso lo apaga el hook (no engancha) */
+  }
+}
+
+/* ============================================================
+   Sección "Experiencia" (v3-F18, pedido de Samuel) — bajo la banda de premios:
+   a un lado el párrafo grande gris/negro, al otro un COLLAGE de 3 fotos
+   "reales": borde blanco fino (--spacing-foto-real-marco, más fino que el
+   passe-partout del photo-stack), --shadow-foto-real (2 capas: contacto +
+   ambiente) y rotación irregular, esparcidas en diagonal.
+
+   POR QUÉ ES CSS A MEDIDA: la rotación, la escala y la traslación del hover
+   van en las propiedades `rotate`/`scale`/`translate`, NO en `transform`, A
+   PROPÓSITO — el reveal de scroll (use-experiencia-scroll.ts, GSAP) anima el
+   `transform` (x/y/scale, vía sus proxies), y esas 3 son longhands
+   independientes: así el giro/tamaño/alza del hover y el desplazamiento del
+   reveal conviven sin pisarse (el mismo motivo por el que el barco del CTA
+   separa `rotate` de `transform`). El hover de GRUPO (v3-F18.3, más abajo)
+   toca esas 3 propiedades, nunca `transform`.
+
+   El reveal (opacity/translate/scale iniciales) lo pone GSAP inline; a Figma
+   NO viaja animado: se captura la sección ya asentada (?dev-exp=estatico /
+   prefers-reduced-motion), que es el estado natural sin GSAP. ============ */
+
+.collage {
+  position: relative;
+  width: 100%;
+  max-width: 34rem;
+  margin-inline: auto;
+  /* v3-F18.1: 4/4.4 (antes 4/5) — con las fotos más grandes y stackeadas la
+     cascada ocupa menos alto; un box más bajo recorta el aire muerto que
+     quedaba debajo del catamarán. Alto conocido antes de cargar las fotos →
+     sin salto (CLS) que descuadre el ScrollTrigger. */
+  aspect-ratio: 4 / 4.4;
+}
+
+/* v3-F18.3 (Samuel): pivote abajo-centro — la foto "nace" del pie del
+   collage al crecer/rotar en hover, no de su propio centro geométrico
+   (mismo principio que el barco del CTA del hero). */
+.collage-foto {
+  position: absolute;
+  transform-origin: bottom center;
+  rotate: var(--rot);
+  scale: 1;
+  translate: 0 0;
+  filter: grayscale(0);
+  padding: var(--spacing-foto-real-marco);
+  background: var(--color-papel);
+  border-radius: var(--radius-foto);
+  box-shadow: var(--shadow-foto-real);
+  transition:
+    rotate var(--collage-foto-hover-transicion) ease-out,
+    scale var(--collage-foto-hover-transicion) ease-out,
+    translate var(--collage-foto-hover-transicion) ease-out,
+    filter var(--collage-foto-hover-transicion) ease-out,
+    box-shadow var(--collage-foto-hover-transicion) ease-out;
+}
+
+.collage-foto img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3; /* las webp reales son ~4:3 apaisadas */
+  object-fit: cover;
+  border-radius: calc(var(--radius-foto) - 0.125rem);
+}
+
+/* Hover de GRUPO (v3-F18.3, pedido de Samuel): al pasar el ratón sobre una de
+   las 3 fotos, ESA sube, crece y rota hacia la izquierda; las OTRAS 2 se
+   achican y pierden color (grayscale) — el foco se va a una sola.
+
+   POR QUÉ ES CSS A MEDIDA (:has()): es una reacción de GRUPO discreta —una
+   foto hovereada, el resto reacciona IGUAL entre sí— no una curva continua
+   por distancia como el dock del ticker (que sí necesita JS para medir). Con
+   `:has()` el propio CSS pregunta "¿hay una .collage-foto en hover dentro de
+   este collage?" y con eso alcanza para expresar el efecto entero sin JS.
+   Sustituye al viejo hover (solo "enderezar" a 0deg): ahora la hovereada
+   rota a --collage-foto-hover-rotacion (pisa su --rot de reposo), no a 0deg.
+
+   ⚠️ Solo con puntero real: en táctil no hay hover que puedan "salir" —
+   dejar 2 fotos en gris permanente por un toque que no se revierte se leería
+   como un error, no como un gesto. */
+@media (hover: hover) {
+  .collage:has(.collage-foto:hover) .collage-foto {
+    scale: var(--collage-foto-reposo-escala);
+    filter: grayscale(1);
+  }
+
+  .collage:has(.collage-foto:hover) .collage-foto:hover {
+    scale: var(--collage-foto-hover-escala);
+    rotate: var(--collage-foto-hover-rotacion);
+    translate: 0 var(--collage-foto-hover-alza);
+    filter: grayscale(0);
+    z-index: 20;
+    box-shadow: var(--shadow-polaroid);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .collage-foto {
+    transition: none;
+  }
+}
+
+/* ============================================================
+   Boleto de reserva directa (why-direct v2 — «dos boletos, mismo precio»,
+   pedido de Samuel 2026-07-15): la comparación aquí-vs-portal hecha objeto.
+   Los dos boletos comparten ENCABEZADO (mismo tour, mismo precio); el del
+   portal se acaba ahí (ranuras vacías), el directo sigue sumando líneas y
+   remata con un sello estampado. La familia se llama «boleto» y no «ticket»
+   para no confundirse a la vista con el ticker del hero (.ticker-*).
+
+   POR QUÉ ES CSS A MEDIDA:
+   · La rotación va en `rotate` (longhand), NO en `transform`: el reveal de
+     scroll (use-why-direct-scroll.ts, GSAP) anima translateY/scale por el
+     `transform` — separados no se pisan (mismo reparto que el collage de
+     Experiencia y el barco del CTA).
+   · La perforación es un CORTE real (no un círculo pintado encima): se
+     consigue con `mask-image` en DOS capas separadas — `.boleto` (exterior)
+     lleva rotate + box-shadow SIN recortar; `.boleto-superficie` (interior)
+     lleva fondo/borde/contenido y es la que se perfora. Separarlas es
+     obligatorio: si el mask fuera del mismo elemento que el box-shadow, el
+     mask recortaría también la sombra (mask-clip llega hasta el border-box).
+     La posición vertical del corte (--boleto-notch-y) la mide JS
+     (boleto-reserva.tsx, offsetTop de .boleto-perforacion, que ya cae en el
+     sitio correcto por flujo normal) y la escribe como custom property —
+     mismo reparto "JS mide, CSS pinta" que el dock del ticker y el notch
+     dinámico del header.
+   ============================================================ */
+
+.boleto {
+  rotate: var(--rot, 0deg);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-foto-real);
+  transition: rotate 300ms ease-out;
+}
+
+/* La escena de desktop: el portal detrás, torcido (el descartado); el directo
+   delante, casi derecho (el elegido). El de delante pinta encima sin z-index:
+   va después en el DOM y `rotate` ya crea stacking context en ambos. */
+.boleto--fondo {
+  --rot: var(--boleto-rotacion-fondo);
+}
+
+.boleto--frente {
+  --rot: var(--boleto-rotacion-frente);
+}
+
+/* Como las fotos del collage: al pasar el ratón el boleto se endereza. Solo
+   con puntero real (en táctil no hay rotación que revertir a mano). */
+@media (hover: hover) {
+  .boleto:hover {
+    rotate: 0deg;
+  }
+}
+
+.boleto-superficie {
+  position: relative;
+  overflow: hidden; /* contiene el barcode/contenido al radio redondeado */
+  border-radius: inherit;
+  background: var(--color-papel);
+  /* Sobre la sección blanca el boleto blanco se disolvería — el borde
+     hairline lo sostiene como objeto (mismo --color-linea que las TourCards). */
+  border: 1px solid var(--color-linea);
+  /* El corte real: opaco en todas partes MENOS dos círculos a la altura de
+     la perforación (--boleto-notch-y, en px, medido por JS), uno pegado a
+     cada borde lateral. `at 0 / at 100%` los centra EN el borde: la mitad que
+     cae fuera del box no se pinta (no hay nada que masquear ahí), así que el
+     resultado ya es el semicírculo correcto sin necesitar un clip aparte.
+     mask-composite:intersect = solo queda opaco donde AMBOS círculos lo son
+     → visible en todas partes salvo la unión de los dos agujeros. Sin
+     --boleto-notch-y (primer render, antes de medir) el círculo cae fuera de
+     pantalla (-999px) y no corta nada — se ve la superficie entera hasta que
+     JS mide, sin parpadeo. */
+  --bn: var(--boleto-notch-y, -999px);
+  mask-image:
+    radial-gradient(circle var(--spacing-boleto-notch) at 0 var(--bn), transparent var(--spacing-boleto-notch), #000 calc(var(--spacing-boleto-notch) + 1px)),
+    radial-gradient(circle var(--spacing-boleto-notch) at 100% var(--bn), transparent var(--spacing-boleto-notch), #000 calc(var(--spacing-boleto-notch) + 1px));
+  mask-composite: intersect;
+}
+
+.boleto-perforacion {
+  border-top: 2px dashed var(--color-linea-fuerte);
+}
+
+/* El sello: doble filete de tinta (borde + filete interior con un outline
+   negativo — dos cajas anidadas dirían lo mismo con más HTML), girado. La
+   rotación en `rotate` por el mismo motivo que el boleto: el reveal lo
+   ESTAMPA escalándolo por `transform`, y así no se pisan. El color lo pone
+   el JSX (currentColor), mismo reparto que las olas del CTA. */
+.boleto-sello {
+  rotate: var(--boleto-sello-rotacion);
+  border: 2px solid currentColor;
+  border-radius: var(--radius-btn);
+  outline: 1px solid currentColor;
+  outline-offset: -6px; /* filete interior, a 4px del borde */
+}
+
+/* Código de barras de utilería: dos rejillas repetidas con períodos que NO
+   son múltiplos (4px y 7px) — superpuestas rompen la regularidad y se leen
+   como barras "aleatorias" sin necesitar un SVG. Color: currentColor. */
+.boleto-barcode {
+  height: var(--spacing-boleto-barcode);
+  background:
+    repeating-linear-gradient(90deg, currentColor 0 2px, transparent 2px 4px),
+    repeating-linear-gradient(90deg, currentColor 0 1px, transparent 1px 7px);
+}
+
+/* El cuerpo entra en fade al cambiar el toggle móvil (why-direct.tsx remonta
+   el boleto con `key`; el encabezado es idéntico, así que lo único que se ve
+   cambiar es esto). Reutiliza la familia de movimiento del notch, como el
+   menú móvil: si se afina esa curva, esta entrada la hereda sola. */
+.boleto-cuerpo {
+  animation: boleto-cuerpo-entrada var(--notch-transicion) var(--notch-easing) both;
+}
+
+@keyframes boleto-cuerpo-entrada {
+  from {
+    opacity: 0;
+    translate: 0 8px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .boleto {
+    transition: none;
+  }
+
+  .boleto-cuerpo {
+    animation: none;
+  }
+}
+
+/* ============================================================
+   Banner de "Reserva directa" (v3, pedido de Samuel 2026-07-15) — la escena
+   de los boletos vive DENTRO de un banner con foto de playa de fondo. El
+   banner arranca a SANGRE (100vw, más alto, esquinas rectas) y al scrollear
+   hasta centrarse se CONTRAE a una caja compacta con esquinas redondeadas.
+
+   El estado COMPACTO es el NATURAL (aquí); GSAP (use-why-direct-scroll.ts)
+   pinta el EXPANDIDO con `.from()` animando max-width / border-radius /
+   padding-block, y lo interpola con el scroll. A Figma / reduced-motion viaja
+   el compacto (el estado del CSS sin GSAP).
+
+   POR QUÉ ES CSS A MEDIDA:
+   · La FOTO de fondo necesita overflow:hidden + el radius para recortarse a
+     las esquinas; pero el boleto directo tiene que SOBRESALIR del banner por
+     arriba y por abajo, y eso pide overflow:visible. Se separan en dos capas:
+     .wd-banner-fondo (absolute, overflow-hidden, la foto + el overlay) y el
+     .wd-banner (overflow visible, del que sobresalen los boletos).
+   · El SOBRESALIR no se anima: es un margin-block negativo FIJO en la columna
+     de boletos, calibrado al padding COMPACTO. Como GSAP anima el padding del
+     banner (expandido→compacto), el boleto pasa solo de caber DENTRO (banner
+     alto) a SOBRESALIR (banner compacto) — el efecto "brota al recogerse" sale
+     gratis del cambio de padding, sin una segunda animación.
+   ============================================================ */
+
+/* La sección se pone por delante de la de "Incluye" (su vecina de abajo): el
+   catamarán de Incluye asoma "desde arriba" de su sección (--incluye-barco-desde
+   negativo) y, al ir DESPUÉS en el DOM, se pintaría ENCIMA del banner e
+   invadiría los boletos. ⚠️ Ese barco es `position:absolute; z-index:10` y su
+   sección (overflow-x-clip, sin z-index) NO crea stacking context, así que el
+   z-10 sube al contexto RAÍZ — por eso aquí hace falta z-index > 10, no basta
+   con 1. Con esto el banner tapa la invasión; el barco solo se ve ya dentro de
+   su sección (emerge desde detrás del borde inferior del banner). Sigue por
+   debajo del header/CTA sticky, que van muy por encima. */
+.wd-section {
+  position: relative;
+  z-index: 20;
+}
+
+.wd-banner {
+  position: relative;
+  width: 100%;
+  /* Compacto: EXCEPCIÓN a --container-contenido (pedido explícito de Samuel,
+     2026-07-15) — el banner ignora el tope de 1400px de las demás secciones y
+     ocupa todo el ancho disponible, con solo este aire lateral fijo. Móvil
+     20px, desktop 40px (media query abajo). GSAP sube max-width a 100vw para
+     el estado a sangre. */
+  max-width: calc(100% - var(--spacing-banner-margen-movil) * 2);
+  margin-inline: auto;
+  border-radius: var(--radius-banner);
+  padding-block: var(--spacing-banner-py);
+  overflow: visible; /* el boleto directo asoma por arriba y por abajo */
+}
+
+@media (min-width: 640px) {
+  .wd-banner {
+    max-width: calc(100% - var(--spacing-banner-margen) * 2);
+  }
+}
+
+.wd-banner-fondo {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit; /* toma el radius animado del banner */
+  z-index: 0;
+}
+
+.wd-banner-fondo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Overlay de legibilidad: el texto (blanco) vive a la IZQUIERDA, así que el
+   navy pesa más de ese lado y se aclara hacia la derecha (donde van los
+   boletos blancos, que no lo necesitan). rgb() a mano con el navy: var() no
+   entra en rgb() (mismo caveat que --shadow-cta y el overlay del hero). Si el
+   navy cambia, este gradiente no se entera solo. */
+.wd-banner-overlay {
+  position: absolute;
+  inset: 0;
+  /* Más oscuro a la izquierda (donde va el texto blanco) y se aclara a la
+     derecha, pero SIN pasar de ~55%: por debajo de eso la foto brillante (agua
+     clara) queda detrás de los boletos blancos y estos dejan de resaltar — se
+     ve "sucio" (verificado en navegador, estado compacto). */
+  background: linear-gradient(
+    100deg,
+    rgb(8 26 48 / 88%) 0%,
+    rgb(8 26 48 / 74%) 40%,
+    rgb(8 26 48 / 58%) 72%,
+    rgb(8 26 48 / 52%) 100%
+  );
+}
+
+.wd-banner-inner {
+  position: relative;
+  z-index: 1;
+}
+
+/* Columna de boletos en desktop — v3.1 (Samuel, 2026-07-15): vuelve el STACK.
+   items-start (no stretch): cada boleto conserva su altura NATURAL — el
+   portal, con menos contenido y sin flex-1 que lo estire, se ve claramente
+   más bajo que el directo, como una tarjeta "de fondo". El margin-block
+   negativo saca la columna del padding COMPACTO del banner +
+   --spacing-banner-sobresale (con el banner expandido, padding mayor, los
+   boletos caben dentro; al contraerse, sobresalen) — se sigue calculando
+   sobre el directo, que es el que manda en altura (el portal, más bajo y
+   además empujado hacia abajo por su propio margen, nunca lo supera). */
+.wd-boletos-desktop {
+  margin-block: calc((var(--spacing-banner-py) + var(--spacing-banner-sobresale)) * -1);
+}
+
+/* ============================================================
+   Carrusel de imágenes de la TourCard (v3-F20, PLAN-v3.md §18) — la pista de
+   fotos que desliza. Las N fotos van una al lado de otra (cada una al 100%
+   del ancho de la ventana) y la pista se corre `-índice * 100%` en el eje X.
+
+   POR QUÉ ES CSS A MEDIDA: el desplazamiento (translateX, inline en el JSX)
+   es dato de estado —cambia con el índice— pero la CURVA con la que se mueve
+   (duración + easing) es constante de diseño y sale de tokens; y sobre todo,
+   con prefers-reduced-motion el deslizado se apaga (salto seco, sin
+   animación) — eso es una media query, no cabe en una utilidad inline. Mismo
+   reparto que el ticker: el JS pone el "cuánto", el CSS pone el "cómo". ==== */
+
+.carrusel-pista {
+  display: flex;
+  height: 100%;
+  transition: transform var(--carrusel-transicion) var(--carrusel-easing);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Sin animar el salto — el auto-avance ya está apagado en el hook por la
+     misma media query (JS matchMedia); esto cubre el paso manual con flechas
+     o puntos, que sigue disponible. */
+  .carrusel-pista {
+    transition: none;
   }
 }

@@ -29,14 +29,31 @@
   --color-aqua: #0e8c9c; /* acento de marca — cuentagotas */
   --color-aqua-dark: #0b6f7c; /* hover del acento */
   --color-aqua-tint: #eaf3f4; /* fondo tenue del acento (hover, icon circles) */
+  /* v3-F17.1: aqua-dark (usado para el eyebrow minimal sobre papel) se hunde
+     contra el navy — este es el mismo aqua pálido de --color-titulo-ola (el
+     acento del H1 sobre el video), aquí de uso general para texto sobre
+     fondo oscuro. Dos tokens con el mismo valor a propósito: cada uno
+     documenta su propio contexto de uso, no hace falta que uno dependa
+     del otro. */
+  --color-aqua-claro: #a9e5ee;
   --color-coral: #ef5b44; /* CTA de reserva */
   --color-coral-dark: #d6432c; /* hover del CTA */
   --color-menta: #e7f5ef; /* fondo de panel de precio */
   --color-menta-texto: #0c7a5e; /* precio dentro del panel */
   --color-linea: #dfe6ea; /* bordes hairline */
   --color-linea-fuerte: #c3ced4;
+  /* v3-F16: estrellas de calificación (insignia-confianza.tsx) — antes vivía
+     como amber-300 suelto de Tailwind (sin token) en la fila de rating del
+     hero. Mismo valor, ahora tokenizado. */
+  --color-estrella: #fcd34d;
   --color-overlay-hero: rgb(11 37 69 / 45%); /* gradiente sobre foto de hero */
   --color-overlay-hero-suave: rgb(11 37 69 / 20%);
+  /* Pie oscuro de una foto que lleva texto ENCIMA (megamenú de Eventos). No
+     sirve --color-overlay-hero aquí: en el hero el 45% va sobre una SEGUNDA
+     capa uniforme que ya oscurece el video (dos capas), y sobre una foto sola
+     —con un casco de barco blanco al fondo— el texto pequeño se queda por
+     debajo del 4.5:1 de la AA. Una sola capa, más opaca, hace el mismo trabajo. */
+  --color-overlay-foto: rgb(11 37 69 / 70%);
 
   /* ---------- Tipografía ---------- */
   --font-display: 'Poppins', ui-sans-serif, system-ui, sans-serif;
@@ -58,6 +75,15 @@
   --text-h3--line-height: 1.3;
   --text-lead: 1.0625rem; /* subtítulo / párrafo destacado */
   --text-lead--line-height: 1.6;
+  /* Narrativa editorial de la sección "Experiencia" (bajo la banda de premios):
+     párrafo GRANDE con palabras alternando gris/negro para resaltar (ref. que
+     aportó Samuel — "Who we are" de Journeo). No reusa --text-h2: aquí el peso
+     es 400/500 (texto corrido, no titular) y necesita un interlineado más
+     abierto para que las 3 frases respiren en la columna estrecha. */
+  --text-narrativa: 2rem; /* 32px — desktop (v3-F18.1: sube de 28px, "un poco más grande") */
+  --text-narrativa--line-height: 1.4;
+  --text-narrativa-movil: 1.5rem; /* 24px — móvil (sube de 22px); Poppins ancha desborda a más */
+  --text-narrativa-movil--line-height: 1.5;
   --text-precio: 1.5rem; /* número de precio en panel menta */
   --text-precio--line-height: 1.1;
   /* v3-F11: la cifra vivía sola en su sección (2.75rem, ref. Journeo). Ahora
@@ -81,11 +107,41 @@
      del notch Y del "amague" cóncavo de arriba, ver componentes.css. */
   --radius-notch: 1.25rem; /* 20px */
   --radius-foto: 0.375rem; /* 6px — foto dentro del passe-partout del photo-stack */
+  /* v3-F17: TourCard «objeto suave» (PLAN-v3.md §17) — ref. soft-UI de Samuel.
+     Wrapper de TourCard únicamente; --radius-card (16px) se queda para todo
+     lo demás, incluida la sub-card de precio anidada dentro de esta. */
+  --radius-card-grande: 1.5rem; /* 24px */
+
+  /* ---------- Hover de GRUPO del collage de "Experiencia" (v3-F18.3, pedido de
+     Samuel) — al pasar el ratón sobre una de las 3 fotos apiladas: esa foto
+     sube, crece un poco y rota hacia la izquierda; las OTRAS 2 se achican y
+     pierden color (grayscale) — el foco se va a una sola. FUENTE del
+     prototipo de Figma (mismo trato que --ticker-* / --cta-*): estos números
+     salen de aquí, no "a ojo" en el CSS. */
+  --collage-foto-hover-escala: 1.08; /* la foto hovereada crece */
+  --collage-foto-hover-rotacion: -4deg; /* rota hacia la IZQUIERDA (negativo), pisa su --rot de reposo */
+  --collage-foto-hover-alza: -0.5rem; /* 8px — "sube un poco" */
+  --collage-foto-reposo-escala: 0.94; /* las otras 2 se achican mientras una está en hover */
+  --collage-foto-hover-transicion: 320ms;
 
   /* ---------- Sombra (regla B: sombra suave, a diferencia de Eventus/Synexia) --- */
   --shadow-card: 0 4px 16px rgb(11 37 69 / 8%);
   --shadow-hero: 0 8px 28px rgb(11 37 69 / 25%);
   --shadow-polaroid: 0 14px 34px rgb(11 37 69 / 18%); /* foto del photo-stack */
+  /* Foto "real" del collage de Experiencia (pedido de Samuel: "sombra realista
+     pero sutil"). Realista = DOS capas: una sombra de CONTACTO corta y densa
+     (la foto apoyada) + una AMBIENTE ancha y difusa (la luz del cuarto). Una
+     sola capa se lee como "flotando", que es justo lo que no se quiere. Más
+     baja que --shadow-polaroid, que es un levantamiento fuerte para el stack. */
+  --shadow-foto-real: 0 1px 2px rgb(11 37 69 / 12%), 0 10px 26px rgb(11 37 69 / 14%);
+  /* v3-F17: hover de TourCard (PLAN-v3.md §17.5) — difusa y baja, a tono con
+     la estética «objeto suave»; --shadow-hero (25%) es demasiado dura aquí. */
+  --shadow-card-flotante: 0 16px 40px rgb(11 37 69 / 12%);
+  /* v3-F17: píldora navy «Ver tour» — brillo fino arriba + sombra corta
+     debajo, el relieve de teclas de la ref. soft-UI. Navy a mano: var() no
+     entra en rgb() (mismo caveat que --shadow-cta, arriba). Si el navy
+     cambia, este token no se entera solo. */
+  --shadow-boton-relieve: inset 0 1px 0 rgb(255 255 255 / 20%), 0 1px 2px rgb(11 37 69 / 25%), 0 4px 10px rgb(11 37 69 / 18%);
   /* v3-F13: halo del CTA principal (PLAN-v3.md §15.8) — --color-coral al 35%,
      a mano: no se puede meter var(--color-coral) dentro de rgb(). Si el coral
      cambia, este token NO se entera solo. */
@@ -110,9 +166,14 @@
      mediría más que la pantalla real; dvh cambia mientras se scrollea y haría
      bailar al ticker que va a caballo del borde. svh es la medida garantizada,
      sin saltos. Es un MÍNIMO (min-height): si el contenido natural del hero
-     crece, el 78% deja de cumplirse en silencio — ver la Trampa №1 de §15.10.
-     Solo aplica en desktop (sm:); en móvil el contenido manda. */
-  --spacing-hero-alto: 78svh;
+     crece, el % deja de cumplirse en silencio — ver la Trampa №1 de §15.10.
+     Solo aplica en desktop (sm:); en móvil el contenido manda.
+     v3-F21 (Samuel, 2026-07-15): sube de 78svh a 84svh — pidió el hero «un
+     poco más alto», aceptando de entrada que los logos de premios queden
+     parcialmente tapados / con menos aire debajo. Esto ANULA a propósito el
+     criterio de aceptación de §15.5 ("los logos se ven enteros sin scroll") —
+     ya no es el objetivo. */
+  --spacing-hero-alto: 84svh;
 
   /* ---------- Movimiento (v3) ----------
      ⚠️ Estas constantes son la FUENTE del prototipo de Figma: los delays del
@@ -124,7 +185,7 @@
 
   /* Medidas de las cards del ticker. */
   --spacing-ticker-alto: 4.25rem; /* 68px */
-  --spacing-ticker-ancho: 18rem; /* 288px — cabe "Desde US$ 55 · 3-4 h · máx. 120" sin cortar */
+  --spacing-ticker-ancho: 18rem; /* 288px — cabe "Desde US$ 75 · 3-4 h · máx. 120" sin cortar */
   --spacing-ticker-gap: 1rem;
   /* Aire vertical del wrapper (antes solo para shadow-card; PLAN-v3.md §10.3
      §2 subió el valor: una card a --ticker-dock-escala-max crece y su sombra
@@ -148,6 +209,19 @@
      duración/easing del componente interactivo (Smart Animate) salen de aquí. */
   --notch-transicion: 300ms; /* morph de ancho/alto al abrir/cerrar un menú */
   --notch-easing: cubic-bezier(0.32, 0.72, 0, 1); /* arranque vivo, aterrizaje suave */
+
+  /* Carrusel de la TourCard (v3-F20, PLAN-v3.md §18) — cada card muestra las
+     fotos reales de su galería deslizándose solas; al hover se pausa y
+     aparecen las flechas para pasarlas a mano. FUENTE del prototipo de Figma
+     (mismo trato que --ticker-duracion): el intervalo lo lee el hook en JS
+     (getComputedStyle), la duración/easing del deslizado viven en el CSS de
+     la pista (.carrusel-pista en componentes.css).
+     ⚠️ El intervalo se apaga con prefers-reduced-motion (contenido en
+     movimiento automático = criterio WCAG 2.2.2): ahí las flechas y los
+     puntos siguen, pero nada se mueve solo. */
+  --carrusel-intervalo: 4s; /* cada cuánto avanza una foto sola */
+  --carrusel-transicion: 600ms; /* deslizado de una foto a la siguiente */
+  --carrusel-easing: cubic-bezier(0.4, 0, 0.2, 1);
 
   /* Cinta de premios (dentro de la sección de stats). Los 7 badges son MUY
      heterogéneos (bloque navy del LTG, cuadrado amarillo de WeddingWire,
@@ -188,6 +262,214 @@
      logo/Reservar no llega a 624px. Mismo ancho que ya usan los megamenús en
      ese rango por esta misma razón (mega-tours.tsx, mega-eventos.tsx). */
   --spacing-notch-panel-compacto: 28rem; /* 448px */
+
+  /* CTA «mar» del hero (pedido de Samuel, 2026-07-14): el botón lg lleva dos
+     capas de olas en deriva constante al pie, y el catamarán real vive DENTRO
+     del botón, en un hueco reservado a la derecha — al hover zarpa: sale de
+     ABAJO (el casco se recorta en el borde inferior del botón, la línea de
+     flotación) y asoma POR ARRIBA del botón. Mecánica en componentes.css.
+     FUENTE del prototipo de Figma, igual que --ticker-* (playbook
+     animaciones-a-figma): duraciones/curvas salen de aquí, no "a ojo". */
+  /* v3-F14.1 (feedback de Samuel, 2026-07-14): sube de 6rem — a 96px, el
+     recorte de calado (14px) dejaba solo 26px de barco asomando POR ENCIMA
+     del botón; el resto (56px, la altura entera del botón) quedaba "pegado"
+     sobre la cara coral en vez de leerse como que sale de ella. El clip
+     inferior de la ventana siempre está a ras del borde del botón (altura
+     fija), así que subir --alto es la única palanca que aumenta lo que
+     asoma POR ARRIBA sin tocar cuánto se solapa con el botón. */
+  --spacing-cta-barco-alto: 7.5rem; /* 120px — alto renderizado del barco (~92px de ancho al mismo ratio) */
+  /* ⚠️ 112px para un barco de ~92px: los 10px de aire a cada lado NO son
+     decoración, son el margen que necesita el BALANCEO. La ventana recorta
+     también en horizontal, y al escorar --cta-barco-balanceo-angulo la punta
+     del mástil se desplaza ~alto × sen(ángulo) ≈ 4px. Con el hueco justo al
+     ancho del barco, el mástil se comería el borde de la ventana al cabecear. */
+  --spacing-cta-barco-hueco: 7rem; /* 112px — ancho de la ventana Y lo que se ensancha el botón al hover */
+  /* Baja de 14px a 10px — coincide con --spacing-cta-ola-alto: el casco se
+     "moja" justo lo que mide la ola delantera, ni más ni menos. */
+  --spacing-cta-barco-calado: 0.625rem; /* 10px — casco que queda "bajo el agua" (recortado) al zarpar */
+  --spacing-cta-barco-orilla: 2rem; /* = px-8, padding lateral del tamaño lg (boton.tsx) — si cambia allí, cambia aquí */
+  --cta-barco-transicion: 550ms;
+  --cta-barco-easing: cubic-bezier(0.34, 1.4, 0.64, 1); /* leve rebote al asomar — sale del agua, no de un cajón */
+  /* Balanceo infinito del barco (pedido de Samuel): cabeceo lento, pivotando
+     en la línea de flotación. El ángulo es DELIBERADAMENTE pequeño — a 2° el
+     mástil (120px de brazo) ya se mueve ~4px, y de ahí sale el aire lateral
+     de --spacing-cta-barco-hueco. Más ángulo y el barco no cabecea: se cae. */
+  --cta-barco-balanceo-angulo: 2deg;
+  --cta-barco-balanceo-duracion: 3.6s; /* medio ciclo (la animación va en `alternate`) */
+  /* Bandada de gaviotas alrededor del barco (pedido de Samuel): trazo simple,
+     dos arcos. Aparecen escalonadas al hover y derivan despacio en bucle. */
+  /* Animación del H1 — PRUEBA A/B (Samuel, 2026-07-14). El destello de luz
+     (background-clip: text) se descartó. Ahora conviven DOS tratamientos, uno
+     por línea, para elegir:
+       · línea 1 → «ola por palabras»: cada palabra flota con un desfase, así
+         que una ola RECORRE la frase de izquierda a derecha.
+       · línea 2 → «subrayado de ola viva»: el texto no se mueve; debajo fluye
+         una línea ondulada en bucle (misma técnica de mask que las olas del CTA).
+     Cuando Samuel elija, se borra la otra. */
+  --titulo-ola-amplitud: 0.25rem; /* 4px — cuánto sube/baja cada palabra. Mínimo a propósito */
+  --titulo-ola-duracion: 2.6s; /* ciclo de flotación de UNA palabra */
+  --titulo-ola-paso: 90ms; /* retardo entre palabra y palabra = la velocidad de la ola */
+
+  --color-titulo-ola: #a9e5ee; /* aqua pálido — el acento de la dirección B, con cuentagotas */
+  --spacing-titulo-subrayado-alto: 0.5rem; /* 8px — alto de la onda */
+  --spacing-titulo-subrayado-largo: 1.5rem; /* 24px — UNA longitud de onda (el tile del mask) */
+  --titulo-subrayado-duracion: 3s; /* deriva de una longitud de onda = loop invisible */
+
+  --spacing-cta-pajaro-ancho: 1.25rem; /* 20px — el pájaro grande; el resto escala por --s */
+  /* Franja de cielo entre el borde superior del botón y la fila de stats. Es
+     el TECHO de la bandada, y su única palanca de altura: los pájaros se
+     posicionan en % de esta franja (pajaros.tsx), así que bajarla los baja a
+     todos DE GOLPE, sin tocar sus 5 posiciones ni arriesgarse a que aterricen
+     sobre la cara coral del botón (un pájaro sobre el coral se lee como una
+     pegatina, no como un pájaro).
+     Historial: 52px → los de arriba rozaban «del aforo del barco» y parecían
+     suciedad sobre el texto. 44px → limpio, pero Samuel los quiere más abajo.
+     28px → la bandada rasante, pegada al barco y bien lejos de los stats. */
+  --spacing-cta-pajaro-cielo: 1.75rem; /* 28px */
+  --spacing-cta-pajaro-deriva: 0.5rem; /* 8px — cuánto se desplaza cada uno en su vaivén */
+  --cta-pajaro-vuelo-duracion: 4.2s; /* más lento que el balanceo del barco: no van a compás */
+  --cta-pajaro-aparicion: 320ms;
+  --spacing-cta-ola-alto: 0.625rem; /* 10px — capa de ola delantera; la del fondo va a ×1.7 */
+  --spacing-cta-ola-largo: 1.5rem; /* 24px — longitud de onda del tile del mask */
+  --cta-ola-duracion: 2.8s; /* deriva de UNA longitud de onda completa (= un loop invisible) */
+
+  /* ---------- Sección "Experiencia" (narrativa + collage de fotos) ----------
+     Bloque nuevo bajo la banda de premios (pedido de Samuel): a un lado el
+     párrafo grande gris/negro, al otro un collage de 3 fotos "reales" (borde
+     blanco fino + --shadow-foto-real + rotación irregular). */
+  --spacing-foto-real-marco: 0.375rem; /* 6px — borde blanco FINO del passe-partout (el stack usa 8-10px) */
+
+  /* ---------- Sección «Incluye» (v3-F19.2, rediseño pedido de Samuel 2026-07-15)
+     ----------
+     Editorial inmersiva (ref. "WHAT'S INCLUDED" que aportó Samuel): océano
+     oscuro a sangre (sin fundidos con las vecinas — corte limpio arriba y
+     abajo), el catamarán en vista CENITAL bajando por el centro AL HACER
+     SCROLL (empieza fuera del recorte del océano, por encima, y desciende
+     mientras se revelan los ítems), y los 8 ítems como texto editorial
+     numerado (01/ … 08/) directamente sobre el agua, sin cards ni cajas.
+
+     ⚠️ El aqua/agua como FONDO GRANDE de sección rompe el guardarraíl de la
+     dirección B (direccion-visual.md §6: "el color lo ponen las fotos, no el
+     fondo") — es una decisión explícita de Samuel para esta sección, con el
+     mismo tratamiento inmersivo que ya tiene el hero (video oscurecido + texto
+     blanco), no un descuido.
+
+     El texto va sobre el agua SIN caja, así que el océano se oscurece fuerte
+     (--color-overlay-incluye) para que el blanco lea a AA. Cuando llegue de
+     Magnific un océano cenital ya oscuro, este overlay baja. */
+  --color-overlay-incluye: rgb(9 26 46 / 66%); /* navy profundo — legibilidad del texto blanco + calma el video de placeholder */
+
+  /* Maquetación editorial (desktop): los 8 ítems van UNO POR FILA, alternando
+     lado (col 1 / col 3) y cascando en diagonal — el carril central (col 2) es
+     el riel por donde baja el barco. El ALTO de la sección lo da el contenido
+     (8 filas × este gap), no un vh fijo: así el recorrido del scroll siempre
+     casa con los ítems, cambie el copy o el viewport. */
+  --spacing-incluye-lane: 24rem; /* 384px — carril central (col 2), el ancho del barco + aire */
+  --spacing-incluye-fila: 8rem; /* 128px — separación entre filas (row-gap) = paso de la cascada */
+  --spacing-incluye-fila-movil: 2.75rem; /* 44px — en móvil los 8 ítems van en lista simple */
+
+  /* El barco cenital. Alto GRANDE (protagonista, corre por el centro). El
+     recorte cenital que pedirá Magnific será apaisado-vertical; hasta que
+     llegue se usa catamaran-recorte.webp (vista 3/4, PROVISIONAL). */
+  --spacing-incluye-barco-alto: 30rem; /* 480px — desktop */
+  --spacing-incluye-barco-alto-movil: 17rem; /* 272px */
+  /* Recorrido del descenso, en fracción del alto de la sección: de dónde
+     ARRANCA el centro del barco (por encima del borde superior → "fuera del
+     océano") a dónde TERMINA (por debajo del inferior). Los lee el hook con
+     getComputedStyle (adimensionales), no van a ojo en el JS. */
+  --incluye-barco-desde: -0.15; /* 15% del alto por ENCIMA del top → asoma desde fuera */
+  --incluye-barco-hasta: 1.05; /* 5% por debajo del bottom → sale por abajo */
+  --incluye-barco-scrub: 0.5; /* suavizado del enganche al scroll */
+  /* Cabeceo lento mientras baja (el agua se mueve; un barco clavado se lee
+     como pegatina). En `rotate`, longhand aparte del `transform` que anima el
+     descenso — no se pisan (mismo patrón que el barco del CTA «mar»). */
+  --incluye-barco-balanceo-angulo: 1.4deg;
+  --incluye-barco-balanceo-duracion: 6s;
+  --incluye-barco-sombra: drop-shadow(0 26px 34px rgb(6 18 33 / 45%));
+
+  /* Reveal de cada ítem editorial al entrar en pantalla (fade + subida), tal
+     como el barco pasa por su altura. Enganchado al scroll (scrub), FUENTE del
+     prototipo de Figma (playbook animaciones-a-figma). */
+  --incluye-item-y: 1.5rem; /* 24px — de dónde sube cada ítem */
+  --incluye-item-scrub: 0.5;
+  --incluye-numero-color: var(--color-titulo-ola); /* aqua pálido — el número 0N/, el único acento */
+
+  /* Reveal al hacer scroll (GSAP ScrollTrigger, scrub — NO sticky). Igual que
+     --ticker-* / --cta-*: estas constantes son la FUENTE del prototipo de Figma
+     (playbook animaciones-a-figma) y las lee el hook (use-experiencia-scroll.ts)
+     con getComputedStyle, no van "a ojo" en el JS. A Figma NO viaja animado: se
+     captura la sección ya asentada (?dev-exp=estatico / prefers-reduced-motion). */
+  --exp-reveal-y: 1.75rem; /* 28px — de dónde sube cada frase del texto */
+  /* v3-F18.1 (Samuel): las fotos ARRANCAN más grandes y más separadas del
+     montón, en opacidad 0, y CONVERGEN a su sitio (estado estático) mientras
+     encogen. La separación es RADIAL: cada foto se aparta del centro del
+     collage a lo largo de su propio radio (lo calcula el hook midiendo cada
+     foto), así que sale disparada hacia afuera y vuelve — no un desplazamiento
+     uniforme. Sustituye al viejo --exp-reveal-foto-y (subían todas en bloque). */
+  --exp-reveal-foto-escala: 1.14; /* escala inicial (>1 = más grandes al arrancar) */
+  --exp-reveal-foto-separacion: 2rem; /* 32px — cuánto se aparta cada foto del centro al arrancar */
+  --exp-reveal-stagger: 0.12; /* s — retardo entre frase y frase, y entre foto y foto */
+  --exp-reveal-scrub: 0.6; /* s — suavizado del enganche al scroll (0 = pegado duro al pixel) */
+
+  /* ---------- Sección "Reserva directa" (boletos, dentro del banner) ----------
+     La comparación aquí-vs-portal hecha OBJETO (pedido de Samuel, 2026-07-15):
+     dos boletos con EL MISMO encabezado (mismo tour, mismo precio) — el del
+     portal se acaba en el precio; el directo sigue sumando líneas y remata
+     con un sello. En móvil un toggle alterna el CUERPO de un solo boleto (el
+     precio no se mueve un píxel). ⚠️ La familia se llama «boleto», no
+     «ticket»: --ticket-* colisionaría a la vista con los --ticker-* del hero.
+     (La escena vive dentro del banner que se recoge — ver --spacing-banner-*.) */
+  --spacing-boleto-ancho: 25rem; /* 400px — boleto directo, toggle móvil (solo) */
+  --spacing-boleto-notch: 0.625rem; /* 10px — radio del corte semicircular de la perforación */
+  --spacing-boleto-barcode: 1.75rem; /* 28px — alto del código de barras */
+  /* v3.1 (Samuel, 2026-07-15): vuelve el STACK — el "en un portal" otra vez
+     más pequeño y más tapado por el "reservando directo" (como en versiones
+     previas a "alinear todo"): sin flex-1 que lo estire a la misma altura, y
+     con --boleto-stack-solape/-caida empujándolo detrás y más abajo. Las
+     rotaciones se mantienen sutiles (no 0), para que no se lean como un
+     mockup rígido. */
+  --boleto-rotacion-fondo: -1.2deg; /* el portal, apenas torcido */
+  --boleto-rotacion-frente: 0.8deg; /* el directo, casi a plomo */
+  --boleto-sello-rotacion: -8deg; /* sello "Reserva directa" del boleto directo */
+
+  /* ---------- Banner de "Reserva directa" (v3, pedido de Samuel 2026-07-15) ---
+     La escena de los boletos vive DENTRO de un banner con foto de fondo de
+     playa. El banner arranca a SANGRE (100vw, más alto, esquinas rectas) y al
+     scrollear hasta centrarse en el viewport se CONTRAE a una caja compacta
+     con esquinas redondeadas — el estado FINAL/estático (el que viaja a Figma
+     y ve quien tiene reduced-motion). El texto + CTA van a la izquierda, los
+     dos boletos a la derecha, y el boleto directo SOBRESALE del banner por
+     arriba y por abajo.
+     Estas constantes son la FUENTE del prototipo de Figma (playbook
+     animaciones-a-figma): la contracción la lee use-why-direct-scroll.ts con
+     getComputedStyle, no va "a ojo" en el JS. */
+  /* Estado COMPACTO (el natural del CSS; GSAP anima DESDE el expandido). */
+  --spacing-banner-py: 3.5rem; /* 56px — padding vertical compacto */
+  --radius-banner: 1.75rem; /* 28px — = --radius-hero, rima con el hero */
+  /* Estado EXPANDIDO (valores de arranque, los pinta GSAP con .from()). */
+  --spacing-banner-py-expandido: 7rem; /* 112px — "un poco más alta" a sangre */
+  /* Cuánto sobresale el boleto por encima y por debajo del banner COMPACTO
+     (en expandido el padding mayor los mete dentro). */
+  --spacing-banner-sobresale: 2.5rem; /* 40px */
+  --banner-scrub: 0.5; /* suavizado del enganche al scroll de la contracción */
+  /* v3.1 (Samuel, 2026-07-15): el banner COMPACTO deja de acatar
+     --container-contenido (1400px) — excepción a propósito para esta sección
+     única: en compacto ocupa TODO el ancho disponible, con solo este aire
+     lateral fijo (el mismo patrón px-5/sm:px-10 que ya usan las secciones,
+     aplicado aquí como margen del banner en vez de padding de contenido). */
+  --spacing-banner-margen-movil: 1.25rem; /* 20px */
+  --spacing-banner-margen: 2.5rem; /* 40px — desktop, pedido explícito */
+
+  /* Ancho de cada boleto dentro del banner en desktop. El directo (frente) es
+     el protagonista; el portal (fondo) vuelve a ser claramente más chico —
+     "como estaba hace algunas versiones" (Samuel). */
+  --spacing-boleto-ancho-banner: 23rem; /* 368px — directo, banner (hay más aire ahora) */
+  --spacing-boleto-ancho-banner-fondo: 16rem; /* 256px — portal, banner: bien más chico */
+  /* Stack: cuánto se meten uno sobre el otro (solape horizontal) y cuánto más
+     abajo arranca el portal (para que se lea "detrás y más pequeño", no como
+     dos objetos en la misma repisa). */
+  --spacing-boleto-stack-solape: 5.5rem; /* 88px */
+  --spacing-boleto-stack-caida: 3rem; /* 48px */
 }
 
 body {

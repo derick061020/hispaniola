@@ -1,8 +1,13 @@
-// Etiqueta de sección ("eyebrow") — v2: en píldora, el recurso que usa la ref.
-// Journeo para presentar cada bloque ("• Who we are?"). Sustituye al texto en
-// caps suelto que usaba la v1.
+// Etiqueta de sección ("eyebrow") — v3-F17.1 (PLAN-v3.md §17.10, pedido de
+// Samuel al ver el eyebrow minimal de "Nuestros tours"): todos los eyebrows
+// del sitio pasan a este tratamiento — solo el texto, sin píldora ni punto.
+// Reemplaza por completo la versión en píldora de v2 (ref. Journeo,
+// "• Who we are?"): cero llamadas la usan ya, así que se retira en vez de
+// dejarla como variante muerta.
 //
-// `sobreOscuro` la invierte para cuando va sobre navy o sobre foto.
+// `sobreOscuro` decide el color: aqua-dark sobre papel (aqua puro falla AA a
+// 12px, ~4.0:1 contra ~5.9:1 de aqua-dark) o aqua-claro sobre navy/foto
+// (aqua-dark se hunde contra el navy — hace falta el pálido para leerse).
 export function Etiqueta({
   children,
   sobreOscuro = false,
@@ -12,15 +17,10 @@ export function Etiqueta({
   sobreOscuro?: boolean
   className?: string
 }) {
-  const tono = sobreOscuro
-    ? 'bg-white/15 text-white ring-white/25 backdrop-blur-sm'
-    : 'bg-aqua-tint text-aqua-dark ring-aqua/15'
-
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-chip px-3 py-1.5 text-eyebrow font-semibold uppercase tracking-[0.12em] ring-1 ring-inset ${tono} ${className}`}
+      className={`inline-block text-eyebrow font-semibold uppercase tracking-[0.12em] ${sobreOscuro ? 'text-aqua-claro' : 'text-aqua-dark'} ${className}`}
     >
-      <span aria-hidden className="size-1 rounded-chip bg-current opacity-60" />
       {children}
     </span>
   )

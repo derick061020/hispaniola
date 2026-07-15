@@ -380,7 +380,7 @@ de **categoría** que se repite está bien (agrupa); una **métrica por-card**
 idéntica repetida miente. Es la diferencia que justifica una y descarta la otra.
 
 El ancho de card pasó a `--spacing-ticker-ancho: 18rem` (uniforme, medido para
-que quepa «Desde US$ 55 · 3-4 h · máx. 120» sin truncar). **El ancho uniforme es
+que quepa «Desde US$ 75 · 3-4 h · máx. 120» sin truncar). **El ancho uniforme es
 un requisito del dock**, no una casualidad: la geometría de §10.2 asume `W` igual
 para todas.
 
@@ -1936,4 +1936,352 @@ mega-eventos.tsx (si algún día la quiere otro menú, se extrae entonces).
 4. **Fotos**: 0 errores 404 en consola; los thumbnails pintan (naturalWidth>0).
 5. `?dev-mega=eventos` abre el estado. Hover de fila = papel-hueso.
 6. `tsc` + `build` limpios, 0 overflow-x.
+
+---
+
+## §17 · V3-F17 — El grid de tours «objeto suave»: cards soft-UI + eyebrow minimal
+
+### 17.0 Punto de retorno
+
+Al escribir esto el working tree tiene trabajo de F15/F16 **sin comitear**
+(logo real, insignias, hero). Regla de §16.0: **se comitea eso primero** — ese
+commit es el punto de retorno — y F17 arranca encima, como fase propia con su
+propio commit.
+
+### 17.1 El pedido (Samuel, 2026-07-15) y la referencia
+
+Dos piezas, misma sección (`tours-grid.tsx` + `tour-card.tsx`):
+
+1. **El eyebrow «Nuestros tours»**: fuera la píldora — solo el texto, sin
+   padding, sin fondo, **sin el punto**, más minimalista, y con el acento aqua.
+2. **Las cards**, a la estética de una referencia que Samuel compartió (una
+   pantalla de onboarding móvil, «Welcome to Genesis»). La referencia **no
+   trae los elementos de nuestra card** — es guía de estética, no de contenido.
+
+**La referencia, descrita** (Sonnet no ve la imagen — esto es lo que hay que
+tener en la cabeza): fondo gris claro neutro; una card blanca de **radio muy
+generoso** (~24–28px) con una **ilustración a sangre arriba** que ocupa más de
+la mitad; debajo, título grande en negro y subtítulo gris; una **sub-card
+interior con borde fino y radio grande** (avatar + «Your Photo» + botón píldora
+negro «Upload»); un input píldora gris; y un CTA «Continue» **píldora negra
+ancha**. Los botones negros llevan un **relieve suave**: brillo fino en el borde
+superior + sombra corta debajo — parecen teclas. Todo es monocromo; **el único
+color lo pone la ilustración**.
+
+### 17.2 La referencia, traducida a la dirección B
+
+Cinco rasgos, y su traducción (la referencia y la dirección B ya riman: «el
+color lo ponen las fotos» es exactamente el guardarraíl de
+`direccion-visual.md` §6):
+
+| rasgo de la referencia | aquí |
+|---|---|
+| radio muy generoso en la card | token nuevo `--radius-card-grande` (24px) — **no** se toca `--radius-card` (16px), que queda para radios interiores y para todo lo demás que ya lo usa |
+| UI monocroma, color solo en la imagen | blanco + navy + `linea`; el aqua solo en el eyebrow; la foto del tour pone el color |
+| sub-card interior con borde (la fila «Your Photo») | el bloque de **precio + CTA** pasa a vivir en su propia caja con borde — la decisión de compra como objeto propio |
+| controles píldora; el primario oscuro con relieve | «Ver tour» pasa de outline aqua a **píldora navy** con `--shadow-boton-relieve` (el «negro» de la referencia aquí es navy) |
+| aire y pocos elementos | foto más alta, padding `p-5`, misma data — **cero campos nuevos, cero copy nuevo** |
+
+### 17.3 El eyebrow minimal — `Etiqueta` gana una variante
+
+`ui/etiqueta.tsx` gana `variante?: 'pildora' | 'minimal'` con **default
+`'pildora'`** — las otras 6 llamadas (`diferenciadores`, `eventos-banda` ×2,
+`galeria-faq-cierre` ×2, `reviews`, `why-direct`) **no cambian ni una letra**.
+
+```tsx
+if (variante === 'minimal') {
+  // Solo el texto: sin píldora, sin punto, sin padding. El acento aqua a pelo.
+  return (
+    <span className={`inline-block text-eyebrow font-semibold uppercase tracking-[0.12em] text-aqua-dark ${className}`}>
+      {children}
+    </span>
+  )
+}
+```
+
+- **`text-aqua-dark`, no `text-aqua`**: aqua (`#0e8c9c`) sobre blanco da ~4.0:1
+  — **falla AA** para texto de 12px; aqua-dark (`#0b6f7c`) da ~5.9:1 ✓. Es
+  además el mismo tono que ya usan los links («Ver los 4 tours →»).
+- `sobreOscuro` solo aplica a `pildora`. **No construir** minimal+sobreOscuro:
+  hoy no lo usa nadie (YAGNI — se hace cuando exista el caso).
+- En `tours-grid.tsx`: `<Etiqueta variante="minimal">Nuestros tours</Etiqueta>`.
+  Nada más cambia en la sección (H2, grid y spacing quedan).
+
+### 17.4 Anatomía de la nueva TourCard
+
+```
+┌────────────────────────────┐ ← rounded-card-grande (24px), ring-linea,
+│  FOTO h-52 (zoom al hover) │   shadow-card; hover: lift + shadow-card-flotante
+│  [chip audiencia ▒blur]    │ ← esmerilado: papel/90 + blur (antes navy/85)
+├────────────────────────────┤
+│  Semi-Privado Premium      │   p-5
+│  ★ 4.9 (1,782) · 4 h · …   │
+│  ✓ Cancelación gratis      │
+│  ┌──────────────────────┐  │ ← sub-card: rounded-card + ring-linea
+│  │ desde      ┌────────┐│  │
+│  │ US$ 99     │Ver tour││  │ ← píldora navy + shadow-boton-relieve
+│  │            └────────┘│  │
+│  └──────────────────────┘  │
+└────────────────────────────┘
+```
+
+`tour-card.tsx` — reescritura (misma data, mismo `EnlacePrototipo`):
+
+```tsx
+<EnlacePrototipo className="group flex flex-col overflow-hidden rounded-card-grande bg-papel shadow-card ring-1 ring-linea transition motion-safe:hover:-translate-y-1 hover:shadow-card-flotante">
+  <div className="relative h-52 overflow-hidden bg-papel-hueso">
+    <img
+      src={`/fotos/${tour.foto}.webp`}
+      alt=""
+      className="size-full object-cover transition-transform duration-300 group-hover:scale-105"
+    />
+    <span className="absolute bottom-3 left-3 rounded-chip bg-papel/90 px-2.5 py-1 text-xs font-medium text-navy backdrop-blur-sm">
+      {tour.audienciaChip}
+    </span>
+  </div>
+  <div className="flex flex-1 flex-col gap-1.5 p-5">
+    <p className="font-display text-lg font-semibold text-navy">{tour.nombre}</p>
+    <p className="text-sm text-navy-soft">
+      ★ {tour.rating} ({tour.resenas.toLocaleString('en-US')}) · {tour.duracionCorta}
+      {tour.maxPax ? ` · máx. ${tour.maxPax}` : ''}
+    </p>
+    <p className="text-xs text-menta-texto">✓ Cancelación gratis</p>
+
+    <div className="mt-auto pt-4">
+      <div className="flex items-center justify-between gap-3 rounded-card bg-papel p-2.5 pl-4 ring-1 ring-linea">
+        <div>
+          {tour.precioLight !== null && <p className="text-xs text-navy-soft">desde</p>}
+          <p className="font-display text-precio font-semibold text-navy">
+            {tour.precioLight !== null ? formatoDinero(tour.precioLight) : bookingCta[tour.booking]}
+          </p>
+        </div>
+        <span className="rounded-chip bg-navy px-4 py-2.5 text-xs font-semibold text-white shadow-boton-relieve">
+          Ver tour
+        </span>
+      </div>
+    </div>
+  </div>
+</EnlacePrototipo>
+```
+
+Decisiones cerradas (no re-litigar al ejecutar):
+
+- **Foto a sangre arriba** (como la referencia), no inset con passe-partout.
+  Sube de `h-44` a **`h-52`**: más presencia, y el radio grande necesita masa.
+- **El chip de audiencia se esmerila**: `bg-papel/90 + backdrop-blur-sm + text-navy`
+  (antes `bg-navy/85` + blanco). La referencia no tiene badges de color sobre
+  la imagen; el esmerilado mantiene la info sin mancharla.
+- **La píldora es estática** (no cambia de color con el hover de la card): en
+  la referencia los botones oscuros no reaccionan — el hover ya lo cuentan el
+  lift, la sombra y el zoom de la foto. Y sigue siendo afordancia visual, no
+  botón real: toda la card es el link.
+- **El aqua sale de la card** (el outline «Ver tour» era su último uso aquí) y
+  se muda al eyebrow de la sección. Cuentagotas de verdad.
+- **`motion-safe:`** en el lift (utility de Tailwind) — sin CSS custom en esta
+  fase, no hace falta guardarraíl en `componentes.css`.
+
+### 17.5 Tokens nuevos (`styles/tokens.css`)
+
+```css
+/* v3-F17: TourCard «objeto suave» (PLAN-v3.md §17) — ref. soft-UI de Samuel. */
+--radius-card-grande: 1.5rem; /* 24px — wrapper de TourCard; --radius-card (16px) queda para el resto y para radios anidados */
+--shadow-card-flotante: 0 16px 40px rgb(11 37 69 / 12%); /* hover de TourCard — difusa y baja; --shadow-hero (25%) es demasiado dura para esta estética */
+--shadow-boton-relieve: inset 0 1px 0 rgb(255 255 255 / 20%), 0 1px 2px rgb(11 37 69 / 25%), 0 4px 10px rgb(11 37 69 / 18%); /* píldora navy: brillo arriba + sombra corta — el relieve de la ref. Navy a mano: var() no entra en rgb() (mismo caveat que --shadow-cta) */
+```
+
+Tres tokens = tres variables nuevas de Figma en el traspaso. Nada más: colores,
+radios interiores, tipos y spacing salen de los que ya existen.
+
+### 17.6 Archivos
+
+| archivo | qué cambia |
+|---|---|
+| `styles/tokens.css` | 3 tokens nuevos (§17.5) |
+| `components/ui/etiqueta.tsx` | prop `variante` con default `'pildora'` (§17.3) |
+| `components/home/tours-grid.tsx` | el eyebrow pasa a `variante="minimal"` |
+| `components/home/tour-card.tsx` | reescritura de la card (§17.4) |
+| `dev/dev-registry.ts` | descripción de «Grid de tours» (mismo commit) |
+
+Ni data nueva (`data/home.ts` intacto), ni CSS custom, ni componentes nuevos.
+
+### 17.7 Dev Mode (mismo commit — regla del proyecto)
+
+**Sin estados nuevos**: el hover de la card no lleva deep-link (mismo criterio
+que el hover que ya tenía). Se actualiza la descripción de «Grid de tours»:
+
+> v3-F17: cards «objeto suave» (ref. soft-UI de Samuel, 2026-07-15): radio
+> 24px (`--radius-card-grande`), foto a sangre más alta (h-52) con chip de
+> audiencia esmerilado (papel/90 + blur, antes navy/85), y el precio + CTA
+> pasan a una sub-card con borde (rounded-card + ring-linea) — la decisión de
+> compra como objeto propio, como la fila «Your Photo» de la referencia. «Ver
+> tour» pasa de outline aqua a píldora navy con relieve
+> (`--shadow-boton-relieve`); el aqua se muda al eyebrow de la sección, que
+> estrena `Etiqueta variante="minimal"` (texto suelto aqua-dark, sin píldora
+> ni punto). Hover: lift (motion-safe) + sombra difusa
+> (`--shadow-card-flotante`) + zoom de foto.
+
+### 17.8 Trampas
+
+1. **`--radius-card` NO se toca.** Lo consumen mega-tours, mega-eventos,
+   ticker, menú móvil y más (`grep rounded-card` antes de empezar, para saber
+   qué NO estás cambiando). El radio nuevo es un token nuevo — y además el
+   16px se sigue usando *dentro* de la card (la sub-card de precio): anidado
+   en un radio de 24, el de 16 se lee concéntrico.
+2. **El default de `Etiqueta` protege a las otras 6 llamadas.** Si tras el
+   cambio alguna sección pierde su píldora, el default está mal puesto.
+3. **Contraste del eyebrow**: `text-aqua` falla AA a 12px (~4.0:1);
+   `text-aqua-dark` ✓ (~5.9:1). No «se ve bien» — se mide.
+4. **Dos `overflow-hidden`, cada uno con su trabajo**: el del wrapper hace
+   respetar el radio de 24px; el del div de la foto contiene el zoom (escalar
+   la imagen suelta empujaría el texto — la lección ya escrita en
+   mega-tours.tsx). Quitar cualquiera de los dos rompe algo distinto.
+5. **Isla Saona no tiene precio publicado** (`precioLight: null`): el bloque
+   grande dice «Consultar» (`bookingCta`) y la línea «desde» **no se pinta**
+   (condicional, no string vacío). La píldora sigue diciendo «Ver tour». No
+   inventar precio (regla del proyecto).
+6. **Las sombras llevan el navy a mano** (`rgb(11 37 69 / …)`) — si el navy
+   cambia, no se enteran solas. Dejarlo dicho en el comentario del token
+   (mismo trato que `--shadow-cta`).
+7. **Traspaso a Figma**: TourCard sigue siendo 1 componente con 2 variantes
+   (con precio / consulta). El relieve de la píldora son 3 sombras apiladas —
+   en Figma van como 3 effects en un mismo effect style.
+
+### 17.9 Verificación (Playwright)
+
+1. **Grid** (1440 / 768 / 390): 4 / 2 / 1 columnas, 0 overflow-x, las 4 cards
+   con la misma altura por fila (las sub-cards de precio alineadas abajo —
+   `mt-auto` trabajando).
+2. **Eyebrow** (computed style): `background-color` transparente, `padding` 0,
+   sin el `<span>` del punto en el DOM, `color` = `#0b6f7c`.
+3. **Card** (computed style): `border-radius` 24px en el wrapper, 16px en la
+   sub-card; píldora navy con el triple shadow.
+4. **Hover** (mouse real de Playwright sobre una card): lift + sombra difusa +
+   zoom de foto — captura como prueba. Con `emulateMedia`
+   `prefers-reduced-motion: reduce`: la card **no** se desplaza.
+5. **Las otras 6 Etiquetas siguen en píldora** (captura de `reviews` o
+   `why-direct` como testigo).
+6. **Isla Saona**: «Consultar» en grande, sin línea «desde», píldora «Ver tour».
+7. **Vecinos intactos**: megamenú Tours (`?dev-mega=tours`) y ticker sin
+   cambios visuales (no consumen ningún token tocado — verificar igual).
+8. **Cierre**: `tsc` limpio, `npm run build` limpio, 0 errores de consola,
+   fotos con `naturalWidth > 0`.
+
+### 17.10 Fuera de alcance / decisiones abiertas para Samuel
+
+- **Unificar el eyebrow minimal en las otras 6 secciones**: decisión de Samuel
+  cuando vea este. Si le gusta, es un find-replace de `variante` (y entonces
+  quizá el default cambie a `minimal` y la píldora pase a ser la variante).
+  **Resuelto en v3-F17.1 (§17.11) — sí, en las 9 llamadas.**
+- **El fade foto→blanco de la referencia** (la ilustración se funde con el
+  área de texto): descartado aquí — sobre fotos reales de catamarán mata el
+  contraste del chip y ensucia el corte limpio. Si Samuel lo pide al verlo,
+  es un overlay de gradiente sobre el div de la foto, no un mask.
+- **CTA ancho tipo «Continue»** (píldora a todo el ancho bajo la card):
+  descartado — en un grid de 4 duplica la altura sin añadir información; la
+  sub-card de precio ya carga el rol de «objeto de decisión».
+- `prototipo/` y `data/home.ts` no se tocan.
+
+### 17.11 V3-F17.1 — El eyebrow minimal se vuelve el único (pedido de Samuel)
+
+Al ver «Nuestros tours» terminado, Samuel pidió que **todos** los badges/eyebrow
+del sitio pasaran a este tratamiento. Con eso, `variante="pildora"` se queda en
+**cero** llamadas — así que en vez de dejarla como código muerto detrás de un
+prop sin usar, `ui/etiqueta.tsx` se **simplifica**: se retira el `variante` y
+el componente vuelve a tener una sola forma de pintar, ahora la minimal.
+
+- **`sobreOscuro` sí hace falta en minimal** (a diferencia de lo que decía
+  §17.3 — YAGNI resuelto: ahora sí hay caso). `aqua-dark` sobre navy/foto se
+  hunde (el navy de fondo, `#0b2545`, y el aqua-dark del texto, `#0b6f7c`, son
+  ambos oscuros — contraste insuficiente). Nuevo token
+  **`--color-aqua-claro: #a9e5ee`** (mismo valor que `--color-titulo-ola`, el
+  acento del H1 sobre el video — dos tokens con el mismo hex a propósito,
+  cada uno documenta su propio contexto, sin que uno dependa del otro).
+- **9 llamadas actualizadas**, ninguna cambia su prop `sobreOscuro` existente
+  — el componente decide el color solo: `diferenciadores`, `eventos-banda`
+  (`sobreOscuro`, card navy), `experiencia` (`className="exp-eyebrow"`, target
+  de animación GSAP en `use-experiencia-scroll.ts` — el className solo se
+  pasa, no lleva estilo propio), `galeria-faq-cierre` ×2, `incluye-crucero`,
+  `mega-eventos` (`sobreOscuro`, sobre foto con gradiente), `reviews`,
+  `tours-grid`, `why-direct`.
+- **`componentes.css`**: el comentario de `.incluye-conector::before` que
+  llamaba al punto de la línea conectora «pariente visual» del punto de la
+  Etiqueta queda desactualizado (la Etiqueta ya no tiene punto) — se corrige
+  para no dejar un comentario que miente.
+- **Verificado en navegador** (`browser-use`, dev server): eyebrow sobre papel
+  (`tours-grid`, `incluye-crucero`) en aqua-dark, sin píldora ni punto;
+  eyebrow sobre foto con overlay (`mega-eventos`, panel abierto) en
+  aqua-claro, legible contra el gradiente oscuro. `tsc` y `npm run build`
+  limpios.
+- Archivos: `styles/tokens.css` (1 token), `components/ui/etiqueta.tsx`
+  (simplificación), `components/home/tours-grid.tsx` (quita el prop
+  `variante`, ya no existe), `styles/componentes.css` (comentario),
+  `dev/dev-registry.ts` (nota de «Grid de tours» ampliada a decisión
+  sitewide).
+
+---
+
+## §18 · V3-F20 — La TourCard con la foto de protagonista: carrusel de galería
+
+**Pedido de Samuel (2026-07-15):** las cards del grid le parecen «feas, sosas,
+aburridas». Tres cosas: (1) dejar SOLO 3 servicios, como la web original
+(Semi-Privado, Snorkel Lovers, Charter Privado); (2) la imagen más protagonista;
+(3) cada servicio muestra VARIAS de sus fotos reales, deslizándose solas, y al
+hover se pueden pasar a mano con una flecha. Ref. estética: una card soft-UI de
+onboarding (imagen grande arriba, badge, título, meta con iconos, chips, CTA
+oscuro ancho).
+
+**Decisiones cerradas:**
+- **3 cards, no 4.** Isla Saona sale del grid (no tiene galería, precio ni
+  aforo — no puede ser una card de este tipo). Sigue viva en ticker, megamenú
+  de Tours, footer y menú móvil (decisión de Samuel: «solo del grid»). El grid
+  filtra `TOURS.filter(t => t.galeria)`; Saona se queda en `TOURS` sin galería.
+- **Galería = fotos reales del servicio** (`/fotos/galeria-<slug>-N.webp`, ya
+  descargadas). 5 por card (de las 7–9 disponibles): un dot-row limpio y una
+  rotación ágil. Portadas verbatim en `data/home.ts` (`galeria: string[]`).
+- **Carrusel reusable** en `components/ui/carrusel-imagenes.tsx` (1 componente
+  React = 1 de Figma). Pista de N fotos al 100%, corrida `-índice·100%` en X.
+  Auto-avance cada `--carrusel-intervalo` (4s), PAUSA + flechas ‹/› al hover
+  (puntero fino), puntos siempre visibles (nav en táctil). El intervalo lo lee
+  el hook del token (`getComputedStyle`); la curva del deslizado
+  (`--carrusel-transicion`/`--carrusel-easing`) vive en `.carrusel-pista`
+  (componentes.css). **prefers-reduced-motion apaga el auto-avance** (WCAG
+  2.2.2); flechas/puntos siguen. Tokens nuevos: `--carrusel-intervalo`,
+  `--carrusel-transicion`, `--carrusel-easing` (FUENTE del prototipo de Figma,
+  mismo trato que `--ticker-*`).
+- **La card deja de ser un `<a>`.** El carrusel mete botones (flechas/puntos) y
+  anidarlos en un enlace es HTML inválido. Pasa a `<article>` + **stretched
+  link**: el CTA lleva `after:inset-0` (z-10) para que toda la card navegue,
+  y el carrusel va en `z-20` (encima del overlay) para que su hover/flechas/
+  puntos reciban el puntero. El CTA no cambia de color en `:hover` (con el
+  stretched link, hover en cualquier parte «lavaría» el botón); el feedback lo
+  da el lift/sombra de la card y la flecha que se corre un pelo.
+- **Anatomía** (ref. soft-UI): carrusel `h-64` con badge de audiencia
+  esmerilado (arriba-izq) · título + precio «desde» · descripción
+  (`line-clamp-2`) · fila de meta con iconos lucide (★ rating, reloj duración,
+  personas aforo) · chips de «incluye» (3, portados verbatim de `datos.js`) ·
+  CTA navy ancho «Ver tour». Grid a `lg:grid-cols-3` (antes 4), `gap-6`.
+- **Dev Mode:** `?dev-tours=estatico` congela los carruseles (auto-avance off)
+  → frame para Figma. Registrado en `dev-registry.ts` mismo commit.
+
+**Convive con v3-F17.2** (hover de grupo `:has()`): se conservan las clases
+`.tour-card`/`.tours-cards`. ⚠️ En la verificación en navegador el efecto de
+grupo (grayscale/encoge de las vecinas) no se vio dispararse — pendiente de
+revisar si Samuel lo quiere vivo (sus tokens/CSS venían de trabajo sin comitear,
+oscilando en el working tree). El hover propio de la card (lift + sombra
+difusa) sí funciona.
+
+**Verificado** (`browser-use`, 1889px): 3 cards, Isla Saona fuera del grid,
+carrusel auto-avanzando, flechas al hover, puntos, chips y precios correctos,
+CTA navy sólido. `?dev-tours=estatico` consume el param y detiene el avance.
+`tsc` + `npm run build` limpios.
+
+**Archivos:** `data/home.ts` (tipo `Tour` + `galeria`/`destacados` en los 3;
+Saona intacta) · `components/ui/carrusel-imagenes.tsx` (nuevo) ·
+`components/home/tour-card.tsx` (reescritura: article + carrusel + stretched
+link) · `components/home/tours-grid.tsx` (filtro a 3, `lg:grid-cols-3`, dev
+flag) · `styles/tokens.css` (3 tokens `--carrusel-*`) · `styles/componentes.css`
+(`.carrusel-pista` + reduced-motion) · `dev/dev-registry.ts`.
+
+**Fuera de alcance:** más de 5 fotos por card (trivial ampliar el array); el
+fade foto→blanco de la ref.; reactivar/retirar v3-F17.2 (decisión de Samuel).
 

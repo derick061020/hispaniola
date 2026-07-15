@@ -1,7 +1,9 @@
 import { Hero } from '@/components/home/hero'
 import { Premios } from '@/components/home/premios'
+import { Experiencia } from '@/components/home/experiencia'
 import { ToursGrid } from '@/components/home/tours-grid'
 import { WhyDirect } from '@/components/home/why-direct'
+import { IncluyeCrucero } from '@/components/home/incluye-crucero'
 import { Diferenciadores } from '@/components/home/diferenciadores'
 import { Reviews } from '@/components/home/reviews'
 import { EventosBanda } from '@/components/home/eventos-banda'
@@ -15,8 +17,10 @@ export function HomePage() {
     <div className="pb-16 md:pb-0">
       <Hero />
       <Premios />
+      <Experiencia />
       <ToursGrid />
       <WhyDirect />
+      <IncluyeCrucero />
       <Diferenciadores />
       <Reviews />
       <EventosBanda />

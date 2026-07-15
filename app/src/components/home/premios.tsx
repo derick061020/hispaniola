@@ -11,10 +11,14 @@ import { PREMIOS } from '@/data/home'
 // vertical que hacía falta para separarlos del ticker.
 export function Premios() {
   return (
+    // v3-F18: se retira el `border-b border-linea` (decisión de Samuel) — la
+    // sección "Experiencia" nace justo debajo, sobre el mismo papel, y las dos
+    // se leen como UN bloque (premios → narrativa) en lugar de partirse con una
+    // línea. El aire lo pone ya el py de Experiencia.
     // pt-premios-aire, no un pt- suelto: el ticker cuelga media card DENTRO de
     // este padding (es `absolute`, no empuja), así que el padding tiene que
     // absorber ese vuelo antes de dar aire — ver el token en tokens.css.
-    <section className="border-b border-linea bg-papel px-5 pb-seccion-sm pt-premios-aire sm:px-10">
+    <section className="bg-papel px-5 pb-seccion-sm pt-premios-aire sm:px-10">
       {/* v3-F13: max-w-contenido (antes max-w-6xl, no 5xl — con los logos a
           64px de alto las 7 juntas necesitan ~1046px + gaps, y a 1024px/5xl
           envolvían a 2 filas incluso en 1920px). */}

@@ -1,44 +1,121 @@
-import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
+import { useRef, useState } from 'react'
 import { Etiqueta } from '@/components/ui/etiqueta'
+import { Boton } from '@/components/ui/boton'
+import { BoletoReserva, type VarianteBoleto } from '@/components/home/boleto-reserva'
+import { useWhyDirectScroll } from '@/components/home/use-why-direct-scroll'
+import { useDevFlag } from '@/dev/use-dev-flag'
 
 // "Why book direct" — el bloque que no existe en la web actual (ver
 // NOTAS['home-why-direct'] del prototipo): Viator vende el mismo tour al
 // mismo precio y hoy no hay ninguna razón visible para reservar directo.
-const BENEFICIOS = [
-  { icono: '25%', titulo: 'Confirma con 25%', texto: 'Paga el depósito hoy y el resto en efectivo el día del tour.' },
-  { icono: '-5%', titulo: 'Descuento en cash', texto: '5% extra si el saldo lo pagas en efectivo a bordo.' },
-  { icono: '🍽', titulo: 'Elige tu menú', texto: 'Langosta, Angus o vegetariano: solo reservando directo eliges plato por persona.' },
-  { icono: '💬', titulo: 'WhatsApp directo', texto: 'Hablas con el equipo del barco, no con un call center.' },
+//
+// v3 «banner que se recoge» (pedido de Samuel, 2026-07-15): la comparación de
+// los dos boletos vive DENTRO de un banner con foto de playa de fondo. A la
+// izquierda el título + descripción + CTA (en blanco sobre la foto); a la
+// derecha los dos boletos, y el directo SOBRESALE del banner por arriba y por
+// abajo. El banner arranca a SANGRE (100vw, más alto, esquinas rectas) y al
+// scrollear hasta centrarse en el viewport se CONTRAE a una caja compacta con
+// esquinas redondeadas (use-why-direct-scroll.ts anima la contracción; el
+// estado compacto es el natural/estático — el que viaja a Figma).
+//
+// En móvil/tablet no caben los dos boletos ni el layout de 2 columnas: el
+// título va arriba y un toggle [En un portal | Aquí] alterna el CUERPO de un
+// solo boleto (el encabezado es idéntico → el precio no se mueve al cambiar).
+
+const VARIANTES: Array<{ id: VarianteBoleto; label: string }> = [
+  { id: 'portal', label: 'En un portal' },
+  { id: 'directo', label: 'Aquí' },
 ]
 
 export function WhyDirect() {
-  return (
-    <section className="bg-papel-hueso px-5 py-seccion-sm sm:px-10 sm:py-seccion">
-      <div className="mx-auto max-w-contenido">
-        <Etiqueta>Reserva directa</Etiqueta>
-        <h2 className="mt-3 max-w-2xl font-display text-h2 font-semibold text-navy">
-          ¿Por qué reservar aquí y no en un portal?
-        </h2>
+  const sectionRef = useRef<HTMLElement>(null)
+  const [sel, setSel] = useState<VarianteBoleto>('directo')
 
-        <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {BENEFICIOS.map((b) => (
-            <div key={b.titulo}>
-              <div className="grid size-11 place-items-center rounded-full bg-aqua-tint text-sm font-bold text-aqua-dark">
-                {b.icono}
-              </div>
-              <p className="mt-3 font-display text-base font-semibold text-navy">{b.titulo}</p>
-              <p className="mt-1 text-sm text-navy-soft">{b.texto}</p>
-            </div>
-          ))}
+  // [dev-mode] ?dev-direct=estatico congela la contracción del banner en su
+  // estado FINAL (la caja compacta — EL frame que viaja a Figma);
+  // ?dev-direct=portal además pone el toggle móvil en «En un portal». Ver
+  // dev-registry.ts.
+  const [estatico, setEstatico] = useState(false)
+  useDevFlag('dev-direct', (v) => {
+    // [dev-mode]
+    setEstatico(true) // [dev-mode]
+    if (v === 'portal') setSel('portal') // [dev-mode]
+  }) // [dev-mode]
+  useWhyDirectScroll(sectionRef, { activo: !estatico }) // [dev-mode] gate
+
+  return (
+    <section ref={sectionRef} className="wd-section relative w-full py-seccion-sm sm:py-seccion">
+      <div className="wd-banner">
+        {/* Fondo: foto de playa + overlay de legibilidad (capa aparte para que
+            los boletos puedan sobresalir del banner sin recortarse). */}
+        <div aria-hidden className="wd-banner-fondo">
+          <img src="/fotos/hero-catamaran-1.webp" alt="" />
+          <div className="wd-banner-overlay" />
         </div>
 
-        <p className="mt-8 text-sm text-navy-soft">
-          + Reembolso total por mal clima o cancelando con 7 días. Mismo precio que en los portales —
-          pero con todo esto incluido.{' '}
-          <EnlacePrototipo className="font-semibold text-aqua-dark hover:underline">
-            Ver la comparación completa →
-          </EnlacePrototipo>
-        </p>
+        <div className="wd-banner-inner mx-auto grid max-w-contenido grid-cols-1 items-center gap-10 px-6 sm:px-10 lg:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)] lg:gap-12">
+          {/* Izquierda — título, descripción y CTA, en blanco sobre la foto */}
+          <div className="text-white">
+            <Etiqueta sobreOscuro>Reserva directa</Etiqueta>
+            <h2 className="mt-3 text-balance font-display text-h2 font-semibold">
+              ¿Por qué reservar aquí y no en un portal?
+            </h2>
+            <p className="mt-4 max-w-md text-lead text-white/80">
+              Mismo precio que en los portales — pero con todo esto incluido.
+            </p>
+            <div className="mt-7">
+              <Boton href="#" tamaño="lg" onClick={(e) => e.preventDefault()}>
+                Ver disponibilidad
+              </Boton>
+            </div>
+          </div>
+
+          {/* Derecha — los dos boletos. Móvil: un boleto + toggle. */}
+          <div>
+            {/* Móvil/tablet: toggle + un boleto (el `key` remonta al cambiar) */}
+            <div className="lg:hidden">
+              <div className="flex justify-center">
+                <div
+                  role="group"
+                  aria-label="Comparar cómo reservar"
+                  className="inline-flex rounded-chip bg-white/15 p-1 ring-1 ring-white/25 backdrop-blur-sm"
+                >
+                  {VARIANTES.map((v) => (
+                    <button
+                      key={v.id}
+                      type="button"
+                      aria-pressed={sel === v.id}
+                      onClick={() => setSel(v.id)}
+                      className={`rounded-chip px-4 py-1.5 text-sm font-semibold transition-colors ${
+                        sel === v.id ? 'bg-white text-navy' : 'text-white/80 hover:text-white'
+                      }`}
+                    >
+                      {v.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <BoletoReserva key={sel} variante={sel} cuerpoAnimado className="mx-auto mt-6 w-full max-w-boleto-ancho" />
+            </div>
+
+            {/* Desktop: STACK — el portal más chico, más abajo y tapado por el
+                directo (items-start: sin stretch, cada uno con su altura
+                natural; el margen negativo -ml los solapa). La columna entera
+                sobresale del banner (margin-block negativo, en CSS). */}
+            <div className="wd-boletos-desktop hidden lg:flex lg:items-start lg:justify-center">
+              <BoletoReserva
+                variante="portal"
+                className="boleto--fondo w-boleto-ancho-banner-fondo shrink-0"
+                style={{ marginTop: 'var(--spacing-boleto-stack-caida)' }}
+              />
+              <BoletoReserva
+                variante="directo"
+                className="boleto--frente w-boleto-ancho-banner shrink-0"
+                style={{ marginLeft: 'calc(var(--spacing-boleto-stack-solape) * -1)' }}
+              />
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   )

@@ -62,12 +62,20 @@ click (las fotos son de la web actual, hace falta internet).
   reales de los platos** (`images/food/*.png`) que ningún competidor tiene
   (hallazgo de la auditoría). Decisión de Samuel 2026-07-13: **el diseño usa las
   fotos reales de la web actual**, no stock.
-- La marca actual (langosta pirata caricaturesca, azules saturados, amarillos,
-  barra de redes de 5 colores) **no se hereda en la UI**: la auditoría ya señaló
-  que choca con el posicionamiento premium adults-only y precios sobre mercado.
-- El logo langosta es un activo del cliente (no lo rediseñamos sin encargo), pero
-  el rediseño puede: (a) usar un wordmark tipográfico "Hispaniola" como marca
-  visual dominante y (b) reciclar la langosta como **sello/acento coral** pequeño.
+- La paleta de la marca actual (azules saturados, amarillos, barra de redes de 5
+  colores) **no se hereda en la UI**: la auditoría ya señaló que choca con el
+  posicionamiento premium adults-only y precios sobre mercado.
+- **El logo sí se hereda** (decisión de Samuel, 2026-07-14, revierte el criterio
+  original de este documento). El lockup real del cliente — langosta pirata +
+  "Hispaniola" script — se usa tal cual en el header; no se rediseña. El wordmark
+  tipográfico que el rediseño usaba como marca dominante queda descartado.
+  - Assets en `app/public/marca/`: `logo.png` (lockup original, texto oscuro) y
+    `logo-hispaniola-white.png` (variante reversed que aporta Samuel — langosta a
+    color + texto blanco), necesaria porque sobre el video del hero el texto
+    oscuro del lockup original es ilegible.
+  - El resto de la piel (marfil, navy, coral con cuentagotas) **no cambia**: el
+    logo es el único punto donde entra la marca caricaturesca, y por eso el resto
+    de la UI tiene que seguir sosteniendo el tono premium.
 
 ## 2. Restricción transversal (aplica a ambas direcciones)
 

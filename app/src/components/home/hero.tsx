@@ -1,6 +1,8 @@
-import { useEffect, useRef, useState } from 'react'
-import { ArrowRight, Check } from 'lucide-react'
+import { useEffect, useRef, useState, type CSSProperties } from 'react'
+import { ArrowRight } from 'lucide-react'
 import { Boton } from '@/components/ui/boton'
+import { InsigniaConfianza } from '@/components/ui/insignia-confianza'
+import { Pajaros } from '@/components/ui/pajaros'
 import { Header } from './header'
 import { TickerHero } from './ticker-hero'
 import { useDevFlag } from '@/dev/use-dev-flag'
@@ -25,9 +27,9 @@ export function Hero() {
     if (v === 'poster') setForzarPoster(true)
   })
 
-  // [dev-mode] ?dev-cta=hover congela el catamarán FUERA del botón, sin
-  // depender de un puntero real → es el frame que viaja a Figma (igual que
-  // ?dev-dock=activo con el hover del ticker). Ver dev-registry.ts
+  // [dev-mode] ?dev-cta=hover congela el catamarán ZARPADO (asomando por
+  // arriba del botón), sin depender de un puntero real → es el frame que
+  // viaja a Figma (igual que ?dev-dock=activo con el ticker). Ver dev-registry.ts
   const [forzarCatamaran, setForzarCatamaran] = useState(false)
   useDevFlag('dev-cta', (v) => {
     if (v === 'hover') setForzarCatamaran(true)
@@ -49,15 +51,17 @@ export function Hero() {
   return (
     <>
       <section id="hero" className="px-hero-margen pt-hero-margen sm:px-hero-margen-sm sm:pt-hero-margen-sm">
-        {/* v3-F13 (PLAN-v3.md §15.5): flex-col + min-h-hero-alto (78svh, solo
-            desde sm — en móvil el contenido manda) para que el hero ocupe
-            ~78% del alto de pantalla y deje ver la banda de premios sin
-            scroll. svh, no vh/dvh: vh es el viewport GRANDE en móvil (la
-            barra de URL escondida) y dvh baila mientras se scrollea, con el
-            ticker a caballo del borde inferior. min-height es un MÍNIMO: si
-            el contenido natural crece, el 78% deja de cumplirse en silencio
-            (Trampa §15.10 №1) — por eso el padding del bloque de contenido
-            se recortó (más abajo) para mantenerlo por debajo del techo. */}
+        {/* v3-F13 (PLAN-v3.md §15.5): flex-col + min-h-hero-alto (solo desde
+            sm — en móvil el contenido manda). svh, no vh/dvh: vh es el
+            viewport GRANDE en móvil (la barra de URL escondida) y dvh baila
+            mientras se scrollea, con el ticker a caballo del borde inferior.
+            min-height es un MÍNIMO: si el contenido natural crece, el %
+            deja de cumplirse en silencio (Trampa §15.10 №1) — por eso el
+            padding del bloque de contenido se recortó (más abajo) para
+            mantenerlo por debajo del techo.
+            v3-F21 (Samuel, 2026-07-15): sube a 84svh (antes 78svh) — el hero
+            «un poco más alto», ya NO persiguiendo que la banda de premios se
+            vea entera sin scroll (--spacing-hero-alto, tokens.css). */}
         <div className="relative flex flex-col rounded-hero sm:min-h-hero-alto">
           <div className="absolute inset-0 overflow-hidden rounded-hero">
             <video
@@ -89,12 +93,17 @@ export function Hero() {
           <div className="relative z-10 flex flex-1 flex-col">
             <Header variante="sobreVideo" />
 
-            {/* La pirámide de confianza (PLAN-v3.md §14): el rating (lo más
-                condensado) sube arriba del título, en el slot donde vivía el
-                eyebrow de localización — la localización no se pierde, el H1
-                ya la dice ("...de Punta Cana..."). Los 4 stats bajan aquí
-                desde su propia sección: los números son la prueba que debe
-                acompañar al CTA, no vivir solos en una pantalla aparte. */}
+            {/* La pirámide de confianza (PLAN-v3.md §14): el eyebrow de
+                localización que vivía arriba del título se retira — la
+                localización no se pierde, el H1 ya la dice ("...de Punta
+                Cana..."). Los 4 stats bajan aquí desde su propia sección: los
+                números son la prueba que debe acompañar al CTA, no vivir
+                solos en una pantalla aparte. v3-F17: las 3 insignias
+                (guirnalda de laurel, v3-F16) vivieron primero ARRIBA del
+                título, en ese mismo slot — Samuel: "no me gusta tanto como se
+                ve arriba del todo" (2026-07-14). Bajan a cerrar el bloque,
+                después del CTA y los 2 checks: como remate de confianza justo
+                antes del ticker, no como preámbulo antes del titular. */}
             {/* v3-F13 (PLAN-v3.md §15.5): flex-1 + justify-center reparte el
                 aire sobrante del min-h-hero-alto entre Header y este bloque;
                 pt-8 sm:pt-10 (antes pt-12 sm:pt-16 lg:pt-20) recorta el
@@ -115,20 +124,27 @@ export function Hero() {
                   sin cambios desde F12). El resto del bloque (rating, stats,
                   CTA) no tiene max-width propio. */}
               <div className="mx-auto max-w-5xl">
-                <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm text-white">
-                  <span className="text-amber-300">★★★★★</span>
-                  <span>
-                    <strong>4.9</strong> · 1.782 reseñas
-                  </span>
-                  <span className="rounded-chip bg-white/15 px-2.5 py-1 text-xs font-medium backdrop-blur-sm">
-                    #1 en TripAdvisor · 7 años
-                  </span>
-                  <span className="rounded-chip bg-white/15 px-2.5 py-1 text-xs font-medium backdrop-blur-sm">
-                    Premios Viator 22-24
-                  </span>
-                </div>
-                <h1 className="mt-3 text-balance font-display text-hero-movil font-semibold text-white sm:text-hero">
-                  Los catamaranes originales de Punta Cana, en grupos pequeños
+                {/* PRUEBA (Samuel, 2026-07-14) — 4ª iteración: el subrayado de
+                    ola viva SE QUEDA, pero el flotado suave («titulo-palabra»)
+                    ya no va en todo el titular — se restringe a las 2 palabras
+                    que lleva subrayadas, «catamaranes originales». El resto
+                    ("Los", "de", "Punta Cana, en grupos pequeños") es texto
+                    quieto, sin envolver en spans que no aportan nada si no
+                    animan. text-balance vuelve a decidir el salto de línea
+                    (ya no hace falta partirlo a mano: ninguna línea entera
+                    necesita ya su propio tratamiento). */}
+                <h1 className="text-balance font-display text-hero-movil font-semibold text-white sm:text-hero">
+                  Los{' '}
+                  <span className="titulo-subrayado">
+                    <span className="titulo-palabra" style={{ '--i': 0 } as CSSProperties}>
+                      catamaranes
+                    </span>{' '}
+                    <span className="titulo-palabra" style={{ '--i': 1 } as CSSProperties}>
+                      originales
+                    </span>
+                    <span className="titulo-ola" aria-hidden="true" />
+                  </span>{' '}
+                  de Punta Cana, en grupos pequeños
                 </h1>
                 <p className="mx-auto mt-4 max-w-xl text-lead text-white/90">
                   Snorkel en un vivero de coral real, cocina flotante con menú a tu elección y barcos a
@@ -151,59 +167,85 @@ export function Hero() {
 
                 {/* v3-F13 (PLAN-v3.md §15.8): columna, no fila — el botón
                     gana peso (tamaño="lg": más ancho, halo --shadow-cta,
-                    icono) y los 2 checks bajan debajo, uno junto al otro con
-                    una divisoria de 1px (oculta en móvil: apilados, una
-                    divisoria vertical entre filas no se lee). Iconos de
-                    lucide (ya usados en item-menu.tsx/menu-movil.tsx), no un
-                    "✓" de texto. */}
+                    icono) y las 2 condiciones bajan debajo, una junto a la
+                    otra con una divisoria de 1px (oculta en móvil: apiladas,
+                    una divisoria vertical entre filas no se lee).
+                    v3-F18 (Samuel, 2026-07-14): pierden el icono Check y bajan
+                    de opacidad (white/90 → white/70) — se barajó subirlas como
+                    insignia arriba del título, pero esa reassurance copy
+                    cumple su trabajo justo AL LADO del botón, en el instante
+                    de decidir el clic; su función es ser texto de letra
+                    pequeña, no una credencial que compita con las insignias
+                    de confianza (§F16/F17) por atención. */}
                 <div className="mt-8 flex flex-col items-center gap-4">
-                  {/* El catamarán REAL del cliente (recorte de
-                      hero-catamaran-2.webp) sale navegando por el borde
-                      derecho del CTA al pasar el ratón — hacia donde apunta la
-                      flecha del botón. Va espejado: en la foto original navega
-                      hacia la izquierda y saldría de espaldas.
-
-                      ⚠️ Vive FUERA del botón (hermano, no hijo) porque un hijo
-                      NUNCA se pinta por detrás del fondo de su padre: dentro
-                      del <a> el barco aparecería ENCIMA del coral desde el
-                      primer frame, en vez de asomar desde detrás. Como hermano
-                      anterior en el DOM y con el botón en `relative` (los dos
-                      posicionados → gana el último del DOM), el botón lo tapa
-                      mientras está dentro de sus límites: el propio fondo del
-                      botón es la puerta por la que sale.
-
-                      El barco es MÁS ALTO que el botón, así que en reposo
-                      asomaría por arriba y por abajo — de ahí el opacity-0
-                      (no basta con esconderlo detrás). Decorativo: alt vacío y
-                      aria-hidden. Con prefers-reduced-motion no se mueve ni
-                      aparece; no se pierde nada. */}
-                  <span className="group relative inline-flex">
-                    <img
-                      src="/fotos/catamaran-recorte.webp"
-                      alt=""
-                      aria-hidden="true"
-                      width={276}
-                      height={360}
-                      className={`pointer-events-none absolute right-0 top-1/2 h-28 w-auto -translate-y-[58%] opacity-0 transition-all duration-500 ease-out motion-safe:group-hover:translate-x-20 motion-safe:group-hover:opacity-100 ${
-                        forzarCatamaran ? 'translate-x-20 opacity-100' : '' // [dev-mode]
-                      }`}
-                    />
-                    <Boton href="#tours" tamaño="lg" className="relative">
+                  {/* CTA «mar» (pedido de Samuel, 2026-07-14): el botón lleva
+                      su propio mar — 2 capas de olas en deriva infinita al
+                      pie, y el catamarán REAL del cliente (recorte de
+                      hero-catamaran-2.webp, espejado para navegar hacia la
+                      flecha) amarrado en un hueco que NACE EN 0 y se EXPANDE
+                      al hover (v3-F14.1: antes el hueco estaba siempre
+                      reservado — 120px de vacío a la derecha del texto en
+                      reposo, feedback de Samuel). Al hover ZARPA: sale de
+                      abajo (el casco se recorta en el borde inferior del
+                      botón, la línea de flotación) y el mástil asoma por
+                      ARRIBA del botón — más arriba que en la 1ª iteración
+                      (subió --spacing-cta-barco-alto: a la altura anterior,
+                      la mayor parte del barco quedaba pegada sobre la cara
+                      coral en vez de leerse saliendo de ella). Toda la
+                      mecánica (ventana de recorte asimétrica, olas con mask,
+                      reduced-motion) vive en componentes.css. */}
+                  <Boton
+                    href="#tours"
+                    tamaño="lg"
+                    className={`cta-mar relative ${forzarCatamaran ? 'cta-mar--forzado' : ''}`} // [dev-mode]
+                  >
+                    {/* La ventana del barco va ANTES de las olas en el DOM:
+                        las olas pintan encima y el casco navega ENTRE ellas. */}
+                    <span aria-hidden="true" className="cta-barco-ventana">
+                      <img src="/fotos/catamaran-recorte.webp" alt="" width={276} height={360} className="cta-barco" />
+                    </span>
+                    {/* La bandada va FUERA de la ventana: allí dentro el
+                        overflow:hidden (que corta el casco en la línea de
+                        flotación) se comería a los pájaros que vuelan alto. */}
+                    <Pajaros className="cta-pajaros" />
+                    <span aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden rounded-btn">
+                      <span className="cta-ola cta-ola--fondo bg-white/20" />
+                      <span className="cta-ola bg-white/30" />
+                    </span>
+                    {/* relative: ventana y olas están posicionadas y pintarían
+                        encima del texto si éste no lo estuviera también. */}
+                    <span className="relative inline-flex items-center gap-2">
                       Ver disponibilidad
                       <ArrowRight className="size-5" aria-hidden="true" />
-                    </Boton>
-                  </span>
+                    </span>
+                  </Boton>
 
-                  <div className="flex flex-col items-center gap-2 text-xs text-white/90 sm:flex-row sm:gap-4">
-                    <span className="flex items-center gap-1.5">
-                      <Check className="size-4 shrink-0" strokeWidth={3} aria-hidden="true" />
-                      Cancelación gratis hasta 7 días antes
-                    </span>
-                    <span className="hidden h-4 w-px bg-white/30 sm:block" aria-hidden="true" />
-                    <span className="flex items-center gap-1.5">
-                      <Check className="size-4 shrink-0" strokeWidth={3} aria-hidden="true" />
-                      Confirma con solo 25% de depósito
-                    </span>
+                  <div className="flex flex-col items-center gap-1.5 text-xs text-white/70 sm:flex-row sm:gap-3">
+                    <span>Cancelación gratis hasta 7 días antes</span>
+                    <span className="hidden h-3 w-px bg-white/20 sm:block" aria-hidden="true" />
+                    <span>Confirma con solo 25% de depósito</span>
+                  </div>
+
+                  {/* v3-F16/F17 (pedido de Samuel, 2026-07-14): las 3 insignias
+                      (antes fila de texto ★★★★★ 4.9 + 2 chips píldora) pasan al
+                      diseño de guirnalda de laurel — mismo trazado que
+                      RatingBadge de Untitled UI (MIT, gratuito), portado a
+                      mano con nuestros tokens (ver insignia-confianza.tsx: no
+                      se instaló la librería, cero dependencia de runtime para
+                      este componente). Vivieron primero arriba del título
+                      (mismo slot que el eyebrow de localización); Samuel:
+                      "no me gusta tanto como se ve arriba del todo" — bajan
+                      a cerrar el bloque, después del CTA y los 2 checks, como
+                      remate de confianza justo antes del ticker. #1
+                      TripAdvisor y Premios Viator no tienen una calificación
+                      propia — llevan 5 estrellas como remate decorativo de
+                      "excelencia", no como cifra citada; la única calificación
+                      real (4.9, con relleno fraccionario en la 5ª estrella)
+                      es la de reseñas. */}
+                  <div className="mt-2 flex flex-wrap items-start justify-center gap-x-8 gap-y-4">
+                    <InsigniaConfianza calificacion={4.9} titulo="4.9" subtitulo="1.782 reseñas" />
+                    <InsigniaConfianza calificacion={5} titulo="#1 en TripAdvisor" subtitulo="7 años consecutivos" />
+                    <InsigniaConfianza calificacion={5} titulo="Premios Viator" subtitulo="2022 · 2023 · 2024" />
                   </div>
                 </div>
               </div>

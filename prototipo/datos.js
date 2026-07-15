@@ -104,7 +104,7 @@ var TOURS = {
     duracionCorta: '3-4 h',
     rating: 4.9,
     resenas: 1782,
-    precioLight: 55,
+    precioLight: 75,
     upgradePremium: 15,
     horarios: [
       { hora: 'A coordinar', regreso: '', quedan: null }

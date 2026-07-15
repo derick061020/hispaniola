@@ -181,7 +181,7 @@
       '</div>' +
       '<div class="benef">' +
       '<h4>Barco entero para tu grupo</h4>' +
-      '<p>De 10 a 120 personas · desde US$ 55/pers · comida a bordo, barra y coordinación.</p>' +
+      '<p>De 10 a 120 personas · desde US$ 75/pers · comida a bordo, barra y coordinación.</p>' +
       '<p style="margin-top:8px; font-weight:700;">★ Couples\' Choice WeddingWire 2018-2021</p>' +
       '<a href="#/eventos" class="btn btn-primario btn-bloque btn-sm" style="margin-top:10px;">Pedir cotización</a>' +
       '</div></div>';
@@ -1431,7 +1431,7 @@
       '<div style="display:flex; gap:10px; flex-wrap:wrap;">' +
       '<a href="#form-eventos" class="btn btn-primario">Pedir cotización</a>' +
       '<a href="https://wa.me/18293052804" target="_blank" rel="noopener" class="btn btn-secundario">💬 WhatsApp directo</a>' +
-      '</div><p class="meta" style="margin-top:10px;">Respuesta en menos de 24 h · Desde US$ 55/persona</p></div>' +
+      '</div><p class="meta" style="margin-top:10px;">Respuesta en menos de 24 h · Desde US$ 75/persona</p></div>' +
       '<div class="img" style="min-height:280px;">Foto — brindis a bordo</div>' +
       '</div>' +
       '<div class="tabla-stats"><div><strong>120</strong>personas máx.</div><div><strong>3-4 h</strong>de navegación</div>' +
