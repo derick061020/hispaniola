@@ -8,10 +8,10 @@ import { useDevFlag } from '@/dev/use-dev-flag'
 //   [Eyebrow centrado]
 //   [h2 centrado: «4.9 de 5 en 1.782 reseñas»]
 //   ┌──────────────────┬──────────────────────────────────┐
-//   │                  │                                  │
+//   │                  │  «                              │
 //   │  <video>         │  [Carrusel step-based, 2 cards] │
 //   │  + gradient      │  r0/r1 → r1/r2 → r2/r3 → ...    │
-//   │  + texto blanco  │                                  │
+//   │  + texto blanco  │  (comilla decorativa de fondo)  │
 //   │  abajo-izq       │  (avanza, espera 4s, avanza...)  │
 //   │                  │                                  │
 //   └──────────────────┴──────────────────────────────────┘
@@ -56,14 +56,25 @@ function Iniciales({ nombre }: { nombre: string }) {
 
 function ReviewCard({ review }: { review: Review }) {
   return (
-    <div className="flex h-full flex-col justify-between rounded-card bg-papel-hueso p-6 lg:p-7">
-      {/* Texto del testimonio — full width arriba */}
-      <p className="text-base text-navy lg:text-lg">
+    <div className="relative flex h-full flex-col justify-between rounded-card bg-papel-hueso p-6 lg:p-7">
+      {/* Comilla decorativa de fondo — grande, serif, color navy al 10%,
+          no seleccionable y oculta para lectores de pantalla. Hace referencia
+          visual de que es un quote sin competir con el texto (el inline
+          &ldquo;…&rdquo; del texto sigue delimitando la cita). */}
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute -left-2 -top-4 select-none font-serif text-[10rem] leading-none text-navy/10 lg:-left-3 lg:-top-5"
+      >
+        &ldquo;
+      </span>
+      {/* Texto del testimonio — full width arriba, relative para ir por
+          encima de la comilla decorativa. */}
+      <p className="relative text-base text-navy lg:text-lg">
         &ldquo;{review.texto}&rdquo;
       </p>
 
       {/* Bottom: 3 sub-columnas (foto | nombre+social | estrellas a la derecha) */}
-      <div className="mt-6 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-4">
+      <div className="relative mt-6 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-4">
         <Iniciales nombre={review.autor} />
         <div className="min-w-0">
           <p className="truncate text-sm font-semibold text-navy lg:text-base">{review.autor}</p>
