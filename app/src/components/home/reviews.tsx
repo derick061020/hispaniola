@@ -15,7 +15,6 @@ import { useDevFlag } from '@/dev/use-dev-flag'
 //   │  abajo-izq       │  (avanza, espera 4s, avanza...)  │
 //   │                  │                                  │
 //   └──────────────────┴──────────────────────────────────┘
-//              [Ver más → TripAdvisor · Facebook]
 //
 // El video llena toda la altura de su columna (mismo alto que el
 // carrusel). El carrusel es step-based, NO un ticker continuo: avanza
@@ -26,10 +25,6 @@ import { useDevFlag } from '@/dev/use-dev-flag'
 // ⚠️ El video es placeholder (hero.mp4 = catamaran navegando, asset real
 // de la marca). La referencia visual pide un video del cofundador hablando
 // a cámara en primer plano — cuando llegue, se cambia solo el `src`.
-//
-// El link "ver más" NO apunta a Viator (NOTAS['home-reviews'] del
-// prototipo) pero sí a TripAdvisor y Facebook (los 2 canales con
-// presencia propia verificable del cliente, según la auditoría del sitio).
 
 function StarRating({ count = 5 }: { count: number }) {
   return (
@@ -130,7 +125,6 @@ export function Reviews() {
   // translateY(-N * cardHeight) (el wrap) muestra el mismo par de cards
   // que translateY(0) — sin él, el "salto" del wrap sería visible.
   const pista = [...QUOTES, ...QUOTES]
-  const visibleIndex = ((index % N) + N) % N
 
   return (
     <section className="px-5 py-seccion-sm sm:px-10 sm:py-seccion">
@@ -192,49 +186,8 @@ export function Reviews() {
                 ))}
               </div>
             </div>
-
-            {/* Pagination dots — sutil, dan control y orientación sin
-                romper la estética limpia. La dot activa es coral, las
-                otras son line-fuerte. */}
-            <div className="mt-6 flex justify-center gap-2" role="tablist" aria-label="Navegar reseñas">
-              {QUOTES.map((_, i) => (
-                <button
-                  key={i}
-                  type="button"
-                  role="tab"
-                  aria-selected={visibleIndex === i}
-                  aria-label={`Ir a la reseña ${i + 1} de ${N}`}
-                  onClick={() => setIndex(i)}
-                  className={`h-1.5 rounded-full transition-all ${
-                    visibleIndex === i ? 'w-6 bg-coral' : 'w-1.5 bg-linea-fuerte hover:bg-navy-soft'
-                  }`}
-                />
-              ))}
-            </div>
           </div>
         </div>
-
-        {/* Ver más — fuera del grid, debajo de las 2 columnas */}
-        <p className="mt-8 text-center text-sm text-navy-soft">
-          Ver más reseñas →{' '}
-          <a
-            href="https://www.tripadvisor.com"
-            target="_blank"
-            rel="noopener"
-            className="font-semibold text-aqua-dark hover:underline"
-          >
-            TripAdvisor
-          </a>
-          {' · '}
-          <a
-            href="https://www.facebook.com"
-            target="_blank"
-            rel="noopener"
-            className="font-semibold text-aqua-dark hover:underline"
-          >
-            Facebook
-          </a>
-        </p>
       </div>
     </section>
   )
