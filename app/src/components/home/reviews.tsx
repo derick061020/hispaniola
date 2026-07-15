@@ -56,7 +56,13 @@ function Iniciales({ nombre }: { nombre: string }) {
 
 function ReviewCard({ review }: { review: Review }) {
   return (
-    <div className="relative flex h-full flex-col justify-between rounded-card bg-papel-hueso p-6 lg:p-7">
+    // overflow-hidden en la card: recorta la comilla decorativa en el borde
+    // superior de la card (en vez de depender del overflow:hidden del
+    // contenedor del carrusel). La card pasa a ser una unidad visual
+    // autocontenida — su contenido nunca sale de sus límites, pase lo que
+    // pase con el carrusel o el layout padre. Mismo efecto visual que
+    // `overflow: clip` pero con soporte universal.
+    <div className="relative flex h-full flex-col justify-between overflow-hidden rounded-card bg-papel-hueso p-6 lg:p-7">
       {/* Comilla decorativa de fondo — más grande (50% sobre la versión
           anterior: 14rem → 21rem = 336px), con margin negativo hacia
           arriba (-top-12 / lg:-top-16) para que la parte superior
