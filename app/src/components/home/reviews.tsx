@@ -63,16 +63,15 @@ function ReviewCard({ review }: { review: Review }) {
     // pase con el carrusel o el layout padre. Mismo efecto visual que
     // `overflow: clip` pero con soporte universal.
     <div className="relative flex h-full flex-col justify-between overflow-hidden rounded-card bg-papel-hueso p-6 lg:p-7">
-      {/* Comilla decorativa de fondo — más grande (50% sobre la versión
-          anterior: 14rem → 21rem = 336px), con margin negativo hacia
-          arriba (-top-12 / lg:-top-16) para que la parte superior
-          sobresalga por encima del card, y más transparente
-          (text-navy/5 vs /10 anterior) para que se sienta como un
-          watermark editorial sin competir con el texto. Sigue siendo
-          no seleccionable y oculta para lectores de pantalla. */}
+      {/* Comilla decorativa de fondo — más grande aún (21rem → 28rem =
+          448px) y con menos margin negativo arriba (-top-12 → -top-4 en
+          móvil, lg:-top-16 → lg:-top-6 en desktop): la comilla ya no
+          "asoma" tanto por encima del card, sino que vive más dentro
+          del card, más integrada al contenido. Opacidad se mantiene
+          (text-navy/5) — sigue siendo un watermark editorial sutil. */}
       <span
         aria-hidden="true"
-        className="pointer-events-none absolute right-8 -top-12 select-none font-serif text-[21rem] leading-none text-navy/5 lg:-top-16"
+        className="pointer-events-none absolute right-8 -top-4 select-none font-serif text-[28rem] leading-none text-navy/5 lg:-top-6"
       >
         &ldquo;
       </span>
