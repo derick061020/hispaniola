@@ -6,7 +6,6 @@ import { WhyDirect } from '@/components/home/why-direct'
 import { IncluyeCrucero } from '@/components/home/incluye-crucero'
 import { Diferenciadores } from '@/components/home/diferenciadores'
 import { Reviews } from '@/components/home/reviews'
-import { EventosBanda } from '@/components/home/eventos-banda'
 import { GaleriaFaqCierre } from '@/components/home/galeria-faq-cierre'
 import { Footer } from '@/components/home/footer'
 
@@ -23,7 +22,6 @@ export function HomePage() {
       <IncluyeCrucero />
       <Diferenciadores />
       <Reviews />
-      <EventosBanda />
       <GaleriaFaqCierre />
       <Footer />
     </div>

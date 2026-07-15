@@ -228,13 +228,6 @@ export const devSections: DevSection[] = [
     title: 'Home — Cierre',
     screens: [
       {
-        title: 'Banda de eventos',
-        route: '/',
-        status: 'done',
-        description: 'CTA de eventos privados (bodas, cumpleaños, team-building) sobre card navy.',
-        states: [],
-      },
-      {
         title: 'Galería + FAQ + cierre',
         route: '/',
         status: 'done',
