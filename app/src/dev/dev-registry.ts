@@ -219,8 +219,15 @@ export const devSections: DevSection[] = [
         title: 'Reviews',
         route: '/',
         status: 'done',
-        description: '3 reseñas verificadas + link a TripAdvisor/Facebook (nunca a Viator, ver nota en el componente).',
-        states: [],
+        description: 'Layout 2 columnas: video del cofundador a la izquierda (placeholder = hero.mp4, asset real de la marca — cuando llegue un video del cofundador hablando a cámara, se cambia solo el src) + frase atribuida a Hispaniola en blockquote con border-left coral. A la derecha, 5 reseñas (data/home.ts → QUOTES) en slider vertical auto-rotante que muestra 2 a la vez: pista duplicada 2x + translateY -50% en bucle (mismo patrón que el ticker del hero). Las cards son grandes: lugar en uppercase + 5 estrellas con el token text-estrella + texto + avatar con iniciales (aqua-tint, no inventamos fotos de clientes) + nombre + plataforma + fecha. El link "ver más" NO apunta a Viator (NOTAS["home-reviews"] del prototipo — no regalar tráfico al canal que vende el mismo tour) pero sí a TripAdvisor y Facebook (los 2 canales con presencia propia verificable del cliente, según la auditoría del sitio). Constantes del bucle en tokens.css: --reviews-duracion (25s, 5 reseñas × 5s cada una), --spacing-review-alto (18rem), --spacing-review-gap (1.5rem).',
+        states: [
+          {
+            label: 'Slider pausado',
+            kind: 'variante',
+            to: '/?dev-reviews=pausado',
+            note: 'Congela la animación del slider → frame limpio para Figma. Misma mecánica que ?dev-ticker=pausado.',
+          },
+        ],
       },
     ],
   },

@@ -1130,3 +1130,85 @@
     transition: none;
   }
 }
+
+/* ============================================================
+   Reviews slider (v5, pedido de Samuel 2026-07-15) — slider vertical
+   auto-rotante de la sección «Reseñas verificadas». 2 cards visibles a
+   la vez, en bucle infinito que va bajando (la pista está duplicada 2x
+   y la animación traduce -50% en Y, mismo patrón que el ticker del hero
+   y las olas del CTA).
+
+   POR QUÉ ES CSS A MEDIDA: el loop infinito vertical con pista duplicada
+   se traduce a Figma como componente interactivo (playbook
+   animaciones-a-figma). Implementarlo con estado React (index +
+   setInterval) perdería la fuente de verdad de las constantes y haría el
+   traspaso más difícil. Aquí el bucle es 100% declarativo.
+
+   Trampa del -50% (misma que el ticker horizontal): si el gap va como
+   `gap` en la pista, el -50% no cae EXACTO al inicio de la segunda copia
+   — el loop "salta". La separación va como `margin-bottom` en CADA slot
+   (no en la última, no en la primera: en TODAS), y la pista sin gap. Así
+   la suma (altura × N) + (margin × N) = 50% del track duplicado, y el
+   empalme del loop es invisible.
+   ============================================================ */
+
+.reviews-slider {
+  overflow: hidden;
+  /* Altura = 2 cards (--spacing-review-alto) + 1 gap (--spacing-review-gap)
+     — exactamente lo que cabe en la ventana visible. */
+  height: calc(2 * var(--spacing-review-alto) + var(--spacing-review-gap));
+  position: relative;
+}
+
+.reviews-slider-track {
+  display: flex;
+  flex-direction: column;
+  animation: reviews-slide var(--reviews-duracion) linear infinite;
+  will-change: transform;
+}
+
+.reviews-slider-slot {
+  height: var(--spacing-review-alto);
+  margin-bottom: var(--spacing-review-gap);
+  flex-shrink: 0;
+}
+.reviews-slider-slot:last-child {
+  /* El margin del ÚLTIMO slot también suma al total — sin esto el -50%
+     caería antes del inicio de la segunda copia y el loop saltaría. */
+  margin-bottom: var(--spacing-review-gap);
+}
+
+@keyframes reviews-slide {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-50%);
+  }
+}
+
+/* Pausa al hover (mismo patrón que el ticker). Se aplica a cualquier
+   descendiente del contenedor, no solo al track — si el cursor entra en
+   el área de un slot (que está dentro del contenedor), también pausa. */
+@media (hover: hover) {
+  .reviews-slider:hover .reviews-slider-track {
+    animation-play-state: paused;
+  }
+  .reviews-slider--pausado .reviews-slider-track {
+    animation-play-state: paused;
+  }
+}
+
+/* Con prefers-reduced-motion: sin animación, la pista es scrollable a
+   mano. Mostrar 2 cards de alto + un poquito más para que se note que se
+   puede scrollear — sin esto, con la altura exacta de 2 cards no hay
+   pista visual de que hay más contenido. */
+@media (prefers-reduced-motion: reduce) {
+  .reviews-slider-track {
+    animation: none;
+  }
+  .reviews-slider {
+    overflow-y: auto;
+    height: calc(3 * var(--spacing-review-alto) + 2 * var(--spacing-review-gap));
+  }
+}

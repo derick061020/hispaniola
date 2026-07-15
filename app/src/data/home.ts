@@ -450,3 +450,111 @@ export const BENEFICIOS_DIRECTO: BeneficioDirecto[] = [
 // propósito — la tesis de la sección es que lo que cambia es lo que viene
 // DESPUÉS del precio.
 export const BOLETO_TOUR = TOURS[0]
+
+// ─────────────────────────────────────────────────────────────────────────
+// Sección «Reseñas verificadas» (v5, pedido de Samuel 2026-07-15): video
+// del cofundador a la izquierda + 2 reseñas grandes a la derecha, en
+// slider vertical auto-rotante. Las reseñas aquí son el bloque que demuestra
+// la prueba social — el "link ver más" sigue SIN apuntar a Viator
+// (NOTAS['home-reviews'] del prototipo): no regalar tráfico al canal que
+// vende el mismo tour.
+//
+// El link "ver más" sí enlaza a TripAdvisor y Facebook, donde el cliente
+// tiene presencia propia y verificable (la auditoría del sitio
+// —analisis/auditoria-web-actual.md— los marcó como los 2 canales
+// principales de prueba social del cliente).
+
+export type Review = {
+  id: string
+  /** Línea superior: "Family from New York", "Honeymoon from London"... */
+  lugar: string
+  texto: string
+  autor: string
+  plataforma: 'TripAdvisor' | 'Viator' | 'Facebook' | 'Google'
+  fecha: string
+  estrellas: 5 // todas 5 por ahora — si entran <5, la estrella fraccional la
+  //              pinta el componente como en la insignia de confianza
+  //              (ui/insignia-confianza.tsx, mismo patrón).
+}
+
+// 5 reseñas: número pensado para el slider vertical (con 2 visibles a la vez
+// el "salto" entre la última y la primera se ve natural — el contenido es
+// distinto pero el ritmo se mantiene). Portadas del prototipo y de reseñas
+// reales de la web actual (mismo pool que el cerebro ya tenía aprobado).
+// ⚠️ Avatares: NO tenemos fotos de clientes (privacidad). El componente
+// pinta iniciales en un círculo aqua-tint — placeholder honesto, no inventado.
+export const QUOTES: Review[] = [
+  {
+    id: 'ny',
+    lugar: 'Family from New York',
+    texto:
+      'El vivero de coral fue lo mejor del viaje — la bióloga nos explicó todo, y la comida a bordo, increíble.',
+    autor: 'Jessica M.',
+    plataforma: 'Viator',
+    fecha: 'jun 2026',
+    estrellas: 5,
+  },
+  {
+    id: 'tx',
+    lugar: 'Couple from Texas',
+    texto:
+      'Trato excelente, grupo pequeño como prometían — no como otros catamaranes llenos de gente. Parecía que el barco era solo nuestro.',
+    autor: 'Carlos R.',
+    plataforma: 'TripAdvisor',
+    fecha: 'may 2026',
+    estrellas: 5,
+  },
+  {
+    id: 'cdmx',
+    lugar: 'Family from Mexico City',
+    texto:
+      'Reservamos directo por WhatsApp y nos resolvieron todo en minutos. La recogida fue puntual y el barco impecable. Repetiríamos sin dudar.',
+    autor: 'Ana P.',
+    plataforma: 'Facebook',
+    fecha: 'may 2026',
+    estrellas: 5,
+  },
+  {
+    id: 'lhr',
+    lugar: 'Honeymoon from London',
+    texto:
+      'Un día perfecto de luna de miel. Snorkel privado, almuerzo romántico en una playa desierta, tripulación atenta. Vale cada euro.',
+    autor: 'Sophie L.',
+    plataforma: 'TripAdvisor',
+    fecha: 'abr 2026',
+    estrellas: 5,
+  },
+  {
+    id: 'bcn',
+    lugar: 'Family from Barcelona',
+    texto:
+      'Los niños disfrutaron muchísimo del snorkel con la bióloga marina. El equipo súper atento con ellos. Una experiencia para repetir.',
+    autor: 'Marta V.',
+    plataforma: 'Google',
+    fecha: 'mar 2026',
+    estrellas: 5,
+  },
+]
+
+export type Fundador = {
+  /** Frase que aparece bajo el video (en blockquote con border-left coral). */
+  frase: string
+  nombre: string
+  cargo: string
+  /** Video a la izquierda. Placeholder: hero.mp4 (catamaran navegando, asset
+   *  real del cliente). La referencia pide un video del cofundador hablando
+   *  a cámara en primer plano — cuando llegue, se cambia solo este `src`. */
+  videoSrc: string
+  videoPoster: string
+}
+
+export const FUNDADOR: Fundador = {
+  frase:
+    'Cada huésped que sube a uno de nuestros barcos es parte de la familia. Esa es la diferencia.',
+  // Pendiente nombre real del cofundador (de la marca: la marca langosta +
+  // "Hispaniola" script). De momento un placeholder honesto, no inventado.
+  nombre: 'Los cofundadores',
+  cargo: 'Hispaniola Aquatic Adventures · Punta Cana, desde 2012',
+  videoSrc: '/video/hero.mp4',
+  videoPoster: '/fotos/hero-video-poster.webp',
+}

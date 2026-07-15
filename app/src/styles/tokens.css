@@ -223,6 +223,23 @@
   --carrusel-transicion: 600ms; /* deslizado de una foto a la siguiente */
   --carrusel-easing: cubic-bezier(0.4, 0, 0.2, 1);
 
+  /* Slider vertical de «Reseñas verificadas» (v5, pedido de Samuel
+     2026-07-15) — 2 reseñas visibles a la vez, pista duplicada 2x,
+     translateY -50% en bucle. Mismo patrón que el ticker del hero
+     (--ticker-*) y que las olas del CTA (--cta-ola-*): el loop infinito
+     se traduce a Figma como componente interactivo (playbook
+     animaciones-a-figma), y los delays salen de aquí, no "a ojo".
+     Pausa al hover; prefers-reduced-motion → scroll manual (mecánica
+     en componentes.css). */
+  /* 5 reseñas × 5s cada una = 25s de ciclo completo (el "salto" entre
+     la última y la primera se ve natural porque el contenido es distinto
+     pero el ritmo se mantiene — ver QUOTES en data/home.ts). */
+  --reviews-duracion: 25s;
+  --spacing-review-alto: 18rem; /* 288px — alto de cada card (puede ser
+                                    un pelín más en pantallas grandes,
+                                    lo decide el clamp en el CSS) */
+  --spacing-review-gap: 1.5rem; /* 24px entre cards */
+
   /* Cinta de premios (dentro de la sección de stats). Los 7 badges son MUY
      heterogéneos (bloque navy del LTG, cuadrado amarillo de WeddingWire,
      verdes de Viator/TripAdvisor, dorado de Luxury Travel Guide): se
