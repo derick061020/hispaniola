@@ -1,3 +1,4 @@
+import * as Button from '@/components/alignui/button'
 import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
 
 // Comparador anti-OTA (fix 1.6 de analisis/revision-wireframes.md).
@@ -20,9 +21,12 @@ export function ComparadorStrip() {
         Mismo precio que en Viator o Civitatis — aquí con <strong className="font-semibold text-navy">depósito del 25%</strong>
         , menú a elección y WhatsApp directo.
       </p>
-      <EnlacePrototipo className="shrink-0 whitespace-nowrap rounded-btn bg-papel px-3 py-2 text-xs font-semibold text-aqua-dark ring-1 ring-linea transition-colors hover:ring-aqua">
-        Ver comparación →
-      </EnlacePrototipo>
+      {/* Etapa A: Button neutral/stroke del sistema (xsmall) — la pastilla
+          blanca de antes, dicha en el idioma AlignUI. Sigue siendo
+          EnlacePrototipo debajo: /reserva-directa vive en el prototipo. */}
+      <Button.Root variant="neutral" mode="stroke" size="xsmall" className="shrink-0" asChild>
+        <EnlacePrototipo>Ver comparación →</EnlacePrototipo>
+      </Button.Root>
     </div>
   )
 }

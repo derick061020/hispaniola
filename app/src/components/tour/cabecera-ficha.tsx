@@ -1,4 +1,6 @@
 import { Link } from 'react-router-dom'
+import { Check } from 'lucide-react'
+import * as StatusBadge from '@/components/alignui/status-badge'
 import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
 import { Estrellas } from '@/components/ui/estrellas'
 import type { Tour } from '@/data/home'
@@ -8,20 +10,13 @@ import type { FichaTour } from '@/data/tours'
 // cancelación gratis, audiencia y duración como chips junto al H1 — el patrón
 // Civitatis/Viator. La prueba social y la tranquilidad ANTES de que el visitante
 // tenga que scrollear ni una vez.
+//
+// Etapa A (PLAN-ALIGNUI.md): los chips son StatusBadge del sistema. La antigua
+// distinción tono ok/neutro se traduce a su lenguaje: la cancelación es un
+// ESTADO positivo (completed + light = el par menta de siempre, via el slot
+// success), los metadatos (audiencia, duración, recogida) van en stroke.
 
 type Props = { tour: Tour; ficha: FichaTour }
-
-function Chip({ children, tono = 'neutro' }: { children: React.ReactNode; tono?: 'neutro' | 'ok' }) {
-  const tonos = {
-    neutro: 'bg-papel-hueso text-navy-sub ring-linea',
-    // Verde menta: el mismo par fondo/texto que ya usan los precios y el
-    // "✓ Cancelación gratis" de la TourCard de la home.
-    ok: 'bg-menta text-menta-texto ring-menta',
-  }
-  return (
-    <span className={`rounded-chip px-3 py-1 text-xs font-medium ring-1 ${tonos[tono]}`}>{children}</span>
-  )
-}
 
 export function CabeceraFicha({ tour, ficha }: Props) {
   return (
@@ -60,10 +55,24 @@ export function CabeceraFicha({ tour, ficha }: Props) {
             ni precio confirmado), y la recogida en hotel solo se anuncia en los
             tours de horario fijo. El chip "WiFi a bordo" del wireframe no está:
             el WiFi se cuenta en la sección Incluye de la home, no aquí. */}
-        {tour.booking !== 'consulta' ? <Chip tono="ok">✓ Cancelación gratis</Chip> : null}
-        <Chip>{tour.audienciaChip}</Chip>
-        <Chip>{ficha.duracion}</Chip>
-        {tour.booking === 'completo' ? <Chip>Recogida en hotel</Chip> : null}
+        {tour.booking !== 'consulta' ? (
+          <StatusBadge.Root status="completed" variant="light">
+            <StatusBadge.Icon as={Check} />
+            Cancelación gratis
+          </StatusBadge.Root>
+        ) : null}
+        <StatusBadge.Root status="disabled" variant="stroke">
+          {tour.audienciaChip}
+        </StatusBadge.Root>
+        <StatusBadge.Root status="disabled" variant="stroke">
+          {ficha.duracion}
+        </StatusBadge.Root>
+        {tour.booking === 'completo' ? (
+          <StatusBadge.Root status="completed" variant="stroke">
+            <StatusBadge.Dot />
+            Recogida en hotel
+          </StatusBadge.Root>
+        ) : null}
       </div>
     </div>
   )

@@ -17,6 +17,13 @@ import type { Tour } from '@/data/home'
 // Sin estado activo por sección visible (resaltar dónde estás): es un
 // IntersectionObserver y una decisión visual, no un olvido — decisión abierta
 // §13.8, si Samuel lo pide al verlo.
+//
+// Etapa A (PLAN-ALIGNUI.md): el inventario proponía TabMenuHorizontal aquí y
+// se DESCARTÓ mirándolo de cerca — es Radix Tabs, y un tablist sin tabpanels
+// miente a los lectores de pantalla (esto es una nav de anclas, no un
+// conmutador de vistas). Sin estado activo (§13.8) tampoco hay indicador que
+// ganar: el look ya coincide con el del sistema (label-sm/medium). Si algún
+// día entra el scroll-spy, se revisa — con nav+aria-current, no con Tabs.
 
 export function AnclasFicha({ tour }: { tour: Tour }) {
   // El salto va suave, pero con `scrollIntoView` y NO con
