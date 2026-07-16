@@ -230,6 +230,38 @@ export const devSections: DevSection[] = [
       },
     ],
   },
+  {
+    title: 'Ficha de tour',
+    screens: [
+      {
+        title: 'Ficha de tour (plantilla)',
+        route: '/tours/semi-privado',
+        status: 'wip',
+        description:
+          'La página donde se reserva (PLAN-TOURS.md). UNA plantilla data-driven para los 4 productos: el mismo layout, y el widget + las secciones que cada modo de `booking` puede sostener honestamente. En Figma es UNA página con frames de variante, no 4 diseños. Estrena la variante `solida` del Header (existía desde v3-F8 pero solo se usaba la `sobreVideo` dentro del hero) y `ScrollAlNavegar` (React Router no resetea el scroll al cambiar de ruta). T-F1: ruta, datos (data/tours.ts, portado verbatim de prototipo/datos.js) y cabecera — migaja, H1 (--text-h2: el mismo text style que un título de sección; el H1 manda por jerarquía, no por tamaño), rating con estrellas fraccionales (ui/estrellas.tsx, extraído de insignia-confianza.tsx para poder pintarlas sobre papel y no solo sobre el video) y los chips por modo. El funnel de reserva NO es parte de este build: sigue bloqueado por la decisión del motor xpotours (pendiente del cliente).',
+        states: [
+          {
+            label: 'Variante: cotización (Charter Privado)',
+            kind: 'variante',
+            to: '/tours/charter-privado',
+            note: 'booking: cotizacion — sin chip de "Recogida en hotel" (el horario se coordina). Su widget cotiza a medida en vez de vender fecha+hora.',
+          },
+          {
+            label: 'Variante: consulta (Isla Saona)',
+            kind: 'variante',
+            to: '/tours/isla-saona',
+            note: 'booking: consulta — el producto sin precio, capacidad ni galería confirmados. NO lleva chip de "Cancelación gratis": no se promete lo que no se puede sostener. Es la variante honesta; el dato sigue pendiente del cliente.',
+          },
+          {
+            label: 'Variante: familias (Snorkel Lovers)',
+            kind: 'variante',
+            to: '/tours/snorkel-lovers',
+            note: 'booking: completo, igual que Semi-Privado — cambia el copy (itinerario y FAQ adaptados a niños) y el precio ancla (US$ 98).',
+          },
+        ],
+      },
+    ],
+  },
 ]
 
 export function devStats() {

@@ -17,7 +17,17 @@ export type MenuId = 'tours' | 'eventos' | 'nosotros' | 'ayuda'
 // necesita una variante transparente sobre el video. 'solida' (default) es
 // la barra opaca de siempre; 'sobreVideo' quita el fondo blanco/sticky y
 // pasa el texto a blanco para leerse sobre el video del hero.
-export function Header({ variante = 'solida' }: { variante?: 'solida' | 'sobreVideo' }) {
+//
+// `ctaHref`: el botón «Reservar» apunta al grid de tours en la home (#tours,
+// el default), pero en la ficha de tour ese ancla NO existe y el botón no
+// haría nada — allí apunta al widget de reserva (PLAN-TOURS.md §7).
+export function Header({
+  variante = 'solida',
+  ctaHref = '#tours',
+}: {
+  variante?: 'solida' | 'sobreVideo'
+  ctaHref?: string
+}) {
   const [menuAbierto, setMenuAbierto] = useState<MenuId | null>(null)
   const [movilAbierto, setMovilAbierto] = useState(false)
   const navRef = useRef<HTMLDivElement>(null)
@@ -143,7 +153,7 @@ export function Header({ variante = 'solida' }: { variante?: 'solida' | 'sobreVi
 
         <div className="flex items-center gap-2">
           <span className="hidden sm:inline-flex">
-            <Boton href="#tours">Reservar</Boton>
+            <Boton href={ctaHref}>Reservar</Boton>
           </span>
           <button
             type="button"
