@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
-import { Check } from 'lucide-react'
+import { Check, ChevronRight } from 'lucide-react'
+import * as Breadcrumb from '@/components/alignui/breadcrumb'
 import * as StatusBadge from '@/components/alignui/status-badge'
 import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
 import { Estrellas } from '@/components/ui/estrellas'
@@ -21,16 +22,23 @@ type Props = { tour: Tour; ficha: FichaTour }
 export function CabeceraFicha({ tour, ficha }: Props) {
   return (
     <div className="mx-auto max-w-contenido px-5 pt-6 sm:px-10">
-      {/* Migaja. "Tours" es el listado, que vive solo en el prototipo (depende
-          del motor de reservas, igual que el funnel) — de ahí EnlacePrototipo. */}
-      <nav aria-label="Migaja de pan" className="text-xs text-navy-soft">
-        <Link to="/" className="hover:text-navy">
-          Inicio
-        </Link>
-        <span className="px-1.5 text-linea-fuerte">/</span>
-        <EnlacePrototipo className="hover:text-navy">Tours</EnlacePrototipo>
-        <span className="px-1.5 text-linea-fuerte">/</span>
-        <span className="text-navy-sub">{tour.nombre}</span>
+      {/* Migaja: Breadcrumb del sistema (portado de las docs públicas — el
+          plan lo daba por inexistente mirando solo los templates Pro, decisión
+          §13.1 reabierta y cerrada). "Tours" es el listado, que vive solo en
+          el prototipo (depende del motor de reservas) — de ahí EnlacePrototipo.
+          El asChild pone los estilos del Item directamente sobre el Link. */}
+      <nav aria-label="Migaja de pan">
+        <Breadcrumb.Root>
+          <Breadcrumb.Item asChild>
+            <Link to="/">Inicio</Link>
+          </Breadcrumb.Item>
+          <Breadcrumb.ArrowIcon as={ChevronRight} className="size-4 self-center" />
+          <Breadcrumb.Item asChild>
+            <EnlacePrototipo>Tours</EnlacePrototipo>
+          </Breadcrumb.Item>
+          <Breadcrumb.ArrowIcon as={ChevronRight} className="size-4 self-center" />
+          <Breadcrumb.Item active>{tour.nombre}</Breadcrumb.Item>
+        </Breadcrumb.Root>
       </nav>
 
       {/* --text-h2 (32px), no un tamaño nuevo: en Figma es el mismo text style

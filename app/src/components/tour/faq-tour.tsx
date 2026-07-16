@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
+import * as Accordion from '@/components/alignui/accordion'
 import { Etiqueta } from '@/components/ui/etiqueta'
-import { Acordeon } from '@/components/ui/acordeon'
 import { TOURS, bookingCta, formatoDinero } from '@/data/home'
 import { FICHAS, type FichaTour } from '@/data/tours'
 
@@ -11,6 +11,12 @@ import { FICHAS, type FichaTour } from '@/data/tours'
 // «aún no está definido»; charter: «¿cuál es el mínimo de personas?» → «dato
 // pendiente»). Que la respuesta honesta sea «no lo sabemos todavía» es
 // preferible a inventarla — y deja la pregunta pendiente a la vista.
+//
+// Etapa A (PLAN-ALIGNUI.md): el acordeón es el Accordion del sistema (Radix,
+// portado de las docs públicas — los templates Pro no lo traen). La HOME
+// conserva ui/acordeon intacto: AlignUI vive de la ficha hacia dentro. Misma
+// conducta que antes: primera pregunta abierta, solo una a la vez (single +
+// collapsible), + / − como indicador (el default del sistema).
 //
 // «También te puede gustar» son los PRIMEROS enlaces internos reales del
 // sitio (<Link> a otra ficha): hasta aquí todo lo que no era la home iba por
@@ -27,7 +33,19 @@ export function FaqTour({ ficha }: { ficha: FichaTour }) {
       <div className="grid gap-8 lg:grid-cols-2">
         <div>
           <Etiqueta>FAQ de este tour</Etiqueta>
-          <Acordeon items={ficha.faqTour} className="mt-4" />
+          <Accordion.Root type="single" collapsible defaultValue="faq-0" className="mt-4 flex flex-col gap-3">
+            {ficha.faqTour.map((item, i) => (
+              <Accordion.Item key={item.p} value={`faq-${i}`}>
+                <Accordion.Header>
+                  <Accordion.Trigger>
+                    {item.p}
+                    <Accordion.Arrow className="justify-self-end" />
+                  </Accordion.Trigger>
+                </Accordion.Header>
+                <Accordion.Content>{item.r}</Accordion.Content>
+              </Accordion.Item>
+            ))}
+          </Accordion.Root>
         </div>
 
         <div>

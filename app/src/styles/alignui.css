@@ -206,4 +206,28 @@
   --shadow-fancy-buttons-primary: 0 1px 2px 0 #0e121b3d, 0 0 0 1px var(--color-primary-base);
   --shadow-fancy-buttons-error: 0 1px 2px 0 #0e121b3d, 0 0 0 1px var(--color-error-base);
   --shadow-fancy-buttons-stroke: 0 1px 3px 0 #0e121b1f, 0 0 0 1px var(--color-stroke-soft-200);
+
+  /* ---------- Animaciones del sistema (Accordion) ----------
+     En v3 estos keyframes salían del tailwind.config del vendor; la altura la
+     pone Radix en --radix-accordion-content-height (no es un número mágico,
+     es el contrato del primitive). */
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--radix-accordion-content-height);
+    }
+  }
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+    to {
+      height: 0;
+    }
+  }
 }

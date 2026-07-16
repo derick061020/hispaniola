@@ -2,7 +2,9 @@
 // No es parte de la home — sirve para revisar tokens antes de construir bloques.
 // Etapa A (PLAN-ALIGNUI.md): también valida la CAPA ALIGNUI (#alignui) — cada
 // pieza vendor renderizada con los slots ya tematizados a la paleta Hispaniola.
-import { CalendarDays, MessageCircle } from 'lucide-react'
+import { CalendarDays, ChevronRight, MessageCircle } from 'lucide-react'
+import * as Accordion from '@/components/alignui/accordion'
+import * as Breadcrumb from '@/components/alignui/breadcrumb'
 import * as FancyButton from '@/components/alignui/fancy-button'
 import * as Button from '@/components/alignui/button'
 import * as LinkButton from '@/components/alignui/link-button'
@@ -269,6 +271,49 @@ export function FundacionesPage() {
                 </TabMenu.List>
               </TabMenu.Root>
             </div>
+          </div>
+
+          <Divider.Root />
+
+          <div>
+            <p className="font-mono text-[11px] text-navy-soft">
+              Breadcrumb + Accordion — portados de las docs públicas (los templates Pro no los traen)
+            </p>
+            <div className="mt-2">
+              <Breadcrumb.Root>
+                <Breadcrumb.Item asChild>
+                  <a href="#alignui">Inicio</a>
+                </Breadcrumb.Item>
+                <Breadcrumb.ArrowIcon as={ChevronRight} className="size-4 self-center" />
+                <Breadcrumb.Item asChild>
+                  <a href="#alignui">Tours</a>
+                </Breadcrumb.Item>
+                <Breadcrumb.ArrowIcon as={ChevronRight} className="size-4 self-center" />
+                <Breadcrumb.Item active>Tour Semi-Privado</Breadcrumb.Item>
+              </Breadcrumb.Root>
+            </div>
+            <Accordion.Root type="single" collapsible defaultValue="demo-0" className="mt-4 flex max-w-xl flex-col gap-3">
+              <Accordion.Item value="demo-0">
+                <Accordion.Header>
+                  <Accordion.Trigger>
+                    ¿Puedo cancelar gratis?
+                    <Accordion.Arrow className="justify-self-end" />
+                  </Accordion.Trigger>
+                </Accordion.Header>
+                <Accordion.Content>
+                  Sí — cancelación gratuita hasta 7 días antes de la salida, y reembolso total por mal clima.
+                </Accordion.Content>
+              </Accordion.Item>
+              <Accordion.Item value="demo-1">
+                <Accordion.Header>
+                  <Accordion.Trigger>
+                    ¿Incluye recogida en el hotel?
+                    <Accordion.Arrow className="justify-self-end" />
+                  </Accordion.Trigger>
+                </Accordion.Header>
+                <Accordion.Content>En los tours de horario fijo, sí — transporte con AC incluido.</Accordion.Content>
+              </Accordion.Item>
+            </Accordion.Root>
           </div>
 
           <Divider.Root />
