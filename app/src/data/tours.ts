@@ -36,6 +36,16 @@ export type FichaTour = {
   /** Quote sobre la foto principal del mosaico — portada de primeraResenaTour()
    *  de prototipo/app.js. Prueba social ANTES de scrollear (wireframe A1). */
   quoteDestacada: string
+  /** Columna visual del itinerario (T-F4). El wireframe (A3) pide ahí un MAPA
+   *  de la ruta, y ese asset NO existe — no se inventa (ni un SVG a ojo ni una
+   *  ilustración generada sin el OK de Samuel); es decisión abierta
+   *  (PLAN-TOURS.md §13.4). Mientras tanto va una foto real del tour, elegida
+   *  MIRÁNDOLAS y de entre las que el mosaico NO usa (que son las 4 primeras de
+   *  `galeriaCompleta` + la portada), para no repetir foto en la misma página.
+   *  Va como campo propio y no como «galeriaCompleta[4]» a propósito: así
+   *  reordenar la galería no hace colisionar en silencio el mosaico con esta.
+   *  undefined = sin columna visual (Isla Saona: no tiene galería). */
+  fotoItinerario?: string
   itinerario: PasoItinerario[]
   incluye: BeneficioIncluido[]
   noIncluido: string
@@ -64,6 +74,9 @@ export const FICHAS: Record<string, FichaTour> = {
       'galeria-semi-privado-7',
     ],
     quoteDestacada: 'El coral fue lo mejor del viaje — la bióloga nos explicó todo.',
+    // El catamarán fondeado con el grupo en el agua: es la parada de «piscina
+    // natural» que el propio itinerario describe.
+    fotoItinerario: 'galeria-semi-privado-6',
     itinerario: [
       {
         hora: '8:05',
@@ -130,6 +143,10 @@ export const FICHAS: Record<string, FichaTour> = {
       'galeria-snorkel-lovers-9',
     ],
     quoteDestacada: 'Perfecto para ir con los niños, todos se sintieron seguros.',
+    // Una snorkelista sobre las estructuras del vivero de coral: es
+    // literalmente el «vivero» que nombra el itinerario, no una foto de agua
+    // cualquiera.
+    fotoItinerario: 'galeria-snorkel-lovers-7',
     itinerario: [
       {
         hora: '8:05',
@@ -197,6 +214,10 @@ export const FICHAS: Record<string, FichaTour> = {
       'galeria-charter-privado-7',
     ],
     quoteDestacada: 'Coordinaron todo a nuestra medida, el barco entero para la familia.',
+    // El grupo entero en el agua con SU barco al fondo: es la promesa del
+    // charter («sin desconocidos a bordo»), no una parada concreta — este tour
+    // no tiene ruta fija.
+    fotoItinerario: 'galeria-charter-privado-7',
     itinerario: [
       { hora: 'A coordinar', titulo: 'Recogida en tu hotel', texto: 'Se ajusta al horario que definamos juntos.' },
       {
@@ -241,6 +262,8 @@ export const FICHAS: Record<string, FichaTour> = {
     // la ficha de Saona, cuyo precio y capacidad siguen "por confirmar".
     galeriaCompleta: [],
     quoteDestacada: 'Playas increíbles, la comida en la isla estuvo deliciosa.',
+    // Sin foto de itinerario: su única foto es la portada, y repetirla aquí
+    // llenaría el hueco sin aportar nada. El timeline va a ancho completo.
     itinerario: [
       { hora: '', titulo: 'Recogida en tu hotel', texto: 'Salida temprano — día completo.' },
       {

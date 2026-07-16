@@ -6,6 +6,9 @@ import { GaleriaMosaico } from '@/components/tour/galeria-mosaico'
 import { WidgetReserva } from '@/components/tour/widget-reserva'
 import { ComparadorStrip } from '@/components/tour/comparador-strip'
 import { BarraMovilFicha } from '@/components/tour/barra-movil-ficha'
+import { Itinerario } from '@/components/tour/itinerario'
+import { IncluyeTour } from '@/components/tour/incluye-tour'
+import { MenuTour } from '@/components/tour/menu-tour'
 import { TOURS } from '@/data/home'
 import { FICHAS } from '@/data/tours'
 
@@ -51,18 +54,32 @@ export function TourPage() {
       <CabeceraFicha tour={tour} ficha={ficha} />
       <GaleriaMosaico tour={tour} ficha={ficha} />
 
+      {/* TODAS las secciones viven en la columna izquierda, con el widget
+          sticky al lado — no a ancho completo debajo del widget. Es una
+          decisión de conversión, no de layout: en desktop no hay barra móvil,
+          así que con el widget fuera de la columna el visitante leería el
+          itinerario y el menú (justo donde se convence) SIN un CTA a la vista.
+          «El widget ES la página» (wireframe A2) significa exactamente esto, y
+          es lo que hacen Viator/GetYourGuide/Civitatis, contra quienes se
+          compara este producto. */}
       <div className="mx-auto max-w-contenido px-5 py-8 sm:px-10">
         <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_var(--spacing-ficha-widget)]">
-          <div className="flex flex-col gap-6">
-            <div>
-              <h2 className="font-display text-h3 font-semibold text-navy">{promesa}</h2>
-              <p className="mt-2 max-w-2xl text-lead text-navy-sub">{tour.descripcionCorta}</p>
+          <div className="flex flex-col gap-12 lg:gap-16">
+            <div className="flex flex-col gap-6">
+              <div>
+                <h2 className="font-display text-h3 font-semibold text-navy">{promesa}</h2>
+                <p className="mt-2 max-w-2xl text-lead text-navy-sub">{tour.descripcionCorta}</p>
+              </div>
+
+              {/* Solo en 'completo': es el único modo con precio publicado que
+                  los portales también venden — sin precio no hay comparación
+                  que hacer. */}
+              {tour.booking === 'completo' ? <ComparadorStrip /> : null}
             </div>
 
-            {/* Solo en 'completo': es el único modo con precio publicado que
-                los portales también venden — sin precio no hay comparación
-                que hacer. */}
-            {tour.booking === 'completo' ? <ComparadorStrip /> : null}
+            <Itinerario tour={tour} ficha={ficha} />
+            <IncluyeTour ficha={ficha} />
+            {tour.booking === 'completo' ? <MenuTour tour={tour} ficha={ficha} /> : null}
           </div>
 
           {/* Sticky bajo el header. El offset sale de --spacing-sticky-top,
