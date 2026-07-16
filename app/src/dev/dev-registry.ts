@@ -241,6 +241,12 @@ export const devSections: DevSection[] = [
           'La página donde se reserva (PLAN-TOURS.md). UNA plantilla data-driven para los 4 productos: el mismo layout, y el widget + las secciones que cada modo de `booking` puede sostener honestamente. En Figma es UNA página con frames de variante, no 4 diseños. Estrena la variante `solida` del Header (existía desde v3-F8 pero solo se usaba la `sobreVideo` dentro del hero) y `ScrollAlNavegar` (React Router no resetea el scroll al cambiar de ruta). T-F1: ruta, datos (data/tours.ts, portado verbatim de prototipo/datos.js) y cabecera — migaja, H1 (--text-h2: el mismo text style que un título de sección; el H1 manda por jerarquía, no por tamaño), rating con estrellas fraccionales (ui/estrellas.tsx, extraído de insignia-confianza.tsx para poder pintarlas sobre papel y no solo sobre el video) y los chips por modo. El funnel de reserva NO es parte de este build: sigue bloqueado por la decisión del motor xpotours (pendiente del cliente).',
         states: [
           {
+            label: 'Widget con fecha elegida',
+            kind: 'estado',
+            to: '/tours/semi-privado?dev-widget=fecha',
+            note: 'T-F3: el widget con el primer día disponible elegido → el CTA pasa de «Elige una fecha» (deshabilitado de verdad, no un botón gris que igual navega) a «Continuar — US$ 198» (2 personas × 99). Es el frame «widget lleno» de Figma y la prueba del cálculo. El precio ancla es SIEMPRE Light: anclar aquí en 99 y cobrar 114 en el paso 1 es el bait-and-switch que la revisión marcó como P1. El CTA no navega: el funnel sigue bloqueado por la decisión del motor xpotours.',
+          },
+          {
             label: 'Galería abierta (lightbox)',
             kind: 'overlay',
             to: '/tours/semi-privado?dev-galeria=abierta',

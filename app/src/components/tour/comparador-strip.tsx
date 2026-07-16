@@ -1,0 +1,28 @@
+import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
+
+// Comparador anti-OTA (fix 1.6 de analisis/revision-wireframes.md).
+//
+// Por qué está AQUÍ y no solo en la página /reserva-directa: quien duda entre
+// reservar aquí o en Viator está mirando ESTE precio en ESTE momento. La
+// página-argumento hay que ir a buscarla; esta franja le sale al paso. Viator
+// vende el mismo tour al mismo precio con Pay-Later y cupones — es el
+// competidor que hay que desintermediar, y este es el punto donde se decide.
+//
+// El aqua como FONDO es una excepción consciente al guardarraíl de la
+// dirección B (§6: «el aqua con cuentagotas, nunca fondo grande de sección»):
+// esto no es una sección, es un badge de argumento de una línea — el mismo
+// estatus que el chip aqua de «Evento privado» del ticker. Si crece, deja de
+// estar amparado por ese precedente.
+export function ComparadorStrip() {
+  return (
+    <div className="flex flex-wrap items-center justify-between gap-3 rounded-card bg-aqua-tint px-4 py-3 ring-1 ring-aqua/20">
+      <p className="text-sm text-navy-sub">
+        Mismo precio que en Viator o Civitatis — aquí con <strong className="font-semibold text-navy">depósito del 25%</strong>
+        , menú a elección y WhatsApp directo.
+      </p>
+      <EnlacePrototipo className="shrink-0 whitespace-nowrap rounded-btn bg-papel px-3 py-2 text-xs font-semibold text-aqua-dark ring-1 ring-linea transition-colors hover:ring-aqua">
+        Ver comparación →
+      </EnlacePrototipo>
+    </div>
+  )
+}

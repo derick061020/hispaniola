@@ -3,6 +3,9 @@ import { Header } from '@/components/home/header'
 import { Footer } from '@/components/home/footer'
 import { CabeceraFicha } from '@/components/tour/cabecera-ficha'
 import { GaleriaMosaico } from '@/components/tour/galeria-mosaico'
+import { WidgetReserva } from '@/components/tour/widget-reserva'
+import { ComparadorStrip } from '@/components/tour/comparador-strip'
+import { BarraMovilFicha } from '@/components/tour/barra-movil-ficha'
 import { TOURS } from '@/data/home'
 import { FICHAS } from '@/data/tours'
 
@@ -28,6 +31,16 @@ export function TourPage() {
   // plan): fingir una aquí sería inventarse una página que nadie ha aprobado.
   if (!tour || !ficha) return <Navigate to="/" replace />
 
+  // El H2 sale de renderFicha() del prototipo: la promesa se ajusta al
+  // producto — no es la misma frase para un charter privado que para un
+  // semi-privado de grupo pequeño.
+  const promesa =
+    tour.booking === 'cotizacion'
+      ? 'Un día de mar a tu medida'
+      : ficha.audiencia === 'Solo adultos'
+        ? 'Un día de mar en grupo pequeño'
+        : 'Un día de mar'
+
   return (
     <div className="pb-16 md:pb-0">
       {/* Primer uso real de la variante 'solida' del header: existe desde
@@ -37,7 +50,33 @@ export function TourPage() {
       <Header ctaHref="#ficha-widget" />
       <CabeceraFicha tour={tour} ficha={ficha} />
       <GaleriaMosaico tour={tour} ficha={ficha} />
+
+      <div className="mx-auto max-w-contenido px-5 py-8 sm:px-10">
+        <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_var(--spacing-ficha-widget)]">
+          <div className="flex flex-col gap-6">
+            <div>
+              <h2 className="font-display text-h3 font-semibold text-navy">{promesa}</h2>
+              <p className="mt-2 max-w-2xl text-lead text-navy-sub">{tour.descripcionCorta}</p>
+            </div>
+
+            {/* Solo en 'completo': es el único modo con precio publicado que
+                los portales también venden — sin precio no hay comparación
+                que hacer. */}
+            {tour.booking === 'completo' ? <ComparadorStrip /> : null}
+          </div>
+
+          {/* Sticky bajo el header. El offset sale de --spacing-sticky-top,
+              derivado del alto MEDIDO del header (Trampa №5: en esta página se
+              apilan header > anclas > widget, y los tres tienen que derivar del
+              mismo token o se desincronizan). */}
+          <div className="lg:sticky lg:top-sticky-top">
+            <WidgetReserva tour={tour} ficha={ficha} />
+          </div>
+        </div>
+      </div>
+
       <Footer />
+      <BarraMovilFicha tour={tour} />
     </div>
   )
 }

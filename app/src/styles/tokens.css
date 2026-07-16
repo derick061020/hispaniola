@@ -603,6 +603,19 @@
   /* Alto del mosaico de galería en desktop (T-F2). Móvil no lo usa: allí la
      galería es un carrusel de alto propio. */
   --spacing-mosaico-alto: 28rem; /* 448px */
+
+  /* Alto real del header sólido — MEDIDO con getBoundingClientRect (76.8px),
+     no adivinado sumando paddings: el logo lleva margen vertical negativo
+     (ui/logo.tsx) y la cuenta a mano no da. Si el header cambia de alto, este
+     token hay que volver a MEDIRLO. */
+  --spacing-header-alto: 4.8rem; /* 76.8px */
+  /* Donde aterriza el primer elemento sticky por debajo del header. En la
+     ficha se apilan tres (header > nav de anclas > widget): los tres derivan
+     de aquí con calc(), no de tres números sueltos que se desincronicen a la
+     primera (PLAN-TOURS.md §9.4, Trampa №5). */
+  --spacing-sticky-top: calc(var(--spacing-header-alto) + 1rem);
+  /* Columna del widget de reserva en desktop (T-F3). */
+  --spacing-ficha-widget: 24rem; /* 384px */
 }
 
 body {
