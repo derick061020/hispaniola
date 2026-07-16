@@ -609,11 +609,17 @@
      (ui/logo.tsx) y la cuenta a mano no da. Si el header cambia de alto, este
      token hay que volver a MEDIRLO. */
   --spacing-header-alto: 4.8rem; /* 76.8px */
-  /* Donde aterriza el primer elemento sticky por debajo del header. En la
-     ficha se apilan tres (header > nav de anclas > widget): los tres derivan
-     de aquí con calc(), no de tres números sueltos que se desincronicen a la
-     primera (PLAN-TOURS.md §9.4, Trampa №5). */
-  --spacing-sticky-top: calc(var(--spacing-header-alto) + 1rem);
+  /* Alto de la fila de anclas de la ficha — MEDIDO con getBoundingClientRect
+     (48.8px), igual que el header. Se apoya justo bajo él, sin aire entre las
+     dos: es una barra sobre otra. Si cambia el padding o el tamaño de texto de
+     la fila, este token hay que volver a MEDIRLO. */
+  --spacing-anclas-alto: 3.05rem; /* 48.8px */
+  /* Donde aterriza lo que se pega por DEBAJO de todo el chrome sticky: el
+     widget y el scroll-margin de las anclas de sección. En la ficha se apilan
+     tres (header > nav de anclas > widget) y los tres derivan de aquí con
+     calc(), no de tres números sueltos que se desincronicen a la primera
+     (PLAN-TOURS.md §9.4, Trampa №5). */
+  --spacing-sticky-top: calc(var(--spacing-header-alto) + var(--spacing-anclas-alto) + 1rem);
   /* Columna del widget de reserva en desktop (T-F3). */
   --spacing-ficha-widget: 24rem; /* 384px */
 }

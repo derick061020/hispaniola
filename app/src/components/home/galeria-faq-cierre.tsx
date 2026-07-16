@@ -1,8 +1,8 @@
-import { useState } from 'react'
 import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
 import { Boton } from '@/components/ui/boton'
 import { PilaFotos, type FotoPila } from '@/components/ui/pila-fotos'
 import { Etiqueta } from '@/components/ui/etiqueta'
+import { Acordeon } from '@/components/ui/acordeon'
 
 // Galería + FAQ + cierre — última sección de contenido de la home. La
 // galería completa (23 fotos) y el listado completo de FAQ viven fuera de
@@ -26,8 +26,6 @@ const FAQS = [
 ]
 
 export function GaleriaFaqCierre() {
-  const [abierta, setAbierta] = useState<number | null>(0)
-
   return (
     <section className="px-5 py-seccion-sm sm:px-10 sm:py-seccion">
       <div className="mx-auto max-w-contenido">
@@ -44,21 +42,7 @@ export function GaleriaFaqCierre() {
 
           <div>
             <Etiqueta>Preguntas frecuentes</Etiqueta>
-            <div className="mt-4 flex flex-col divide-y divide-linea rounded-card bg-papel ring-1 ring-linea">
-              {FAQS.map((f, i) => (
-                <div key={f.p}>
-                  <button
-                    type="button"
-                    onClick={() => setAbierta((a) => (a === i ? null : i))}
-                    className="flex w-full items-center justify-between gap-3 px-4 py-3.5 text-left text-sm font-medium text-navy"
-                  >
-                    {f.p}
-                    <span className="shrink-0 text-navy-soft">{abierta === i ? '−' : '+'}</span>
-                  </button>
-                  {abierta === i ? <p className="px-4 pb-3.5 text-sm text-navy-soft">{f.r}</p> : null}
-                </div>
-              ))}
-            </div>
+            <Acordeon items={FAQS} className="mt-4" />
             <p className="mt-3 text-sm">
               <EnlacePrototipo className="font-semibold text-aqua-dark hover:underline">
                 Ver todas las preguntas →

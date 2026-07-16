@@ -9,6 +9,9 @@ import { BarraMovilFicha } from '@/components/tour/barra-movil-ficha'
 import { Itinerario } from '@/components/tour/itinerario'
 import { IncluyeTour } from '@/components/tour/incluye-tour'
 import { MenuTour } from '@/components/tour/menu-tour'
+import { OpinionesTour } from '@/components/tour/opiniones-tour'
+import { FaqTour } from '@/components/tour/faq-tour'
+import { AnclasFicha } from '@/components/tour/anclas-ficha'
 import { TOURS } from '@/data/home'
 import { FICHAS } from '@/data/tours'
 
@@ -53,6 +56,7 @@ export function TourPage() {
       <Header ctaHref="#ficha-widget" />
       <CabeceraFicha tour={tour} ficha={ficha} />
       <GaleriaMosaico tour={tour} ficha={ficha} />
+      <AnclasFicha tour={tour} />
 
       {/* TODAS las secciones viven en la columna izquierda, con el widget
           sticky al lado — no a ancho completo debajo del widget. Es una
@@ -80,6 +84,8 @@ export function TourPage() {
             <Itinerario tour={tour} ficha={ficha} />
             <IncluyeTour ficha={ficha} />
             {tour.booking === 'completo' ? <MenuTour tour={tour} ficha={ficha} /> : null}
+            <OpinionesTour tour={tour} ficha={ficha} />
+            <FaqTour ficha={ficha} />
           </div>
 
           {/* Sticky bajo el header. El offset sale de --spacing-sticky-top,
