@@ -363,8 +363,8 @@
   /* ---------- Sección «Incluye» (v3-F19.2, rediseño pedido de Samuel 2026-07-15)
      ----------
      Editorial inmersiva (ref. "WHAT'S INCLUDED" que aportó Samuel): océano
-     oscuro a sangre (sin fundidos con las vecinas — corte limpio arriba y
-     abajo), el catamarán en vista CENITAL bajando por el centro AL HACER
+     oscuro que se funde con el papel arriba y abajo con bandas de ESPUMA real
+     (ver --spacing-incluye-espuma), el catamarán en vista CENITAL bajando por el centro AL HACER
      SCROLL (empieza fuera del recorte del océano, por encima, y desciende
      mientras se revelan los ítems), y los 8 ítems como texto editorial
      numerado (01/ … 08/) directamente sobre el agua, sin cards ni cajas.
@@ -376,9 +376,25 @@
      blanco), no un descuido.
 
      El texto va sobre el agua SIN caja, así que el océano se oscurece fuerte
-     (--color-overlay-incluye) para que el blanco lea a AA. Cuando llegue de
-     Magnific un océano cenital ya oscuro, este overlay baja. */
-  --color-overlay-incluye: rgb(9 26 46 / 66%); /* navy profundo — legibilidad del texto blanco + calma el video de placeholder */
+     (--color-overlay-incluye) para que el blanco lea a AA — verificado en
+     navegador con el video cenital real (incluye-oceano-cenital.mp4,
+     generado en Magnific): el mismo overlay sigue funcionando, no hizo
+     falta bajarlo. */
+  /* ⚠️ BAJADO de 66% a 30% (2026-07-16). El 66% se puso a ojo y nunca se
+     comprobó CUÁNTO contraste hacía falta: daba 11.6:1 de texto blanco sobre el
+     agua cuando la AA pide 4.5:1 — dos veces y media de más. A cambio se comía
+     el 66% del brillo del agua y DOS TERCIOS de su textura (contraste de textura
+     6.41 → 2.21, medido sobre el frame real). Ese era el motivo real de que el
+     océano no se pareciera nunca a la referencia que aportó Samuel: daba igual
+     lo buena que fuera el agua, la sección la aplastaba después.
+     Medido sobre el video actual (el color del agua es (15,98,110) en crudo):
+       0%  → 4.4:1 peor caso (falla AA por poco)
+       30% → 6.8:1 peor caso (pasa AA con 51% de margen)  ← aquí
+       66% → 11.6:1 (el anterior)
+     «Peor caso» = el percentil 99 de brillo, o sea las crestas iluminadas, que
+     es donde el blanco sobre blanco se pierde primero — no la media, que sería
+     autoengaño. Los ítems llevan además text-shadow propio, que suma margen. */
+  --color-overlay-incluye: rgb(9 26 46 / 30%); /* navy — legibilidad del texto blanco, medida */
 
   /* Maquetación editorial (desktop): los 8 ítems van UNO POR FILA, alternando
      lado (col 1 / col 3) y cascando en diagonal — el carril central (col 2) es
@@ -389,18 +405,107 @@
   --spacing-incluye-fila: 8rem; /* 128px — separación entre filas (row-gap) = paso de la cascada */
   --spacing-incluye-fila-movil: 2.75rem; /* 44px — en móvil los 8 ítems van en lista simple */
 
-  /* El barco cenital. Alto GRANDE (protagonista, corre por el centro). El
-     recorte cenital que pedirá Magnific será apaisado-vertical; hasta que
-     llegue se usa catamaran-recorte.webp (vista 3/4, PROVISIONAL). */
+  /* Transición océano ↔ papel: ESPUMA, no un degradado (Samuel 2026-07-16 —
+     "quiero algo más complejo": el linear-gradient anterior tenía un borde
+     recto y matemático; en su referencia la espuma MISMA es la transición, la
+     cresta de la ola rompiendo ES el blanco de la página).
+     Bandas arriba y abajo del océano recortadas por un mapa de alfa de espuma
+     real — ver .incluye-espuma en componentes.css.
+
+     ⚠️ El alto NO es libre: es la ESCALA propia de la espuma. El mapa tiene una
+     proporción de ~4:1 (medida sobre el asset), así que a todo el ancho de
+     pantalla la banda pide ~480px para leerse como espuma y no como encaje —
+     por eso sube de los 8rem que tenía el degradado (un degradado no tiene
+     escala propia; la espuma sí). Coincide con la referencia de Samuel, donde
+     la espuma ocupa ~25% del ancho de la composición.
+
+     Este alto es TAMBIÉN la zona que el padding reserva: medido sobre el mapa,
+     la espuma deja motas 100% opacas hasta el 90% de la banda (no se deshace
+     suave), así que el texto blanco no puede entrar en ella en NINGÚN punto —
+     sobre espuma blanca sería invisible. Por eso un solo token para las dos
+     cosas, no dos. */
+  --spacing-incluye-espuma: 30rem; /* 480px — alto de la banda de espuma (desktop) = zona reservada */
+  --spacing-incluye-espuma-movil: 11rem; /* 176px */
+  --incluye-espuma-mapa: url('/fotos/incluye-espuma-mapa.webp');
+
+  /* El mapa es TILEABLE en horizontal (su borde derecho continúa en el izquierdo,
+     cosido con una rampa en el propio asset) → repeat-x sin costura, que es lo que
+     permite la deriva en bucle. El tile se dimensiona a la ALTURA de la banda por
+     el aspecto real del mapa: así la espuma nunca se deforma, sea cual sea el
+     viewport, y el repeat-x se encarga de rellenar el ancho que falte. */
+  --incluye-espuma-aspecto: 3.297; /* 1500×455 — proporción del asset, no tocar sin regenerarlo */
+  --incluye-espuma-tile: calc(var(--spacing-incluye-espuma-movil) * var(--incluye-espuma-aspecto));
+
+  /* Deriva de la espuma: desplaza UNA longitud de tile exacta → el empalme del
+     bucle es invisible (mismo principio que las olas del CTA y el -50% del
+     ticker). La banda de abajo va rotada 180°, así que estas MISMAS keyframes la
+     hacen derivar hacia el lado contrario: las dos orillas no se leen como una
+     sola cinta moviéndose. Lento a propósito: es ambiente, no un efecto. */
+  --incluye-espuma-deriva-duracion: 60s;
+  /* Sangrado de la banda por FUERA del borde de la sección (arriba y abajo).
+     NO es decorativo, es un sello: el borde de la sección casi nunca cae en un
+     píxel entero (medido: y=200.575), y las capas que coinciden en ese borde
+     redondean su subpíxel por separado. Con la banda a ras salía 1px de mar
+     oscuro contra el papel (medido en captura: fila de brillo 188 entre dos de
+     255). Sobresaliendo, el píxel del borde cae SIEMPRE en espuma 100% opaca y
+     no depende de que dos capas redondeen igual.
+     Cae en el gap blanco de arriba y en Reviews (sin fondo propio → papel)
+     abajo, así que pintar blanco ahí es invisible.
+     v3-F21: antes abajo caía en Diferenciadores, que tras su rediseño tenía
+     bg-papel-hueso — o sea que el sangrado pintaba --color-papel sobre un
+     hueso, un blanco distinto al que este comentario prometía. Al eliminarse
+     esa sección el vecino de abajo es Reviews (sin fondo) y vuelve a ser
+     cierto. Si algún día entra aquí una sección CON fondo propio, este
+     sangrado hay que revisarlo. */
+  --incluye-espuma-sangrado: 2px;
+
+  /* Gap blanco que separa el océano del banner de Reserva directa (WhyDirect),
+     que va justo encima. */
+  --spacing-incluye-gap: 6rem; /* 96px — aire blanco sobre el océano (separa del banner de arriba) */
+  --spacing-incluye-gap-movil: 3rem; /* 48px */
+
+  /* El barco cenital. Alto GRANDE (protagonista, corre por el centro).
+     incluye-barco-cenital.webp (generado en Magnific, recorte transparente,
+     PROA ABAJO — volteado en el archivo para que "mire" en el sentido en que
+     desciende) es MÁS ANGOSTO en proporción (~0.54) que la vista 3/4 que usaba
+     antes — a esta altura le sobra aire dentro de --spacing-incluye-lane, que se
+     dimensionó para la proporción vieja; no rompe nada, pero si se quiere un
+     barco más "gordo" en el carril, este es el número a subir. */
   --spacing-incluye-barco-alto: 30rem; /* 480px — desktop */
   --spacing-incluye-barco-alto-movil: 17rem; /* 272px */
   /* Recorrido del descenso, en fracción del alto de la sección: de dónde
-     ARRANCA el centro del barco (por encima del borde superior → "fuera del
-     océano") a dónde TERMINA (por debajo del inferior). Los lee el hook con
-     getComputedStyle (adimensionales), no van a ojo en el JS. */
-  --incluye-barco-desde: -0.15; /* 15% del alto por ENCIMA del top → asoma desde fuera */
-  --incluye-barco-hasta: 1.05; /* 5% por debajo del bottom → sale por abajo */
+     ARRANCA el centro del barco a dónde TERMINA. Rango CORTO (pedido de Samuel:
+     "empezar más abajo y parar mucho antes, solo debe sobresalir un poco"): el
+     barco entra apenas asomando por el top y se detiene apenas asomando por el
+     bottom, sin recorrer toda la sección. Los lee el hook con getComputedStyle
+     (adimensionales), no van a ojo en el JS. */
+  --incluye-barco-desde: 0.1; /* apenas asoma por el top → solo un poco fuera */
+  --incluye-barco-hasta: 0.86; /* se detiene antes del bottom → solo un poco fuera */
   --incluye-barco-scrub: 0.5; /* suavizado del enganche al scroll */
+
+  /* El AGUA avanza con el scroll (Samuel 2026-07-16): el video no se reproduce
+     solo — su playhead se mapea al recorrido de la sección, así que si nadie
+     scrollea el agua está congelada. Sustituye al autoplay en bucle, y de paso
+     mata el problema del reinicio: ya no hay loop que disimular (el asset dejó
+     de ser boomerang y es solo la ida — al subir, el scrub la reproduce hacia
+     atrás gratis). Scrub más CORTO que el del barco: el agua debe sentirse
+     pegada a la rueda; con demasiada inercia se lee como que va por su cuenta. */
+  --incluye-video-scrub: 0.3;
+
+  /* Qué PORCIÓN del video se consume al cruzar la sección entera. Es el dial de
+     VELOCIDAD del agua (Samuel 2026-07-16: "quiero que el video se produzca más
+     lento, para crear un buen efecto óptico").
+       1    = el video entero cruzando la sección (lo más rápido)
+       0.5  = solo la primera mitad → el agua va a MEDIA velocidad
+     Por qué existe: con scrub, la velocidad en pantalla es el producto de tres
+     cosas — cuánto se desplaza el agua por fotograma (el asset), cuántos
+     fotogramas se consumen por píxel de scroll (esto), y lo rápido que scrollee
+     el usuario (incontrolable). Este es el único de los tres que se toca sin
+     regenerar el video, así que es el que se calibra a ojo.
+     ⚠️ Bajarlo deja metros de video sin usar: cuando el valor esté decidido,
+     recortar el asset a esa porción y volver este token a 1 (si no, se están
+     descargando MB que nadie ve). */
+  --incluye-video-tramo: 1;
   /* Cabeceo lento mientras baja (el agua se mueve; un barco clavado se lee
      como pegatina). En `rotate`, longhand aparte del `transform` que anima el
      descenso — no se pisan (mismo patrón que el barco del CTA «mar»). */

@@ -647,10 +647,12 @@
 
 /* ============================================================
    Sección «Incluye» (v3-F19.2, rediseño pedido de Samuel 2026-07-15) —
-   editorial inmersiva: océano oscuro a sangre (corte limpio, sin fundidos),
-   el catamarán CENITAL bajando por el centro AL SCROLLEAR, y los 8 ítems
-   como texto numerado (01/ … 08/) sobre el agua, sin cajas. Ref. de Samuel:
-   "WHAT'S INCLUDED".
+   editorial inmersiva: océano oscuro que se FUNDE con el blanco de la web
+   arriba y abajo mediante bandas de ESPUMA real (Samuel pidió disolver el agua
+   en el papel, ref. "olas rompiendo" — ver .incluye-espuma),
+   el catamarán CENITAL (proa abajo) bajando por el centro AL SCROLLEAR, y los
+   8 ítems como texto numerado (01/ … 08/) sobre el agua, sin cajas. Ref. de
+   Samuel: "WHAT'S INCLUDED".
 
    REPARTO CSS ↔ JS (playbook animaciones-a-figma): el hook (use-incluye-scroll.ts)
    solo escribe la posición del barco (--barco-y, en fracción del alto de la
@@ -660,15 +662,127 @@
    longhands que no se pisan, igual que el barco del CTA «mar».
    ============================================================ */
 
-/* La capa que RECORTA el océano — inset-0 de la sección, overflow hidden. El
-   barco vive FUERA de esta capa (en la de contenido, sin recorte) para poder
-   asomar por encima del océano al arrancar el descenso ("empieza fuera del
-   video", pedido de Samuel) — mismo reparto media/contenido que el hero. */
+/* La capa del océano — inset-0 de la sección. El barco vive FUERA de ella (en la
+   de contenido) para poder asomar por encima del agua al arrancar el descenso
+   ("empieza fuera del video", pedido de Samuel) — mismo reparto media/contenido
+   que el hero.
+
+   SIN overflow:hidden a propósito (lo tenía): (1) rompía `position: sticky` del
+   video — un ancestro con overflow hidden se convierte en su contenedor de
+   scroll y el sticky no llega a activarse nunca; (2) ya no hace falta, porque
+   el video ahora mide una ventana y el sticky lo mantiene DENTRO de esta capa,
+   y la espuma se mudó fuera (ver .incluye-espuma). */
 .incluye-oceano {
   position: absolute;
   inset: 0;
-  overflow: hidden;
 }
+
+/* El video FIJO A LA VENTANA, avanzando con el scroll (pedido de Samuel,
+   2026-07-16) — el playhead lo mueve use-incluye-scroll.ts; aquí solo vive la
+   geometría. Sin autoplay ni loop: si nadie scrollea, el agua está congelada.
+
+   ⚠️ Esta es la pieza que arregla la CALIDAD, no el códec. Antes el video cubría
+   la sección ENTERA (1585×3140, proporción 0.5) y `object-cover` lo ampliaba
+   2.91× recortando los lados: se veía una tira de 545px de ancho del original
+   estirada hasta 1585 (el 28% del frame) — de ahí que no se viera HD. Acotado a
+   una ventana de 100svh, la caja pasa a ~16:9, que es la forma REAL del video:
+   se usa el 100% del frame y a escala ~0.83 (reducido = nítido).
+
+   `svh` y no vh/dvh: vh en móvil es el viewport grande (con la barra de URL
+   escondida) y dvh cambia al scrollear, lo que haría bailar un elemento anclado
+   al borde. svh es la medida chica garantizada, sin saltos.
+
+   El sticky es CSS y no JS a propósito: un pin con scrub iría con retraso y
+   asomaría el navy de la sección por detrás. El scrub solo mueve el playhead. */
+.incluye-oceano video {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  height: 100svh;
+  object-fit: cover;
+}
+
+/* Transición océano ↔ papel: ESPUMA (Samuel 2026-07-16 — "quiero algo más
+   complejo"; reemplaza al linear-gradient blanco→transparente de la 1ª pasada,
+   que tenía un borde recto y matemático). En su referencia el borde no existe:
+   la espuma MISMA es la transición — la cresta de la ola rompiendo ES el blanco
+   de la página, y hacia el agua se deshace en hilos y salpicaduras.
+
+   Cómo: una capa del color del PAPEL recortada por un mapa de alfa de espuma
+   real (incluye-espuma-mapa.webp — foto cenital generada en Magnific de espuma
+   blanca sobre agua casi negra, cuya luminancia YA es el mapa; pasada a alfa con
+   una curva de contraste + rampas que fuerzan el borde exterior a 100% opaco y
+   el interior a 0). Donde la espuma es densa el papel tapa; donde se deshace,
+   aparece el agua.
+
+   Es MÁSCARA y no una foto pegada a propósito: así el color sale siempre de
+   --color-papel, el token. Una foto traería SU blanco —con su grano, su
+   temperatura y su compresión— y contra el papel plano cantaría el parche justo
+   donde tiene que fundirse.
+
+   El mask se dimensiona `var(--incluye-espuma-tile) 100%` + `repeat-x`: la
+   ALTURA siempre calza la banda exacta (garantiza el borde opaco arriba y el
+   final transparente abajo, que es lo que hace que selle), y el ANCHO sale de
+   la altura × el aspecto real del mapa, así la espuma no se deforma en ningún
+   viewport y el repeat-x rellena lo que falte. `cover` no sirve aquí: recorta en
+   vertical y se comería o la fila opaca del borde (velo gris contra el papel) o
+   el final transparente (línea dura al cortar la banda).
+
+   ⚠️ Van FUERA de .incluye-oceano (hermanas, no hijas) aunque tapen su media:
+   dentro, su overflow:hidden las recortaba justo en el borde de la sección, y
+   ese recorte redondea el subpíxel distinto a como se pintan los fondos — la
+   banda blanca cubría 0.264 del píxel del borde en vez de 0.425 y asomaba 1px
+   de mar oscuro contra el papel (medido en captura). Fuera del recorte, y con
+   --incluye-espuma-sangrado, el borde sella a blanco puro.
+
+   Su alto (--spacing-incluye-espuma) va reservado en el padding de la sección:
+   la espuma deja motas opacas casi hasta el final de la banda, así que el texto
+   blanco no puede entrar en ella en ningún punto. */
+.incluye-espuma {
+  position: absolute;
+  left: 0;
+  right: 0;
+  /* + sangrado: la banda se pasa de largo por fuera del borde de la sección y
+     .incluye-oceano la recorta — ver --incluye-espuma-sangrado. */
+  height: calc(var(--spacing-incluye-espuma-movil) + var(--incluye-espuma-sangrado));
+  pointer-events: none;
+  background: var(--color-papel);
+  mask-image: var(--incluye-espuma-mapa);
+  mask-size: var(--incluye-espuma-tile) 100%;
+  mask-repeat: repeat-x;
+}
+
+.incluye-espuma--top {
+  top: calc(var(--incluye-espuma-sangrado) * -1);
+}
+
+/* 180°, no espejo vertical: la toma es CENITAL, así que no hay gravedad que
+   delate la rotación (en una vista de dron no existe un "arriba" natural) — y
+   girar entero evita que las dos bandas se lean como reflejo la una de la otra.
+   `rotate` longhand, aparte de `transform`, como el resto de la sección. */
+.incluye-espuma--bottom {
+  bottom: calc(var(--incluye-espuma-sangrado) * -1);
+  rotate: 180deg;
+}
+
+/* La espuma NO se mueve (decisión de Samuel, 2026-07-16): se probó derivando en
+   bucle y se descartó a favor de que el movimiento de la sección lo ponga el
+   AGUA enganchada al scroll (ver el scrub del video en use-incluye-scroll.ts).
+   Una espuma a la deriva + un océano avanzando = dos movimientos compitiendo.
+   El mapa sigue siendo tileable y `repeat-x` sigue aquí porque es lo que hace
+   que la banda rellene cualquier ancho sin deformarse — no era solo para animar.
+   Si se quisiera recuperar la deriva: animar `mask-position` exactamente
+   var(--incluye-espuma-tile) (una longitud de tile → empalme invisible), igual
+   que .cta-ola. */
+
+@media (min-width: 640px) {
+  .incluye-espuma {
+    height: calc(var(--spacing-incluye-espuma) + var(--incluye-espuma-sangrado));
+    /* el tile crece con la banda: la espuma mantiene su proporción */
+    --incluye-espuma-tile: calc(var(--spacing-incluye-espuma) * var(--incluye-espuma-aspecto));
+  }
+}
+
 
 /* El barco cenital. MÓVIL (base): en el flujo, centrado arriba del bloque,
    solo cabeceo — no desciende (down-the-middle no cabe en una columna
@@ -1016,10 +1130,11 @@
      gratis del cambio de padding, sin una segunda animación.
    ============================================================ */
 
-/* La sección se pone por delante de la de "Incluye" (su vecina de abajo): el
-   catamarán de Incluye asoma "desde arriba" de su sección (--incluye-barco-desde
-   negativo) y, al ir DESPUÉS en el DOM, se pintaría ENCIMA del banner e
-   invadiría los boletos. ⚠️ Ese barco es `position:absolute; z-index:10` y su
+/* La sección se pone por delante de la de "Incluye" (su vecina de abajo): al
+   arrancar el descenso, el catamarán de Incluye puede asomar un poco por encima
+   del top de su sección (hacia el gap blanco que la separa de este banner) y, al
+   ir DESPUÉS en el DOM, se pintaría ENCIMA del banner e invadiría los boletos.
+   ⚠️ Ese barco es `position:absolute; z-index:10` y su
    sección (overflow-x-clip, sin z-index) NO crea stacking context, así que el
    z-10 sube al contexto RAÍZ — por eso aquí hace falta z-index > 10, no basta
    con 1. Con esto el banner tapa la invasión; el barco solo se ve ya dentro de

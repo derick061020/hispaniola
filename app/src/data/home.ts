@@ -345,10 +345,34 @@ export const PREMIOS: Premio[] = [
 // (hispaniolaaquaticadventures.com, "Punta Cana's most complete catamaran
 // experience"): 6 párrafos en inglés condensados a 3 frases + un cierre, en
 // español (el resto de la home ya es español). NO es copy inventado: es el
-// mismo argumento del cliente, resumido — el argumento del "no es un party
-// boat" lo PROMETE aquí y lo PRUEBA luego la sección Diferenciadores.
+// mismo argumento del cliente, resumido.
 // ⚠️ Pendiente reconciliar con datos.js (fuente canónica): este texto todavía
 // no vive allí (ver CLAUDE.md — copy se porta de datos.js).
+//
+// v3-F21 (Samuel, 2026-07-16): esta sección ya no solo PROMETE el "no es un
+// party boat" — ahora también lo PRUEBA. La prueba vivía en «Diferenciadores»,
+// que se ELIMINÓ por redundante: sus 4 verdades ya se decían todas antes
+// (coral → aquí + cards de tour + Incluye 01 + reseña de Jessica M.; cocina
+// flotante → aquí + Incluye 05 + cards; ≤35% de aforo y 0 plástico → son STATS
+// DEL HERO, literales). Además llegaba 3 secciones después de la promesa
+// —cuando ToursGrid, WhyDirect e Incluye ya la habían cerrado— y repetía el
+// número editorial gigante de IncluyeCrucero (01/…08/) justo debajo de él.
+//
+// Lo ÚNICO que no vivía en ninguna otra parte de la home era el top-3 de
+// restauración de coral → se rescata AQUÍ, en la que era la línea más vaga
+// ("rincones que las rutas de siempre no visitan", algo que cualquier catamarán
+// de Bávaro podría escribir). Así la frase más débil pasa a cargar el dato más
+// duro sin sumar scroll, y encaja con la 1ª foto del collage (el vivero).
+// Portado de datos.js: "Arrecife de Cabeza de Toro: proyecto de restauración
+// top-3 de RD". El topónimo va en GRIS a propósito — lo que resalta es la
+// AFIRMACIÓN (top-3), no el nombre del sitio; así la línea conserva sus 2
+// segmentos `fuerte` y no se rompe el ritmo gris/negro.
+// ⚠️ La bióloga marina no se repite aquí: ya vive en el chip y la descripción
+// de las cards de tour, y en la reseña de Jessica M.
+// ⚠️ La auditoría (analisis/auditoria-web-actual.md §7) añade que el proyecto
+// está "avalado por Ministerio de Medio Ambiente" — dato fuerte, pero NO está
+// en datos.js y no se inventa. Pendiente confirmarlo con el cliente
+// (app/PLAN-v3.md §9); si se confirma, su sitio natural es esta misma frase.
 //
 // Cada frase es un array de segmentos: `fuerte` = navy, resalta; si no, gris
 // (navy-sub). El alternado gris/negro del "texto grande" es la referencia que
@@ -363,9 +387,9 @@ export const EXPERIENCIA_NARRATIVA: SegmentoNarrativa[][] = [
     { t: 'cuidada al detalle.', fuerte: true },
   ],
   [
-    { t: 'Navegamos a ' },
-    { t: 'rincones que las rutas de siempre no visitan', fuerte: true },
-    { t: ', y comes lo que se ' },
+    { t: 'Navegamos al arrecife de Cabeza de Toro — uno de los ' },
+    { t: '3 mayores proyectos de restauración de coral del país', fuerte: true },
+    { t: ' — y comes lo que se ' },
     { t: 'cocina a bordo, recién hecho.', fuerte: true },
   ],
   [
@@ -378,10 +402,10 @@ export const EXPERIENCIA_NARRATIVA: SegmentoNarrativa[][] = [
 export const EXPERIENCIA_KICKER = 'Sin costes ocultos. Sin barcos abarrotados.'
 
 // Fotos REALES de la web actual (no stock). Las 3 cuentan el argumento: el
-// vivero de coral (rincones que no visitan las rutas de siempre), la cocina a
-// bordo (langosta recién servida) y el catamarán fondeado (la navegación).
-// Ninguna se repite con Diferenciadores (snorkel-lovers-6) ni con la galería
-// del cierre. El ORDEN es el del reveal escalonado (fondo → frente).
+// vivero de coral (ahora nombrado en el copy: el arrecife de Cabeza de Toro),
+// la cocina a bordo (langosta recién servida) y el catamarán fondeado (la
+// navegación). Ninguna se repite con la galería del cierre. El ORDEN es el del
+// reveal escalonado (fondo → frente).
 export type FotoExperiencia = { foto: string; alt: string }
 
 export const EXPERIENCIA_FOTOS: FotoExperiencia[] = [
