@@ -1,4 +1,7 @@
 import { useMemo, useState } from 'react'
+import { Clock, Users } from 'lucide-react'
+import * as FancyButton from '@/components/alignui/fancy-button'
+import * as Select from '@/components/alignui/select'
 import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
 import { useDevFlag } from '@/dev/use-dev-flag'
 import { diaCorto, hoyISO, numeroDeDia, sumarDias } from '@/lib/fechas'
@@ -20,6 +23,14 @@ import { WHATSAPP_URL, type FichaTour } from '@/data/tours'
 // sigue bloqueado por la decisión del motor xpotours (reemplazar / re-skinear),
 // pendiente del cliente. El CTA se pinta con su estado real (deshabilitado sin
 // fecha, con el total calculado al elegirla) pero no navega.
+//
+// Etapa A (PLAN-ALIGNUI.md): el chrome del widget habla AlignUI — selects de
+// Radix (Select) y CTAs FancyButton con los slots tematizados (primary=coral).
+// Los CHIPS DE FECHA se quedan como diseño propio: son la pieza de conversión
+// del widget y AlignUI no tiene equivalente (decisión abierta §13 del plan:
+// valorar mini-calendario). El halo coral (--shadow-cta) se retira del CTA:
+// FancyButton trae su propio relieve (shadow-fancy-buttons-primary) y los dos
+// lenguajes de sombra a la vez se pelean.
 
 type Props = { tour: Tour; ficha: FichaTour }
 
@@ -95,17 +106,14 @@ export function WidgetReserva({ tour, ficha }: Props) {
         <p className="text-sm text-navy-sub">
           Este tour se cotiza a tu medida según nº de personas y menú — hasta {tour.maxPax} personas.
         </p>
-        <EnlacePrototipo className="inline-flex w-full items-center justify-center rounded-btn bg-coral px-5 py-3 text-sm font-semibold text-white transition hover:bg-coral-dark">
-          Pedir cotización
-        </EnlacePrototipo>
-        <a
-          href={WHATSAPP_URL}
-          target="_blank"
-          rel="noopener"
-          className="inline-flex w-full items-center justify-center rounded-btn bg-papel-hueso px-5 py-3 text-sm font-semibold text-navy ring-1 ring-linea transition hover:bg-papel hover:ring-linea-fuerte"
-        >
-          WhatsApp directo
-        </a>
+        <FancyButton.Root variant="primary" className="w-full" asChild>
+          <EnlacePrototipo>Pedir cotización</EnlacePrototipo>
+        </FancyButton.Root>
+        <FancyButton.Root variant="basic" className="w-full" asChild>
+          <a href={WHATSAPP_URL} target="_blank" rel="noopener">
+            WhatsApp directo
+          </a>
+        </FancyButton.Root>
       </Caja>
     )
   }
@@ -121,21 +129,16 @@ export function WidgetReserva({ tour, ficha }: Props) {
           <strong className="font-semibold text-navy">Precio pendiente de confirmar con el cliente.</strong> Duración y
           capacidad también están por definir.
         </p>
-        <a
-          href={WHATSAPP_URL}
-          target="_blank"
-          rel="noopener"
-          className="inline-flex w-full items-center justify-center rounded-btn bg-coral px-5 py-3 text-sm font-semibold text-white transition hover:bg-coral-dark"
-        >
-          Consultar por WhatsApp
-        </a>
+        <FancyButton.Root variant="primary" className="w-full" asChild>
+          <a href={WHATSAPP_URL} target="_blank" rel="noopener">
+            Consultar por WhatsApp
+          </a>
+        </FancyButton.Root>
       </Caja>
     )
   }
 
   const total = tour.precioLight !== null ? tour.precioLight * personas : null
-  const claseCampo =
-    'w-full rounded-btn border border-linea bg-papel px-3 py-2 text-sm text-navy transition-colors hover:border-linea-fuerte focus:border-aqua focus:outline-none focus:ring-2 focus:ring-aqua/30'
 
   return (
     <Caja>
@@ -170,44 +173,59 @@ export function WidgetReserva({ tour, ficha }: Props) {
         </div>
       </div>
 
-      <label className="block">
-        <span className="mb-1 block text-xs font-medium text-navy-sub">Horario</span>
-        <select className={claseCampo} value={horario} onChange={(e) => setHorario(Number(e.target.value))}>
-          {ficha.horarios.map((h, i) => (
-            <option key={h.hora} value={i}>
-              {h.hora}
-              {h.regreso ? ` — regreso ${h.regreso}` : ''}
-            </option>
-          ))}
-        </select>
-      </label>
+      {/* Radix necesita valores string: el índice del horario y el nº de
+          personas viajan como String(n) y vuelven con Number(v). */}
+      <div>
+        <span className="mb-1 block text-xs font-medium text-navy-sub" id="widget-label-horario">
+          Horario
+        </span>
+        <Select.Root value={String(horario)} onValueChange={(v) => setHorario(Number(v))}>
+          <Select.Trigger aria-labelledby="widget-label-horario">
+            <Select.TriggerIcon as={Clock} />
+            <Select.Value />
+          </Select.Trigger>
+          <Select.Content>
+            {ficha.horarios.map((h, i) => (
+              <Select.Item key={h.hora} value={String(i)}>
+                {h.hora}
+                {h.regreso ? ` — regreso ${h.regreso}` : ''}
+              </Select.Item>
+            ))}
+          </Select.Content>
+        </Select.Root>
+      </div>
 
-      <label className="block">
-        <span className="mb-1 block text-xs font-medium text-navy-sub">Personas</span>
-        <select className={claseCampo} value={personas} onChange={(e) => setPersonas(Number(e.target.value))}>
-          {Array.from({ length: 6 }, (_, i) => i + 1).map((n) => (
-            <option key={n} value={n}>
-              {n}
-            </option>
-          ))}
-        </select>
-      </label>
+      <div>
+        <span className="mb-1 block text-xs font-medium text-navy-sub" id="widget-label-personas">
+          Personas
+        </span>
+        <Select.Root value={String(personas)} onValueChange={(v) => setPersonas(Number(v))}>
+          <Select.Trigger aria-labelledby="widget-label-personas">
+            <Select.TriggerIcon as={Users} />
+            <Select.Value />
+          </Select.Trigger>
+          <Select.Content>
+            {Array.from({ length: 6 }, (_, i) => i + 1).map((n) => (
+              <Select.Item key={n} value={String(n)}>
+                {n === 1 ? '1 persona' : `${n} personas`}
+              </Select.Item>
+            ))}
+          </Select.Content>
+        </Select.Root>
+      </div>
 
       {/* Sin fecha, el CTA está DESHABILITADO de verdad (no un botón gris que
           igual navega): el estado vacío es una variante del componente en
-          Figma, y se resuelve con tokens, no bajando la opacidad. */}
+          Figma (FancyButton disabled), y se resuelve con los slots del
+          sistema, no bajando la opacidad. */}
       {fecha === null ? (
-        <button
-          type="button"
-          disabled
-          className="w-full cursor-not-allowed rounded-btn bg-papel-hueso px-5 py-3 text-sm font-semibold text-navy-soft"
-        >
+        <FancyButton.Root variant="primary" className="w-full" disabled>
           Elige una fecha
-        </button>
+        </FancyButton.Root>
       ) : (
-        <EnlacePrototipo className="inline-flex w-full items-center justify-center rounded-btn bg-coral px-5 py-3 text-sm font-semibold text-white shadow-cta transition hover:bg-coral-dark">
-          Continuar — {formatoDinero(total)}
-        </EnlacePrototipo>
+        <FancyButton.Root variant="primary" className="w-full" asChild>
+          <EnlacePrototipo>Continuar — {formatoDinero(total)}</EnlacePrototipo>
+        </FancyButton.Root>
       )}
 
       <Checks

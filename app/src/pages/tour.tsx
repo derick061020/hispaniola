@@ -67,7 +67,14 @@ export function TourPage() {
           es lo que hacen Viator/GetYourGuide/Civitatis, contra quienes se
           compara este producto. */}
       <div className="mx-auto max-w-contenido px-5 py-8 sm:px-10">
-        <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_var(--spacing-ficha-widget)]">
+        {/* grid-cols-1 en móvil NO es redundante: sin él, el track implícito
+            se dimensiona por el min-content de sus hijos y la fila de 14 chips
+            del widget (694px + padding) ensanchaba la página entera a 754px en
+            un viewport de 390 (overflow-x en toda la ficha — bug preexistente
+            de T-F3, cazado en el QA móvil de la etapa A). minmax(0,1fr) del
+            grid-cols-1 de Tailwind es lo que permite al scroll interno de los
+            chips hacer su trabajo. */}
+        <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-[minmax(0,1fr)_var(--spacing-ficha-widget)]">
           <div className="flex flex-col gap-12 lg:gap-16">
             <div className="flex flex-col gap-6">
               <div>

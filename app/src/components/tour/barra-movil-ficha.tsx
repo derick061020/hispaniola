@@ -1,3 +1,4 @@
+import * as FancyButton from '@/components/alignui/fancy-button'
 import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
 import { formatoDinero, type Tour } from '@/data/home'
 import { WHATSAPP_URL } from '@/data/tours'
@@ -8,11 +9,10 @@ import { WHATSAPP_URL } from '@/data/tours'
 // termina de leer el itinerario no tiene dónde reservar.
 //
 // Mismo idioma que el CTA sticky del hero: bg-papel + border-t hairline.
+// Etapa A: el CTA es el mismo FancyButton primary del widget — un solo
+// lenguaje de botón de acción en toda la ficha (PLAN-ALIGNUI.md).
 export function BarraMovilFicha({ tour }: { tour: Tour }) {
   const irAlWidget = () => document.getElementById('ficha-widget')?.scrollIntoView({ block: 'center' })
-
-  const claseCta =
-    'inline-flex shrink-0 items-center justify-center rounded-btn bg-coral px-5 py-3 text-sm font-semibold text-white transition hover:bg-coral-dark'
 
   return (
     <div className="fixed inset-x-0 bottom-0 z-30 flex items-center justify-between gap-3 border-t border-linea bg-papel px-5 py-3 md:hidden">
@@ -28,15 +28,19 @@ export function BarraMovilFicha({ tour }: { tour: Tour }) {
       </div>
 
       {tour.booking === 'completo' ? (
-        <button type="button" onClick={irAlWidget} className={claseCta}>
+        <FancyButton.Root variant="primary" className="shrink-0" onClick={irAlWidget}>
           Elegir fecha
-        </button>
+        </FancyButton.Root>
       ) : tour.booking === 'cotizacion' ? (
-        <EnlacePrototipo className={claseCta}>Cotizar</EnlacePrototipo>
+        <FancyButton.Root variant="primary" className="shrink-0" asChild>
+          <EnlacePrototipo>Cotizar</EnlacePrototipo>
+        </FancyButton.Root>
       ) : (
-        <a href={WHATSAPP_URL} target="_blank" rel="noopener" className={claseCta}>
-          Consultar
-        </a>
+        <FancyButton.Root variant="primary" className="shrink-0" asChild>
+          <a href={WHATSAPP_URL} target="_blank" rel="noopener">
+            Consultar
+          </a>
+        </FancyButton.Root>
       )}
     </div>
   )
