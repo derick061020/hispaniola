@@ -2,6 +2,7 @@ import { Navigate, useParams } from 'react-router-dom'
 import { Header } from '@/components/home/header'
 import { Footer } from '@/components/home/footer'
 import { CabeceraFicha } from '@/components/tour/cabecera-ficha'
+import { GaleriaMosaico } from '@/components/tour/galeria-mosaico'
 import { TOURS } from '@/data/home'
 import { FICHAS } from '@/data/tours'
 
@@ -35,6 +36,7 @@ export function TourPage() {
           de tours (#tours), que aquí no existe. */}
       <Header ctaHref="#ficha-widget" />
       <CabeceraFicha tour={tour} ficha={ficha} />
+      <GaleriaMosaico tour={tour} ficha={ficha} />
       <Footer />
     </div>
   )

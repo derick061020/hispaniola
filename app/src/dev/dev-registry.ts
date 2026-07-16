@@ -241,6 +241,12 @@ export const devSections: DevSection[] = [
           'La página donde se reserva (PLAN-TOURS.md). UNA plantilla data-driven para los 4 productos: el mismo layout, y el widget + las secciones que cada modo de `booking` puede sostener honestamente. En Figma es UNA página con frames de variante, no 4 diseños. Estrena la variante `solida` del Header (existía desde v3-F8 pero solo se usaba la `sobreVideo` dentro del hero) y `ScrollAlNavegar` (React Router no resetea el scroll al cambiar de ruta). T-F1: ruta, datos (data/tours.ts, portado verbatim de prototipo/datos.js) y cabecera — migaja, H1 (--text-h2: el mismo text style que un título de sección; el H1 manda por jerarquía, no por tamaño), rating con estrellas fraccionales (ui/estrellas.tsx, extraído de insignia-confianza.tsx para poder pintarlas sobre papel y no solo sobre el video) y los chips por modo. El funnel de reserva NO es parte de este build: sigue bloqueado por la decisión del motor xpotours (pendiente del cliente).',
         states: [
           {
+            label: 'Galería abierta (lightbox)',
+            kind: 'overlay',
+            to: '/tours/semi-privado?dev-galeria=abierta',
+            note: 'T-F2: el lightbox con la galería completa del tour (portada + galeriaCompleta). Hereda los 4 arreglos de UX de la hoja del menú móvil (scroll del fondo bloqueado guardando el valor previo, foco que entra y vuelve al disparador, Escape, click fuera) porque el problema es el mismo: un overlay modal sobre la página. Extra propio de galería: ← → pasan foto. Isla Saona NO tiene lightbox — no hay galería suya y no se rellena con fotos de otros tours.',
+          },
+          {
             label: 'Variante: cotización (Charter Privado)',
             kind: 'variante',
             to: '/tours/charter-privado',

@@ -596,6 +596,13 @@
      dos objetos en la misma repisa). */
   --spacing-boleto-stack-solape: 5.5rem; /* 88px */
   --spacing-boleto-stack-caida: 3rem; /* 48px */
+
+  /* ---------- Ficha de tour (PLAN-TOURS.md) ----------
+     Primera página del sitio fuera de la home. En Figma, UNA página con
+     frames de variante por modo de booking — no 4 diseños. */
+  /* Alto del mosaico de galería en desktop (T-F2). Móvil no lo usa: allí la
+     galería es un carrusel de alto propio. */
+  --spacing-mosaico-alto: 28rem; /* 448px */
 }
 
 body {
