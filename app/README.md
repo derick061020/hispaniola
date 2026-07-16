@@ -1,15 +1,47 @@
-# Hispaniola — Home en diseño final (React)
+# Hispaniola — Diseño final en React (home + ficha de tour)
 
-Diseño visual final de la home de Hispaniola Aquatic Adventures, construido en
-React para trasladarse después a Figma vía MCP (mismo flujo que Eventus y
-Synexia — ver playbook `codigo-a-figma` del cerebro).
+Diseño visual final de Hispaniola Aquatic Adventures, construido en React para
+trasladarse después a Figma vía MCP (mismo flujo que Eventus y Synexia — ver
+playbook `codigo-a-figma` del cerebro).
+
+**Dos páginas reales**: la home (`/`) y la **ficha de tour** (`/tours/:slug`).
 
 - [`PLAN.md`](./PLAN.md) — cómo se construyó la home (v1, tag `v1.0-home-diseno`).
 - [`PLAN-v2.md`](./PLAN-v2.md) — dirección «Boutique luminoso» (tag
   `v2.0-home-boutique`). Photo-stack, más aire y Poppins en toda la web.
-- [`PLAN-v3.md`](./PLAN-v3.md) — **la versión actual**: hero «inmersivo» (tag
+- [`PLAN-v3.md`](./PLAN-v3.md) — la home actual: hero «inmersivo» (tag
   `v3.0-hero-inmersivo`). Header integrado en el hero, video de fondo,
   contenido centrado y un ticker horizontal (sustituye a la baraja de v2).
+- [`PLAN-TOURS.md`](./PLAN-TOURS.md) — **la ficha de tour** (tag
+  `v1.0-ficha-tour`): la página donde se reserva.
+
+## Lo que hay que saber de la ficha de tour (`/tours/:slug`)
+
+- **Es UNA plantilla, no 4 diseños.** El mismo layout para los 4 productos; lo
+  que cambia es el widget y qué secciones puede sostener cada modo de
+  `booking`: `completo` (Semi-Privado, Snorkel Lovers) · `cotizacion` (Charter)
+  · `consulta` (Isla Saona). En Figma: una página con frames de variante.
+- **El widget ES la página** (wireframe A2): sticky junto a TODO el contenido,
+  no solo junto a la descripción. En desktop no hay barra móvil — si el widget
+  se fuera, el visitante leería el menú y el itinerario (donde se convence) sin
+  un CTA a la vista.
+- **Los 4 fixes de conversión que cablea** (`analisis/revision-wireframes.md`):
+  el precio ancla es siempre Light y Premium solo aparece como delta «+US$ 15»
+  (1.1, anti bait-and-switch) · las reseñas enlazan **solo a TripAdvisor**,
+  jamás a Viator (1.2) · la franja anti-OTA va bajo el widget, donde ocurre la
+  comparación (1.6) · barra inferior fija en móvil (2.3).
+- **Lo que NO se inventa**: Isla Saona no tiene precio, capacidad ni galería
+  confirmados → su ficha lo dice, no lleva chip de «cancelación gratis» y
+  muestra foto única. Los horarios no llevan «quedan N» (haría falta que el
+  motor exponga el aforo). No hay barras de distribución de reseñas (no existe
+  el dato). El mapa de la ruta del wireframe **no tiene asset** → foto real
+  provisional (ver `§13` del plan: decisiones abiertas).
+- **El funnel de reserva (4 pasos) y el listado `/tours` NO están construidos**:
+  dependen de la decisión del motor xpotours, pendiente del cliente. El CTA
+  «Continuar» se pinta con su estado real (deshabilitado sin fecha, con el
+  total al elegirla) pero no navega.
+- Estados de Dev Mode: `?dev-widget=fecha` (widget lleno, el frame de Figma) y
+  `?dev-galeria=abierta` (lightbox).
 
 ## Lo que hay que saber de la v3
 
@@ -54,17 +86,19 @@ Abre `http://localhost:5173` (o el puerto que indique Vite). Requiere Node 18+.
 
 ## Qué es y qué no es
 
-- **Es**: el diseño visual final de la **home únicamente**, con el copy y los
-  datos exactos del wireframe/prototipo aprobado (`prototipo/`), fotos reales
-  de la web actual (nada de stock ni IA), y la Dirección visual B — "Charter
-  Premium" (`analisis/direccion-visual.md`).
+- **Es**: el diseño visual final de la **home + la ficha de tour**, con el copy
+  y los datos exactos del wireframe/prototipo aprobado (`prototipo/`), fotos
+  reales de la web actual (nada de stock ni IA), y la Dirección visual B —
+  "Charter Premium" (`analisis/direccion-visual.md`).
 - **No es**: el resto del sitio (eso sigue viviendo en `prototipo/`, la SPA
   vanilla navegable), ni el traspaso a Figma (fase posterior), ni código de
   producción para Derick — es la base visual desde la que se construye el
   archivo Figma.
-- Los enlaces a páginas fuera de la home (ficha de tour, eventos, nosotros,
-  FAQ…) no navegan — muestran un tooltip "Vive en el prototipo navegable" y
-  apuntan a `prototipo/` como su referencia real.
+- Los enlaces a páginas que **aún** no existen en React (funnel de reserva,
+  listado `/tours`, eventos, nosotros, FAQ…) no navegan — muestran un tooltip
+  "Vive en el prototipo navegable" y apuntan a `prototipo/` como su referencia
+  real. Los que **sí** navegan: los 4 tours, desde la TourCard, el ticker, el
+  megamenú, el footer y el menú móvil.
 
 ## Stack
 
@@ -80,7 +114,8 @@ titulares y cuerpo.
 app/
 ├── PLAN.md                  ← plan de ejecución v1 (F0-F7)
 ├── PLAN-v2.md                ← plan v2 «Boutique luminoso»
-├── PLAN-v3.md                ← plan v3 «Hero inmersivo» (actual)
+├── PLAN-v3.md                ← plan v3 «Hero inmersivo» (la home actual)
+├── PLAN-TOURS.md             ← plan de la ficha de tour
 ├── public/fotos/            ← fotos reales extraídas de la web actual
 ├── public/video/hero.mp4    ← video de fondo del hero (asset del cliente)
 └── src/
@@ -89,11 +124,19 @@ app/
     │                             del ticker; ahí está explicado el porqué)
     ├── data/home.ts           ← contenido (tours, platos, ocasiones, ticker),
     │                             portado de prototipo/datos.js
-    ├── components/ui/         ← Boton, Logo, Etiqueta, PilaFotos, EnlacePrototipo
+    ├── data/tours.ts          ← contenido de la FICHA (itinerario, incluye,
+    │                             FAQ, galería), portado de datos.js. Solo lo
+    │                             que home.ts no tiene ya — cero duplicados
+    ├── lib/                   ← comportamiento sin pintura: scroll al navegar
+    │                             (React Router no lo resetea) y fechas ES
+    ├── components/ui/         ← reusables: Boton, Logo, Etiqueta, Estrellas,
+    │                             Acordeon, CarruselImagenes, PilaFotos…
     ├── components/home/       ← una sección de la home por archivo (+ TickerHero)
+    ├── components/tour/       ← una sección de la ficha por archivo
     ├── dev/                   ← Dev Mode (glosario navegable, NO va a Figma)
     └── pages/
         ├── home.tsx           ← compone todas las secciones
+        ├── tour.tsx           ← la plantilla de ficha (/tours/:slug)
         └── fundaciones.tsx    ← swatches + type scale, para validar tokens
 ```
 

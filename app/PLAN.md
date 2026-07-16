@@ -168,7 +168,13 @@ estructura ni el orden (ya validados en la revisión de conversión):
 - NO importar el HTML/JSX a Figma con Anima/html.to.design (regla de oro del playbook).
 - NO añadir librerías de UI ni de animación.
 - NO inventar copy, datos ni usar fotos stock.
-- NO construir otras páginas (ni ficha ni booking — solo la home).
+- ~~NO construir otras páginas (ni ficha ni booking — solo la home).~~
+  **Derogado a medias (2026-07-16, PLAN-TOURS.md):** la **ficha de tour**
+  (`/tours/:slug`) ya está construida — es la página donde se reserva, y el
+  research de conversión entero apuntaba a ella. Sigue en pie el resto: el
+  **funnel de booking** (4 pasos) y el **listado `/tours`** NO se construyen,
+  porque dependen de la decisión del motor xpotours (reemplazar / re-skinear),
+  que sigue pendiente del cliente.
 - NO tocar `prototipo/` ni `wireframes/` (siguen siendo la referencia del resto del sitio).
 - NO valores sueltos: si un color/tamaño no existe como token, se añade el token primero.
 
