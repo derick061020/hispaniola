@@ -1,11 +1,12 @@
+import { Link } from 'react-router-dom'
 import { ArrowRight, Clock, Star, Users } from 'lucide-react'
 import type { Tour } from '@/data/home'
 import { formatoDinero } from '@/data/home'
-import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
 import { CarruselImagenes } from '@/components/ui/carrusel-imagenes'
 
-// Card de tour — el escaparate de "Nuestros tours". La ficha vive en prototipo/
-// (fuera de alcance), así que el CTA "Ver tour" es un EnlacePrototipo.
+// Card de tour — el escaparate de "Nuestros tours". El CTA "Ver tour" navega a
+// la ficha REAL (/tours/:slug, PLAN-TOURS.md): era un EnlacePrototipo mientras
+// la ficha solo existía en prototipo/.
 //
 // v3-F20 (PLAN-v3.md §18, pedido de Samuel): las cards se rediseñan con la FOTO
 // de protagonista — un CARRUSEL con la galería real del servicio que desliza
@@ -85,10 +86,13 @@ export function TourCard({ tour, autoAvance = true }: { tour: Tour; autoAvance?:
             dispararía el :hover del ancla y "lavaría" el botón; el feedback lo
             da el lift/sombra de la card. La flecha sí se corre un pelo. */}
         <div className="mt-auto pt-3">
-          <EnlacePrototipo className="group/cta flex w-full items-center justify-center gap-2 rounded-chip bg-navy px-4 py-3 text-sm font-semibold text-white shadow-boton-relieve after:absolute after:inset-0 after:z-10">
+          <Link
+            to={`/tours/${tour.slug}`}
+            className="group/cta flex w-full items-center justify-center gap-2 rounded-chip bg-navy px-4 py-3 text-sm font-semibold text-white shadow-boton-relieve after:absolute after:inset-0 after:z-10"
+          >
             Ver tour
             <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
-          </EnlacePrototipo>
+          </Link>
         </div>
       </div>
     </article>

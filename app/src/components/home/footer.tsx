@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { TOURS } from '@/data/home'
 import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
 import { Logo } from '@/components/ui/logo'
@@ -21,7 +22,9 @@ export function Footer() {
           <ul className="mt-3 flex flex-col gap-2 text-sm text-white/80">
             {TOURS.map((t) => (
               <li key={t.slug}>
-                <EnlacePrototipo className="hover:text-white">{t.nombre}</EnlacePrototipo>
+                <Link to={`/tours/${t.slug}`} className="hover:text-white">
+                  {t.nombre}
+                </Link>
               </li>
             ))}
             <li>
@@ -52,9 +55,13 @@ export function Footer() {
           <h5 className="text-sm font-semibold uppercase tracking-wide text-white/50">Reservas y ayuda</h5>
           <ul className="mt-3 flex flex-col gap-2 text-sm text-white/80">
             <li>
-              <a href="#tours" className="hover:text-white">
+              {/* `/#tours` y no `#tours`: el footer también vive en la ficha,
+                  donde ese ancla no existe y el enlace no haría nada. Con la
+                  ruta delante vuelve a la home y ScrollAlNavegar (hash-aware)
+                  baja al grid de tours. */}
+              <Link to="/#tours" className="hover:text-white">
                 Reservar ahora
-              </a>
+              </Link>
             </li>
             <li>
               <EnlacePrototipo className="hover:text-white">Mi reserva</EnlacePrototipo>

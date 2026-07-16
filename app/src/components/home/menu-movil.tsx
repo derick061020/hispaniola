@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
+import { Link } from 'react-router-dom'
 import { X } from 'lucide-react'
 import { TOURS, OCASIONES, NAV_NOSOTROS, NAV_AYUDA, bookingCta, formatoDinero } from '@/data/home'
 import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
@@ -18,7 +19,17 @@ const secciones: { id: Seccion; label: string }[] = [
 // que sustituye a la página: la hoja lleva el mismo margen y radio que el
 // hero (--spacing-hero-margen, --radius-hero — el mismo lenguaje visual del
 // resto del sitio) sobre un scrim que atenúa el fondo.
-export function MenuMovil({ abierto, onCerrar }: { abierto: boolean; onCerrar: () => void }) {
+export function MenuMovil({
+  abierto,
+  onCerrar,
+  ctaHref = '#tours',
+}: {
+  abierto: boolean
+  onCerrar: () => void
+  /** Destino de «Reservar ahora» — lo pasa el Header, que sabe en qué página
+   *  está (en la ficha, #tours no existe). */
+  ctaHref?: string
+}) {
   const [expandida, setExpandida] = useState<Seccion | null>('tours')
   const hojaRef = useRef<HTMLDivElement>(null)
   const cerrarBtnRef = useRef<HTMLButtonElement>(null)
@@ -131,13 +142,23 @@ export function MenuMovil({ abierto, onCerrar }: { abierto: boolean; onCerrar: (
                 <div className="pb-3">
                   {s.id === 'tours' ? (
                     <div className="flex flex-col gap-2">
+                      {/* Los tours llevan a su ficha real. La hoja se cierra
+                          sola al navegar: el header escucha el cambio de
+                          pathname (header.tsx) — hace falta porque entre dos
+                          fichas React Router NO desmonta la página, así que la
+                          hoja se quedaría abierta encima, con el scroll del
+                          fondo aún bloqueado. */}
                       {TOURS.map((t) => (
-                        <EnlacePrototipo key={t.slug} className="flex items-center justify-between rounded-lg bg-papel-hueso px-3 py-2.5">
+                        <Link
+                          key={t.slug}
+                          to={`/tours/${t.slug}`}
+                          className="flex items-center justify-between rounded-lg bg-papel-hueso px-3 py-2.5"
+                        >
                           <span className="text-sm font-medium text-navy">{t.nombre}</span>
                           <span className="text-xs font-semibold text-menta-texto">
                             {t.precioLight !== null ? `Desde ${formatoDinero(t.precioLight)}` : bookingCta[t.booking]}
                           </span>
-                        </EnlacePrototipo>
+                        </Link>
                       ))}
                     </div>
                   ) : null}
@@ -176,7 +197,11 @@ export function MenuMovil({ abierto, onCerrar }: { abierto: boolean; onCerrar: (
         </div>
 
         <div className="border-t border-linea p-4">
-          <Boton href="#tours" onClick={onCerrar} className="w-full">
+          {/* `#tours` solo existe en la home; en la ficha este botón no haría
+              nada. Se resuelve contra la página actual: en la ficha manda al
+              widget de reserva (el mismo destino que el «Reservar» del header),
+              y en la home al grid de tours. */}
+          <Boton href={ctaHref} onClick={onCerrar} className="w-full">
             Reservar ahora
           </Boton>
         </div>

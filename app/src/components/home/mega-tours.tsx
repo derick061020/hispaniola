@@ -1,9 +1,11 @@
+import { Link } from 'react-router-dom'
 import { TOURS, bookingCta, formatoDinero } from '@/data/home'
 import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
 
 // Megamenú Tours — el escaparate: los 4 productos, camino directo al dinero
-// (ver NOTAS['home-megamenu-tours'] del prototipo). Cada tour es un
-// EnlacePrototipo: la ficha vive en prototipo/, no aquí.
+// (ver NOTAS['home-megamenu-tours'] del prototipo). Cada tour lleva a su ficha
+// real (/tours/:slug); la salida "Ver los N tours" sigue en el prototipo — el
+// listado depende del motor de reservas, como el funnel.
 //
 // v3-F14.3 (decisión de Samuel, 2026-07-14): las cards se DESNUDAN. Antes eran
 // la TourCard de la sección "Nuestros tours" encogida — mismo anatómico (marco,
@@ -34,7 +36,7 @@ export function MegaTours() {
     <div className="w-[min(92vw,28rem)] p-4 xl:w-[min(92vw,55rem)]">
       <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
         {TOURS.map((t) => (
-          <EnlacePrototipo key={t.slug} className="group block">
+          <Link key={t.slug} to={`/tours/${t.slug}`} className="group block">
             {/* El zoom vive en el contenedor con overflow-hidden, no en el
                 <img>: escalar la imagen suelta crecería su caja y empujaría al
                 texto de debajo. */}
@@ -61,7 +63,7 @@ export function MegaTours() {
               )}
               {t.duracionCorta}
             </span>
-          </EnlacePrototipo>
+          </Link>
         ))}
       </div>
 

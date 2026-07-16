@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { TICKER_ITEMS, formatoDinero, type TickerItem, type TickerTour } from '@/data/home'
 import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
 import { useDevFlag } from '@/dev/use-dev-flag'
@@ -6,7 +7,8 @@ import { useTickerDock } from './use-ticker-dock'
 
 // Ticker del hero (v3) — sustituye a la baraja de v2 (app/PLAN-v3.md §7).
 // Los 4 tours + las 6 ocasiones desfilan en loop infinito por el pie del
-// hero; cada card lleva a su ficha (EnlacePrototipo). Hover "dock" (§10): las
+// hero. Las cards de TOUR llevan a su ficha real (/tours/:slug); las de
+// ocasión siguen en el prototipo. Hover "dock" (§10): las
 // cards cercanas al puntero crecen sobre una curva continua — ver
 // use-ticker-dock.ts.
 //
@@ -57,17 +59,33 @@ export function TickerHero() {
 }
 
 function TickerCard({ item, oculto = false }: { item: TickerItem; oculto?: boolean }) {
-  return (
-    <EnlacePrototipo
-      className="ticker-card flex h-ticker-alto w-ticker-ancho shrink-0 items-center gap-3 rounded-card bg-papel p-2 pr-4 shadow-card"
-      aria-hidden={oculto || undefined}
-      tabIndex={oculto ? -1 : undefined}
-    >
+  const clases =
+    'ticker-card flex h-ticker-alto w-ticker-ancho shrink-0 items-center gap-3 rounded-card bg-papel p-2 pr-4 shadow-card'
+  const contenido = (
+    <>
       <img src={`/fotos/${item.foto}.webp`} alt="" className="aspect-square h-full shrink-0 rounded-lg object-cover" />
       <div className="min-w-0">
         <p className="truncate font-display text-sm font-semibold text-navy">{item.nombre}</p>
         {item.tipo === 'tour' ? <MetaTour item={item} /> : <ChipOcasion />}
       </div>
+    </>
+  )
+
+  // Las dos especies del ticker ya no van al mismo sitio: el TOUR tiene ficha
+  // real (/tours/:slug) y la OCASIÓN sigue viviendo en el prototipo (su hub
+  // depende del formulario de eventos, fuera de este build). La unión
+  // discriminada del dato lo decide sola.
+  if (item.tipo === 'tour') {
+    return (
+      <Link to={`/tours/${item.id}`} className={clases} aria-hidden={oculto || undefined} tabIndex={oculto ? -1 : undefined}>
+        {contenido}
+      </Link>
+    )
+  }
+
+  return (
+    <EnlacePrototipo className={clases} aria-hidden={oculto || undefined} tabIndex={oculto ? -1 : undefined}>
+      {contenido}
     </EnlacePrototipo>
   )
 }

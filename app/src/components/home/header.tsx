@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 import { Menu } from 'lucide-react'
 import { Logo } from '@/components/ui/logo'
 import { Boton } from '@/components/ui/boton'
@@ -31,10 +32,40 @@ export function Header({
   const [menuAbierto, setMenuAbierto] = useState<MenuId | null>(null)
   const [movilAbierto, setMovilAbierto] = useState(false)
   const navRef = useRef<HTMLDivElement>(null)
+  const { pathname } = useLocation()
 
   // [dev-mode] deep-links del Glosario Dev — ver src/dev/dev-registry.ts
   useDevFlag('dev-mega', (v) => setMenuAbierto(v as MenuId))
   useDevFlag('dev-movil', (v) => setMovilAbierto(v === 'abierto'))
+
+  // Al navegar, los menús se cierran. Desde que los tours llevan a una ficha
+  // real (/tours/:slug) esto NO es opcional: entre dos fichas React Router
+  // reusa la misma TourPage (misma ruta, otro param) y NO la desmonta, así que
+  // sin esto el megamenú —o la hoja del menú móvil, con su scroll bloqueado—
+  // se quedaría abierto encima de la página de destino.
+  //
+  // ⚠️ Cierra solo cuando el pathname CAMBIA de verdad, comparándolo con el
+  // anterior — y no con un flag de «primer render». Dos razones, las dos
+  // encontradas en la verificación de T-F6:
+  //   1. Los efectos de `useDevFlag` se declaran arriba, así que en el montaje
+  //      corren ANTES que éste: sin guarda, cerraba de inmediato el menú que
+  //      `?dev-mega=tours` / `?dev-movil=abierto` acababan de abrir, y esos
+  //      deep-links son los frames de Figma.
+  //   2. Un flag de primer render NO basta: StrictMode invoca los efectos dos
+  //      veces al montar (efecto → cleanup → efecto), así que la 2ª pasada ya
+  //      no se saltaba y volvía a cerrar. Comparar el valor anterior es
+  //      idempotente: si el pathname no cambió, no hay nada que cerrar.
+  //
+  // Depende solo de `pathname`: useDevFlag limpia su query param tras
+  // aplicarse, y con `search` en las dependencias ese cambio volvería a
+  // cerrar el menú recién abierto.
+  const pathnameAnterior = useRef(pathname)
+  useEffect(() => {
+    if (pathnameAnterior.current === pathname) return
+    pathnameAnterior.current = pathname
+    setMenuAbierto(null)
+    setMovilAbierto(false)
+  }, [pathname])
 
   useEffect(() => {
     if (!menuAbierto) return
@@ -141,7 +172,13 @@ export function Header({
         className={`relative mx-auto flex max-w-contenido items-center justify-between px-5 py-3 ${sobreVideo ? '' : 'border-b border-linea'}`}
         ref={navRef}
       >
-        <Logo sobreOscuro={sobreVideo} />
+        {/* El logo lleva a la home. Mientras el sitio era una sola página no
+            hacía falta y era un <img> suelto; desde que existe la ficha, es la
+            salida universal a casa y su ausencia se nota (verificado en el
+            flujo de QA: era el único paso que no navegaba). */}
+        <Link to="/" aria-label="Hispaniola Aquatic Adventures — inicio">
+          <Logo sobreOscuro={sobreVideo} />
+        </Link>
 
         {sobreVideo ? (
           <div className="absolute left-1/2 top-0 z-30 hidden w-max -translate-x-1/2 md:block">
@@ -166,7 +203,7 @@ export function Header({
         </div>
       </div>
 
-      <MenuMovil abierto={movilAbierto} onCerrar={() => setMovilAbierto(false)} />
+      <MenuMovil abierto={movilAbierto} onCerrar={() => setMovilAbierto(false)} ctaHref={ctaHref} />
     </header>
   )
 }

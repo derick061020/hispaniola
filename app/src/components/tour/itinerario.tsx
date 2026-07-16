@@ -34,9 +34,15 @@ export function Itinerario({ tour, ficha }: { tour: Tour; ficha: FichaTour }) {
           <ul className="mt-5 flex flex-col gap-6 border-l border-linea pl-5">
             {ficha.itinerario.map((paso, i) => (
               <li key={i} className="relative">
+                {/* El punto se coloca DONDE EMPIEZA el padding del raíl
+                    (-left-5 es el espejo exacto del pl-5 de la <ul>) y se
+                    centra sobre sí mismo con -translate-x-1/2 → cae sobre la
+                    línea. Así no hay ningún número mágico: si el pl- cambia,
+                    solo hay que cambiar su espejo, y el ring-4 en color papel
+                    es lo que «perfora» la línea detrás del punto. */}
                 <span
                   aria-hidden="true"
-                  className="absolute -left-[1.5625rem] top-1.5 size-2.5 rounded-chip bg-aqua ring-4 ring-papel"
+                  className="absolute -left-5 top-1.5 size-2.5 -translate-x-1/2 rounded-chip bg-aqua ring-4 ring-papel"
                 />
                 {paso.hora ? (
                   <span className="font-display text-xs font-semibold uppercase tracking-wide text-aqua-dark">
