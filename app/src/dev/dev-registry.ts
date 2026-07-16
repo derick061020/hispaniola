@@ -51,6 +51,14 @@ export const devSections: DevSection[] = [
           'Swatches de paleta (Dirección B — Charter Premium) y escala tipográfica Lora + Inter, para validar fundaciones antes de construir bloques.',
         states: [],
       },
+      {
+        title: 'Sistema AlignUI',
+        route: '/fundaciones#alignui',
+        status: 'done',
+        description:
+          'Etapa A (PLAN-ALIGNUI.md): las piezas vendor de AlignUI Pro (copy-in de Synexia/referencia-alignui) con sus slots tematizados a la paleta Hispaniola vía styles/alignui.css — primary=coral, information=aqua, success=menta, faded=grises navy. Es el chrome de UI de las páginas internas (ficha de tour; el funnel cuando se desbloquee). La home y el shell NO usan estas piezas. En Figma, cada una mapea al componente equivalente del kit de Figma de AlignUI (licencia Pro) con estas variables.',
+        states: [],
+      },
     ],
   },
   {

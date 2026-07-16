@@ -1,0 +1,209 @@
+/* ============================================================
+   Hispaniola — Capa de tokens de AlignUI (PLAN-ALIGNUI.md).
+
+   Los componentes vendor de `src/components/alignui/` hablan el vocabulario
+   de slots de AlignUI (`bg-bg-weak-50`, `text-label-sm`, `rounded-10`…).
+   Este archivo define esos slots en sintaxis @theme de Tailwind v4,
+   apuntando SIEMPRE a los tokens Hispaniola de tokens.css — la regla
+   «todo pasa por tokens» sigue viva: aquí no nacen colores nuevos, solo
+   se traduce el vocabulario.
+
+   En el traspaso a Figma, esta capa mapea 1:1 a las VARIABLES del kit de
+   Figma de AlignUI (incluido en la licencia Pro), tematizadas con la
+   paleta Hispaniola: un componente AlignUI en código = el componente
+   equivalente del kit en Figma, con estas variables.
+
+   ⚠️ El port es Tailwind v3 → v4: el original vive en el tailwind.config.ts
+   del vendor (Synexia/referencia-alignui/finance). Si se añade aquí un
+   text/shadow/radius nuevo del sistema, su CLAVE se refleja también en
+   lib/alignui/cn.ts (twMergeConfig) — ver el comentario de ese archivo.
+   ============================================================ */
+
+/* Las entradas/salidas animadas del vendor (animate-in, fade-in-0,
+   zoom-in-95, slide-in-from-top-2… en Select y Modal) venían del plugin
+   tailwindcss-animate (Tailwind v3). tw-animate-css es su port oficial a
+   v4 (CSS puro, sin plugin JS). Son micro-transiciones de chrome de UI del
+   vendor, no animación de producto — la regla «sin librerías de animación»
+   sigue aplicando al código propio. */
+@import 'tw-animate-css';
+
+@theme {
+  /* ---------- Superficies ---------- */
+  --color-bg-white-0: var(--color-papel);
+  --color-bg-weak-50: var(--color-papel-hueso);
+  --color-bg-soft-200: var(--color-linea);
+  --color-bg-sub-300: var(--color-linea-fuerte);
+  --color-bg-surface-800: var(--color-navy);
+  --color-bg-strong-950: var(--color-navy);
+
+  /* ---------- Texto ---------- */
+  --color-text-strong-950: var(--color-navy);
+  --color-text-sub-600: var(--color-navy-sub);
+  --color-text-soft-400: var(--color-navy-soft);
+  /* Mismo rol cromático que el neutral-300 del vendor (#cbd2dc ≈ #c3ced4):
+     no se inventa un gris nuevo para «texto deshabilitado». */
+  --color-text-disabled-300: var(--color-linea-fuerte);
+  --color-text-white-0: var(--color-papel);
+
+  /* ---------- Bordes ---------- */
+  --color-stroke-strong-950: var(--color-navy);
+  --color-stroke-sub-300: var(--color-linea-fuerte);
+  --color-stroke-soft-200: var(--color-linea);
+  --color-stroke-white-0: var(--color-papel);
+
+  /* ---------- Primary = ACCIÓN (el coral del CTA) ----------
+     En AlignUI «primary» es el color de acción de botones y focus. En la
+     dirección B ese papel lo tiene el CORAL; el aqua sigue siendo acento
+     de marca (badges informativos → familia information, abajo). */
+  --color-primary-base: var(--color-coral);
+  --color-primary-dark: var(--color-coral-dark);
+  /* Hispaniola no tiene tercer escalón de coral: dark y darker comparten
+     valor (mismo patrón documentado que aqua-claro/titulo-ola). */
+  --color-primary-darker: var(--color-coral-dark);
+  /* Alphas del sistema, derivadas del coral por color-mix — no son colores
+     nuevos, son el coral con transparencia (focus rings, fondos ghost). */
+  --color-primary-alpha-10: color-mix(in srgb, var(--color-coral) 10%, transparent);
+  --color-primary-alpha-16: color-mix(in srgb, var(--color-coral) 16%, transparent);
+  --color-primary-alpha-24: color-mix(in srgb, var(--color-coral) 24%, transparent);
+
+  /* ---------- Estáticos y overlay ---------- */
+  --color-static-white: var(--color-papel);
+  /* El «negro» de Hispaniola ES el navy. */
+  --color-static-black: var(--color-navy);
+  --color-overlay: var(--color-overlay-foto);
+
+  /* ---------- Familias de estado ----------
+     Solo se definen las que tienen equivalente cromático REAL en la paleta
+     Hispaniola. Las demás (warning, away, feature, highlighted, stable)
+     quedan SIN definir a propósito: sus clases viven en las recetas del
+     vendor pero ningún uso nuestro las pisa, y antes de inventar un
+     amarillo/morado que la dirección B no tiene, ese mapeo se decide con
+     Samuel el día que haga falta. Tailwind v4 simplemente no genera las
+     utilidades de un slot inexistente. */
+
+  /* faded = grises neutros */
+  --color-faded-dark: var(--color-navy-sub);
+  --color-faded-base: var(--color-navy-soft);
+  --color-faded-light: var(--color-linea);
+  --color-faded-lighter: var(--color-papel-hueso);
+
+  /* information / verified = la familia aqua (acento de marca) */
+  --color-information-dark: var(--color-aqua-dark);
+  --color-information-base: var(--color-aqua);
+  --color-information-light: var(--color-aqua-claro);
+  --color-information-lighter: var(--color-aqua-tint);
+  --color-verified-dark: var(--color-aqua-dark);
+  --color-verified-base: var(--color-aqua);
+  --color-verified-light: var(--color-aqua-claro);
+  --color-verified-lighter: var(--color-aqua-tint);
+
+  /* success = la familia menta (la del panel de precio) */
+  --color-success-dark: var(--color-menta-texto);
+  --color-success-base: var(--color-menta-texto);
+  /* light y lighter comparten la menta: Hispaniola solo tiene dos escalones
+     verdes y ninguna pieza usa ambos slots lado a lado. */
+  --color-success-light: var(--color-menta);
+  --color-success-lighter: var(--color-menta);
+
+  /* error = el coral (Hispaniola no tiene un rojo aparte; el coral es el
+     rojo de la casa). Tints derivados por color-mix sobre blanco. */
+  --color-error-dark: var(--color-coral-dark);
+  --color-error-base: var(--color-coral);
+  --color-error-light: color-mix(in srgb, var(--color-coral) 24%, white);
+  --color-error-lighter: color-mix(in srgb, var(--color-coral) 10%, white);
+
+  /* ---------- Radios del sistema AlignUI ---------- */
+  /* ¡Ya coinciden! --radius-btn de Hispaniola es 0.625rem = el radius-10. */
+  --radius-10: var(--radius-btn);
+  /* 1.25rem — mismo valor que --radius-notch, pero ese token documenta el
+     notch del header; el 20 del sistema AlignUI se declara con su valor. */
+  --radius-20: 1.25rem;
+
+  /* ---------- Text styles del sistema AlignUI ----------
+     Valores LITERALES del kit (tailwind.config del vendor): son la escala
+     tipográfica del sistema AlignUI y en Figma existen como text styles del
+     kit — no se fuerzan sobre --text-h2/--text-lead, que son la escala
+     EDITORIAL de Hispaniola. Conviven: la marca titula con su escala, el
+     chrome de UI (botones, selects, badges) habla la del sistema.
+     La FUENTE sí es la de la casa: heredan Poppins del body.
+     (title-* y doc-* del kit se omiten: ese papel ya lo cubre la escala
+     editorial de Hispaniola y definirlos invitaría a usarlos.) */
+  --text-label-xl: 1.5rem;
+  --text-label-xl--line-height: 2rem;
+  --text-label-xl--letter-spacing: -0.015em;
+  --text-label-xl--font-weight: 500;
+  --text-label-lg: 1.125rem;
+  --text-label-lg--line-height: 1.5rem;
+  --text-label-lg--letter-spacing: -0.015em;
+  --text-label-lg--font-weight: 500;
+  --text-label-md: 1rem;
+  --text-label-md--line-height: 1.5rem;
+  --text-label-md--letter-spacing: -0.011em;
+  --text-label-md--font-weight: 500;
+  --text-label-sm: 0.875rem;
+  --text-label-sm--line-height: 1.25rem;
+  --text-label-sm--letter-spacing: -0.006em;
+  --text-label-sm--font-weight: 500;
+  --text-label-xs: 0.75rem;
+  --text-label-xs--line-height: 1rem;
+  --text-label-xs--letter-spacing: 0em;
+  --text-label-xs--font-weight: 500;
+  --text-paragraph-xl: 1.5rem;
+  --text-paragraph-xl--line-height: 2rem;
+  --text-paragraph-xl--letter-spacing: -0.015em;
+  --text-paragraph-xl--font-weight: 400;
+  --text-paragraph-lg: 1.125rem;
+  --text-paragraph-lg--line-height: 1.5rem;
+  --text-paragraph-lg--letter-spacing: -0.015em;
+  --text-paragraph-lg--font-weight: 400;
+  --text-paragraph-md: 1rem;
+  --text-paragraph-md--line-height: 1.5rem;
+  --text-paragraph-md--letter-spacing: -0.011em;
+  --text-paragraph-md--font-weight: 400;
+  --text-paragraph-sm: 0.875rem;
+  --text-paragraph-sm--line-height: 1.25rem;
+  --text-paragraph-sm--letter-spacing: -0.006em;
+  --text-paragraph-sm--font-weight: 400;
+  --text-paragraph-xs: 0.75rem;
+  --text-paragraph-xs--line-height: 1rem;
+  --text-paragraph-xs--letter-spacing: 0em;
+  --text-paragraph-xs--font-weight: 400;
+  --text-subheading-md: 1rem;
+  --text-subheading-md--line-height: 1.5rem;
+  --text-subheading-md--letter-spacing: 0.06em;
+  --text-subheading-md--font-weight: 500;
+  --text-subheading-sm: 0.875rem;
+  --text-subheading-sm--line-height: 1.25rem;
+  --text-subheading-sm--letter-spacing: 0.06em;
+  --text-subheading-sm--font-weight: 500;
+  --text-subheading-xs: 0.75rem;
+  --text-subheading-xs--line-height: 1rem;
+  --text-subheading-xs--letter-spacing: 0.04em;
+  --text-subheading-xs--font-weight: 500;
+  --text-subheading-2xs: 0.6875rem;
+  --text-subheading-2xs--line-height: 0.75rem;
+  --text-subheading-2xs--letter-spacing: 0.02em;
+  --text-subheading-2xs--font-weight: 500;
+
+  /* ---------- Sombras del sistema AlignUI ----------
+     Los hex de sombra vienen del kit tal cual (igual que --shadow-card de
+     Hispaniola lleva su rgb() literal): una sombra ES un token, este es su
+     archivo. Las de foco y las fancy referencian los slots de color de
+     arriba, así que se tematizan solas con la paleta Hispaniola. */
+  --shadow-regular-xs: 0 1px 2px 0 #0a0d1408;
+  --shadow-regular-sm: 0 2px 4px #1b1c1d0a;
+  --shadow-regular-md: 0 16px 32px -12px #0e121b1a;
+  --shadow-button-primary-focus:
+    0 0 0 2px var(--color-bg-white-0),
+    0 0 0 4px var(--color-primary-alpha-10);
+  --shadow-button-important-focus:
+    0 0 0 2px var(--color-bg-white-0),
+    0 0 0 4px color-mix(in srgb, var(--color-navy-soft) 16%, transparent);
+  --shadow-button-error-focus:
+    0 0 0 2px var(--color-bg-white-0),
+    0 0 0 4px color-mix(in srgb, var(--color-coral) 10%, transparent);
+  --shadow-fancy-buttons-neutral: 0 1px 2px 0 #1b1c1d7a, 0 0 0 1px var(--color-navy);
+  --shadow-fancy-buttons-primary: 0 1px 2px 0 #0e121b3d, 0 0 0 1px var(--color-primary-base);
+  --shadow-fancy-buttons-error: 0 1px 2px 0 #0e121b3d, 0 0 0 1px var(--color-error-base);
+  --shadow-fancy-buttons-stroke: 0 1px 3px 0 #0e121b1f, 0 0 0 1px var(--color-stroke-soft-200);
+}

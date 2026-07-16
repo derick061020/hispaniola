@@ -1,4 +1,10 @@
 @import './styles/tokens.css';
+/* Capa de slots AlignUI → tokens Hispaniola (PLAN-ALIGNUI.md). Va aquí y no
+   como @import dentro de tokens.css por dos razones: (1) el grafo entero se
+   aplana en este entry y el @theme registra igual; (2) tokens.css tiene
+   trabajo en vuelo de otra sesión — este archivo era el punto de enganche
+   que no pisa a nadie. */
+@import './styles/alignui.css';
 @import './styles/componentes.css';
 
 *,
