@@ -1,4 +1,4 @@
-import { Etiqueta } from '@/components/ui/etiqueta'
+import { TituloSeccion } from '@/components/tour/titulo-seccion'
 import { BLOQUE_FICHA } from '@/components/tour/bloque-ficha'
 import type { FichaTour } from '@/data/tours'
 
@@ -12,7 +12,7 @@ import type { FichaTour } from '@/data/tours'
 export function Itinerario({ ficha }: { ficha: FichaTour }) {
   return (
     <section id="ancla-itinerario" className={`${BLOQUE_FICHA} scroll-mt-sticky-top`}>
-      <Etiqueta>Itinerario — {ficha.duracion}</Etiqueta>
+      <TituloSeccion>Itinerario — {ficha.duracion}</TituloSeccion>
 
       {/* El raíl es un border-left en la <ul>; cada hito pone su punto encima.
           Con `hora` vacía (charter y Saona coordinan a demanda) la fila no se

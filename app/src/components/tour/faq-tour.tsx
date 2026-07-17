@@ -1,5 +1,5 @@
 import * as Accordion from '@/components/alignui/accordion'
-import { Etiqueta } from '@/components/ui/etiqueta'
+import { TituloSeccion } from '@/components/tour/titulo-seccion'
 import { BLOQUE_FICHA } from '@/components/tour/bloque-ficha'
 import type { FichaTour } from '@/data/tours'
 
@@ -27,7 +27,7 @@ import type { FichaTour } from '@/data/tours'
 export function FaqTour({ ficha }: { ficha: FichaTour }) {
   return (
     <section id="ancla-faq" className={`${BLOQUE_FICHA} scroll-mt-sticky-top`}>
-      <Etiqueta>FAQ de este tour</Etiqueta>
+      <TituloSeccion>FAQ de este tour</TituloSeccion>
       <Accordion.Root type="single" collapsible defaultValue="faq-0" className="mt-4 flex flex-col gap-3">
         {ficha.faqTour.map((item, i) => (
           <Accordion.Item key={item.p} value={`faq-${i}`}>

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Etiqueta } from '@/components/ui/etiqueta'
+import { TituloSeccion } from '@/components/tour/titulo-seccion'
 import { Estrellas } from '@/components/ui/estrellas'
 import { BLOQUE_FICHA } from '@/components/tour/bloque-ficha'
 import { useDevFlag } from '@/dev/use-dev-flag'
@@ -66,7 +66,7 @@ export function OpinionesTour({ tour }: { tour: Tour }) {
 
   return (
     <section id="ancla-opiniones" className={`${BLOQUE_FICHA} scroll-mt-sticky-top`}>
-      <Etiqueta>Opiniones</Etiqueta>
+      <TituloSeccion>Opiniones</TituloSeccion>
 
       <div className="mt-5 flex items-center gap-4">
         <p className="font-display text-h2 font-semibold text-navy">

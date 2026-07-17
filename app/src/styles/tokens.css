@@ -753,7 +753,7 @@
      compite con --spacing-hero-alto (84svh, exclusivo de la home). Min-height,
      no alto fijo: si el contenido (H1 largo, chips que envuelven) crece, el
      hero crece con él en vez de recortarlo. */
-  --spacing-hero-interna-alto: 34rem; /* 544px — desktop, sm: en adelante */
+  --spacing-hero-interna-alto: 25rem; /* 400px — desktop (2026-07-17, Samuel: más compacto; antes 34rem) */
   /* Alto de cada box de «También te puede gustar» (C4) — boxes grandes de
      imagen con texto encima, no cards de texto: necesitan leerse como su
      propia sección, no como una card más del gris de la ficha. */

@@ -1,5 +1,5 @@
 import { UtensilsCrossed } from 'lucide-react'
-import { Etiqueta } from '@/components/ui/etiqueta'
+import { TituloSeccion } from '@/components/tour/titulo-seccion'
 import { BLOQUE_FICHA } from '@/components/tour/bloque-ficha'
 import { formatoDinero, type Tour } from '@/data/home'
 import type { FichaTour, PlatoMenu } from '@/data/tours'
@@ -63,7 +63,10 @@ function PaqueteMenu({
   cols: string
 }) {
   return (
-    <div className="rounded-card-grande p-4 ring-1 ring-linea sm:p-5">
+    // Fondo gris clarito y SIN borde (2026-07-17, Samuel): antes era card
+    // blanca con borde igual que el bloque padre — se confundían. El gris lo
+    // separa del padre blanco, y las cards de plato (blancas) resaltan encima.
+    <div className="rounded-card-grande bg-fondo-ficha p-4 sm:p-5">
       <header className="mb-4 flex items-baseline justify-between gap-3 border-b border-linea pb-3">
         <div>
           <h3 className="font-display text-h3 font-semibold text-navy">Menú {nombre}</h3>
@@ -86,7 +89,7 @@ function PaqueteMenu({
 export function MenuTour({ tour, ficha }: { tour: Tour; ficha: FichaTour }) {
   return (
     <section id="ancla-menu" className={`${BLOQUE_FICHA} scroll-mt-sticky-top`}>
-      <Etiqueta>Tu menú, a tu elección</Etiqueta>
+      <TituloSeccion>Tu menú, a tu elección</TituloSeccion>
       <p className="mt-3 max-w-2xl text-sm text-navy-sub">
         Cada persona elige su plato al reservar, recién hecho a bordo — no buffet recalentado. El menú es lo único que
         cambia entre los dos paquetes; el resto del tour es idéntico.

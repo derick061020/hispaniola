@@ -1,5 +1,5 @@
 import { Check, Camera, Sun, Waves, Shirt, Banknote, Package } from 'lucide-react'
-import { Etiqueta } from '@/components/ui/etiqueta'
+import { TituloSeccion } from '@/components/tour/titulo-seccion'
 import { BLOQUE_FICHA } from '@/components/tour/bloque-ficha'
 import type { FichaTour } from '@/data/tours'
 
@@ -37,7 +37,7 @@ export function IncluyeTour({ ficha }: { ficha: FichaTour }) {
   return (
     <>
       <section id="ancla-incluye" className={`${BLOQUE_FICHA} scroll-mt-sticky-top`}>
-        <Etiqueta>Qué incluye</Etiqueta>
+        <TituloSeccion>Qué incluye</TituloSeccion>
 
         <div className="mt-5 grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
           {incluidos.map((b) => (
@@ -63,7 +63,7 @@ export function IncluyeTour({ ficha }: { ficha: FichaTour }) {
           lista (Saona no tiene datos → no se pinta). */}
       {ficha.queLlevar.length > 0 ? (
         <section className={BLOQUE_FICHA}>
-          <Etiqueta>Qué llevar</Etiqueta>
+          <TituloSeccion>Qué llevar</TituloSeccion>
           <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
             {ficha.queLlevar.map((item) => {
               const Icono = iconoLlevar(item)
