@@ -1,4 +1,5 @@
 import { Etiqueta } from '@/components/ui/etiqueta'
+import { BLOQUE_FICHA } from '@/components/tour/bloque-ficha'
 import type { FichaTour } from '@/data/tours'
 
 // Qué incluye (wireframe A4). Sin iconos: los 4 beneficios son de cada tour
@@ -13,7 +14,7 @@ import type { FichaTour } from '@/data/tours'
 // por confirmar — se pinta igual.
 export function IncluyeTour({ ficha }: { ficha: FichaTour }) {
   return (
-    <section id="ancla-incluye" className="scroll-mt-sticky-top">
+    <section id="ancla-incluye" className={`${BLOQUE_FICHA} scroll-mt-sticky-top`}>
       <Etiqueta>Qué incluye</Etiqueta>
 
       <div className="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-4">

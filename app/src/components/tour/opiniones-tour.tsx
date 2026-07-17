@@ -1,5 +1,6 @@
 import { Etiqueta } from '@/components/ui/etiqueta'
 import { Estrellas } from '@/components/ui/estrellas'
+import { BLOQUE_FICHA } from '@/components/tour/bloque-ficha'
 import type { Tour } from '@/data/home'
 import type { FichaTour } from '@/data/tours'
 
@@ -24,7 +25,7 @@ const TRIPADVISOR_URL = 'https://www.tripadvisor.com'
 
 export function OpinionesTour({ tour, ficha }: { tour: Tour; ficha: FichaTour }) {
   return (
-    <section id="ancla-opiniones" className="scroll-mt-sticky-top">
+    <section id="ancla-opiniones" className={`${BLOQUE_FICHA} scroll-mt-sticky-top`}>
       <Etiqueta>Opiniones</Etiqueta>
 
       <div className="mt-5 grid gap-6 lg:grid-cols-3">

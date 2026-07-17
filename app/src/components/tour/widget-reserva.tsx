@@ -3,6 +3,7 @@ import { Clock, Users } from 'lucide-react'
 import * as FancyButton from '@/components/alignui/fancy-button'
 import * as Select from '@/components/alignui/select'
 import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
+import { BLOQUE_FICHA } from '@/components/tour/bloque-ficha'
 import { useDevFlag } from '@/dev/use-dev-flag'
 import { diaCorto, hoyISO, numeroDeDia, sumarDias } from '@/lib/fechas'
 import { formatoDinero, type Tour } from '@/data/home'
@@ -53,12 +54,12 @@ function Checks({ lineas }: { lineas: string[] }) {
 
 function Caja({ children }: { children: React.ReactNode }) {
   // Mismo lenguaje «objeto suave» que la TourCard de la home: la decisión de
-  // compra vive en una caja propia, no suelta sobre el papel.
+  // compra vive en una caja propia, no suelta sobre el fondo. PLAN-INTERNAS-
+  // V2.md §C2: BLOQUE_FICHA en vez de un p-5 propio — la misma receta que el
+  // resto de bloques de la ficha, para que el widget lea como una card más
+  // sobre --color-fondo-ficha y no como la única pieza con su padding aparte.
   return (
-    <div
-      id="ficha-widget"
-      className="flex scroll-mt-sticky-top flex-col gap-4 rounded-card-grande bg-papel p-5 shadow-card ring-1 ring-linea"
-    >
+    <div id="ficha-widget" className={`${BLOQUE_FICHA} flex scroll-mt-sticky-top flex-col gap-4`}>
       {children}
     </div>
   )

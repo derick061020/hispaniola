@@ -1,4 +1,5 @@
 import { Etiqueta } from '@/components/ui/etiqueta'
+import { BLOQUE_FICHA } from '@/components/tour/bloque-ficha'
 import type { FichaTour } from '@/data/tours'
 import type { Tour } from '@/data/home'
 
@@ -22,7 +23,7 @@ export function Itinerario({ tour, ficha }: { tour: Tour; ficha: FichaTour }) {
         : 'Costa Bávaro → Cabo Engaño'
 
   return (
-    <section id="ancla-itinerario" className="scroll-mt-sticky-top">
+    <section id="ancla-itinerario" className={`${BLOQUE_FICHA} scroll-mt-sticky-top`}>
       <div className={`grid gap-8 ${ficha.fotoItinerario ? 'lg:grid-cols-2' : ''} items-start`}>
         <div>
           <Etiqueta>Itinerario — {ficha.duracion}</Etiqueta>

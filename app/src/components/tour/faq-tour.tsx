@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import * as Accordion from '@/components/alignui/accordion'
 import { Etiqueta } from '@/components/ui/etiqueta'
+import { BLOQUE_FICHA } from '@/components/tour/bloque-ficha'
 import { TOURS, bookingCta, formatoDinero } from '@/data/home'
 import { FICHAS, type FichaTour } from '@/data/tours'
 
@@ -29,7 +30,7 @@ export function FaqTour({ ficha }: { ficha: FichaTour }) {
     .filter((r) => r.tour && r.ficha)
 
   return (
-    <section id="ancla-faq" className="scroll-mt-sticky-top">
+    <section id="ancla-faq" className={`${BLOQUE_FICHA} scroll-mt-sticky-top`}>
       <div className="grid gap-8 lg:grid-cols-2">
         <div>
           <Etiqueta>FAQ de este tour</Etiqueta>

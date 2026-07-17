@@ -1,4 +1,5 @@
 import { Etiqueta } from '@/components/ui/etiqueta'
+import { BLOQUE_FICHA } from '@/components/tour/bloque-ficha'
 import { PLATOS, formatoDinero, type Tour } from '@/data/home'
 import type { FichaTour } from '@/data/tours'
 
@@ -17,7 +18,7 @@ import type { FichaTour } from '@/data/tours'
 
 export function MenuTour({ tour, ficha }: { tour: Tour; ficha: FichaTour }) {
   return (
-    <section id="ancla-menu" className="scroll-mt-sticky-top">
+    <section id="ancla-menu" className={`${BLOQUE_FICHA} scroll-mt-sticky-top`}>
       <Etiqueta>Tu menú, a tu elección</Etiqueta>
       <p className="mt-3 max-w-2xl text-sm text-navy-sub">
         Cada persona elige su plato al reservar. Recién hecho a bordo, no buffet recalentado.
