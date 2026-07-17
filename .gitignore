@@ -10,3 +10,7 @@ home-top.png
 fotos-stock/
 # Scripts de debug puntuales
 app/debug-*.mjs
+app/debug-*.png
+# Capturas de debug de Playwright (app/app/ es un typo del script, no parte
+# del proyecto — debería ir a /tmp pero se quedó aquí)
+app/app/

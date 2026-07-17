@@ -112,12 +112,13 @@ export const NOSOTROS = {
   arrecifeTexto:
     'Cada tour navega al vivero de coral de Cabeza de Toro, un proyecto de restauración top-3 del país que apoyamos a través de la Bávaro Reefs Foundation.',
   arrecifeCta: 'Ver toda la historia en Sostenibilidad',
-  // Foto de fondo del banner de cierre (2026-07-17, pedido de Samuel: "ponle
-  // una imagen fundida de fondo para darle más diseño"). Misma foto que
-  // EXPERIENCIA_FOTOS[0] ya curada con el alt del vivero de coral — la
-  // reutilizamos aquí en vez de inventar una nueva.
-  arrecifeFoto: 'galeria-semi-privado-1',
-  arrecifeFotoAlt: 'Huéspedes de Hispaniola frente al vivero de coral del proyecto de restauración',
+  // Foto de fondo del banner de cierre. 6ª vuelta (2026-07-17, pedido de
+  // Samuel: "usa otra imagen, usa una imagen de stock del océano Caribeño
+  // vista cenital") — sustituimos la foto del vivero de coral real por una
+  // cenital genérica de agua turquesa caribeña (stock, sin marca de agua).
+  // El texto del banner YA cuenta el arrecife; el fondo solo ambienta mar.
+  arrecifeFoto: 'arrecife-fondo-cenital',
+  arrecifeFotoAlt: 'Vista cenital del océano Caribe con agua turquesa cristalina',
 }
 
 // ---------- Intro «Quiénes somos» (NUEVO, portado de about-hispaniola.php) ----------

@@ -8,14 +8,17 @@ import { NOSOTROS } from '@/data/nosotros'
 // Nosotros del header (data/home.ts → NAV_NOSOTROS).
 //
 // Foto de fondo (2026-07-17, pedido de Samuel: "ponle una imagen fundida de
-// fondo para darle más diseño"): la del vivero de coral
-// (galeria-semi-privado-1, ya curada con ese mismo alt en EXPERIENCIA_FOTOS)
-// cubre toda la sección a sangre, con un gradiente navy encima — más
-// cargado a la izquierda, donde vive el texto (max-w-2xl), y abriendo
-// hacia la derecha para que se vea más mar. Mismo idioma visual que
-// cocina-flotante.tsx y tambien-te-gusta.tsx (foto real + gradiente + texto
-// encima). La foto es decorativa (el texto ya cuenta la historia): alt="" +
-// aria-hidden para que screen readers no la lean dos veces.
+// fondo para darle más diseño"). 6ª vuelta: "usa otra imagen, usa una
+// imagen de stock del océano Caribeño vista cenital" — sustituimos la foto
+// del vivero de coral real por una cenital genérica de agua turquesa
+// caribeña (stock, sin marca de agua, /fotos/arrecife-fondo-cenital.webp —
+// 2400x1200, crop 2/3 superior de la original para quedarnos solo con la
+// zona de agua). Cubre toda la sección a sangre, con un gradiente navy
+// encima — más cargado a la izquierda, donde vive el texto (max-w-2xl), y
+// abriendo hacia la derecha para que se vea más mar. Mismo idioma visual
+// que cocina-flotante.tsx y tambien-te-gusta.tsx (foto + gradiente + texto
+// encima). La foto es decorativa (el texto ya cuenta el arrecife): alt=""
+// + aria-hidden para que screen readers no la lean dos veces.
 export function ArrecifeTeaser() {
   return (
     <section className="relative overflow-hidden rounded-card p-8 sm:p-10">
