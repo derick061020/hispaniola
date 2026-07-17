@@ -12,7 +12,11 @@ import type { FichaEvento, PaqueteEvento } from '@/data/eventos'
 // cada paquete es INDEPENDIENTE, no un upgrade de otro.
 //
 // Layout:
-//  - 1 fila con 4 cards (en lg), 2x2 en sm, 1 col en móvil.
+//  - 1 col en móvil, 2 cols desde lg (2x2 en desktop) — pedido de
+//    Samuel 2026-07-17: "estan muy apretados, ponlos en un grid de
+//    2 columnas". La card en 1/4 de pantalla quedaba con fotos
+//    pequenas y poco aire — 2 columnas da espacio a la foto del
+//    plato y a la lista de items con check.
 //  - Cada card: foto (si tiene) + nombre + precio + capacidad + items
 //    con check + extra de precio. El Premium lleva un badge "Most
 //    complete" y un acento aqua en el borde (mismo lenguaje que la
@@ -125,7 +129,7 @@ export function PaquetesEvento({ evento }: { evento: FichaEvento }) {
       <TituloSeccion>{paquetes.titulo}</TituloSeccion>
       <p className="mt-2 text-sm text-navy-sub">{paquetes.intro}</p>
 
-      <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mt-5 grid grid-cols-1 gap-4 lg:grid-cols-2">
         {paquetes.items.map((p) => (
           <div
             key={p.id}
