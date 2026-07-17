@@ -1,12 +1,17 @@
-import { Check, UtensilsCrossed } from 'lucide-react'
+import { Check, UtensilsCrossed, Plus } from 'lucide-react'
 import { TituloSeccion } from '@/components/tour/titulo-seccion'
 import { BLOQUE_FICHA } from '@/components/tour/bloque-ficha'
 import { formatoDinero, type Tour } from '@/data/home'
-import type { FichaTour, PlatoMenu } from '@/data/tours'
+import type { FichaTour, PlatoBuffet, PlatoMenu } from '@/data/tours'
 
 // «Tu menú, a tu elección» (wireframe A4) — el diferenciador estrella: fotos
 // reales de los platos, un activo que ningún competidor tiene. Solo en
-// 'completo': charter cotiza su menú a medida y Saona no tiene paquetes.
+// 'completo': charter cotiza su menú a medida.
+//   - Si la ficha tiene menuBuffet (Saona, v3 2026-07-17): formato buffet
+//     con lista de platos + add-on opcional. Misma cabecera y misma nota de
+//     langosta al pie, sin comparador Light/Premium (Saona no se vende por
+//     menú — se vende por BOTE, vía subVariantes en el widget).
+//   - Si no: el modelo clásico con comparador Light/Premium.
 //
 // 2026-07-17 (2ª pasada, feedback de Samuel: "el apartado de los menús me
 // parece rarísimo"): antes eran 4 fotos sueltas + 2 listas de texto. Se
@@ -103,46 +108,101 @@ function PaqueteMenu({ nombre, platos }: { nombre: string; platos: PlatoMenu[] }
   )
 }
 
+// Bloque BUFFET (v3 2026-07-17, Saona): una lista de platos servidos en la
+// propia isla + el add-on opcional de langosta premium. Sin cards con foto
+// (la comida del buffet no se ha fotografiado) y sin comparador Light/Premium
+// (Saona no se vende por menú — se vende por BOTE).
+function MenuBuffet({ platos, addOn }: { platos: PlatoBuffet[]; addOn?: { nombre: string; precio: number; descripcion?: string } }) {
+  return (
+    <div className="rounded-card-grande bg-fondo-ficha p-4 sm:p-5">
+      <h3 className="mb-4 border-b border-linea pb-3 font-display text-h3 font-semibold text-navy">
+        Buffet en Isla Saona
+      </h3>
+      <ul className="flex flex-col gap-2.5">
+        {platos.map((p) => (
+          <li key={p.nombre} className="flex items-start gap-2.5 text-sm text-navy">
+            <Check className="mt-0.5 size-4 shrink-0 text-menta-texto" aria-hidden="true" />
+            <span>
+              <span className="font-semibold">{p.nombre}</span>
+              {p.desc ? <span className="text-navy-soft"> · {p.desc}</span> : null}
+            </span>
+          </li>
+        ))}
+      </ul>
+      {addOn ? (
+        <div className="mt-4 flex items-center gap-3 rounded-card border border-linea bg-papel p-3">
+          <span className="grid size-9 shrink-0 place-items-center rounded-full bg-aqua-tint text-aqua-dark">
+            <Plus className="size-4" aria-hidden="true" />
+          </span>
+          <div className="flex-1">
+            <p className="text-sm font-semibold text-navy">
+              {addOn.nombre} · {formatoDinero(addOn.precio)}{' '}
+              <span className="text-xs font-normal text-navy-soft">por persona</span>
+            </p>
+            {addOn.descripcion ? <p className="mt-0.5 text-xs text-navy-soft">{addOn.descripcion}</p> : null}
+          </div>
+        </div>
+      ) : null}
+    </div>
+  )
+}
+
 export function MenuTour({ tour, ficha }: { tour: Tour; ficha: FichaTour }) {
   const precioPremium =
     tour.precioLight !== null && ficha.upgradePremium !== null ? tour.precioLight + ficha.upgradePremium : null
 
+  // v3 (2026-07-17, Saona): si la ficha tiene menuBuffet, pintamos formato
+  // buffet + add-on en vez del comparador Light/Premium clásico. Saona no
+  // se vende por menú, se vende por BOTE (subVariantes en el widget) — el
+  // menú es el mismo en las 3 sub-variantes.
+  const esBuffet = ficha.menuBuffet !== undefined
+
   return (
     <section id="ancla-menu" className={`${BLOQUE_FICHA} scroll-mt-sticky-top`}>
-      <TituloSeccion>Tu menú, a tu elección</TituloSeccion>
+      <TituloSeccion>{esBuffet ? 'El menú del día' : 'Tu menú, a tu elección'}</TituloSeccion>
       <p className="mt-3 max-w-2xl text-sm text-navy-sub">
-        Cada persona elige su plato al reservar, recién hecho a bordo — no buffet recalentado.
+        {esBuffet
+          ? 'Buffet típico dominicano servido en la propia isla, con parada en la piscina natural antes y después.'
+          : 'Cada persona elige su plato al reservar, recién hecho a bordo — no buffet recalentado.'}
       </p>
 
-      {/* Comparador de paquetes fundido en el menú (Fase B). Tratamiento
-          LIGERO —hairlines sobre blanco, como la barra de KPIs— y NO una card
-          gris más: las 2 columnas se dividen con un divisor vertical. */}
-      <div className="mt-5 border-y border-linea py-4">
-        <div className="grid grid-cols-2 divide-x divide-linea">
-          <ComparaColumna
-            nombre="Light"
-            precio={formatoDinero(tour.precioLight)}
-            platos={`${ficha.menuLight.length} platos a la parrilla`}
-          />
-          <ComparaColumna
-            nombre="Premium"
-            precio={formatoDinero(precioPremium)}
-            delta={ficha.upgradePremium !== null ? `+${formatoDinero(ficha.upgradePremium)}` : undefined}
-            platos={`${ficha.menuPremium.length} platos gourmet`}
-          />
+      {esBuffet ? (
+        <div className="mt-4">
+          <MenuBuffet platos={ficha.menuBuffet!.platos} addOn={ficha.menuBuffet!.addOn} />
         </div>
-        <p className="mt-3 text-center text-xs text-navy-soft">
-          El tour es idéntico en los dos — lo único que cambia es el menú.
-        </p>
-      </div>
+      ) : (
+        <>
+          {/* Comparador de paquetes fundido en el menú (Fase B). Tratamiento
+              LIGERO —hairlines sobre blanco, como la barra de KPIs— y NO una card
+              gris más: las 2 columnas se dividen con un divisor vertical. */}
+          <div className="mt-5 border-y border-linea py-4">
+            <div className="grid grid-cols-2 divide-x divide-linea">
+              <ComparaColumna
+                nombre="Light"
+                precio={formatoDinero(tour.precioLight)}
+                platos={`${ficha.menuLight.length} platos a la parrilla`}
+              />
+              <ComparaColumna
+                nombre="Premium"
+                precio={formatoDinero(precioPremium)}
+                delta={ficha.upgradePremium !== null ? `+${formatoDinero(ficha.upgradePremium)}` : undefined}
+                platos={`${ficha.menuPremium.length} platos gourmet`}
+              />
+            </div>
+            <p className="mt-3 text-center text-xs text-navy-soft">
+              El tour es idéntico en los dos — lo único que cambia es el menú.
+            </p>
+          </div>
 
-      {/* Los platos de cada paquete, con foto real. Ambos usan el mismo grid de
-          hasta 4 columnas: así las 2 cards de Light quedan del tamaño de las de
-          Premium y dejan huecos en blanco (2026-07-17, Samuel). */}
-      <div className="mt-4 flex flex-col gap-4">
-        <PaqueteMenu nombre="Light" platos={ficha.menuLight} />
-        <PaqueteMenu nombre="Premium" platos={ficha.menuPremium} />
-      </div>
+          {/* Los platos de cada paquete, con foto real. Ambos usan el mismo grid de
+              hasta 4 columnas: así las 2 cards de Light quedan del tamaño de las de
+              Premium y dejan huecos en blanco (2026-07-17, Samuel). */}
+          <div className="mt-4 flex flex-col gap-4">
+            <PaqueteMenu nombre="Light" platos={ficha.menuLight} />
+            <PaqueteMenu nombre="Premium" platos={ficha.menuPremium} />
+          </div>
+        </>
+      )}
 
       <p className="mt-3 text-xs text-navy-soft">
         * Langosta se sustituye por langostino salvaje de marzo a junio (veda).

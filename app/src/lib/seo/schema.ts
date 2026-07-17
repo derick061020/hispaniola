@@ -2,7 +2,7 @@
 // — nunca se inventa un dato que el sitio no muestre ya en algún lado.
 import { CONTACTO } from '@/data/home'
 import type { Tour } from '@/data/home'
-import type { PreguntaTour } from '@/data/tours'
+import type { FichaTour, PreguntaTour } from '@/data/tours'
 
 const SITIO = () => window.location.origin
 
@@ -42,10 +42,14 @@ export function schemaOrganizacion() {
 
 /** Un tour bookeable (Product es el tipo con más soporte real de rich
  *  results, incluido el de 'TouristTrip' que schema.org sugiere pero Google
- *  soporta peor). Isla Saona (precioLight null, booking 'consulta') no
- *  publica `offers` — no hay precio real que anunciar. */
-export function schemaTour(tour: Tour) {
-  return {
+ *  soporta peor). Isla Saona v3 (2026-07-17): cuando `ficha` tiene
+ *  `subVariantes` (Saona: speedboat / fishing / catamarán), el `offers` pasa
+ *  a ser un `AggregateOffer` con low/high + lista de Offer por tramo — más fiel
+ *  a la web del cliente que el único `precioLight` que ven los otros tours.
+ *  Para los tours sin subVariantes se mantiene un único Offer con `precioLight`
+ *  (el ancla del widget). */
+export function schemaTour(tour: Tour, ficha?: FichaTour) {
+  const base = {
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: tour.nombre,
@@ -57,18 +61,58 @@ export function schemaTour(tour: Tour) {
       ratingValue: String(tour.rating),
       reviewCount: String(tour.resenas),
     },
-    ...(tour.precioLight !== null
-      ? {
-          offers: {
-            '@type': 'Offer',
-            price: String(tour.precioLight),
-            priceCurrency: 'USD',
-            availability: 'https://schema.org/InStock',
-            url: `${SITIO()}/tours/${tour.slug}`,
-          },
-        }
-      : {}),
   }
+
+  // Con subVariantes (Saona): AggregateOffer con todos los tramos.
+  if (ficha?.subVariantes && ficha.subVariantes.length > 0) {
+    const precios: number[] = []
+    const tramos: Array<Record<string, unknown>> = []
+    for (const v of ficha.subVariantes) {
+      for (const t of v.tabla) {
+        // Para el schema publicamos el precio POR PERSONA cuando es
+        // tramo-por-persona, y el total del grupo cuando es fijo (precio real
+        // que pagaría alguien con `t.desde` pax).
+        const precioPublicado = t.tipo === 'persona' ? t.precio : t.precio
+        precios.push(precioPublicado)
+        tramos.push({
+          '@type': 'Offer',
+          name: `${v.nombre} — ${t.desde}${t.hasta === null ? '+' : `-${t.hasta}`} pax`,
+          price: String(precioPublicado),
+          priceCurrency: 'USD',
+          availability: 'https://schema.org/InStock',
+          url: `${SITIO()}/tours/${tour.slug}`,
+        })
+      }
+    }
+    return {
+      ...base,
+      offers: {
+        '@type': 'AggregateOffer',
+        lowPrice: String(Math.min(...precios)),
+        highPrice: String(Math.max(...precios)),
+        priceCurrency: 'USD',
+        offerCount: String(tramos.length),
+        offers: tramos,
+      },
+    }
+  }
+
+  // Sin subVariantes: un único Offer con precioLight (modelo clásico).
+  if (tour.precioLight !== null) {
+    return {
+      ...base,
+      offers: {
+        '@type': 'Offer',
+        price: String(tour.precioLight),
+        priceCurrency: 'USD',
+        availability: 'https://schema.org/InStock',
+        url: `${SITIO()}/tours/${tour.slug}`,
+      },
+    }
+  }
+
+  // Sin precio (consulta): no se publica `offers` — no hay precio real.
+  return base
 }
 
 /** FAQPage — misma forma {p,r} que usan FAQ_HOME (data/home.ts) y

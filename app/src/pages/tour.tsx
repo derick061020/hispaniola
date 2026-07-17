@@ -56,7 +56,7 @@ export function TourPage() {
   return (
     <div className="pb-16 md:pb-0">
       <Meta titulo={tour.nombre} descripcion={tour.descripcionCorta} ruta={`/tours/${tour.slug}`} />
-      <SchemaJsonLd datos={schemaTour(tour)} />
+      <SchemaJsonLd datos={schemaTour(tour, ficha)} />
       {ficha.faqTour.length > 0 ? <SchemaJsonLd datos={schemaFaq(ficha.faqTour)} /> : null}
       {/* PLAN-INTERNAS-V2.md §C1: el header ya no vive suelto en variante
           'solida' — se muda DENTRO del hero compartido con la home

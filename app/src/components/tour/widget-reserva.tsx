@@ -159,6 +159,15 @@ export function WidgetReserva({ tour, ficha }: Props) {
     setFecha(sumarDias(hoyISO(), 1))
     if (v === 'premium') setPaquete('premium')
   })
+  // [dev-mode] v3 (2026-07-17, Saona): el sub-variante picker se cambia a
+  // Catamarán para mostrar el frame de la opción con la tabla de tramos
+  // distinta (1-30 pax = grupo, 31-70 pax = por persona). Sin el flag, abre
+  // en Speedboat (la 1ª, la más común).
+  useDevFlag('dev-saona', (v) => {
+    if (v !== 'catamaran') return
+    setFecha(sumarDias(hoyISO(), 1))
+    setVariante('catamaran')
+  })
 
   if (tour.booking === 'cotizacion') {
     return (
