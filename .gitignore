@@ -4,3 +4,9 @@ dist/
 .DS_Store
 Thumbs.db
 .playwright-mcp/
+# Capturas locales de la home (no son assets del sitio)
+home-top.png
+# Fotos stock de referencia (no se usan en el sitio)
+fotos-stock/
+# Scripts de debug puntuales
+app/debug-*.mjs

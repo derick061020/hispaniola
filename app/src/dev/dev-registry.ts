@@ -56,7 +56,7 @@ export const devSections: DevSection[] = [
         route: '/fundaciones#alignui',
         status: 'done',
         description:
-          'Etapa A (PLAN-ALIGNUI.md): las piezas vendor de AlignUI Pro (copy-in de Synexia/referencia-alignui) con sus slots tematizados a la paleta Hispaniola vía styles/alignui.css — primary=coral, information=aqua, success=menta, faded=grises navy. Es el chrome de UI de las páginas internas (ficha de tour; el funnel cuando se desbloquee). La home y el shell NO usan estas piezas. En Figma, cada una mapea al componente equivalente del kit de Figma de AlignUI (licencia Pro) con estas variables.',
+          'Etapa A (PLAN-ALIGNUI.md): las piezas vendor de AlignUI Pro (copy-in de Synexia/referencia-alignui) con sus slots tematizados a la paleta Hispaniola vía styles/alignui.css — primary=coral, information=aqua, success=menta, faded=grises navy. Es el chrome de UI de las páginas internas (ficha de tour; el funnel cuando se desbloquee). La home usa ÚNICAMENTE el Accordion (sección FAQ, 2026-07-17, decisión de Samuel — ver «Home — Cierre» → «FAQ centrado (AlignUI)»); el resto de la home y el shell siguen sin AlignUI. En Figma, cada una mapea al componente equivalente del kit de Figma de AlignUI (licencia Pro) con estas variables.',
         states: [],
       },
     ],
@@ -69,10 +69,10 @@ export const devSections: DevSection[] = [
         route: '/',
         status: 'done',
         description:
-          'v3: el header vive DENTRO del box del hero (variante sobreVideo, transparente sobre el video), con la fila de logo/nav/Reservar capada a max-w-contenido (1400px — v3-F13, antes max-w-6xl/1152px). Sin topbar (WhatsApp + idioma se resuelven aparte con botones flotantes — pendiente). v3-F8: los megamenús/dropdowns ya no son cards flotantes — el notch se EXPANDE (ancho y alto, animado) y los contiene, estilo Dynamic Island. v3-F9: Nosotros/Ayuda pasan de lista de links a grid de 2 columnas con chip de icono + descripción (antes el panel angosto flotaba centrado en la caja del notch, con aire muerto a los lados); "Contacto y WhatsApp" pasa a ser "Contacto", a la página /contacto del prototipo. v3-F13: el panel de Nosotros/Ayuda sube a 624px (antes 512px) — con el notch centrado y simétrico, eso solo cabe desde lg (1024px) sin tapar el logo/Reservar; entre md y lg va una variante compacta de 448px sin descripciones (chip + título). CTA Reservar, menú móvil con acordeón, y footer de 4 columnas. v3-F15: el logo deja de ser el wordmark tipográfico "Hispaniola" y pasa a ser el LOGO REAL del cliente (langosta pirata + script), descargado de la web actual — revierte la decisión de direccion-visual.md §1, que lo había apartado de la UI por chocar con el posicionamiento premium. Va en dos variantes porque el lockup original tiene el texto en oscuro y es ilegible sobre el video: sobre el video, la versión reversed (langosta a color + texto blanco) que aporta Samuel; con el header sólido, el lockup original. 44px de alto en ambos casos.',
+          '"Inicio" (2026-07-17, pedido de Samuel): primer ítem del menú, en las 3 superficies de nav (TabsPrincipales en nav-tabs.tsx — sobreVideo + isla flotante; tabsConPaneles en header.tsx — variante solida; y MenuMovil) — link plano a "/", sin panel propio, mismo trato que llevaba "Guías" cuando era su propio tab. v3: el header vive DENTRO del box del hero (variante sobreVideo, transparente sobre el video), con la fila de logo/nav/Reservar capada a max-w-contenido (1400px — v3-F13, antes max-w-6xl/1152px). Topbar (WhatsApp + teléfono + idioma) aparte, ver «Topbar (contacto + idioma)» más abajo. v3-F8: los megamenús/dropdowns ya no son cards flotantes — el notch se EXPANDE (ancho y alto, animado) y los contiene, estilo Dynamic Island. v3-F9: Nosotros/Ayuda pasan de lista de links a grid de 2 columnas con chip de icono + descripción (antes el panel angosto flotaba centrado en la caja del notch, con aire muerto a los lados); "Contacto y WhatsApp" pasa a ser "Contacto", a la página /contacto del prototipo. v3-F13: el panel de Nosotros/Ayuda sube a 624px (antes 512px) — con el notch centrado y simétrico, eso solo cabe desde lg (1024px) sin tapar el logo/Reservar; entre md y lg va una variante compacta de 448px sin descripciones (chip + título). CTA Reservar, menú móvil con acordeón. v3-F15: el logo deja de ser el wordmark tipográfico "Hispaniola" y pasa a ser el LOGO REAL del cliente (langosta pirata + script), descargado de la web actual — revierte la decisión de direccion-visual.md §1, que lo había apartado de la UI por chocar con el posicionamiento premium. Va en dos variantes porque el lockup original tiene el texto en oscuro y es ilegible sobre el video: sobre el video, la versión reversed (langosta a color + texto blanco) que aporta Samuel; con el header sólido, el lockup original. 44px de alto en ambos casos.\n\nFOOTER «OCÉANO» (2026-07-17, pedido de Samuel): reemplaza al footer de 4 columnas sobre bg-navy a sangre — ahora las mismas 4 columnas (contenido intacto) viven SOBRE un océano turquesa Caribe, con una transición de espuma que disuelve el blanco de la sección anterior en el agua. Misma TÉCNICA de mask que .incluye-espuma (ver «Incluye del crucero» en «Home — Argumentos») pero ESTÁTICA: img (footer-oceano.webp) + overlay por token en vez de video, sin sticky ni GSAP — es el footer compartido con la ficha de tour y las landings de evento, no hay scroll-reveal que fundir tres veces. Assets PROPIOS (footer-oceano.webp + footer-espuma-mapa.webp, generados en Magnific — Samuel prohibió reutilizar los del incluye): el mapa de espuma se procesó en Python/PIL fuera del repo (curva de contraste + rampas de opacidad en los bordes + costura horizontal por corte ondulado, no cross-fade lineal — un blend liso dejaba "fantasma" borroso en textura de alta frecuencia como la espuma). El CTA canónico de cierre ("Tu día en el Caribe empieza aquí" + "Ver disponibilidad") ya NO vive en su propia sección: se FUNDE aquí, sobre el océano y encima de las columnas — "Ver disponibilidad" usa `to="/#tours"` (Boton con variante Link) porque el footer también vive en páginas sin ese ancla. --color-overlay-footer decide cuánto se oscurece el agua para que el texto blanco lea a AA (mismo método de medición que --color-overlay-incluye — ver ese token). Dirección de la col. 1 actualizada al dato canónico nuevo de Samuel (C. P.º del Sol, Punta Cana); WhatsApp de la col. 4 pasa a leer WHATSAPP_URL en vez de estar hardcodeado; "FAQ" y "Contacto" ahora son <Link> a /#faq y /#contacto (existen como secciones propias desde este mismo cambio).',
         states: [
-          { label: 'Megamenú: Tours', kind: 'estado', to: '/?dev-mega=tours', note: 'Abre el notch expandido (v3-F8), no una card flotante. v3-F14.3: las cards se DESNUDAN (decisión de Samuel) — eran la TourCard del grid de la home encogida (marco, chip de audiencia, bloque de precio), así que el menú repetía tal cual la sección que vive media pantalla más abajo y mezclaba navegación con decisión de compra dentro de un panel que se cierra al salir el ratón. Ahora: foto grande (200×144), nombre y una línea de meta con el mismo idioma que la card del ticker («Desde US$ 99 · 4 h»; Isla Saona no tiene precio publicado → «Consultar»). Sin marco, sin chip y sin bloque de precio, + salida "Ver los 4 tours →" al catálogo. El hover es el mismo que en Eventos (zoom de foto + título en aqua): los 2 megamenús hablan por fin el mismo lenguaje.' },
-          { label: 'Megamenú: Eventos', kind: 'estado', to: '/?dev-mega=eventos', note: 'v3-F14: foto editorial (galeria-charter-privado-4, con gradiente + "Pedir cotización") en la columna izquierda desde xl + lista de las 6 ocasiones con thumbnail a la derecha — antes 2 landings en cards y 4 ocasiones en texto plano con una divisoria vertical (el único megamenú sin una sola imagen). Entre md y xl la foto se oculta y queda solo la lista. v3-F14.2: el panel crece a lo ANCHO para dejar de crecer a lo ALTO (880px, el mismo ancho que el megamenú de Tours; antes 640px): las 6 ocasiones pasan a 2 columnas × 3 filas y el menú baja de ~430px a 281px de alto. La foto, que ocupa el alto de la lista, deja de ser un rectángulo de pie y queda casi cuadrada (277×248). Los thumbnails suben de 48 a 64px. El gradiente de la foto se recalculó (--color-overlay-foto): con la foto baja, el texto caía sobre las palmeras iluminadas y el casco blanco del barco. v3-F14.3: el hover de cada ocasión se hace notorio — la foto hace zoom (1.10, dentro de un marco con overflow-hidden para no comerse el gap con el texto) y el título pasa a aqua, además del fondo gris de la fila.' },
+          { label: 'Megamenú: Tours', kind: 'estado', to: '/?dev-mega=tours', note: 'Abre el notch expandido (v3-F8), no una card flotante. v3-F14.3: las cards se DESNUDAN (decisión de Samuel) — eran la TourCard del grid de la home encogida (marco, chip de audiencia, bloque de precio), así que el menú repetía tal cual la sección que vive media pantalla más abajo y mezclaba navegación con decisión de compra dentro de un panel que se cierra al salir el ratón. Ahora: foto grande (200×144), nombre y una línea de meta con el mismo idioma que la card del ticker («Desde US$ 99 · 4 h»; Isla Saona no tiene precio publicado → «Consultar»). Sin marco, sin chip y sin bloque de precio. El hover es el mismo que en Eventos (zoom de foto + título en aqua): los 2 megamenús hablan por fin el mismo lenguaje. 2026-07-17 (2ª vuelta, pedido de Samuel): se quita la salida "Ver los 4 tours →" al pie (el menú ya muestra los 4, no llevaba a ningún catálogo más grande) y el panel deja de tener un ancho en rem fijo por breakpoint — es `w-fit` (max-w-[92vw] de red de seguridad), autoajustado a Nº de columnas × --spacing-mega-card-ancho + gaps + padding. Numéricamente igual que antes (880px a 4 columnas, 448px a 2), pero ahora ese ancho SALE de la cuenta en vez de estar copiado a mano — la base que permitió a Eventos, con menos ítems, adaptarse sin tocar el ancho de card.' },
+          { label: 'Megamenú: Eventos', kind: 'estado', to: '/?dev-mega=eventos', note: 'v3-F14 → rediseño 2026-07-17 (pedido de Samuel: "ya que los eventos los redujimos a 3, haz que tenga el mismo patrón de diseño que los tours, mismas cards que el mega menú de tours, quitamos ese box a la izquierda con eventos privados"). Se retira la foto editorial de la columna izquierda ("Eventos privados" + "Pedir cotización", galeria-charter-privado-4) y la lista con thumbnail de las ocasiones: con solo 3 ítems (LOS 3 EVENTOS de la web actual — OCASIONES en data/home.ts), el menú pasa a ser LA MISMA rejilla que MegaTours — misma card foto h-36 + nombre + meta, mismo ancho de card (--spacing-mega-card-ancho). 2ª vuelta (mismo día, Samuel: "quita ese footer... y que el ancho del megamenú se adapte para los 3, queda un espacio blanco raro, pero ojo no hagas que las cards sean más anchas"): se quita la salida "Ver los 3 eventos →" y `xl:grid-cols-4` pasa a `xl:grid-cols-3` — sin la 4ª celda vacía que dejaba compartir el ancho fijo de Tours (880px, calibrado para 4 columnas) sin compartir su Nº de columnas. El panel es `w-fit`: se autoajusta a 3 × --spacing-mega-card-ancho + gaps + padding (664px), sin tocar el ancho de card. Los 2 megamenús siguen siendo el mismo componente con datos distintos.' },
           { label: 'Dropdown: Nosotros', kind: 'estado', to: '/?dev-mega=nosotros', note: 'v3-F9: grid de 2 columnas, chip cuadrado gris + título + descripción (antes lista de links).' },
           { label: 'Dropdown: Ayuda', kind: 'estado', to: '/?dev-mega=ayuda', note: 'v3-F9: grid de 2 columnas — 3 ítems, el hueco de la 4ª celda se deja vacío a propósito.' },
           {
@@ -80,6 +80,50 @@ export const devSections: DevSection[] = [
             kind: 'variante',
             to: '/?dev-movil=abierto',
             note: 'v3-F10: hoja (mismo margen/radio que el hero) sobre scrim, no pantalla completa. Bloquea el scroll del fondo, atrapa el foco y cierra con Escape o tocando el scrim. Ver mejor con el viewport en modo móvil.',
+          },
+        ],
+      },
+      {
+        title: 'Topbar (contacto + idioma)',
+        route: '/',
+        status: 'done',
+        description:
+          '2026-07-17 (pedido de Samuel): banda delgada de contacto/idioma que la web actual lleva ARRIBA del header (WhatsApp, teléfono toll free, selector ES/EN) — retirada al construir v3 (el Header se mudó DENTRO del hero, transparente sobre el video, y ese fondo no aguantaba una barra sólida encima) y dejada como backlog de "botones flotantes". Vuelve, pero NO como esos botones: topbar.tsx vive en App.tsx, FUERA de <Routes> y en flujo normal (no fixed, a diferencia de la isla) — así queda con fondo blanco sólido, delgada, ANTES del margen/caja redondeada de cada hero (sm:pt-0 en home/hero.tsx e internas/hero-interna.tsx cancela el margen superior del hero SOLO desde sm — el móvil, sin topbar, conserva el margen original), en toda página que no sea /fundaciones (la página interna de validación de tokens, sin Header ni Footer tampoco). Sin borde inferior propio: el blanco de la barra se funde directo con el borde superior redondeado del hero, sin línea divisoria ni espaciado entre ambos. Texto pequeño y apagado (text-navy-soft, no protagonismo) a propósito: es utilidad, no jerarquía — el Header sigue siendo la fila que manda. Los teléfonos salen de CONTACTO (data/home.ts, la misma fuente que usa /contacto), no repetidos a mano. Selector ES/EN (ui/selector-idioma.tsx): toggle switch con banderas circulares SVG a mano (España — no RD, "se entiende mejor por los turistas" — y Estados Unidos) y un fondo que se desliza al lado activo; el lado inactivo suma su etiqueta de texto junto a la bandera (animada por max-width/opacity) para dejar claro que es un idioma A DONDE CAMBIAR, no decoración — puramente visual, el sitio no tiene i18n real todavía (Pendientes de PLAN-LANZAMIENTO.md). Topbar entero solo desde sm: en móvil no cabían los 3 bloques sin truncar y el header móvil ya carga logo + hamburguesa.',
+        states: [],
+      },
+      {
+        title: 'Isla flotante (nav fijo al scroll)',
+        route: '/',
+        status: 'done',
+        description:
+          '2026-07-17 (pedido de Samuel): al pasar el hero, aparece un nav FIJO — pero no el header de siempre vuelto position:fixed a ancho completo (no habría quedado bien), sino un cluster compacto tipo Dynamic Island (isla-flotante.tsx): 3 chips flotantes (logo · tabs · Reservar), centrados, shrink-to-fit, que NO abarca el ancho completo. Los tabs reusan NotchMenu (mismo morph de ancho/alto que el notch del header sobreVideo) con una variante `flotante`: sin las esquinas cóncavas (esas simulan un recorte en el borde del viewport — no tienen sentido flotando con margen) y con las 4 esquinas redondeadas (--radius-card-grande) en vez de solo las de abajo (ver .notch-caja--flotante en componentes.css). El Reservar usa el nuevo tamaño="sm" de Boton (rounded-full, antes solo existían md/lg). Aparece con un IntersectionObserver sobre el id="hero" compartido por el hero de la home y el de las internas (hero-interna.tsx) — sale cuando ese hero (con el header normal DENTRO, sobreVideo) deja de verse, para no duplicar el nav. Vive en App.tsx, fuera de cada página (comportamiento del shell, como ScrollAlNavegar): solo desktop (md:, en móvil ya hay CTA sticky + hoja de menú) y NO aparece en /tours/:slug, que ya tiene su propio chrome fijo (AnclasFicha, pegado a top-0, con --spacing-sticky-top calculado asumiendo que es el ÚNICO fijo) — dos navs fijos ahí competirían por la misma franja. Sí aparece en /eventos/:slug, que hoy no tiene ningún chrome fijo. El estado de apertura de tabs (useMenuDropdown) se extrajo del Header a lib/use-menu-dropdown.ts al sumar este 2º consumidor con el mismo comportamiento (clic fuera / Escape / cierre al navegar); los botones de tab también se extrajeron a home/nav-tabs.tsx (TabsPrincipales) para que Header y la isla compartan el mismo nav sin 2 copias.',
+        states: [
+          {
+            label: 'Isla visible (forzada)',
+            kind: 'estado',
+            to: '/?dev-isla=abierta',
+            note: 'Fuerza la isla visible sin tener que scrollear pasado el hero → frame limpio para Figma.',
+          },
+          {
+            label: 'Isla con Tours abierto',
+            kind: 'estado',
+            to: '/?dev-isla=tours',
+            note: 'Fuerza la isla visible Y el panel de Tours expandido dentro del NotchMenu flotante — el frame del morph a capturar.',
+          },
+        ],
+      },
+      {
+        title: 'Modal de bienvenida (video)',
+        route: '/',
+        status: 'done',
+        description:
+          '2026-07-17 (pedido de Samuel): popup con el video promocional al entrar a la home — la web actual solo lo expone como thumbnail "click to play" dentro de la página; aquí es un popup AUTOMÁTICO, pero UNA VEZ POR SESIÓN (sessionStorage, no localStorage — modal-bienvenida.tsx): sobrevive a navegar la SPA en la misma pestaña, pero se olvida al cerrar el navegador o borrar el storage/caché, que es justo cuándo debe reaparecer. Diálogo a mano (NO alignui/modal.tsx — CLAUDE.md reserva AlignUI en la home solo para el Accordion de FAQ): portal a document.body, bloqueo de scroll + foco de entrada + Escape, mismos 3 arreglos que MenuMovil. Embed de YouTube (youtube-nocookie, autoplay=1&mute=1 — el mute es obligatorio porque el modal se abre SIN gesto del usuario y el navegador bloquearía un autoplay con sonido).',
+        states: [
+          {
+            label: 'Modal abierto',
+            kind: 'modal',
+            to: '/?dev-bienvenida=abierto',
+            note: 'Fuerza el modal sin tener que borrar sessionStorage a mano.',
           },
         ],
       },
@@ -139,6 +183,14 @@ export const devSections: DevSection[] = [
         status: 'done',
         description:
           'v3-F11: esta sección ERA "Cinta de stats + premios" — las 4 cifras subieron al hero (ver «Hero inmersivo + ticker»), así que ahora es SOLO la banda de los 7 premios reales de la web actual (TripAdvisor #1, WeddingWire 2018-21, LTG Global 2021/22, Viator 2022/23/24, Luxury Travel Guide 2016), descargados de la web del cliente y no recreados. Al quedarse solos, los logos crecen (48px → 64px). Sustituyen a la antigua línea de texto "Reconocido en...". Van en gris + 72% de opacidad en reposo y recuperan su color real al pasar el ratón: son 5 familias cromáticas distintas y a todo color se leen como 7 objetos sueltos, no como una cinta (el guardarraíl de la dirección B: el color lo ponen las fotos, no los badges). v3-F13: max-w-contenido (antes max-w-6xl). El eyebrow "Reconocido por" se retira (los 7 badges ya dicen lo que son) y el padding superior pasa a --spacing-premios-aire: el ticker es `absolute` y cuelga media card DENTRO de este padding, así que el padding lo absorbe antes de dar aire — con un pt normal el hueco real salía negativo y las cards del ticker tocaban los logos. Hueco resultante: 48px en todas las resoluciones.',
+        states: [],
+      },
+      {
+        title: 'Eco-friendly (cintillo)',
+        route: '/',
+        status: 'done',
+        description:
+          'Sección nueva (2026-07-17, pedido de Samuel a partir de una foto de la web actual): esa web tiene un cintillo "ECO FRIENDLY [ícono] NO PLASTIC" como banda azul sólida a sangre, justo bajo los premios. Copiarla tal cual violaría el guardarraíl de la dirección B (direccion-visual.md §6: el color vive en las fotos, nunca en un fondo grande y plano) — Samuel, al ver 2 propuestas (línea sutil tipo eyebrow vs. fundirlo en la banda de Premios), eligió una 3ª: su PROPIA banda pero con "su nivel de protagonismo", ni un bloque azul sólido ni una línea que se pierde. 2ª vuelta (mismo día, Samuel: "usa la imagen ecofriendly original enmedio, haz que sea más delgado el banner y la imagen del centro sobresalga por arriba y por abajo, y que el background en vez de ser sólido sea linear-gradient transparente 25% verde 75% verde 100% transparente"): la insignia REAL del cliente (marca/eco-friendly-logo.png, descargada de la web actual) sustituye al ícono lucide genérico, a tamaño grande (80px móvil, 112px desktop) — más alta que el cintillo de color, que mide menos (36px/48px) y va centrado verticalmente en la misma caja: la insignia asoma por arriba y por abajo del color, como un sello sobre una cinta, sin overflow real hacia Premios/Experiencia. El fondo pasa de --color-menta sólido a un linear-gradient horizontal (transparente 0% → --color-menta 15%-85% → transparente 100%; el 2º stop subió de 75% a 85% y el 1er stop bajó de 25% a 15%, en 2 vueltas más el mismo día — tramo sólido asimétrico, ensanchado por los dos lados) — el color se concentra detrás de la insignia y se disuelve al blanco en los extremos, mismo idioma de gradiente-con-var() ya usado en mega-eventos.tsx. Copy sin cambios: "Eco-friendly" en inglés (footer); "Cero plástico a bordo" (stat del hero) a los lados de la insignia. Entre Premios y Experiencia — la misma posición relativa que en la web vieja; el cambio de fondo (ya no sólido, pero igual de presente en el tramo central) sigue haciendo de división entre las 2 secciones sin necesitar un border-b.',
         states: [],
       },
       {
@@ -232,10 +284,34 @@ export const devSections: DevSection[] = [
     title: 'Home — Cierre',
     screens: [
       {
-        title: 'Galería + FAQ + cierre',
+        title: 'Eventos especiales (acordeón de hover)',
         route: '/',
         status: 'done',
-        description: 'Curaduría de 4 fotos reales (+19 más), acordeón de 4 FAQ (primera abierta) y CTA final "Ver disponibilidad".',
+        description:
+          '2026-07-17 (pedido de Samuel): sección NUEVA entre Reviews y Contacto — replica la vitrina de 4 boxes que la home actual (hispaniolaaquaticadventures.com/index.php) tiene al final de la página (Birthdays/Weddings/Anniversaries/Bachelor Experience, traducidos y condensados a data/home.ts → EVENTOS_ESPECIALES). 2ª vuelta (Samuel): pasa de ir justo antes del Footer a vivir aquí — separa mejor el bloque de confianza (reseñas) del bloque de conversión/cierre (contacto + FAQ + footer); de paso, las cards suben de 416px a 512px de alto ("un poco más altas"). Desde lg: fila flex a igual tamaño (--spacing-eventos-especiales-alto) con acordeón de HOVER (ref. visual de Samuel: paneles de destino tipo "London/Paris/New York" que se expanden) — al posar el ratón sobre un box, ESE crece (flex → --eventos-especiales-hover-flex) y los otros 3 se adelgazan (--eventos-especiales-reposo-flex) y su contenido (título/descripción/CTA) se desvanece a opacity 0. Mismo idioma `:has()` que .collage de Experiencia (hover de grupo), pero por ancho en vez de escala/rotación — ver componentes.css. Solo con puntero real (`hover:hover` + `pointer:fine`): en móvil/tablet es un grid 2×2 fijo, sin el juego de hover, con el contenido siempre visible (no hay hover persistente táctil). Bodas es la única con landing real (`Link` a /eventos/bodas); el resto va por EnlacePrototipo, igual que la ocasión genérica de OCASIONES. Fotos PROVISIONALES de la galería de charter-privado (mismo criterio que OCASIONES).',
+        states: [],
+      },
+      {
+        title: 'Contacto (mapa + formulario)',
+        route: '/',
+        status: 'done',
+        description:
+          'Sección nueva tras Reviews (2026-07-17, pedido de Samuel — ref. visual: sección de contacto de Lumoro, adaptada a tokens Hispaniola). Reemplaza a la galería photo-stack que vivía en «Galería + FAQ + cierre» (la galería completa sigue en prototipo/). Mapa a la izquierda (iframe de Google Maps SIN API key, coordenadas fijas 18.669740,-68.401262, esquinas --radius-card-grande, alto reservado en móvil vía --spacing-contacto-mapa-movil para evitar CLS) + formulario a la derecha (Nombre/Email/Mensaje, SOLO PROTOTIPO sin backend — mismo criterio que inicializarFormularioDemo del prototipo/app.js) + 4 cards de contacto debajo (WhatsApp/Teléfono/Email/Oficina, iconos lucide en círculo aqua-tint). Datos canónicos NUEVOS dados por Samuel 2026-07-17 (no existían en el prototipo): dirección "C. P.º del Sol, Punta Cana 23500, RD." y correo "info@catamarantourspuntacana.com"; el resto (WhatsApp, toll-free, horario, la advertencia "no vengas aquí") portado verbatim de renderContacto (prototipo/app.js:1693-1722). Todo centralizado en data/home.ts (CONTACTO).',
+        states: [
+          {
+            label: 'Formulario enviado (demo)',
+            kind: 'estado',
+            to: '/?dev-contacto=enviado',
+            note: 'Muestra la confirmación "Recibimos tu mensaje…" sin tener que enviar el form a mano → frame limpio para Figma.',
+          },
+        ],
+      },
+      {
+        title: 'FAQ centrado (AlignUI)',
+        route: '/',
+        status: 'done',
+        description:
+          'Reemplaza el layout 2 columnas de «Galería + FAQ + cierre» (2026-07-17, pedido de Samuel): sin fotos, solo el acordeón centrado (ref. visual: FAQ de Praxa) — eyebrow + titular grande centrados, acordeón a max-w-3xl (768px), primera pregunta abierta. Primera pieza de AlignUI en la home (el Accordion — antes AlignUI vivía solo de la ficha de tour hacia dentro; CLAUDE.md actualizado con la excepción). Mismo componente y misma conducta que tour/faq-tour.tsx (single + collapsible, +/− del sistema). 6 preguntas curadas de FAQ_CATEGORIAS (prototipo/datos.js, 6 categorías/14 preguntas — una por categoría) + enlace "Ver todas las preguntas →" al prototipo. Datos en data/home.ts (FAQ_HOME).',
         states: [],
       },
     ],
@@ -248,7 +324,7 @@ export const devSections: DevSection[] = [
         route: '/tours/semi-privado',
         status: 'done',
         description:
-          'La página donde se reserva (PLAN-TOURS.md). UNA plantilla data-driven para los 4 productos: el mismo layout, y el widget + las secciones que cada modo de `booking` puede sostener honestamente. En Figma es UNA página con frames de variante, no 4 diseños. `ScrollAlNavegar` (React Router no resetea el scroll al cambiar de ruta). Datos en data/tours.ts, portados verbatim de prototipo/datos.js — solo lo que home.ts no tiene ya. Anatomía: HERO compartido con la home (PLAN-INTERNAS-V2.md §C1, internas/hero-interna.tsx) — mismo box redondeado + Header variante `sobreVideo` sobre el video de marca (hero.mp4, el mismo de la home), COMPACTO; dentro, la cabecera (migaja, H1 en --text-h2, rating con estrellas fraccionales, chips por modo) en blanco, alineada al mismo max-w-contenido que el resto de la página (iteración 2026-07-17, 2ª vuelta — la 1ª versión de ese mismo día usaba padding plano y desalineaba el título contra el resto del contenido; Samuel: "no me gusta nada") · nav de anclas sticky, pegada al hero · sobre --color-fondo-ficha (§C2), cada bloque su propia card blanca (BLOQUE_FICHA) EXCEPTO el mosaico de fotos, que abre la columna sin envoltorio blanco (internas/galeria-mosaico.tsx: 2×2 de fotos reales del tour + lightbox, con la quote destacada flotando sobre la 1ª celda) — descripción + comparador anti-OTA + WIDGET STICKY · itinerario · incluye · menú · opiniones (§C3: resumen + MARQUEE infinito de reseñas, sin salida a ningún sitio — ni Viator ni ya TripAdvisor) · FAQ, ya a columna entera (§C4) · fuera del gris, «También te puede gustar» a ancho completo (§C4, internas/tambien-te-gusta.tsx: boxes grandes en fundido con el tour relacionado) · barra móvil fija. Los fixes de conversión que cablea (analisis/revision-wireframes.md): precio ancla SIEMPRE Light y Premium solo como delta «+US$ 15» (1.1, anti bait-and-switch) · franja anti-OTA bajo el widget, donde ocurre la comparación (1.6) · barra móvil (2.3). El widget es sticky junto a TODO el contenido, no solo junto a la descripción: en desktop no hay barra móvil, así que si se fuera, el visitante leería el menú y el itinerario —donde se convence— sin un CTA a la vista. Lo que NO se inventa: sin «quedan N» en los horarios (haría falta que el motor exponga el aforo), sin barras de distribución de reseñas (no existe el dato), y el mapa de la ruta del wireframe no tiene asset → foto real provisional. El funnel de reserva y el listado /tours NO son parte de este build: siguen bloqueados por la decisión del motor xpotours (pendiente del cliente).',
+          'La página donde se reserva (PLAN-TOURS.md). UNA plantilla data-driven para los 4 productos: el mismo layout, y el widget + las secciones que cada modo de `booking` puede sostener honestamente. En Figma es UNA página con frames de variante, no 4 diseños. `ScrollAlNavegar` (React Router no resetea el scroll al cambiar de ruta). Datos en data/tours.ts, portados verbatim de prototipo/datos.js — solo lo que home.ts no tiene ya. Anatomía: HERO compartido con la home (PLAN-INTERNAS-V2.md §C1, internas/hero-interna.tsx) — mismo box redondeado + Header variante `sobreVideo` sobre el video de marca (hero.mp4, el mismo de la home), COMPACTO; dentro, la cabecera (migaja, H1 en --text-h2, rating con estrellas fraccionales, chips por modo) en blanco, alineada al mismo max-w-contenido que el resto de la página (iteración 2026-07-17, 2ª vuelta — la 1ª versión de ese mismo día usaba padding plano y desalineaba el título contra el resto del contenido; Samuel: "no me gusta nada") · nav de anclas sticky, pegada al hero · sobre --color-fondo-ficha (§C2), cada bloque su propia card blanca (BLOQUE_FICHA) EXCEPTO el mosaico de fotos, que abre la columna sin envoltorio blanco (internas/galeria-mosaico.tsx: 2×2 de fotos reales del tour + lightbox, con la quote destacada flotando sobre la 1ª celda) — descripción + comparador anti-OTA + WIDGET STICKY · itinerario · incluye · menú · opiniones (§C3: resumen + MARQUEE infinito de reseñas, sin salida a ningún sitio — ni Viator ni ya TripAdvisor) · FAQ, ya a columna entera (§C4) · fuera del gris, «También te puede gustar» a ancho completo (§C4, internas/tambien-te-gusta.tsx: boxes grandes en fundido con el tour relacionado) · barra móvil fija. Los fixes de conversión que cablea (analisis/revision-wireframes.md): precio ancla SIEMPRE Light y Premium solo como delta «+US$ 15» (1.1, anti bait-and-switch) · franja anti-OTA bajo el widget, donde ocurre la comparación (1.6) · barra móvil (2.3). El widget es sticky junto a TODO el contenido, no solo junto a la descripción: en desktop no hay barra móvil, así que si se fuera, el visitante leería el menú y el itinerario —donde se convence— sin un CTA a la vista. Lo que NO se inventa: sin «quedan N» en los horarios (haría falta que el motor exponga el aforo), sin barras de distribución de reseñas (no existe el dato), y el mapa de la ruta del wireframe no tiene asset → foto real provisional. El funnel de reserva y el listado /tours NO son parte de este build: siguen bloqueados por la decisión del motor xpotours (pendiente del cliente). ⚠️ REDISEÑO del widget (2026-07-17, pedidos sueltos de Samuel en la misma sesión): (1) Personas pasa de Select a stepper "− N +" (CompactButton de AlignUI, componentes.tsx). (2) Precio del encabezado en una frase humana ("Desde US$ 99 por persona", estilo Viator) en vez de fragmentos ("US$ 99 /persona · desde"). (3) Toggle Light/Premium: se quita el eyebrow "Elige tu paquete" (se lee solo) y se rebaja su peso a un segmentado tipo iOS — thumb BLANCO puro (no relleno navy) sobre pista un punto más oscura (bg-linea), texto navy en el activo y atenuado en el inactivo; competía con la fila de horario. (4) Fecha deja de ser una tira de 14 chips con scroll horizontal: ahora es un calendario MENSUAL real (grid de 7 columnas, navegación de mes con flechas, calendario-widget.tsx) — y ese calendario, a su vez, deja de estar siempre visible y se colapsa a un campo compacto tipo input (mismo alto que Personas) que abre el grid en un POPOVER al tocarlo, para que el widget entero quepa en pantallas de laptop. (5) Horario pasa de Select a chips LIGEROS (tinte navy/10 + ring, no relleno navy) que aparecen SOLO tras elegir fecha (fade+slide corto) — deroga la decisión previa de dejarlos siempre visibles: aunque ficha.horarios no depende del día, el modelo mental de una reserva es fecha → hora, y mostrar la hora antes hacía que compitiera con la fecha y se leyera "roto" (feedback de Samuel). Revelarlos bajo el calendario ya elegido hace la secuencia obvia ("qué tocar primero") y baja el alto inicial. De la mano, la Fecha gana jerarquía de ENTRADA primaria: icono en aqua + anillo aqua suave de "empieza aquí" mientras está vacía (calendario-widget.tsx). (6) La caja del widget baja su padding propio (ya no comparte el p-6/sm:p-8 de BLOQUE_FICHA con itinerario/incluye/menú/opiniones/FAQ — esos 5 bloques de texto largo siguen igual). (7) Las 3 garantías del pie (depósito/cancelación/reembolso) pasan de lista vertical a un marquee horizontal infinito (mismo mecanismo que el de Opiniones) para bajar el alto. (8) Stepper de personas con feedback de click (2026-07-17, pedido de Samuel: "cuando se suma o resta como que no se nota, hay que agregarle sensación de interacción"): los botones −/+ escalan a 0.9 al apretar y se invierten a fondo navy/texto papel un instante (override via className, sin tocar el vendor AlignUI), y el número de personas PULSA al cambiar — key={personas} remonta el <span> y dispara .stepper-tick (componentes.css, 280ms ease-out: escala 1 → 1.18 → 1 + flash de color navy-sub → navy), con tabular-nums para que el ancho no salte al pasar de 9 a 10. Respeta prefers-reduced-motion. No se añade un state nuevo en el glosario: la animación es momentánea (~280ms) y solo se ve al hacer click, no es un frame congelable para Figma — el cambio queda documentado aquí para que se refleje en el traspaso del componente Stepper.',
         states: [
           {
             label: 'Hero compacto congelado',
@@ -272,19 +348,43 @@ export const devSections: DevSection[] = [
             label: 'Widget con fecha elegida',
             kind: 'estado',
             to: '/tours/semi-privado?dev-widget=fecha',
-            note: 'T-F3: el widget con el primer día disponible elegido → el CTA pasa de «Elige una fecha» (deshabilitado de verdad, no un botón gris que igual navega) a «Continuar — US$ 198» (2 personas × 99). Es el frame «widget lleno» de Figma y la prueba del cálculo. El precio ancla es SIEMPRE Light: anclar aquí en 99 y cobrar 114 en el paso 1 es el bait-and-switch que la revisión marcó como P1. El CTA no navega: el funnel sigue bloqueado por la decisión del motor xpotours.',
+            note: 'T-F3: el widget con mañana elegido (nunca cae en uno de los 2 días agotados de ejemplo del calendario) → el CTA pasa de «Elige una fecha» (deshabilitado de verdad, no un botón gris que igual navega) a «Continuar — US$ 198» (2 personas × 99). Es el frame «widget lleno» de Figma y la prueba del cálculo. El precio ancla es SIEMPRE Light: anclar aquí en 99 y cobrar 114 en el paso 1 es el bait-and-switch que la revisión marcó como P1. El CTA no navega: el funnel sigue bloqueado por la decisión del motor xpotours.',
           },
           {
             label: 'Widget con paquete Premium elegido',
             kind: 'estado',
             to: '/tours/semi-privado?dev-widget=premium',
-            note: 'Fase B (booking): el selector Light/Premium DENTRO del widget elige Premium → el precio de cabecera y el total del CTA saltan a la tarifa Premium (US$ 114/persona; 114 × 2 = US$ 228), y de paso elige el 1er día libre para que el CTA muestre el total. Sigue anclado en Light por defecto (abre en 99): Premium es un opt-in EXPLÍCITO, no un cambio a espaldas del visitante — se mantiene el guardarraíl anti bait-and-switch (§1.1). El «ahorra hasta 15%» junto al CTA son los descuentos reales (recurrente + anticipación + efectivo), mostrados SOBRE el precio de lista, no anclados en él.',
+            note: 'Fase B (booking): el selector Light/Premium DENTRO del widget elige Premium → el precio de cabecera y el total del CTA saltan a la tarifa Premium (US$ 114/persona; 114 × 2 = US$ 228), y de paso elige mañana para que el CTA muestre el total. Sigue anclado en Light por defecto (abre en 99): Premium es un opt-in EXPLÍCITO, no un cambio a espaldas del visitante — se mantiene el guardarraíl anti bait-and-switch (§1.1). El «ahorra hasta 15%» junto al CTA son los descuentos reales (recurrente + anticipación + efectivo), mostrados SOBRE el precio de lista, no anclados en él.',
+          },
+          {
+            label: 'Calendario abierto (popover)',
+            kind: 'overlay',
+            to: '/tours/semi-privado?dev-widget=calendario',
+            note: '2ª vuelta (2026-07-17, pedido de Samuel: reducir el alto del widget para que quepa en pantallas de laptop) — el campo "Fecha" se colapsó de un grid de días siempre visible a un input compacto (mismo trato que Personas: h-10, rounded-10) que abre este popover al tocarlo. Dentro, el MISMO grid mensual de antes (fondo blanco ahora que es una card flotante, no bg-papel-hueso: ya no comparte fila con el resto de campos del widget) con navegación de mes (‹ Julio 2026 ›), 3 meses de ventana de demo. Cierra solo, con Escape o clic fuera (calendario-widget.tsx) — elegir un día también cierra.',
+          },
+          {
+            label: 'Checks del widget: ticker pausado',
+            kind: 'estado',
+            to: '/tours/semi-privado?dev-widget-checks=pausado',
+            note: '2026-07-17, pedido de Samuel: "que estén en una fila, en un ticker infinito, para reducir el alto" — las 3 garantías (depósito 25%/cancelación/reembolso) pasan de lista vertical a un marquee horizontal en bucle (misma mecánica que el de Opiniones, pista duplicada 2x). Este flag congela la pista → frame limpio para Figma.',
           },
           {
             label: 'Galería abierta (lightbox)',
             kind: 'overlay',
             to: '/tours/semi-privado?dev-galeria=abierta',
             note: 'T-F2: el lightbox del mosaico de la columna de contenido (internas/galeria-mosaico.tsx) con la galería completa del tour (portada + galeriaCompleta). Hereda los 4 arreglos de UX de la hoja del menú móvil (scroll del fondo bloqueado guardando el valor previo, foco que entra y vuelve al disparador, Escape, click fuera) porque el problema es el mismo: un overlay modal sobre la página. Extra propio de galería: ← → pasan foto. Isla Saona NO tiene mosaico ni lightbox — no hay galería suya y no se rellena con fotos de otros tours.',
+          },
+          {
+            label: 'Menú de anclas — activa: FAQ',
+            kind: 'estado',
+            to: '/tours/semi-privado?dev-anclas=ancla-faq',
+            note: '2026-07-17 (pedido de Samuel): el sticky de la ficha gana un indicador deslizante — una sola barra bg-aqua-dark al pie del nav, que se anima al ancla activa con `transform: translateX(...)` + `width` (motion-safe, 300ms ease-out; con prefers-reduced-motion salta sin animar). El frame ?dev-anclas=ancla-faq congela FAQ como activa → captura limpia del indicador en su última posición. Otros ids válidos: ancla-itinerario, ancla-incluye, ancla-menu (solo en booking=completo, p. ej. /tours/charter-privado?dev-anclas=ancla-menu), ancla-opiniones — el scroll del visitante la sobreescribe en cuanto se mueva.',
+          },
+          {
+            label: 'Menú de anclas — activa: Itinerario',
+            kind: 'estado',
+            to: '/tours/semi-privado?dev-anclas=ancla-itinerario',
+            note: '2026-07-17: mismo flag, con la primera ancla forzada — el indicador aparece pegado al borde izquierdo del nav (mide lo mismo que el padding-x del contenedor + el offsetLeft del primer link), para verificar que el cálculo del `transform` no se desfasa al inicio.',
           },
           {
             label: 'Variante: cotización (Charter Privado)',
@@ -336,7 +436,7 @@ export const devSections: DevSection[] = [
         route: '/eventos/bodas',
         status: 'done',
         description:
-          'UNA plantilla data-driven para las 2 ocasiones con landing propia (Bodas y Empresas/MICE — las `esLanding: true` de OCASIONES; las otras 4 van al formulario del hub, que sigue en el prototipo). En Figma es una página con frames de variante, no 2 diseños. Copy portado verbatim de renderBodas/renderEmpresas del prototipo (data/eventos.ts). Anatomía: HERO compartido con la home y la ficha de tour (PLAN-INTERNAS-V2.md §C5, internas/hero-interna.tsx) — mismo box redondeado + Header `sobreVideo` sobre el video de marca, COMPACTO; dentro, cabecera en blanco (migaja, eyebrow, H1 en --text-h2, lead, fila de confianza, CTAs), alineada al mismo max-w-contenido que el resto de la página · banda de cifras (solo empresas: pax/multi-barco/factura/seguro), ya en blanco, debajo del hero · mosaico de fotos reales de charter-privado (`evento.galeria`), ya como bloque del contenido, no incrustado en el hero (iteración 2026-07-17, 2ª vuelta — internas/galeria-mosaico.tsx, misma pieza que la ficha de tour, sin quote propia porque FichaEvento no la tiene) · formatos (3 cards foto+texto) · beneficios (mismo anatómico que IncluyeTour) + testimonio · banda de cierre navy (ancla del «Reservar» del header, #evento-cierre). Es página de PERSUASIÓN, no de conversión directa: el evento se cotiza (sin precio, sin widget, sin barra móvil) — el CTA de cotización es la frontera con el prototipo (EnlacePrototipo), igual que el funnel en la ficha. Lo que NO se pinta y por qué: la galería «Bodas reales» del prototipo (la única foto de boda real es la de la cabecera; rellenar con fotos de otros tours mentiría — mismo criterio que la galería vacía de Isla Saona) y los 6 logos «Han navegado con nosotros» de empresas (no hay logos reales de clientes). Fotos PROVISIONALES de la galería del charter privado, elegidas mirándolas (también las del hero); pendiente shooting de eventos (PLAN-v3.md §9). La home enlaza las 2 landings desde el megamenú de Eventos, el ticker del hero y el menú móvil (unión por `slug` en OCASIONES — el resto de ocasiones sigue por EnlacePrototipo).',
+          'UNA plantilla data-driven para las 2 ocasiones con landing propia (Bodas y Empresas/MICE — las `esLanding: true` de OCASIONES; «Eventos y party boat» va al formulario del hub, que sigue en el prototipo). En Figma es una página con frames de variante, no 2 diseños. Copy portado verbatim de renderBodas/renderEmpresas del prototipo (data/eventos.ts). Anatomía: HERO compartido con la home y la ficha de tour (PLAN-INTERNAS-V2.md §C5, internas/hero-interna.tsx) — mismo box redondeado + Header `sobreVideo` sobre el video de marca, COMPACTO; dentro, cabecera en blanco (migaja, eyebrow, H1 en --text-h2, lead, fila de confianza, CTAs), alineada al mismo max-w-contenido que el resto de la página · banda de cifras (solo empresas: pax/multi-barco/factura/seguro), ya en blanco, debajo del hero · mosaico de fotos reales de charter-privado (`evento.galeria`), ya como bloque del contenido, no incrustado en el hero (iteración 2026-07-17, 2ª vuelta — internas/galeria-mosaico.tsx, misma pieza que la ficha de tour, sin quote propia porque FichaEvento no la tiene) · formatos (3 cards foto+texto) · beneficios (mismo anatómico que IncluyeTour) + testimonio · banda de cierre navy (ancla del «Reservar» del header, #evento-cierre). Es página de PERSUASIÓN, no de conversión directa: el evento se cotiza (sin precio, sin widget, sin barra móvil) — el CTA de cotización es la frontera con el prototipo (EnlacePrototipo), igual que el funnel en la ficha. Lo que NO se pinta y por qué: la galería «Bodas reales» del prototipo (la única foto de boda real es la de la cabecera; rellenar con fotos de otros tours mentiría — mismo criterio que la galería vacía de Isla Saona) y los 6 logos «Han navegado con nosotros» de empresas (no hay logos reales de clientes). Fotos PROVISIONALES de la galería del charter privado, elegidas mirándolas (también las del hero); pendiente shooting de eventos (PLAN-v3.md §9). La home enlaza las 2 landings desde el megamenú de Eventos, el ticker del hero y el menú móvil (unión por `slug` en OCASIONES — el resto de ocasiones sigue por EnlacePrototipo).',
         states: [
           {
             label: 'Hero compacto congelado',
@@ -355,6 +455,133 @@ export const devSections: DevSection[] = [
             kind: 'variante',
             to: '/eventos/empresas',
             note: 'La misma plantilla con los datos de empresas: banda de cifras (única de esta variante), CTA secundario «Dossier corporativo (PDF)» (demo en el prototipo → EnlacePrototipo), testimonio institucional sin estrellas y cierre sin WhatsApp (el prototipo solo lo pone en bodas).',
+          },
+        ],
+      },
+    ],
+  },
+  {
+    title: 'Sostenibilidad',
+    screens: [
+      {
+        title: 'Página de Sostenibilidad',
+        route: '/sostenibilidad',
+        status: 'done',
+        description:
+          'Página propia (2026-07-17, pedido de Samuel) que COMBINA las 2 páginas reales de la web actual: sustainability.php (intro + 3 pilares: conservación/áreas protegidas · comunidades/orfanato · operación y equipo, con los importes US$3.50/US$2.00 por huésped) y competitive-advantage.php (la frase + los 7 videos). Copy TRADUCIDO fiel del inglés (data/sostenibilidad.ts), mismo criterio que INCLUYE_CRUCERO. Adopta el HERO COMPARTIDO (PLAN-INTERNAS-V2.md, internas/hero-interna.tsx) con la home/ficha/eventos: mismo box redondeado + Header `sobreVideo` dentro; «Reservar» del header → /#tours (no se cotiza aquí). Foto de cabecera PROVISIONAL (la web vieja no tiene fotos de contenido) — pendiente fotos propias de la fundación.\n\nREDISEÑO 2026-07-17, 2ª vuelta (pedido de Samuel: "se ve muy feo ese montón de cajas... mejoralo que se vea más editorial, el texto de la descripción del hero está muy largo, puedes añadirle efecto de gsap"). 4 cambios: (1) Hero ACORTADO a una frase (data/sostenibilidad.ts §sub) — la declaración completa que tenía antes (Bávaro Reefs Foundation, "empoderar a nuestra gente", RD) no se pierde: se muda a §mision, un párrafo GRANDE (font-display, --text-narrativa — mismo tratamiento que Experiencia en la home) que ahora abre PilaresSostenibilidad. (2) Los 3 pilares dejan las cards sobre --color-papel-hueso (el "montón de cajas") por una LISTA EDITORIAL: numeral fantasma (.sost-numero — mismo truco que .incluye-numero de la home pero en versión clara, aqua muy rebajado sobre papel) con el título montado encima, separados por hairline (border-t/divide-y), sin fondo ni caja. El pilar «Operación» gana el detalle que faltaba del original ("a percentage is also allocated to our office and sales teams", ahora en el párrafo) y sus 2 cifras ($3.50/$2.00) se muestran como highlight tipográfico aparte (--text-h2, text-aqua-dark), no enterradas en el texto corrido — contenido verificado contra sustainability.php?lang=es. (3) Videos: se quita el ring-1 ring-linea de cada póster (las leía como 7 cajas idénticas). Se evaluó destacar el 1er video a doble ancho (bento asimétrico) pero varios pósters de este set son recortes verticales de YouTube Shorts con texto quemado en INGLÉS (6ixzXs68DPQ, ziUx_05VC-4, aMVg2cL3Z8o — pendiente real: pedir al cliente miniaturas en ES o recortes limpios); agrandar cualquiera de esos habría sido el defecto más visible de la sección, así que la rejilla se queda uniforme a propósito. (4) Cierre: tipografía más grande (--text-h2, antes --text-h3) como declaración final, no una card de meta más. Reveal de scroll NUEVO (use-sostenibilidad-reveal.ts): cada bloque `.sost-reveal` (misión, cada pilar, eyebrow/título/párrafo de videos, cada póster, el cierre) entra por su cuenta al cruzar el umbral — GSAP ScrollTrigger.batch, no un timeline scrub único (a diferencia de Experiencia/Incluye, esto es una lista larga de secciones apiladas, no una pieza fija con su propio ritmo). Un solo hook, llamado UNA VEZ desde la página (los `.sost-reveal` viven repartidos en 3 componentes hijos). Las constantes (--sost-reveal-*, --text-sost-numero*, --color-sost-numero) salen de tokens.css, FUENTE del prototipo de Figma — a Figma no viaja animado.',
+        states: [
+          {
+            label: 'Video en modal (reproduciendo)',
+            kind: 'modal',
+            to: '/sostenibilidad?dev-video-sost=abierto',
+            note: 'Abre el modal del 1er video sobre el Modal del sistema (Radix Dialog: scroll-lock, focus-trap, Escape). El iframe de YouTube (youtube-nocookie, autoplay) solo existe mientras el modal está abierto — nada de 7 embeds en segundo plano.',
+          },
+          {
+            label: 'Sección asentada (sin reveal)',
+            kind: 'variante',
+            to: '/sostenibilidad?dev-sost=estatico',
+            note: 'Congela el reveal de scroll (GSAP ScrollTrigger.batch) en su estado FINAL — misión, pilares, videos y cierre ya visibles, sin desplazamiento. Es EL frame que viaja a Figma (a Figma no va animado, igual que el ticker o el CTA del hero). Coincide con lo que ve quien tiene prefers-reduced-motion.',
+          },
+        ],
+      },
+    ],
+  },
+  {
+    title: 'Páginas secundarias (Nosotros, Guías, Ayuda, Legal)',
+    screens: [
+      {
+        title: 'Nosotros',
+        route: '/nosotros',
+        status: 'done',
+        description:
+          'REDISEÑO 2026-07-17 (pedido de Samuel: "hay que darle mucho amor y cariño a las páginas internas... la nuestra hay puras cajas, está horrible planteada"). Antes: hero + 2 bloques planos (chips de tripulación sin texto, 3 cards de flota genéricas) + cierre. Ahora, 5 bloques, portando el contenido REAL de about-hispaniola.php?lang=es que no vivía en ningún lugar del sitio (ver cabecera de data/nosotros.ts para el detalle completo de fuentes): (1) IntroNosotros — «Quiénes somos», bienvenida + diferenciador de grupos pequeños (barcos para 100+ pasajeros, pero reservan menos), texto+foto. (2) ExperienciaABordo — «Un día de mar en 3 paradas», el itinerario contado como historia (snorkel en el vivero de coral → playa desierta con coco-loco → piscina natural), 3 fotos reales con numeral 01/02/03 en aqua-dark (no la ficha oscura de --incluye-numero: esta página vive sobre papel, no sobre el océano del home). (3) CocinaFlotante — el diferenciador único ("la única empresa de excursiones de RD con cocina flotante"), su propia sección grande (mismo idioma que internas/tambien-te-gusta.tsx: foto real + gradiente + texto, sin Link). (4) TripulacionFlota — gana párrafo real de equipo (multilingüe, capacitado, seguridad) sobre los 4 chips de icono (siguen sin fotos/nombres propios — el cliente no los ha dado, inventarlos sería fabricar contenido); la FLOTA pasa de 3 cards genéricas (Catamarán A/B + cocina flotante, la versión simplificada de prototipo/datos.js) a los 6 CATAMARANES REALES CON NOMBRE PROPIO de la web actual (Santa María, Forever Teresa, Maite, GrandMa, Joker, Karaya) — 2ª vuelta del mismo rediseño, pedido explícito de Samuel: "mete toda la flota de barcos, todo el contenido que haya en la original lo metemos en la nueva". Cada barco es su propia fila foto+texto alternada (mismo anatómico que IntroNosotros) en flujo normal — sin fondo/sombra/radio, sin pin de CSS, sin hook de GSAP (la foto es la única que conserva su --radius-card-grande propio). 4ª vuelta (stacking con GSAP) y 5ª vuelta (mismo día, "quita los efectos de gsap de los barcos y haz que sean una sección estática normal, sin esos cards con sombra o borders") se cancelan mutuamente. Fotos de los 6 barcos + cocina/bar flotante DESCARGADAS de hispaniolaaquaticadventures.com/images/boats/ y /images/food/ (activos reales del cliente, mismo criterio que eco-friendly-logo.png), mapeadas a ojo contra las etiquetas de la galería real de la página. 3ª vuelta (Samuel: "no me gusta que los barcos se vean en cards, haz que cada barco sea una sección con el texto de un lado y el barco del otro, y vaya alternando el orden a medida que bajamos"): cada barco pasa de card de grid a fila foto+texto a ancho completo, alternando lado por índice (par/impar) vía `lg:order-*` — en móvil la foto siempre va primero. 4ª vuelta (mismo día, Samuel: "que estas secciones de barcos tengan el efecto de gsap de que vamos bajando con scroll y se van stackeando"): «stacking cards» — el PIN es CSS puro (.flota-barco, position: sticky; el orden de apilado sale gratis del orden del DOM, sin z-index a mano) porque un pin dirigido por JS (ScrollTrigger `pin:true`) va con retraso frente al compositor nativo (mismo criterio que el video de «Incluye»); GSAP (nosotros/use-flota-scroll.ts) solo anima el achicado (--flota-stack-escala, 0.92) y oscurecido (--flota-stack-opacidad, 0.5) de la card que va quedando tapada, enganchado al scroll de la SIGUIENTE. Cada barco vive en un envoltorio de --spacing-flota-barco-alto (90vh) que le da el "turno" de scroll antes de que el siguiente lo tape. Solo desktop (lg+, mismo criterio que .incluye-barco) — en móvil no hay sticky ni animación, las cards van en flujo normal. (5) ArrecifeTeaser — SIN CAMBIOS: mención sin detalles + botón a Sostenibilidad, el límite de contenido con esa página se mantiene intacto (la donación/fundación no se duplica aquí). NAV_NOSOTROS.tripulacion.to sigue apuntando aquí.',
+        states: [],
+      },
+      {
+        title: 'Guías (tips reales + índice del blog)',
+        route: '/guias',
+        status: 'done',
+        description:
+          'Mapea tips-for-punta-cana-....php: de página suelta a índice de blog (arquitectura-nueva.md §2, motor SEO que hoy no existe). Dos bloques. 1) TipsRapidos: las 4 preguntas evergreen de esa misma página vieja (versión ?lang=es, HTML descargado y leído línea a línea) — esnórquel/arrecife, vela, mar, mariscos — con enlaces reales a /sostenibilidad y /nosotros; las otras 4 preguntas de esa página (protocolos COVID-19: testeo, mascarilla, transporte privado) se dejaron fuera por obsoletas, decisión de Samuel 2026-07-17. 2) ListaGuias: las 5 entradas de GUIAS (prototipo/datos.js) verbatim, SIN páginas de artículo (/guias/:slug) — el prototipo solo tiene título+resumen+lectura, no el cuerpo del texto; inventar 5 artículos completos sería fabricar contenido. Cuando el cliente dé el copy real, cada entrada gana su plantilla (mismo patrón que tours/eventos).\n\nREDISEÑO EDITORIAL 2026-07-17, mismo día que Sostenibilidad y misma queja de Samuel ("parece una página con solo cajas... más editorial, más creativa e interesante, usa animaciones GSAP de ser necesario"). Antes: TipsRapidos y ListaGuias eran cards `bg-papel-hueso ring-1 ring-linea` apiladas, dos veces seguidas. Ahora, mismo lenguaje que PilaresSostenibilidad (misma sesión): numeral fantasma (.guias-numero, aqua muy rebajado sobre papel — tokens propios, --text-guias-numero/--color-guias-numero, NO cruzados con los de Sostenibilidad) con el título/pregunta montado encima (margen negativo), separados por hairline (`divide-y`/`border-t`) en vez de fondo o caja. En TipsRapidos cada fila es numeral+pregunta en una columna angosta junto a la respuesta (ya es prosa real y larga) en una columna ancha. En ListaGuias la entrada `destacado` (hoy la única con tiempo de lectura) rompe el patrón de 2 columnas y ocupa una fila ANCHA de una sola columna con numeral/título más grandes — un artículo destacado real, no una card más gris entre las otras 4. Ambos componentes ganan Etiqueta+h2 propios (autocontenidos, ListaGuias ya no depende de un wrapper en guias.tsx). Reveal de scroll NUEVO (use-guias-reveal.ts): cada bloque `.guias-reveal` entra por su cuenta al cruzar el umbral — GSAP ScrollTrigger.batch, igual mecanismo que use-sostenibilidad-reveal.ts (no timeline scrub: es una lista larga de bloques apilados, no una pieza fija). Un solo hook, llamado UNA VEZ desde la página.',
+        states: [
+          {
+            label: 'Sección asentada (sin reveal)',
+            kind: 'variante',
+            to: '/guias?dev-guias=estatico',
+            note: 'Congela el reveal de scroll (GSAP ScrollTrigger.batch) en su estado FINAL — tips y guías ya visibles, sin desplazamiento. Es EL frame que viaja a Figma. Coincide con lo que ve quien tiene prefers-reduced-motion.',
+          },
+        ],
+      },
+      {
+        title: 'FAQ standalone',
+        route: '/faq',
+        status: 'done',
+        description:
+          'Mapea frequently-asked-questions.php. Las 6 categorías / 14 preguntas completas de FAQ_CATEGORIAS (prototipo/datos.js), un Accordion AlignUI independiente por categoría (mismo vendor que home/faq.tsx y tour/faq-tour.tsx). Es la versión completa de la FAQ curada de la home (FAQ_HOME, 6 preguntas) — su "Ver todas las preguntas →" trae aquí. NAV_AYUDA.faq.to apunta aquí.',
+        states: [],
+      },
+      {
+        title: 'Agentes de viaje',
+        route: '/agentes-de-viaje',
+        status: 'done',
+        description:
+          'Mapea travel-agent-registration.php. Formulario de registro B2B (agencia, contacto, email, teléfono, mensaje) — SOLO PROTOTIPO (sin backend), mismo criterio que home/contacto.tsx. Sin comisiones ni condiciones de programa inventadas (no existen en ninguna fuente): el pitch solo usa hechos ya vetados en otra parte del sitio (factura fiscal RD/internacional, de la landing de Empresas/MICE). Enlazado desde el footer, no del menú principal (es B2B, el 99% del tráfico es turista — arquitectura-nueva.md §2).',
+        states: [
+          {
+            label: 'Confirmación enviada',
+            kind: 'estado',
+            to: '/agentes-de-viaje?dev-agentes=enviado',
+            note: 'Congela el mensaje de confirmación sin enviar el formulario a mano.',
+          },
+        ],
+      },
+      {
+        title: 'Reserva directa (comparación)',
+        route: '/reserva-directa',
+        status: 'done',
+        description:
+          'NOTAS[\'reserva-directa\'] del prototipo + arquitectura-nueva.md §3: "el argumento no es un destino de menú" — página de SOPORTE de conversión, fuera del menú principal, enlazada desde tour/comparador-strip.tsx ("Ver comparación →") y el footer ("¿Por qué reservar directo?"). Reusa el MISMO BoletoReserva del banner why-direct de la home (2 variantes: portal/directo) pero lado a lado y ESTÁTICO — sin la animación de contracción por scroll ni el stack solapado del banner a sangre, para poder mandarla por WhatsApp y que se lea de un vistazo en móvil.',
+        states: [],
+      },
+      {
+        title: 'Contacto',
+        route: '/contacto',
+        status: 'done',
+        description:
+          'Mapea contact.php de la web actual (H1 "Contact Us" + subtítulo de ubicación + bloque teléfono/WhatsApp/email/oficina + formulario "Leave a Message"). Antes de esta página, "Contacto" del footer y del dropdown Ayuda del header (NAV_AYUDA) apuntaban a `/#contacto` (ancla de la home) — roto desde cualquier página que no fuera la home; NAV_AYUDA.contacto.to y el footer ahora apuntan aquí. Hero compartido (PLAN-INTERNAS-V2.md, internas/hero-interna.tsx) con fotos de charter-privado/hero-catamaran en fundido. El cuerpo REUSA home/contacto.tsx (mapa + formulario + 4 cards, ya existente desde el 2026-07-17) con `mostrarEncabezado={false}` — el H1 ya lo pinta CabeceraContacto, repetirlo sería el mismo titular dos veces. Dato NO portado a propósito: la dirección visible en contact.php ("Plaza Bibijagua, Punta Cana - Bavaro") difiere de CONTACTO.direccion ("C. P.º del Sol") — el propio contact.php se contradice consigo mismo (su JSON-LD usa C. P.º del Sol), así que se mantuvo el dato que Samuel dio directamente. El bloque legal "by Events & Entertainment Punta Cana LLC" (entidad de Miami, facturación) tampoco se portó — no es información de contacto al cliente.',
+        states: [
+          {
+            label: 'Formulario enviado (demo)',
+            kind: 'estado',
+            to: '/contacto?dev-contacto=enviado',
+            note: 'Mismo flag que la sección embebida de la home (home/contacto.tsx) — un solo componente, dos rutas.',
+          },
+        ],
+      },
+      {
+        title: 'Legal (plantilla, 4 variantes)',
+        route: '/legal/politica-de-cancelacion',
+        status: 'done',
+        description:
+          'UNA plantilla data-driven (data/legal.ts) para las 4 páginas de PLAN-LANZAMIENTO.md Bloque F — la web actual no tiene NINGUNA (verificado en mapa-del-sitio.md). Política de cancelación tiene contenido REAL, compuesto de hechos ya vetados en el resto del sitio (depósito 25%, 5% cash, cancelación gratis ≥7 días, reembolso total por clima, cambio de menú ≤24h) — nada inventado. Privacidad/Términos/Cookies NO tienen fuente que portar: en vez de fabricar cláusulas legales vinculantes que nadie ha revisado, la página deja la ESTRUCTURA esperable con un aviso explícito ("borrador de estructura, no un documento vinculante — pendiente de un abogado"). ⚠️ Pendiente avisar a Samuel/Derick: estas 3 NO deben salir a producción tal cual. `noindex` en las 4.',
+        states: [
+          {
+            label: 'Variante: Privacidad (placeholder)',
+            kind: 'variante',
+            to: '/legal/privacidad',
+            note: 'contenidoReal: false — muestra el aviso de borrador de estructura.',
+          },
+          {
+            label: 'Variante: Términos (placeholder)',
+            kind: 'variante',
+            to: '/legal/terminos',
+            note: 'contenidoReal: false.',
+          },
+          {
+            label: 'Variante: Cookies (placeholder)',
+            kind: 'variante',
+            to: '/legal/cookies',
+            note: 'contenidoReal: false — el sitio hoy no usa cookies de analítica/publicidad (PLAN-LANZAMIENTO.md Bloque G, sin implementar).',
           },
         ],
       },
