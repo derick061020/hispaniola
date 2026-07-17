@@ -249,6 +249,11 @@
      mecánica de pista duplicada que el ticker del hero (--ticker-duracion),
      aquí horizontal y dentro del bloque de opiniones de la ficha. */
   --opiniones-marquee-duracion: 45s;
+  --spacing-opiniones-card-ancho: 20rem; /* 320px */
+  --spacing-opiniones-gap: 1rem; /* 16px — margin, no gap: mismo motivo que
+    .ticker-card (componentes.css) — con la pista duplicada, un `gap` del
+    flex desincroniza el -50% del loop del punto exacto donde arranca la
+    2ª copia. */
 
   /* Slider step-based de «Reseñas verificadas» (v6, pedido de Pedro
      2026-07-15) — carrusel que avanza 1 slot, espera, avanza otro.

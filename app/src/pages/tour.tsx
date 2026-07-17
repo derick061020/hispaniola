@@ -102,7 +102,7 @@ export function TourPage() {
               <Itinerario tour={tour} ficha={ficha} />
               <IncluyeTour ficha={ficha} />
               {tour.booking === 'completo' ? <MenuTour tour={tour} ficha={ficha} /> : null}
-              <OpinionesTour tour={tour} ficha={ficha} />
+              <OpinionesTour tour={tour} />
               <FaqTour ficha={ficha} />
             </div>
 

@@ -1373,3 +1373,58 @@
     height: calc(3 * var(--reviews-card-alto) + 2 * var(--reviews-step-gap));
   }
 }
+
+/* ============================================================
+   Marquee de OpinionesTour (PLAN-INTERNAS-V2.md §C3) — franja horizontal
+   infinita de reseñas dentro del bloque «Opiniones» de la ficha. MISMA
+   mecánica que el ticker del hero (pista duplicada 2x en el JSX, loop
+   invisible con `translate: -50% 0`, margin en la card en vez de gap en la
+   pista — un gap desincroniza el punto exacto donde arranca la 2ª copia).
+   Clases propias, no las del ticker: son dos piezas de marca distintas (home
+   vs. ficha) que hoy comparten mecánica pero no tienen por qué compartir
+   nombre de clase si una cambia mañana. ============================================================ */
+.opiniones-marquee-wrapper {
+  overflow: hidden;
+}
+
+.opiniones-marquee-wrapper--estatico {
+  overflow-x: auto;
+}
+
+.opiniones-marquee-pista {
+  display: flex;
+  width: max-content;
+  animation: opiniones-marquee-desfile var(--opiniones-marquee-duracion) linear infinite;
+}
+
+.opiniones-marquee-wrapper--estatico .opiniones-marquee-pista {
+  animation: none;
+}
+
+.opiniones-marquee-pista--pausada {
+  animation-play-state: paused;
+}
+
+/* Hover del wrapper (no de cada card): pausa toda la pista para poder leer
+   cualquier reseña sin perseguirla — mismo trato que el ticker. */
+.opiniones-marquee-wrapper:hover .opiniones-marquee-pista {
+  animation-play-state: paused;
+}
+
+.opiniones-marquee-card {
+  width: var(--spacing-opiniones-card-ancho);
+  margin-right: var(--spacing-opiniones-gap);
+  flex-shrink: 0;
+}
+
+@keyframes opiniones-marquee-desfile {
+  to {
+    translate: -50% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .opiniones-marquee-pista {
+    animation: none;
+  }
+}

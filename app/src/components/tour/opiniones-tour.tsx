@@ -1,58 +1,106 @@
+import { useState } from 'react'
 import { Etiqueta } from '@/components/ui/etiqueta'
 import { Estrellas } from '@/components/ui/estrellas'
 import { BLOQUE_FICHA } from '@/components/tour/bloque-ficha'
-import type { Tour } from '@/data/home'
-import type { FichaTour } from '@/data/tours'
+import { useDevFlag } from '@/dev/use-dev-flag'
+import { QUOTES, type Review, type Tour } from '@/data/home'
 
 // Opiniones (wireframe A5 · fix 1.2 de analisis/revision-wireframes.md).
 //
-// ⚠️ EL LINK DE SALIDA ES SOLO TRIPADVISOR — jamás Viator. Viator vende el
-// MISMO tour, al mismo precio, con Reserve-Now-Pay-Later y cupones del 10%:
-// mandarle tráfico desde aquí es regalarle la venta al canal que este rediseño
-// existe para desintermediar, y encima en el momento exacto de la decisión.
-// Citar a Viator como FUENTE de una reseña en texto está bien (atribuir no
-// manda tráfico); un botón «ver en Viator», nunca.
+// PLAN-INTERNAS-V2.md (§C3, pedido de Samuel): fuera el link de salida —
+// «no quiero que lleven a TripAdvisor» — y el resumen (rating + reseñas
+// verificadas) pasa a preceder un MARQUEE horizontal infinito de reseñas, en
+// vez de una sola quote fija. El ⚠️ anti-Viator de siempre sigue vigente en
+// otro sentido: CERO enlaces de salida en esta sección, ni a Viator ni ya a
+// TripAdvisor — nada que distraiga de la decisión en el momento exacto en
+// que se está tomando.
+//
+// El pool de reseñas es QUOTES (data/home.ts) — las mismas 5 reales que usa
+// la home, no un texto redactado para la ficha: no hay reseñas por-tour en
+// ninguna fuente del proyecto (prototipo/datos.js tampoco las tiene), y
+// inventarlas sería peor que reusar las genéricas. Si el loop se siente
+// corto, hacen falta más reseñas REALES (pedirlas, no inventarlas — ver
+// PLAN-INTERNAS-V2.md §Decisiones abiertas). La quote destacada de ESTE tour
+// (`ficha.quoteDestacada`) sigue haciendo su trabajo donde ya vivía — flotando
+// sobre la foto principal del mosaico (galeria-mosaico.tsx) — así que no se
+// pierde, solo deja de repetirse aquí.
+//
+// Mecánica: pista duplicada 2x, igual que el ticker del hero — ver el
+// bloque .opiniones-marquee-* en componentes.css para el porqué de cada
+// pieza. Pausa al hover (CSS) y con prefers-reduced-motion no avanza sola
+// (WCAG 2.2.2): una sola copia, scrollable a mano.
 //
 // ⚠️ Sin barras de distribución (92% 5★, 6% 4★…): ese dato no existe en
 // ninguna fuente del proyecto. El wireframe las dibujó como placeholder;
 // pintarlas aquí sería inventar estadística. Decisión abierta §13.5 — cuando
 // el cliente dé el dato real (o el motor lo exponga), tienen su sitio hecho.
-//
-// TODO(cliente): la URL es el TripAdvisor genérico. La del perfil real ya está
-// pedida (PLAN-v3.md §9, junto a los assets de premios en alta) — es la otra
-// mitad de la crítica de la auditoría: «premios sin enlaces verificables».
-const TRIPADVISOR_URL = 'https://www.tripadvisor.com'
 
-export function OpinionesTour({ tour, ficha }: { tour: Tour; ficha: FichaTour }) {
+function ReviewCard({ review }: { review: Review }) {
+  return (
+    <div className="flex h-full flex-col justify-between gap-4 rounded-card bg-papel-hueso p-5">
+      <p className="text-sm text-navy">«{review.texto}»</p>
+      <div className="flex items-center justify-between gap-3">
+        <div className="min-w-0">
+          <p className="truncate text-sm font-semibold text-navy">{review.autor}</p>
+          <p className="truncate text-xs text-navy-soft">
+            {review.plataforma} · {review.fecha}
+          </p>
+        </div>
+        <Estrellas calificacion={review.estrellas} />
+      </div>
+    </div>
+  )
+}
+
+export function OpinionesTour({ tour }: { tour: Tour }) {
+  const [pausado, setPausado] = useState(false)
+
+  // [dev-mode] deep-link del Glosario Dev — ver src/dev/dev-registry.ts
+  useDevFlag('dev-opiniones', (v) => {
+    if (v === 'pausado') setPausado(true)
+  })
+
+  const estatico =
+    typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
   return (
     <section id="ancla-opiniones" className={`${BLOQUE_FICHA} scroll-mt-sticky-top`}>
       <Etiqueta>Opiniones</Etiqueta>
 
-      <div className="mt-5 grid gap-6 lg:grid-cols-3">
+      <div className="mt-5 flex items-center gap-4">
+        <p className="font-display text-h2 font-semibold text-navy">
+          {tour.rating}
+          <span className="text-lead font-normal text-navy-soft"> / 5</span>
+        </p>
         <div>
-          <p className="font-display text-h2 font-semibold text-navy">
-            {tour.rating}
-            <span className="text-lead font-normal text-navy-soft"> / 5</span>
-          </p>
-          <Estrellas calificacion={tour.rating} className="mt-2" />
-          <p className="mt-3 text-sm text-navy-soft">{tour.resenas.toLocaleString('en-US')} reseñas verificadas</p>
-          <a
-            href={TRIPADVISOR_URL}
-            target="_blank"
-            rel="noopener"
-            className="mt-1 inline-block text-sm font-semibold text-aqua-dark hover:underline"
-          >
-            Ver en TripAdvisor →
-          </a>
+          <Estrellas calificacion={tour.rating} />
+          <p className="mt-1 text-sm text-navy-soft">{tour.resenas.toLocaleString('en-US')} reseñas verificadas</p>
         </div>
+      </div>
 
-        <figure className="rounded-card bg-papel-hueso p-5 lg:col-span-2">
-          <blockquote className="text-lead text-navy">«{ficha.quoteDestacada} Volveríamos sin dudarlo.»</blockquote>
-          <figcaption className="mt-3 flex items-center gap-2 text-xs text-navy-soft">
-            <Estrellas calificacion={5} />
-            Cliente verificado · jun 2026
-          </figcaption>
-        </figure>
+      <div
+        className={`opiniones-marquee-wrapper mt-6 ${estatico ? 'opiniones-marquee-wrapper--estatico' : ''}`}
+        role="group"
+        aria-roledescription="carrusel"
+        aria-label="Reseñas de huéspedes"
+      >
+        <div className={`opiniones-marquee-pista ${pausado ? 'opiniones-marquee-pista--pausada' : ''}`}>
+          {QUOTES.map((q) => (
+            <div key={q.id} className="opiniones-marquee-card">
+              <ReviewCard review={q} />
+            </div>
+          ))}
+          {/* Segunda copia para el loop del -50%: oculta a lectores de
+              pantalla (PLAN-v3.md §7.3, mismo trato que el ticker del hero),
+              no hace falta si es estático (reduced-motion). */}
+          {!estatico
+            ? QUOTES.map((q) => (
+                <div key={`dup-${q.id}`} className="opiniones-marquee-card" aria-hidden="true">
+                  <ReviewCard review={q} />
+                </div>
+              ))
+            : null}
+        </div>
       </div>
     </section>
   )
