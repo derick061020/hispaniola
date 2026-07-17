@@ -13,6 +13,7 @@ import { OpinionesTour } from '@/components/tour/opiniones-tour'
 import { FaqTour } from '@/components/tour/faq-tour'
 import { AnclasFicha } from '@/components/tour/anclas-ficha'
 import { BLOQUE_FICHA } from '@/components/tour/bloque-ficha'
+import { TambienTeGusta } from '@/components/internas/tambien-te-gusta'
 import { TOURS } from '@/data/home'
 import { FICHAS } from '@/data/tours'
 
@@ -116,6 +117,12 @@ export function TourPage() {
           </div>
         </div>
       </div>
+
+      {/* PLAN-INTERNAS-V2.md §C4: «También te puede gustar» sale del grid —
+          ya no comparte columna con la FAQ — y pasa a ser su propia sección
+          a ancho completo, sobre blanco, entre el gris de la ficha y el
+          footer. */}
+      <TambienTeGusta slugs={ficha.tambienTeGusta} />
 
       <Footer />
       <BarraMovilFicha tour={tour} />
