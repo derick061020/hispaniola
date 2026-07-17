@@ -3,7 +3,6 @@ import { Footer } from '@/components/home/footer'
 import { HeroInterna } from '@/components/internas/hero-interna'
 import { CabeceraFicha } from '@/components/tour/cabecera-ficha'
 import { WidgetReserva } from '@/components/tour/widget-reserva'
-import { ComparadorStrip } from '@/components/tour/comparador-strip'
 import { BarraMovilFicha } from '@/components/tour/barra-movil-ficha'
 import { Itinerario } from '@/components/tour/itinerario'
 import { IncluyeTour } from '@/components/tour/incluye-tour'
@@ -13,6 +12,7 @@ import { FaqTour } from '@/components/tour/faq-tour'
 import { AnclasFicha } from '@/components/tour/anclas-ficha'
 import { BLOQUE_FICHA } from '@/components/tour/bloque-ficha'
 import { DescripcionTour } from '@/components/tour/descripcion-tour'
+import { KpisTour } from '@/components/tour/kpis-tour'
 import { GaleriaMosaico } from '@/components/internas/galeria-mosaico'
 import { TambienTeGusta } from '@/components/internas/tambien-te-gusta'
 import { TOURS } from '@/data/home'
@@ -96,16 +96,13 @@ export function TourPage() {
                   columna: el visitante ve el producto antes de leer texto. */}
               <GaleriaMosaico fotos={[tour.foto, ...ficha.galeriaCompleta]} etiqueta={tour.nombre} />
 
-              <div className={`${BLOQUE_FICHA} flex flex-col gap-6`}>
-                <div>
-                  <h2 className="font-display text-h3 font-semibold text-navy">{promesa}</h2>
-                  <DescripcionTour parrafos={ficha.descripcionLarga} corta={tour.descripcionCorta} />
-                </div>
+              {/* KPIs de confianza de la empresa, debajo del mosaico (pedido
+                  de Samuel, ref. barra de datos de hellocaribetours). */}
+              <KpisTour />
 
-                {/* Solo en 'completo': es el único modo con precio publicado
-                    que los portales también venden — sin precio no hay
-                    comparación que hacer. */}
-                {tour.booking === 'completo' ? <ComparadorStrip /> : null}
+              <div className={BLOQUE_FICHA}>
+                <h2 className="font-display text-h3 font-semibold text-navy">{promesa}</h2>
+                <DescripcionTour parrafos={ficha.descripcionLarga} corta={tour.descripcionCorta} />
               </div>
 
               <Itinerario ficha={ficha} />
