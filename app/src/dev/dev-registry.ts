@@ -357,6 +357,12 @@ export const devSections: DevSection[] = [
             note: 'Fase B (booking): el selector Light/Premium DENTRO del widget elige Premium → el precio de cabecera y el total del CTA saltan a la tarifa Premium (US$ 114/persona; 114 × 2 = US$ 228), y de paso elige mañana para que el CTA muestre el total. Sigue anclado en Light por defecto (abre en 99): Premium es un opt-in EXPLÍCITO, no un cambio a espaldas del visitante — se mantiene el guardarraíl anti bait-and-switch (§1.1). El «ahorra hasta 15%» junto al CTA son los descuentos reales (recurrente + anticipación + efectivo), mostrados SOBRE el precio de lista, no anclados en él.',
           },
           {
+            label: 'Saona: sub-variante Catamarán',
+            kind: 'estado',
+            to: '/tours/isla-saona?dev-saona=catamaran',
+            note: 'v3 (2026-07-17, Saona completo): el selector de sub-variante del widget cambia a Catamarán y se elige mañana (los tramos del catamarán son 1-30 pax grupo + 31-70 pax por persona). Es el frame de la opción con la tabla de tramos más distinta (los tramos por persona solo aparecen aquí, no en speedboat ni en fishing). Para los otros 2 sub-variantes (Speedboat, Fishing Town) no hace falta deep-link: el default es Speedboat (la más común) y los tramos son grupo-fijo hasta 9/10 pax, sin tramo por persona — visualmente muy parecidos.',
+          },
+          {
             label: 'Calendario abierto (popover)',
             kind: 'overlay',
             to: '/tours/semi-privado?dev-widget=calendario',
