@@ -38,17 +38,29 @@ export type TramoPrecio = {
   extra?: string
 }
 
-/** Una sub-variante seleccionable en el widget (Saona: Speedboat, Fishing
- *  Town, Catamarán). El widget pinta un segmented control con estas y
- *  recalcula el total al cambiar — un Light/Premium pero a nivel de BOTE en
- *  vez de a nivel de menú. `capacidad` es la línea de meta del toggle
- *  (ej: «6-9 personas (+US$ 130 pax extra hasta 25)»). */
+/** Una sub-variante seleccionable en el widget (Saona: Speedboat/Fishing/
+ *  Catamarán; Charter: Maite/GrandMa/Santa Maria/Forever Teresa). El
+ *  widget pinta un segmented control con estas y recalcula el total al
+ *  cambiar — un Light/Premium pero a nivel de BOTE/MODALIDAD en vez de a
+ *  nivel de menú. `capacidad` es la línea de meta del toggle (ej: «6-9
+ *  personas»). `foto` (en /fotos) y `horarios` se muestran cuando la
+ *  sub-variante los tiene (Saona no usa ninguno; Charter usa ambos). */
 export type SubVarianteTour = {
   id: string
   nombre: string
   descripcion: string
   capacidad: string
   tabla: TramoPrecio[]
+  /** Foto del bote/modalidad, en /fotos (sin extensión). Opcional —
+   *    sin foto, el widget pinta solo el nombre. */
+  foto?: string
+  /** Horarios publicados de esta sub-variante. Si está vacío, se usan los
+   *    horarios globales de la ficha (`ficha.horarios`). */
+  horarios?: Horario[]
+  /** Duración info de la sub-variante (ej: «3-4 horas»). NO se elige
+   *    — es solo info, según pedido de Samuel el 2026-07-17 (charter).
+   *    El cálculo del precio usa solo la tabla de tramos. */
+  duracion?: string
 }
 
 /** Plato del menú BUFFET (Saona) — distinto del PlatoMenu de los paquetes
@@ -62,6 +74,16 @@ export type PlatoBuffet = { nombre: string; desc?: string }
 export type MenuBuffetTour = {
   platos: PlatoBuffet[]
   /** Add-on al hacer check-out (ej: langosta premium). */
+  addOn?: { nombre: string; precio: number; descripcion?: string }
+}
+
+/** Menú transversal del charter (los 7 platos + 1 add-on de langosta).
+ *  Cuando `ficha` tiene `menuCharter`, MenuTour pinta una lista con los
+ *  7 platos + un card de add-on. El menú NO cambia al cambiar de bote
+ *  — es transversal a los 4 botes (Maite, GrandMa, Santa Maria, Forever
+ *  Teresa). Charter es el único caso actual. */
+export type MenuCharterTour = {
+  platos: { nombre: string; desc?: string }[]
   addOn?: { nombre: string; precio: number; descripcion?: string }
 }
 
@@ -116,6 +138,10 @@ export type FichaTour = {
    *  (Saona) en vez del comparador Light/Premium clásico. Saona es el único
    *  caso actual. */
   menuBuffet?: MenuBuffetTour
+  /** Cuando está presente, el bloque de menú pinta los 7 platos + 1 add-on
+   *  transversales del charter (lista simple, no buffet ni Light/Premium).
+   *  Charter es el único caso actual. */
+  menuCharter?: MenuCharterTour
 }
 
 export const FICHAS: Record<string, FichaTour> = {
@@ -215,13 +241,38 @@ export const FICHAS: Record<string, FichaTour> = {
     tituloLargo: 'Snorkel Lovers — catamarán para toda la familia',
     audiencia: 'Familias',
     duracion: '4 horas',
+    descripcionLarga: [
+      'Snorkel Lovers es la versión para familias del Semi-Privado: el mismo catamarán, el mismo arrecife de Cabeza de Toro con el proyecto de restauración top-3 de República Dominicana, y la misma cocina flotante — pero con un ritmo pensado para que los niños disfruten sin apuro.',
+      'La bióloga marina adapta la explicación del vivero de coral al nivel de cada edad: los más pequeños descubren los peces de colores, los más grandes entienden el trabajo de restauración. En el agua, los chalecos infantiles son obligatorios y se ajustan a todas las tallas — incluso si nadie del grupo sabe nadar, el snorkel es en aguas poco profundas (1,2 m) y la piscina natural de estructuras de arrecife artificial.',
+      'El menú es el mismo de la casa, con o sin alcohol a elección: cerveza, ron añejo y vodka para los adultos, jugos y refrescos para los niños. La langosta del menú Premium se sustituye por langostino salvaje de marzo a junio (veda).',
+    ],
     horarios: [
       { hora: '9:00 AM', regreso: '1:00 PM' },
       { hora: '1:00 PM', regreso: '5:00 PM' },
     ],
-    upgradePremium: 15,
-    // Misma cocina/operación que Semi-Privado (mismo catamarán y menú); el
-    // marco cambia (familias, sin alcohol para menores), no los platos.
+    // v3 (2026-07-17, pedido de Samuel: «quitar la opción de premium/light,
+    // dejar los 8 menús»): la web del cliente NO publica Premium para
+    // snorkel-lovers — solo Adulto 114 / Niño 65 como tarifa única. El
+    // menúLight queda VACÍO a propósito (no se borra del modelo: el widget
+    // y MenuTour lo detectan y ocultan la opción). El menúPremium pasa a
+    // ser EL menú del tour (sin nombre "Premium", renombrado a "Tu menú"
+    // en MenuTour cuando no hay menuLight). Para semi-privado, en cambio,
+    // sigue con menuLight + menuPremium (la web sí publica el upgrade).
+    upgradePremium: null,
+    // dejar los 8 menús»): la web del cliente NO publica Premium para
+    // snorkel-lovers — solo Adulto 114 / Niño 65 como tarifa única. El
+    // menúLight queda VACÍO a propósito (no se borra del modelo: el widget
+    // y MenuTour lo detectan y ocultan la opción). El menúPremium pasa a
+    // ser EL menú del tour (sin nombre "Premium", renombrado a "Tu menú"
+    // en MenuTour cuando no hay menuLight). Para semi-privado, en cambio,
+    // sigue con menuLight + menuPremium (la web sí publica el upgrade).
+    // v3 fix (2026-07-17, pedido de Samuel): el refactor a "solo Adulto
+    // 114 / Niño 65" deja menuLight vacio A PROPOSITO, pero el widget
+    // y el funnel de la ficha AUN no estan actualizados a ese modelo
+    // (siguen aceptando y mostrando paquete=light). Hasta que se
+    // termine el refactor, restaurar menuLight para que el paso 2
+    // del funnel de snorkel-lovers tenga platos que mostrar cuando
+    // el usuario entra con ?paquete=light.
     menuLight: [
       { nombre: 'Pechuga de pollo a la parrilla', desc: 'Con papas y vegetales', foto: 'plato-chicken-bodegon' },
       { nombre: 'Filete de pescado a la parrilla', desc: 'Con papas y vegetales', foto: 'plato-fish-bodegon' },
@@ -235,6 +286,10 @@ export const FICHAS: Record<string, FichaTour> = {
       { nombre: 'Lasaña con pechuga de pollo', foto: 'plato-lasagna-pollo' },
       { nombre: 'Cóctel de mariscos', foto: 'plato-coctel-mariscos' },
     ],
+    // v3 (2026-07-17, web del cliente): 18 fotos reales de la excursión
+    // familiar (la web tenía `images/excursions/educational/{4,5,7,8,10,11,
+    // 13,14,16,17,20,21,22,23,24,25,26,27}.jpg`). Antes 9 — faltaban las
+    // 9 últimas. Descargadas y reencodeadas a WEBP quality 85 (~50-170 KB).
     galeriaCompleta: [
       'galeria-snorkel-lovers-1',
       'galeria-snorkel-lovers-2',
@@ -245,6 +300,15 @@ export const FICHAS: Record<string, FichaTour> = {
       'galeria-snorkel-lovers-7',
       'galeria-snorkel-lovers-8',
       'galeria-snorkel-lovers-9',
+      'galeria-snorkel-lovers-10',
+      'galeria-snorkel-lovers-11',
+      'galeria-snorkel-lovers-12',
+      'galeria-snorkel-lovers-13',
+      'galeria-snorkel-lovers-14',
+      'galeria-snorkel-lovers-15',
+      'galeria-snorkel-lovers-16',
+      'galeria-snorkel-lovers-17',
+      'galeria-snorkel-lovers-18',
     ],
     quoteDestacada: 'Perfecto para ir con los niños, todos se sintieron seguros.',
     itinerario: [
@@ -309,12 +373,126 @@ export const FICHAS: Record<string, FichaTour> = {
     tituloLargo: 'Charter Privado — el barco entero para tu grupo',
     audiencia: 'Tu grupo',
     duracion: '3-4 horas',
-    horarios: [{ hora: 'A coordinar', regreso: '' }],
-    upgradePremium: 15,
-    // Charter cotiza el menú a medida (booking 'cotizacion' no pinta MenuTour):
-    // sin listas fijas de paquete.
+    descripcionLarga: [
+      'El Charter Privado es el barco entero para tu grupo — familia, amigos, empresa o celebración. Eliges uno de nuestros 4 botes según el tamaño del grupo y el plan: Maite (4h, hasta 20 pax), GrandMa (3h, hasta 20 pax), Santa Maria (4h, hasta 20 pax, o más con skewers) o Forever Teresa (3h o 4h, hasta 120 pax).',
+      'La ruta es la misma que los otros tours: navegación desde Bávaro hasta Cabeza de Toro, snorkel en el vivero de coral del proyecto top-3 de RD, parada en la playa desierta con coco-loco y comida a bordo de la cocina flotante. Lo que cambia es el barco (capacidad y tarifa según pax) y el menú, que coordinamos contigo: 7 platos a elegir (seafood, meat, surf & turf, vegetarian, chicken/beef/shrimp skewers) y langosta premium como add-on opcional al check-out.',
+      'Para grupos grandes (más de 20 pax), Forever Teresa es la opción: hasta 120 personas con un servicio tipo buffet en cubierta. La coordinación se hace con una persona dedicada, de principio a fin — sin sobresaltos.',
+    ],
+    // v3 (2026-07-17, charter completo): el charter tiene 4 botes con
+    // precios distintos según pax. Cada bote tiene 2 horarios (Maite,
+    // Santa Maria) o 3 (GrandMa, Forever Teresa 3h). Los precios vienen
+    // verbatim del schema.org de la web del cliente (JSON-LD verificado).
+    // Las fotos están en /fotos (flota-*).
+    //
+    // Maite: 4h, 2 horarios, 2 tramos. Para 8 pax, US$ 625 por grupo
+    // (+ US$ 25/pax meal/transport). Para 20 pax, US$ 99 por persona.
+    //
+    // GrandMa: 3h, 3 horarios, 1 tramo fijo de 20 pax. US$ 825 grupo.
+    //
+    // Santa Maria: 4h, 2 horarios, 1 tramo fijo de 20 pax. US$ 1.150
+    // grupo. El web dice "plated options for up to 20 pax and premium
+    // skewers for groups of 21 pax and more" — el precio para 21+ se
+    // coordina aparte.
+    //
+    // Forever Teresa: 3h/4h (info, no se elige), 2 horarios. Tramos
+    // por pax desde 1-18 hasta 30-120. El widget usa los precios de 3h
+    // (los más comunes); 4h se menciona en la descripción.
+    horarios: [],
+    upgradePremium: null,
+    subVariantes: [
+      {
+        id: 'maite',
+        nombre: 'Maite',
+        descripcion: 'Crucero íntimo 4h · hasta 20 pax',
+        capacidad: '8-20 personas',
+        duracion: '4 horas',
+        foto: 'flota-maite',
+        horarios: [
+          { hora: '9:00 AM', regreso: '1:00 PM' },
+          { hora: '2:00 PM', regreso: '6:00 PM' },
+        ],
+        tabla: [
+          { desde: 1, hasta: 8, precio: 625, tipo: 'grupo', extra: '+ US$ 25 por persona para comida y transporte' },
+          { desde: 9, hasta: 19, precio: 99, tipo: 'persona' },
+          { desde: 20, hasta: 20, precio: 99, tipo: 'persona' },
+        ],
+      },
+      {
+        id: 'grandma',
+        nombre: 'GrandMa',
+        descripcion: 'Crucero ágil 3h · hasta 20 pax',
+        capacidad: 'Hasta 20 personas',
+        duracion: '3 horas',
+        foto: 'flota-grandma',
+        horarios: [
+          { hora: '9:00 AM', regreso: '11:55 AM' },
+          { hora: '12:00 PM', regreso: '2:55 PM' },
+          { hora: '3:00 PM', regreso: '6:00 PM' },
+        ],
+        tabla: [
+          { desde: 1, hasta: 20, precio: 825, tipo: 'grupo' },
+        ],
+      },
+      {
+        id: 'santa-maria',
+        nombre: 'Santa Maria',
+        descripcion: 'Crucero premium 4h · hasta 20 pax',
+        capacidad: 'Hasta 20 personas (plated) o más con skewers',
+        duracion: '4 horas',
+        foto: 'flota-santa-maria',
+        horarios: [
+          { hora: '9:00 AM', regreso: '12:55 PM' },
+          { hora: '2:00 PM', regreso: '6:00 PM' },
+        ],
+        tabla: [
+          { desde: 1, hasta: 20, precio: 1150, tipo: 'grupo' },
+        ],
+      },
+      {
+        id: 'forever-teresa',
+        nombre: 'Forever Teresa',
+        descripcion: 'Catamarán grande 3h/4h · hasta 120 pax',
+        capacidad: '1-120 personas (precios por tramo)',
+        duracion: '3 horas (también 4h, consultar)',
+        foto: 'flota-forever-teresa',
+        horarios: [
+          { hora: '9:00 AM', regreso: '12:00 PM' },
+          { hora: '3:00 PM', regreso: '6:00 PM' },
+        ],
+        tabla: [
+          { desde: 1, hasta: 18, precio: 1750, tipo: 'grupo' },
+          { desde: 19, hasta: 25, precio: 85, tipo: 'persona' },
+          { desde: 26, hasta: 29, precio: 2225, tipo: 'grupo' },
+          { desde: 30, hasta: 120, precio: 75, tipo: 'persona' },
+        ],
+      },
+    ],
+    // v3 (2026-07-17, charter): el charter ahora se vende con paquetes
+    // (4 botes con tabla de precios) — antes era booking 'cotizacion'
+    // sin menuLight ni menuPremium. Mantengo los 2 campos vacíos por
+    // compatibilidad con el modelo (no se usan en el widget porque
+    // menuLight.length === 0 → no se pinta el toggle Light/Premium).
     menuLight: [],
     menuPremium: [],
+    // El menú de charter es transversal a los 4 botes: 7 platos + 1
+    // add-on (lobster premium). Se pinta en MenuTour como un caso
+    // nuevo (menuCharter) porque es transversal a las sub-variantes.
+    menuCharter: {
+      platos: [
+        { nombre: 'Seafood', desc: 'Langosta, pulpo, camarón' },
+        { nombre: 'Meat', desc: 'Angus certificado' },
+        { nombre: 'Surf & Turf', desc: 'Langosta + Angus' },
+        { nombre: 'Vegetarian', desc: 'Ceviche de zucchini' },
+        { nombre: 'Chicken Skewers' },
+        { nombre: 'Beef Skewers' },
+        { nombre: 'Shrimp Skewers' },
+      ],
+      addOn: {
+        nombre: 'Lobster premium',
+        precio: 30,
+        descripcion: 'Disponible al hacer check-out, US$ 30 por persona',
+      },
+    },
     galeriaCompleta: [
       'galeria-charter-privado-1',
       'galeria-charter-privado-2',
@@ -326,34 +504,40 @@ export const FICHAS: Record<string, FichaTour> = {
     ],
     quoteDestacada: 'Coordinaron todo a nuestra medida, el barco entero para la familia.',
     itinerario: [
-      { hora: 'A coordinar', titulo: 'Recogida en tu hotel', texto: 'Se ajusta al horario que definamos juntos.' },
-      {
-        hora: '',
-        titulo: 'Ruta a tu elección',
-        texto: 'Snorkel, playa desierta y piscina natural — el mismo recorrido, a tu ritmo.',
-      },
-      { hora: '', titulo: 'Comida y barra a bordo', texto: 'Menú a medida desde la cocina flotante.' },
-      { hora: '', titulo: 'Regreso al hotel', texto: '' },
+      { hora: '8:05', titulo: 'Recogida en tu hotel', texto: 'Transporte con AC. La hora exacta según tu hotel y el horario del bote.' },
+      { hora: '9:00', titulo: 'Zarpamos desde Bávaro', texto: 'Check-in en el muelle y navegación por la costa hasta Cabeza de Toro.' },
+      { hora: '~9:45', titulo: 'Snorkel en el vivero de coral', texto: 'El proyecto top-3 de RD, guiado por nuestra bióloga marina.' },
+      { hora: '~11:00', titulo: 'Playa desierta + coco-loco', texto: 'Cóctel en coco real, para y fotos.' },
+      { hora: '~11:45', titulo: 'Piscina natural + comida a bordo', texto: 'Tu plato a medida, recién hecho en la cocina flotante.' },
+      { hora: '13:00', titulo: 'Regreso y traslado al hotel', texto: '' },
     ],
     incluye: [
-      { titulo: 'Barco entero', texto: 'Sin desconocidos a bordo, hasta 120 personas.' },
-      { titulo: 'Transporte ida y vuelta', texto: 'AC, desde tu hotel.' },
-      { titulo: 'Comida a medida', texto: 'Menú coordinado con tu grupo.' },
-      { titulo: 'Coordinación dedicada', texto: 'Una persona de principio a fin.' },
+      { titulo: 'Barco entero', texto: 'Sin desconocidos a bordo — el barco es solo para tu grupo.' },
+      { titulo: 'Transporte ida y vuelta', texto: 'AC, desde tu hotel (Bávaro / Punta Cana).' },
+      { titulo: 'Comida a medida', texto: '7 platos a elegir entre seafood, meat, surf & turf, vegetarian y skewers.' },
+      { titulo: 'Coordinación dedicada', texto: 'Una persona de principio a fin — sin sobresaltos.' },
     ],
-    noIncluido: 'Precio final según nº de personas y menú elegido — se cotiza a medida.',
-    queLlevar: ['Traje de baño', 'Toalla', 'Protector solar biodegradable', 'Cámara'],
+    incluyeExtra: [
+      'WiFi a bordo',
+      'Equipo de snorkel (todas las tallas)',
+      'Bióloga marina como guía en el arrecife',
+      'Fotos gratis subidas a Facebook',
+    ],
+    noIncluido:
+      'No incluido: langosta premium (US$ 30 pax, add-on opcional al check-out) · transporte desde Casa de Campo (suplemento) · fotógrafo profesional (con aviso previo, costo extra).',
+    queLlevar: [
+      'Traje de baño',
+      'Toalla',
+      'Protector solar biodegradable',
+      'Cámara',
+      'Efectivo (para el add-on de langosta o propinas)',
+    ],
     faqTour: [
-      {
-        p: '¿Cuál es el mínimo de personas?',
-        r: 'Dato pendiente de confirmar con el cliente — escríbenos por WhatsApp y te respondemos al instante.',
-      },
-      { p: '¿Puedo elegir la ruta?', r: 'Sí, la coordinamos contigo según lo que quiera ver tu grupo.' },
+      { p: '¿Cuántas personas caben en cada bote?', r: 'Maite 8-20 pax · GrandMa hasta 20 pax · Santa Maria hasta 20 pax (más con skewers) · Forever Teresa hasta 120 pax.' },
+      { p: '¿Cuál es el mínimo de personas?', r: 'Maite parte de 1 pax (la tarifa de US$ 625 cubre hasta 8). Los demás no tienen mínimo formal — consulta por WhatsApp para grupos de menos de 6 pax.' },
+      { p: '¿Puedo elegir el menú?', r: 'Sí — coordinamos los 7 platos contigo (seafood, meat, surf & turf, vegetarian, chicken/beef/shrimp skewers). Langosta premium como add-on opcional.' },
       { p: '¿Aceptan pagos corporativos?', r: 'Sí, ver la página de Empresas y MICE para facturación formal.' },
-      {
-        p: '¿Cómo funciona la cotización?',
-        r: 'Nos cuentas tu grupo y fecha, y te respondemos en menos de 24 h con precio final.',
-      },
+      { p: '¿Y si llueve?', r: 'Reembolso total o cambio de fecha, sin costo.' },
     ],
     tambienTeGusta: ['semi-privado', 'snorkel-lovers'],
   },
@@ -530,21 +714,29 @@ export const FICHAS: Record<string, FichaTour> = {
  *  reserva-directa) viven en prototipo/ y van por EnlacePrototipo. */
 export const WHATSAPP_URL = 'https://wa.me/18293052804'
 
-/** Resuelve el precio total del tour para una variante y nº de personas
- *  dados. Funciona para los 2 modelos:
- *  - Sin subVariantes (semi-privado, snorkel-lovers): `precioLight × personas`.
- *  - Con subVariantes (Saona): busca el tramo que contiene `personas` dentro
- *    de la tabla de la variante; el tramo tipo 'grupo' ya es el total, el
- *    tipo 'persona' se multiplica por `personas`.
- *  Devuelve `null` cuando no hay forma de calcularlo (charter-privado cotiza
- *  a medida; consulta no tiene precio). El widget usa esto para pintar el
+/** Resuelve el precio total del tour. Funciona para los 3 modelos:
+ *  - SubVariantes (Saona, v3 2026-07-17): busca el tramo que contiene
+ *    `personas` en la tabla de la sub-variante; tramo 'grupo' es el total,
+ *    'persona' se multiplica.
+ *  - Tarifa dual (Snorkel Lovers, v3 2026-07-17): `adultos × precioLight +
+ *    niños × precioNino` (+ upgrade si Premium en ambos casos — el menú
+ *    Premium es el mismo para adultos y niños). Pasa por el objeto
+ *    `rol` { adultos, ninos }.
+ *  - Light/Premium clásico (semi-privado): `precioLight × personas`
+ *    (+ upgrade si Premium).
+ *  Devuelve `null` cuando no hay forma de calcularlo (charter cotiza a
+ *  medida; consulta no tiene precio). El widget usa esto para pintar el
  *  precio del CTA y para mandar el total correcto al funnel. */
 export function calcularTotalTour(
   ficha: FichaTour,
   varianteId: string | null,
   personas: number,
   precioLight: number | null,
+  precioNino: number | null | undefined,
+  paquete: 'light' | 'premium',
+  rol?: { adultos: number; ninos: number },
 ): number | null {
+  // SubVariantes: tramo por pax total (no por rol).
   if (ficha.subVariantes && ficha.subVariantes.length > 0) {
     const v = varianteId
       ? ficha.subVariantes.find((s) => s.id === varianteId) ?? ficha.subVariantes[0]
@@ -556,5 +748,12 @@ export function calcularTotalTour(
     return t.tipo === 'grupo' ? t.precio : t.precio * personas
   }
   if (precioLight === null) return null
-  return precioLight * personas
+  // Tarifa dual (Snorkel Lovers): adultos + niños × su tarifa.
+  if (rol && precioNino !== null && precioNino !== undefined) {
+    const upgrade = paquete === 'premium' ? ficha.upgradePremium ?? 0 : 0
+    return (precioLight + upgrade) * rol.adultos + (precioNino + upgrade) * rol.ninos
+  }
+  // Light/Premium clásico.
+  const upgrade = paquete === 'premium' ? ficha.upgradePremium ?? 0 : 0
+  return (precioLight + upgrade) * personas
 }
