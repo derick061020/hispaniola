@@ -309,6 +309,26 @@ export const devSections: DevSection[] = [
     ],
   },
   {
+    title: 'Reserva (funnel)',
+    screens: [
+      {
+        title: 'Funnel de reserva (4 pasos)',
+        route: '/reservar/semi-privado?paquete=light&personas=2',
+        status: 'done',
+        description:
+          'Fase C: el funnel que el widget de la ficha abre al pulsar «Continuar». Shell propio y compacto (no el HeroInterna de marketing del resto de internas — un checkout se hace en una columna enfocada, sin megamenú ni video que inviten a salir): logo + «volver al tour» arriba, barra de pasos, y Atrás/Continuar abajo. La config viaja del widget en la URL (paquete · fecha · horario · personas) y se lee con useSearchParams. 4 pasos: (1) MENÚ por persona (un Select AlignUI por comensal con los platos del paquete elegido — el diferenciador «eliges tu plato» hecho pantalla), (2) RECOGIDA (hotel + habitación + notas), (3) CONTACTO (nombre/email/WhatsApp), (4) REVISAR + DEPÓSITO 25%. Solo para tours booking «completo» (semi-privado, snorkel-lovers); charter y Saona redirigen a su ficha. Precio de LISTA (mismo criterio anti bait-and-switch que el widget): total = tarifa del paquete × personas; depósito = 25%; saldo el día del tour (−5% en efectivo). FRONTERA: el botón «Pagar depósito» NO cobra — el motor xpotours sigue pendiente del cliente y el paso 4 lo dice con todas las letras (no se finge un cobro ni un «reserva confirmada»). noindex.',
+        states: [
+          {
+            label: 'Variante Premium (3 personas)',
+            kind: 'variante',
+            to: '/reservar/semi-privado?paquete=premium&personas=3',
+            note: 'La misma pantalla con la config Premium y 3 comensales: el paso 1 ofrece los 7 platos Premium y el precio/depósito reflejan la tarifa Premium. Los pasos 2-4 se ven avanzando con «Continuar» (el estado del flujo es local; no hay deep-link por paso todavía).',
+          },
+        ],
+      },
+    ],
+  },
+  {
     title: 'Landings de eventos',
     screens: [
       {

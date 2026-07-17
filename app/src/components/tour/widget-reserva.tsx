@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { Clock, Users, Tag } from 'lucide-react'
 import * as FancyButton from '@/components/alignui/fancy-button'
 import * as Select from '@/components/alignui/select'
@@ -24,10 +25,12 @@ import { WHATSAPP_URL, type FichaTour } from '@/data/tours'
 // anticipación + efectivo) mostrados SOBRE el precio de lista, no anclados en
 // él (decisión de precio de Samuel: se ancla en la tarifa que todos pagan).
 //
-// ⚠️ FRONTERA DEL BUILD: el funnel de reserva (4 pasos) no existe en React —
-// sigue bloqueado por la decisión del motor xpotours (reemplazar / re-skinear),
-// pendiente del cliente. El CTA se pinta con su estado real (deshabilitado sin
-// fecha, con el total calculado al elegirla) pero no navega.
+// FRONTERA DEL BUILD (Fase C, 2026-07-17): el funnel de reserva YA existe
+// (/reservar/:slug, 4 pasos) y «Continuar» navega a él con la config en la URL
+// (paquete · fecha · horario · personas). La frontera se MUEVE al final de ese
+// funnel: el depósito del 25% no se cobra (el motor xpotours sigue pendiente del
+// cliente) y el paso 4 lo dice con todas las letras. El CTA sigue deshabilitado
+// de verdad sin fecha.
 //
 // Etapa A (PLAN-ALIGNUI.md): el chrome del widget habla AlignUI — selects de
 // Radix (Select) y CTAs FancyButton con los slots tematizados (primary=coral).
@@ -301,7 +304,16 @@ export function WidgetReserva({ tour, ficha }: Props) {
         </FancyButton.Root>
       ) : (
         <FancyButton.Root variant="primary" className="w-full" asChild>
-          <EnlacePrototipo>Continuar — {formatoDinero(total)}</EnlacePrototipo>
+          <Link
+            to={`/reservar/${tour.slug}?${new URLSearchParams({
+              paquete,
+              fecha,
+              horario: String(horario),
+              personas: String(personas),
+            }).toString()}`}
+          >
+            Continuar — {formatoDinero(total)}
+          </Link>
         </FancyButton.Root>
       )}
 
