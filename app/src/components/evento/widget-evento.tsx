@@ -4,6 +4,7 @@ import { Minus, Plus, MessageCircle, Tag, Users } from 'lucide-react'
 import * as Select from '@/components/alignui/select'
 import * as FancyButton from '@/components/alignui/fancy-button'
 import * as CompactButton from '@/components/alignui/compact-button'
+import { ChecksTicker } from '@/components/ui/checks-ticker'
 import { guardarCotizacion } from '@/lib/cotizacion-evento'
 import { useDevFlag } from '@/dev/use-dev-flag'
 import { WHATSAPP_URL, type FichaEvento } from '@/data/eventos'
@@ -382,23 +383,20 @@ export function WidgetEvento({ evento }: Props) {
         Cotizando directo ahorras hasta 15%
       </div>
 
-      {/* 3 checks de reassurance — el mismo lenguaje del widget de
-          tour, adaptado a eventos (no hay "25% de depósito" porque no
-          se reserva con depósito). */}
-      <ul className="flex flex-col gap-1.5 text-xs text-navy-soft">
-        <li className="flex items-center gap-1.5">
-          <span aria-hidden="true" className="text-menta-texto">✓</span>
-          Respuesta en menos de 24 h
-        </li>
-        <li className="flex items-center gap-1.5">
-          <span aria-hidden="true" className="text-menta-texto">✓</span>
-          Sin compromiso — cotizamos gratis
-        </li>
-        <li className="flex items-center gap-1.5">
-          <span aria-hidden="true" className="text-menta-texto">✓</span>
-          WhatsApp directo con el equipo del barco
-        </li>
-      </ul>
+      {/* 3 checks de reassurance — TICKER INFINITO horizontal, IGUAL
+          al del widget de tour (2026-07-17, pedido de Samuel: "que los
+          3 puntos (que son los mismos que tenemos en tours) sean igual
+          un ticker infinito pasando en horizontal, tiene que ser el
+          mismo que esta en tours"). Reusa el mismo componente
+          `components/ui/checks-ticker.tsx` — misma animación, misma
+          pausa al hover, misma respuesta a prefers-reduced-motion. */}
+      <ChecksTicker
+        lineas={[
+          'Respuesta en menos de 24 h',
+          'Sin compromiso — cotizamos gratis',
+          'WhatsApp directo con el equipo del barco',
+        ]}
+      />
     </Caja>
   )
 }

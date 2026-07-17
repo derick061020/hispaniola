@@ -4,6 +4,7 @@ import { Minus, Plus, Users, Baby, Tag, ArrowDown } from 'lucide-react'
 import * as FancyButton from '@/components/alignui/fancy-button'
 import * as CompactButton from '@/components/alignui/compact-button'
 import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
+import { ChecksTicker } from '@/components/ui/checks-ticker'
 import { CalendarioWidget } from '@/components/tour/calendario-widget'
 import { SubVariantePicker } from '@/components/tour/sub-variante-picker'
 import { useDevFlag } from '@/dev/use-dev-flag'
@@ -54,47 +55,11 @@ const MAX_PERSONAS_DEFAULT = 6
 
 // Ticker infinito en una sola línea (2026-07-17, pedido de Samuel: "que estén
 // en una fila, en un ticker infinito, para reducir el alto" — antes eran 3
-// líneas apiladas). MISMA mecánica que el marquee de Opiniones (pista
-// duplicada 2x, loop con translate: -50%, pausa al hover) pero clases e
-// ítems propios — ver .widget-checks-* en componentes.css: aquí no hay
-// cards, son 3 frases cortas corriendo en una fila continua.
+// líneas apiladas). Reusado por el widget de evento (PLAN-EVENTOS.md §3)
+// desde `components/ui/checks-ticker.tsx` — misma pieza, mismo CSS,
+// misma animacion.
 function Checks({ lineas }: { lineas: string[] }) {
-  const [pausado, setPausado] = useState(false)
-  // [dev-mode] deep-link del Glosario Dev — ver src/dev/dev-registry.ts
-  useDevFlag('dev-widget-checks', (v) => {
-    if (v === 'pausado') setPausado(true)
-  })
-  const estatico =
-    typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
-
-  const item = (texto: string, key: string, oculto: boolean) => (
-    <span
-      key={key}
-      aria-hidden={oculto || undefined}
-      className="widget-checks-item flex items-center gap-1.5 text-xs text-navy-soft"
-    >
-      <span aria-hidden="true" className="text-menta-texto">
-        ✓
-      </span>
-      {texto}
-    </span>
-  )
-
-  return (
-    <div
-      role="group"
-      aria-label="Garantías de la reserva"
-      className={`widget-checks-wrapper ${estatico ? 'widget-checks-wrapper--estatico' : ''}`}
-    >
-      <div className={`widget-checks-pista ${pausado ? 'widget-checks-pista--pausada' : ''}`}>
-        {lineas.map((l) => item(l, l, false))}
-        {/* 2ª copia para el loop del -50%, oculta a lectores de pantalla
-            (mismo trato que el ticker del hero) — no hace falta si es
-            estático (reduced-motion). */}
-        {!estatico ? lineas.map((l) => item(l, `dup-${l}`, true)) : null}
-      </div>
-    </div>
-  )
+  return <ChecksTicker lineas={lineas} />
 }
 
 function Caja({ children }: { children: React.ReactNode }) {
@@ -203,6 +168,16 @@ export function WidgetReserva({ tour, ficha }: Props) {
     setAdultos(2)
     setNinos(1)
   })
+  // [dev-mode] v3 (2026-07-17, charter): preconfigura Forever Teresa
+  // con 30 pax (tramo 30-120, US$ 75/pax = US$ 2.250) + mañana. Es el
+  // frame más útil para enseñar el selector de 4 botes con la card de
+  // preview del bote activo y el cálculo por persona en el tramo alto.
+  useDevFlag('dev-charter', (v) => {
+    if (v !== 'forever-teresa') return
+    setFecha(sumarDias(hoyISO(), 1))
+    setVariante('forever-teresa')
+    setPersonas(30)
+  })
 
   if (tour.booking === 'cotizacion') {
     return (
@@ -306,7 +281,10 @@ export function WidgetReserva({ tour, ficha }: Props) {
       {tieneSubVariantes ? (
         <SubVariantePicker
           subVariantes={ficha.subVariantes!}
-          activa={variante ?? ficha.subVariantes[0].id}
+          // TS no conecta `tieneSubVariantes === true` con `subVariantes !== undefined`
+          // (se tipa por separado, no como Record<...>). Usamos una guarda local
+          // explícita para no perder el control-flow analysis.
+          activa={variante ?? ficha.subVariantes![0].id}
           onChange={(id) => {
             setVariante(id)
             // Reset horario al cambiar de bote (cada bote tiene sus horarios).
