@@ -65,13 +65,11 @@ export function TourPage() {
       </HeroInterna>
       <AnclasFicha tour={tour} />
 
-      {/* PLAN-INTERNAS-V2.md §C2: el área de contenido pasa a
-          --color-fondo-ficha (gris frío, NO el hueso cálido de
-          --color-papel-hueso — ver el token) y cada sección de abajo se
-          separa de ese fondo Y de sus vecinas como su propia card blanca
-          (BLOQUE_FICHA) — el pedido de Samuel de "separar mejor los
-          elementos del fondo y entre ellos". */}
-      <div className="bg-fondo-ficha">
+      {/* El área de contenido es BLANCA (2026-07-17, 2ª iteración de la ficha
+          — antes era --color-fondo-ficha gris). Cada bloque se separa del
+          fondo y de sus vecinos por su BORDE gris (BLOQUE_FICHA: ring-linea,
+          sin sombra), no por contraste card-blanca-sobre-gris. */}
+      <div className="bg-papel">
         {/* TODAS las secciones viven en la columna izquierda, con el widget
             sticky al lado — no a ancho completo debajo del widget. Es una
             decisión de conversión, no de layout: en desktop no hay barra
@@ -95,11 +93,7 @@ export function TourPage() {
                   no ancho completo), no una sección aparte por encima del
                   nav de anclas como en la v1 de PLAN-TOURS.md. Primero en la
                   columna: el visitante ve el producto antes de leer texto. */}
-              <GaleriaMosaico
-                fotos={[tour.foto, ...ficha.galeriaCompleta]}
-                etiqueta={tour.nombre}
-                quote={{ texto: ficha.quoteDestacada, rating: tour.rating }}
-              />
+              <GaleriaMosaico fotos={[tour.foto, ...ficha.galeriaCompleta]} etiqueta={tour.nombre} />
 
               <div className={`${BLOQUE_FICHA} flex flex-col gap-6`}>
                 <div>
