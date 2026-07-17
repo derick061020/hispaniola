@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Clock, Users } from 'lucide-react'
+import { Clock, Users, Tag } from 'lucide-react'
 import * as FancyButton from '@/components/alignui/fancy-button'
 import * as Select from '@/components/alignui/select'
 import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
@@ -13,12 +13,16 @@ import { WHATSAPP_URL, type FichaTour } from '@/data/tours'
 // el primer viewport — en la web actual ese precio está a 6 pantallas de
 // scroll. Es la superficie de decisión de todo el sitio.
 //
-// ⚠️ El precio ancla es SIEMPRE Light (`precioLight`), nunca Premium: la card
-// de la home y este widget prometen «desde US$ 99» y el paso 1 del booking
-// tiene que abrir en 99. Anclar aquí y cobrar 114 allí es el bait-and-switch
-// que la revisión de conversión marcó como P1 (revision-wireframes.md §1.1) —
-// el mismo patrón que criticamos de la web actual. Premium solo aparece como
-// delta («+US$ 15») en la sección de menú.
+// ⚠️ El precio ABRE SIEMPRE en Light (`precioLight`), nunca en Premium: la card
+// de la home y este widget prometen «desde US$ 99». Fase B (2026-07-17): el
+// paquete ya se ELIGE aquí (selector Light/Premium) y al pasar a Premium el
+// precio de cabecera y el total del CTA saltan a la tarifa Premium — pero es un
+// opt-in EXPLÍCITO del visitante, con Light por defecto, así que se mantiene el
+// guardarraíl anti bait-and-switch (analisis/revision-wireframes.md §1.1: lo
+// prohibido es ANCLAR en 99 y cobrar 114 sin que el usuario lo pida). El
+// «ahorra hasta 15%» junto al CTA son los descuentos reales (recurrente +
+// anticipación + efectivo) mostrados SOBRE el precio de lista, no anclados en
+// él (decisión de precio de Samuel: se ancla en la tarifa que todos pagan).
 //
 // ⚠️ FRONTERA DEL BUILD: el funnel de reserva (4 pasos) no existe en React —
 // sigue bloqueado por la decisión del motor xpotours (reemplazar / re-skinear),
@@ -27,9 +31,9 @@ import { WHATSAPP_URL, type FichaTour } from '@/data/tours'
 //
 // Etapa A (PLAN-ALIGNUI.md): el chrome del widget habla AlignUI — selects de
 // Radix (Select) y CTAs FancyButton con los slots tematizados (primary=coral).
-// Los CHIPS DE FECHA se quedan como diseño propio: son la pieza de conversión
-// del widget y AlignUI no tiene equivalente (decisión abierta §13 del plan:
-// valorar mini-calendario). El halo coral (--shadow-cta) se retira del CTA:
+// Los CHIPS DE FECHA y el selector de PAQUETE se quedan como diseño propio: son
+// piezas de conversión del widget y AlignUI no tiene equivalente (decisión
+// abierta §13 del plan). El halo coral (--shadow-cta) se retira del CTA:
 // FancyButton trae su propio relieve (shadow-fancy-buttons-primary) y los dos
 // lenguajes de sombra a la vez se pelean.
 
@@ -65,13 +69,16 @@ function Caja({ children }: { children: React.ReactNode }) {
   )
 }
 
-function Precio({ tour }: { tour: Tour }) {
+// `desde` añade «· desde» al sufijo: se usa cuando el precio es un SUELO (Light,
+// o el «desde US$ 75» de una cotización), no cuando es la tarifa exacta ya
+// elegida (Premium).
+function Precio({ precio, desde = false }: { precio: number | null; desde?: boolean }) {
   return (
     <div className="flex items-baseline gap-1.5">
       <span className="font-display text-precio font-semibold text-navy">
-        {tour.precioLight !== null ? formatoDinero(tour.precioLight) : 'US$ —'}
+        {precio !== null ? formatoDinero(precio) : 'US$ —'}
       </span>
-      {tour.precioLight !== null ? <span className="text-xs text-navy-soft">/persona · desde</span> : null}
+      {precio !== null ? <span className="text-xs text-navy-soft">/persona{desde ? ' · desde' : ''}</span> : null}
     </div>
   )
 }
@@ -80,6 +87,9 @@ export function WidgetReserva({ tour, ficha }: Props) {
   const [fecha, setFecha] = useState<string | null>(null)
   const [horario, setHorario] = useState(0)
   const [personas, setPersonas] = useState(2)
+  // Fase B: el paquete se elige en el widget. Abre en Light (ancla US$ 99);
+  // Premium es opt-in explícito — ver la nota de bait-and-switch de arriba.
+  const [paquete, setPaquete] = useState<'light' | 'premium'>('light')
 
   // Los 14 días que ofrece el widget. Dos salen agotados (hoy+3 y hoy+10, como
   // el prototipo): el estado «no disponible» tiene que existir en pantalla —
@@ -93,17 +103,20 @@ export function WidgetReserva({ tour, ficha }: Props) {
     })
   }, [])
 
-  // [dev-mode] deep-link del Glosario Dev — ver src/dev/dev-registry.ts
+  // [dev-mode] deep-link del Glosario Dev — ver src/dev/dev-registry.ts.
+  // 'fecha' elige el 1er día libre; 'premium' además cambia el paquete a
+  // Premium (el frame que enseña el precio saltando a la tarifa Premium).
   useDevFlag('dev-widget', (v) => {
-    if (v !== 'fecha') return
+    if (v !== 'fecha' && v !== 'premium') return
     const primero = dias.find((d) => !d.agotado)
     if (primero) setFecha(primero.iso)
+    if (v === 'premium') setPaquete('premium')
   })
 
   if (tour.booking === 'cotizacion') {
     return (
       <Caja>
-        <Precio tour={tour} />
+        <Precio precio={tour.precioLight} desde />
         <p className="text-sm text-navy-sub">
           Este tour se cotiza a tu medida según nº de personas y menú — hasta {tour.maxPax} personas.
         </p>
@@ -122,7 +135,7 @@ export function WidgetReserva({ tour, ficha }: Props) {
   if (tour.booking === 'consulta') {
     return (
       <Caja>
-        <Precio tour={tour} />
+        <Precio precio={tour.precioLight} desde />
         {/* El copy no se maquilla: es la verdad del producto (dato pendiente
             del cliente, ver PLAN-v3.md §9). Un precio inventado aquí sería el
             peor sitio posible para inventarlo. */}
@@ -139,11 +152,56 @@ export function WidgetReserva({ tour, ficha }: Props) {
     )
   }
 
-  const total = tour.precioLight !== null ? tour.precioLight * personas : null
+  // booking 'completo': precio reactivo al paquete elegido. El ancla es Light;
+  // Premium suma el upgrade real (delta de data/tours.ts). Los tours 'completo'
+  // siempre traen precio y upgrade, pero se comprueba null por el tipo.
+  const precioBase = tour.precioLight
+  const upgrade = ficha.upgradePremium
+  const tienePaquetes = precioBase !== null && upgrade !== null
+  const precioPersona =
+    paquete === 'premium' && precioBase !== null && upgrade !== null ? precioBase + upgrade : precioBase
+  const total = precioPersona !== null ? precioPersona * personas : null
 
   return (
     <Caja>
-      <Precio tour={tour} />
+      <Precio precio={precioPersona} desde={paquete === 'light'} />
+
+      {/* Selector de paquete (Fase B). Solo si el tour vende por paquetes
+          (upgradePremium !== null). Dos cards a elegir — mismo idioma de
+          «objeto seleccionable» que los chips de fecha, pero con el estado
+          activo en outline navy (un relleno navy sería demasiado peso para una
+          card de este tamaño). Cada una muestra su tarifa de LISTA, para que el
+          visitante compare 99 vs 114 de un vistazo. */}
+      {tienePaquetes && precioBase !== null && upgrade !== null ? (
+        <div>
+          <p className="mb-2 text-eyebrow font-semibold uppercase tracking-[0.12em] text-navy-soft">Elige tu paquete</p>
+          <div className="grid grid-cols-2 gap-2">
+            {[
+              { id: 'light' as const, nombre: 'Light', precio: precioBase, platos: ficha.menuLight.length },
+              { id: 'premium' as const, nombre: 'Premium', precio: precioBase + upgrade, platos: ficha.menuPremium.length },
+            ].map((p) => {
+              const activo = paquete === p.id
+              return (
+                <button
+                  key={p.id}
+                  type="button"
+                  onClick={() => setPaquete(p.id)}
+                  aria-pressed={activo}
+                  className={`flex flex-col items-start gap-0.5 rounded-card border bg-papel px-3 py-2.5 text-left transition-colors ${
+                    activo ? 'border-navy ring-1 ring-navy' : 'border-linea hover:border-linea-fuerte'
+                  }`}
+                >
+                  <span className="text-xs font-medium uppercase tracking-wide text-navy-soft">{p.nombre}</span>
+                  <span className="font-display text-lg font-semibold leading-none text-navy">
+                    {formatoDinero(p.precio)}
+                  </span>
+                  <span className="mt-0.5 text-xs text-navy-soft">{p.platos} platos a elegir</span>
+                </button>
+              )
+            })}
+          </div>
+        </div>
+      ) : null}
 
       <div>
         <p className="mb-2 text-eyebrow font-semibold uppercase tracking-[0.12em] text-navy-soft">Elige una fecha</p>
@@ -213,6 +271,15 @@ export function WidgetReserva({ tour, ficha }: Props) {
             ))}
           </Select.Content>
         </Select.Root>
+      </div>
+
+      {/* «Ahorra hasta 15%» (decisión de precio, Fase B): el precio mostrado es
+          el de LISTA (el que todos pagan); los descuentos —recurrente +
+          anticipación + efectivo— se comunican aquí, junto al CTA, sin anclar
+          el precio en ellos. */}
+      <div className="flex items-center justify-center gap-1.5 rounded-btn bg-menta px-3 py-1.5 text-center text-xs font-medium text-menta-texto">
+        <Tag className="size-3.5 shrink-0" aria-hidden="true" />
+        Reservando directo ahorras hasta 15%
       </div>
 
       {/* Sin fecha, el CTA está DESHABILITADO de verdad (no un botón gris que

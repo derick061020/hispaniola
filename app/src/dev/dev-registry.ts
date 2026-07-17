@@ -275,6 +275,12 @@ export const devSections: DevSection[] = [
             note: 'T-F3: el widget con el primer día disponible elegido → el CTA pasa de «Elige una fecha» (deshabilitado de verdad, no un botón gris que igual navega) a «Continuar — US$ 198» (2 personas × 99). Es el frame «widget lleno» de Figma y la prueba del cálculo. El precio ancla es SIEMPRE Light: anclar aquí en 99 y cobrar 114 en el paso 1 es el bait-and-switch que la revisión marcó como P1. El CTA no navega: el funnel sigue bloqueado por la decisión del motor xpotours.',
           },
           {
+            label: 'Widget con paquete Premium elegido',
+            kind: 'estado',
+            to: '/tours/semi-privado?dev-widget=premium',
+            note: 'Fase B (booking): el selector Light/Premium DENTRO del widget elige Premium → el precio de cabecera y el total del CTA saltan a la tarifa Premium (US$ 114/persona; 114 × 2 = US$ 228), y de paso elige el 1er día libre para que el CTA muestre el total. Sigue anclado en Light por defecto (abre en 99): Premium es un opt-in EXPLÍCITO, no un cambio a espaldas del visitante — se mantiene el guardarraíl anti bait-and-switch (§1.1). El «ahorra hasta 15%» junto al CTA son los descuentos reales (recurrente + anticipación + efectivo), mostrados SOBRE el precio de lista, no anclados en él.',
+          },
+          {
             label: 'Galería abierta (lightbox)',
             kind: 'overlay',
             to: '/tours/semi-privado?dev-galeria=abierta',
