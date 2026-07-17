@@ -22,8 +22,9 @@ import { QUOTES, type Review, type Tour } from '@/data/home'
 // corto, hacen falta más reseñas REALES (pedirlas, no inventarlas — ver
 // PLAN-INTERNAS-V2.md §Decisiones abiertas). La quote destacada de ESTE tour
 // (`ficha.quoteDestacada`) sigue haciendo su trabajo donde ya vivía — flotando
-// sobre la foto principal del mosaico (galeria-mosaico.tsx) — así que no se
-// pierde, solo deja de repetirse aquí.
+// sobre la 1ª foto del mosaico, ahora incrustado en el propio hero
+// (internas/galeria-hero.tsx) — así que no se pierde, solo deja de
+// repetirse aquí.
 //
 // Mecánica: pista duplicada 2x, igual que el ticker del hero — ver el
 // bloque .opiniones-marquee-* en componentes.css para el porqué de cada

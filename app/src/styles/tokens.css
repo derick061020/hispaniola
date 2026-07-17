@@ -235,11 +235,12 @@
   --carrusel-transicion: 600ms; /* deslizado de una foto a la siguiente */
   --carrusel-easing: cubic-bezier(0.4, 0, 0.2, 1);
 
-  /* Crossfade de ui/fotos-fundido.tsx (PLAN-INTERNAS-V2.md §C1) — el fondo del
-     hero de las páginas internas (ficha de tour, landing de evento) y de los
-     boxes de «También te puede gustar»: las fotos reales del tour/evento
-     fundiéndose una en otra, en vez de un video. Mismo trato WCAG 2.2.2 que
-     el carrusel: con prefers-reduced-motion no avanza sola. FUENTE del
+  /* Crossfade de ui/fotos-fundido.tsx (PLAN-INTERNAS-V2.md §C1) — las fotos
+     reales del tour/evento fundiéndose una en otra. Ya no es el fondo del
+     hero de las internas (iteración 2026-07-17: volvió al video de la home,
+     ver internas/hero-interna.tsx) — hoy vive solo en los boxes de «También
+     te puede gustar» (internas/tambien-te-gusta.tsx). Mismo trato WCAG 2.2.2
+     que el carrusel: con prefers-reduced-motion no avanza sola. FUENTE del
      prototipo de Figma (mismo patrón que --carrusel-intervalo): el intervalo
      lo lee el hook, la transición de opacidad vive en el CSS (.fundido-foto). */
   --fundido-intervalo: 4.5s;
@@ -715,10 +716,6 @@
   /* ---------- Ficha de tour (PLAN-TOURS.md) ----------
      Primera página del sitio fuera de la home. En Figma, UNA página con
      frames de variante por modo de booking — no 4 diseños. */
-  /* Alto del mosaico de galería en desktop (T-F2). Móvil no lo usa: allí la
-     galería es un carrusel de alto propio. */
-  --spacing-mosaico-alto: 28rem; /* 448px */
-
   /* Alto real del header sólido — MEDIDO con getBoundingClientRect (76.8px),
      no adivinado sumando paddings: el logo lleva margen vertical negativo
      (ui/logo.tsx) y la cuenta a mano no da. Si el header cambia de alto, este
@@ -747,8 +744,8 @@
      hero crece con él en vez de recortarlo. */
   --spacing-hero-interna-alto: 34rem; /* 544px — desktop, sm: en adelante */
   /* Alto de cada box de «También te puede gustar» (C4) — boxes grandes de
-     imagen con texto encima, no cards de texto: necesitan más alto que
-     --spacing-mosaico-alto para leerse como su propia sección. */
+     imagen con texto encima, no cards de texto: necesitan leerse como su
+     propia sección, no como una card más del gris de la ficha. */
   --spacing-tambien-alto: 24rem; /* 384px */
 }
 

@@ -33,10 +33,12 @@ export function EventoPage() {
   return (
     <div>
       {/* PLAN-INTERNAS-V2.md §C5: hero compartido con la home y la ficha de
-          tour (HeroInterna) — el header pasa a vivir DENTRO, sobre las fotos
-          reales del evento en fundido. «Reservar» del header apunta a la
-          banda de cierre: en esta página no existe ni #tours (home) ni el
-          widget (ficha) — lo reservable aquí es pedir la cotización. */}
+          tour (HeroInterna) — el header pasa a vivir DENTRO, sobre el video
+          de marca; las fotos reales del evento (evento.galeria) arman el
+          mosaico incrustado en el propio hero (iteración 2026-07-17).
+          «Reservar» del header apunta a la banda de cierre: en esta página
+          no existe ni #tours (home) ni el widget (ficha) — lo reservable
+          aquí es pedir la cotización. */}
       <HeroInterna fotos={evento.galeria} etiqueta={evento.nombre} ctaHref="#evento-cierre">
         <CabeceraEvento evento={evento} />
       </HeroInterna>
