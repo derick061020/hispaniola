@@ -225,6 +225,33 @@ de empresas queda debajo, en blanco. Los CTA coral funcionan sobre foto
    nota del cerebro (`proyectos/hispaniola.md`) y del playbook si aparece un
    patrón nuevo — no hacerlo en silencio.
 
+## Estado final
+
+**Etapa cerrada** (tag `v2-internas`). Las 4 fichas de tour y las 2 landings
+de evento comparten ya el mismo hero que la home (`internas/hero-interna.tsx`
++ `ui/fotos-fundido.tsx`), el contenido de la ficha vive en bloques
+(`BLOQUE_FICHA`) sobre `--color-fondo-ficha`, las opiniones son un marquee
+infinito sin salida a TripAdvisor ni Viator, y «También te puede gustar» es
+su propia sección de boxes en fundido (`internas/tambien-te-gusta.tsx`).
+
+QA (C6) verificado con Playwright y con los commits aislados
+quirúrgicamente de trabajo paralelo de Samuel en el mismo working tree (ver
+nota de sesión más abajo): `git diff --name-only pre-internas-v2` no toca
+`components/home/` ni las `ui/` compartidas · `tsc`/`build` limpios en
+aislamiento (working tree solo con estos commits, sin el WIP paralelo) · 0
+hex en el código nuevo · 0 enlaces a Viator/TripAdvisor · los 7 deep-links
+dev funcionan (4 preexistentes + `dev-hero-interna`, `dev-opiniones`,
+`dev-tambien`) · `prefers-reduced-motion` respetado (fundidos + marquee) ·
+390px sin overflow-x en las 6 páginas tocadas.
+
+**Nota de sesión**: la ejecución (C0-C6, Sonnet 5) coincidió con trabajo
+en vivo de Samuel en el mismo working tree (footer «océano», Contacto/FAQ de
+la home con AlignUI, SEO, sostenibilidad, favicons…). Cada commit de este
+plan se aisló reconstruyendo el archivo desde el HEAD anterior + solo los
+cambios propios de esa fase (vía `git hash-object`/`update-index`, sin tocar
+el working tree), para no arrastrar ni pisar ese trabajo. No hubo pérdida de
+datos; el WIP de Samuel sigue sin commitear, tal como él lo dejó.
+
 ## Decisiones abiertas para Samuel
 
 1. **Más reseñas reales**: el pool actual son las QUOTES de la home. Para que
