@@ -123,17 +123,38 @@ pieza antes de este plan: ninguna de las copiadas lo usa.
 
 ## Fases (commit por fase; verificación Playwright antes de cada commit)
 
-- **A0** — checkpoint: tag `pre-alignui`; registrar estado del árbol (trabajo
-  paralelo de IncluyeCrucero sigue sin comitear y sin tocar).
-- **A1** — infraestructura: deps + `lib/alignui/` + `styles/alignui.css` +
-  copy-in de las piezas + smoke-test en una ruta dev (`?dev-alignui`) que
-  renderice cada pieza. Registro en dev-registry (mismo commit).
-- **A2** — widget de reserva: Select ×2, FancyButton ×3 estados, barra móvil.
-- **A3** — lightbox sobre Modal + LinkButton en galería.
-- **A4** — cabecera (chips → StatusBadge) + anclas → TabMenuHorizontal +
-  comparador (LinkButton).
-- **A5** — FAQ (Accordion si es portable) + repaso de piezas menores.
-- **A6** — QA final + docs + tag `v1.1-ficha-alignui`.
+- **A0** ✅ — checkpoint: tag `pre-alignui`; plan comiteado (`035c1ff`). Trabajo
+  paralelo de IncluyeCrucero sin tocar en todo el recorrido.
+- **A1** ✅ (`983ab84`) — infraestructura: 11 piezas vendor + utils +
+  `styles/alignui.css` + showcase en `/fundaciones#alignui` (no `?dev-alignui`:
+  una sección de la página de fundaciones, registrada en dev-registry).
+- **A2** ✅ (`7915d5a`) — widget: Select ×2, FancyButton en los 3 modos, barra
+  móvil. + fix de overflow-x a 390 (preexistente de T-F3, cazado aquí).
+- **A3** ✅ (`f921ab7`) — lightbox sobre Modal. La celda «Ver las N fotos →» NO
+  pasó a LinkButton (un tile de overlay es más fuerte que un enlace — desviación
+  documentada). Foco al disparador re-añadido a mano (Radix lo perdía por el
+  desmontaje condicional del Root).
+- **A4** ✅ (`d684184`) — chips → StatusBadge, comparador → Button/stroke. Las
+  anclas NO pasaron a TabMenuHorizontal: es Radix Tabs y un tablist sin
+  tabpanels miente a los lectores de pantalla (desviación documentada).
+- **A5** ✅ (`51b0c39`) — FAQ → Accordion y migaja → Breadcrumb, ambas portadas
+  de las docs públicas (los templates Pro no las traen); cerró la §13.1.
+- **A6** ✅ — QA + docs + tag `v1.1-ficha-alignui`. Guardas: `git diff
+  pre-alignui` no toca `home/` ni los `ui/` compartidos; home medida idéntica
+  (CTA coral 10px, acordeón propio 0-Radix, 0 slots AlignUI, sin overflow);
+  `tsc` + `build` limpios; 0 errores de consola en las 4 fichas; responsive
+  390 con Select-dropdown y lightbox dentro del viewport; sin enlaces a Viator.
+
+## Estado final
+
+**Etapa A cerrada.** El chrome de UI de la ficha de tour habla AlignUI: Select,
+FancyButton, Modal, StatusBadge, Button, Accordion, Breadcrumb — todos
+tematizados a la paleta Hispaniola vía `styles/alignui.css`. La home y el shell
+compartido quedaron intactos (garantía verificada, no confiada). El **funnel de
+reserva, el listado `/tours` y los eventos** siguen bloqueados por la decisión
+del motor xpotours — cuando se desbloqueen, se construyen sobre esta base, ya
+montada. Las 3 desviaciones del inventario (tile de galería, anclas, y el CTA
+del comparador como Button en vez de LinkButton) están documentadas en su código.
 
 ## Criterios de QA (A6, y por fase lo que aplique)
 

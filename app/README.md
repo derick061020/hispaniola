@@ -14,6 +14,10 @@ playbook `codigo-a-figma` del cerebro).
   contenido centrado y un ticker horizontal (sustituye a la baraja de v2).
 - [`PLAN-TOURS.md`](./PLAN-TOURS.md) — **la ficha de tour** (tag
   `v1.0-ficha-tour`): la página donde se reserva.
+- [`PLAN-ALIGNUI.md`](./PLAN-ALIGNUI.md) — **AlignUI en las páginas internas**
+  (tag `v1.1-ficha-alignui`): el chrome de UI de la ficha (Select, botones,
+  modal, badges, acordeón, migaja) pasa al design system AlignUI, tematizado
+  a la paleta Hispaniola. La home y el shell quedan intactos.
 
 ## Lo que hay que saber de la ficha de tour (`/tours/:slug`)
 
@@ -42,6 +46,13 @@ playbook `codigo-a-figma` del cerebro).
   total al elegirla) pero no navega.
 - Estados de Dev Mode: `?dev-widget=fecha` (widget lleno, el frame de Figma) y
   `?dev-galeria=abierta` (lightbox).
+- **El chrome de UI habla AlignUI** (`PLAN-ALIGNUI.md`): los selects del widget,
+  los CTAs (FancyButton), el lightbox (Modal de Radix), los chips (StatusBadge),
+  el acordeón del FAQ (Accordion) y la migaja (Breadcrumb) son piezas del design
+  system AlignUI — copy-in del vendor en `src/components/alignui/`, tematizadas a
+  la paleta Hispaniola en `src/styles/alignui.css` (primary=coral, aqua=marca,
+  menta=éxito). **La home NO usa AlignUI**: vive de la ficha hacia dentro. El
+  showcase de todas las piezas está en `/fundaciones#alignui`.
 
 ## Lo que hay que saber de la v3
 
@@ -102,11 +113,15 @@ Abre `http://localhost:5173` (o el puerto que indique Vite). Requiere Node 18+.
 
 ## Stack
 
-Vite + React + TypeScript + Tailwind CSS v4 + React Router. Sin librerías de
-UI ni de animación (todo componente es propio; el ticker es un `@keyframes`
-CSS con la pista duplicada, la pausa al hover es CSS puro). Iconos:
-`lucide-react`. Fuente self-hosted vía `@fontsource`: **Poppins**, en
-titulares y cuerpo.
+Vite + React + TypeScript + Tailwind CSS v4 + React Router. La **home** no usa
+librerías de UI ni de animación (todo componente propio; el ticker es un
+`@keyframes` CSS con la pista duplicada, la pausa al hover es CSS puro). Las
+**páginas internas** (la ficha de tour) sí usan **AlignUI** para el chrome de
+UI, sobre Radix primitives (`@radix-ui/react-select|dialog|accordion|tabs`,
+`tailwind-variants`, `tailwind-merge`) — ver `PLAN-ALIGNUI.md`. Iconos:
+`lucide-react` en el código propio, `@remixicon/react` dentro del vendor
+AlignUI. Fuente self-hosted vía `@fontsource`: **Poppins**, en titulares y
+cuerpo (también la que heredan las piezas AlignUI).
 
 ## Estructura
 
@@ -116,10 +131,13 @@ app/
 ├── PLAN-v2.md                ← plan v2 «Boutique luminoso»
 ├── PLAN-v3.md                ← plan v3 «Hero inmersivo» (la home actual)
 ├── PLAN-TOURS.md             ← plan de la ficha de tour
+├── PLAN-ALIGNUI.md           ← plan de AlignUI en las páginas internas
 ├── public/fotos/            ← fotos reales extraídas de la web actual
 ├── public/video/hero.mp4    ← video de fondo del hero (asset del cliente)
 └── src/
     ├── styles/tokens.css      ← TODOS los tokens (Tailwind v4 @theme)
+    ├── styles/alignui.css     ← capa de slots AlignUI → tokens Hispaniola
+    │                             (primary=coral, aqua=marca, menta=éxito)
     ├── styles/componentes.css ← CSS a medida (hover del photo-stack, loop
     │                             del ticker; ahí está explicado el porqué)
     ├── data/home.ts           ← contenido (tours, platos, ocasiones, ticker),
@@ -129,8 +147,11 @@ app/
     │                             que home.ts no tiene ya — cero duplicados
     ├── lib/                   ← comportamiento sin pintura: scroll al navegar
     │                             (React Router no lo resetea) y fechas ES
-    ├── components/ui/         ← reusables: Boton, Logo, Etiqueta, Estrellas,
-    │                             Acordeon, CarruselImagenes, PilaFotos…
+    ├── lib/alignui/           ← utils del vendor AlignUI (cn/tv/polymorphic…)
+    ├── components/ui/         ← reusables PROPIOS: Boton, Logo, Etiqueta,
+    │                             Estrellas, Acordeon, CarruselImagenes… (la home)
+    ├── components/alignui/    ← piezas vendor AlignUI (copy-in, NO se editan);
+    │                             el chrome de UI de las páginas internas
     ├── components/home/       ← una sección de la home por archivo (+ TickerHero)
     ├── components/tour/       ← una sección de la ficha por archivo
     ├── dev/                   ← Dev Mode (glosario navegable, NO va a Figma)

@@ -13,6 +13,16 @@ luego se traslada a Figma vía MCP — mismo flujo probado en Eventus/Synexia.
   es acento con cuentagotas (marca/links/badges), nunca fondo grande de sección.
 - **Un componente React = un futuro componente Figma**: nombres claros en
   `src/components/ui/` (piezas reusables) y `src/components/home/` (una por sección).
+- **AlignUI en las páginas internas** (desde 2026-07-16, `app/PLAN-ALIGNUI.md`):
+  la ficha de tour y el resto de páginas internas usan el design system AlignUI
+  (copy-in del vendor en `src/components/alignui/` + `src/lib/alignui/`), tematizado
+  a la paleta Hispaniola en `src/styles/alignui.css`. **La home y el shell NO lo
+  usan** — AlignUI vive de la ficha hacia dentro. Esto deroga «sin librerías de UI»
+  solo para internas. `src/components/alignui/` y `src/styles/alignui.css` son la
+  capa de tokens del sistema AlignUI: sus hex/valores están ahí a propósito y se
+  excluyen del grep de «cero hex», igual que `src/dev/`. Las piezas vendor NO se
+  editan a mano — se personalizan por `className`/wrappers. En Figma mapean al kit
+  de Figma de AlignUI (licencia Pro), no a componentes dibujados desde cero.
 - **Dev Mode obligatorio**: cada bloque/estado nuevo se registra en
   `app/src/dev/dev-registry.ts` en el mismo commit que lo crea. Las líneas que el Dev
   Mode obliga a tocar en componentes de producto se marcan `// [dev-mode]`.
