@@ -1,71 +1,84 @@
 import { Link } from 'react-router-dom'
+import { ChevronRight } from 'lucide-react'
+import * as Breadcrumb from '@/components/alignui/breadcrumb'
+import * as StatusBadge from '@/components/alignui/status-badge'
 import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
-import { Etiqueta } from '@/components/ui/etiqueta'
-import { Estrellas } from '@/components/ui/estrellas'
+import { Quote } from 'lucide-react'
 import type { FichaEvento } from '@/data/eventos'
 
-// Above the fold de la landing de evento (renderBodas/renderEmpresas del
-// prototipo): migaja, eyebrow, H1, sub, la fila de confianza (bodas: el
-// Couples' Choice de WeddingWire — el premio EXACTO para esta audiencia) y
-// los CTA.
+// Cabecera de las landings de eventos (PLAN-EVENTOS.md) — clon de la
+// `cabecera-ficha.tsx` con 2 diferencias:
 //
-// PLAN-INTERNAS-V2.md (§C5): deja de tener su propio contenedor + columna de
-// foto — se disuelve en el `children` de HeroInterna (mismo hero compartido
-// con la ficha de tour, PLAN-INTERNAS-V2.md §C1), sobre las fotos reales del
-// evento en fundido en vez de una imagen fija al lado. Los colores pasan a
-// blanco: H1/sub/migaja directos (esta migaja es propia, no la de AlignUI —
-// nunca necesitó el wrapper .migaja-sobre-foto de la ficha), Etiqueta con
-// `sobreOscuro`. La banda de cifras (solo empresas) sale de aquí y vive
-// debajo, en blanco (pages/evento.tsx) — no compite con la foto.
+// 1) Los chips son GENÉRICOS del producto (no reassurance del cliente) — la
+//    home ya carga 4.9★ y #1 TripAdvisor. Aquí los chips cuentan lo que
+//    distingue a ESTE evento (capacidad, duración, "ruta a medida"…).
+// 2) La migaja tiene "Eventos" como 2do tramo (no "Tours"). EnlacePrototipo
+//    porque el hub `/eventos` general (sin landing) ya no existe — las 3
+//    landings son el catálogo completo.
 //
-// Los CTA van por EnlacePrototipo: el destino real es el formulario del hub
-// de eventos (#/eventos?tipo=…), que vive en el prototipo — misma frontera
-// que el CTA del widget de la ficha de tour. El dossier PDF de empresas
-// tampoco existe como asset: en el prototipo era un botón demo con toast.
+// Reusa el mismo lenguaje visual de la ficha: Header DENTRO del hero
+// (HeroInterna), cabecera blanca sobre el video de marca, todo en
+// max-w-contenido para que el H1 alinie con el resto de la página.
 
-export function CabeceraEvento({ evento }: { evento: FichaEvento }) {
+type Props = { evento: FichaEvento }
+
+export function CabeceraEvento({ evento }: Props) {
   return (
     <div>
-      {/* Migaja: "Eventos" es el hub (formulario + ocasiones), que sigue en
-          el prototipo — de ahí EnlacePrototipo, como "Tours" en la ficha. */}
-      <nav aria-label="Migaja de pan" className="text-xs text-white/70">
-        <Link to="/" className="hover:text-white">
-          Inicio
-        </Link>
-        <span className="px-1.5 text-white/40">/</span>
-        <EnlacePrototipo className="hover:text-white">Eventos</EnlacePrototipo>
-        <span className="px-1.5 text-white/40">/</span>
-        <span className="text-white/90">{evento.nombre}</span>
+      {/* Migaja: Inicio / Eventos / {nombre}. "Eventos" va por
+          EnlacePrototipo: no hay hub general en este build, las 3
+          landings son el catálogo completo. Mismo trato que "Tours" en
+          la ficha de tour. El asChild pone los estilos del Item
+          directamente sobre el Link. */}
+      <nav aria-label="Migaja de pan" className="migaja-sobre-foto">
+        <Breadcrumb.Root>
+          <Breadcrumb.Item asChild>
+            <Link to="/">Inicio</Link>
+          </Breadcrumb.Item>
+          <Breadcrumb.ArrowIcon as={ChevronRight} className="size-4 self-center" />
+          <Breadcrumb.Item asChild>
+            <EnlacePrototipo>Eventos</EnlacePrototipo>
+          </Breadcrumb.Item>
+          <Breadcrumb.ArrowIcon as={ChevronRight} className="size-4 self-center" />
+          <Breadcrumb.Item active>{evento.nombre}</Breadcrumb.Item>
+        </Breadcrumb.Root>
       </nav>
 
-      <Etiqueta sobreOscuro className="mt-4">
-        {evento.eyebrow}
-      </Etiqueta>
+      {/* Mismo --text-h2 que la ficha de tour (32px). El H1 manda por
+          jerarquía, no por tamaño — el hero de la home es el único con
+          --text-hero. text-balance equilibra las 2 líneas en desktop. */}
+      <h1 className="mt-3 text-balance font-display text-h2 font-semibold text-white">
+        {evento.titulo}
+      </h1>
 
-      {/* --text-h2, igual que el H1 de la ficha de tour: manda por
-          jerarquía, no por tamaño — --text-hero es solo del hero de la
-          home. */}
-      <h1 className="mt-3 max-w-2xl text-balance font-display text-h2 font-semibold text-white">{evento.titulo}</h1>
+      <p className="mt-3 max-w-3xl text-pretty text-base text-white/90 sm:text-lg">
+        {evento.sub}
+      </p>
 
-      <p className="mt-4 max-w-2xl text-lead text-white/85">{evento.sub}</p>
-
-      {evento.trust ? (
-        <div className="mt-4 flex items-center gap-2 text-sm">
-          <Estrellas calificacion={5} sobreOscuro />
-          <strong className="font-semibold text-white">{evento.trust}</strong>
-        </div>
-      ) : null}
-
-      <div className="mt-6 flex flex-wrap items-center gap-3">
-        <EnlacePrototipo className="inline-flex items-center justify-center rounded-btn bg-coral px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-coral-dark">
-          {evento.ctaPrincipal}
-        </EnlacePrototipo>
-        {evento.ctaSecundaria ? (
-          <EnlacePrototipo className="inline-flex items-center justify-center rounded-btn bg-papel/90 px-5 py-3 text-sm font-semibold text-navy backdrop-blur-sm transition hover:bg-papel">
-            {evento.ctaSecundaria}
-          </EnlacePrototipo>
-        ) : null}
+      {/* Chips del producto. Estilo "disabled/stroke" (gris neutro) — son
+          meta del producto, no reassurance. La home ya carga la prueba
+          social. Diferencia con la ficha de tour: en tour "Cancelación
+          gratis" es un status "completed" (menta, lo que ya está pagado);
+          aquí no aplica (los eventos se cotizan). */}
+      <div className="mt-4 flex flex-wrap gap-2">
+        {evento.chips.map((chip) => (
+          <StatusBadge.Root key={chip} status="disabled" variant="stroke">
+            {chip}
+          </StatusBadge.Root>
+        ))}
       </div>
+
+      {/* Slogan/quote (solo bodas, según data). Va AQUÍ, no sobre la foto
+          del mosaico, para no romper el lenguaje de la ficha (la quote
+          destacada de tour es de un review de cliente, 5★). El slogan
+          de bodas es poesía institucional — se gana su sitio en el hero,
+          con el icono Quote de lucide para que se lea como tal. */}
+      {evento.quotePrincipal ? (
+        <p className="mt-5 flex items-start gap-2 text-pretty font-display text-base italic text-white/90 sm:text-lg">
+          <Quote className="mt-1 size-5 shrink-0 text-aqua-tint" aria-hidden="true" />
+          <span>{evento.quotePrincipal}</span>
+        </p>
+      ) : null}
     </div>
   )
 }

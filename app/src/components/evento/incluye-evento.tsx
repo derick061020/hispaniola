@@ -1,48 +1,71 @@
-import { Etiqueta } from '@/components/ui/etiqueta'
-import { Estrellas } from '@/components/ui/estrellas'
-import type { FichaEvento } from '@/data/eventos'
+import { Music, Utensils, Camera, Wifi, Bus, Users, Waves, Package, Wine, Heart, MapPin, Briefcase, Receipt, CloudRain, Phone } from 'lucide-react'
+import { TituloSeccion } from '@/components/tour/titulo-seccion'
+import { BLOQUE_FICHA } from '@/components/tour/bloque-ficha'
+import type { FichaEvento, BeneficioEvento } from '@/data/eventos'
 
-// «Qué incluye» (bodas, 6 beneficios + la nota de los wedding planners) /
-// «Lo que un organizador necesita saber» (empresas, 4) — el grid-2 del
-// prototipo: beneficios a la izquierda, el testimonio a la derecha. Cards de
-// texto con el MISMO anatómico que IncluyeTour de la ficha (rounded-card +
-// ring-linea, título sm, texto xs): en Figma es el mismo componente.
+// "Qué incluye" de las landings de eventos (PLAN-EVENTOS.md) — grid de
+// items icono + texto, mismo lenguaje que `IncluyeTour` de la ficha de
+// tour (mismo `BLOQUE_FICHA`, mismo `TituloSeccion`). Reemplaza al
+// `incluye-evento.tsx` anterior (que era la versión "persuasión", sin
+// tokens, sin icono).
 //
-// ⚠️ La columna derecha del prototipo traía además una galería («Bodas
-// reales», mosaico) y 6 logos («Han navegado con nosotros»). NO se pintan:
-// no existen fotos de bodas reales (la única es la de la cabecera) ni logos
-// de empresas cliente, y rellenar con fotos de otros tours o logos falsos
-// mentiría sobre el producto — mismo criterio que la galería vacía de Isla
-// Saona. Cuando el cliente entregue el material (PLAN-v3.md §9), su sitio es
-// esta columna.
-export function IncluyeEvento({ evento }: { evento: FichaEvento }) {
+// Mapeo de icono por PALABRA CLAVE en el título — la lista es corta y
+// estable. Si un título no matchea, cae en `Package` (genérico).
+function iconoPorTitulo(titulo: string) {
+  const t = titulo.toLowerCase()
+  if (t.includes('snorkel')) return Waves
+  if (t.includes('comida') || t.includes('menú')) return Utensils
+  if (t.includes('bebida') || t.includes('barra')) return Wine
+  if (t.includes('música') || t.includes('sonido')) return Music
+  if (t.includes('foto')) return Camera
+  if (t.includes('wifi')) return Wifi
+  if (t.includes('transporte') || t.includes('traslado') || t.includes('logística') || t.includes('hoteles')) return Bus
+  if (t.includes('guía') || t.includes('coordinador') || t.includes('tripulación')) return Users
+  if (t.includes('playa')) return MapPin
+  if (t.includes('capacidad') || t.includes('flota') || t.includes('multi-barco')) return Briefcase
+  if (t.includes('clima') || t.includes('cancelación') || t.includes('plan b')) return CloudRain
+  if (t.includes('facturación') || t.includes('factura') || t.includes('pago')) return Receipt
+  if (t.includes('coordinadora') || t.includes('wedding planner') || t.includes('dedicad')) return Heart
+  if (t.includes('whatsapp') || t.includes('contacto') || t.includes('idioma')) return Phone
+  return Package
+}
+
+function Item({ b }: { b: BeneficioEvento }) {
+  const Icono = iconoPorTitulo(b.titulo)
   return (
-    <section className="grid items-start gap-8 lg:grid-cols-[2fr_1fr]">
-      <div>
-        <Etiqueta>{evento.incluyeTitulo}</Etiqueta>
+    <div className="flex items-start gap-3">
+      <span
+        aria-hidden="true"
+        className="grid size-9 shrink-0 place-items-center rounded-card bg-aqua-tint text-aqua-dark"
+      >
+        <Icono className="size-4" />
+      </span>
+      <div className="pt-0.5">
+        <p className="font-display text-sm font-semibold text-navy">{b.titulo}</p>
+        {b.texto ? <p className="mt-0.5 text-sm text-navy-sub">{b.texto}</p> : null}
+      </div>
+    </div>
+  )
+}
 
-        <div className="mt-5 grid grid-cols-2 gap-3">
-          {evento.incluye.map((b) => (
-            <div key={b.titulo} className="rounded-card bg-papel p-4 ring-1 ring-linea">
-              <h3 className="font-display text-sm font-semibold text-navy">{b.titulo}</h3>
-              <p className="mt-1 text-xs text-navy-soft">{b.texto}</p>
-            </div>
-          ))}
-        </div>
+export function IncluyeEvento({ evento }: { evento: FichaEvento }) {
+  if (evento.incluye.length === 0) return null
 
-        {evento.incluyeNota ? <p className="mt-4 text-xs text-navy-soft">{evento.incluyeNota}</p> : null}
+  return (
+    <section id="ancla-incluye" className={`${BLOQUE_FICHA} scroll-mt-sticky-top`}>
+      <TituloSeccion>{evento.incluyeTitulo}</TituloSeccion>
+
+      <div className="mt-5 grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
+        {evento.incluye.map((b) => (
+          <Item key={b.titulo} b={b} />
+        ))}
       </div>
 
-      {/* El testimonio — misma figure que OpinionesTour (caja papel-hueso,
-          quote en lead). El de bodas es una reseña 5★ de WeddingWire; el de
-          empresas es institucional (Directora de RRHH), sin estrellas. */}
-      <figure className="rounded-card bg-papel-hueso p-5">
-        <blockquote className="text-lead text-navy">«{evento.quote.texto}»</blockquote>
-        <figcaption className="mt-3 flex items-center gap-2 text-xs text-navy-soft">
-          {evento.quote.estrellas ? <Estrellas calificacion={5} /> : null}
-          {evento.quote.meta}
-        </figcaption>
-      </figure>
+      {/* Nota al pie (honesta, como el `noIncluido` de la ficha de tour):
+          la web del cliente de bodas decía "Trabajamos con los wedding
+          planners de la zona. ¿Ya tenéis uno? Nos coordinamos con él."
+          — se OMITE porque bodas ya tiene una FAQ con esa pregunta, y
+          poner la misma info en 2 sitios genera redundancia visual. */}
     </section>
   )
 }
