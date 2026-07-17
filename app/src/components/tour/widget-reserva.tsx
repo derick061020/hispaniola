@@ -167,18 +167,19 @@ export function WidgetReserva({ tour, ficha }: Props) {
       <Precio precio={precioPersona} desde={paquete === 'light'} />
 
       {/* Selector de paquete (Fase B). Solo si el tour vende por paquetes
-          (upgradePremium !== null). Dos cards a elegir — mismo idioma de
-          «objeto seleccionable» que los chips de fecha, pero con el estado
-          activo en outline navy (un relleno navy sería demasiado peso para una
-          card de este tamaño). Cada una muestra su tarifa de LISTA, para que el
-          visitante compare 99 vs 114 de un vistazo. */}
+          (upgradePremium !== null). TOGGLE SEGMENTADO, no dos cards-selector
+          (feedback de Samuel 2026-07-17: "que parezca más un toggle switch
+          button"): una sola pista tipo switch (bg-papel-hueso) con el segmento
+          activo relleno en navy. Cada mitad lleva su tarifa de LISTA inline
+          para comparar 99 vs 114 de un vistazo; sin el conteo de platos (eso
+          vive en la sección de menú). */}
       {tienePaquetes && precioBase !== null && upgrade !== null ? (
         <div>
           <p className="mb-2 text-eyebrow font-semibold uppercase tracking-[0.12em] text-navy-soft">Elige tu paquete</p>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-1 rounded-full bg-papel-hueso p-1">
             {[
-              { id: 'light' as const, nombre: 'Light', precio: precioBase, platos: ficha.menuLight.length },
-              { id: 'premium' as const, nombre: 'Premium', precio: precioBase + upgrade, platos: ficha.menuPremium.length },
+              { id: 'light' as const, nombre: 'Light', precio: precioBase },
+              { id: 'premium' as const, nombre: 'Premium', precio: precioBase + upgrade },
             ].map((p) => {
               const activo = paquete === p.id
               return (
@@ -187,15 +188,12 @@ export function WidgetReserva({ tour, ficha }: Props) {
                   type="button"
                   onClick={() => setPaquete(p.id)}
                   aria-pressed={activo}
-                  className={`flex flex-col items-start gap-0.5 rounded-card border bg-papel px-3 py-2.5 text-left transition-colors ${
-                    activo ? 'border-navy ring-1 ring-navy' : 'border-linea hover:border-linea-fuerte'
+                  className={`flex items-center justify-center gap-1.5 rounded-full px-3 py-2 text-sm transition-colors ${
+                    activo ? 'bg-navy text-white' : 'text-navy-sub hover:text-navy'
                   }`}
                 >
-                  <span className="text-xs font-medium uppercase tracking-wide text-navy-soft">{p.nombre}</span>
-                  <span className="font-display text-lg font-semibold leading-none text-navy">
-                    {formatoDinero(p.precio)}
-                  </span>
-                  <span className="mt-0.5 text-xs text-navy-soft">{p.platos} platos a elegir</span>
+                  <span className="font-semibold">{p.nombre}</span>
+                  <span className={activo ? 'text-white/70' : 'text-navy-soft'}>{formatoDinero(p.precio)}</span>
                 </button>
               )
             })}
