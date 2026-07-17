@@ -1,4 +1,5 @@
-import { OCASIONES } from '@/data/home'
+import { Link } from 'react-router-dom'
+import { OCASIONES, type Ocasion } from '@/data/home'
 import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
 import { Etiqueta } from '@/components/ui/etiqueta'
 
@@ -64,32 +65,49 @@ export function MegaEventos() {
           sola columna. */}
       <div className="grid grid-cols-1 gap-1 xl:grid-cols-2 xl:gap-x-2">
         {OCASIONES.map((o) => (
-          <EnlacePrototipo
-            key={o.tipo}
-            className="group flex items-center gap-3 rounded-lg p-2 transition-colors hover:bg-papel-hueso"
-          >
-            {/* El zoom vive DENTRO de un contenedor con overflow-hidden, no en
-                el <img> suelto: escalando la imagen directamente crecería su
-                caja entera y se comería el gap con el texto. Misma mecánica
-                que la foto de TourCard y del megamenú de Tours — el hover de
-                una foto es un zoom, no un salto. */}
-            <span className="size-16 shrink-0 overflow-hidden rounded-lg bg-papel-hueso">
-              <img
-                src={`/fotos/${o.foto}.webp`}
-                alt=""
-                aria-hidden="true"
-                className="size-full object-cover transition-transform duration-300 group-hover:scale-110"
-              />
-            </span>
-            <span className="min-w-0">
-              <span className="block font-display text-sm font-semibold text-navy transition-colors group-hover:text-aqua-dark">
-                {o.nombre}
-              </span>
-              <span className="mt-0.5 block text-xs text-navy-soft">{o.meta}</span>
-            </span>
-          </EnlacePrototipo>
+          <ItemOcasion key={o.tipo} ocasion={o} />
         ))}
       </div>
     </div>
   )
+}
+
+// Bodas y Corporativo/MICE llevan a su landing real (/eventos/:slug); las
+// otras 4 ocasiones siguen en el prototipo (su destino es el formulario del
+// hub con el tipo preseleccionado — NOTAS['eventos-hub']). La unión la decide
+// el dato (`slug`), igual que las dos especies del ticker.
+function ItemOcasion({ ocasion: o }: { ocasion: Ocasion }) {
+  const clases = 'group flex items-center gap-3 rounded-lg p-2 transition-colors hover:bg-papel-hueso'
+  const contenido = (
+    <>
+      {/* El zoom vive DENTRO de un contenedor con overflow-hidden, no en
+          el <img> suelto: escalando la imagen directamente crecería su
+          caja entera y se comería el gap con el texto. Misma mecánica
+          que la foto de TourCard y del megamenú de Tours — el hover de
+          una foto es un zoom, no un salto. */}
+      <span className="size-16 shrink-0 overflow-hidden rounded-lg bg-papel-hueso">
+        <img
+          src={`/fotos/${o.foto}.webp`}
+          alt=""
+          aria-hidden="true"
+          className="size-full object-cover transition-transform duration-300 group-hover:scale-110"
+        />
+      </span>
+      <span className="min-w-0">
+        <span className="block font-display text-sm font-semibold text-navy transition-colors group-hover:text-aqua-dark">
+          {o.nombre}
+        </span>
+        <span className="mt-0.5 block text-xs text-navy-soft">{o.meta}</span>
+      </span>
+    </>
+  )
+
+  if (o.slug) {
+    return (
+      <Link to={`/eventos/${o.slug}`} className={clases}>
+        {contenido}
+      </Link>
+    )
+  }
+  return <EnlacePrototipo className={clases}>{contenido}</EnlacePrototipo>
 }

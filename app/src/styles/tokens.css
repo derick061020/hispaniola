@@ -137,11 +137,18 @@
   /* v3-F17: hover de TourCard (PLAN-v3.md §17.5) — difusa y baja, a tono con
      la estética «objeto suave»; --shadow-hero (25%) es demasiado dura aquí. */
   --shadow-card-flotante: 0 16px 40px rgb(11 37 69 / 12%);
-  /* v3-F17: píldora navy «Ver tour» — brillo fino arriba + sombra corta
-     debajo, el relieve de teclas de la ref. soft-UI. Navy a mano: var() no
-     entra en rgb() (mismo caveat que --shadow-cta, arriba). Si el navy
-     cambia, este token no se entera solo. */
-  --shadow-boton-relieve: inset 0 1px 0 rgb(255 255 255 / 20%), 0 1px 2px rgb(11 37 69 / 25%), 0 4px 10px rgb(11 37 69 / 18%);
+  /* v3-F22 it.2 (Samuel: «usa el estilo de las fancy buttons de AlignUI»): el
+     CTA «Ver tour» de la TourCard adopta la RECETA del FancyButton primary —
+     coral plano + borde-luz de 1px (::before) + brillo blanco degradado
+     (::after) + esta sombra: 1px de caída + anillo de 1px del propio coral
+     (las capas viven en tour-card.tsx). MISMO valor que
+     --shadow-fancy-buttons-primary (alignui.css) A PROPÓSITO y sin depender de
+     él: la home no importa la capa AlignUI (PLAN-ALIGNUI.md — AlignUI vive de
+     la ficha hacia dentro); si aquel slot cambia, este token no se entera solo.
+     Sustituye al degradado + sombra interior de la it.1 de F22
+     (--gradiente-boton-coral, --color-coral-claro, --shadow-boton-interior),
+     retirados con ella. */
+  --shadow-boton-fancy: 0 1px 2px 0 rgb(14 18 27 / 24%), 0 0 0 1px var(--color-coral);
   /* v3-F13: halo del CTA principal (PLAN-v3.md §15.8) — --color-coral al 35%,
      a mano: no se puede meter var(--color-coral) dentro de rgb(). Si el coral
      cambia, este token NO se entera solo. */
@@ -471,8 +478,8 @@
      antes — a esta altura le sobra aire dentro de --spacing-incluye-lane, que se
      dimensionó para la proporción vieja; no rompe nada, pero si se quiere un
      barco más "gordo" en el carril, este es el número a subir. */
-  --spacing-incluye-barco-alto: 30rem; /* 480px — desktop */
-  --spacing-incluye-barco-alto-movil: 17rem; /* 272px */
+  --spacing-incluye-barco-alto: 36rem; /* 576px — desktop (v3-F19.3: sube de 30rem, Samuel "quiero que el barco sea más grande"; a ~0.54 de proporción son 309px de ancho, sigue dentro del carril de 384) */
+  --spacing-incluye-barco-alto-movil: 19rem; /* 304px (sube de 17rem, mismo pedido) */
   /* Recorrido del descenso, en fracción del alto de la sección: de dónde
      ARRANCA el centro del barco a dónde TERMINA. Rango CORTO (pedido de Samuel:
      "empezar más abajo y parar mucho antes, solo debe sobresalir un poco"): el
@@ -480,7 +487,15 @@
      bottom, sin recorrer toda la sección. Los lee el hook con getComputedStyle
      (adimensionales), no van a ojo en el JS. */
   --incluye-barco-desde: 0.1; /* apenas asoma por el top → solo un poco fuera */
-  --incluye-barco-hasta: 0.86; /* se detiene antes del bottom → solo un poco fuera */
+  /* Hasta dónde llega la proa. Subido de 0.86 a 0.91 (Samuel 2026-07-16: "el
+     bote debe llegar un poco más abajo"). ⚠️ El fallo de fondo NO era este
+     número sino el RANGO de scroll del descenso, que no era el del agua (ver
+     use-incluye-scroll.ts): el barco se iba por arriba de la pantalla antes de
+     que el agua parase — su centro acababa en -183px. Con el rango ya cuadrado,
+     este token es lo que decide dónde acaba, y traduce así:
+       centro en pantalla al final ≈ hasta × alto_sección − rango_del_sticky
+     (0.86 → 338px; 0.91 → 495px, con la proa entrando en la espuma de abajo). */
+  --incluye-barco-hasta: 0.91;
   --incluye-barco-scrub: 0.5; /* suavizado del enganche al scroll */
 
   /* El AGUA avanza con el scroll (Samuel 2026-07-16): el video no se reproduce
@@ -506,6 +521,28 @@
      recortar el asset a esa porción y volver este token a 1 (si no, se están
      descargando MB que nadie ve). */
   --incluye-video-tramo: 1;
+
+  /* Los FOTOGRAMAS/s del asset. No es decorativo: es la resolución TEMPORAL del
+     scrub, y fue el fallo que Samuel reportó 2026-07-16 ("no se está
+     reproduciendo de manera fluida con scroll"). La fluidez no la marca el
+     scrub ni el códec sino cuántos px de scroll cuesta cada fotograma:
+       px_por_fotograma = rango_del_sticky / (duración × fps)
+     El asset salía de Seedance a 24fps → 121 fotogramas para 2240px de scroll =
+     18.5px cada uno: scrolleando a 400px/s el video corría a 21fps, y ahí está
+     el tirón (los scrub buenos van a 2-5px/fotograma). Medido con
+     requestVideoFrameCallback, la maquinaria ya daba 58.5 fps reales — no era
+     el scrub ni las búsquedas: era que no había fotogramas que enseñar.
+     Ahora el asset va INTERPOLADO a 60fps (ffmpeg minterpolate, ver el registro
+     de Dev) → 298 fotogramas, 7.5px cada uno. Sale gratis: mismo peso y misma
+     resolución que antes, porque los fotogramas inventados son casi idénticos a
+     sus vecinos y comprimen a nada (crf23 compensa el resto; medido, −0.3% de
+     detalle contra el crf20 anterior — indistinguible).
+     ⚠️ Lo lee el hook para saber cuánto es MEDIO fotograma: por debajo de eso no
+     gasta una búsqueda (no se vería). Si se regenera el asset a otros fps, este
+     token va detrás — si se queda en 60 con un asset de 24, el hook se saltaría
+     búsquedas que sí se ven. */
+  --incluye-video-fps: 60;
+
   /* Cabeceo lento mientras baja (el agua se mueve; un barco clavado se lee
      como pegatina). En `rotate`, longhand aparte del `transform` que anima el
      descenso — no se pisan (mismo patrón que el barco del CTA «mar»). */
@@ -518,7 +555,60 @@
      prototipo de Figma (playbook animaciones-a-figma). */
   --incluye-item-y: 1.5rem; /* 24px — de dónde sube cada ítem */
   --incluye-item-scrub: 0.5;
-  --incluye-numero-color: var(--color-titulo-ola); /* aqua pálido — el número 0N/, el único acento */
+
+  /* Numeral FANTASMA de cada ítem (v3-F19.3, Samuel 2026-07-16: "los números
+     tienen un slash por alguna razón, no me convencen… que siga el estilo
+     editorial de solo tipografía pero se puede trabajar mejor"). Reemplaza al
+     "01/" pequeño: ahora el numeral es GRANDE y translúcido y el título se
+     MONTA encima (--spacing-incluye-numero-solape, margen negativo) — el solape
+     es lo que los lee como una sola pieza tipográfica y no como dos renglones.
+     El aqua va REBAJADO con color-mix: es fondo tipográfico del título, no un
+     rótulo; a plena opacidad le competía al blanco. Sigue siendo el único
+     acento de color de la sección. */
+  --incluye-numero-color: color-mix(in srgb, var(--color-aqua-claro) 40%, transparent);
+  --text-incluye-numero: 4.5rem; /* 72px — desktop (v3-F19.4: sube de 4rem junto con el título, que creció más — ver abajo) */
+  --text-incluye-numero-movil: 3rem; /* 48px (sube de 2.75rem) */
+  --spacing-incluye-numero-solape: 2rem; /* 32px — cuánto sube el título sobre el numeral (sube de 28px, el título ahora es más alto) */
+
+  /* Título y descripción de cada ítem (v3-F19.4, Samuel 2026-07-16: "quiero
+     que los textos de lo que incluye sean más grandes, sobre todo el título
+     y la descripción, que sea bastante más grande"). No reusan --text-h3
+     (22px, usado en cards de toda la web — subirlo ahí rompería otras
+     secciones) ni --text-sm de Tailwind: son tokens propios porque, igual que
+     el título de la sección, este texto vive suelto sobre el agua sin caja
+     que lo contenga — necesita su propia escala para seguir leyéndose
+     editorial a este tamaño y no como un párrafo suelto. */
+  --text-incluye-item-titulo: 2.25rem; /* 36px — desktop (sube de 22px/text-h3) */
+  --text-incluye-item-titulo--line-height: 1.15;
+  --text-incluye-item-titulo-movil: 1.625rem; /* 26px */
+  --text-incluye-item-titulo-movil--line-height: 1.2;
+  --text-incluye-item-texto: 1.1875rem; /* 19px — desktop (sube de 14px/text-sm) */
+  --text-incluye-item-texto--line-height: 1.5;
+  --text-incluye-item-texto-movil: 1.0625rem; /* 17px */
+  --text-incluye-item-texto-movil--line-height: 1.55;
+
+  /* Título de la sección (v3-F19.3, Samuel: "al centro, más grande, que el
+     barco le pase por encima"). No reusa --text-h2 (2rem): aquí el título es
+     parte del PAISAJE — tipografía tendida sobre el agua con el catamarán
+     navegándole por encima — y a 2rem se leía como un rótulo cualquiera.
+     La MEZCLA (mix-blend-mode) es el "efecto sobre el agua": los rizos del
+     video pasan por DENTRO de las letras, y como el agua avanza con el scroll,
+     el texto ondula sin animarlo. En Figma es el blend mode de la capa de
+     texto (1:1). El valor lo fija .incluye-titulo (componentes.css). */
+  --text-incluye-titulo: 4.25rem; /* 68px — desktop */
+  --text-incluye-titulo--line-height: 1.08;
+  --text-incluye-titulo-movil: 2.25rem; /* 36px */
+  --text-incluye-titulo-movil--line-height: 1.15;
+  /* screen + aqua-claro, elegido en A/B de captura contra overlay/soft-light/
+     color-dodge/blanco plano: overlay y soft-light se APAGAN sobre agua oscura
+     (la fórmula usa el fondo para decidir, y con fondo oscuro multiplica);
+     screen solo puede aclarar, así que las letras quedan luminosas y el rizado
+     las modula por dentro sin comerse la legibilidad. El aqua-claro además
+     cierra la historia del acento en esta sección: aqua = lo que toca el agua
+     (eyebrow, numerales fantasma, título). El barco pasa POR ENCIMA del texto
+     y las letras se leen a través de las redes del trampolín (translúcidas en
+     el recorte) — coherencia física gratis. */
+  --incluye-titulo-mezcla: screen;
 
   /* Reveal al hacer scroll (GSAP ScrollTrigger, scrub — NO sticky). Igual que
      --ticker-* / --cta-*: estas constantes son la FUENTE del prototipo de Figma

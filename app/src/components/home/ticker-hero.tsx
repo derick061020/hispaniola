@@ -71,13 +71,27 @@ function TickerCard({ item, oculto = false }: { item: TickerItem; oculto?: boole
     </>
   )
 
-  // Las dos especies del ticker ya no van al mismo sitio: el TOUR tiene ficha
-  // real (/tours/:slug) y la OCASIÓN sigue viviendo en el prototipo (su hub
-  // depende del formulario de eventos, fuera de este build). La unión
+  // Las especies del ticker no van al mismo sitio: el TOUR tiene ficha real
+  // (/tours/:slug), y de las ocasiones, Bodas y MICE tienen ya su landing
+  // (/eventos/:slug) — las otras 4 siguen en el prototipo (su destino es el
+  // formulario del hub de eventos, fuera de este build). La unión
   // discriminada del dato lo decide sola.
   if (item.tipo === 'tour') {
     return (
       <Link to={`/tours/${item.id}`} className={clases} aria-hidden={oculto || undefined} tabIndex={oculto ? -1 : undefined}>
+        {contenido}
+      </Link>
+    )
+  }
+
+  if (item.slug) {
+    return (
+      <Link
+        to={`/eventos/${item.slug}`}
+        className={clases}
+        aria-hidden={oculto || undefined}
+        tabIndex={oculto ? -1 : undefined}
+      >
         {contenido}
       </Link>
     )

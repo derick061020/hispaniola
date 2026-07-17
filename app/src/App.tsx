@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom'
 import { HomePage } from '@/pages/home'
 import { TourPage } from '@/pages/tour'
+import { EventoPage } from '@/pages/evento'
 import { FundacionesPage } from '@/pages/fundaciones'
 import { ScrollAlNavegar } from '@/lib/scroll-al-navegar'
 import { DevMode } from '@/dev/dev-mode'
@@ -14,6 +15,7 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/tours/:slug" element={<TourPage />} />
+        <Route path="/eventos/:slug" element={<EventoPage />} />
         <Route path="/fundaciones" element={<FundacionesPage />} />
       </Routes>
       {import.meta.env.DEV ? <DevMode /> : null}

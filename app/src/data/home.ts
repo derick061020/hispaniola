@@ -134,6 +134,9 @@ export type Ocasion = {
   esLanding: boolean
   /** nombre de archivo en /fotos (sin extensión) */
   foto: string
+  /** slug de la landing real (/eventos/:slug) — solo las 2 con esLanding.
+   *  Las otras 4 van al formulario del hub, que vive en el prototipo. */
+  slug?: string
 }
 
 // Fotos PROVISIONALES: no existe shooting propio de eventos (bodas,
@@ -147,6 +150,7 @@ export const OCASIONES: Ocasion[] = [
     meta: 'Ceremonia, welcome party o despedida del grupo.',
     esLanding: true,
     foto: 'galeria-charter-privado-5',
+    slug: 'bodas',
   },
   {
     tipo: 'mice',
@@ -154,6 +158,7 @@ export const OCASIONES: Ocasion[] = [
     meta: 'Incentivos, team building, cierres de convención.',
     esLanding: true,
     foto: 'galeria-charter-privado-3',
+    slug: 'empresas',
   },
   {
     tipo: 'cumpleanos',
@@ -429,7 +434,15 @@ export type TickerItem =
       /** null = sin tope publicado */
       maxPax: number | null
     }
-  | { tipo: 'ocasion'; id: string; nombre: string; foto: string }
+  | {
+      tipo: 'ocasion'
+      id: string
+      nombre: string
+      foto: string
+      /** landing real (/eventos/:slug) — solo Bodas y MICE; el resto sigue
+       *  en el prototipo (formulario del hub) */
+      slug?: string
+    }
 
 export type TickerTour = Extract<TickerItem, { tipo: 'tour' }>
 
@@ -447,7 +460,9 @@ export const TICKER_ITEMS: TickerItem[] = [
       maxPax: t.maxPax,
     }),
   ),
-  ...OCASIONES.map((o): TickerItem => ({ tipo: 'ocasion', id: o.tipo, nombre: o.nombre, foto: o.foto })),
+  ...OCASIONES.map(
+    (o): TickerItem => ({ tipo: 'ocasion', id: o.tipo, nombre: o.nombre, foto: o.foto, slug: o.slug }),
+  ),
 ]
 
 // ─────────────────────────────────────────────────────────────────────────

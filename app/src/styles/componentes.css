@@ -823,8 +823,11 @@
    directamente sobre el agua (sin caja). El estado inicial del reveal
    (opacity 0 + subida) lo pinta el hook con GSAP; en reposo/reduced-motion es
    el estado natural de aquí (visible). */
+/* v3-F19.4: 28rem, sube de 22rem — el título creció a 36px (--text-incluye-
+   item-titulo) y a 22rem envolvía en 2-3 líneas cortas y feas; con más ancho
+   respira sin perder el efecto columna angosta editorial. */
 .incluye-item {
-  max-width: 22rem;
+  max-width: 28rem;
 }
 
 /* Desktop: cada ítem ocupa su propia FILA (--fila = 1..8) y alterna de LADO
@@ -852,11 +855,39 @@
   }
 }
 
+/* El título de la sección — parte del PAISAJE, no un rótulo (v3-F19.3, Samuel:
+   "al centro, más grande, que el barco le pase por encima"). Va centrado en el
+   carril del barco A PROPÓSITO: el catamarán le pasa literalmente por encima al
+   scrollear (el <img> del barco viene después en el DOM con el mismo z-index →
+   pinta encima). La mezcla con el agua sale de --incluye-titulo-mezcla: los
+   rizos del video pasan por dentro de las letras y, como el agua avanza con el
+   scroll, el efecto se anima gratis. SIN text-shadow: la sombra entraría en la
+   mezcla y ensuciaría el agua alrededor de cada letra. */
+.incluye-titulo {
+  mix-blend-mode: var(--incluye-titulo-mezcla);
+  text-wrap: balance; /* 2 líneas parejas, no una larga y un huérfano */
+}
+
+/* Numeral fantasma del ítem: grande, translúcido, línea propia, con el título
+   montado encima por margen negativo (--spacing-incluye-numero-solape). El
+   solape es lo que los funde en UNA pieza tipográfica (ver tokens.css). */
 .incluye-numero {
   font-family: var(--font-display);
-  font-weight: 600;
+  font-weight: 700;
+  font-size: var(--text-incluye-numero-movil);
+  line-height: 1;
   color: var(--incluye-numero-color);
-  letter-spacing: 0.02em;
+  letter-spacing: 0.04em;
+}
+
+@media (min-width: 1024px) {
+  .incluye-numero {
+    font-size: var(--text-incluye-numero);
+  }
+}
+
+.incluye-item-titulo {
+  margin-top: calc(var(--spacing-incluye-numero-solape) * -1);
 }
 
 /* Sombra de texto suave: sobre agua con brillos, el blanco necesita despegar

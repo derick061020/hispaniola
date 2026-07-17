@@ -164,11 +164,24 @@ export function MenuMovil({
                   ) : null}
                   {s.id === 'eventos' ? (
                     <div className="flex flex-col gap-1.5">
-                      {OCASIONES.map((o) => (
-                        <EnlacePrototipo key={o.tipo} className="rounded-lg px-3 py-2 hover:bg-papel-hueso">
-                          <span className="text-sm font-medium text-navy">{o.nombre}</span>
-                        </EnlacePrototipo>
-                      ))}
+                      {/* Bodas y MICE llevan a su landing real; las otras 4
+                          ocasiones siguen en el prototipo (formulario del
+                          hub). Misma unión por `slug` que el megamenú. */}
+                      {OCASIONES.map((o) =>
+                        o.slug ? (
+                          <Link
+                            key={o.tipo}
+                            to={`/eventos/${o.slug}`}
+                            className="rounded-lg px-3 py-2 hover:bg-papel-hueso"
+                          >
+                            <span className="text-sm font-medium text-navy">{o.nombre}</span>
+                          </Link>
+                        ) : (
+                          <EnlacePrototipo key={o.tipo} className="rounded-lg px-3 py-2 hover:bg-papel-hueso">
+                            <span className="text-sm font-medium text-navy">{o.nombre}</span>
+                          </EnlacePrototipo>
+                        ),
+                      )}
                     </div>
                   ) : null}
                   {s.id === 'nosotros' ? (

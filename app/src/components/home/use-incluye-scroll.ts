@@ -62,6 +62,12 @@ export function useIncluyeScroll(
     const scrubBarco = tokenNum(cs, '--incluye-barco-scrub', 0.5)
     const scrubVideo = tokenNum(cs, '--incluye-video-scrub', 0.3)
     const tramoVideo = tokenNum(cs, '--incluye-video-tramo', 1)
+    // Medio fotograma del asset: por debajo de eso una búsqueda no se vería, así
+    // que no se gasta. Sale de los fps REALES del video (--incluye-video-fps) y
+    // no de una constante: estaba fijo en 1/48 (medio fotograma a 24fps) y al
+    // pasar el asset a 60fps eso son 1.25 fotogramas — el portillo se habría
+    // comido las búsquedas que justamente arreglan el tirón.
+    const medioFotograma = 1 / (2 * tokenNum(cs, '--incluye-video-fps', 60))
     const itemY = tokenAPx(cs, '--incluye-item-y', rootPx, 24)
     const scrubItem = tokenNum(cs, '--incluye-item-scrub', 0.5)
 
@@ -105,7 +111,7 @@ export function useIncluyeScroll(
       // el dial de velocidad del agua (ver tokens.css).
       const t = objetivo * video.duration * tramoVideo
       // menos de medio frame de diferencia no se vería: no gastar una búsqueda
-      if (Math.abs(video.currentTime - t) < 1 / 48) return
+      if (Math.abs(video.currentTime - t) < medioFotograma) return
       buscando = true
       video.currentTime = t
     }
@@ -148,8 +154,30 @@ export function useIncluyeScroll(
             ease: 'none', // el scroll ES la curva
             scrollTrigger: {
               trigger: section,
-              start: 'top bottom', // entra cuando el borde superior toca el fondo de la pantalla
-              end: 'bottom top', // sale cuando el borde inferior toca el techo
+              // ⚠️ EL MISMO RANGO QUE EL AGUA (el del sticky), no el de la
+              // sección entera cruzando la pantalla ('top bottom' → 'bottom
+              // top', que es lo que había). Con rangos distintos el barco
+              // recorría 4040px de scroll mientras el agua recorría 2240: al
+              // pararse el agua, el barco iba solo por el 78% de su descenso y
+              // —peor— ya se había ido POR ARRIBA de la pantalla (medido: su
+              // centro acababa en -183px, con 60px visibles de 486). Es el
+              // "el bote se queda atrás llegando al final del scroll" que
+              // reportó Samuel 2026-07-16.
+              //
+              // El porqué es geométrico: el barco se posiciona en coordenadas
+              // de la SECCIÓN y el agua va fija a la VENTANA, así que lo que se
+              // ve es la RESTA de las dos velocidades —
+              //   px que sube/baja en pantalla por px de scroll
+              //     = alto_sección × (hasta − desde) / rango_del_barco − 1
+              // Con 4040px de rango daba −0.41 (el barco SUBÍA por la pantalla
+              // a 0.41px por px, adelantando al agua, que sube 0.079px/px:
+              // el barco navegaba hacia su propia popa). Con el rango del agua
+              // (2240) da +0.065: el barco se queda casi quieto y baja despacio
+              // mientras el agua le pasa por debajo — que es justo la lectura
+              // que se busca (la cámara acompaña al barco, el mar corre hacia
+              // atrás). El dial de dónde acaba es --incluye-barco-hasta.
+              start: 'top top',
+              end: 'bottom bottom',
               scrub: scrubBarco,
               invalidateOnRefresh: true,
               onRefresh: setAlto,

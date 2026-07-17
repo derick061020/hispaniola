@@ -102,12 +102,14 @@ export function IncluyeCrucero() {
       <div className="incluye-espuma incluye-espuma--top" />
       <div className="incluye-espuma incluye-espuma--bottom" />
 
-      {/* Título — en desktop acotado a la izquierda (max-w) para que NUNCA
-          cruce el carril central por donde baja el barco; queda apilado y
-          editorial, como el "WHAT'S / INCLUDED" de la referencia. */}
-      <div className="relative z-10 mx-auto w-full max-w-contenido px-5 text-center sm:px-10 lg:text-left">
+      {/* Título — CENTRADO y GRANDE, tendido sobre el agua (v3-F19.3, Samuel:
+          "al centro, más grande, que el barco le pase por encima"; antes iba
+          acotado a la izquierda justo para esquivar el carril del barco — ahora
+          lo ocupa a propósito y el catamarán navega por encima del texto al
+          scrollear). La mezcla con el agua vive en .incluye-titulo. */}
+      <div className="relative z-10 mx-auto w-full max-w-contenido px-5 text-center sm:px-10">
         <Etiqueta sobreOscuro>A bordo</Etiqueta>
-        <h2 className="mt-3 font-display text-h2 font-semibold text-white lg:max-w-sm">
+        <h2 className="incluye-titulo mx-auto mt-4 max-w-4xl font-display text-incluye-titulo-movil font-semibold text-aqua-claro lg:text-incluye-titulo">
           Todos nuestros cruceros incluyen
         </h2>
       </div>
@@ -139,11 +141,18 @@ export function IncluyeCrucero() {
               className={`incluye-item ${izquierda ? 'incluye-item--izquierda' : 'incluye-item--derecha'}`}
               style={{ '--col': izquierda ? 1 : 3, '--fila': i + 1 } as CSSProperties}
             >
-              <p className="incluye-numero text-lead">{String(i + 1).padStart(2, '0')}/</p>
-              <p className="incluye-item-titulo mt-1 font-display text-h3 font-semibold text-white">
+              {/* Numeral fantasma (v3-F19.3): grande y translúcido, sin el
+                  slash que Samuel rechazó; el título se le monta encima
+                  (.incluye-item-titulo, margen negativo). aria-hidden: para el
+                  lector de pantalla el orden ya lo da el DOM — el numeral es
+                  decoración tipográfica. */}
+              <p className="incluye-numero" aria-hidden="true">
+                {String(i + 1).padStart(2, '0')}
+              </p>
+              <p className="incluye-item-titulo font-display text-incluye-item-titulo-movil font-semibold text-white lg:text-incluye-item-titulo">
                 {item.titulo}
               </p>
-              <p className="incluye-item-texto mt-2 text-sm leading-relaxed text-white/75">
+              <p className="incluye-item-texto mt-3 text-incluye-item-texto-movil text-white/75 lg:text-incluye-item-texto">
                 {item.texto}
               </p>
             </div>
