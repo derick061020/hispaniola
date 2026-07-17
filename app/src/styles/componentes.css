@@ -1278,6 +1278,35 @@
 }
 
 /* ============================================================
+   Crossfade de ui/fotos-fundido.tsx (PLAN-INTERNAS-V2.md §C1) — las fotos
+   viven APILADAS (absolute inset-0, todas montadas a la vez) y solo cambia
+   su opacidad; el intervalo lo pone el hook, la curva vive aquí. Mismo
+   reparto JS/CSS que el carrusel de la TourCard. ==== */
+.fundido-foto {
+  transition: opacity var(--fundido-transicion) ease-in-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fundido-foto {
+    transition: none;
+  }
+}
+
+/* Migaja AlignUI (Breadcrumb) sobre foto — hero-interna.tsx (§C1). El vendor
+   (components/alignui/breadcrumb.tsx) fija sus colores vía los slots
+   --color-text-strong-950/-sub-600/-disabled-300 (alignui.css los mapea a
+   navy/navy-sub/linea-fuerte para uso sobre PAPEL); sobre una foto esos leen
+   casi invisibles. En vez de pelear la utility con otra clase (mismo peso de
+   cascada, orden de generación no controlable desde el JSX), se re-tema el
+   scope: mismo patrón que alignui.css usa para mapear AlignUI → Hispaniola,
+   aquí acotado a este wrapper. El vendor no se toca. */
+.migaja-sobre-foto {
+  --color-text-strong-950: var(--color-papel);
+  --color-text-sub-600: rgb(255 255 255 / 75%);
+  --color-text-disabled-300: rgb(255 255 255 / 45%);
+}
+
+/* ============================================================
    Reviews step carousel (v6, pedido de Pedro 2026-07-15) — carrusel
    step-based de la sección «Reseñas verificadas»: avanza 1 slot,
    espera, avanza otro. NO es un ticker continuo. La pista está

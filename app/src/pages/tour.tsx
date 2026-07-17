@@ -1,6 +1,6 @@
 import { Navigate, useParams } from 'react-router-dom'
-import { Header } from '@/components/home/header'
 import { Footer } from '@/components/home/footer'
+import { HeroInterna } from '@/components/internas/hero-interna'
 import { CabeceraFicha } from '@/components/tour/cabecera-ficha'
 import { GaleriaMosaico } from '@/components/tour/galeria-mosaico'
 import { WidgetReserva } from '@/components/tour/widget-reserva'
@@ -49,12 +49,15 @@ export function TourPage() {
 
   return (
     <div className="pb-16 md:pb-0">
-      {/* Primer uso real de la variante 'solida' del header: existe desde
-          v3-F8 pero hasta ahora solo vivía la 'sobreVideo' dentro del hero.
-          El CTA apunta al widget de esta página — en la home apunta al grid
-          de tours (#tours), que aquí no existe. */}
-      <Header ctaHref="#ficha-widget" />
-      <CabeceraFicha tour={tour} ficha={ficha} />
+      {/* PLAN-INTERNAS-V2.md §C1: el header ya no vive suelto en variante
+          'solida' — se muda DENTRO del hero compartido con la home
+          (HeroInterna, variante 'sobreVideo'), sobre las fotos reales del
+          tour en vez del video. El CTA sigue apuntando al widget de esta
+          página — en la home apunta al grid de tours (#tours), que aquí no
+          existe. */}
+      <HeroInterna fotos={[tour.foto, ...ficha.galeriaCompleta]} etiqueta={tour.nombre} ctaHref="#ficha-widget">
+        <CabeceraFicha tour={tour} ficha={ficha} />
+      </HeroInterna>
       <GaleriaMosaico tour={tour} ficha={ficha} />
       <AnclasFicha tour={tour} />
 

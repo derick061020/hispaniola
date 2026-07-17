@@ -23,6 +23,11 @@
      de sección. El blanco + navy son la base; el color lo ponen las fotos. */
   --color-papel: #ffffff;
   --color-papel-hueso: #f7f9fa; /* fondo de sección alterna, no blanco puro */
+  /* PLAN-INTERNAS-V2.md (C1): fondo del área de contenido de las páginas
+     internas (ficha de tour, landing de evento) — gris FRÍO derivado del
+     navy, no el hueso cálido de --color-papel-hueso (ese casi no contrasta
+     contra una card blanca encima; este sí separa el bloque del fondo). */
+  --color-fondo-ficha: #eef1f4;
   --color-navy: #0b2545; /* texto fuerte, footer, headings */
   --color-navy-sub: #42525f; /* texto secundario sobre papel */
   --color-navy-soft: #5b6b78; /* meta/caption sobre papel */
@@ -229,6 +234,21 @@
   --carrusel-intervalo: 4s; /* cada cuánto avanza una foto sola */
   --carrusel-transicion: 600ms; /* deslizado de una foto a la siguiente */
   --carrusel-easing: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Crossfade de ui/fotos-fundido.tsx (PLAN-INTERNAS-V2.md §C1) — el fondo del
+     hero de las páginas internas (ficha de tour, landing de evento) y de los
+     boxes de «También te puede gustar»: las fotos reales del tour/evento
+     fundiéndose una en otra, en vez de un video. Mismo trato WCAG 2.2.2 que
+     el carrusel: con prefers-reduced-motion no avanza sola. FUENTE del
+     prototipo de Figma (mismo patrón que --carrusel-intervalo): el intervalo
+     lo lee el hook, la transición de opacidad vive en el CSS (.fundido-foto). */
+  --fundido-intervalo: 4.5s;
+  --fundido-transicion: 900ms;
+
+  /* Marquee infinito de OpinionesTour (PLAN-INTERNAS-V2.md §C3) — misma
+     mecánica de pista duplicada que el ticker del hero (--ticker-duracion),
+     aquí horizontal y dentro del bloque de opiniones de la ficha. */
+  --opiniones-marquee-duracion: 45s;
 
   /* Slider step-based de «Reseñas verificadas» (v6, pedido de Pedro
      2026-07-15) — carrusel que avanza 1 slot, espera, avanza otro.
@@ -712,6 +732,19 @@
   --spacing-sticky-top: calc(var(--spacing-header-alto) + var(--spacing-anclas-alto) + 1rem);
   /* Columna del widget de reserva en desktop (T-F3). */
   --spacing-ficha-widget: 24rem; /* 384px */
+
+  /* ---------- Internas v2 (PLAN-INTERNAS-V2.md) ----------
+     Hero compartido de la ficha de tour y la landing de evento: mismo
+     lenguaje que el hero de la home (box redondeado, header sobreVideo,
+     overlay) pero COMPACTO — presenta y cede el paso al blanco enseguida, no
+     compite con --spacing-hero-alto (84svh, exclusivo de la home). Min-height,
+     no alto fijo: si el contenido (H1 largo, chips que envuelven) crece, el
+     hero crece con él en vez de recortarlo. */
+  --spacing-hero-interna-alto: 34rem; /* 544px — desktop, sm: en adelante */
+  /* Alto de cada box de «También te puede gustar» (C4) — boxes grandes de
+     imagen con texto encima, no cards de texto: necesitan más alto que
+     --spacing-mosaico-alto para leerse como su propia sección. */
+  --spacing-tambien-alto: 24rem; /* 384px */
 }
 
 body {
