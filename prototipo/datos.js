@@ -194,13 +194,15 @@ var HOTELES = [
 ];
 
 // ---------- Ocasiones de eventos (para el hub + megamenú) ----------
+// LOS 3 de la web actual, en su mismo orden (mapa-del-sitio.md §"EVENTS &
+// CELEBRATIONS"): «Events & Party Boat» / «Pre-Post Wedding» / «MICE». Las
+// ocasiones sueltas (cumpleaños, aniversarios, despedidas, reuniones) eran el
+// desglose del genérico y se recolapsan en «Eventos y party boat» (que abre el
+// hub sin ?tipo). Sus deep-links siguen soportados por TIPO_EVENTO_LABEL abajo.
 var OCASIONES = [
+  { tipo: 'eventos', nombre: 'Eventos y party boat', meta: 'Cumpleaños, aniversarios, despedidas y reuniones. Barco entero.', ruta: '#/eventos', esLanding: false },
   { tipo: 'boda', nombre: 'Bodas y pre-boda', meta: 'Ceremonia, welcome party o despedida del grupo.', ruta: '#/eventos/bodas', esLanding: true },
-  { tipo: 'mice', nombre: 'Corporativo / MICE', meta: 'Incentivos, team building, cierres de convención.', ruta: '#/eventos/empresas', esLanding: true },
-  { tipo: 'cumpleanos', nombre: 'Cumpleaños', meta: 'Decoración, pastel y la playlist que elijas.', ruta: '#/eventos?tipo=cumpleanos', esLanding: false },
-  { tipo: 'aniversario', nombre: 'Aniversarios', meta: 'Íntimo o con toda la familia.', ruta: '#/eventos?tipo=aniversario', esLanding: false },
-  { tipo: 'despedida', nombre: 'Despedidas de soltero/a', meta: 'Barco entero, solo tu grupo.', ruta: '#/eventos?tipo=despedida', esLanding: false },
-  { tipo: 'reunion', nombre: 'Reuniones familiares', meta: 'Multi-generación: niños y abuelos a bordo.', ruta: '#/eventos?tipo=reunion', esLanding: false }
+  { tipo: 'mice', nombre: 'Corporativo / MICE', meta: 'Incentivos, team building, cierres de convención.', ruta: '#/eventos/empresas', esLanding: true }
 ];
 
 var TIPO_EVENTO_LABEL = {
