@@ -1,6 +1,6 @@
 import type { ComponentType } from 'react'
 import { Link } from 'react-router-dom'
-import { CircleHelp, Compass, Fish, MessageCircle, TicketCheck, Users } from 'lucide-react'
+import { CircleHelp, Compass, Fish, MessageCircle, TicketCheck, User, Users } from 'lucide-react'
 import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
 import type { ItemNav } from '@/data/home'
 
@@ -11,6 +11,12 @@ const ICONOS: Record<string, ComponentType<{ className?: string }>> = {
   reserva: TicketCheck,
   guias: Compass,
   contacto: MessageCircle,
+  // 2026-07-17 — entrada nueva para /mi-reserva (subtab de "Ayuda" +
+  // link en el footer). User (singular, no Users) para señalar que es
+  // "TU" reserva, personal. Si ICONOS no tiene el id del item,
+  // `Icono` queda undefined y `<Icono />` revienta React → pantalla
+  // en blanco al abrir el dropdown.
+  'mi-reserva': User,
 }
 
 // Ítem del notch dinámico (PLAN-v3.md §12.1) — icono + título + descripción,
