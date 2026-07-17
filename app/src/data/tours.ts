@@ -19,14 +19,29 @@ export type Horario = { hora: string; regreso: string }
 export type BeneficioIncluido = { titulo: string; texto: string }
 export type PreguntaTour = { p: string; r: string }
 
+/** Un plato del menú de un paquete. `foto` solo la tienen los 4 platos
+ *  fotografiados en /fotos (plato-*); el resto son de texto (no hay asset). */
+export type PlatoMenu = { nombre: string; desc?: string; foto?: string }
+
 export type FichaTour = {
   tituloLargo: string
   audiencia: string
   /** La duración larga ('4 horas'); la corta ('4 h') vive en home.ts. */
   duracion: string
+  /** Descripción larga en párrafos, para el bloque de intro con «leer más»
+   *  (2026-07-17: portada de la web aprobada, que es más rica que la frase
+   *  corta de home.ts). Opcional: si falta, la intro usa solo descripcionCorta. */
+  descripcionLarga?: string[]
   horarios: Horario[]
   /** null = este tour no tiene upgrade de menú (no se vende por paquetes). */
   upgradePremium: number | null
+  /** Menú POR PAQUETE (2026-07-17, portado de la web aprobada — antes el build
+   *  usaba 4 platos compartidos). Light = 2 platos a la parrilla; Premium = 7
+   *  platos (los 4 con foto real + 3 de solo texto). [] en los tours que no
+   *  venden menú por paquete (charter cotiza a medida, Saona sin definir);
+   *  MenuTour solo se pinta en booking 'completo', así que esos [] no se ven. */
+  menuLight: PlatoMenu[]
+  menuPremium: PlatoMenu[]
   /** TODAS las fotos reales del tour, en /fotos (sin extensión). La `galeria`
    *  de home.ts son solo las 5 portadas del carrusel del grid; ésta es el
    *  material completo para el mosaico y el lightbox.
@@ -48,7 +63,13 @@ export type FichaTour = {
   fotoItinerario?: string
   itinerario: PasoItinerario[]
   incluye: BeneficioIncluido[]
+  /** «También incluye»: el resto de lo que trae el tour más allá de los 4
+   *  titulares (WiFi, aperitivos, barra flotante…). Portado de la web. */
+  incluyeExtra?: string[]
   noIncluido: string
+  /** Qué llevar (traje de baño, cámara, toalla, protector, efectivo). Portado
+   *  de la web. [] si no aplica (Saona, sin datos). */
+  queLlevar: string[]
   faqTour: PreguntaTour[]
   /** slugs de TOURS (data/home.ts) */
   tambienTeGusta: string[]
@@ -59,11 +80,32 @@ export const FICHAS: Record<string, FichaTour> = {
     tituloLargo: 'Semi-Privado Premium — catamarán solo adultos',
     audiencia: 'Solo adultos',
     duracion: '4 horas',
+    descripcionLarga: [
+      'Una excursión semi-privada solo para adultos: navegamos a no más del 35% de la capacidad del barco, para que el servicio sea personalizado y te sientas un VIP — no un número en un tour masivo.',
+      'Zarpamos desde Bávaro y navegamos por la costa hasta Cabo Engaño, donde empieza el mar Caribe. En el arrecife de Cabeza de Toro, nuestra bióloga marina te explica el proyecto de jardinería de coral —uno de los 3 más grandes de República Dominicana—, creado en 2016 por la Fundación Ecológica Los Arrecifes de Bávaro.',
+      'Después, una playa desierta con coco-loco (con o sin alcohol) y una piscina natural de aguas poco profundas con estructuras de arrecife artificial, ideal para principiantes. La comida se prepara al momento en nuestra cocina flotante — nada de buffet recalentado.',
+    ],
     horarios: [
       { hora: '9:00 AM', regreso: '1:00 PM' },
       { hora: '1:00 PM', regreso: '5:00 PM' },
     ],
     upgradePremium: 15,
+    // Menú POR PAQUETE, portado de la web aprobada. Light: 2 platos a la
+    // parrilla. Premium: 7 platos — los 4 con foto real (plato-*) + 3 de solo
+    // texto (lasañas y cóctel, sin asset en /fotos).
+    menuLight: [
+      { nombre: 'Pechuga de pollo a la parrilla', desc: 'Con papas y vegetales' },
+      { nombre: 'Filete de pescado a la parrilla', desc: 'Con papas y vegetales' },
+    ],
+    menuPremium: [
+      { nombre: 'Mariscos', desc: 'Langosta, pulpo, camarón', foto: 'plato-mariscos' },
+      { nombre: 'Carne', desc: 'Angus certificado', foto: 'plato-carne' },
+      { nombre: 'Surf & Turf', desc: 'Langosta + Angus', foto: 'plato-surf-turf' },
+      { nombre: 'Vegetariano', desc: 'Ceviche de zucchini', foto: 'plato-vegetariano' },
+      { nombre: 'Lasaña vegetariana' },
+      { nombre: 'Lasaña con pechuga de pollo' },
+      { nombre: 'Cóctel de mariscos' },
+    ],
     galeriaCompleta: [
       'galeria-semi-privado-1',
       'galeria-semi-privado-2',
@@ -103,13 +145,20 @@ export const FICHAS: Record<string, FichaTour> = {
       { hora: '13:00', titulo: 'Regreso y traslado al hotel', texto: '' },
     ],
     incluye: [
-      { titulo: 'Equipo de snorkel', texto: 'Sanitizado, todas las tallas.' },
-      { titulo: 'Transporte ida y vuelta', texto: 'AC, desde tu hotel.' },
-      { titulo: 'Comida + bebidas', texto: 'Cocina flotante y barra.' },
-      { titulo: 'Bióloga marina', texto: 'Guía del arrecife.' },
+      { titulo: 'Snorkel en el vivero de coral', texto: 'Equipo sanitizado (todas las tallas) + guía en el arrecife de Cabeza de Toro.' },
+      { titulo: 'Transporte ida y vuelta', texto: 'Vehículo con AC, desde tu hotel.' },
+      { titulo: 'Comida + barra libre', texto: 'Cocina flotante; cerveza, ron añejo, vodka, jugos, refrescos y agua.' },
+      { titulo: 'Bióloga marina', texto: 'Te explica el proyecto de restauración del coral.' },
+    ],
+    incluyeExtra: [
+      'WiFi a bordo',
+      'Aperitivos: croissants de fruta, pavo y queso',
+      'Barra flotante «Coyote» en la piscina natural',
+      'Fotos gratis subidas a Facebook',
     ],
     noIncluido:
-      'No incluido: fotos HD originales (US$ 20 vía Dropbox) · suplemento de transporte desde Casa de Campo.',
+      'No incluido: álbum de fotos HD (US$ 20/grupo vía Dropbox) · fotógrafo profesional (con aviso previo, costo extra) · suplemento de transporte desde Casa de Campo.',
+    queLlevar: ['Traje de baño', 'Toalla', 'Protector solar biodegradable', 'Cámara', 'Efectivo (si pagas el saldo a bordo)'],
     faqTour: [
       { p: '¿Y si llueve?', r: 'Reembolso total o cambio de fecha, sin costo.' },
       { p: '¿Hay baño a bordo?', r: 'Sí, todos nuestros barcos tienen baño.' },
@@ -131,6 +180,21 @@ export const FICHAS: Record<string, FichaTour> = {
       { hora: '1:00 PM', regreso: '5:00 PM' },
     ],
     upgradePremium: 15,
+    // Misma cocina/operación que Semi-Privado (mismo catamarán y menú); el
+    // marco cambia (familias, sin alcohol para menores), no los platos.
+    menuLight: [
+      { nombre: 'Pechuga de pollo a la parrilla', desc: 'Con papas y vegetales' },
+      { nombre: 'Filete de pescado a la parrilla', desc: 'Con papas y vegetales' },
+    ],
+    menuPremium: [
+      { nombre: 'Mariscos', desc: 'Langosta, pulpo, camarón', foto: 'plato-mariscos' },
+      { nombre: 'Carne', desc: 'Angus certificado', foto: 'plato-carne' },
+      { nombre: 'Surf & Turf', desc: 'Langosta + Angus', foto: 'plato-surf-turf' },
+      { nombre: 'Vegetariano', desc: 'Ceviche de zucchini', foto: 'plato-vegetariano' },
+      { nombre: 'Lasaña vegetariana' },
+      { nombre: 'Lasaña con pechuga de pollo' },
+      { nombre: 'Cóctel de mariscos' },
+    ],
     galeriaCompleta: [
       'galeria-snorkel-lovers-1',
       'galeria-snorkel-lovers-2',
@@ -177,12 +241,19 @@ export const FICHAS: Record<string, FichaTour> = {
     ],
     incluye: [
       { titulo: 'Equipo de snorkel', texto: 'Todas las tallas, incluidas infantiles.' },
-      { titulo: 'Transporte ida y vuelta', texto: 'AC, desde tu hotel.' },
-      { titulo: 'Comida + bebidas', texto: 'Cocina flotante y barra (sin alcohol para menores).' },
+      { titulo: 'Transporte ida y vuelta', texto: 'Vehículo con AC, desde tu hotel.' },
+      { titulo: 'Comida + barra libre', texto: 'Cocina flotante; jugos y refrescos para todos, sin alcohol para menores.' },
       { titulo: 'Guía de snorkel', texto: 'Explicación adaptada a todas las edades.' },
     ],
+    incluyeExtra: [
+      'WiFi a bordo',
+      'Aperitivos: croissants de fruta, pavo y queso',
+      'Barra flotante «Coyote» en la piscina natural',
+      'Fotos gratis subidas a Facebook',
+    ],
     noIncluido:
-      'No incluido: fotos HD originales (US$ 20 vía Dropbox) · suplemento de transporte desde Casa de Campo.',
+      'No incluido: álbum de fotos HD (US$ 20/grupo vía Dropbox) · fotógrafo profesional (con aviso previo, costo extra) · suplemento de transporte desde Casa de Campo.',
+    queLlevar: ['Traje de baño', 'Toalla', 'Protector solar biodegradable', 'Cámara', 'Efectivo (si pagas el saldo a bordo)'],
     faqTour: [
       {
         p: '¿Desde qué edad pueden ir los niños?',
@@ -204,6 +275,10 @@ export const FICHAS: Record<string, FichaTour> = {
     duracion: '3-4 horas',
     horarios: [{ hora: 'A coordinar', regreso: '' }],
     upgradePremium: 15,
+    // Charter cotiza el menú a medida (booking 'cotizacion' no pinta MenuTour):
+    // sin listas fijas de paquete.
+    menuLight: [],
+    menuPremium: [],
     galeriaCompleta: [
       'galeria-charter-privado-1',
       'galeria-charter-privado-2',
@@ -235,6 +310,7 @@ export const FICHAS: Record<string, FichaTour> = {
       { titulo: 'Coordinación dedicada', texto: 'Una persona de principio a fin.' },
     ],
     noIncluido: 'Precio final según nº de personas y menú elegido — se cotiza a medida.',
+    queLlevar: ['Traje de baño', 'Toalla', 'Protector solar biodegradable', 'Cámara'],
     faqTour: [
       {
         p: '¿Cuál es el mínimo de personas?',
@@ -256,6 +332,9 @@ export const FICHAS: Record<string, FichaTour> = {
     duracion: 'Día completo',
     horarios: [],
     upgradePremium: null,
+    // Sin paquetes ni datos confirmados (pendiente del cliente).
+    menuLight: [],
+    menuPremium: [],
     // Sin galería propia: la web actual no tiene fotos de este tour. No se
     // rellena con fotos de los otros (son barcos y planes distintos) — la ficha
     // muestra su foto de portada sola. Es la misma honestidad que el resto de
@@ -280,6 +359,7 @@ export const FICHAS: Record<string, FichaTour> = {
       { titulo: 'Paradas de snorkel', texto: 'Piscina natural incluida.' },
     ],
     noIncluido: 'Precio, duración exacta y capacidad: PENDIENTE de confirmar con el cliente.',
+    queLlevar: [],
     faqTour: [
       { p: '¿Cuánto dura el tour completo?', r: 'Dato pendiente de confirmar con el cliente.' },
       { p: '¿Qué incluye el almuerzo?', r: 'Comida típica dominicana servida en la propia isla.' },

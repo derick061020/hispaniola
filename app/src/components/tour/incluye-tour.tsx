@@ -26,7 +26,32 @@ export function IncluyeTour({ ficha }: { ficha: FichaTour }) {
         ))}
       </div>
 
+      {/* «También incluye» — el resto de lo que trae el tour más allá de los 4
+          titulares (WiFi, aperitivos, barra flotante…), como chips para que se
+          lea de un vistazo sin competir con las cards. */}
+      {ficha.incluyeExtra && ficha.incluyeExtra.length > 0 ? (
+        <div className="mt-4 flex flex-wrap gap-2">
+          {ficha.incluyeExtra.map((item) => (
+            <span key={item} className="inline-flex items-center gap-1.5 rounded-chip bg-papel-hueso px-3 py-1 text-xs text-navy-sub">
+              <span aria-hidden="true" className="text-menta-texto">
+                ✓
+              </span>
+              {item}
+            </span>
+          ))}
+        </div>
+      ) : null}
+
       <p className="mt-4 text-xs text-navy-soft">{ficha.noIncluido}</p>
+
+      {/* Qué llevar — dato práctico de la web aprobada. Solo si hay lista (en
+          Saona no hay datos → no se pinta). */}
+      {ficha.queLlevar.length > 0 ? (
+        <div className="mt-4 border-t border-linea pt-4">
+          <h3 className="text-eyebrow font-semibold uppercase tracking-[0.12em] text-navy-soft">Qué llevar</h3>
+          <p className="mt-1.5 text-sm text-navy-sub">{ficha.queLlevar.join(' · ')}</p>
+        </div>
+      ) : null}
     </section>
   )
 }

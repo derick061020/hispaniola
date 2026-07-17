@@ -12,6 +12,7 @@ import { OpinionesTour } from '@/components/tour/opiniones-tour'
 import { FaqTour } from '@/components/tour/faq-tour'
 import { AnclasFicha } from '@/components/tour/anclas-ficha'
 import { BLOQUE_FICHA } from '@/components/tour/bloque-ficha'
+import { DescripcionTour } from '@/components/tour/descripcion-tour'
 import { GaleriaMosaico } from '@/components/internas/galeria-mosaico'
 import { TambienTeGusta } from '@/components/internas/tambien-te-gusta'
 import { TOURS } from '@/data/home'
@@ -98,7 +99,7 @@ export function TourPage() {
               <div className={`${BLOQUE_FICHA} flex flex-col gap-6`}>
                 <div>
                   <h2 className="font-display text-h3 font-semibold text-navy">{promesa}</h2>
-                  <p className="mt-2 max-w-2xl text-lead text-navy-sub">{tour.descripcionCorta}</p>
+                  <DescripcionTour parrafos={ficha.descripcionLarga} corta={tour.descripcionCorta} />
                 </div>
 
                 {/* Solo en 'completo': es el único modo con precio publicado
