@@ -176,7 +176,18 @@ export function WidgetReserva({ tour, ficha }: Props) {
       {tienePaquetes && precioBase !== null && upgrade !== null ? (
         <div>
           <p className="mb-2 text-eyebrow font-semibold uppercase tracking-[0.12em] text-navy-soft">Elige tu paquete</p>
-          <div className="grid grid-cols-2 gap-1 rounded-full bg-papel-hueso p-1">
+          {/* Track relativo con un THUMB deslizante (feedback de Samuel
+              2026-07-17): en vez de que cada botón cambie su propio fondo, un
+              único elemento navy se DESLIZA al segmento activo — lee más como un
+              switch de verdad. El ancho del thumb y su desplazamiento derivan de
+              p-1 (4px) + gap-1 (4px): cada segmento mide calc(50% - 6px) y el
+              salto al 2º es su ancho + el gap → translateX(100% + 4px). */}
+          <div className="relative grid grid-cols-2 gap-1 rounded-full bg-papel-hueso p-1">
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-y-1 left-1 w-[calc(50%-0.375rem)] rounded-full bg-navy transition-transform duration-200 ease-out motion-reduce:transition-none"
+              style={{ transform: paquete === 'premium' ? 'translateX(calc(100% + 0.25rem))' : 'translateX(0)' }}
+            />
             {[
               { id: 'light' as const, nombre: 'Light', precio: precioBase },
               { id: 'premium' as const, nombre: 'Premium', precio: precioBase + upgrade },
@@ -188,8 +199,8 @@ export function WidgetReserva({ tour, ficha }: Props) {
                   type="button"
                   onClick={() => setPaquete(p.id)}
                   aria-pressed={activo}
-                  className={`flex items-center justify-center gap-1.5 rounded-full px-3 py-2 text-sm transition-colors ${
-                    activo ? 'bg-navy text-white' : 'text-navy-sub hover:text-navy'
+                  className={`relative z-10 flex items-center justify-center gap-1.5 rounded-full px-3 py-2 text-sm transition-colors ${
+                    activo ? 'text-white' : 'text-navy-sub hover:text-navy'
                   }`}
                 >
                   <span className="font-semibold">{p.nombre}</span>
