@@ -69,7 +69,13 @@ export function HeroInterna({
   }, [pausado, reducirMovimiento])
 
   return (
-    <section className="px-hero-margen pt-hero-margen sm:px-hero-margen-sm sm:pt-hero-margen-sm">
+    // id="hero": mismo id que el hero de la home (home/hero.tsx) — es el
+    // sentinel que IslaFlotante observa para saber cuándo aparecer (una vez
+    // este hero sale del viewport). Un solo hero por página, sin colisión.
+    // pt-hero-margen SOLO en móvil: desde sm: el Topbar vive justo encima,
+    // blanco y sin borde — sm:pt-0 pega el hero a su borde inferior sin
+    // espaciado (mismo criterio que home/hero.tsx).
+    <section id="hero" className="px-hero-margen pt-hero-margen sm:px-hero-margen-sm sm:pt-0">
       <div className="relative flex min-h-[22rem] flex-col rounded-hero sm:min-h-hero-interna-alto">
         <div className="absolute inset-0 overflow-hidden rounded-hero">
           <video

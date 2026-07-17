@@ -17,6 +17,9 @@ import { GaleriaMosaico } from '@/components/internas/galeria-mosaico'
 import { TambienTeGusta } from '@/components/internas/tambien-te-gusta'
 import { TOURS } from '@/data/home'
 import { FICHAS } from '@/data/tours'
+import { Meta } from '@/components/seo/meta'
+import { SchemaJsonLd } from '@/components/seo/schema-json-ld'
+import { schemaTour, schemaFaq } from '@/lib/seo/schema'
 
 // Ficha de tour — UNA plantilla para los 4 productos (PLAN-TOURS.md).
 // Es la página de conversión del sitio: aquí el visitante tiene el precio
@@ -52,6 +55,9 @@ export function TourPage() {
 
   return (
     <div className="pb-16 md:pb-0">
+      <Meta titulo={tour.nombre} descripcion={tour.descripcionCorta} ruta={`/tours/${tour.slug}`} />
+      <SchemaJsonLd datos={schemaTour(tour)} />
+      {ficha.faqTour.length > 0 ? <SchemaJsonLd datos={schemaFaq(ficha.faqTour)} /> : null}
       {/* PLAN-INTERNAS-V2.md §C1: el header ya no vive suelto en variante
           'solida' — se muda DENTRO del hero compartido con la home
           (HeroInterna, variante 'sobreVideo'), sobre el video de marca (el

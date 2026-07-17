@@ -1,12 +1,12 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Clock, Users, Tag } from 'lucide-react'
+import { Minus, Plus, Users, Tag } from 'lucide-react'
 import * as FancyButton from '@/components/alignui/fancy-button'
-import * as Select from '@/components/alignui/select'
+import * as CompactButton from '@/components/alignui/compact-button'
 import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
-import { BLOQUE_FICHA } from '@/components/tour/bloque-ficha'
+import { CalendarioWidget } from '@/components/tour/calendario-widget'
 import { useDevFlag } from '@/dev/use-dev-flag'
-import { diaCorto, hoyISO, numeroDeDia, sumarDias } from '@/lib/fechas'
+import { hoyISO, sumarDias } from '@/lib/fechas'
 import { formatoDinero, type Tour } from '@/data/home'
 import { WHATSAPP_URL, type FichaTour } from '@/data/tours'
 
@@ -42,47 +42,94 @@ import { WHATSAPP_URL, type FichaTour } from '@/data/tours'
 
 type Props = { tour: Tour; ficha: FichaTour }
 
-const DIAS_VISIBLES = 14
+// Tope del contador de personas de ESTE booking (no el aforo del barco,
+// tour.maxPax — un grupo de 25 no se arma en un solo formulario). Mismo
+// límite que ya traía el Select que este stepper reemplaza (2026-07-17,
+// pedido de Samuel: "− N +" en vez de un desplegable).
+const MAX_PERSONAS = 6
 
+// Ticker infinito en una sola línea (2026-07-17, pedido de Samuel: "que estén
+// en una fila, en un ticker infinito, para reducir el alto" — antes eran 3
+// líneas apiladas). MISMA mecánica que el marquee de Opiniones (pista
+// duplicada 2x, loop con translate: -50%, pausa al hover) pero clases e
+// ítems propios — ver .widget-checks-* en componentes.css: aquí no hay
+// cards, son 3 frases cortas corriendo en una fila continua.
 function Checks({ lineas }: { lineas: string[] }) {
+  const [pausado, setPausado] = useState(false)
+  // [dev-mode] deep-link del Glosario Dev — ver src/dev/dev-registry.ts
+  useDevFlag('dev-widget-checks', (v) => {
+    if (v === 'pausado') setPausado(true)
+  })
+  const estatico =
+    typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+  const item = (texto: string, key: string, oculto: boolean) => (
+    <span
+      key={key}
+      aria-hidden={oculto || undefined}
+      className="widget-checks-item flex items-center gap-1.5 text-xs text-navy-soft"
+    >
+      <span aria-hidden="true" className="text-menta-texto">
+        ✓
+      </span>
+      {texto}
+    </span>
+  )
+
   return (
-    <ul className="flex flex-col gap-1 text-xs text-navy-soft">
-      {lineas.map((l) => (
-        <li key={l} className="flex gap-1.5">
-          <span aria-hidden="true" className="text-menta-texto">
-            ✓
-          </span>
-          {l}
-        </li>
-      ))}
-    </ul>
+    <div
+      role="group"
+      aria-label="Garantías de la reserva"
+      className={`widget-checks-wrapper ${estatico ? 'widget-checks-wrapper--estatico' : ''}`}
+    >
+      <div className={`widget-checks-pista ${pausado ? 'widget-checks-pista--pausada' : ''}`}>
+        {lineas.map((l) => item(l, l, false))}
+        {/* 2ª copia para el loop del -50%, oculta a lectores de pantalla
+            (mismo trato que el ticker del hero) — no hace falta si es
+            estático (reduced-motion). */}
+        {!estatico ? lineas.map((l) => item(l, `dup-${l}`, true)) : null}
+      </div>
+    </div>
   )
 }
 
 function Caja({ children }: { children: React.ReactNode }) {
   // Mismo lenguaje «objeto suave» que la TourCard de la home: la decisión de
-  // compra vive en una caja propia, no suelta sobre el fondo. PLAN-INTERNAS-
-  // V2.md §C2: BLOQUE_FICHA en vez de un p-5 propio — la misma receta que el
-  // resto de bloques de la ficha, para que el widget lea como una card más
-  // sobre --color-fondo-ficha y no como la única pieza con su padding aparte.
+  // compra vive en una caja propia, no suelta sobre el fondo — pero con SU
+  // PROPIO padding (no BLOQUE_FICHA, 2026-07-17, pedido de Samuel: "reduce el
+  // padding, veo que tiene mucho"), no el que comparten itinerario/incluye/
+  // menú/opiniones/FAQ: ese padding tiene que seguir sirviendo a esos 5
+  // bloques de texto largo, así que reducirlo A TODOS para que uno quepa
+  // mejor los habría desajustado a ellos. Mismo radio/fondo/borde que
+  // BLOQUE_FICHA (bloque-ficha.ts) para seguir leyendo como la misma card.
   return (
-    <div id="ficha-widget" className={`${BLOQUE_FICHA} flex scroll-mt-sticky-top flex-col gap-4`}>
+    <div
+      id="ficha-widget"
+      className="flex scroll-mt-sticky-top flex-col gap-4 rounded-card-grande bg-papel p-4 ring-1 ring-linea sm:p-5"
+    >
       {children}
     </div>
   )
 }
 
-// `desde` añade «· desde» al sufijo: se usa cuando el precio es un SUELO (Light,
-// o el «desde US$ 75» de una cotización), no cuando es la tarifa exacta ya
-// elegida (Premium).
+// «Desde US$ 99 por persona», una sola frase leída de corrido (2026-07-17,
+// pedido de Samuel: "que sea un texto más humano como el de Viator" — su
+// widget dice literalmente "Desde USD 94.00 por persona", no 3 fragmentos
+// pegados). Reemplaza al layout anterior (monto grande + "/persona · desde"
+// suelto detrás, en ESE orden: sonaba a 3 etiquetas de depuración, no a una
+// frase). `desde` antepone "Desde": se usa cuando el precio es un SUELO
+// (Light, o el «desde US$ 75» de una cotización), no cuando es la tarifa
+// exacta ya elegida (Premium).
 function Precio({ precio, desde = false }: { precio: number | null; desde?: boolean }) {
+  if (precio === null) {
+    return <p className="font-display text-precio font-semibold text-navy">US$ —</p>
+  }
   return (
-    <div className="flex items-baseline gap-1.5">
-      <span className="font-display text-precio font-semibold text-navy">
-        {precio !== null ? formatoDinero(precio) : 'US$ —'}
-      </span>
-      {precio !== null ? <span className="text-xs text-navy-soft">/persona{desde ? ' · desde' : ''}</span> : null}
-    </div>
+    <p className="text-navy">
+      {desde ? <span className="text-sm text-navy-sub">Desde </span> : null}
+      <span className="font-display text-precio font-semibold">{formatoDinero(precio)}</span>
+      <span className="text-sm text-navy-sub"> por persona</span>
+    </p>
   )
 }
 
@@ -94,25 +141,14 @@ export function WidgetReserva({ tour, ficha }: Props) {
   // Premium es opt-in explícito — ver la nota de bait-and-switch de arriba.
   const [paquete, setPaquete] = useState<'light' | 'premium'>('light')
 
-  // Los 14 días que ofrece el widget. Dos salen agotados (hoy+3 y hoy+10, como
-  // el prototipo): el estado «no disponible» tiene que existir en pantalla —
-  // es un frame de Figma y es la realidad de un tour que se llena.
-  const dias = useMemo(() => {
-    const hoy = hoyISO()
-    const agotados = [sumarDias(hoy, 3), sumarDias(hoy, 10)]
-    return Array.from({ length: DIAS_VISIBLES }, (_, i) => {
-      const iso = sumarDias(hoy, i)
-      return { iso, agotado: agotados.includes(iso) }
-    })
-  }, [])
-
   // [dev-mode] deep-link del Glosario Dev — ver src/dev/dev-registry.ts.
-  // 'fecha' elige el 1er día libre; 'premium' además cambia el paquete a
-  // Premium (el frame que enseña el precio saltando a la tarifa Premium).
+  // 'fecha' elige mañana (nunca cae en uno de los 2 días agotados de ejemplo
+  // del calendario, hoy+3/hoy+10 — ver calendario-widget.tsx); 'premium'
+  // además cambia el paquete a Premium (el frame que enseña el precio
+  // saltando a la tarifa Premium).
   useDevFlag('dev-widget', (v) => {
     if (v !== 'fecha' && v !== 'premium') return
-    const primero = dias.find((d) => !d.agotado)
-    if (primero) setFecha(primero.iso)
+    setFecha(sumarDias(hoyISO(), 1))
     if (v === 'premium') setPaquete('premium')
   })
 
@@ -170,25 +206,24 @@ export function WidgetReserva({ tour, ficha }: Props) {
       <Precio precio={precioPersona} desde={paquete === 'light'} />
 
       {/* Selector de paquete (Fase B). Solo si el tour vende por paquetes
-          (upgradePremium !== null). TOGGLE SEGMENTADO, no dos cards-selector
-          (feedback de Samuel 2026-07-17: "que parezca más un toggle switch
-          button"): una sola pista tipo switch (bg-papel-hueso) con el segmento
-          activo relleno en navy. Cada mitad lleva su tarifa de LISTA inline
-          para comparar 99 vs 114 de un vistazo; sin el conteo de platos (eso
-          vive en la sección de menú). */}
+          (upgradePremium !== null). TOGGLE SEGMENTADO tipo iOS (2ª vuelta
+          2026-07-17, pedido de Samuel): el THUMB activo es BLANCO PURO
+          (bg-papel + shadow-sm), no relleno navy — así el control pesa MENOS
+          (competía con la fila de horario). La pista va un punto más oscura
+          (bg-linea, no bg-papel-hueso) para que el thumb blanco se despegue.
+          Texto del segmento activo en navy (sobre el thumb blanco); el
+          inactivo, atenuado (opacidad) para que solo "grite" el elegido.
+          Cada mitad lleva su tarifa de LISTA inline (99 vs 114 de un
+          vistazo); sin el conteo de platos (eso vive en la sección de menú).
+          El ancho/desplazamiento del thumb deriva de p-1 (4px) + gap-1 (4px):
+          cada segmento mide calc(50% - 6px) y el salto al 2º es su ancho +
+          el gap → translateX(100% + 4px). */}
       {tienePaquetes && precioBase !== null && upgrade !== null ? (
         <div>
-          <p className="mb-2 text-eyebrow font-semibold uppercase tracking-[0.12em] text-navy-soft">Elige tu paquete</p>
-          {/* Track relativo con un THUMB deslizante (feedback de Samuel
-              2026-07-17): en vez de que cada botón cambie su propio fondo, un
-              único elemento navy se DESLIZA al segmento activo — lee más como un
-              switch de verdad. El ancho del thumb y su desplazamiento derivan de
-              p-1 (4px) + gap-1 (4px): cada segmento mide calc(50% - 6px) y el
-              salto al 2º es su ancho + el gap → translateX(100% + 4px). */}
-          <div className="relative grid grid-cols-2 gap-1 rounded-full bg-papel-hueso p-1">
+          <div className="relative grid grid-cols-2 gap-1 rounded-full bg-linea p-1">
             <span
               aria-hidden="true"
-              className="pointer-events-none absolute inset-y-1 left-1 w-[calc(50%-0.375rem)] rounded-full bg-navy transition-transform duration-200 ease-out motion-reduce:transition-none"
+              className="pointer-events-none absolute inset-y-1 left-1 w-[calc(50%-0.375rem)] rounded-full bg-papel shadow-sm transition-transform duration-200 ease-out motion-reduce:transition-none"
               style={{ transform: paquete === 'premium' ? 'translateX(calc(100% + 0.25rem))' : 'translateX(0)' }}
             />
             {[
@@ -202,12 +237,53 @@ export function WidgetReserva({ tour, ficha }: Props) {
                   type="button"
                   onClick={() => setPaquete(p.id)}
                   aria-pressed={activo}
-                  className={`relative z-10 flex items-center justify-center gap-1.5 rounded-full px-3 py-2 text-sm transition-colors ${
-                    activo ? 'text-white' : 'text-navy-sub hover:text-navy'
+                  className={`relative z-10 flex items-center justify-center gap-1.5 rounded-full px-3 py-2 text-sm font-semibold transition-colors ${
+                    activo ? 'text-navy' : 'text-navy-sub/55 hover:text-navy-sub'
                   }`}
                 >
-                  <span className="font-semibold">{p.nombre}</span>
-                  <span className={activo ? 'text-white/70' : 'text-navy-soft'}>{formatoDinero(p.precio)}</span>
+                  {p.nombre}
+                  <span className={`font-normal ${activo ? 'text-navy-soft' : ''}`}>{formatoDinero(p.precio)}</span>
+                </button>
+              )
+            })}
+          </div>
+        </div>
+      ) : null}
+
+      <CalendarioWidget fecha={fecha} onSeleccionar={setFecha} />
+
+      {/* Horario: aparece SOLO tras elegir fecha (2ª vuelta 2026-07-17, pedido
+          de Samuel — el flujo tiene que ser obvio: "qué tocar primero y
+          luego"). Deroga la decisión anterior de dejarlo siempre visible:
+          aunque ficha.horarios NO cambia con el día (lista fija del tour), el
+          MODELO MENTAL universal de una reserva es fecha → hora, así que
+          mostrar la hora antes de la fecha hacía que compitiera con ella y se
+          leyera "roto". Revelado debajo del calendario ya elegido, la
+          secuencia se explica sola y de paso baja el alto del estado inicial.
+          Peso LIGERO (chip con tinte navy/10 + ring, no relleno navy) para
+          que no pese como el toggle de paquete. Entra con un fade+slide corto
+          (tw-animate-css, importado por alignui.css) para que el reveal se
+          sienta fluido. */}
+      {fecha !== null ? (
+        <div className="duration-200 animate-in fade-in slide-in-from-top-1">
+          <p className="mb-1.5 text-xs font-medium text-navy-sub">Horario</p>
+          <div className="flex flex-wrap gap-1.5">
+            {ficha.horarios.map((h, i) => {
+              const elegido = horario === i
+              return (
+                <button
+                  key={h.hora}
+                  type="button"
+                  onClick={() => setHorario(i)}
+                  aria-pressed={elegido}
+                  className={`rounded-btn px-3 py-1.5 text-sm transition-colors ${
+                    elegido
+                      ? 'bg-navy/10 font-semibold text-navy ring-1 ring-inset ring-navy/20'
+                      : 'bg-papel-hueso text-navy-soft hover:text-navy'
+                  }`}
+                >
+                  {h.hora}
+                  {h.regreso ? <span className="text-navy-soft"> · regreso {h.regreso}</span> : null}
                 </button>
               )
             })}
@@ -216,73 +292,61 @@ export function WidgetReserva({ tour, ficha }: Props) {
       ) : null}
 
       <div>
-        <p className="mb-2 text-eyebrow font-semibold uppercase tracking-[0.12em] text-navy-soft">Elige una fecha</p>
-        <div className="flex gap-1.5 overflow-x-auto pb-1.5">
-          {dias.map((d) => {
-            const elegido = fecha === d.iso
-            return (
-              <button
-                key={d.iso}
-                type="button"
-                disabled={d.agotado}
-                onClick={() => setFecha(d.iso)}
-                aria-pressed={elegido}
-                aria-label={`${diaCorto(d.iso)} ${numeroDeDia(d.iso)}${d.agotado ? ' — sin plazas' : ''}`}
-                className={`flex min-w-11 shrink-0 flex-col items-center rounded-btn px-2 py-1.5 text-xs transition-colors ${
-                  elegido
-                    ? 'bg-navy text-white'
-                    : d.agotado
-                      ? 'cursor-not-allowed bg-papel-hueso text-linea-fuerte line-through'
-                      : 'bg-papel-hueso text-navy-sub hover:bg-menta hover:text-menta-texto'
-                }`}
-              >
-                <span className="uppercase">{diaCorto(d.iso)}</span>
-                <span className="font-semibold">{numeroDeDia(d.iso)}</span>
-              </button>
-            )
-          })}
-        </div>
-      </div>
-
-      {/* Radix necesita valores string: el índice del horario y el nº de
-          personas viajan como String(n) y vuelven con Number(v). */}
-      <div>
-        <span className="mb-1 block text-xs font-medium text-navy-sub" id="widget-label-horario">
-          Horario
-        </span>
-        <Select.Root value={String(horario)} onValueChange={(v) => setHorario(Number(v))}>
-          <Select.Trigger aria-labelledby="widget-label-horario">
-            <Select.TriggerIcon as={Clock} />
-            <Select.Value />
-          </Select.Trigger>
-          <Select.Content>
-            {ficha.horarios.map((h, i) => (
-              <Select.Item key={h.hora} value={String(i)}>
-                {h.hora}
-                {h.regreso ? ` — regreso ${h.regreso}` : ''}
-              </Select.Item>
-            ))}
-          </Select.Content>
-        </Select.Root>
-      </div>
-
-      <div>
         <span className="mb-1 block text-xs font-medium text-navy-sub" id="widget-label-personas">
           Personas
         </span>
-        <Select.Root value={String(personas)} onValueChange={(v) => setPersonas(Number(v))}>
-          <Select.Trigger aria-labelledby="widget-label-personas">
-            <Select.TriggerIcon as={Users} />
-            <Select.Value />
-          </Select.Trigger>
-          <Select.Content>
-            {Array.from({ length: 6 }, (_, i) => i + 1).map((n) => (
-              <Select.Item key={n} value={String(n)}>
-                {n === 1 ? '1 persona' : `${n} personas`}
-              </Select.Item>
-            ))}
-          </Select.Content>
-        </Select.Root>
+        {/* Stepper "− N +" (2026-07-17, pedido de Samuel: no un desplegable
+            para esto) — CompactButton de AlignUI para los 2 botones, mismo
+            alto (h-10) y forma (rounded-10, border-stroke-soft-200) que el
+            Select de Horario de arriba, para que las 2 filas lean como el
+            mismo sistema de campos. */}
+        <div
+          role="group"
+          aria-labelledby="widget-label-personas"
+          className="flex h-10 items-center justify-between rounded-10 border border-stroke-soft-200 bg-bg-white-0 pl-3 pr-1.5"
+        >
+          <span className="flex items-center gap-2 text-paragraph-sm text-text-strong-950">
+            <Users className="size-5 shrink-0 text-text-sub-600" aria-hidden="true" />
+            {/* key={personas} remonta el span y dispara la animación .stepper-tick
+                en cada cambio (2026-07-17, pedido de Samuel: "como que no se
+                nota" al sumar/restar — el pulso da una señal imposible de
+                perder al lado del icono). tabular-nums evita que el ancho
+                salte al pasar de 9 a 10 personas. */}
+            <span key={personas} aria-live="polite" className="stepper-tick tabular-nums">
+              {personas === 1 ? '1 persona' : `${personas} personas`}
+            </span>
+          </span>
+          <div className="flex items-center gap-1">
+            {/* Feedback de click en los +/− (override via className, sin tocar
+                el vendor de AlignUI — patrón de personalización de
+                PLAN-ALIGNUI.md). active:scale-90 encoge el botón al apretar;
+                active:bg-navy + active:text-papel lo "invierte" al coral del
+                CTA por un instante; active:shadow-none lo mete en la
+                superficie. Combinados, el gesto se siente. */}
+            <CompactButton.Root
+              type="button"
+              variant="stroke"
+              fullRadius
+              aria-label="Quitar una persona"
+              disabled={personas <= 1}
+              onClick={() => setPersonas((p) => Math.max(1, p - 1))}
+              className="active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
+            >
+              <CompactButton.Icon as={Minus} />
+            </CompactButton.Root>
+            <CompactButton.Root
+              type="button"
+              variant="stroke"
+              fullRadius
+              aria-label="Añadir una persona"
+              disabled={personas >= MAX_PERSONAS}
+              onClick={() => setPersonas((p) => Math.min(MAX_PERSONAS, p + 1))}
+              className="active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
+            >
+              <CompactButton.Icon as={Plus} />
+            </CompactButton.Root>
+          </div>
+        </div>
       </div>
 
       {/* «Ahorra hasta 15%» (decisión de precio, Fase B): el precio mostrado es

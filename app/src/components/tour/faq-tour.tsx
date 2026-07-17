@@ -12,10 +12,12 @@ import type { FichaTour } from '@/data/tours'
 // preferible a inventarla — y deja la pregunta pendiente a la vista.
 //
 // Etapa A (PLAN-ALIGNUI.md): el acordeón es el Accordion del sistema (Radix,
-// portado de las docs públicas — los templates Pro no lo traen). La HOME
-// conserva ui/acordeon intacto: AlignUI vive de la ficha hacia dentro. Misma
-// conducta que antes: primera pregunta abierta, solo una a la vez (single +
-// collapsible), + / − como indicador (el default del sistema).
+// portado de las docs públicas — los templates Pro no lo traen). Mismo
+// componente que usa la home en su sección FAQ (2026-07-17, ver
+// components/home/faq.tsx — primera pieza de AlignUI en la home, antes
+// vivía solo de la ficha hacia dentro). Misma conducta aquí: primera
+// pregunta abierta, solo una a la vez (single + collapsible), + / − como
+// indicador (el default del sistema).
 //
 // PLAN-INTERNAS-V2.md (§C4, pedido de Samuel): «También te puede gustar»
 // sale de aquí — no le gustaba compartir columna con la FAQ («siento que

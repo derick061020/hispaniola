@@ -1,5 +1,5 @@
+import { Link } from 'react-router-dom'
 import * as Button from '@/components/alignui/button'
-import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
 
 // Comparador anti-OTA (fix 1.6 de analisis/revision-wireframes.md).
 //
@@ -22,10 +22,10 @@ export function ComparadorStrip() {
         , menú a elección y WhatsApp directo.
       </p>
       {/* Etapa A: Button neutral/stroke del sistema (xsmall) — la pastilla
-          blanca de antes, dicha en el idioma AlignUI. Sigue siendo
-          EnlacePrototipo debajo: /reserva-directa vive en el prototipo. */}
+          blanca de antes, dicha en el idioma AlignUI. /reserva-directa ya es
+          página real (2026-07-17). */}
       <Button.Root variant="neutral" mode="stroke" size="xsmall" className="shrink-0" asChild>
-        <EnlacePrototipo>Ver comparación →</EnlacePrototipo>
+        <Link to="/reserva-directa">Ver comparación →</Link>
       </Button.Root>
     </div>
   )

@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import type { Tour } from '@/data/home'
+import { useDevFlag } from '@/dev/use-dev-flag' // [dev-mode]
 
 // Nav de anclas de la ficha (wireframe A2). La ficha es larga y el visitante
 // no llega con la misma pregunta: unos quieren la hora de recogida, otros el
@@ -27,6 +28,16 @@ import type { Tour } from '@/data/home'
 // a abajo y gana la última sección cuyo tope ya cruzó esa línea; al final de
 // la página gana la última (si no, las secciones cortas del pie nunca se
 // activan). rAF para no recalcular en cada píxel. nav+aria-current, no Tabs.
+//
+// Indicador deslizante (2026-07-17, pedido de Samuel): una sola barra
+// `bg-aqua-dark` al pie del nav, que se anima al ancla activa con
+// `transform: translateX(...)` + `width`. Mide la activa con
+// `useLayoutEffect` + `ResizeObserver` (mismo idioma que notch-menu.tsx), no
+// en cada scroll — solo cambia cuando cambia `activa` o el ancho del
+// contenedor. No se renderiza hasta el primer measure: si apareciera en
+// `left:0/width:0` y la transición se disparara hacia la primera activa, la
+// barra saldría DEL borde superior izquierdo en vez de estar ya en su sitio.
+// `motion-safe:` apaga la transición con prefers-reduced-motion.
 export function AnclasFicha({ tour }: { tour: Tour }) {
   const anclas = [
     { id: 'ancla-itinerario', label: 'Itinerario' },
@@ -37,7 +48,15 @@ export function AnclasFicha({ tour }: { tour: Tour }) {
   ]
 
   const [activa, setActiva] = useState(anclas[0]?.id)
+  const [indicator, setIndicator] = useState({ left: 0, width: 0 })
+  const [mounted, setMounted] = useState(false)
+  const navRef = useRef<HTMLDivElement>(null)
   const idsKey = anclas.map((a) => a.id).join()
+
+  // [dev-mode] ?dev-anclas=<id> fuerza la activa al id pasado (p. ej.
+  // `ancla-faq` para capturar la pestaña FAQ como activa en Figma) — el
+  // scroll real del visitante la sobreescribe en cuanto se mueva.
+  useDevFlag('dev-anclas', (v) => setActiva(v))
 
   useEffect(() => {
     const secciones = anclas
@@ -81,6 +100,26 @@ export function AnclasFicha({ tour }: { tour: Tour }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [idsKey])
 
+  // Mide la posición de la activa y la guarda como estado del indicador.
+  // useLayoutEffect: se ejecuta antes del paint → la primera vez la barra
+  // ya aparece en su sitio (sin "viaje" desde 0,0). ResizeObserver (no solo
+  // `resize` del viewport): cubre reflows por fuentes tardías, por la
+  // aparición de «Menú» al cambiar de booking, etc.
+  useLayoutEffect(() => {
+    const cont = navRef.current
+    if (!cont) return
+    const medir = () => {
+      const el = cont.querySelector<HTMLElement>(`[data-ancla="${activa}"]`)
+      if (!el) return
+      setIndicator({ left: el.offsetLeft, width: el.offsetWidth })
+      setMounted(true)
+    }
+    medir()
+    const ro = new ResizeObserver(medir)
+    ro.observe(cont)
+    return () => ro.disconnect()
+  }, [activa, anclas.length])
+
   // El salto va suave, pero con `scrollIntoView` y NO con
   // `html { scroll-behavior: smooth }`: ese es global y cambiaría también los
   // anclas de la home (#tours del hero y del header), que esta fase no toca.
@@ -99,12 +138,16 @@ export function AnclasFicha({ tour }: { tour: Tour }) {
       aria-label="Secciones de esta página"
       className="sticky top-0 z-30 hidden border-b border-linea bg-papel/90 backdrop-blur-sm md:block"
     >
-      <div className="mx-auto flex max-w-contenido gap-1 px-5 sm:px-10">
+      <div
+        ref={navRef}
+        className="relative mx-auto flex max-w-contenido gap-1 px-5 sm:px-10"
+      >
         {anclas.map((a) => {
           const esActiva = a.id === activa
           return (
             <a
               key={a.id}
+              data-ancla={a.id}
               href={`#${a.id}`}
               onClick={(e) => irA(e, a.id)}
               aria-current={esActiva ? 'true' : undefined}
@@ -118,6 +161,16 @@ export function AnclasFicha({ tour }: { tour: Tour }) {
             </a>
           )
         })}
+        {mounted && (
+          <span
+            aria-hidden
+            className="pointer-events-none absolute bottom-0 h-0.5 bg-aqua-dark motion-safe:transition-[transform,width] motion-safe:duration-300 motion-safe:ease-out"
+            style={{
+              width: indicator.width,
+              transform: `translateX(${indicator.left}px)`,
+            }}
+          />
+        )}
       </div>
     </nav>
   )
