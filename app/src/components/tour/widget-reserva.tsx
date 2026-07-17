@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Minus, Plus, Users, Baby, Tag } from 'lucide-react'
+import { Minus, Plus, Users, Baby, Tag, ArrowDown } from 'lucide-react'
 import * as FancyButton from '@/components/alignui/fancy-button'
 import * as CompactButton from '@/components/alignui/compact-button'
 import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
 import { CalendarioWidget } from '@/components/tour/calendario-widget'
+import { SubVariantePicker } from '@/components/tour/sub-variante-picker'
 import { useDevFlag } from '@/dev/use-dev-flag'
 import { hoyISO, sumarDias } from '@/lib/fechas'
 import { formatoDinero, type Tour } from '@/data/home'
@@ -191,6 +192,17 @@ export function WidgetReserva({ tour, ficha }: Props) {
     setFecha(sumarDias(hoyISO(), 1))
     setVariante('catamaran')
   })
+  // [dev-mode] v3 (2026-07-17, Snorkel Lovers): preconfigura el escenario
+  // familiar típico para el frame de Figma — 2 adultos + 1 niño + mañana
+  // elegida (así el CTA muestra el total con la tarifa dual real:
+  // 114×2 + 65×1 = US$ 343). Sin el flag, el state es 2 adultos + 0 niños
+  // (pareja sin niños, el caso más simple — no enseña la fila de Niños).
+  useDevFlag('dev-snorkel', (v) => {
+    if (v !== 'familia') return
+    setFecha(sumarDias(hoyISO(), 1))
+    setAdultos(2)
+    setNinos(1)
+  })
 
   if (tour.booking === 'cotizacion') {
     return (
@@ -234,9 +246,13 @@ export function WidgetReserva({ tour, ficha }: Props) {
   // booking 'completo': el precio se calcula con `calcularTotalTour()`, que
   // entiende los 3 modelos (subVariantes, tarifa dual, light/premium clásico).
   //  - Saona: tramo por pax total según sub-variante.
-  //  - Snorkel Lovers (dual): adultos × precioLight + niños × precioNino
-  //    (×2 si Premium — el menú es el mismo para adultos y niños).
-  //  - Semi-privado, charter: precioLight × personas (+ upgrade si Premium).
+  //  - Snorkel Lovers (dual, sin Light): adultos × precioLight + niños ×
+  //    precioNino. No hay upgrade (la web NO publica Premium para este tour
+  //    — la opción Light/Premium se quitó el 2026-07-17 por pedido de
+  //    Samuel; `paquete` siempre es 'light' y `ficha.upgradePremium` es
+  //    null, así que el cálculo no suma nada).
+  //  - Semi-privado (con Light/Premium): precioLight × personas
+  //    (+ upgrade si Premium).
   const total = calcularTotalTour(
     ficha,
     variante,
@@ -251,7 +267,14 @@ export function WidgetReserva({ tour, ficha }: Props) {
   // modelo clásico (precioLight o premium según el toggle).
   const precioBase = tour.precioLight
   const upgrade = ficha.upgradePremium
-  const tienePaquetes = precioBase !== null && upgrade !== null
+  // v3 (2026-07-17, Snorkel Lovers): el toggle Light/Premium se pinta solo
+  // si el tour TIENE Light definido (`menuLight.length > 0`). Snorkel Lovers
+  // ya no tiene diferenciador de menú (quitado por Samuel: la web del
+  // cliente NO publica Premium para ese tour) — `menuLight: []` por lo
+  // que el toggle no se muestra. Semi-privado, en cambio, sigue con sus
+  // 2 platos de Light, y el toggle se pinta normal.
+  const tienePaquetes =
+    precioBase !== null && upgrade !== null && ficha.menuLight.length > 0
   const tieneSubVariantes = ficha.subVariantes !== undefined && ficha.subVariantes.length > 0
   const precioAncla = tieneSubVariantes
     ? // Ancla "desde": la sub-variante 1 (speedboat), tramo más barato.
@@ -272,50 +295,24 @@ export function WidgetReserva({ tour, ficha }: Props) {
     <Caja>
       <Precio precio={precioAncla} desde={paquete === 'light' || tieneSubVariantes} />
 
-      {/* Selector de paquete o de sub-variante. v3 (2026-07-17): Saona tiene
-          subVariantes y su modelo de diferenciación es por BOTE, no por menú,
-          así que oculta el toggle Light/Premium y pinta un segmented control
-          con las 3 sub-variantes (speedboat / fishing / catamarán). Mismo
-          lenguaje visual que el toggle de Fase B (thumb blanco sobre pista
-          gris, mismo translateX animado). */}
+      {/* Selector de paquete o de sub-variante. v3 (2026-07-17, Saona y
+          charter): cuando hay subVariantes, oculta el toggle Light/Premium y
+          pinta un segmented control con las N sub-variantes (Saona 3:
+          speedboat/fishing/catamarán; charter 4: Maite/GrandMa/Santa
+          Maria/Forever Teresa). Mismo lenguaje visual que el toggle de
+          Fase B (thumb blanco sobre pista gris, mismo translateX animado)
+          — pero el thumb y el grid se calculan dinámicamente según el
+          número de sub-variantes. */}
       {tieneSubVariantes ? (
-        <div>
-          <div className="relative grid grid-cols-3 gap-1 rounded-full bg-linea p-1">
-            <span
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-y-1 left-1 w-[calc(33.333%-0.375rem)] rounded-full bg-papel shadow-sm transition-transform duration-200 ease-out motion-reduce:transition-none"
-              style={{
-                transform:
-                  variante && ficha.subVariantes!.findIndex((s) => s.id === variante) > 0
-                    ? `translateX(calc(${(ficha.subVariantes!.findIndex((s) => s.id === variante) * 100) / 3}% + ${
-                        ficha.subVariantes!.findIndex((s) => s.id === variante) * 4
-                      }px + 4px))`
-                    : 'translateX(0)',
-              }}
-            />
-            {ficha.subVariantes!.map((s) => {
-              const activo = variante === s.id
-              return (
-                <button
-                  key={s.id}
-                  type="button"
-                  onClick={() => setVariante(s.id)}
-                  aria-pressed={activo}
-                  className={`relative z-10 flex items-center justify-center rounded-full px-2 py-2 text-sm font-semibold transition-colors ${
-                    activo ? 'text-navy' : 'text-navy-sub/55 hover:text-navy-sub'
-                  }`}
-                >
-                  {s.nombre}
-                </button>
-              )
-            })}
-          </div>
-          {variante ? (
-            <p className="mt-2 text-center text-xs text-navy-soft">
-              {ficha.subVariantes!.find((s) => s.id === variante)?.capacidad}
-            </p>
-          ) : null}
-        </div>
+        <SubVariantePicker
+          subVariantes={ficha.subVariantes!}
+          activa={variante ?? ficha.subVariantes[0].id}
+          onChange={(id) => {
+            setVariante(id)
+            // Reset horario al cambiar de bote (cada bote tiene sus horarios).
+            setHorario(0)
+          }}
+        />
       ) : tienePaquetes && precioBase !== null && upgrade !== null ? (
         <div>
           <div className="relative grid grid-cols-2 gap-1 rounded-full bg-linea p-1">
@@ -358,36 +355,64 @@ export function WidgetReserva({ tour, ficha }: Props) {
           mostrar la hora antes de la fecha hacía que compitiera con ella y se
           leyera "roto". Revelado debajo del calendario ya elegido, la
           secuencia se explica sola y de paso baja el alto del estado inicial.
-          Peso LIGERO (chip con tinte navy/10 + ring, no relleno navy) para
-          que no pese como el toggle de paquete. Entra con un fade+slide corto
-          (tw-animate-css, importado por alignui.css) para que el reveal se
-          sienta fluido. */}
-      {fecha !== null ? (
-        <div className="duration-200 animate-in fade-in slide-in-from-top-1">
-          <p className="mb-1.5 text-xs font-medium text-navy-sub">Horario</p>
-          <div className="flex flex-wrap gap-1.5">
-            {ficha.horarios.map((h, i) => {
-              const elegido = horario === i
-              return (
-                <button
-                  key={h.hora}
-                  type="button"
-                  onClick={() => setHorario(i)}
-                  aria-pressed={elegido}
-                  className={`rounded-btn px-3 py-1.5 text-sm transition-colors ${
-                    elegido
-                      ? 'bg-navy/10 font-semibold text-navy ring-1 ring-inset ring-navy/20'
-                      : 'bg-papel-hueso text-navy-soft hover:text-navy'
-                  }`}
-                >
-                  {h.hora}
-                  {h.regreso ? <span className="text-navy-soft"> · regreso {h.regreso}</span> : null}
-                </button>
-              )
-            })}
+          Entra con un fade+slide corto (tw-animate-css, importado por
+          alignui.css) para que el reveal se sienta fluido.
+
+          Diseño del chip (3ª vuelta 2026-07-17, pedido de Samuel):
+          2 columnas lado a lado (grid-cols-2 — antes se apilaban con
+          flex-wrap), contenido en 2 líneas con "Salida: HH" arriba,
+          una flecha ↓ y "Regreso: HH PM" abajo. El estado seleccionado
+          ahora es bg-navy text-white (antes era bg-navy/10 ring-1 — se
+          leía como "deshabilitado" por su tinte gris, no como "elegido"). */}
+      {fecha !== null ? (() => {
+        // v3 (2026-07-17, charter): cada bote tiene SUS horarios (2 o 3).
+        // Si la sub-variante activa tiene horarios propios, usamos esos;
+        // si no, los globales de la ficha. Esto evita que se muestren
+        // horarios de OTRO bote cuando el usuario cambia de Maite a
+        // GrandMa.
+        const subActiva = ficha.subVariantes?.find((s) => s.id === variante)
+        const horariosActivos =
+          subActiva?.horarios && subActiva.horarios.length > 0 ? subActiva.horarios : ficha.horarios
+        return (
+          <div className="duration-200 animate-in fade-in slide-in-from-top-1">
+            <p className="mb-1.5 text-xs font-medium text-navy-sub">Horario</p>
+            <div className="grid grid-cols-2 gap-2">
+              {horariosActivos.map((h, i) => {
+                const elegido = horario === i
+                return (
+                  <button
+                    key={h.hora}
+                    type="button"
+                    onClick={() => setHorario(i)}
+                    aria-pressed={elegido}
+                    aria-label={`Salida ${h.hora}${h.regreso ? `, regreso ${h.regreso}` : ''}`}
+                    className={`flex flex-col items-center gap-0.5 rounded-btn px-2 py-2 text-sm transition-colors ${
+                      elegido
+                        ? 'bg-navy font-semibold text-white shadow-sm'
+                        : 'bg-papel-hueso text-navy-soft hover:bg-papel-hueso/80 hover:text-navy'
+                    }`}
+                  >
+                    <span className="text-xs">
+                      Salida: <span className="font-semibold">{h.hora}</span>
+                    </span>
+                    {h.regreso ? (
+                      <>
+                        <ArrowDown
+                          className={`size-3 ${elegido ? 'text-white/70' : 'text-navy-soft/70'}`}
+                          aria-hidden="true"
+                        />
+                        <span className="text-xs">
+                          Regreso: <span className="font-semibold">{h.regreso}</span>
+                        </span>
+                      </>
+                    ) : null}
+                  </button>
+                )
+              })}
+            </div>
           </div>
-        </div>
-      ) : null}
+        )
+      })() : null}
 
       {/* Stepper de personas. 2 modelos:
           - esDual (Snorkel Lovers, v3 2026-07-17): 2 inputs «Adultos» + «Niños»
