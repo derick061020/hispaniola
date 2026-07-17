@@ -12,6 +12,7 @@ import { OpinionesTour } from '@/components/tour/opiniones-tour'
 import { FaqTour } from '@/components/tour/faq-tour'
 import { AnclasFicha } from '@/components/tour/anclas-ficha'
 import { BLOQUE_FICHA } from '@/components/tour/bloque-ficha'
+import { GaleriaMosaico } from '@/components/internas/galeria-mosaico'
 import { TambienTeGusta } from '@/components/internas/tambien-te-gusta'
 import { TOURS } from '@/data/home'
 import { FICHAS } from '@/data/tours'
@@ -52,19 +53,14 @@ export function TourPage() {
     <div className="pb-16 md:pb-0">
       {/* PLAN-INTERNAS-V2.md §C1: el header ya no vive suelto en variante
           'solida' — se muda DENTRO del hero compartido con la home
-          (HeroInterna, variante 'sobreVideo'). Iteración 2026-07-17: el hero
-          vuelve a llevar el video de marca (el de la home) y el mosaico de
-          fotos reales del tour se muda DENTRO del propio hero (a su lado en
-          desktop, en una tira al pie en móvil) — ya no hay una sección de
-          galería aparte justo debajo. El CTA sigue apuntando al widget de
-          esta página — en la home apunta al grid de tours (#tours), que aquí
-          no existe. */}
-      <HeroInterna
-        fotos={[tour.foto, ...ficha.galeriaCompleta]}
-        etiqueta={tour.nombre}
-        ctaHref="#ficha-widget"
-        quote={{ texto: ficha.quoteDestacada, rating: tour.rating }}
-      >
+          (HeroInterna, variante 'sobreVideo'), sobre el video de marca (el
+          de la home). Iteración 2026-07-17, 2ª vuelta: el mosaico de fotos
+          YA NO vive incrustado en el hero (esa 1ª iteración desalineaba el
+          título contra el max-w-contenido del resto de la página, y el grid
+          no pertenecía ahí) — se muda a la columna de contenido, ver más
+          abajo. El CTA sigue apuntando al widget de esta página — en la
+          home apunta al grid de tours (#tours), que aquí no existe. */}
+      <HeroInterna ctaHref="#ficha-widget">
         <CabeceraFicha tour={tour} ficha={ficha} />
       </HeroInterna>
       <AnclasFicha tour={tour} />
@@ -94,6 +90,17 @@ export function TourPage() {
               scroll interno de los chips hacer su trabajo. */}
           <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-[minmax(0,1fr)_var(--spacing-ficha-widget)]">
             <div className="flex flex-col gap-6 lg:gap-8">
+              {/* Iteración 2026-07-17, 2ª vuelta: el mosaico se muda aquí
+                  desde el hero — un bloque MÁS de esta columna (a su ancho,
+                  no ancho completo), no una sección aparte por encima del
+                  nav de anclas como en la v1 de PLAN-TOURS.md. Primero en la
+                  columna: el visitante ve el producto antes de leer texto. */}
+              <GaleriaMosaico
+                fotos={[tour.foto, ...ficha.galeriaCompleta]}
+                etiqueta={tour.nombre}
+                quote={{ texto: ficha.quoteDestacada, rating: tour.rating }}
+              />
+
               <div className={`${BLOQUE_FICHA} flex flex-col gap-6`}>
                 <div>
                   <h2 className="font-display text-h3 font-semibold text-navy">{promesa}</h2>

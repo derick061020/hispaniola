@@ -5,6 +5,7 @@ import { CabeceraEvento } from '@/components/evento/cabecera-evento'
 import { FormatosEvento } from '@/components/evento/formatos-evento'
 import { IncluyeEvento } from '@/components/evento/incluye-evento'
 import { CierreEvento } from '@/components/evento/cierre-evento'
+import { GaleriaMosaico } from '@/components/internas/galeria-mosaico'
 import { EVENTOS } from '@/data/eventos'
 
 // Landing de evento — UNA plantilla para las 2 landings con destino propio
@@ -34,12 +35,10 @@ export function EventoPage() {
     <div>
       {/* PLAN-INTERNAS-V2.md §C5: hero compartido con la home y la ficha de
           tour (HeroInterna) — el header pasa a vivir DENTRO, sobre el video
-          de marca; las fotos reales del evento (evento.galeria) arman el
-          mosaico incrustado en el propio hero (iteración 2026-07-17).
-          «Reservar» del header apunta a la banda de cierre: en esta página
-          no existe ni #tours (home) ni el widget (ficha) — lo reservable
-          aquí es pedir la cotización. */}
-      <HeroInterna fotos={evento.galeria} etiqueta={evento.nombre} ctaHref="#evento-cierre">
+          de marca. «Reservar» del header apunta a la banda de cierre: en
+          esta página no existe ni #tours (home) ni el widget (ficha) — lo
+          reservable aquí es pedir la cotización. */}
+      <HeroInterna ctaHref="#evento-cierre">
         <CabeceraEvento evento={evento} />
       </HeroInterna>
 
@@ -63,6 +62,12 @@ export function EventoPage() {
 
       <div className="mx-auto max-w-contenido px-5 py-12 sm:px-10 lg:py-16">
         <div className="flex flex-col gap-12 lg:gap-16">
+          {/* Iteración 2026-07-17, 2ª vuelta: el mosaico se muda aquí desde
+              el hero — un bloque más del contenido, no incrustado en el
+              hero (ver internas/hero-interna.tsx). Fotos PROVISIONALES de
+              charter-privado, mismo criterio que antes. */}
+          <GaleriaMosaico fotos={evento.galeria} etiqueta={evento.nombre} />
+
           <FormatosEvento evento={evento} />
           <IncluyeEvento evento={evento} />
           <CierreEvento evento={evento} />

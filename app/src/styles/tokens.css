@@ -734,6 +734,15 @@
   --spacing-sticky-top: calc(var(--spacing-header-alto) + var(--spacing-anclas-alto) + 1rem);
   /* Columna del widget de reserva en desktop (T-F3). */
   --spacing-ficha-widget: 24rem; /* 384px */
+  /* Alto del mosaico de fotos (internas/galeria-mosaico.tsx) en desktop —
+     iteración 2026-07-17: vive DENTRO de la columna de contenido (no ya en
+     el hero ni en su propia sección a ancho completo), así que es más bajo
+     que el --spacing-mosaico-alto original (28rem): esa columna es más
+     angosta (le resta el ancho del widget) y un cuadrante 2×2 sin celda
+     grande no necesita tanto alto para verse bien. Móvil usa una escala
+     Tailwind plana (h-56/sm:h-72), como el resto de alturas ad hoc de la
+     ficha. */
+  --spacing-galeria-ficha-alto: 22rem; /* 352px — lg: en adelante */
 
   /* ---------- Internas v2 (PLAN-INTERNAS-V2.md) ----------
      Hero compartido de la ficha de tour y la landing de evento: mismo
