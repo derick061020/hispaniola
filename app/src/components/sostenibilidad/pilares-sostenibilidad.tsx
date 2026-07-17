@@ -38,7 +38,7 @@ export function PilaresSostenibilidad() {
               <h3 className="sost-item-titulo font-display text-h3 font-semibold text-navy">{p.titulo}</h3>
             </div>
 
-            <div className="sm:max-w-xl sm:pt-1">
+            <div className="sm:max-w-2xl sm:pt-1">
               <p className="text-lead text-navy-sub">{p.texto}</p>
 
               {p.stats ? (

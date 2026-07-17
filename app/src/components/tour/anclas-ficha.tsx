@@ -30,14 +30,21 @@ import { useDevFlag } from '@/dev/use-dev-flag' // [dev-mode]
 // activan). rAF para no recalcular en cada píxel. nav+aria-current, no Tabs.
 //
 // Indicador deslizante (2026-07-17, pedido de Samuel): una sola barra
-// `bg-aqua-dark` al pie del nav, que se anima al ancla activa con
-// `transform: translateX(...)` + `width`. Mide la activa con
-// `useLayoutEffect` + `ResizeObserver` (mismo idioma que notch-menu.tsx), no
-// en cada scroll — solo cambia cuando cambia `activa` o el ancho del
-// contenedor. No se renderiza hasta el primer measure: si apareciera en
-// `left:0/width:0` y la transición se disparara hacia la primera activa, la
-// barra saldría DEL borde superior izquierdo en vez de estar ya en su sitio.
-// `motion-safe:` apaga la transición con prefers-reduced-motion.
+// `bg-aqua-dark` al ras del texto de la activa (no al pie del nav — el `py-3.5`
+// del link dejaría la línea ~14px suelta debajo de la palabra y se ve
+// "desfasada"). Mide el TEXTO con `getBoundingClientRect()` (no el `<a>` con
+// `offsetLeft`/`offsetWidth` — eso medía la caja, que incluye el `px-3` de
+// 12px, y la línea quedaba más ancha que la palabra). `getBoundingClientRect`
+// es más fiable que `offsetLeft` para esto: no se lia con el `offsetParent`
+// del flex item (sería la `relative` interna, pero la geometría del `gap-1` +
+// padding del contenedor puede desfasar la lectura). `useLayoutEffect` +
+// `ResizeObserver` (mismo idioma que notch-menu.tsx). No se renderiza hasta
+// el primer measure: si apareciera en `left:0/width:0` y la transición se
+// disparara hacia la primera activa, la barra saldría DEL borde superior
+// izquierdo. `left` y `width` animan con transition; `top` se setea directo
+// (la posición vertical del texto no cambia al alternar entre tabs del
+// mismo `text-sm` single-line). `motion-safe:` apaga la transición con
+// prefers-reduced-motion.
 export function AnclasFicha({ tour }: { tour: Tour }) {
   const anclas = [
     { id: 'ancla-itinerario', label: 'Itinerario' },
@@ -48,7 +55,7 @@ export function AnclasFicha({ tour }: { tour: Tour }) {
   ]
 
   const [activa, setActiva] = useState(anclas[0]?.id)
-  const [indicator, setIndicator] = useState({ left: 0, width: 0 })
+  const [indicator, setIndicator] = useState({ left: 0, top: 0, width: 0 })
   const [mounted, setMounted] = useState(false)
   const navRef = useRef<HTMLDivElement>(null)
   const idsKey = anclas.map((a) => a.id).join()
@@ -100,18 +107,29 @@ export function AnclasFicha({ tour }: { tour: Tour }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [idsKey])
 
-  // Mide la posición de la activa y la guarda como estado del indicador.
-  // useLayoutEffect: se ejecuta antes del paint → la primera vez la barra
-  // ya aparece en su sitio (sin "viaje" desde 0,0). ResizeObserver (no solo
-  // `resize` del viewport): cubre reflows por fuentes tardías, por la
-  // aparición de «Menú» al cambiar de booking, etc.
+  // Mide la posición del TEXTO de la activa y la guarda como estado del
+  // indicador. useLayoutEffect: se ejecuta antes del paint → la primera vez
+  // la barra ya aparece en su sitio (sin "viaje" desde 0,0). ResizeObserver
+  // (no solo `resize` del viewport): cubre reflows por fuentes tardías, por
+  // la aparición de «Menú» al cambiar de booking, etc.
   useLayoutEffect(() => {
     const cont = navRef.current
     if (!cont) return
     const medir = () => {
-      const el = cont.querySelector<HTMLElement>(`[data-ancla="${activa}"]`)
-      if (!el) return
-      setIndicator({ left: el.offsetLeft, width: el.offsetWidth })
+      const linkEl = cont.querySelector<HTMLElement>(`[data-ancla="${activa}"]`)
+      if (!linkEl) return
+      const textEl = linkEl.querySelector<HTMLElement>('[data-ancla-label]') ?? linkEl
+      const contRect = cont.getBoundingClientRect()
+      const textRect = textEl.getBoundingClientRect()
+      setIndicator({
+        left: textRect.left - contRect.left,
+        // 2px de aire bajo el texto (medido incluyendo descendentes) — la
+        // línea es `h-0.5` (2px), así que el bloque total línea+gap mide
+        // 4px desde la base del texto. Lo suficiente para que no se lea
+        // como "subrayado" tipográfico (que tocaría la baseline).
+        top: textRect.bottom - contRect.top + 2,
+        width: textRect.width,
+      })
       setMounted(true)
     }
     medir()
@@ -157,17 +175,18 @@ export function AnclasFicha({ tour }: { tour: Tour }) {
                   : 'text-navy-sub hover:bg-papel-hueso hover:text-navy'
               }`}
             >
-              {a.label}
+              <span data-ancla-label>{a.label}</span>
             </a>
           )
         })}
         {mounted && (
           <span
             aria-hidden
-            className="pointer-events-none absolute bottom-0 h-0.5 bg-aqua-dark motion-safe:transition-[transform,width] motion-safe:duration-300 motion-safe:ease-out"
+            className="pointer-events-none absolute h-0.5 bg-aqua-dark motion-safe:transition-[left,width] motion-safe:duration-300 motion-safe:ease-out"
             style={{
+              left: indicator.left,
+              top: indicator.top,
               width: indicator.width,
-              transform: `translateX(${indicator.left}px)`,
             }}
           />
         )}

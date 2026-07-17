@@ -100,16 +100,33 @@ export const TOURS: Tour[] = [
   {
     slug: 'isla-saona',
     nombre: 'Isla Saona',
-    audienciaChip: 'Privado',
+    // v3 (2026-07-17, petición de Samuel al reemerger como producto completo):
+    // Saona deja de ser "pendiente de confirmar" y se publica con su contenido
+    // real de la web del cliente. Pasa de booking 'consulta' a 'completo'
+    // (3 sub-variantes: speedboat / fishing town / catamarán — ver
+    // FICHAS['isla-saona'].subVariantes en data/tours.ts). precioLight es la
+    // ancla "desde" en el widget: el speedboat para 6 pax son US$ 1.100 grupo,
+    // ~US$ 184 por persona. Es un ancla visual (no un precio por persona real,
+    // porque Saona se vende por GRUPO — el widget lo recalcula por tramo al
+    // elegir variante y pax).
+    audienciaChip: 'Día completo',
     duracionCorta: 'día completo',
     rating: 4.9,
     resenas: 1782,
-    maxPax: null,
-    precioLight: null,
-    booking: 'consulta',
+    maxPax: 70,
+    precioLight: 184,
+    booking: 'completo',
     descripcionCorta:
-      'Día completo navegando a Isla Saona: playas de arena blanca, piscina natural y almuerzo típico dominicano. Precio y capacidad pendientes de confirmar.',
+      'Día completo navegando a Isla Saona: elige speedboat, catamarán o lancha con parada en Mano Juan. Piscina natural con estrellas gigantes y buffet en la isla.',
     foto: 'tour-isla-saona',
+    galeria: [
+      'galeria-isla-saona-1',
+      'galeria-isla-saona-2',
+      'galeria-isla-saona-3',
+      'galeria-isla-saona-4',
+      'galeria-isla-saona-5',
+    ],
+    destacados: ['Speedboat o catamarán', 'Piscina natural + buffet', 'Día completo'],
   },
 ]
 

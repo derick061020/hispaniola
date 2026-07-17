@@ -60,7 +60,7 @@ export function ListaGuias() {
                 <h3 className="guias-item-titulo font-display text-h3 font-semibold text-navy">{g.titulo}</h3>
               </div>
 
-              <div className="sm:max-w-xl sm:pt-1">
+              <div className="sm:max-w-2xl sm:pt-1">
                 <p className="text-lead text-navy-sub">{g.resumen}</p>
               </div>
             </article>

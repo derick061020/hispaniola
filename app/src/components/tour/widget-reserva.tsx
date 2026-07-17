@@ -8,7 +8,7 @@ import { CalendarioWidget } from '@/components/tour/calendario-widget'
 import { useDevFlag } from '@/dev/use-dev-flag'
 import { hoyISO, sumarDias } from '@/lib/fechas'
 import { formatoDinero, type Tour } from '@/data/home'
-import { WHATSAPP_URL, type FichaTour } from '@/data/tours'
+import { WHATSAPP_URL, calcularTotalTour, type FichaTour } from '@/data/tours'
 
 // «El widget ES la página» (wireframe A2): sticky en desktop, con el precio en
 // el primer viewport — en la web actual ese precio está a 6 pantallas de
@@ -140,6 +140,14 @@ export function WidgetReserva({ tour, ficha }: Props) {
   // Fase B: el paquete se elige en el widget. Abre en Light (ancla US$ 99);
   // Premium es opt-in explícito — ver la nota de bait-and-switch de arriba.
   const [paquete, setPaquete] = useState<'light' | 'premium'>('light')
+  // v3 (2026-07-17, Saona): cuando el tour tiene subVariantes (Saona:
+  // speedboat / fishing / catamarán), el selector de paquetes pasa a ser un
+  // selector de BOTE — el toggle Light/Premium se oculta. El id arranca en
+  // la 1ª sub-variante (speedboat, la más común). El cálculo del total se
+  // delega en `calcularTotalTour()` (data/tours.ts) para que la lógica de
+  // tramos viva en datos, no en el componente.
+  const varianteInicial = ficha.subVariantes?.[0]?.id ?? null
+  const [variante, setVariante] = useState<string | null>(varianteInicial)
 
   // [dev-mode] deep-link del Glosario Dev — ver src/dev/dev-registry.ts.
   // 'fecha' elige mañana (nunca cae en uno de los 2 días agotados de ejemplo
@@ -191,34 +199,87 @@ export function WidgetReserva({ tour, ficha }: Props) {
     )
   }
 
-  // booking 'completo': precio reactivo al paquete elegido. El ancla es Light;
-  // Premium suma el upgrade real (delta de data/tours.ts). Los tours 'completo'
-  // siempre traen precio y upgrade, pero se comprueba null por el tipo.
+  // booking 'completo': el precio se calcula con `calcularTotalTour()`, que
+  // entiende los 2 modelos:
+  //  - Light/Premium (semi-privado, snorkel-lovers): `precioLight + upgrade ×
+  //    personas`. El ancla visual es Light; Premium opt-in.
+  //  - SubVariantes (Saona): busca el tramo que contiene `personas` en la
+  //    tabla de la sub-variante activa. `precioPersona` aquí NO es por
+  //    persona — es el precio de la sub-variante mostrada en la cabecera
+  //    del widget (ancla: el tramo más barato), y `total` es el resultado
+  //    del tramo al pax actual.
+  const total = calcularTotalTour(ficha, variante, personas, tour.precioLight)
+  // Ancla del widget: el "desde" que se ve en la cabecera. Con
+  // subVariantes es el tramo más barato de la 1ª variante; sin ellas, el
+  // modelo clásico (precioLight o premium según el toggle).
   const precioBase = tour.precioLight
   const upgrade = ficha.upgradePremium
   const tienePaquetes = precioBase !== null && upgrade !== null
-  const precioPersona =
-    paquete === 'premium' && precioBase !== null && upgrade !== null ? precioBase + upgrade : precioBase
-  const total = precioPersona !== null ? precioPersona * personas : null
+  const tieneSubVariantes = ficha.subVariantes !== undefined && ficha.subVariantes.length > 0
+  const precioAncla = tieneSubVariantes
+    ? // Ancla "desde": la sub-variante 1 (speedboat), tramo más barato.
+      // Sirve para pintar el "Desde US$ X por persona" de la cabecera cuando
+      // el grupo aún no se ha ajustado — la sala varía al cambiar pax.
+      (() => {
+        const v = ficha.subVariantes![0]
+        const t = v.tabla.reduce((min, tr) => (tr.precio < min.precio ? tr : min), v.tabla[0])
+        // "Por persona" cuando es tramo-por-persona; "Grupo" cuando es fijo.
+        const porPersona = t.tipo === 'persona' ? t.precio : Math.round(t.precio / t.desde)
+        return porPersona
+      })()
+    : paquete === 'premium' && tienePaquetes
+      ? precioBase! + upgrade!
+      : precioBase
 
   return (
     <Caja>
-      <Precio precio={precioPersona} desde={paquete === 'light'} />
+      <Precio precio={precioAncla} desde={paquete === 'light' || tieneSubVariantes} />
 
-      {/* Selector de paquete (Fase B). Solo si el tour vende por paquetes
-          (upgradePremium !== null). TOGGLE SEGMENTADO tipo iOS (2ª vuelta
-          2026-07-17, pedido de Samuel): el THUMB activo es BLANCO PURO
-          (bg-papel + shadow-sm), no relleno navy — así el control pesa MENOS
-          (competía con la fila de horario). La pista va un punto más oscura
-          (bg-linea, no bg-papel-hueso) para que el thumb blanco se despegue.
-          Texto del segmento activo en navy (sobre el thumb blanco); el
-          inactivo, atenuado (opacidad) para que solo "grite" el elegido.
-          Cada mitad lleva su tarifa de LISTA inline (99 vs 114 de un
-          vistazo); sin el conteo de platos (eso vive en la sección de menú).
-          El ancho/desplazamiento del thumb deriva de p-1 (4px) + gap-1 (4px):
-          cada segmento mide calc(50% - 6px) y el salto al 2º es su ancho +
-          el gap → translateX(100% + 4px). */}
-      {tienePaquetes && precioBase !== null && upgrade !== null ? (
+      {/* Selector de paquete o de sub-variante. v3 (2026-07-17): Saona tiene
+          subVariantes y su modelo de diferenciación es por BOTE, no por menú,
+          así que oculta el toggle Light/Premium y pinta un segmented control
+          con las 3 sub-variantes (speedboat / fishing / catamarán). Mismo
+          lenguaje visual que el toggle de Fase B (thumb blanco sobre pista
+          gris, mismo translateX animado). */}
+      {tieneSubVariantes ? (
+        <div>
+          <div className="relative grid grid-cols-3 gap-1 rounded-full bg-linea p-1">
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-y-1 left-1 w-[calc(33.333%-0.375rem)] rounded-full bg-papel shadow-sm transition-transform duration-200 ease-out motion-reduce:transition-none"
+              style={{
+                transform:
+                  variante && ficha.subVariantes!.findIndex((s) => s.id === variante) > 0
+                    ? `translateX(calc(${(ficha.subVariantes!.findIndex((s) => s.id === variante) * 100) / 3}% + ${
+                        ficha.subVariantes!.findIndex((s) => s.id === variante) * 4
+                      }px + 4px))`
+                    : 'translateX(0)',
+              }}
+            />
+            {ficha.subVariantes!.map((s) => {
+              const activo = variante === s.id
+              return (
+                <button
+                  key={s.id}
+                  type="button"
+                  onClick={() => setVariante(s.id)}
+                  aria-pressed={activo}
+                  className={`relative z-10 flex items-center justify-center rounded-full px-2 py-2 text-sm font-semibold transition-colors ${
+                    activo ? 'text-navy' : 'text-navy-sub/55 hover:text-navy-sub'
+                  }`}
+                >
+                  {s.nombre}
+                </button>
+              )
+            })}
+          </div>
+          {variante ? (
+            <p className="mt-2 text-center text-xs text-navy-soft">
+              {ficha.subVariantes!.find((s) => s.id === variante)?.capacidad}
+            </p>
+          ) : null}
+        </div>
+      ) : tienePaquetes && precioBase !== null && upgrade !== null ? (
         <div>
           <div className="relative grid grid-cols-2 gap-1 rounded-full bg-linea p-1">
             <span
@@ -370,7 +431,12 @@ export function WidgetReserva({ tour, ficha }: Props) {
         <FancyButton.Root variant="primary" className="w-full" asChild>
           <Link
             to={`/reservar/${tour.slug}?${new URLSearchParams({
-              paquete,
+              // Saona (subVariantes) manda `variante` en vez de `paquete` (no
+              // hay Light/Premium — el menú buffet es igual en las 3
+              // sub-variantes; lo que cambia es el BOTE). El funnel aún no
+              // conoce `variante` — cuando se desbloquee la frontera con el
+              // motor, leerá este param y hará la rama de sub-variante.
+              ...(tieneSubVariantes ? { variante: variante ?? '' } : { paquete }),
               fecha,
               horario: String(horario),
               personas: String(personas),
