@@ -7,6 +7,20 @@
 
 export const DIAS_CORTOS = ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb']
 export const MESES_CORTOS = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic']
+export const MESES = [
+  'enero',
+  'febrero',
+  'marzo',
+  'abril',
+  'mayo',
+  'junio',
+  'julio',
+  'agosto',
+  'septiembre',
+  'octubre',
+  'noviembre',
+  'diciembre',
+]
 
 export function fechaAISO(d: Date): string {
   return (
@@ -39,4 +53,14 @@ export function diaCorto(iso: string): string {
 
 export function numeroDeDia(iso: string): number {
   return parseFechaISO(iso).getDate()
+}
+
+// Para el grid mensual del calendario (calendario-widget.tsx): en qué columna
+// (0=domingo, igual que DIAS_CORTOS) cae el día 1, y cuántos días tiene el mes.
+export function primerDiaSemana(anio: number, mes: number): number {
+  return new Date(anio, mes, 1).getDay()
+}
+
+export function diasEnMes(anio: number, mes: number): number {
+  return new Date(anio, mes + 1, 0).getDate()
 }

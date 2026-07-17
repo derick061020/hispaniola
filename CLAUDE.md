@@ -16,9 +16,11 @@ luego se traslada a Figma vía MCP — mismo flujo probado en Eventus/Synexia.
 - **AlignUI en las páginas internas** (desde 2026-07-16, `app/PLAN-ALIGNUI.md`):
   la ficha de tour y el resto de páginas internas usan el design system AlignUI
   (copy-in del vendor en `src/components/alignui/` + `src/lib/alignui/`), tematizado
-  a la paleta Hispaniola en `src/styles/alignui.css`. **La home y el shell NO lo
-  usan** — AlignUI vive de la ficha hacia dentro. Esto deroga «sin librerías de UI»
-  solo para internas. `src/components/alignui/` y `src/styles/alignui.css` son la
+  a la paleta Hispaniola en `src/styles/alignui.css`. **La home usa únicamente el
+  Accordion** (sección FAQ, decisión de Samuel 2026-07-17); el resto de la home y
+  el shell siguen sin AlignUI — el sistema completo vive de la ficha hacia dentro.
+  Esto deroga «sin librerías de UI» solo para internas (y, puntualmente, para ese
+  Accordion de la home). `src/components/alignui/` y `src/styles/alignui.css` son la
   capa de tokens del sistema AlignUI: sus hex/valores están ahí a propósito y se
   excluyen del grep de «cero hex», igual que `src/dev/`. Las piezas vendor NO se
   editan a mano — se personalizan por `className`/wrappers. En Figma mapean al kit

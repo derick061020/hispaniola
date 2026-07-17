@@ -27,8 +27,12 @@ proceso código-primero → Figma probado en Eventus y Synexia.
 
 ## Principios no negociables
 
-1. **Todo es visual.** Sin backend, sin lógica real. Interacciones solo las que se ven:
-   menús, hover, carrusel, estados del buscador simulados.
+1. ~~**Todo es visual.** Sin backend, sin lógica real.~~ **Superado (2026-07-17,
+   `PLAN-LANZAMIENTO.md`):** este código pasa a ser también el frontend real que
+   Derick conecta a backend, no solo la fuente para Figma (que sigue siendo un
+   entregable válido en paralelo). El resto de principios de este archivo sigue
+   en pie. Interacciones solo las que se ven — menús, hover, carrusel, estados
+   del buscador simulados — seguía siendo la regla hasta ese punto.
 2. **Tokens primero.** Cada color, radio, spacing y estilo de texto vive en
    `src/styles/tokens.css` (`@theme` de Tailwind v4). **Cero hex ni px mágicos en
    componentes** — esos tokens serán las variables de Figma en el traspaso.

@@ -1,7 +1,7 @@
 // Contenido de las LANDINGS de eventos — portado de prototipo/app.js
 // (renderBodas / renderEmpresas, la implementación canónica) y de
 // prototipo/datos.js (OCASIONES). Solo Bodas y Empresas/MICE tienen landing
-// propia (`esLanding: true` en datos.js); las otras 4 ocasiones van al
+// propia (`esLanding: true` en datos.js); «Eventos y party boat» va al
 // formulario del hub de eventos, que sigue en el prototipo (depende del
 // formulario de cotización, fuera de este build — como el funnel).
 //

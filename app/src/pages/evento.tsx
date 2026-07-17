@@ -7,6 +7,7 @@ import { IncluyeEvento } from '@/components/evento/incluye-evento'
 import { CierreEvento } from '@/components/evento/cierre-evento'
 import { GaleriaMosaico } from '@/components/internas/galeria-mosaico'
 import { EVENTOS } from '@/data/eventos'
+import { Meta } from '@/components/seo/meta'
 
 // Landing de evento — UNA plantilla para las 2 landings con destino propio
 // (Bodas y Empresas/MICE, las `esLanding: true` de OCASIONES), igual que la
@@ -19,10 +20,10 @@ import { EVENTOS } from '@/data/eventos'
 // (el hub de eventos, con deep-link ?tipo=) vive en el prototipo, fuera de
 // este build — misma frontera que el funnel en la ficha de tour.
 //
-// Las otras 4 ocasiones (cumpleaños, aniversarios, despedidas, reuniones) NO
-// tienen landing: van directas al formulario del hub con el tipo
-// preseleccionado (NOTAS['eventos-hub'] del prototipo) — una landing por
-// ocasión sin contenido propio sería relleno.
+// «Eventos y party boat» (el 3er ítem, que absorbe cumpleaños, aniversarios,
+// despedidas y reuniones) NO tiene landing: va directo al formulario del hub
+// (NOTAS['eventos-hub'] del prototipo) — una landing sin contenido propio sería
+// relleno.
 export function EventoPage() {
   const { slug } = useParams()
   const evento = slug ? EVENTOS[slug] : undefined
@@ -33,6 +34,7 @@ export function EventoPage() {
 
   return (
     <div>
+      <Meta titulo={evento.titulo} descripcion={evento.sub} ruta={`/eventos/${slug}`} />
       {/* PLAN-INTERNAS-V2.md §C5: hero compartido con la home y la ficha de
           tour (HeroInterna) — el header pasa a vivir DENTRO, sobre el video
           de marca. «Reservar» del header apunta a la banda de cierre: en

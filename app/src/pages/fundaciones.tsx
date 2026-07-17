@@ -14,6 +14,7 @@ import * as Badge from '@/components/alignui/badge'
 import * as StatusBadge from '@/components/alignui/status-badge'
 import * as TabMenu from '@/components/alignui/tab-menu-horizontal'
 import * as Divider from '@/components/alignui/divider'
+import { Meta } from '@/components/seo/meta'
 const swatches: { nombre: string; token: string; hex: string; textoClaro?: boolean }[] = [
   { nombre: 'Papel', token: 'papel', hex: '#FFFFFF' },
   { nombre: 'Papel hueso', token: 'papel-hueso', hex: '#F7F9FA' },
@@ -28,6 +29,12 @@ const swatches: { nombre: string; token: string; hex: string; textoClaro?: boole
 export function FundacionesPage() {
   return (
     <main className="mx-auto max-w-4xl px-6 py-12">
+      <Meta
+        titulo="Fundaciones (interno)"
+        descripcion="Página interna de validación de tokens y componentes — no es contenido del sitio."
+        ruta="/fundaciones"
+        indexable={false}
+      />
       <p className="text-xs font-semibold uppercase tracking-wide text-aqua-dark">Fundaciones — F0</p>
       <h1 className="mt-2 font-display text-h2 font-semibold text-navy">
         v3 — Hero inmersivo
