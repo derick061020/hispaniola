@@ -42,7 +42,7 @@ import { WHATSAPP_URL, calcularTotalTour, type FichaTour } from '@/data/tours'
 // FancyButton trae su propio relieve (shadow-fancy-buttons-primary) y los dos
 // lenguajes de sombra a la vez se pelean.
 
-type Props = { tour: Tour; ficha: FichaTour }
+type Props = { tour: Tour; ficha: FichaTour; variante?: string | null; onVarianteChange?: (id: string) => void }
 
 // Tope del contador de personas de ESTE booking. v3 (2026-07-17, Saona): con
 // subVariantes (Saona: speedboat hasta 25, catamarán hasta 70) el tope
@@ -86,23 +86,39 @@ function Caja({ children }: { children: React.ReactNode }) {
 // widget dice literalmente "Desde USD 94.00 por persona", no 3 fragmentos
 // pegados). Reemplaza al layout anterior (monto grande + "/persona · desde"
 // suelto detrás, en ESE orden: sonaba a 3 etiquetas de depuración, no a una
-// frase). `desde` antepone "Desde": se usa cuando el precio es un SUELO
-// (Light, o el «desde US$ 75» de una cotización), no cuando es la tarifa
-// exacta ya elegida (Premium).
-function Precio({ precio, desde = false }: { precio: number | null; desde?: boolean }) {
+// frase).
+//
+// v3 (2026-07-17, charter): la unidad ya no es siempre "por persona" — el
+// tramo activo de cada bote puede ser `tipo: 'grupo'` (precio fijo de
+// grupo, ej: Maite 1-8 pax = US$ 625 grupo) o `tipo: 'persona'`
+// (US$/pax × pax, ej: Maite 9-19 pax = US$ 99 × N). `unidad` lo dice:
+// - 'persona' → «US$ 99 por persona»
+// - 'grupo'   → «US$ 825 por grupo» (precio fijo, NO multiplica)
+// - 'desde'   → «Desde US$ 75 por persona» (ancla de la home, no hay
+//   tramo que aplique todavía — se muestra solo como fallback cuando
+//   personas no entra en ningún tramo, o en Light cuando no hay
+//   subVariantes).
+function Precio({
+  precio,
+  unidad = 'persona',
+}: {
+  precio: number | null
+  unidad?: 'persona' | 'grupo' | 'desde'
+}) {
   if (precio === null) {
     return <p className="font-display text-precio font-semibold text-navy">US$ —</p>
   }
+  const sufijo = unidad === 'grupo' ? 'por grupo' : 'por persona'
   return (
     <p className="text-navy">
-      {desde ? <span className="text-sm text-navy-sub">Desde </span> : null}
+      {unidad === 'desde' ? <span className="text-sm text-navy-sub">Desde </span> : null}
       <span className="font-display text-precio font-semibold">{formatoDinero(precio)}</span>
-      <span className="text-sm text-navy-sub"> por persona</span>
+      <span className="text-sm text-navy-sub"> {sufijo}</span>
     </p>
   )
 }
 
-export function WidgetReserva({ tour, ficha }: Props) {
+export function WidgetReserva({ tour, ficha, variante: varianteProp, onVarianteChange }: Props) {
   const [fecha, setFecha] = useState<string | null>(null)
   const [horario, setHorario] = useState(0)
   // v3 (2026-07-17, Snorkel Lovers): tarifa dual Adulto/Niño. Cuando el tour
@@ -124,8 +140,20 @@ export function WidgetReserva({ tour, ficha }: Props) {
   // la 1ª sub-variante (speedboat, la más común). El cálculo del total se
   // delega en `calcularTotalTour()` (data/tours.ts) para que la lógica de
   // tramos viva en datos, no en el componente.
+  //
+  // v3 (2026-07-17, charter): el state es CONTROLADO cuando el padre pasa
+  // `variante`/`onVarianteChange` (lo hace `tour.tsx` para que la
+  // `TablaPreciosCharter` de la izquierda pueda pintar el highlight del
+  // bote activo). Si las props NO vienen (tours sin subVariantes: el state
+  // interno nunca se lee), el componente cae a su propio useState —
+  // compatibilidad con semi-privado y snorkel-lovers.
   const varianteInicial = ficha.subVariantes?.[0]?.id ?? null
-  const [variante, setVariante] = useState<string | null>(varianteInicial)
+  const [varianteLocal, setVarianteLocal] = useState<string | null>(varianteInicial)
+  const variante = varianteProp !== undefined ? varianteProp : varianteLocal
+  const setVariante = (id: string) => {
+    if (onVarianteChange) onVarianteChange(id)
+    setVarianteLocal(id)
+  }
   // Tope del stepper de personas:
   //  - esDual (Snorkel Lovers): el max del tour (30).
   //  - subVariantes (Saona): el tramo más alto (70 en catamarán).
@@ -168,21 +196,51 @@ export function WidgetReserva({ tour, ficha }: Props) {
     setAdultos(2)
     setNinos(1)
   })
-  // [dev-mode] v3 (2026-07-17, charter): preconfigura Forever Teresa
-  // con 30 pax (tramo 30-120, US$ 75/pax = US$ 2.250) + mañana. Es el
-  // frame más útil para enseñar el selector de 4 botes con la card de
-  // preview del bote activo y el cálculo por persona en el tramo alto.
+  // [dev-mode] v3 (2026-07-17, charter): escenarios preconfigurados para
+  // capturar el frame de Figma con cada tipo de tramo visible. Cada valor
+  // del flag elige bote + pax + mañana, así la TablaPreciosCharter de la
+  // izquierda pinta el highlight del bote activo y el desglose del
+  // widget muestra la fórmula correcta (US$/pax × N para tramos por
+  // persona, "precio fijo de grupo" para tramos por grupo).
+  //  - 'forever-teresa' (default recomendado): el tramo ALTO por persona
+  //    (30-120, US$ 75/pax) — 30 pax × 75 = US$ 2.250.
+  //  - 'maite-8': el tramo grupo de Maite (1-8 pax, US$ 625 fijo) — el
+  //    usuario ve el caso "precio fijo de grupo", no multiplica.
+  //  - 'maite-12': el tramo persona de Maite (9-19, US$ 99/pax) — el
+  //    usuario ve el caso "US$ 99 × 12 = US$ 1.188".
+  //  - 'grandma-5': el único tramo de GrandMa (1-20 pax, US$ 825 fijo).
   useDevFlag('dev-charter', (v) => {
-    if (v !== 'forever-teresa') return
-    setFecha(sumarDias(hoyISO(), 1))
-    setVariante('forever-teresa')
-    setPersonas(30)
+    const fechaManana = sumarDias(hoyISO(), 1)
+    if (v === 'forever-teresa') {
+      setFecha(fechaManana)
+      setVariante('forever-teresa')
+      setPersonas(30)
+      return
+    }
+    if (v === 'maite-8') {
+      setFecha(fechaManana)
+      setVariante('maite')
+      setPersonas(8)
+      return
+    }
+    if (v === 'maite-12') {
+      setFecha(fechaManana)
+      setVariante('maite')
+      setPersonas(12)
+      return
+    }
+    if (v === 'grandma-5') {
+      setFecha(fechaManana)
+      setVariante('grandma')
+      setPersonas(5)
+      return
+    }
   })
 
   if (tour.booking === 'cotizacion') {
     return (
       <Caja>
-        <Precio precio={tour.precioLight} desde />
+        <Precio precio={tour.precioLight} unidad="desde" />
         <p className="text-sm text-navy-sub">
           Este tour se cotiza a tu medida según nº de personas y menú — hasta {tour.maxPax} personas.
         </p>
@@ -201,7 +259,7 @@ export function WidgetReserva({ tour, ficha }: Props) {
   if (tour.booking === 'consulta') {
     return (
       <Caja>
-        <Precio precio={tour.precioLight} desde />
+        <Precio precio={tour.precioLight} unidad="desde" />
         {/* El copy no se maquilla: es la verdad del producto (dato pendiente
             del cliente, ver PLAN-v3.md §9). Un precio inventado aquí sería el
             peor sitio posible para inventarlo. */}
@@ -238,8 +296,13 @@ export function WidgetReserva({ tour, ficha }: Props) {
     esDual ? { adultos, ninos } : undefined,
   )
   // Ancla del widget: el "desde" que se ve en la cabecera. Con
-  // subVariantes es el tramo más barato de la 1ª variante; sin ellas, el
-  // modelo clásico (precioLight o premium según el toggle).
+  // subVariantes, es el precio del TRAMO ACTIVO de la variante activa
+  // (charter: cambia al cambiar de bote o de pax — antes era el tramo
+  // más barato de la 1ª sub-variante y se quedaba fijo aunque el
+  // usuario seleccionara Forever Teresa o subiera a 30 pax; era el bug
+  // que Samuel reportó el 2026-07-17: "no está saliendo el precio por
+  // persona"). Sin subVariantes, el modelo clásico (precioLight o
+  // premium según el toggle).
   const precioBase = tour.precioLight
   const upgrade = ficha.upgradePremium
   // v3 (2026-07-17, Snorkel Lovers): el toggle Light/Premium se pinta solo
@@ -251,24 +314,74 @@ export function WidgetReserva({ tour, ficha }: Props) {
   const tienePaquetes =
     precioBase !== null && upgrade !== null && ficha.menuLight.length > 0
   const tieneSubVariantes = ficha.subVariantes !== undefined && ficha.subVariantes.length > 0
-  const precioAncla = tieneSubVariantes
-    ? // Ancla "desde": la sub-variante 1 (speedboat), tramo más barato.
-      // Sirve para pintar el "Desde US$ X por persona" de la cabecera cuando
-      // el grupo aún no se ha ajustado — la sala varía al cambiar pax.
-      (() => {
-        const v = ficha.subVariantes![0]
-        const t = v.tabla.reduce((min, tr) => (tr.precio < min.precio ? tr : min), v.tabla[0])
-        // "Por persona" cuando es tramo-por-persona; "Grupo" cuando es fijo.
-        const porPersona = t.tipo === 'persona' ? t.precio : Math.round(t.precio / t.desde)
-        return porPersona
-      })()
+  // Tramo ACTIVO de la variante ACTIVA con las pax actuales. Es la fuente
+  // de verdad del precio unitario que se muestra en la cabecera del
+  // widget, y la que decide si el desglose del CTA dice "US$ 99 × 12
+  // personas" o "Precio fijo de grupo". Cuando `personas` no entra en
+  // ningún tramo (ej: 2 pax con Maite — sí entra en 1-8 grupo; 4 pax
+  // con Forever Teresa — sí entra en 1-18 grupo; pero 4 pax con
+  // catamarán de Saona — NO entra, el mínimo es 30), `tramoActivo` es
+  // null y caemos al ancla "desde" de la home.
+  const paxActuales = esDual ? totalPersonas : personas
+  const subActiva = tieneSubVariantes
+    ? (variante ? ficha.subVariantes!.find((s) => s.id === variante) : null) ?? ficha.subVariantes![0]
+    : null
+  const tramoActivo = subActiva
+    ? subActiva.tabla.find(
+        (tr) => tr.desde <= paxActuales && (tr.hasta === null || tr.hasta >= paxActuales),
+      ) ?? null
+    : null
+  // Lo que se muestra en la cabecera: si hay tramo, su precio unitario
+  // (por persona o por grupo, según `tipo`). Si no, el "desde" de la
+  // home como fallback. La cabecera SIEMPRE dice la verdad del momento:
+  // cambia al mover el stepper o al cambiar de bote.
+  const precioAnclaNum = tieneSubVariantes
+    ? tramoActivo
+      ? tramoActivo.precio
+      : precioBase
     : paquete === 'premium' && tienePaquetes
       ? precioBase! + upgrade!
       : precioBase
+  const unidadAncla: 'persona' | 'grupo' | 'desde' = tieneSubVariantes
+    ? tramoActivo
+      ? tramoActivo.tipo === 'persona'
+        ? 'persona'
+        : 'grupo'
+      : 'desde'
+    : paquete === 'premium' && tienePaquetes
+      ? 'persona'
+      : 'desde'
 
   return (
     <Caja>
-      <Precio precio={precioAncla} desde={paquete === 'light' || tieneSubVariantes} />
+      <Precio precio={precioAnclaNum} unidad={unidadAncla} />
+
+      {/* v3 (2026-07-17, charter): el cálculo del total en vivo, justo
+          debajo de la cabecera. Es la pieza que faltaba — antes el
+          usuario veía "Continuar — US$ 1.188" sin saber de dónde salía
+          (¿es por persona? ¿es fijo? ¿con qué tramo?). Ahora el
+          desglose se ve ARRIBA, al lado del precio unitario, y cambia
+          al sumar/quitar personas o cambiar de bote. Charter es el
+          caso más útil (4 botes × 4-7 tramos = 16-28 combinaciones);
+          Saona y los otros tours no lo necesitan (su precio es por
+          persona simple). */}
+      {tieneSubVariantes && tramoActivo ? (
+        <p className="-mt-2 text-xs text-navy-soft tabular-nums">
+          {tramoActivo.tipo === 'persona' ? (
+            <>
+              {formatoDinero(tramoActivo.precio)} × {paxActuales} {paxActuales === 1 ? 'persona' : 'personas'}
+              {' · '}
+              <span className="text-navy-sub">tramo {tramoActivo.desde}–{tramoActivo.hasta === null ? '120' : tramoActivo.hasta} pax</span>
+            </>
+          ) : (
+            <>
+              Precio fijo de grupo
+              {' · '}
+              <span className="text-navy-sub">tramo {tramoActivo.desde}–{tramoActivo.hasta === null ? '120' : tramoActivo.hasta} pax</span>
+            </>
+          )}
+        </p>
+      ) : null}
 
       {/* Selector de paquete o de sub-variante. v3 (2026-07-17, Saona y
           charter): cuando hay subVariantes, oculta el toggle Light/Premium y
@@ -294,6 +407,14 @@ export function WidgetReserva({ tour, ficha }: Props) {
       ) : tienePaquetes && precioBase !== null && upgrade !== null ? (
         <div>
           <div className="relative grid grid-cols-2 gap-1 rounded-full bg-linea p-1">
+            {/* v3 (2026-07-17, fix Samuel): el thumb estaba MAL
+                posicionado. El w-[calc(50%-0.375rem)] (50% - 6px) sí
+                es correcto (ancho de columna: 100% - 2*4px - 4px =
+                100% - 12px, dividido 2 = 50% - 6px), pero el
+                translateX(calc(100% + 0.25rem)) lo movía 100% + 4px
+                desde left-1 (4px), es decir, terminaba a 100% + 8px —
+                fuera del contenedor. Fórmula correcta: 100% = 1
+                width del thumb (= 1 columna), + 4px = el gap. */}
             <span
               aria-hidden="true"
               className="pointer-events-none absolute inset-y-1 left-1 w-[calc(50%-0.375rem)] rounded-full bg-papel shadow-sm transition-transform duration-200 ease-out motion-reduce:transition-none"
@@ -605,6 +726,12 @@ export function WidgetReserva({ tour, ficha }: Props) {
           </Link>
         </FancyButton.Root>
       )}
+
+      {/* v3 (2026-07-17, charter): el desglose del total se pinta ARRIBA,
+          en la cabecera, justo debajo del precio unitario (no aquí, donde
+          duplicaba la info). Es la pieza que faltaba — el usuario ve
+          «US$ 99 × 12 personas · tramo 9-19 pax» cambiar en vivo al
+          sumar/quitar personas o cambiar de bote. */}
 
       <Checks
         lineas={['Confirma con 25% de depósito', 'Cancela gratis hasta 7 días antes', 'Reembolso total por mal clima']}

@@ -97,4 +97,11 @@ export const SOSTENIBILIDAD = {
 
   cierreTitulo: 'Dejar una huella positiva',
   cierreTexto: 'Todo negocio deja una huella allí donde opera. La nuestra queremos que sea positiva: de la conservación marina y el trabajo comunitario a la operación ética y el desarrollo de nuestro equipo. A través de la Bávaro Reefs Foundation contribuimos no solo a experiencias inolvidables en el mar, sino a arrecifes más sanos, comunidades más fuertes y un futuro más sostenible para la República Dominicana.',
+  // Foto de fondo del cierre (2026-07-17, pedido de Samuel: "ponle el mismo
+  // background de fondo del mar que tiene el banner de nosotros"). Mismo
+  // asset que /nosotros (ArrecifeTeaser) y el mismo idioma visual — foto
+  // cenital turquesa + gradiente navy encima, texto blanco a la izquierda.
+  // Sin CTA: el "Ver disponibilidad" canónico vive en el Footer Océano,
+  // justo debajo — duplicarlo aquí serían dos botones pegados.
+  cierreFoto: 'arrecife-fondo-cenital',
 }

@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Navigate, useParams } from 'react-router-dom'
 import { Footer } from '@/components/home/footer'
 import { HeroInterna } from '@/components/internas/hero-interna'
@@ -7,6 +8,7 @@ import { BarraMovilFicha } from '@/components/tour/barra-movil-ficha'
 import { Itinerario } from '@/components/tour/itinerario'
 import { IncluyeTour } from '@/components/tour/incluye-tour'
 import { MenuTour } from '@/components/tour/menu-tour'
+import { TablaPreciosCharter } from '@/components/tour/tabla-precios-charter'
 import { OpinionesTour } from '@/components/tour/opiniones-tour'
 import { FaqTour } from '@/components/tour/faq-tour'
 import { AnclasFicha } from '@/components/tour/anclas-ficha'
@@ -52,6 +54,16 @@ export function TourPage() {
       : ficha.audiencia === 'Solo adultos'
         ? 'Un día de mar en grupo pequeño'
         : 'Un día de mar'
+
+  // v3 (2026-07-17, charter): la sub-variante (bote) vive en `tour.tsx` y
+  // se pasa ABAJO a `WidgetReserva` y a `TablaPreciosCharter` — antes vivía
+  // dentro del widget y la tabla de la izquierda nunca sabía cuál estaba
+  // activo (la pasábamos con `activa={null}`, así que el highlight
+  // "Seleccionado" nunca se pintaba). Con el state arriba, el cambio de
+  // bote en el widget pinta simultáneamente la franja aqua de la fila
+  // correspondiente en la tabla — coherencia entre el selector y la
+  // referencia visual.
+  const [variante, setVariante] = useState<string | null>(ficha.subVariantes?.[0]?.id ?? null)
 
   return (
     <div className="pb-16 md:pb-0">
@@ -114,6 +126,12 @@ export function TourPage() {
               <Itinerario ficha={ficha} />
               <IncluyeTour ficha={ficha} />
               {tour.booking === 'completo' ? <MenuTour tour={tour} ficha={ficha} /> : null}
+              {/* v3 (2026-07-17, pedido de Samuel): tabla de precios por bote
+                  para charter-privado (4 botes con sus tramos de pax).
+                  Solo se pinta si la ficha tiene subVariantes. */}
+              {tour.booking === 'completo' && ficha.subVariantes && ficha.subVariantes.length > 0 ? (
+                <TablaPreciosCharter ficha={ficha} activa={variante} />
+              ) : null}
               <OpinionesTour tour={tour} />
               <FaqTour ficha={ficha} />
             </div>
@@ -123,7 +141,7 @@ export function TourPage() {
                 se apilan header > anclas > widget, y los tres tienen que
                 derivar del mismo token o se desincronizan). */}
             <div className="lg:sticky lg:top-sticky-top">
-              <WidgetReserva tour={tour} ficha={ficha} />
+              <WidgetReserva tour={tour} ficha={ficha} variante={variante} onVarianteChange={setVariante} />
             </div>
           </div>
         </div>

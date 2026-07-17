@@ -363,6 +363,36 @@ export const devSections: DevSection[] = [
             note: 'v3 (2026-07-17, Saona completo): el selector de sub-variante del widget cambia a Catamarán y se elige mañana (los tramos del catamarán son 1-30 pax grupo + 31-70 pax por persona). Es el frame de la opción con la tabla de tramos más distinta (los tramos por persona solo aparecen aquí, no en speedboat ni en fishing). Para los otros 2 sub-variantes (Speedboat, Fishing Town) no hace falta deep-link: el default es Speedboat (la más común) y los tramos son grupo-fijo hasta 9/10 pax, sin tramo por persona — visualmente muy parecidos.',
           },
           {
+            label: 'Charter: Forever Teresa 30 pax',
+            kind: 'estado',
+            to: '/tours/charter-privado?dev-charter=forever-teresa',
+            note: 'v3 (2026-07-17, charter completo): el selector de botes del widget cambia a Forever Teresa (catamarán grande, hasta 120 pax) y se eligen 30 personas + mañana. El cálculo usa el tramo 30-120 (US$ 75/pax = US$ 2.250) y muestra el frame del bote con mayor capacidad. La duración (3h/4h) y los horarios (9 AM o 3 PM) son los del Forever Teresa, distintos a los de Maite o GrandMa — el flag es la forma más rápida de ver el frame con 4 botes en el selector. La TablaPreciosCharter de la izquierda pinta la franja aqua-dark + pill «Seleccionado» en la fila de Forever Teresa (lift state up de la variante, 2026-07-17), y la cabecera del widget dice «US$ 75 por persona · 30 personas · tramo 30-120 pax».',
+          },
+          {
+            label: 'Charter: Maite 8 pax (tramo grupo)',
+            kind: 'estado',
+            to: '/tours/charter-privado?dev-charter=maite-8',
+            note: 'v3 (2026-07-17): Maite 8 personas cae en el tramo 1-8 «precio fijo de grupo» (US$ 625) — la cabecera del widget dice «US$ 625 por grupo» y el desglose es «Precio fijo de grupo · 8 personas · tramo 1-8 pax». Sirve para capturar el caso donde el precio NO multiplica por pax (es el único tramo no-por-persona de Maite, y el caso «para grupos chicos Maite es fijo»).',
+          },
+          {
+            label: 'Charter: Maite 12 pax (tramo persona)',
+            kind: 'estado',
+            to: '/tours/charter-privado?dev-charter=maite-12',
+            note: 'v3 (2026-07-17): Maite 12 personas cae en el tramo 9-19 «por persona» (US$ 99/pax) — la cabecera del widget dice «US$ 99 por persona» y el desglose es «US$ 99 × 12 personas · tramo 9-19 pax». El frame más común: bote pequeño, tramo medio, cálculo por persona × pax = total.',
+          },
+          {
+            label: 'Charter: GrandMa 5 pax (tramo grupo)',
+            kind: 'estado',
+            to: '/tours/charter-privado?dev-charter=grandma-5',
+            note: 'v3 (2026-07-17): GrandMa 5 personas cae en su único tramo 1-20 «precio fijo de grupo» (US$ 825) — la cabecera del widget dice «US$ 825 por grupo». Sirve para mostrar el caso de un bote con un solo tramo fijo, distinto a los demás (Santa Maria también es así, US$ 1.150 grupo).',
+          },
+          {
+            label: 'Snorkel Lovers: familia 2 adultos + 1 niño',
+            kind: 'estado',
+            to: '/tours/snorkel-lovers?dev-snorkel=familia',
+            note: 'v3 (2026-07-17, Snorkel Lovers tarifa dual): preconfigura 2 adultos + 1 niño + mañana para enseñar el frame del modelo dual (Adultos + Niños con icono Baby en la fila de niños). El CTA salta a 114×2 + 65×1 = US$ 343 — el total real con la tarifa dual. Sin el flag, el state es 2 adultos + 0 niños (pareja sin niños), que NO muestra la fila de Niños y por tanto no se ve el segundo stepper.',
+          },
+          {
             label: 'Calendario abierto (popover)',
             kind: 'overlay',
             to: '/tours/semi-privado?dev-widget=calendario',
@@ -393,10 +423,10 @@ export const devSections: DevSection[] = [
             note: '2026-07-17: mismo flag, con la primera ancla forzada — el indicador aparece pegado al borde izquierdo del nav (mide lo mismo que el padding-x del contenedor + el offsetLeft del primer link), para verificar que el cálculo del `transform` no se desfasa al inicio.',
           },
           {
-            label: 'Variante: cotización (Charter Privado)',
+            label: 'Variante: charter (Charter Privado)',
             kind: 'variante',
             to: '/tours/charter-privado',
-            note: 'booking: cotizacion — sin chip de "Recogida en hotel" (el horario se coordina). Su widget cotiza a medida en vez de vender fecha+hora.',
+            note: 'v3 (2026-07-17, charter completo): booking: completo con 4 sub-variantes (Maite/GrandMa/Santa Maria/Forever Teresa), menú transversal de 7 platos + 1 add-on (lobster), tabla de precios por pax en cada bote. Antes era booking: cotizacion (sin precio, sin menú, sin widget de reserva). Sin flag: abre en Maite con 2 personas → cae en el tramo 1-8 «precio fijo de grupo» (US$ 625). Para los otros botes/tramos usar los flags dev-charter=* (maite-8, maite-12, grandma-5, forever-teresa).',
           },
           {
             label: 'Variante: consulta (Isla Saona)',
@@ -422,7 +452,7 @@ export const devSections: DevSection[] = [
         route: '/reservar/semi-privado?paquete=light&personas=2',
         status: 'done',
         description:
-          'Fase C: el funnel que el widget de la ficha abre al pulsar «Continuar». Shell propio y compacto (no el HeroInterna de marketing del resto de internas — un checkout se hace en una columna enfocada, sin megamenú ni video que inviten a salir): logo + «volver al tour» arriba, barra de pasos, y Atrás/Continuar abajo. La config viaja del widget en la URL (paquete · fecha · horario · personas) y se lee con useSearchParams. 4 pasos: (1) MENÚ por persona (un Select AlignUI por comensal con los platos del paquete elegido — el diferenciador «eliges tu plato» hecho pantalla), (2) RECOGIDA (hotel + habitación + notas), (3) CONTACTO (nombre/email/WhatsApp), (4) REVISAR + DEPÓSITO 25%. Solo para tours booking «completo» (semi-privado, snorkel-lovers); charter y Saona redirigen a su ficha. Precio de LISTA (mismo criterio anti bait-and-switch que el widget): total = tarifa del paquete × personas; depósito = 25%; saldo el día del tour (−5% en efectivo). FRONTERA: el botón «Pagar depósito» NO cobra — el motor xpotours sigue pendiente del cliente y el paso 4 lo dice con todas las letras (no se finge un cobro ni un «reserva confirmada»). noindex.',
+          'Fase C: el funnel que el widget de la ficha abre al pulsar «Continuar». Shell propio y compacto (no el HeroInterna de marketing del resto de internas — un checkout se hace en una columna enfocada, sin megamenú ni video que inviten a salir): logo + «volver al tour» arriba, barra de pasos, y Atrás/Continuar abajo. La config viaja del widget en la URL (paquete · fecha · horario · personas) y se lee con useSearchParams. 4 pasos: (1) MENÚ por persona (cada comensal es un ACORDEÓN que se expande con CARDS de foto y elige su plato — el diferenciador «eliges tu plato» hecho pantalla; al clickar una card SOLO se marca el plato (check + ring aqua) y aparece al pie del acordeón un botón «Siguiente» que el visitante pulsa para confirmar y avanzar a la próxima persona, en vez del auto-advance previo que se sentía sin control — 2026-07-17, pedido de Samuel en la misma sesión: «que le des click a un menu y un boton en ese box se habilite y diga sigueinte y ahi si se salta al siguite tab, esto para confirmar y sientes que tu estas avanzando». La fila inferior también muestra «Seleccionado: <plato>» como confirmación explícita antes de pulsar), (2) RECOGIDA (hotel + habitación + notas), (3) CONTACTO (nombre/email/WhatsApp), (4) REVISAR + DEPÓSITO 25%. Solo para tours booking «completo» (semi-privado, snorkel-lovers); charter y Saona redirigen a su ficha. Precio de LISTA (mismo criterio anti bait-and-switch que el widget): total = tarifa del paquete × personas; depósito = 25%; saldo el día del tour (−5% en efectivo). FRONTERA: el botón «Pagar depósito» NO cobra — el motor xpotours sigue pendiente del cliente y el paso 4 lo dice con todas las letras (no se finge un cobro ni un «reserva confirmada»). noindex.',
         states: [
           {
             label: 'Variante Premium (3 personas)',

@@ -99,10 +99,17 @@ export const TOURS: Tour[] = [
     rating: 4.9,
     resenas: 1782,
     maxPax: 120,
+    // v3 (2026-07-17, charter completo): ancla "desde" — el precio público
+    // más bajo de la tabla es US$ 75/pax (Forever Teresa 30-120 pax). El
+    // widget pinta 4 sub-variantes (Maite, GrandMa, Santa Maria, Forever
+    // Teresa) y el cálculo real se hace con la tabla de cada bote según
+    // pax. booking pasa de 'cotizacion' a 'completo' (4 botes, no se
+    // cotiza aparte — el cliente puede ver y calcular el precio en el
+    // widget; el "a medida" del menú sí se coordina aparte).
     precioLight: 75,
-    booking: 'cotizacion',
+    booking: 'completo',
     descripcionCorta:
-      'El barco completo, solo para tu grupo: familia, amigos, o una celebración. Ruta y horario a tu medida, desde 10 personas.',
+      'El barco completo, solo para tu grupo. Elige uno de nuestros 4 botes (Maite, GrandMa, Santa Maria, Forever Teresa) según el tamaño y el plan.',
     foto: 'tour-charter-privado',
     galeria: [
       'galeria-charter-privado-1',
@@ -111,7 +118,7 @@ export const TOURS: Tour[] = [
       'galeria-charter-privado-4',
       'galeria-charter-privado-5',
     ],
-    destacados: ['Barco entero', 'Comida a medida', 'Coordinación dedicada'],
+    destacados: ['Barco entero', 'Menú a medida', 'Coordinación dedicada'],
   },
   {
     slug: 'isla-saona',

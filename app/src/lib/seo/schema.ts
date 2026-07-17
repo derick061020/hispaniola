@@ -97,8 +97,39 @@ export function schemaTour(tour: Tour, ficha?: FichaTour) {
     }
   }
 
-  // Sin subVariantes: un único Offer con precioLight (modelo clásico).
+  // Sin subVariantes: tarifa dual (Snorkel Lovers, v3 2026-07-17) o un
+  // único Offer con precioLight (modelo clásico).
   if (tour.precioLight !== null) {
+    if (tour.precioNino !== null && tour.precioNino !== undefined) {
+      return {
+        ...base,
+        offers: {
+          '@type': 'AggregateOffer',
+          lowPrice: String(tour.precioNino),
+          highPrice: String(tour.precioLight),
+          priceCurrency: 'USD',
+          offerCount: '2',
+          offers: [
+            {
+              '@type': 'Offer',
+              name: 'Adulto',
+              price: String(tour.precioLight),
+              priceCurrency: 'USD',
+              availability: 'https://schema.org/InStock',
+              url: `${SITIO()}/tours/${tour.slug}`,
+            },
+            {
+              '@type': 'Offer',
+              name: 'Niño',
+              price: String(tour.precioNino),
+              priceCurrency: 'USD',
+              availability: 'https://schema.org/InStock',
+              url: `${SITIO()}/tours/${tour.slug}`,
+            },
+          ],
+        },
+      }
+    }
     return {
       ...base,
       offers: {
