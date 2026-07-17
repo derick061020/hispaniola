@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react'
-import { Link, useSearchParams } from 'react-router-dom'
-import { Check, CreditCard, MapPin, Pencil, Users, Utensils } from 'lucide-react'
+import { useState, type FormEvent } from 'react'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { Check, ChevronRight, CreditCard, MapPin, Pencil, Ticket, Users, Utensils } from 'lucide-react'
 import { Logo } from '@/components/ui/logo'
 import { Meta } from '@/components/seo/meta'
 import { fechaLarga } from '@/lib/fechas'
-import { buscarReserva, guardarReserva, reservaDemo, type Reserva } from '@/lib/reservas'
+import { guardarReserva, reservaDemo, type Reserva } from '@/lib/reservas'
 import { formatoDinero } from '@/data/home'
 import { Campo } from '@/components/ui/campo'
 
@@ -13,13 +13,25 @@ import { Campo } from '@/components/ui/campo'
 // local (localStorage) para ser "más fieles al prototipo" — la página
 // queda usable sin backend.
 //
-// LAYOUT (1 columna, max-w-3xl):
-//   1. Cabecera: código + tour + fecha + chip «Confirmada» (o
-//      «Demo» si es la reserva de ejemplo del prototipo).
-//   2. Bloque «Tu reserva» (resumen + botón «Pagar saldo online» si
-//      queda saldo).
-//   3. Bloque «Tu menú» (platos por persona, editables hasta el día
-//      antes).
+// FLUJO (2 estados):
+//   1. INGRESO — sin `?codigo=…` en la URL, la página muestra un input
+//      centrado que pide el código HSP-XXXX-NNNN. Submit navega a
+//      `?codigo=…` y la página pasa al estado DETALLE. (2026-07-17,
+//      pedido de Samuel: "primero debería ser una pantalla para poner
+//      un código, y luego de poner el código que te muestre la pantalla
+//      de ejemplo".)
+//   2. DETALLE — con código en la URL, la página muestra la reserva
+//      DE EJEMPLO del prototipo SIEMPRE (mismo comportamiento aunque el
+//      código exista en localStorage — el "de momento" de Samuel:
+//      "con cualquier código funcione". Cuando llegue el backend, este
+//      fallback desaparece y se carga la reserva real del cliente).
+//      En la cabecera hay un link "Usar otro código" para volver a
+//      INGRESO y meter otro código.
+//
+// LAYOUT del estado DETALLE (1 columna, max-w-3xl):
+//   1. Cabecera: código + tour + fecha + chip «Demo».
+//   2. Bloque «Tu reserva» (resumen + botón «Pagar saldo online»).
+//   3. Bloque «Tu menú» (platos por persona, editables).
 //   4. Bloque «Recogida» (hotel + notas, editables).
 //   5. Bloque «Datos de contacto» (editables).
 //   6. Footer: link a contacto + WhatsApp.
@@ -42,50 +54,41 @@ function nombrePlato(id: string, menu: { nombre: string }[]) {
 
 export function MiReservaPage() {
   const [params] = useSearchParams()
+  const navigate = useNavigate()
   const codigo = params.get('codigo')
 
-  const [reserva, setReserva] = useState<Reserva | null>(null)
-  const [esDemo, setEsDemo] = useState(false)
-
-  useEffect(() => {
-    if (!codigo) {
-      // Sin código en URL → muestra la reserva de ejemplo del prototipo,
-      // marcada como demo. Permite previsualizar /mi-reserva sin completar
-      // una reserva real.
-      setReserva(reservaDemo())
-      setEsDemo(true)
-      return
-    }
-    const r = buscarReserva(codigo)
-    if (r) {
-      setReserva(r)
-      setEsDemo(false)
-    } else {
-      // Código no encontrado en localStorage → fallback a la demo.
-      // (Mismo comportamiento que el prototipo.)
-      setReserva(reservaDemo())
-      setEsDemo(true)
-    }
-  }, [codigo])
-
-  if (!reserva) return null
-
-  const guardar = (nueva: Reserva) => {
-    guardarReserva(nueva)
-    setReserva(nueva)
+  // 2 estados: INGRESO (input) o DETALLE (la demo). Sin `?codigo=…` en
+  // la URL siempre arranca en INGRESO — ni siquiera se monta la página
+  // de detalle, que es la parte pesada.
+  if (!codigo) {
+    return <PantallaIngreso onSubmit={(c) => navigate(`/mi-reserva?codigo=${encodeURIComponent(c)}`)} />
   }
 
-  const horario = reserva.ficha.horarios[reserva.horarioIdx]
+  return <DetalleReserva codigoIngresado={codigo} />
+}
 
+// Pantalla 1 — ingreso de código. Una sola columna centrada (max-w-md),
+// el mismo lenguaje visual que la pantalla /gracias (mismo Logo +
+// "Volver al inicio" arriba, max-w-3xl para el main). El input pide el
+// código en formato libre (HSP-XXXX-NNNN) — sin validación de formato
+// (a día de hoy cualquier cosa funciona; cuando se conecte el backend
+// se valida y se muestra error). El submit navega a `?codigo=…`; el
+// resto de la lógica vive en DetalleReserva.
+function PantallaIngreso({ onSubmit }: { onSubmit: (codigo: string) => void }) {
+  const [valor, setValor] = useState('')
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault()
+    const limpio = valor.trim()
+    if (!limpio) return
+    onSubmit(limpio)
+  }
   return (
     <div className="min-h-screen bg-papel">
       <Meta
-        titulo={`Mi reserva · ${reserva.codigo}`}
-        descripcion={`Gestiona tu reserva ${reserva.codigo} de ${reserva.tour.nombre} para ${reserva.personas} personas el ${fechaLarga(reserva.fechaISO)}.`}
-        ruta={`/mi-reserva?codigo=${reserva.codigo}`}
-        indexable={false}
+        titulo="Mi reserva"
+        descripcion="Gestiona tu reserva: cambia el menú, la recogida o los datos, o paga el saldo. Introduce tu código HSP-XXXX-NNNN."
+        ruta="/mi-reserva"
       />
-
       <header className="border-b border-linea">
         <div className="mx-auto flex max-w-3xl items-center justify-between px-5 py-3 sm:px-8">
           <Link to="/" aria-label="Inicio de Hispaniola Aquatic Adventures">
@@ -96,52 +99,159 @@ export function MiReservaPage() {
           </Link>
         </div>
       </header>
+      <main className="mx-auto max-w-md px-5 py-12 sm:px-8 sm:py-20">
+        <div className="text-center">
+          <div className="mx-auto grid size-14 place-items-center rounded-full bg-aqua-tint text-aqua-dark">
+            <Ticket className="size-7" aria-hidden="true" strokeWidth={2} />
+          </div>
+          <h1 className="mt-5 font-display text-2xl font-semibold text-navy sm:text-3xl">
+            Gestiona tu reserva
+          </h1>
+          <p className="mt-3 text-sm text-navy-sub sm:text-base">
+            Introduce el código de 14 caracteres que te enviamos por email. Lo encuentras también en
+            la pantalla de confirmación.
+          </p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="mt-8 space-y-4">
+          <Campo
+            etiqueta="Código de reserva"
+            value={valor}
+            onChange={(e) => setValor(e.target.value.toUpperCase())}
+            placeholder="HSP-XXXX-NNNN"
+            autoFocus
+            required
+          />
+          <button
+            type="submit"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-btn bg-coral px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-coral-dark"
+          >
+            Ver mi reserva
+            <ChevronRight className="size-4" aria-hidden="true" />
+          </button>
+        </form>
+
+        <p className="mt-6 text-center text-xs text-navy-soft">
+          ¿No encuentras el código? Escríbenos por{' '}
+          <a
+            href="https://wa.me/18293052804"
+            target="_blank"
+            rel="noopener"
+            className="font-semibold text-aqua-dark hover:underline"
+          >
+            WhatsApp
+          </a>
+          .
+        </p>
+      </main>
+    </div>
+  )
+}
+
+// Pantalla 2 — detalle. La reserva que se pinta es SIEMPRE la demo del
+// prototipo (independiente de si el código existe en localStorage o
+// no) — "de momento" de Samuel, hasta que se conecte el backend. El
+// estado "Demo" se muestra en el chip de la cabecera y en el banner
+// para que el visitante entienda que no es su reserva real.
+//
+// Recibe `codigoIngresado` solo para mostrarlo en la cabecera (en vez
+// del HSP-0000-0001 de la demo) — la lógica interna de la página
+// sigue operando sobre la demo, no sobre el código.
+function DetalleReserva({ codigoIngresado }: { codigoIngresado: string }) {
+  const [reserva, setReserva] = useState<Reserva>(() => reservaDemo())
+  // `codigo` se pinta en la cabecera — el de la URL, no el de la demo
+  // (HSP-0000-0001). Así el cliente ve "su" código en la pantalla y
+  // entiende que la demo es lo que vería con ese código, no otro.
+  const reservaParaMostrar: Reserva = { ...reserva, codigo: codigoIngresado.toUpperCase() }
+
+  const guardar = (nueva: Reserva) => {
+    guardarReserva(nueva)
+    setReserva(nueva)
+  }
+
+  const horario = reservaParaMostrar.ficha.horarios[reservaParaMostrar.horarioIdx]
+
+  return (
+    <div className="min-h-screen bg-papel">
+      <Meta
+        titulo={`Mi reserva · ${reservaParaMostrar.codigo}`}
+        descripcion={`Gestiona tu reserva ${reservaParaMostrar.codigo} de ${reservaParaMostrar.tour.nombre} para ${reservaParaMostrar.personas} personas el ${fechaLarga(reservaParaMostrar.fechaISO)}.`}
+        ruta={`/mi-reserva?codigo=${reservaParaMostrar.codigo}`}
+        indexable={false}
+      />
+
+      <header className="border-b border-linea">
+        <div className="mx-auto flex max-w-3xl items-center justify-between px-5 py-3 sm:px-8">
+          <Link to="/" aria-label="Inicio de Hispaniola Aquatic Adventures">
+            <Logo compacto />
+          </Link>
+          {/* 2026-07-17: link "Usar otro código" — para volver a la pantalla
+              de ingreso y meter otro código. Va a la izquierda de "Volver
+              al inicio" porque esa es la acción típica cuando se prueba
+              con varios códigos o se equivoca uno. */}
+          <div className="flex items-center gap-4">
+            <Link
+              to="/mi-reserva"
+              className="text-sm font-semibold text-aqua-dark hover:underline"
+            >
+              Usar otro código
+            </Link>
+            <Link to="/" className="text-sm font-semibold text-aqua-dark hover:underline">
+              ← Volver al inicio
+            </Link>
+          </div>
+        </div>
+      </header>
 
       <main className="mx-auto max-w-3xl px-5 py-10 sm:px-8 sm:py-14">
-        {esDemo && (
-          <div className="mb-6 rounded-card border border-coral/30 bg-coral/5 p-4 text-sm text-navy-sub">
-            Estás viendo una <strong className="font-semibold text-navy">reserva de ejemplo</strong> —
-            cuando completes una reserva real, esta pantalla mostrará la tuya. Los cambios que
-            hagas aquí se guardan en tu navegador, no en nuestro sistema.
-          </div>
-        )}
+        {/* Banner demo — siempre presente (2026-07-17). Antes se pintaba
+            solo cuando el código no estaba en localStorage; ahora SIEMPRE
+            porque la página siempre muestra la demo ("con cualquier código
+            funcione"). El texto se simplificó: ya no menciona "cuando
+            completes una reserva real" porque la idea es que el cliente
+            entienda que esta vista es el preview, no su reserva real. */}
+        <div className="mb-6 rounded-card border border-coral/30 bg-coral/5 p-4 text-sm text-navy-sub">
+          Estás viendo una <strong className="font-semibold text-navy">reserva de ejemplo</strong>.
+          Cuando hagas una reserva real, esta pantalla mostrará la tuya con tus datos. Los cambios
+          que hagas aquí se guardan en tu navegador, no en nuestro sistema.
+        </div>
 
         {/* 1. CABECERA */}
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <p className="text-xs font-semibold uppercase tracking-wide text-navy-soft">Mi reserva</p>
             <h1 className="mt-1 font-display text-2xl font-semibold text-navy sm:text-3xl">
-              {reserva.codigo}
-              <span className="text-navy-soft"> · {reserva.tour.nombre}</span>
+              {reservaParaMostrar.codigo}
+              <span className="text-navy-soft"> · {reservaParaMostrar.tour.nombre}</span>
             </h1>
             <p className="mt-1 text-sm text-navy-sub">
-              {fechaLarga(reserva.fechaISO)} · {horario?.hora ?? '—'} · {reserva.personas}{' '}
-              {reserva.personas === 1 ? 'persona' : 'personas'}
+              {fechaLarga(reservaParaMostrar.fechaISO)} · {horario?.hora ?? '—'} · {reservaParaMostrar.personas}{' '}
+              {reservaParaMostrar.personas === 1 ? 'persona' : 'personas'}
             </p>
           </div>
           <span className="inline-flex items-center gap-1.5 rounded-chip bg-menta px-3 py-1.5 text-sm font-semibold text-menta-texto">
             <Check className="size-4" aria-hidden="true" />
-            {esDemo ? 'Demo' : 'Confirmada'}
+            Demo
           </span>
         </div>
 
         {/* 2. RESUMEN + PAGO DE SALDO */}
-        <BloqueReserva reserva={reserva} />
+        <BloqueReserva reserva={reservaParaMostrar} />
 
         {/* 3. MENÚ POR PERSONA */}
-        <BloqueMenu reserva={reserva} guardar={guardar} />
+        <BloqueMenu reserva={reservaParaMostrar} guardar={guardar} />
 
         {/* 4. RECOGIDA */}
-        <BloqueRecogida reserva={reserva} guardar={guardar} />
+        <BloqueRecogida reserva={reservaParaMostrar} guardar={guardar} />
 
         {/* 5. CONTACTO */}
-        <BloqueContacto reserva={reserva} guardar={guardar} />
+        <BloqueContacto reserva={reservaParaMostrar} guardar={guardar} />
 
         {/* 6. FOOTER */}
         <div className="mt-10 flex flex-wrap items-center justify-between gap-3 border-t border-linea pt-6 text-sm text-navy-soft">
           <p>¿Algo no encaja? Escríbenos y lo arreglamos.</p>
           <a
-            href={`https://wa.me/18293052804?text=${encodeURIComponent(`Hola! Tengo la reserva ${reserva.codigo} y necesito ayuda.`)}`}
+            href={`https://wa.me/18293052804?text=${encodeURIComponent(`Hola! Tengo la reserva ${reservaParaMostrar.codigo} y necesito ayuda.`)}`}
             target="_blank"
             rel="noopener"
             className="font-semibold text-aqua-dark hover:underline"
