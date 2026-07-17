@@ -20,16 +20,16 @@ import { DIAS_CORTOS, MESES_CORTOS, parseFechaISO } from '@/lib/fechas'
 // reservas (xpotours) sigue pendiente de decisión del cliente, así que se
 // construye como PROTOTIPO de UX y el «pagar» no cobra (lo dice el paso 4).
 //
-// LAYOUT estilo Viator (2026-07-17, pedido de Samuel, con su checkout como
-// referencia): dos columnas — a la IZQUIERDA las secciones que se van
-// rellenando (acordeón: la activa expandida, las hechas colapsadas con su
-// resumen + «Editar», las pendientes en gris), a la DERECHA la tarjeta STICKY de
-// «qué estás comprando» (ResumenReserva). Shell PROPIO y MÍNIMO (no el
-// HeroInterna de marketing ni el header/megamenú del sitio — como Viator, solo
-// el logo arriba): un checkout se hace en una columna enfocada, sin nada que
-// invite a salir a mitad de la reserva. Lo que NO se copia de Viator: su
-// urgencia inventada (contador de plaza, «reservado 5+ veces») — ver
-// ResumenReserva. `noindex`: es una pantalla de flujo, no contenido de Google.
+// LAYOUT estilo Viator (2026-07-17, pedido de Samuel): 2 zonas — a la IZQUIERDA
+// (blanca) las secciones que se rellenan en acordeón (la activa expandida, las
+// hechas colapsadas con resumen + «Editar», las pendientes en gris; SeccionPaso
+// abajo), a la DERECHA la tarjeta «qué estás comprando». TODA la zona derecha es
+// GRIS a sangre hasta el borde del viewport y a altura completa (no solo un box
+// alrededor de la card) — ver el ::after de la celda derecha. Header MÍNIMO (solo
+// logo + selector de moneda, sin Header/megamenú del sitio ni topbar de
+// contacto/idioma — todo eso invita a salir a mitad de un checkout). Lo que NO se
+// copia de Viator: su urgencia inventada (contador de plaza, «reservado 5+
+// veces»), prohibida por revision-wireframes.md §2.7. `noindex`.
 
 const PASOS = ['Tu menú', 'Recogida', 'Contacto', 'Pago']
 
@@ -117,7 +117,10 @@ function FlujoReserva({
   const estadoDe = (i: number): EstadoSeccion => (i < paso ? 'done' : i === paso ? 'activo' : 'pendiente')
 
   return (
-    <div className="flex min-h-screen flex-col bg-papel">
+    // overflow-x-clip: recorta el ::after w-screen de la zona gris sin volverse
+    // contenedor de scroll (a diferencia de overflow-hidden), así el sticky de
+    // la derecha sigue funcionando.
+    <div className="flex min-h-screen flex-col overflow-x-clip bg-papel">
       <Meta
         titulo={`Reservar — ${tour.nombre}`}
         descripcion={`Configura tu ${tour.nombre}: elige el menú de cada persona, la recogida y confirma con solo el 25% de depósito.`}
@@ -125,16 +128,15 @@ function FlujoReserva({
         indexable={false}
       />
 
-      {/* Header MÍNIMO estilo Viator: solo el logo (a la home) + volver al tour.
-          Sin el Header/megamenú del sitio: en un checkout no se ofrecen salidas. */}
+      {/* Header MÍNIMO estilo Viator: logo (a la home) + selector de moneda. */}
       <header className="border-b border-linea">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-3 sm:px-8">
           <Link to="/" aria-label="Inicio de Hispaniola Aquatic Adventures">
             <Logo compacto />
           </Link>
-          {/* Selector de moneda visual (2026-07-17, Samuel) — como el «USD» de
-              Viator. Los precios del sitio son todos en US$; es decorativo, igual
-              que el SelectorIdioma del topbar (sin conversión real todavía). */}
+          {/* Selector de moneda visual (Samuel) — como el «USD» de Viator. Los
+              precios del sitio son todos en US$; decorativo, igual que el
+              SelectorIdioma del topbar (sin conversión real todavía). */}
           <button
             type="button"
             className="flex items-center gap-1 text-sm font-medium text-navy-sub transition-colors hover:text-navy"
@@ -145,98 +147,107 @@ function FlujoReserva({
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-6xl flex-1 px-5 py-8 sm:px-8 sm:py-10">
-        <div className="mb-6">
-          <h1 className="font-display text-h2 font-semibold text-navy">Completa tu reserva</h1>
-          <p className="mt-1 text-sm text-navy-soft">
-            {tour.nombre} · {fechaTxt} · {personas === 1 ? '1 persona' : `${personas} personas`}
-          </p>
-        </div>
+      <main className="flex-1">
+        {/* Grid de 2 zonas. Sin `items-start`: las celdas se ESTIRAN a la misma
+            altura (la del formulario, más largo), así el gris de la derecha
+            llega hasta abajo. La celda derecha lleva bg gris + un ::after que lo
+            extiende w-screen hasta el borde del viewport (recortado por el
+            overflow-x-clip de arriba) — «todo el lado derecho gris», no un box. */}
+        <div className="mx-auto grid max-w-6xl grid-cols-1 lg:grid-cols-[minmax(0,1fr)_var(--spacing-ficha-widget)]">
+          {/* IZQUIERDA (blanca): cabecera + secciones */}
+          <div className="px-5 py-8 sm:px-8 sm:py-10">
+            <div className="mb-6">
+              <h1 className="font-display text-h2 font-semibold text-navy">Completa tu reserva</h1>
+              <p className="mt-1 text-sm text-navy-soft">
+                {tour.nombre} · {fechaTxt} · {personas === 1 ? '1 persona' : `${personas} personas`}
+              </p>
+            </div>
 
-        <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1fr)_var(--spacing-ficha-widget)] lg:gap-8">
-          {/* IZQUIERDA: secciones que se rellenan (acordeón) */}
-          <div className="flex flex-col gap-4">
-            <SeccionPaso
-              numero={1}
-              titulo={PASOS[0]}
-              estado={estadoDe(0)}
-              onEditar={() => setPaso(0)}
-              resumen={
-                <ul className="flex flex-col gap-0.5">
-                  {platos.map((p, i) => (
-                    <li key={i}>
-                      <span className="text-navy-soft">Persona {i + 1}:</span>{' '}
-                      <span className="font-medium text-navy">{p || '—'}</span>
-                    </li>
-                  ))}
-                </ul>
-              }
-            >
-              <PasoMenu
-                platosDisponibles={platosPaquete}
-                seleccion={platos}
-                onCambio={cambiarPlato}
-                nombrePaquete={nombrePaquete}
-              />
-              <Continuar habilitado={platos.every((p) => p)} onClick={() => setPaso(1)} />
-            </SeccionPaso>
+            <div className="flex flex-col gap-4">
+              <SeccionPaso
+                numero={1}
+                titulo={PASOS[0]}
+                estado={estadoDe(0)}
+                onEditar={() => setPaso(0)}
+                resumen={
+                  <ul className="flex flex-col gap-0.5">
+                    {platos.map((p, i) => (
+                      <li key={i}>
+                        <span className="text-navy-soft">Persona {i + 1}:</span>{' '}
+                        <span className="font-medium text-navy">{p || '—'}</span>
+                      </li>
+                    ))}
+                  </ul>
+                }
+              >
+                <PasoMenu
+                  platosDisponibles={platosPaquete}
+                  seleccion={platos}
+                  onCambio={cambiarPlato}
+                  nombrePaquete={nombrePaquete}
+                />
+                <Continuar habilitado={platos.every((p) => p)} onClick={() => setPaso(1)} />
+              </SeccionPaso>
 
-            <SeccionPaso
-              numero={2}
-              titulo={PASOS[1]}
-              estado={estadoDe(1)}
-              onEditar={() => setPaso(1)}
-              resumen={
-                <p>
-                  <span className="font-medium text-navy">{recogida.hotel || '—'}</span>
-                </p>
-              }
-            >
-              <PasoRecogida
-                datos={recogida}
-                onCambio={(parcial) => setRecogida((r) => ({ ...r, ...parcial }))}
-                horaSalida={horario?.hora ?? null}
-              />
-              <Continuar habilitado={recogida.hotel.trim() !== ''} onClick={() => setPaso(2)} />
-            </SeccionPaso>
+              <SeccionPaso
+                numero={2}
+                titulo={PASOS[1]}
+                estado={estadoDe(1)}
+                onEditar={() => setPaso(1)}
+                resumen={
+                  <p>
+                    <span className="font-medium text-navy">{recogida.hotel || '—'}</span>
+                  </p>
+                }
+              >
+                <PasoRecogida
+                  datos={recogida}
+                  onCambio={(parcial) => setRecogida((r) => ({ ...r, ...parcial }))}
+                  horaSalida={horario?.hora ?? null}
+                />
+                <Continuar habilitado={recogida.hotel.trim() !== ''} onClick={() => setPaso(2)} />
+              </SeccionPaso>
 
-            <SeccionPaso
-              numero={3}
-              titulo={PASOS[2]}
-              estado={estadoDe(2)}
-              onEditar={() => setPaso(2)}
-              resumen={
-                <p>
-                  <span className="font-medium text-navy">{contacto.nombre || '—'}</span>
-                  {contacto.email ? ` · ${contacto.email}` : ''}
-                  {contacto.telefono ? ` · ${contacto.telefono}` : ''}
-                </p>
-              }
-            >
-              <PasoContacto datos={contacto} onCambio={(parcial) => setContacto((c) => ({ ...c, ...parcial }))} />
-              <Continuar
-                habilitado={contacto.nombre.trim() !== '' && contacto.email.trim() !== ''}
-                onClick={() => setPaso(3)}
-              />
-            </SeccionPaso>
+              <SeccionPaso
+                numero={3}
+                titulo={PASOS[2]}
+                estado={estadoDe(2)}
+                onEditar={() => setPaso(2)}
+                resumen={
+                  <p>
+                    <span className="font-medium text-navy">{contacto.nombre || '—'}</span>
+                    {contacto.email ? ` · ${contacto.email}` : ''}
+                    {contacto.telefono ? ` · ${contacto.telefono}` : ''}
+                  </p>
+                }
+              >
+                <PasoContacto datos={contacto} onCambio={(parcial) => setContacto((c) => ({ ...c, ...parcial }))} />
+                <Continuar
+                  habilitado={contacto.nombre.trim() !== '' && contacto.email.trim() !== ''}
+                  onClick={() => setPaso(3)}
+                />
+              </SeccionPaso>
 
-            <SeccionPaso numero={4} titulo={PASOS[3]} estado={estadoDe(3)}>
-              <PasoPago deposito={deposito} saldo={saldo} frontera={frontera} onPagar={() => setFrontera(true)} />
-            </SeccionPaso>
+              <SeccionPaso numero={4} titulo={PASOS[3]} estado={estadoDe(3)}>
+                <PasoPago deposito={deposito} saldo={saldo} frontera={frontera} onPagar={() => setFrontera(true)} />
+              </SeccionPaso>
+            </div>
           </div>
 
-          {/* DERECHA: «qué estás comprando», sticky */}
-          <div className="lg:sticky lg:top-6">
-            <ResumenReserva
-              tour={tour}
-              fechaTxt={fechaTxt}
-              horarioTxt={horarioTxt}
-              nombrePaquete={nombrePaquete}
-              personas={personas}
-              total={total}
-              deposito={deposito}
-              saldo={saldo}
-            />
+          {/* DERECHA: zona GRIS a sangre (bg + ::after w-screen), altura completa */}
+          <div className="relative bg-fondo-ficha px-5 py-8 sm:px-8 sm:py-10 lg:after:absolute lg:after:inset-y-0 lg:after:left-full lg:after:w-screen lg:after:bg-fondo-ficha lg:after:content-['']">
+            <div className="lg:sticky lg:top-6">
+              <ResumenReserva
+                tour={tour}
+                fechaTxt={fechaTxt}
+                horarioTxt={horarioTxt}
+                nombrePaquete={nombrePaquete}
+                personas={personas}
+                total={total}
+                deposito={deposito}
+                saldo={saldo}
+              />
+            </div>
           </div>
         </div>
       </main>

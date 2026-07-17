@@ -4,10 +4,11 @@ import { formatoDinero, type Tour } from '@/data/home'
 // Columna DERECHA del funnel (Fase C, layout Viator): «qué estás comprando»,
 // sticky, siempre visible mientras se rellena el formulario de la izquierda.
 //
-// Fondo GRIS (2026-07-17, Samuel: "el lado derecho, igual que en Viator, en
-// gris"): toda la columna es un panel --color-fondo-ficha, con la tarjeta de
-// producto en BLANCO encima (mismo contraste que Viator) y los puntos de
-// confianza directamente sobre el gris.
+// El GRIS lo pone la ZONA derecha entera (reservar.tsx: bg-fondo-ficha + ::after
+// a sangre hasta el borde, "todo el lado derecho gris" — 2026-07-17, Samuel), no
+// este componente: aquí solo va la tarjeta de producto en BLANCO + los puntos de
+// confianza sobre el gris de la zona. Nada de un box gris alrededor (eso era el
+// error anterior).
 //
 // Se basa en el checkout de Viator PERO sin su urgencia inventada: nada de
 // contador «te guardamos la plaza 18 min» ni «reservado 5+ veces» — el proyecto
@@ -33,7 +34,7 @@ export function ResumenReserva({
   saldo: number
 }) {
   return (
-    <div className="rounded-card-grande bg-fondo-ficha p-4 sm:p-5">
+    <div>
       <div className="overflow-hidden rounded-card bg-papel ring-1 ring-linea">
         <div className="flex items-center gap-3 p-4">
           <img
