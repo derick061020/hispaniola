@@ -6,6 +6,7 @@
 // Construir la fecha con sus 3 partes evita el corrimiento.
 
 export const DIAS_CORTOS = ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb']
+export const MESES_CORTOS = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic']
 
 export function fechaAISO(d: Date): string {
   return (
