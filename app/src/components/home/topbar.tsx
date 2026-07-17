@@ -24,10 +24,20 @@ import { SelectorIdioma } from '@/components/ui/selector-idioma'
 export function Topbar() {
   const { pathname } = useLocation()
   // Sin topbar: /fundaciones (validación de tokens, "no es contenido del sitio"
-  // — sin Header ni Footer tampoco) y el funnel /reservar/:slug (un checkout
+  // — sin Header ni Footer tampoco), el funnel /reservar/:slug (un checkout
   // enfocado, con su propio header MÍNIMO — reservar.tsx — que no ofrece salidas:
-  // nada de contacto/idioma compitiendo con el flujo de compra).
-  if (pathname === '/fundaciones' || pathname.startsWith('/reservar')) return null
+  // nada de contacto/idioma compitiendo con el flujo de compra), y la pantalla
+  // post-checkout (/gracias) + la gestión de reserva (/mi-reserva) (2026-07-17,
+  // pedido de Samuel: "quita el header fijo de estas secciones, no quiero
+  // distracciones de contacto/idioma cuando el cliente está confirmando o
+  // editando su reserva"). El header local con Logo de cada página sigue
+  // siendo el ancla de marca.
+  if (
+    pathname === '/fundaciones' ||
+    pathname.startsWith('/reservar') ||
+    pathname === '/mi-reserva'
+  )
+    return null
 
   const whatsapp = CONTACTO.cards.find((c) => c.id === 'whatsapp')
   const telefono = CONTACTO.cards.find((c) => c.id === 'telefono')

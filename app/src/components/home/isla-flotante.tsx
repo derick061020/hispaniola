@@ -35,13 +35,21 @@ import type { MenuId } from './header'
 // menú (MenuMovil) — una 2ª isla ahí competiría por la misma franja que el
 // pulgar necesita para scrollear.
 //
-// NO aparece en /tours/:slug: esa página ya tiene su propio chrome fijo
-// (AnclasFicha, pegado a top-0, con --spacing-sticky-top calculado
-// asumiendo que ese es el ÚNICO elemento fijo — ver tokens.css). Dos navs
-// fijos ahí competirían por la misma franja superior. Sí aparece en
-// /eventos/:slug: esas landings hoy NO tienen ningún chrome fijo («por eso
-// no lleva barra móvil ni sticky», ver evento.tsx) — la isla es pura
-// ganancia ahí, no un 2º nav que reconciliar.
+// NO aparece en:
+//   - /tours/:slug: esa página ya tiene su propio chrome fijo
+//     (AnclasFicha, pegado a top-0, con --spacing-sticky-top calculado
+//     asumiendo que ese es el ÚNICO elemento fijo — ver tokens.css). Dos
+//     navs fijos ahí competirían por la misma franja superior.
+//   - /reservar/:slug/gracias y /mi-reserva (2026-07-17, pedido de Samuel):
+//     pantallas de "ya pagaste, gestiona tu reserva" — un nav compacto
+//     flotando encima invita a salirse en mitad de algo que NO es navegación.
+//     El header local con Logo de cada página sigue siendo el ancla. Aunque
+//     estas páginas no tienen hero (no activan el sentinel), la exclusión
+//     es defensiva por si `?dev-isla=abierta` la forzara a aparecer.
+//
+// Sí aparece en /eventos/:slug: esas landings hoy NO tienen ningún chrome
+// fijo («por eso no lleva barra móvil ni sticky», ver evento.tsx) — la
+// isla es pura ganancia ahí, no un 2º nav que reconciliar.
 export function IslaFlotante() {
   const { pathname } = useLocation()
   const [pasoElHero, setPasoElHero] = useState(false)
@@ -71,7 +79,12 @@ export function IslaFlotante() {
 
   const visible = forzarVisible || pasoElHero
 
-  if (pathname.startsWith('/tours/')) return null
+  if (
+    pathname.startsWith('/tours/') ||
+    pathname.startsWith('/reservar/') ||
+    pathname === '/mi-reserva'
+  )
+    return null
 
   return (
     <div
