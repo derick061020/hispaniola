@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from 'react'
 import { Link, Navigate, useParams, useSearchParams } from 'react-router-dom'
-import { ArrowLeft, Check } from 'lucide-react'
+import { Check, ChevronDown } from 'lucide-react'
 import * as FancyButton from '@/components/alignui/fancy-button'
 import { Logo } from '@/components/ui/logo'
 import { Meta } from '@/components/seo/meta'
@@ -101,10 +101,10 @@ function FlujoReserva({
   const saldo = total - deposito
 
   const [paso, setPaso] = useState(0)
-  const [platos, setPlatos] = useState<string[]>(() =>
-    Array.from({ length: personas }, () => platosPaquete[0]?.nombre ?? ''),
-  )
-  const [recogida, setRecogida] = useState<DatosRecogida>({ hotel: '', habitacion: '', notas: '' })
+  // Empieza SIN plato elegido (2026-07-17, Samuel): cada persona lo escoge
+  // activamente en su card. «Continuar» del paso 1 se habilita al elegir todos.
+  const [platos, setPlatos] = useState<string[]>(() => Array.from({ length: personas }, () => ''))
+  const [recogida, setRecogida] = useState<DatosRecogida>({ hotel: '', notas: '' })
   const [contacto, setContacto] = useState<DatosContacto>({ nombre: '', email: '', telefono: '' })
   const [frontera, setFrontera] = useState(false)
 
@@ -132,13 +132,16 @@ function FlujoReserva({
           <Link to="/" aria-label="Inicio de Hispaniola Aquatic Adventures">
             <Logo compacto />
           </Link>
-          <Link
-            to={`/tours/${tour.slug}`}
-            className="flex items-center gap-1.5 text-sm font-medium text-navy-sub transition-colors hover:text-navy"
+          {/* Selector de moneda visual (2026-07-17, Samuel) — como el «USD» de
+              Viator. Los precios del sitio son todos en US$; es decorativo, igual
+              que el SelectorIdioma del topbar (sin conversión real todavía). */}
+          <button
+            type="button"
+            className="flex items-center gap-1 text-sm font-medium text-navy-sub transition-colors hover:text-navy"
           >
-            <ArrowLeft className="size-4" aria-hidden="true" />
-            Volver al tour
-          </Link>
+            USD
+            <ChevronDown className="size-4" aria-hidden="true" />
+          </button>
         </div>
       </header>
 
@@ -186,7 +189,6 @@ function FlujoReserva({
               resumen={
                 <p>
                   <span className="font-medium text-navy">{recogida.hotel || '—'}</span>
-                  {recogida.habitacion ? ` · Hab. ${recogida.habitacion}` : ''}
                 </p>
               }
             >

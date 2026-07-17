@@ -1,13 +1,18 @@
 import { Check, ShieldCheck, MessageCircle } from 'lucide-react'
 import { formatoDinero, type Tour } from '@/data/home'
 
-// Columna DERECHA del funnel (Fase C, rediseño estilo Viator 2026-07-17, pedido
-// de Samuel): la tarjeta «qué estás comprando», sticky, siempre visible mientras
-// se rellena el formulario de la izquierda. Se basa en el checkout de Viator
-// PERO sin su urgencia inventada: nada de contador «te guardamos la plaza 18
-// min» ni «reservado 5+ veces» — el proyecto prohíbe la urgencia que no se
-// puede sostener con un dato real (analisis/revision-wireframes.md §2.7). Lo que
-// queda es honesto: producto, config, precio, depósito y política de cancelación.
+// Columna DERECHA del funnel (Fase C, layout Viator): «qué estás comprando»,
+// sticky, siempre visible mientras se rellena el formulario de la izquierda.
+//
+// Fondo GRIS (2026-07-17, Samuel: "el lado derecho, igual que en Viator, en
+// gris"): toda la columna es un panel --color-fondo-ficha, con la tarjeta de
+// producto en BLANCO encima (mismo contraste que Viator) y los puntos de
+// confianza directamente sobre el gris.
+//
+// Se basa en el checkout de Viator PERO sin su urgencia inventada: nada de
+// contador «te guardamos la plaza 18 min» ni «reservado 5+ veces» — el proyecto
+// prohíbe la urgencia que no se sostiene con un dato real (revision-wireframes.md
+// §2.7). Lo que queda es honesto: producto, config, precio, depósito y cancelación.
 export function ResumenReserva({
   tour,
   fechaTxt,
@@ -28,8 +33,8 @@ export function ResumenReserva({
   saldo: number
 }) {
   return (
-    <div className="flex flex-col gap-4">
-      <div className="overflow-hidden rounded-card-grande border border-linea bg-papel">
+    <div className="rounded-card-grande bg-fondo-ficha p-4 sm:p-5">
+      <div className="overflow-hidden rounded-card bg-papel ring-1 ring-linea">
         <div className="flex items-center gap-3 p-4">
           <img
             src={`/fotos/${tour.foto}.webp`}
@@ -56,7 +61,7 @@ export function ResumenReserva({
           </p>
         </div>
 
-        <div className="border-t border-linea bg-fondo-ficha p-4">
+        <div className="border-t border-linea p-4">
           <div className="flex items-center justify-between">
             <span className="text-sm font-semibold text-navy">Depósito hoy (25%)</span>
             <span className="font-display text-precio font-semibold text-navy">{formatoDinero(deposito)}</span>
@@ -67,7 +72,7 @@ export function ResumenReserva({
         </div>
       </div>
 
-      <div className="rounded-card-grande border border-linea bg-papel p-4">
+      <div className="mt-5 px-1">
         <h2 className="font-display text-sm font-semibold text-navy">Reserva con confianza</h2>
         <ul className="mt-3 flex flex-col gap-3 text-xs text-navy-sub">
           <li className="flex gap-2.5">

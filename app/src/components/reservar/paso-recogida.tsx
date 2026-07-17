@@ -3,8 +3,9 @@ import type { DatosRecogida } from '@/components/reservar/tipos'
 
 // Paso 2 del funnel: dónde recogemos al huésped. La web actual promete
 // «recogida gratis desde tu hotel» pero la hora exacta depende del hotel y se
-// confirma aparte — el copy lo dice, no se inventa una hora fija (mismo
-// criterio anti-invención que el resto del build).
+// confirma aparte — el copy lo dice, no se inventa una hora fija (mismo criterio
+// anti-invención que el resto del build). Sin campo de nº de habitación
+// (2026-07-17, Samuel): se pide el hotel y, si hace falta, se afina por WhatsApp.
 export function PasoRecogida({
   datos,
   onCambio,
@@ -31,12 +32,6 @@ export function PasoRecogida({
           placeholder="Ej. Meliá Caribe Beach"
           value={datos.hotel}
           onChange={(e) => onCambio({ hotel: e.target.value })}
-        />
-        <Campo
-          etiqueta="Nº de habitación (opcional)"
-          placeholder="Ej. 214"
-          value={datos.habitacion}
-          onChange={(e) => onCambio({ habitacion: e.target.value })}
         />
         <Campo
           etiqueta="Notas para la recogida (opcional)"

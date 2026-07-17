@@ -4,6 +4,6 @@
 
 export type Paquete = 'light' | 'premium'
 
-export type DatosRecogida = { hotel: string; habitacion: string; notas: string }
+export type DatosRecogida = { hotel: string; notas: string }
 
 export type DatosContacto = { nombre: string; email: string; telefono: string }
