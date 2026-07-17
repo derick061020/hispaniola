@@ -70,9 +70,12 @@ export function GraciasEventoPage() {
       />
 
       {/* Header mínimo — mismo patrón que gracias.tsx (no invitamos a
-          salir a mitad de una pantalla crítica). */}
+          salir a mitad de una pantalla crítica). Logo centrado (2026-07-17,
+          pedido de Samuel): las 2 páginas de gracias son de confirmación,
+          no de exploración — el header no compite por atención, solo ancla
+          la marca. */}
       <header className="border-b border-linea">
-        <div className="mx-auto flex max-w-3xl items-center px-5 py-3 sm:px-8">
+        <div className="mx-auto flex max-w-3xl items-center justify-center px-5 py-3 sm:px-8">
           <Link to="/" aria-label="Inicio de Hispaniola Aquatic Adventures">
             <Logo compacto />
           </Link>
