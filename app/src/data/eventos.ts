@@ -49,6 +49,13 @@ export type FichaEvento = {
   ctaSecundaria?: string
   foto: string
   fotoAlt: string
+  /** PLAN-INTERNAS-V2.md §C5: fotos del hero-interna (fundido, en vez de
+   *  video). SOLO fotos reales existentes — mismo criterio honesto que
+   *  `foto` y los `formatos` de aquí abajo: el portada + una selección de
+   *  las mismas fotos reales de charter-privado (el producto que un evento
+   *  de verdad compra) que ya usan los formatos, no fotos nuevas ni de
+   *  otros tours. */
+  galeria: string[]
   /** banda de cifras bajo la cabecera (solo empresas) */
   stats?: StatEvento[]
   formatosTitulo: string
@@ -77,6 +84,7 @@ export const EVENTOS: Record<string, FichaEvento> = {
     // grupo — la misma que OCASIONES ya curó para "Bodas y pre-boda".
     foto: 'galeria-charter-privado-5',
     fotoAlt: 'Novia celebrando a bordo del catamarán con su grupo de invitados',
+    galeria: ['galeria-charter-privado-5', 'galeria-charter-privado-4', 'galeria-charter-privado-1', 'galeria-charter-privado-2'],
     formatosTitulo: 'Tres momentos, tres formatos',
     formatos: [
       {
@@ -132,6 +140,7 @@ export const EVENTOS: Record<string, FichaEvento> = {
     // "capacidad + grupo organizado" de toda la galería.
     foto: 'galeria-charter-privado-3',
     fotoAlt: 'La cubierta del catamarán con varios grupos comiendo en sus mesas',
+    galeria: ['galeria-charter-privado-3', 'galeria-charter-privado-2', 'galeria-charter-privado-7', 'galeria-charter-privado-1'],
     // ⚠️ "Multi-barco" está en la lista de datos a confirmar con el cliente
     // (cerebro, Pendientes) — se porta tal cual del prototipo (canónico) y se
     // ajustará si el cliente lo desmiente.

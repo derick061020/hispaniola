@@ -1,6 +1,6 @@
 import { Navigate, useParams } from 'react-router-dom'
-import { Header } from '@/components/home/header'
 import { Footer } from '@/components/home/footer'
+import { HeroInterna } from '@/components/internas/hero-interna'
 import { CabeceraEvento } from '@/components/evento/cabecera-evento'
 import { FormatosEvento } from '@/components/evento/formatos-evento'
 import { IncluyeEvento } from '@/components/evento/incluye-evento'
@@ -32,11 +32,32 @@ export function EventoPage() {
 
   return (
     <div>
-      {/* «Reservar» del header apunta a la banda de cierre: en esta página
-          no existe ni #tours (home) ni el widget (ficha) — lo reservable
-          aquí es pedir la cotización. */}
-      <Header ctaHref="#evento-cierre" />
-      <CabeceraEvento evento={evento} />
+      {/* PLAN-INTERNAS-V2.md §C5: hero compartido con la home y la ficha de
+          tour (HeroInterna) — el header pasa a vivir DENTRO, sobre las fotos
+          reales del evento en fundido. «Reservar» del header apunta a la
+          banda de cierre: en esta página no existe ni #tours (home) ni el
+          widget (ficha) — lo reservable aquí es pedir la cotización. */}
+      <HeroInterna fotos={evento.galeria} etiqueta={evento.nombre} ctaHref="#evento-cierre">
+        <CabeceraEvento evento={evento} />
+      </HeroInterna>
+
+      {/* Banda de cifras (solo empresas) — sale de CabeceraEvento (§C5): ya
+          no compite con la foto del hero, queda en blanco justo debajo. */}
+      {evento.stats ? (
+        <div className="mx-auto max-w-contenido px-5 pt-8 sm:px-10 sm:pt-10">
+          <dl className="grid grid-cols-2 gap-6 rounded-card bg-papel-hueso p-6 sm:grid-cols-4">
+            {evento.stats.map((s) => (
+              <div key={s.label}>
+                <dt className="sr-only">{s.label}</dt>
+                <dd>
+                  <span className="block font-display text-stat font-semibold text-navy">{s.valor}</span>
+                  <span className="mt-1 block text-xs text-navy-soft">{s.label}</span>
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      ) : null}
 
       <div className="mx-auto max-w-contenido px-5 py-12 sm:px-10 lg:py-16">
         <div className="flex flex-col gap-12 lg:gap-16">
