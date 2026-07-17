@@ -5,6 +5,7 @@ import { Logo } from '@/components/ui/logo'
 import { Meta } from '@/components/seo/meta'
 import { sumarDias, fechaLarga } from '@/lib/fechas'
 import { buscarReserva, type Reserva } from '@/lib/reservas'
+import { dispararConfetti } from '@/lib/celebracion'
 import { formatoDinero } from '@/data/home'
 
 // «¡Nos vemos a bordo!» — pantalla post-checkout (2026-07-17, pedido de
@@ -52,6 +53,15 @@ export function GraciasPage() {
     setReserva(r)
     setOrigen(r.comoNosConociste ?? null)
   }, [codigo, slug, navigate])
+
+  // Celebración one-shot al confirmar la reserva. Deps []: se dispara
+  // una sola vez al montar la página, no en cada re-render ni al
+  // volver a la misma pantalla. canvas-confetti monta su propio canvas
+  // position:fixed con pointer-events:none — el copy debajo sigue
+  // siendo clickable.
+  useEffect(() => {
+    if (reserva) dispararConfetti()
+  }, [reserva])
 
   if (!reserva) return null
 
