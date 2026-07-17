@@ -121,6 +121,16 @@ export function Footer() {
               </Link>
             </li>
             <li>
+              {/* 2026-07-17: link a /mi-reserva — la pieza que faltaba para
+                  cerrar el ciclo post-checkout. Sin este link, un cliente que
+                  quería cambiar el menú o pagar el saldo tenía que
+                  contactarnos por WhatsApp (fricción). Va entre FAQ y
+                  Contacto: misma columna semántica (gestión + ayuda). */}
+              <Link to="/mi-reserva" className="font-semibold hover:text-white">
+                Gestionar mi reserva
+              </Link>
+            </li>
+            <li>
               <Link to="/contacto" className="hover:text-white">
                 Contacto
               </Link>

@@ -337,6 +337,10 @@ export const NAV_NOSOTROS: ItemNav[] = [
 // en el nav principal y entra aquí como subtab — rellena de paso la 4ª
 // celda que antes se dejaba vacía a propósito (decisión de Samuel, ya no
 // aplica con 4 ítems).
+// 5º ítem (2026-07-17, pedido de Samuel): "Gestionar mi reserva" — entra
+// a la página /mi-reserva donde el cliente edita su menú/recogida/contacto
+// o paga el saldo. Es la pieza que faltaba para cerrar el ciclo post-
+// checkout sin obligar al cliente a escribir por WhatsApp.
 export const NAV_AYUDA: ItemNav[] = [
   {
     id: 'faq',
@@ -355,6 +359,12 @@ export const NAV_AYUDA: ItemNav[] = [
     nombre: 'Contacto',
     descripcion: 'WhatsApp, teléfono y formulario. Respondemos en minutos, de 8:00 a 20:00.',
     to: '/contacto',
+  },
+  {
+    id: 'mi-reserva',
+    nombre: 'Gestionar mi reserva',
+    descripcion: 'Edita tu menú, recogida o datos con tu código HSP-XXXX-NNNN.',
+    to: '/mi-reserva',
   },
 ]
 
