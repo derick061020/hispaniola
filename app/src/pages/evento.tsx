@@ -6,6 +6,7 @@ import { CabeceraEvento } from '@/components/evento/cabecera-evento'
 import { WidgetEvento } from '@/components/evento/widget-evento'
 import { QueOfrecemos } from '@/components/evento/que-ofrecemos'
 import { IncluyeEvento } from '@/components/evento/incluye-evento'
+import { PaquetesEvento } from '@/components/evento/paquetes-evento'
 import { OtrasOcasiones } from '@/components/evento/otras-ocasiones'
 import { GaleriaMosaico } from '@/components/internas/galeria-mosaico'
 import * as Accordion from '@/components/alignui/accordion'
@@ -128,6 +129,12 @@ export function EventoPage() {
 
               <QueOfrecemos evento={evento} />
               <IncluyeEvento evento={evento} />
+
+              {/* Paquetes (solo party-boat). Misma card soft-UI que el
+                  resto, con 4 cards (Premium destacado + 3 paquetes
+                  estándar). Se pinta SOLO si el evento tiene `paquetes`
+                  en data. */}
+              <PaquetesEvento evento={evento} />
 
               {/* FAQ — solo si hay preguntas. La web del cliente de
                   party boat NO tenía FAQ propia, así que su landing

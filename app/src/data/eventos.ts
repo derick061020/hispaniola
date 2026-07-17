@@ -31,6 +31,33 @@ export type FormatoEvento = {
 
 export type BeneficioEvento = { titulo: string; texto: string }
 
+export type PaqueteEvento = {
+  /** id estable, kebab-case. Se usa en `?dev-paquete=I` para
+   *  pre-seleccionar un paquete en el form (Figma frame). */
+  id: string
+  nombre: string
+  /** ej: "US$ 660.00" — "Starting at" según la web del cliente */
+  precio: string
+  /** ej: "1-12 Person" o "1-120 personas" */
+  capacidad: string
+  /** ej: "2 stops" o "4 hours" — metadata corta del paquete */
+  meta: string
+  /** nombre de archivo en /fotos (sin extensión) — foto del plato
+   *  representativo del paquete. `null` = sin foto (mismo trato que
+   *  la galería vacía de Isla Saona). */
+  foto: string | null
+  fotoAlt: string
+  /** items del paquete con check. Mismo shape que BeneficioEvento
+   *  para reusar el lenguaje visual de IncluyeEvento. */
+  items: BeneficioEvento[]
+  /** extra de precio, ej: "US$ 99.00 per extra person" — texto libre
+   *  bajo los items. null = no aplica. */
+  extraPrecio?: string
+  /** badge de destacar: null = ninguno, "premium" = "Most complete" o
+   *  similar. La card se pinta con un acento si está presente. */
+  destacado?: 'premium' | null
+}
+
 export type StatEvento = { valor: string; label: string }
 
 export type PreguntaEvento = { p: string; r: string }
@@ -62,6 +89,18 @@ export type FichaEvento = {
   /** titulo + cards de "Qué incluye" */
   incluyeTitulo: string
   incluye: BeneficioEvento[]
+  /** null/undefined = el evento no tiene paquetes. Presente solo en
+   *  party-boat (la web del cliente vende 4 paquetes para eventos) y
+   *  en el futuro para bodas si cotiza a un menú cerrado. */
+  paquetes?: {
+    titulo: string
+    /** copy introductorio bajo el titulo */
+    intro: string
+    items: PaqueteEvento[]
+    /** nota al pie del bloque de paquetes (ej: "Lobster puede no estar
+     *  disponible de marzo a junio") */
+    nota?: string
+  }
   /** foto principal del mosaico (la portada) */
   foto: string
   fotoAlt: string
@@ -155,16 +194,113 @@ const PARTY_BOAT: FichaEvento = {
     },
   ],
   incluyeTitulo: 'Qué incluye',
-  // Los 6 ítems base de cualquier party boat. Mismo lenguaje que la
-  // ficha de tour (texto corto, sin sub-línea en los secundarios).
+  // 12 ítems verbatim de la sección "All Packages Include" de la web
+  // del cliente. La versión v1 de la landing tenía solo 6 (los más
+  // "turísticos"); esta v2 suma los 6 que el cliente lista
+  // explícitamente: transporte, check-in privado, floating kitchen,
+  // fotos submarinas, barra nacional, mamajuana shots, etc. — todo
+  // lo que ya está en el precio del party boat.
   incluye: [
-    { titulo: 'Snorkel', texto: 'Equipo incluido y aguas poco profundas — apto para principiantes.' },
-    { titulo: 'Comida a bordo', texto: 'Recién hecha en nuestra cocina flotante.' },
-    { titulo: 'Bebidas', texto: 'Cerveza nacional, ron añejo, vodka, jugos y refrescos.' },
-    { titulo: 'Música', texto: 'Equipo de sonido a bordo y playlist a tu gusto.' },
-    { titulo: 'Playa desierta', texto: 'Parada con coco-loco (con o sin alcohol).' },
-    { titulo: 'Fotos', texto: 'Subimos las del tour a nuestro Facebook — gratis.' },
+    { titulo: 'Transporte', texto: 'Ida y vuelta desde tu hotel, en bus con AC.' },
+    { titulo: 'Private Check-In Lobby', texto: 'Recepción privada en nuestras instalaciones antes de zarpar.' },
+    { titulo: 'Floating Kitchen', texto: 'Cocina flotante para comida recién hecha a bordo.' },
+    { titulo: 'Snorkeling Equipment', texto: 'Equipo sanitizado, todas las tallas.' },
+    { titulo: 'Photos (Facebook)', texto: 'Subimos las del tour a nuestro Facebook — gratis.' },
+    { titulo: 'Underwater Photos (Facebook)', texto: 'También del snorkel, en nuestro Facebook.' },
+    { titulo: 'WiFi & AUX port', texto: 'WiFi a bordo y puerto AUX para tu música.' },
+    { titulo: 'Music & Dance', texto: 'Equipo de sonido y crew con energía.' },
+    { titulo: 'National Open Bar', texto: 'Cerveza nacional, ron, vodka, jugos y refrescos.' },
+    { titulo: 'Mamajuana Shots', texto: 'La bebida típica de RD, en shots de cortesía.' },
+    { titulo: 'Fruit Skewers', texto: 'Brochetas de fruta fresca (1p/p).' },
+    { titulo: 'Mini Turkey & Cheese Croissant', texto: 'Aperitivo de pavo y queso (1p/p).' },
   ],
+  // 4 paquetes verbatim de la sección "All Packages" de la web del
+  // cliente. SOLO party boat los tiene — bodas y empresas cotizan a
+  // medida, no tienen paquetes públicos. Los items de cada paquete
+  // vienen de la web del cliente con el mismo patrón "1p/p" cuando
+  // aplica. NOTA al pie: avisos de langosta y de opciones
+  // vegetarianas (verbatim del original).
+  paquetes: {
+    titulo: 'Paquetes de comida',
+    intro:
+      'El party boat se cotiza con uno de estos 4 paquetes de comida. Cada uno incluye todo lo de "Qué incluye" arriba; lo que cambia es el menú, la capacidad y la duración.',
+    items: [
+      {
+        id: 'premium',
+        nombre: 'Hispaniola Premium Package',
+        precio: 'US$ 1,188.00',
+        capacidad: '1-12 personas',
+        meta: '4 horas a bordo',
+        foto: 'paquete-premium',
+        fotoAlt: 'Hispaniola Premium Package — langosta, brochetas y fries en plato blanco',
+        items: [
+          { titulo: 'Chicken Skewer', texto: '1p/p' },
+          { titulo: 'Beef Skewer', texto: '1p/p' },
+          { titulo: 'Shrimp Skewer', texto: '1p/p' },
+          { titulo: 'Shrimp Tempura', texto: '1 p/p' },
+          { titulo: 'Fish Sticks', texto: '' },
+          { titulo: 'French Fries', texto: '' },
+          { titulo: 'Lobster', texto: '' },
+          { titulo: '… y mucha diversión', texto: '' },
+        ],
+        extraPrecio: 'US$ 99.00 por persona extra',
+        destacado: 'premium',
+      },
+      {
+        id: 'package-i',
+        nombre: 'Package #I',
+        precio: 'US$ 660.00',
+        capacidad: '1-12 personas',
+        meta: '3 horas a bordo · 2 paradas',
+        foto: 'paquete-i',
+        fotoAlt: 'Package #I del party boat',
+        items: [{ titulo: 'Hot Dog', texto: '1p/p' }, { titulo: '… y mucha diversión', texto: '' }],
+        // Las "Vegetarian Substitutions" del cliente son reemplazos,
+        // no items extra — el plato de cada comensal es O el hot dog
+        // O el vegetariano. Por ahora el form los lleva como items;
+        // si quieres separarlos, dime y abro un sub-campo.
+        extraPrecio: 'US$ 55.00 por persona extra',
+      },
+      {
+        id: 'package-ii',
+        nombre: 'Package #II',
+        precio: 'US$ 780.00',
+        capacidad: '1-12 personas',
+        meta: '3 horas a bordo · 2 paradas',
+        foto: 'paquete-ii',
+        fotoAlt: 'Package #II del party boat',
+        items: [
+          { titulo: 'Hot Dog', texto: '1p/p' },
+          { titulo: 'Chicken Skewer', texto: '1p/p' },
+          { titulo: 'Beef Skewer', texto: '1p/p' },
+          { titulo: 'French Fries', texto: '' },
+          { titulo: '… y mucha diversión', texto: '' },
+        ],
+        extraPrecio: 'US$ 65.00 por persona extra',
+      },
+      {
+        id: 'package-iii',
+        nombre: 'Package #III',
+        precio: 'US$ 900.00',
+        capacidad: '1-12 personas',
+        meta: '3 horas a bordo · 2 paradas',
+        foto: 'paquete-iii',
+        fotoAlt: 'Package #III del party boat',
+        items: [
+          { titulo: 'Chicken Skewer', texto: '1p/p' },
+          { titulo: 'Beef Skewer', texto: '1p/p' },
+          { titulo: 'Shrimp Skewer', texto: '1p/p' },
+          { titulo: 'Shrimp Tempura', texto: '1 p/p' },
+          { titulo: 'Fish Sticks', texto: '' },
+          { titulo: 'French Fries', texto: '' },
+          { titulo: '… y mucha diversión', texto: '' },
+        ],
+        extraPrecio: 'US$ 75.00 por persona extra',
+      },
+    ],
+    nota:
+      '*"Starting At Rates" con los descuentos aplicables: hasta 5% cliente recurrente · 5% reserva con 30+ días · 5% pago en efectivo. La langosta puede no estar disponible de marzo a junio (se reemplaza por langostino salvaje). Las opciones vegetarianas aplican SOLO a su paquete y no se pueden intercambiar con otros.',
+  },
   // Foto de portada (la 1ª del mosaico). Sin quote sobre la foto: el
   // party boat no tiene un review de 5★ "famoso" que destaque.
   foto: 'events-1',

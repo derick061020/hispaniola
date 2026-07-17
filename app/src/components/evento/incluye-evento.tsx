@@ -14,19 +14,22 @@ import type { FichaEvento, BeneficioEvento } from '@/data/eventos'
 function iconoPorTitulo(titulo: string) {
   const t = titulo.toLowerCase()
   if (t.includes('snorkel')) return Waves
-  if (t.includes('comida') || t.includes('menú')) return Utensils
-  if (t.includes('bebida') || t.includes('barra')) return Wine
-  if (t.includes('música') || t.includes('sonido')) return Music
+  if (t.includes('comida') || t.includes('menú') || t.includes('skewer') || t.includes('fish') || t.includes('lobster') || t.includes('fries') || t.includes('croissant')) return Utensils
+  if (t.includes('bebida') || t.includes('barra') || t.includes('bar ') || t.includes('mamajuana') || t.includes('fruit')) return Wine
+  if (t.includes('música') || t.includes('sonido') || t.includes('aux')) return Music
   if (t.includes('foto')) return Camera
   if (t.includes('wifi')) return Wifi
   if (t.includes('transporte') || t.includes('traslado') || t.includes('logística') || t.includes('hoteles')) return Bus
   if (t.includes('guía') || t.includes('coordinador') || t.includes('tripulación')) return Users
   if (t.includes('playa')) return MapPin
+  if (t.includes('check-in') || t.includes('lobby') || t.includes('recepción')) return MapPin
   if (t.includes('capacidad') || t.includes('flota') || t.includes('multi-barco')) return Briefcase
   if (t.includes('clima') || t.includes('cancelación') || t.includes('plan b')) return CloudRain
   if (t.includes('facturación') || t.includes('factura') || t.includes('pago')) return Receipt
   if (t.includes('coordinadora') || t.includes('wedding planner') || t.includes('dedicad')) return Heart
   if (t.includes('whatsapp') || t.includes('contacto') || t.includes('idioma')) return Phone
+  if (t.includes('dance')) return Music
+  if (t.includes('kitchen')) return Utensils
   return Package
 }
 
