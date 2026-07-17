@@ -241,7 +241,6 @@ const PARTY_BOAT: FichaEvento = {
           { titulo: 'Fish Sticks', texto: '' },
           { titulo: 'French Fries', texto: '' },
           { titulo: 'Lobster', texto: '' },
-          { titulo: '… y mucha diversión', texto: '' },
         ],
         extraPrecio: 'US$ 99.00 por persona extra',
         destacado: 'premium',
@@ -254,7 +253,7 @@ const PARTY_BOAT: FichaEvento = {
         meta: '3 horas a bordo · 2 paradas',
         foto: 'paquete-i',
         fotoAlt: 'Package #I del party boat',
-        items: [{ titulo: 'Hot Dog', texto: '1p/p' }, { titulo: '… y mucha diversión', texto: '' }],
+        items: [{ titulo: 'Hot Dog', texto: '1p/p' }],
         // Las "Vegetarian Substitutions" del cliente son reemplazos,
         // no items extra — el plato de cada comensal es O el hot dog
         // O el vegetariano. Por ahora el form los lleva como items;
@@ -274,7 +273,6 @@ const PARTY_BOAT: FichaEvento = {
           { titulo: 'Chicken Skewer', texto: '1p/p' },
           { titulo: 'Beef Skewer', texto: '1p/p' },
           { titulo: 'French Fries', texto: '' },
-          { titulo: '… y mucha diversión', texto: '' },
         ],
         extraPrecio: 'US$ 65.00 por persona extra',
       },
@@ -293,7 +291,6 @@ const PARTY_BOAT: FichaEvento = {
           { titulo: 'Shrimp Tempura', texto: '1 p/p' },
           { titulo: 'Fish Sticks', texto: '' },
           { titulo: 'French Fries', texto: '' },
-          { titulo: '… y mucha diversión', texto: '' },
         ],
         extraPrecio: 'US$ 75.00 por persona extra',
       },
