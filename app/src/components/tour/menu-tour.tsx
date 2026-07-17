@@ -96,14 +96,15 @@ export function MenuTour({ tour, ficha }: { tour: Tour; ficha: FichaTour }) {
       </p>
 
       <div className="mt-5 flex flex-col gap-4">
-        {/* Light: 2 platos → grid de 2 columnas, cards anchas que llenan la
-            fila. Premium: 7 platos → hasta 4 columnas, más denso (se ve que
-            trae más por el +US$ 15). */}
+        {/* Los dos paquetes usan el MISMO grid de hasta 4 columnas (2026-07-17,
+            Samuel): así las 2 cards de Light quedan del mismo tamaño que las de
+            Premium y dejan huecos en blanco a la derecha — se siente que «solo
+            son 2», en vez de estirarse a llenar la fila. */}
         <PaqueteMenu
           nombre="Light"
           precio={formatoDinero(tour.precioLight)}
           platos={ficha.menuLight}
-          cols="grid-cols-2"
+          cols="grid-cols-2 sm:grid-cols-3 lg:grid-cols-4"
         />
         <PaqueteMenu
           nombre="Premium"
