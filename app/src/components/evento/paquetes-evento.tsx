@@ -39,9 +39,16 @@ function Card({ paquete }: { paquete: PaqueteEvento }) {
   return (
     <article
       className={[
-        'flex flex-col overflow-hidden rounded-card ring-1 transition-shadow',
+        // h-full: la card ocupa toda la altura de su fila del grid
+        // (Tailwind grid strechea los hijos por defecto, pero el
+        // h-full lo hace explícito para que el `flex-1` del ul de
+        // items empuje el footer al fondo en CUALQUIER cantidad
+        // de items — pedido de Samuel 2026-07-17).
+        'flex h-full flex-col overflow-hidden rounded-card ring-1',
         esPremium ? 'ring-2 ring-aqua bg-aqua-tint/40' : 'ring-linea',
-        'hover:shadow-card',
+        // Sin sombras (Samuel: "que no tenga sombras las cajas").
+        // Antes: hover:shadow-card. Ahora: sin transition-shadow
+        // tampoco, para que no se note el cambio al quitarlo.
       ].join(' ')}
     >
       {/* Foto (si tiene) o placeholder */}
@@ -75,9 +82,10 @@ function Card({ paquete }: { paquete: PaqueteEvento }) {
           {paquete.capacidad} · {paquete.meta}
         </p>
 
-        {/* Items con check. Si el array viene vacío (paquetes #I, #II,
-            #III pendientes de confirmar con la web del cliente), se
-            muestra un placeholder honesto en vez de inventar items. */}
+        {/* Items con check. `flex-1` empuja el footer (extraPrecio)
+            al fondo de la card, sin importar cuántos items tenga
+            el paquete — los 4 paquetes de la misma fila quedan
+            con su footer en el mismo Y. */}
         {paquete.items.length > 0 ? (
           <ul className="mt-4 flex-1 space-y-2">
             {paquete.items.map((it) => (
@@ -100,7 +108,7 @@ function Card({ paquete }: { paquete: PaqueteEvento }) {
         )}
 
         {paquete.extraPrecio ? (
-          <p className="mt-4 border-t border-linea pt-3 text-xs text-navy-soft">
+          <p className="mt-auto border-t border-linea pt-3 text-xs text-navy-soft">
             {paquete.extraPrecio}
           </p>
         ) : null}
