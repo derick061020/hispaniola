@@ -2,6 +2,8 @@ import { Routes, Route } from 'react-router-dom'
 import { HomePage } from '@/pages/home'
 import { TourPage } from '@/pages/tour'
 import { ReservarPage } from '@/pages/reservar'
+import { GraciasPage } from '@/pages/gracias'
+import { MiReservaPage } from '@/pages/mi-reserva'
 import { EventoPage } from '@/pages/evento'
 import { SostenibilidadPage } from '@/pages/sostenibilidad'
 import { NosotrosPage } from '@/pages/nosotros'
@@ -33,6 +35,8 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/tours/:slug" element={<TourPage />} />
         <Route path="/reservar/:slug" element={<ReservarPage />} />
+        <Route path="/reservar/:slug/gracias" element={<GraciasPage />} />
+        <Route path="/mi-reserva" element={<MiReservaPage />} />
         <Route path="/eventos/:slug" element={<EventoPage />} />
         <Route path="/sostenibilidad" element={<SostenibilidadPage />} />
         <Route path="/nosotros" element={<NosotrosPage />} />

@@ -47,6 +47,11 @@ export function sumarDias(iso: string, n: number): string {
   return fechaAISO(d)
 }
 
+export function fechaLarga(iso: string): string {
+  const d = parseFechaISO(iso)
+  return `${DIAS_CORTOS[d.getDay()]} ${d.getDate()} ${MESES[d.getMonth()]}`
+}
+
 export function diaCorto(iso: string): string {
   return DIAS_CORTOS[parseFechaISO(iso).getDay()]
 }

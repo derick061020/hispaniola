@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from 'react'
-import { Link, Navigate, useParams, useSearchParams } from 'react-router-dom'
+import { Link, Navigate, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { Check, ChevronDown } from 'lucide-react'
 import * as FancyButton from '@/components/alignui/fancy-button'
 import { Logo } from '@/components/ui/logo'
@@ -13,6 +13,7 @@ import type { DatosContacto, DatosRecogida, Paquete } from '@/components/reserva
 import { TOURS, type Tour } from '@/data/home'
 import { FICHAS, type FichaTour } from '@/data/tours'
 import { DIAS_CORTOS, MESES_CORTOS, parseFechaISO } from '@/lib/fechas'
+import { guardarReserva, generarCodigoReserva, type Reserva } from '@/lib/reservas'
 
 // Funnel de reserva (/reservar/:slug, Fase C). El widget de la ficha es el
 // CONFIGURADOR (paquete · fecha · hora · personas); «Continuar» abre aquí, con
@@ -92,6 +93,7 @@ function FlujoReserva({
   horarioIdx: number
   fechaISO: string | null
 }) {
+  const navigate = useNavigate()
   const platosPaquete = paquete === 'premium' ? ficha.menuPremium : ficha.menuLight
   const nombrePaquete = paquete === 'premium' ? 'Premium' : 'Light'
   const horario = ficha.horarios[horarioIdx] ?? ficha.horarios[0]
@@ -113,7 +115,51 @@ function FlujoReserva({
     emailConfirm: '',
     telefono: '',
   })
-  const [frontera, setFrontera] = useState(false)
+
+  // "Pagar" — persiste la reserva en localStorage y navega a la pantalla
+  // de confirmación. No hay backend todavía (PLAN-LANZAMIENTO Bloque A),
+  // así que la "reserva" vive en el navegador del cliente hasta que se
+  // conecte Odoo/xpotours. Cuando exista backend, este handler será
+  // `onClick={async () => await api.createReserva(reserva)}` y la nav
+  // se hace con el codigo que devuelva el server.
+  const handlePagar = () => {
+    const codigo = generarCodigoReserva()
+    const reserva: Reserva = {
+      codigo,
+      slug: tour.slug,
+      tour: {
+        nombre: tour.nombre,
+        audienciaChip: tour.audienciaChip,
+        duracionCorta: tour.duracionCorta,
+        maxPax: tour.maxPax,
+        precioLight: tour.precioLight,
+      },
+      ficha: {
+        menuLight: ficha.menuLight,
+        menuPremium: ficha.menuPremium,
+        horarios: ficha.horarios,
+        upgradePremium: ficha.upgradePremium,
+      },
+      paquete,
+      personas,
+      horarioIdx,
+      fechaISO: fechaISO ?? new Date().toISOString().slice(0, 10),
+      platos,
+      recogida: { hotel: recogida.hotel.trim(), notas: recogida.notas.trim() },
+      contacto: {
+        nombre: contacto.nombre.trim(),
+        apellidos: contacto.apellidos.trim(),
+        email: contacto.email.trim(),
+        telefono: contacto.telefono.trim(),
+      },
+      total,
+      deposito,
+      saldo,
+      fechaCreacionISO: new Date().toISOString(),
+    }
+    guardarReserva(reserva)
+    navigate(`/reservar/${tour.slug}/gracias?codigo=${codigo}`)
+  }
 
   const fechaTxt = fechaLegible(fechaISO)
   const horarioTxt = horario ? `${horario.hora}${horario.regreso ? ` — regreso ${horario.regreso}` : ''}` : '—'
@@ -237,7 +283,7 @@ function FlujoReserva({
               </SeccionPaso>
 
               <SeccionPaso numero={4} titulo={PASOS[3]} estado={estadoDe(3)}>
-                <PasoPago deposito={deposito} saldo={saldo} frontera={frontera} onPagar={() => setFrontera(true)} />
+                <PasoPago deposito={deposito} saldo={saldo} onPagar={handlePagar} />
               </SeccionPaso>
             </div>
           </div>

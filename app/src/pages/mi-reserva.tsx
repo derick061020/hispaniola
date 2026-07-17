@@ -1,0 +1,435 @@
+import { useEffect, useState } from 'react'
+import { Link, useSearchParams } from 'react-router-dom'
+import { Check, CreditCard, MapPin, Pencil, Users, Utensils } from 'lucide-react'
+import { Logo } from '@/components/ui/logo'
+import { Meta } from '@/components/seo/meta'
+import { fechaLarga } from '@/lib/fechas'
+import { buscarReserva, guardarReserva, reservaDemo, type Reserva } from '@/lib/reservas'
+import { formatoDinero } from '@/data/home'
+import { Campo } from '@/components/ui/campo'
+
+// «Mi reserva» — vista de la reserva ya pagada con edición local (2026-07-17,
+// pedido de Pedro). El usuario pidió que las ediciones se guarden en
+// local (localStorage) para ser "más fieles al prototipo" — la página
+// queda usable sin backend.
+//
+// LAYOUT (1 columna, max-w-3xl):
+//   1. Cabecera: código + tour + fecha + chip «Confirmada» (o
+//      «Demo» si es la reserva de ejemplo del prototipo).
+//   2. Bloque «Tu reserva» (resumen + botón «Pagar saldo online» si
+//      queda saldo).
+//   3. Bloque «Tu menú» (platos por persona, editables hasta el día
+//      antes).
+//   4. Bloque «Recogida» (hotel + notas, editables).
+//   5. Bloque «Datos de contacto» (editables).
+//   6. Footer: link a contacto + WhatsApp.
+//
+// EDICIÓN: cada bloque tiene un botón «Editar» que lo abre en modo
+// form. «Guardar» persiste en localStorage (vía guardarReserva).
+// «Cancelar» revierte sin guardar.
+
+const NOMBRES_PLATO: Record<string, string> = {
+  // Mapeo legacy por si el id guardado no es el nombre (registros viejos en
+  // localStorage). El funnel actual guarda `plato.nombre` directamente, así
+  // que el lookup principal va por el menú del paquete.
+  'surf-turf': 'Surf & Turf', 'ceviche-peruano': 'Ceviche peruano', 'vegano-gourmet': 'Vegano gourmet',
+  wagyu: 'Wagyu', langosta: 'Langosta', mariscos: 'Mariscos', carne: 'Carne', vegetariano: 'Vegetariano',
+}
+
+function nombrePlato(id: string, menu: { nombre: string }[]) {
+  return menu.find((p) => p.nombre === id)?.nombre ?? NOMBRES_PLATO[id] ?? id
+}
+
+export function MiReservaPage() {
+  const [params] = useSearchParams()
+  const codigo = params.get('codigo')
+
+  const [reserva, setReserva] = useState<Reserva | null>(null)
+  const [esDemo, setEsDemo] = useState(false)
+
+  useEffect(() => {
+    if (!codigo) {
+      // Sin código en URL → muestra la reserva de ejemplo del prototipo,
+      // marcada como demo. Permite previsualizar /mi-reserva sin completar
+      // una reserva real.
+      setReserva(reservaDemo())
+      setEsDemo(true)
+      return
+    }
+    const r = buscarReserva(codigo)
+    if (r) {
+      setReserva(r)
+      setEsDemo(false)
+    } else {
+      // Código no encontrado en localStorage → fallback a la demo.
+      // (Mismo comportamiento que el prototipo.)
+      setReserva(reservaDemo())
+      setEsDemo(true)
+    }
+  }, [codigo])
+
+  if (!reserva) return null
+
+  const guardar = (nueva: Reserva) => {
+    guardarReserva(nueva)
+    setReserva(nueva)
+  }
+
+  const horario = reserva.ficha.horarios[reserva.horarioIdx]
+
+  return (
+    <div className="min-h-screen bg-papel">
+      <Meta
+        titulo={`Mi reserva · ${reserva.codigo}`}
+        descripcion={`Gestiona tu reserva ${reserva.codigo} de ${reserva.tour.nombre} para ${reserva.personas} personas el ${fechaLarga(reserva.fechaISO)}.`}
+        ruta={`/mi-reserva?codigo=${reserva.codigo}`}
+        indexable={false}
+      />
+
+      <header className="border-b border-linea">
+        <div className="mx-auto flex max-w-3xl items-center justify-between px-5 py-3 sm:px-8">
+          <Link to="/" aria-label="Inicio de Hispaniola Aquatic Adventures">
+            <Logo compacto />
+          </Link>
+          <Link to="/" className="text-sm font-semibold text-aqua-dark hover:underline">
+            ← Volver al inicio
+          </Link>
+        </div>
+      </header>
+
+      <main className="mx-auto max-w-3xl px-5 py-10 sm:px-8 sm:py-14">
+        {esDemo && (
+          <div className="mb-6 rounded-card border border-coral/30 bg-coral/5 p-4 text-sm text-navy-sub">
+            Estás viendo una <strong className="font-semibold text-navy">reserva de ejemplo</strong> —
+            cuando completes una reserva real, esta pantalla mostrará la tuya. Los cambios que
+            hagas aquí se guardan en tu navegador, no en nuestro sistema.
+          </div>
+        )}
+
+        {/* 1. CABECERA */}
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wide text-navy-soft">Mi reserva</p>
+            <h1 className="mt-1 font-display text-2xl font-semibold text-navy sm:text-3xl">
+              {reserva.codigo}
+              <span className="text-navy-soft"> · {reserva.tour.nombre}</span>
+            </h1>
+            <p className="mt-1 text-sm text-navy-sub">
+              {fechaLarga(reserva.fechaISO)} · {horario?.hora ?? '—'} · {reserva.personas}{' '}
+              {reserva.personas === 1 ? 'persona' : 'personas'}
+            </p>
+          </div>
+          <span className="inline-flex items-center gap-1.5 rounded-chip bg-menta px-3 py-1.5 text-sm font-semibold text-menta-texto">
+            <Check className="size-4" aria-hidden="true" />
+            {esDemo ? 'Demo' : 'Confirmada'}
+          </span>
+        </div>
+
+        {/* 2. RESUMEN + PAGO DE SALDO */}
+        <BloqueReserva reserva={reserva} />
+
+        {/* 3. MENÚ POR PERSONA */}
+        <BloqueMenu reserva={reserva} guardar={guardar} />
+
+        {/* 4. RECOGIDA */}
+        <BloqueRecogida reserva={reserva} guardar={guardar} />
+
+        {/* 5. CONTACTO */}
+        <BloqueContacto reserva={reserva} guardar={guardar} />
+
+        {/* 6. FOOTER */}
+        <div className="mt-10 flex flex-wrap items-center justify-between gap-3 border-t border-linea pt-6 text-sm text-navy-soft">
+          <p>¿Algo no encaja? Escríbenos y lo arreglamos.</p>
+          <a
+            href={`https://wa.me/18293052804?text=${encodeURIComponent(`Hola! Tengo la reserva ${reserva.codigo} y necesito ayuda.`)}`}
+            target="_blank"
+            rel="noopener"
+            className="font-semibold text-aqua-dark hover:underline"
+          >
+            WhatsApp +1-829-305-2804 →
+          </a>
+        </div>
+      </main>
+    </div>
+  )
+}
+
+// ────────────────────────────────────────────────────────────────────────
+// Sub-componentes
+// ────────────────────────────────────────────────────────────────────────
+
+function BloqueReserva({ reserva }: { reserva: Reserva }) {
+  const [pagado, setPagado] = useState(false)
+
+  return (
+    <section className="mt-8 rounded-card-grande border border-linea bg-papel p-5 sm:p-6">
+      <div className="flex items-center gap-2">
+        <CreditCard className="size-5 text-aqua" aria-hidden="true" />
+        <h2 className="font-display text-lg font-semibold text-navy">Tu reserva</h2>
+      </div>
+      <dl className="mt-4 space-y-2 text-sm">
+        <Fila label="Total del tour" valor={formatoDinero(reserva.total)} />
+        <Fila label="Ya pagado" valor={formatoDinero(reserva.deposito)} />
+        <div className="flex items-center justify-between border-t border-linea pt-3 text-sm">
+          <dt className="font-medium text-navy">Saldo pendiente</dt>
+          <dd className="text-base font-semibold text-navy">{formatoDinero(reserva.saldo)}</dd>
+        </div>
+      </dl>
+      {reserva.saldo > 0 && !pagado && (
+        <div className="mt-4">
+          <button
+            type="button"
+            onClick={() => setPagado(true)}
+            className="w-full rounded-btn bg-coral px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-coral-dark"
+          >
+            Pagar saldo online — {formatoDinero(reserva.saldo)}
+          </button>
+          <p className="mt-2 text-center text-xs text-navy-soft">
+            O paga en efectivo a bordo — no hace falta hacer nada aquí.
+          </p>
+        </div>
+      )}
+      {pagado && (
+        <p className="mt-4 inline-flex items-center gap-1.5 rounded-chip bg-menta px-3 py-1.5 text-sm font-semibold text-menta-texto">
+          <Check className="size-4" aria-hidden="true" />
+          Saldo pagado — no queda nada pendiente.
+        </p>
+      )}
+    </section>
+  )
+}
+
+function Fila({ label, valor }: { label: string; valor: string }) {
+  return (
+    <div className="flex items-center justify-between">
+      <dt className="text-navy-soft">{label}</dt>
+      <dd className="text-navy">{valor}</dd>
+    </div>
+  )
+}
+
+function BloqueMenu({ reserva, guardar }: { reserva: Reserva; guardar: (r: Reserva) => void }) {
+  const [edit, setEdit] = useState(false)
+  const [platos, setPlatos] = useState(reserva.platos)
+  const menu = reserva.paquete === 'premium' ? reserva.ficha.menuPremium : reserva.ficha.menuLight
+
+  const guardarCambios = () => {
+    guardar({ ...reserva, platos })
+    setEdit(false)
+  }
+  const cancelar = () => {
+    setPlatos(reserva.platos)
+    setEdit(false)
+  }
+
+  return (
+    <section className="mt-6 rounded-card-grande border border-linea bg-papel p-5 sm:p-6">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Utensils className="size-5 text-aqua" aria-hidden="true" />
+          <h2 className="font-display text-lg font-semibold text-navy">Tu menú</h2>
+        </div>
+        {!edit && (
+          <BotonEditar onClick={() => setEdit(true)} />
+        )}
+      </div>
+
+      {edit ? (
+        <div className="mt-4 space-y-3">
+          {platos.map((p, i) => (
+            <div key={i}>
+              <label className="text-xs font-semibold uppercase tracking-wide text-navy-soft">
+                Persona {i + 1}
+              </label>
+              <select
+                value={p}
+                onChange={(e) => setPlatos((prev) => prev.map((x, j) => (i === j ? e.target.value : x)))}
+                className="mt-1 w-full rounded-btn border border-linea bg-papel px-3 py-2 text-sm text-navy focus:border-aqua focus:outline-none focus:ring-2 focus:ring-aqua/20"
+              >
+                {menu.map((plato) => (
+                  <option key={plato.nombre} value={plato.nombre}>
+                    {plato.nombre}
+                  </option>
+                ))}
+              </select>
+            </div>
+          ))}
+          <div className="flex gap-2 pt-2">
+            <button
+              type="button"
+              onClick={guardarCambios}
+              className="rounded-btn bg-coral px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-coral-dark"
+            >
+              Guardar menú
+            </button>
+            <button
+              type="button"
+              onClick={cancelar}
+              className="rounded-btn border border-linea bg-papel px-4 py-2 text-sm font-medium text-navy transition-colors hover:bg-papel-hueso"
+            >
+              Cancelar
+            </button>
+          </div>
+        </div>
+      ) : (
+        <ul className="mt-4 space-y-1.5 text-sm">
+          {reserva.platos.map((p, i) => (
+            <li key={i} className="flex items-center justify-between">
+              <span className="text-navy-soft">Persona {i + 1}</span>
+              <span className="font-medium text-navy">{nombrePlato(p, menu)}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+  )
+}
+
+function BloqueRecogida({ reserva, guardar }: { reserva: Reserva; guardar: (r: Reserva) => void }) {
+  const [edit, setEdit] = useState(false)
+  const [hotel, setHotel] = useState(reserva.recogida.hotel)
+  const [notas, setNotas] = useState(reserva.recogida.notas)
+
+  const guardarCambios = () => {
+    guardar({ ...reserva, recogida: { hotel: hotel.trim(), notas: notas.trim() } })
+    setEdit(false)
+  }
+  const cancelar = () => {
+    setHotel(reserva.recogida.hotel)
+    setNotas(reserva.recogida.notas)
+    setEdit(false)
+  }
+
+  return (
+    <section className="mt-6 rounded-card-grande border border-linea bg-papel p-5 sm:p-6">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <MapPin className="size-5 text-aqua" aria-hidden="true" />
+          <h2 className="font-display text-lg font-semibold text-navy">Recogida</h2>
+        </div>
+        {!edit && <BotonEditar onClick={() => setEdit(true)} />}
+      </div>
+
+      {edit ? (
+        <div className="mt-4 space-y-3">
+          <Campo
+            etiqueta="Hotel"
+            value={hotel}
+            onChange={(e) => setHotel(e.target.value)}
+            placeholder="Nombre del hotel"
+            required
+          />
+          <Campo
+            etiqueta="Notas"
+            value={notas}
+            onChange={(e) => setNotas(e.target.value)}
+            placeholder="Habitación, hora preferida, etc."
+          />
+          <div className="flex gap-2 pt-2">
+            <button
+              type="button"
+              onClick={guardarCambios}
+              className="rounded-btn bg-coral px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-coral-dark"
+            >
+              Guardar
+            </button>
+            <button
+              type="button"
+              onClick={cancelar}
+              className="rounded-btn border border-linea bg-papel px-4 py-2 text-sm font-medium text-navy transition-colors hover:bg-papel-hueso"
+            >
+              Cancelar
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className="mt-4 space-y-1 text-sm">
+          <p className="font-medium text-navy">{reserva.recogida.hotel || '—'}</p>
+          {reserva.recogida.notas && <p className="text-navy-soft">{reserva.recogida.notas}</p>}
+        </div>
+      )}
+    </section>
+  )
+}
+
+function BloqueContacto({ reserva, guardar }: { reserva: Reserva; guardar: (r: Reserva) => void }) {
+  const [edit, setEdit] = useState(false)
+  const [contacto, setContacto] = useState({
+    nombre: reserva.contacto.nombre,
+    apellidos: reserva.contacto.apellidos,
+    email: reserva.contacto.email,
+    telefono: reserva.contacto.telefono,
+  })
+
+  const guardarCambios = () => {
+    guardar({ ...reserva, contacto: { ...contacto, nombre: contacto.nombre.trim(), apellidos: contacto.apellidos.trim() } })
+    setEdit(false)
+  }
+  const cancelar = () => {
+    setContacto({
+      nombre: reserva.contacto.nombre,
+      apellidos: reserva.contacto.apellidos,
+      email: reserva.contacto.email,
+      telefono: reserva.contacto.telefono,
+    })
+    setEdit(false)
+  }
+
+  return (
+    <section className="mt-6 rounded-card-grande border border-linea bg-papel p-5 sm:p-6">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Users className="size-5 text-aqua" aria-hidden="true" />
+          <h2 className="font-display text-lg font-semibold text-navy">Datos de contacto</h2>
+        </div>
+        {!edit && <BotonEditar onClick={() => setEdit(true)} />}
+      </div>
+
+      {edit ? (
+        <div className="mt-4 space-y-3">
+          <div className="grid gap-3 sm:grid-cols-2">
+            <Campo etiqueta="Nombre" value={contacto.nombre} onChange={(e) => setContacto((c) => ({ ...c, nombre: e.target.value }))} required />
+            <Campo etiqueta="Apellidos" value={contacto.apellidos} onChange={(e) => setContacto((c) => ({ ...c, apellidos: e.target.value }))} />
+            <Campo etiqueta="Email" type="email" value={contacto.email} onChange={(e) => setContacto((c) => ({ ...c, email: e.target.value }))} required />
+            <Campo etiqueta="Teléfono" type="tel" value={contacto.telefono} onChange={(e) => setContacto((c) => ({ ...c, telefono: e.target.value }))} />
+          </div>
+          <div className="flex gap-2 pt-2">
+            <button
+              type="button"
+              onClick={guardarCambios}
+              className="rounded-btn bg-coral px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-coral-dark"
+            >
+              Guardar
+            </button>
+            <button
+              type="button"
+              onClick={cancelar}
+              className="rounded-btn border border-linea bg-papel px-4 py-2 text-sm font-medium text-navy transition-colors hover:bg-papel-hueso"
+            >
+              Cancelar
+            </button>
+          </div>
+        </div>
+      ) : (
+        <dl className="mt-4 space-y-1 text-sm">
+          <Fila label="Nombre" valor={`${reserva.contacto.nombre} ${reserva.contacto.apellidos}`.trim()} />
+          <Fila label="Email" valor={reserva.contacto.email} />
+          <Fila label="Teléfono" valor={reserva.contacto.telefono} />
+        </dl>
+      )}
+    </section>
+  )
+}
+
+function BotonEditar({ onClick }: { onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="inline-flex items-center gap-1.5 rounded-btn border border-linea bg-papel px-3 py-1.5 text-sm font-medium text-navy transition-colors hover:bg-papel-hueso"
+    >
+      <Pencil className="size-3.5" aria-hidden="true" />
+      Editar
+    </button>
+  )
+}
