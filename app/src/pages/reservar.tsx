@@ -106,7 +106,13 @@ function FlujoReserva({
   // activamente en su card. «Continuar» del paso 1 se habilita al elegir todos.
   const [platos, setPlatos] = useState<string[]>(() => Array.from({ length: personas }, () => ''))
   const [recogida, setRecogida] = useState<DatosRecogida>({ hotel: '', notas: '' })
-  const [contacto, setContacto] = useState<DatosContacto>({ nombre: '', email: '', telefono: '' })
+  const [contacto, setContacto] = useState<DatosContacto>({
+    nombre: '',
+    apellidos: '',
+    email: '',
+    emailConfirm: '',
+    telefono: '',
+  })
   const [frontera, setFrontera] = useState(false)
 
   const fechaTxt = fechaLegible(fechaISO)
@@ -167,7 +173,9 @@ function FlujoReserva({
                 onEditar={() => setPaso(0)}
                 resumen={
                   <p>
-                    <span className="font-medium text-navy">{contacto.nombre || '—'}</span>
+                    <span className="font-medium text-navy">
+                      {[contacto.nombre, contacto.apellidos].filter(Boolean).join(' ') || '—'}
+                    </span>
                     {contacto.email ? ` · ${contacto.email}` : ''}
                     {contacto.telefono ? ` · ${contacto.telefono}` : ''}
                   </p>
@@ -175,7 +183,11 @@ function FlujoReserva({
               >
                 <PasoContacto datos={contacto} onCambio={(parcial) => setContacto((c) => ({ ...c, ...parcial }))} />
                 <Continuar
-                  habilitado={contacto.nombre.trim() !== '' && contacto.email.trim() !== ''}
+                  habilitado={
+                    contacto.nombre.trim() !== '' &&
+                    contacto.email.trim() !== '' &&
+                    contacto.email === contacto.emailConfirm
+                  }
                   onClick={() => setPaso(1)}
                 />
               </SeccionPaso>
