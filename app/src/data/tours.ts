@@ -51,16 +51,6 @@ export type FichaTour = {
   /** Quote sobre la foto principal del mosaico — portada de primeraResenaTour()
    *  de prototipo/app.js. Prueba social ANTES de scrollear (wireframe A1). */
   quoteDestacada: string
-  /** Columna visual del itinerario (T-F4). El wireframe (A3) pide ahí un MAPA
-   *  de la ruta, y ese asset NO existe — no se inventa (ni un SVG a ojo ni una
-   *  ilustración generada sin el OK de Samuel); es decisión abierta
-   *  (PLAN-TOURS.md §13.4). Mientras tanto va una foto real del tour, elegida
-   *  MIRÁNDOLAS y de entre las que el mosaico NO usa (que son las 4 primeras de
-   *  `galeriaCompleta` + la portada), para no repetir foto en la misma página.
-   *  Va como campo propio y no como «galeriaCompleta[4]» a propósito: así
-   *  reordenar la galería no hace colisionar en silencio el mosaico con esta.
-   *  undefined = sin columna visual (Isla Saona: no tiene galería). */
-  fotoItinerario?: string
   itinerario: PasoItinerario[]
   incluye: BeneficioIncluido[]
   /** «También incluye»: el resto de lo que trae el tour más allá de los 4
@@ -94,8 +84,8 @@ export const FICHAS: Record<string, FichaTour> = {
     // parrilla. Premium: 7 platos — los 4 con foto real (plato-*) + 3 de solo
     // texto (lasañas y cóctel, sin asset en /fotos).
     menuLight: [
-      { nombre: 'Pechuga de pollo a la parrilla', desc: 'Con papas y vegetales' },
-      { nombre: 'Filete de pescado a la parrilla', desc: 'Con papas y vegetales' },
+      { nombre: 'Pechuga de pollo a la parrilla', desc: 'Con papas y vegetales', foto: 'plato-chicken-bodegon' },
+      { nombre: 'Filete de pescado a la parrilla', desc: 'Con papas y vegetales', foto: 'plato-fish-bodegon' },
     ],
     menuPremium: [
       { nombre: 'Mariscos', desc: 'Langosta, pulpo, camarón', foto: 'plato-mariscos' },
@@ -116,9 +106,6 @@ export const FICHAS: Record<string, FichaTour> = {
       'galeria-semi-privado-7',
     ],
     quoteDestacada: 'El coral fue lo mejor del viaje — la bióloga nos explicó todo.',
-    // El catamarán fondeado con el grupo en el agua: es la parada de «piscina
-    // natural» que el propio itinerario describe.
-    fotoItinerario: 'galeria-semi-privado-6',
     itinerario: [
       {
         hora: '8:05',
@@ -183,8 +170,8 @@ export const FICHAS: Record<string, FichaTour> = {
     // Misma cocina/operación que Semi-Privado (mismo catamarán y menú); el
     // marco cambia (familias, sin alcohol para menores), no los platos.
     menuLight: [
-      { nombre: 'Pechuga de pollo a la parrilla', desc: 'Con papas y vegetales' },
-      { nombre: 'Filete de pescado a la parrilla', desc: 'Con papas y vegetales' },
+      { nombre: 'Pechuga de pollo a la parrilla', desc: 'Con papas y vegetales', foto: 'plato-chicken-bodegon' },
+      { nombre: 'Filete de pescado a la parrilla', desc: 'Con papas y vegetales', foto: 'plato-fish-bodegon' },
     ],
     menuPremium: [
       { nombre: 'Mariscos', desc: 'Langosta, pulpo, camarón', foto: 'plato-mariscos' },
@@ -207,10 +194,6 @@ export const FICHAS: Record<string, FichaTour> = {
       'galeria-snorkel-lovers-9',
     ],
     quoteDestacada: 'Perfecto para ir con los niños, todos se sintieron seguros.',
-    // Una snorkelista sobre las estructuras del vivero de coral: es
-    // literalmente el «vivero» que nombra el itinerario, no una foto de agua
-    // cualquiera.
-    fotoItinerario: 'galeria-snorkel-lovers-7',
     itinerario: [
       {
         hora: '8:05',
@@ -289,10 +272,6 @@ export const FICHAS: Record<string, FichaTour> = {
       'galeria-charter-privado-7',
     ],
     quoteDestacada: 'Coordinaron todo a nuestra medida, el barco entero para la familia.',
-    // El grupo entero en el agua con SU barco al fondo: es la promesa del
-    // charter («sin desconocidos a bordo»), no una parada concreta — este tour
-    // no tiene ruta fija.
-    fotoItinerario: 'galeria-charter-privado-7',
     itinerario: [
       { hora: 'A coordinar', titulo: 'Recogida en tu hotel', texto: 'Se ajusta al horario que definamos juntos.' },
       {

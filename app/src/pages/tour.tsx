@@ -108,7 +108,7 @@ export function TourPage() {
                 {tour.booking === 'completo' ? <ComparadorStrip /> : null}
               </div>
 
-              <Itinerario tour={tour} ficha={ficha} />
+              <Itinerario ficha={ficha} />
               <IncluyeTour ficha={ficha} />
               {tour.booking === 'completo' ? <MenuTour tour={tour} ficha={ficha} /> : null}
               <OpinionesTour tour={tour} />
