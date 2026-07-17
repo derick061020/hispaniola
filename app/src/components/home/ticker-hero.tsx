@@ -6,7 +6,7 @@ import { useDevFlag } from '@/dev/use-dev-flag'
 import { useTickerDock } from './use-ticker-dock'
 
 // Ticker del hero (v3) — sustituye a la baraja de v2 (app/PLAN-v3.md §7).
-// Los 4 tours + las 6 ocasiones desfilan en loop infinito por el pie del
+// Los 4 tours + los 3 eventos desfilan en loop infinito por el pie del
 // hero. Las cards de TOUR llevan a su ficha real (/tours/:slug); las de
 // ocasión siguen en el prototipo. Hover "dock" (§10): las
 // cards cercanas al puntero crecen sobre una curva continua — ver
@@ -73,8 +73,8 @@ function TickerCard({ item, oculto = false }: { item: TickerItem; oculto?: boole
 
   // Las especies del ticker no van al mismo sitio: el TOUR tiene ficha real
   // (/tours/:slug), y de las ocasiones, Bodas y MICE tienen ya su landing
-  // (/eventos/:slug) — las otras 4 siguen en el prototipo (su destino es el
-  // formulario del hub de eventos, fuera de este build). La unión
+  // (/eventos/:slug) — «Eventos y party boat» sigue en el prototipo (su destino
+  // es el formulario del hub de eventos, fuera de este build). La unión
   // discriminada del dato lo decide sola.
   if (item.tipo === 'tour') {
     return (
@@ -130,7 +130,7 @@ function MetaTour({ item }: { item: TickerTour }) {
 // La ocasión no tiene precio publicado (todas se cotizan): en lugar de un dato
 // inventado, un chip de CATEGORÍA en aqua — el único punto de color de la card,
 // y el contraste que separa las dos especies de un vistazo en la pista (número
-// fuerte = tour, chip aqua = ocasión). Que se repita en las 6 es correcto: un
+// fuerte = tour, chip aqua = ocasión). Que se repita en los 3 es correcto: un
 // chip de categoría AGRUPA. Lo que no valdría es repetir una métrica por-card
 // idéntica (los 4 tours comparten rating 4.9) fingiendo que informa de cada una.
 function ChipOcasion() {

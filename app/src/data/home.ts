@@ -2,6 +2,8 @@
 // Solo se incluyen los campos que la HOME usa; el resto de la ficha de tour
 // (itinerario, incluye, FAQ propia…) no es parte de este build (ver PLAN.md).
 
+import { WHATSAPP_URL } from '@/data/tours'
+
 export type Tour = {
   slug: string
   nombre: string
@@ -135,15 +137,32 @@ export type Ocasion = {
   /** nombre de archivo en /fotos (sin extensión) */
   foto: string
   /** slug de la landing real (/eventos/:slug) — solo las 2 con esLanding.
-   *  Las otras 4 van al formulario del hub, que vive en el prototipo. */
+   *  «Eventos y party boat» (el ítem genérico) va al formulario del hub, que
+   *  vive en el prototipo. */
   slug?: string
 }
 
-// Fotos PROVISIONALES: no existe shooting propio de eventos (bodas,
-// cumpleaños...), así que se reutilizan fotos reales de la galería de
-// charter-privado que mejor encajan con cada ocasión. Pendiente pedirle al
-// cliente fotos reales de eventos (ver app/PLAN-v3.md §9).
+// LOS 3 EVENTOS de la web actual, en su mismo orden (decisión de Samuel
+// 2026-07-17, mapa-del-sitio.md §"EVENTS & CELEBRATIONS"): la web vieja tiene
+// SOLO 3 ítems de evento — «Events & Party Boat», «Pre-Post Wedding
+// Celebrations» y «MICE» — así que la nueva no debe inventar más. Las
+// ocasiones sueltas de antes (cumpleaños, aniversarios, despedidas, reuniones)
+// eran el desglose del genérico «Events & Party Boat» y se recolapsan en él;
+// siguen dando «scent» desde la `meta`, sin ocupar cada una un slot del menú.
+// Bodas y MICE ya correspondían 1:1 al viejo y conservan su landing propia.
+//
+// Fotos PROVISIONALES: no existe shooting propio de eventos, así que se
+// reutilizan fotos reales de la galería de charter-privado que mejor encajan
+// con cada ocasión. Pendiente pedirle al cliente fotos reales de eventos (ver
+// app/PLAN-v3.md §9).
 export const OCASIONES: Ocasion[] = [
+  {
+    tipo: 'eventos',
+    nombre: 'Eventos y party boat',
+    meta: 'Cumpleaños, aniversarios, despedidas y reuniones. Barco entero.',
+    esLanding: false,
+    foto: 'galeria-charter-privado-2',
+  },
   {
     tipo: 'boda',
     nombre: 'Bodas y pre-boda',
@@ -160,32 +179,51 @@ export const OCASIONES: Ocasion[] = [
     foto: 'galeria-charter-privado-3',
     slug: 'empresas',
   },
+]
+
+export type EventoEspecial = {
+  id: string
+  nombre: string
+  meta: string
+  /** nombre de archivo en /fotos (sin extensión) */
+  foto: string
+  /** solo Bodas tiene landing real (/eventos/:slug); el resto va a
+   *  EnlacePrototipo, igual que la ocasión genérica de OCASIONES. */
+  slug?: string
+}
+
+// Sección «Special Events» del final de la home actual (4 boxes: Birthdays,
+// Weddings, Anniversaries, Bachelor Experience — hispaniolaaquaticadventures.com/
+// index.php), traducida fiel y condensada a una línea por evento (mismo
+// criterio de síntesis que OCASIONES/INCLUYE_CRUCERO). NO es lo mismo que
+// OCASIONES: aquella son las 3 categorías del megamenú/hub de eventos; esta
+// es la vitrina visual de 4 boxes que la home actual muestra al final de la
+// página. Fotos PROVISIONALES (mismo criterio que OCASIONES): reutilizan la
+// galería real de charter-privado, no hay shooting propio de eventos.
+export const EVENTOS_ESPECIALES: EventoEspecial[] = [
   {
-    tipo: 'cumpleanos',
+    id: 'cumpleanos',
     nombre: 'Cumpleaños',
-    meta: 'Decoración, pastel y la playlist que elijas.',
-    esLanding: false,
-    foto: 'galeria-charter-privado-1',
-  },
-  {
-    tipo: 'aniversario',
-    nombre: 'Aniversarios',
-    meta: 'Íntimo o con toda la familia.',
-    esLanding: false,
-    foto: 'galeria-charter-privado-7',
-  },
-  {
-    tipo: 'despedida',
-    nombre: 'Despedidas de soltero/a',
-    meta: 'Barco entero, solo tu grupo.',
-    esLanding: false,
+    meta: 'Fiesta a bordo con familia y amigos — buena comida y barra libre nacional.',
     foto: 'galeria-charter-privado-2',
   },
   {
-    tipo: 'reunion',
-    nombre: 'Reuniones familiares',
-    meta: 'Multi-generación: niños y abuelos a bordo.',
-    esLanding: false,
+    id: 'bodas',
+    nombre: 'Bodas',
+    meta: 'El día más importante de tu vida, tan perfecto como un catamarán lo puede hacer.',
+    foto: 'galeria-charter-privado-5',
+    slug: 'bodas',
+  },
+  {
+    id: 'aniversarios',
+    nombre: 'Aniversarios',
+    meta: 'Celebra tu próximo aniversario en el agua y hazlo un año inolvidable.',
+    foto: 'galeria-charter-privado-3',
+  },
+  {
+    id: 'despedidas',
+    nombre: 'Despedidas de soltero/a',
+    meta: 'Barra libre, gran comida y música — la escapada perfecta antes de la boda.',
     foto: 'galeria-charter-privado-6',
   },
 ]
@@ -219,48 +257,66 @@ export function formatoDinero(n: number | null): string {
   return 'US$ ' + n.toLocaleString('en-US', { maximumFractionDigits: 2 })
 }
 
-export type ItemNav = { id: string; nombre: string; descripcion: string }
+export type ItemNav = {
+  id: string
+  nombre: string
+  descripcion: string
+  /** ruta real (Link SPA) — sin ella el ítem es placeholder del prototipo */
+  to?: string
+}
 
 // Nosotros (PLAN-v3.md §12.2) — fuente: TRIPULACION (4 roles) + FLOTA (3
-// entradas) del prototipo para el primer ítem; el itinerario de semi-privado
-// ("Arrecife de Cabeza de Toro: proyecto de restauración top-3 de RD") para
-// el segundo. El icono se mapea por `id` en item-menu.tsx (presentación, no
-// contenido — así este archivo no importa React).
+// entradas) del prototipo para el primer ítem. El segundo, "El arrecife que
+// reconstruimos", ya NO cuenta la historia en el menú: es solo una MENCIÓN +
+// botón a /sostenibilidad, donde vive toda la info (conservación, coral,
+// tortugas, los 7 videos). Sostenibilidad tuvo brevemente su propio tab en el
+// menú principal (2026-07-17); se revirtió el mismo día (Samuel: "quita
+// sostenibilidad del menú principal, porque ya lo tenemos en nosotros como
+// subtab") — este ítem es ahora su ÚNICA entrada en la navegación principal
+// (desktop y móvil). El icono se mapea por `id` en item-menu.tsx (presentación,
+// no contenido — así este archivo no importa React).
 export const NAV_NOSOTROS: ItemNav[] = [
   {
     id: 'tripulacion',
     nombre: 'La tripulación y la flota',
     descripcion: 'Capitán, bióloga marina, chef a bordo y guía de snorkel. Dos catamaranes y la cocina flotante.',
+    to: '/nosotros',
   },
   {
     id: 'arrecife',
     nombre: 'El arrecife que reconstruimos',
-    descripcion: 'El vivero de coral de Cabeza de Toro: proyecto de restauración top-3 del país.',
+    descripcion: 'Mira la página de Sostenibilidad para toda la historia.',
+    to: '/sostenibilidad',
   },
 ]
 
 // Ayuda (PLAN-v3.md §12.2) — FAQ_CATEGORIAS del prototipo: 6 categorías, 14
-// preguntas (contadas). NOTAS['mi-reserva'] para el segundo ítem. "Contacto"
-// (ya no "Contacto y WhatsApp", decisión de Samuel 2026-07-14) lleva a la
-// página /contacto del prototipo — WhatsApp con horario, teléfono, email y
-// formulario, no solo el enlace directo a WhatsApp que tenía antes.
-// ⚠️ El grid de 2 columnas deja un hueco en la 4ª celda con estos 3 ítems —
-// decisión de Samuel: se queda vacío, sin `col-span` ni relleno inventado.
+// preguntas (contadas). "Contacto" (ya no "Contacto y WhatsApp", decisión de
+// Samuel 2026-07-14) lleva a la página /contacto del prototipo — WhatsApp
+// con horario, teléfono, email y formulario, no solo el enlace directo a
+// WhatsApp que tenía antes.
+// 4º ítem (2026-07-17, pedido de Samuel): "Guías" deja de ser su propio tab
+// en el nav principal y entra aquí como subtab — rellena de paso la 4ª
+// celda que antes se dejaba vacía a propósito (decisión de Samuel, ya no
+// aplica con 4 ítems).
 export const NAV_AYUDA: ItemNav[] = [
   {
     id: 'faq',
     nombre: 'Preguntas frecuentes',
     descripcion: '14 preguntas: reservas y pagos, qué llevar, comida, clima, niños.',
+    to: '/faq',
   },
   {
-    id: 'reserva',
-    nombre: 'Gestionar mi reserva',
-    descripcion: 'Cambia tu menú o paga el saldo pendiente. Solo con tu código, sin cuenta.',
+    id: 'guias',
+    nombre: 'Guías de Punta Cana',
+    descripcion: '5 artículos: cómo elegir tour, qué llevar, mejor época para navegar.',
+    to: '/guias',
   },
   {
     id: 'contacto',
     nombre: 'Contacto',
     descripcion: 'WhatsApp, teléfono y formulario. Respondemos en minutos, de 8:00 a 20:00.',
+    to: '/contacto',
   },
 ]
 
@@ -597,3 +653,94 @@ export const FUNDADOR: Fundador = {
   videoSrc: '/video/hero.mp4',
   videoPoster: '/fotos/hero-video-poster.webp',
 }
+
+// ─────────────────────────────────────────────────────────────────────────
+// Sección «Contacto» (2026-07-17, pedido de Samuel) — mapa + formulario +
+// 4 cards de contacto, tras Reviews (ref. visual: sección de contacto de
+// Lumoro, adaptada a tokens Hispaniola).
+//
+// Copy portado VERBATIM de prototipo/app.js → renderContacto (líneas
+// 1693-1722) e inicializarFormularioDemo, salvo dos datos que NO existían en
+// el prototipo (el email de contacto no tenía dirección literal, y la
+// dirección de oficina se actualiza) — ambos dados por Samuel el
+// 2026-07-17: dirección "Oficina Hispaniola Aquatic Adventures, C. P.º del
+// Sol, Punta Cana 23500, República Dominicana" (coordenadas 18.669740,
+// -68.401262) y correo "info@catamarantourspuntacana.com".
+export type ContactoCard = {
+  id: 'whatsapp' | 'telefono' | 'email' | 'oficina'
+  titulo: string
+  dato: string
+  href?: string
+}
+
+export const CONTACTO = {
+  // eyebrow/lead: chrome de la cabecera de /contacto (HeroInterna), NO del
+  // bloque embebido en la home — `titulo` ya hacía ese trabajo ahí y sigue
+  // igual. Mapea contact.php de la web actual (H1 "Contact Us" / subtítulo
+  // "Punta Cana - Bavaro, Dominican Republic"), con el copy adaptado al tono
+  // de marca del resto del sitio en vez de portado literal.
+  eyebrow: 'Contacto',
+  lead: 'El equipo real del barco, no un call center — WhatsApp, teléfono o el formulario de abajo. Respondemos en menos de 24 h.',
+  titulo: 'Hablas con nosotros, no con un call center',
+  direccion: 'Oficina Hispaniola Aquatic Adventures, C. P.º del Sol, Punta Cana 23500, República Dominicana',
+  email: 'info@catamarantourspuntacana.com',
+  mapaEmbedUrl: 'https://www.google.com/maps?q=18.669740,-68.401262&z=16&output=embed',
+  confirmacion: 'Recibimos tu mensaje — te respondemos en menos de 24 h (o antes por WhatsApp).',
+  microcopy: '¿Ya tienes una reserva? Ten a mano tu código (HSP-XXXX-XXXX) y te ayudamos más rápido.',
+  cards: [
+    {
+      id: 'whatsapp',
+      titulo: 'WhatsApp',
+      dato: '+1 829 305 2804',
+      href: WHATSAPP_URL,
+    },
+    {
+      id: 'telefono',
+      titulo: 'Teléfono',
+      dato: '1-800-657-0016',
+      href: 'tel:+18006570016',
+    },
+    {
+      id: 'email',
+      titulo: 'Email',
+      dato: 'info@catamarantourspuntacana.com',
+      href: 'mailto:info@catamarantourspuntacana.com',
+    },
+    {
+      id: 'oficina',
+      titulo: 'Oficina',
+      dato: 'C. P.º del Sol, Punta Cana 23500, República Dominicana',
+      href: 'https://maps.app.goo.gl/iuu1EGaNYGCjhreC7',
+    },
+  ] satisfies ContactoCard[],
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// FAQ de la home (2026-07-17) — reemplaza al layout de galería+FAQ en 2
+// columnas (la galería photo-stack sale de la home; la galería completa
+// sigue en prototipo/). Curaduría de 6 preguntas de FAQ_CATEGORIAS
+// (prototipo/datos.js, 6 categorías / 14 preguntas) — una por categoría.
+// Las 3 primeras ya vivían curadas en la sección anterior; #4 y #5 son
+// verbatim nuevas de datos.js, #6 ya estaba curada.
+export type FaqItem = { p: string; r: string }
+
+export const FAQ_HOME: FaqItem[] = [
+  { p: '¿Qué pasa si llueve el día de mi tour?', r: 'Reembolso total o cambio de fecha, sin costo.' },
+  { p: '¿Puedo pagar solo el depósito?', r: 'Sí, confirmas con el 25% y pagas el resto el día del tour.' },
+  {
+    p: '¿Incluye recogida en mi hotel?',
+    r: 'Sí, en todos los tours (excepto charters con punto de encuentro propio).',
+  },
+  {
+    p: '¿Puedo elegir mi plato?',
+    r: 'Sí, cada persona elige su plato al reservar: Mariscos, Carne, Surf & Turf o Vegetariano.',
+  },
+  {
+    p: '¿Puedo ir si no sé nadar?',
+    r: 'Sí, el snorkel es en aguas poco profundas y con chaleco salvavidas disponible.',
+  },
+  {
+    p: '¿Los niños pueden ir en todos los tours?',
+    r: 'En Snorkel Lovers sí; Semi-Privado Premium es solo para adultos.',
+  },
+]

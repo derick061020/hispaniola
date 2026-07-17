@@ -1,53 +1,8 @@
 /* ============================================================
    CSS de componente — efectos a medida que no se expresan bien con utilidades.
 
-   POR QUÉ EXISTE: el photo-stack necesita que el hover REVIERTA una rotación
-   que viene de una custom property (`--rot`). Con utilidades
-   (`rotate-[var(--rot)]` + `hover:rotate-0`) no conseguimos que el hover se
-   aplicara: la foto se quedaba torcida. Escrito como CSS explícito funciona
-   —verificado en navegador comparando capturas en reposo y con el ratón
-   encima— y además el orden de la cascada queda a la vista, que para un
-   efecto propio como éste se lee mejor y se traduce mejor a Figma.
-
    Todos los valores siguen saliendo de tokens (@theme en tokens.css).
    ============================================================ */
-
-.pila-foto {
-  position: relative;
-  z-index: var(--z);
-  rotate: var(--rot);
-  translate: 0 0;
-  border-radius: var(--radius-foto);
-  background: var(--color-papel);
-  padding: 0.5rem;
-  box-shadow: var(--shadow-polaroid);
-  transition:
-    rotate 300ms ease-out,
-    translate 300ms ease-out;
-}
-
-@media (min-width: 640px) {
-  .pila-foto {
-    padding: 0.625rem;
-  }
-}
-
-/* Al pasar el ratón: la foto se endereza, se levanta y sube por encima de las
-   que la tapan. Solo con puntero real (en táctil no hay hover que revertir). */
-@media (hover: hover) {
-  .pila-foto:hover {
-    z-index: 50;
-    rotate: 0deg;
-    translate: 0 -0.5rem;
-  }
-}
-
-/* Con reduced-motion el cambio ocurre igual, pero sin animarlo. */
-@media (prefers-reduced-motion: reduce) {
-  .pila-foto {
-    transition: none;
-  }
-}
 
 /* ============================================================
    Ticker del hero (v3) — pie del hero, loop infinito de cards.
@@ -199,6 +154,17 @@
   transition:
     width var(--notch-transicion) var(--notch-easing),
     height var(--notch-transicion) var(--notch-easing);
+}
+
+/* Variante de la isla flotante (isla-flotante.tsx, 2026-07-17) — MISMO morph
+   de ancho/alto que el notch de siempre, pero flotando con margen del borde
+   en vez de cortado en él: las 4 esquinas redondeadas (no solo las de abajo)
+   y borde + sombra propios, ya que aquí no hay marco/esquinas cóncavas que
+   sugieran "recorte en el bisel". */
+.notch-caja--flotante {
+  border-radius: var(--radius-card-grande);
+  border: 1px solid var(--color-linea);
+  box-shadow: var(--shadow-card);
 }
 
 /* El panel entra en fade cuando la caja ya va llegando a su tamaño final —
@@ -1425,6 +1391,241 @@
 
 @media (prefers-reduced-motion: reduce) {
   .opiniones-marquee-pista {
+    animation: none;
+  }
+}
+
+/* ============================================================
+   Marquee de checks del widget de reserva (2026-07-17, pedido de Samuel:
+   "que estén en una sola línea, en un ticker infinito, para reducir el
+   alto" — antes 3 líneas apiladas). MISMA mecánica que el marquee de
+   Opiniones (arriba): pista duplicada 2x en el JSX, loop invisible con
+   translate: -50% 0, pausa al hover. Clases propias porque aquí no hay
+   cards: son 3 frases cortas en una fila continua, no ítems de ancho fijo. */
+.widget-checks-wrapper {
+  overflow: hidden;
+}
+
+.widget-checks-wrapper--estatico {
+  overflow-x: auto;
+}
+
+.widget-checks-pista {
+  display: flex;
+  width: max-content;
+  animation: widget-checks-desfile var(--widget-checks-duracion) linear infinite;
+}
+
+.widget-checks-wrapper--estatico .widget-checks-pista {
+  animation: none;
+}
+
+.widget-checks-pista--pausada {
+  animation-play-state: paused;
+}
+
+.widget-checks-wrapper:hover .widget-checks-pista {
+  animation-play-state: paused;
+}
+
+.widget-checks-item {
+  margin-right: var(--spacing-widget-checks-gap);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+@keyframes widget-checks-desfile {
+  to {
+    translate: -50% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .widget-checks-pista {
+    animation: none;
+  }
+}
+
+/* ============================================================
+   Eventos especiales (2026-07-17, pedido de Samuel) — 4 boxes de foto+overlay
+   a igual tamaño; desde lg, fila flex con acordeón de HOVER (ref. de Samuel:
+   paneles de destino que se expanden, tipo "London/Paris/New York"): al
+   posar el ratón sobre uno, ESE crece y el resto se adelgaza y pierde su
+   contenido (título/descripción/CTA).
+
+   POR QUÉ ES CSS A MEDIDA (:has()): mismo idioma que .collage (arriba, hover
+   de grupo de 3 fotos) — una reacción de grupo discreta, no una curva
+   continua por distancia. Aquí la variable que cambia es ANCHO (flex-grow),
+   no escala/rotación.
+
+   min-width: 0 es obligatorio — sin él, el título más largo ("Despedidas de
+   soltero/a") fija un ancho mínimo de contenido y el flex-item no puede
+   encogerse por debajo de esa medida (bug clásico de flexbox).
+
+   ⚠️ Solo con puntero real (hover:hover + pointer:fine): en táctil no hay
+   hover que puedan "salir" — 3 boxes adelgazados y sin contenido de forma
+   permanente se leería como un error, no como un gesto. En móvil/tablet la
+   fila es un grid 2×2 fijo (eventos-especiales.tsx) y este bloque no aplica.
+   ============================================================ */
+.eventos-especiales-fila {
+  display: flex;
+  gap: 1rem;
+}
+
+.eventos-especiales-item {
+  min-width: 0;
+  flex: 1 1 0%;
+  transition: flex var(--eventos-especiales-transicion) ease;
+}
+
+.eventos-especiales-contenido {
+  transition: opacity 200ms ease-out;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .eventos-especiales-fila:has(.eventos-especiales-item:hover) .eventos-especiales-item {
+    flex: var(--eventos-especiales-reposo-flex) 1 0%;
+  }
+
+  .eventos-especiales-fila:has(.eventos-especiales-item:hover) .eventos-especiales-item:hover {
+    flex: var(--eventos-especiales-hover-flex) 1 0%;
+  }
+
+  .eventos-especiales-fila:has(.eventos-especiales-item:hover) .eventos-especiales-item:not(:hover) .eventos-especiales-contenido {
+    opacity: 0;
+  }
+}
+
+/* ============================================================
+   Footer «océano» (2026-07-17, pedido de Samuel) — transición blanco → mar
+   con banda de espuma, misma TÉCNICA que .incluye-espuma (ver arriba: el
+   bloque «Incluye») pero ESTÁTICA — img en vez de video, sin sticky ni GSAP
+   — y con assets PROPIOS (Samuel prohibió reutilizar los del incluye).
+   Solo banda SUPERIOR: el footer es el final de la página, no hay un
+   blanco de vuelta que fundir por abajo.
+
+   El alto de la banda va RESERVADO en el padding-top del footer
+   (footer.tsx, con calc() sobre estos mismos tokens — mismo patrón que
+   incluye-crucero.tsx), así el contenido nunca la pisa. El sangrado sella
+   el subpíxel del borde contra el papel de la sección anterior (siempre
+   blanco: FAQ en la home, wrappers blancos en la ficha y en las landings
+   de evento — si algún día una página terminara en un color, este borde
+   100% opaco cantaría contra él).
+   ============================================================ */
+.footer-oceano {
+  position: absolute;
+  inset: 0;
+}
+
+.footer-espuma {
+  /* HERMANA de .footer-oceano, no hija — dentro, su recorte redondearía el
+     subpíxel del borde distinto a como se pinta el fondo (mismo bug medido
+     en .incluye-espuma). */
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(var(--footer-espuma-sangrado) * -1);
+  height: calc(var(--spacing-footer-espuma-movil) + var(--footer-espuma-sangrado));
+  pointer-events: none;
+  background: var(--color-papel);
+  mask-image: var(--footer-espuma-mapa);
+  mask-size: var(--footer-espuma-tile) 100%;
+  mask-repeat: repeat-x;
+}
+
+@media (min-width: 640px) {
+  .footer-espuma {
+    height: calc(var(--spacing-footer-espuma) + var(--footer-espuma-sangrado));
+    --footer-espuma-tile: calc(var(--spacing-footer-espuma) * var(--footer-espuma-aspecto));
+  }
+}
+
+/* ============================================================
+   Página Sostenibilidad — numeral fantasma de cada pilar (rediseño
+   2026-07-17). Mismo truco que .incluye-numero/.incluye-item-titulo (número
+   grande y translúcido, el título MONTADO encima por margen negativo — el
+   solape es lo que los lee como una sola pieza tipográfica), pero en versión
+   clara: aqua muy rebajado sobre papel en vez de aqua-claro sobre el océano
+   del "Incluye". aria-hidden en el numeral — el orden ya lo da el DOM. */
+.sost-numero {
+  display: block;
+  font-family: var(--font-display);
+  font-size: var(--text-sost-numero-movil);
+  font-weight: 700;
+  line-height: 1;
+  color: var(--color-sost-numero);
+}
+
+@media (min-width: 640px) {
+  .sost-numero {
+    font-size: var(--text-sost-numero);
+  }
+}
+
+.sost-item-titulo {
+  position: relative;
+  margin-top: calc(var(--spacing-sost-numero-solape) * -1);
+}
+
+/* ============================================================
+   Página Guías — numeral fantasma de cada tip/artículo (rediseño editorial
+   2026-07-17). Mismo truco que .sost-numero/.sost-item-titulo (mismo día,
+   misma queja de Samuel — "solo cajas" — resuelta con el mismo lenguaje),
+   tokens propios (--text-guias-numero, --color-guias-numero). */
+.guias-numero {
+  display: block;
+  font-family: var(--font-display);
+  font-size: var(--text-guias-numero-movil);
+  font-weight: 700;
+  line-height: 1;
+  color: var(--color-guias-numero);
+}
+
+@media (min-width: 640px) {
+  .guias-numero {
+    font-size: var(--text-guias-numero);
+  }
+}
+
+.guias-item-titulo {
+  position: relative;
+  margin-top: calc(var(--spacing-guias-numero-solape) * -1);
+}
+
+/* ============================================================
+   Stepper "− N +" del widget de reserva (2026-07-17, pedido de Samuel:
+   "cuando se suma o resta personas como que no se nota, hay que agregarle
+   sensación de interacción"). El número de personas PULSA al cambiar (un
+   tick corto: escala 1 → 1.18 → 1 + un flash de color navy → navy-sub) para
+   que el cambio sea imposible de no ver al lado del icono. La animación
+   corre al re-montar el <span> (key={personas}, en widget-reserva.tsx), no
+   con un watch de estado — así no acumula tiempo si el usuario machaca el
+   botón. La curva es un ease-out al subir y ease-in al volver, para que el
+   "pico" se note y el aterrizaje sea suave (no un latido simétrico).
+   Respeta prefers-reduced-motion. */
+.stepper-tick {
+  display: inline-block;
+  animation: stepper-tick 280ms ease-out;
+  transform-origin: center;
+}
+
+@keyframes stepper-tick {
+  0% {
+    transform: scale(1);
+    color: var(--color-navy-sub);
+  }
+  35% {
+    transform: scale(1.18);
+    color: var(--color-navy);
+  }
+  100% {
+    transform: scale(1);
+    color: var(--color-navy);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stepper-tick {
     animation: none;
   }
 }

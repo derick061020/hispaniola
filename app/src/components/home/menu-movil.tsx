@@ -128,6 +128,17 @@ export function MenuMovil({
         </div>
 
         <div className="flex-1 overflow-y-auto px-5 py-2">
+          {/* "Inicio" (2026-07-17, pedido de Samuel): primer ítem de todos,
+              link plano a "/" — a diferencia de las 4 secciones de abajo, no
+              tiene subítems que desplegar, así que no pasa por el estado
+              `expandida`. */}
+          <Link
+            to="/"
+            onClick={onCerrar}
+            className="block border-b border-linea py-3 font-display text-base font-semibold text-navy"
+          >
+            Inicio
+          </Link>
           {secciones.map((s) => (
             <div key={s.id} className="border-b border-linea py-1">
               <button
@@ -164,8 +175,8 @@ export function MenuMovil({
                   ) : null}
                   {s.id === 'eventos' ? (
                     <div className="flex flex-col gap-1.5">
-                      {/* Bodas y MICE llevan a su landing real; las otras 4
-                          ocasiones siguen en el prototipo (formulario del
+                      {/* Bodas y MICE llevan a su landing real; «Eventos y
+                          party boat» sigue en el prototipo (formulario del
                           hub). Misma unión por `slug` que el megamenú. */}
                       {OCASIONES.map((o) =>
                         o.slug ? (
@@ -186,27 +197,54 @@ export function MenuMovil({
                   ) : null}
                   {s.id === 'nosotros' ? (
                     <div className="flex flex-col gap-1.5">
-                      {NAV_NOSOTROS.map((item) => (
-                        <EnlacePrototipo key={item.id} className="rounded-lg px-3 py-2 text-sm font-medium text-navy hover:bg-papel-hueso">
-                          {item.nombre}
-                        </EnlacePrototipo>
-                      ))}
+                      {/* Igual que ItemMenu del dropdown de escritorio: `to`
+                          decide página real vs. placeholder del prototipo. */}
+                      {NAV_NOSOTROS.map((item) =>
+                        item.to ? (
+                          <Link
+                            key={item.id}
+                            to={item.to}
+                            className="rounded-lg px-3 py-2 text-sm font-medium text-navy hover:bg-papel-hueso"
+                          >
+                            {item.nombre}
+                          </Link>
+                        ) : (
+                          <EnlacePrototipo
+                            key={item.id}
+                            className="rounded-lg px-3 py-2 text-sm font-medium text-navy hover:bg-papel-hueso"
+                          >
+                            {item.nombre}
+                          </EnlacePrototipo>
+                        ),
+                      )}
                     </div>
                   ) : null}
                   {s.id === 'ayuda' ? (
                     <div className="flex flex-col gap-1.5">
-                      {NAV_AYUDA.map((item) => (
-                        <EnlacePrototipo key={item.id} className="rounded-lg px-3 py-2 text-sm font-medium text-navy hover:bg-papel-hueso">
-                          {item.nombre}
-                        </EnlacePrototipo>
-                      ))}
+                      {NAV_AYUDA.map((item) =>
+                        item.to ? (
+                          <Link
+                            key={item.id}
+                            to={item.to}
+                            className="rounded-lg px-3 py-2 text-sm font-medium text-navy hover:bg-papel-hueso"
+                          >
+                            {item.nombre}
+                          </Link>
+                        ) : (
+                          <EnlacePrototipo
+                            key={item.id}
+                            className="rounded-lg px-3 py-2 text-sm font-medium text-navy hover:bg-papel-hueso"
+                          >
+                            {item.nombre}
+                          </EnlacePrototipo>
+                        ),
+                      )}
                     </div>
                   ) : null}
                 </div>
               ) : null}
             </div>
           ))}
-          <EnlacePrototipo className="block py-3 font-display text-base font-semibold text-navy">Guías</EnlacePrototipo>
         </div>
 
         <div className="border-t border-linea p-4">

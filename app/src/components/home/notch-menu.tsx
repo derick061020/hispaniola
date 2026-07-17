@@ -25,7 +25,20 @@ import type { MenuId } from './header'
 //      mueven ni un píxel al abrir.
 //   3. panel — el contenido del menú activo, con `key={abierto}` para que
 //      re-monte (y su animación de entrada se repita) al cambiar de tab.
-export function NotchMenu({ abierto, tabs }: { abierto: MenuId | null; tabs: ReactNode }) {
+export function NotchMenu({
+  abierto,
+  tabs,
+  flotante = false,
+}: {
+  abierto: MenuId | null
+  tabs: ReactNode
+  // isla-flotante.tsx (2026-07-17, pedido de Samuel): el MISMO morph de
+  // ancho/alto, pero sin las esquinas cóncavas (esas simulan un recorte en
+  // el borde del viewport — tienen sentido pegado a top-0, no flotando con
+  // margen) y con las 4 esquinas redondeadas en vez de solo las de abajo.
+  // Ver .notch-caja--flotante en componentes.css.
+  flotante?: boolean
+}) {
   const cajaRef = useRef<HTMLElement>(null)
   const tabsRef = useRef<HTMLDivElement>(null)
   const panelRef = useRef<HTMLDivElement>(null)
@@ -58,9 +71,16 @@ export function NotchMenu({ abierto, tabs }: { abierto: MenuId | null; tabs: Rea
 
   return (
     <div className="relative w-max">
-      <span className="notch-esquina notch-esquina--izquierda" aria-hidden="true" />
-      <span className="notch-esquina notch-esquina--derecha" aria-hidden="true" />
-      <nav ref={cajaRef} className="notch-caja flex flex-col items-center bg-papel">
+      {flotante ? null : (
+        <>
+          <span className="notch-esquina notch-esquina--izquierda" aria-hidden="true" />
+          <span className="notch-esquina notch-esquina--derecha" aria-hidden="true" />
+        </>
+      )}
+      <nav
+        ref={cajaRef}
+        className={`notch-caja flex flex-col items-center bg-papel ${flotante ? 'notch-caja--flotante' : ''}`}
+      >
         <div ref={tabsRef} className="flex w-max items-center gap-1 whitespace-nowrap px-2 py-2">
           {tabs}
         </div>

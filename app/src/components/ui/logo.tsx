@@ -17,17 +17,35 @@ const ALTO_RENDER = 64
 const ALTO_FILA = 52
 const HOLGURA = (ALTO_FILA - ALTO_RENDER) / 2
 
-export function Logo({ className = '', sobreOscuro = false }: { className?: string; sobreOscuro?: boolean }) {
+// Variante `compacto` (isla-flotante.tsx, 2026-07-17, pedido de Samuel): el
+// logo pasa a compartir fila con los botones de tab (36px de alto cada uno,
+// contando su propio padding) en vez de vivir en su chip flotante aparte —
+// a 52px de fila dominaba y desalineaba la píldora fusionada.
+const ALTO_RENDER_COMPACTO = 44
+const ALTO_FILA_COMPACTO = 36
+const HOLGURA_COMPACTO = (ALTO_FILA_COMPACTO - ALTO_RENDER_COMPACTO) / 2
+
+export function Logo({
+  className = '',
+  sobreOscuro = false,
+  compacto = false,
+}: {
+  className?: string
+  sobreOscuro?: boolean
+  compacto?: boolean
+}) {
   const { src, ancho, alto } = sobreOscuro ? VARIANTES.oscuro : VARIANTES.claro
+  const altoRender = compacto ? ALTO_RENDER_COMPACTO : ALTO_RENDER
+  const holgura = compacto ? HOLGURA_COMPACTO : HOLGURA
 
   return (
     <img
       src={src}
       alt="Hispaniola Aquatic Adventures"
-      width={Math.round((ALTO_RENDER * ancho) / alto)}
-      height={ALTO_RENDER}
-      style={{ marginBlock: HOLGURA }}
-      className={`h-16 w-auto ${className}`}
+      width={Math.round((altoRender * ancho) / alto)}
+      height={altoRender}
+      style={{ marginBlock: holgura }}
+      className={`w-auto ${compacto ? 'h-11' : 'h-16'} ${className}`}
     />
   )
 }

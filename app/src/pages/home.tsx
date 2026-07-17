@@ -1,12 +1,20 @@
 import { Hero } from '@/components/home/hero'
 import { Premios } from '@/components/home/premios'
+import { EcoFriendly } from '@/components/home/eco-friendly'
 import { Experiencia } from '@/components/home/experiencia'
 import { ToursGrid } from '@/components/home/tours-grid'
 import { WhyDirect } from '@/components/home/why-direct'
 import { IncluyeCrucero } from '@/components/home/incluye-crucero'
 import { Reviews } from '@/components/home/reviews'
-import { GaleriaFaqCierre } from '@/components/home/galeria-faq-cierre'
+import { Contacto } from '@/components/home/contacto'
+import { Faq } from '@/components/home/faq'
+import { EventosEspeciales } from '@/components/home/eventos-especiales'
 import { Footer } from '@/components/home/footer'
+import { ModalBienvenida } from '@/components/home/modal-bienvenida'
+import { Meta } from '@/components/seo/meta'
+import { SchemaJsonLd } from '@/components/seo/schema-json-ld'
+import { schemaOrganizacion, schemaFaq } from '@/lib/seo/schema'
+import { FAQ_HOME } from '@/data/home'
 
 // Home completa (F0-F6) — ver app/PLAN.md. v3: el Header vive DENTRO del
 // Hero (app/PLAN-v3.md §4), ya no se monta aquí como hermano.
@@ -17,17 +25,51 @@ import { Footer } from '@/components/home/footer'
 // número editorial gigante repetía el de IncluyeCrucero justo encima. El único
 // dato que solo vivía allí (el top-3 de restauración de coral) se rescató en la
 // narrativa de Experiencia — el porqué completo, en data/home.ts.
+//
+// Cierre v2 (Samuel, 2026-07-17): GaleriaFaqCierre (galería photo-stack +
+// FAQ 2 columnas + CTA) se reemplaza por Contacto (mapa + formulario +
+// cards) y Faq (acordeón centrado, AlignUI) — el CTA de cierre se funde en
+// el Footer, que pasa a ser el océano.
+//
+// 2026-07-17 (misma sesión, pedido de Samuel): 2 añadidos nuevos. (1)
+// ModalBienvenida — popup de video al entrar, una vez por sesión
+// (sessionStorage); portal a document.body, no ocupa lugar en el árbol pero
+// vive aquí porque es un comportamiento de LA HOME, no del shell. (2)
+// EventosEspeciales — la vitrina de 4 boxes (Cumpleaños/Bodas/Aniversarios/
+// Despedidas) que la home actual tiene al final de la página. 2ª vuelta
+// (Samuel): pasa de ir justo antes del Footer a vivir entre Reviews y
+// Contacto — separa mejor el bloque de confianza (reseñas) del bloque de
+// conversión/cierre (contacto + FAQ + footer).
+//
+// EcoFriendly (misma sesión, pedido de Samuel sobre el cintillo "ECO FRIENDLY
+// · NO PLASTIC" de la web actual): entre Premios y Experiencia, la misma
+// posición relativa que en la web vieja (justo bajo los premios). Antes
+// Premios y Experiencia se leían como "un bloque" sin borde entre ellas
+// (mismo papel blanco, ver el comentario de premios.tsx) — ahora ese bloque
+// queda partido por esta franja, con su propio fondo (--color-menta) a
+// propósito: es la línea divisoria, no hace falta un border-b.
 export function HomePage() {
   return (
     <div className="pb-16 md:pb-0">
+      <Meta
+        titulo="Catamaranes originales en Punta Cana"
+        descripcion="Snorkel en vivero de coral, playa desierta y comida hecha a bordo — grupos pequeños, 4.9★ en 1.782 reseñas y #1 en TripAdvisor 7 años seguidos. Reserva directo, sin comisión de intermediario."
+        ruta="/"
+      />
+      <SchemaJsonLd datos={schemaOrganizacion()} />
+      <SchemaJsonLd datos={schemaFaq(FAQ_HOME)} />
+      <ModalBienvenida />
       <Hero />
       <Premios />
+      <EcoFriendly />
       <Experiencia />
       <ToursGrid />
       <WhyDirect />
       <IncluyeCrucero />
       <Reviews />
-      <GaleriaFaqCierre />
+      <EventosEspeciales />
+      <Contacto />
+      <Faq />
       <Footer />
     </div>
   )

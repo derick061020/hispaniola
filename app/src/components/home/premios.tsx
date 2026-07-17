@@ -11,10 +11,11 @@ import { PREMIOS } from '@/data/home'
 // vertical que hacía falta para separarlos del ticker.
 export function Premios() {
   return (
-    // v3-F18: se retira el `border-b border-linea` (decisión de Samuel) — la
-    // sección "Experiencia" nace justo debajo, sobre el mismo papel, y las dos
-    // se leen como UN bloque (premios → narrativa) en lugar de partirse con una
-    // línea. El aire lo pone ya el py de Experiencia.
+    // v3-F18: se retira el `border-b border-linea` (decisión de Samuel) — sin
+    // borde, esta banda se leía como UN bloque con lo que viniera debajo. Eso
+    // era "Experiencia" (misma papel blanca); ahora es EcoFriendly (2026-07-17),
+    // con su propio fondo --color-menta — ese cambio de color YA hace de
+    // división, así que el border-b sigue sin hacer falta.
     // pt-premios-aire, no un pt- suelto: el ticker cuelga media card DENTRO de
     // este padding (es `absolute`, no empuja), así que el padding tiene que
     // absorber ese vuelo antes de dar aire — ver el token en tokens.css.

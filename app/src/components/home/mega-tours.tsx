@@ -1,11 +1,11 @@
 import { Link } from 'react-router-dom'
 import { TOURS, bookingCta, formatoDinero } from '@/data/home'
-import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
 
 // Megamenú Tours — el escaparate: los 4 productos, camino directo al dinero
 // (ver NOTAS['home-megamenu-tours'] del prototipo). Cada tour lleva a su ficha
-// real (/tours/:slug); la salida "Ver los N tours" sigue en el prototipo — el
-// listado depende del motor de reservas, como el funnel.
+// real (/tours/:slug). Sin salida "Ver los N tours →" al pie (2026-07-17,
+// pedido de Samuel): el menú YA muestra los 4 productos completos, así que
+// ese link no llevaba a ningún catálogo más grande — era un paso muerto.
 //
 // v3-F14.3 (decisión de Samuel, 2026-07-14): las cards se DESNUDAN. Antes eran
 // la TourCard de la sección "Nuestros tours" encogida — mismo anatómico (marco,
@@ -25,18 +25,18 @@ import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
 // menús hablan por fin el mismo lenguaje.
 export function MegaTours() {
   return (
-    // Ancho responsivo, no solo "min(92vw, …)": entre md y xl el notch
-    // centrado no tiene sitio para un megamenú ancho sin tapar el logo/Reservar
-    // — en ese rango va a 2 columnas y más angosto. Desde xl (1280px) vuelve a
-    // 4 columnas.
-    // v3-F13 (PLAN-v3.md §15.4): 55rem restaurado — con la fila del header
-    // ensanchada a max-w-contenido (1400px, antes max-w-6xl/1152px) el margen
-    // libre a cada lado del notch vuelve a crecer con el viewport; a 1280px
-    // sobran ~968px, de sobra para 880px (55rem) con margen real.
-    <div className="w-[min(92vw,28rem)] p-4 xl:w-[min(92vw,55rem)]">
+    // Ancho AUTOAJUSTADO (2026-07-17, pedido de Samuel): ya no un rem fijo
+    // por breakpoint — el panel es `w-fit`, así que mide exactamente lo que
+    // ocupan sus columnas (--spacing-mega-card-ancho × Nº de columnas + gaps
+    // + padding), con un tope de 92vw como red de seguridad en viewports
+    // angostos. Entre md y xl, 2 columnas (2×200px = 448px, igual que antes);
+    // desde xl (1280px), 4 columnas (880px, el mismo ancho de siempre — pura
+    // coincidencia matemática con el 55rem que tenía antes a mano, porque el
+    // valor salía de esta misma cuenta).
+    <div className="w-fit max-w-[92vw] p-4">
       <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
         {TOURS.map((t) => (
-          <Link key={t.slug} to={`/tours/${t.slug}`} className="group block">
+          <Link key={t.slug} to={`/tours/${t.slug}`} className="group block w-mega-card-ancho">
             {/* El zoom vive en el contenedor con overflow-hidden, no en el
                 <img>: escalar la imagen suelta crecería su caja y empujaría al
                 texto de debajo. */}
@@ -65,15 +65,6 @@ export function MegaTours() {
             </span>
           </Link>
         ))}
-      </div>
-
-      {/* La salida al catálogo completo: el menú deja de intentar ser el grid,
-          así que tiene que llevar a él. TOURS.length, no un "4" a mano — si
-          entra un quinto tour, el texto no miente. */}
-      <div className="mt-4 flex justify-end border-t border-linea pt-3">
-        <EnlacePrototipo className="text-sm font-semibold text-aqua-dark hover:underline">
-          Ver los {TOURS.length} tours →
-        </EnlacePrototipo>
       </div>
     </div>
   )

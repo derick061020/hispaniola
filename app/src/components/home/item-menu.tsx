@@ -1,5 +1,6 @@
 import type { ComponentType } from 'react'
-import { CircleHelp, Fish, MessageCircle, TicketCheck, Users } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { CircleHelp, Compass, Fish, MessageCircle, TicketCheck, Users } from 'lucide-react'
 import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
 import type { ItemNav } from '@/data/home'
 
@@ -8,6 +9,7 @@ const ICONOS: Record<string, ComponentType<{ className?: string }>> = {
   arrecife: Fish,
   faq: CircleHelp,
   reserva: TicketCheck,
+  guias: Compass,
   contacto: MessageCircle,
 }
 
@@ -30,8 +32,9 @@ const ICONOS: Record<string, ComponentType<{ className?: string }>> = {
 // para el móvil, aplicada a la franja donde el ancho tampoco da.
 export function ItemMenu({ item }: { item: ItemNav }) {
   const Icono = ICONOS[item.id]
-  return (
-    <EnlacePrototipo className="group flex gap-3 rounded-lg p-3 transition-colors hover:bg-papel-hueso">
+  const clases = 'group flex gap-3 rounded-lg p-3 transition-colors hover:bg-papel-hueso'
+  const contenido = (
+    <>
       <span className="grid size-10 shrink-0 place-items-center rounded-btn bg-papel-hueso text-navy-soft transition-colors group-hover:bg-papel group-hover:text-aqua-dark">
         <Icono className="size-5" />
       </span>
@@ -39,6 +42,18 @@ export function ItemMenu({ item }: { item: ItemNav }) {
         <span className="block font-display text-sm font-semibold text-navy">{item.nombre}</span>
         <span className="mt-0.5 hidden text-xs text-navy-soft lg:block">{item.descripcion}</span>
       </span>
-    </EnlacePrototipo>
+    </>
   )
+
+  // Con `to` es página real (Link SPA — hoy solo "El arrecife…" → /sostenibilidad);
+  // sin él sigue siendo placeholder del prototipo. Misma unión por dato que las
+  // ocasiones del megamenú.
+  if (item.to) {
+    return (
+      <Link to={item.to} className={clases}>
+        {contenido}
+      </Link>
+    )
+  }
+  return <EnlacePrototipo className={clases}>{contenido}</EnlacePrototipo>
 }

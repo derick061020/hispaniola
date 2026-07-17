@@ -3,13 +3,14 @@ import { Link, useLocation } from 'react-router-dom'
 import { Menu } from 'lucide-react'
 import { Logo } from '@/components/ui/logo'
 import { Boton } from '@/components/ui/boton'
-import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
 import { MegaTours } from './mega-tours'
 import { MegaEventos } from './mega-eventos'
 import { DropdownNosotros } from './dropdown-nosotros'
 import { DropdownAyuda } from './dropdown-ayuda'
 import { MenuMovil } from './menu-movil'
 import { NotchMenu } from './notch-menu'
+import { claseLinkTab, crearBotonTab, TabsPrincipales } from './nav-tabs'
+import { useMenuDropdown } from '@/lib/use-menu-dropdown'
 import { useDevFlag } from '@/dev/use-dev-flag'
 
 export type MenuId = 'tours' | 'eventos' | 'nosotros' | 'ayuda'
@@ -29,101 +30,42 @@ export function Header({
   variante?: 'solida' | 'sobreVideo'
   ctaHref?: string
 }) {
-  const [menuAbierto, setMenuAbierto] = useState<MenuId | null>(null)
   const [movilAbierto, setMovilAbierto] = useState(false)
-  const navRef = useRef<HTMLDivElement>(null)
   const { pathname } = useLocation()
+  const { menuAbierto, setMenuAbierto, toggle, navRef } = useMenuDropdown()
 
   // [dev-mode] deep-links del Glosario Dev — ver src/dev/dev-registry.ts
   useDevFlag('dev-mega', (v) => setMenuAbierto(v as MenuId))
   useDevFlag('dev-movil', (v) => setMovilAbierto(v === 'abierto'))
 
-  // Al navegar, los menús se cierran. Desde que los tours llevan a una ficha
-  // real (/tours/:slug) esto NO es opcional: entre dos fichas React Router
-  // reusa la misma TourPage (misma ruta, otro param) y NO la desmonta, así que
-  // sin esto el megamenú —o la hoja del menú móvil, con su scroll bloqueado—
-  // se quedaría abierto encima de la página de destino.
-  //
-  // ⚠️ Cierra solo cuando el pathname CAMBIA de verdad, comparándolo con el
-  // anterior — y no con un flag de «primer render». Dos razones, las dos
-  // encontradas en la verificación de T-F6:
-  //   1. Los efectos de `useDevFlag` se declaran arriba, así que en el montaje
-  //      corren ANTES que éste: sin guarda, cerraba de inmediato el menú que
-  //      `?dev-mega=tours` / `?dev-movil=abierto` acababan de abrir, y esos
-  //      deep-links son los frames de Figma.
-  //   2. Un flag de primer render NO basta: StrictMode invoca los efectos dos
-  //      veces al montar (efecto → cleanup → efecto), así que la 2ª pasada ya
-  //      no se saltaba y volvía a cerrar. Comparar el valor anterior es
-  //      idempotente: si el pathname no cambió, no hay nada que cerrar.
-  //
-  // Depende solo de `pathname`: useDevFlag limpia su query param tras
-  // aplicarse, y con `search` en las dependencias ese cambio volvería a
-  // cerrar el menú recién abierto.
+  // Al navegar, la hoja del menú móvil se cierra (el menú de tabs ya lo
+  // resuelve useMenuDropdown, mismo motivo — ver su comentario). Entre dos
+  // fichas React Router reusa la misma TourPage (misma ruta, otro param) y NO
+  // la desmonta, así que sin esto la hoja —con su scroll bloqueado— se
+  // quedaría abierta encima de la página de destino.
   const pathnameAnterior = useRef(pathname)
   useEffect(() => {
     if (pathnameAnterior.current === pathname) return
     pathnameAnterior.current = pathname
-    setMenuAbierto(null)
     setMovilAbierto(false)
   }, [pathname])
 
-  useEffect(() => {
-    if (!menuAbierto) return
-    function onClickFuera(e: MouseEvent) {
-      if (navRef.current && !navRef.current.contains(e.target as Node)) setMenuAbierto(null)
-    }
-    function onEscape(e: KeyboardEvent) {
-      if (e.key === 'Escape') setMenuAbierto(null)
-    }
-    document.addEventListener('mousedown', onClickFuera)
-    document.addEventListener('keydown', onEscape)
-    return () => {
-      document.removeEventListener('mousedown', onClickFuera)
-      document.removeEventListener('keydown', onEscape)
-    }
-  }, [menuAbierto])
-
-  const toggle = (id: MenuId) => setMenuAbierto((actual) => (actual === id ? null : id))
-
   const sobreVideo = variante === 'sobreVideo'
-  // Los tabs del menú SIEMPRE viven sobre blanco: el fondo bg-papel del
-  // header entero en 'solida', o el notch blanco en 'sobreVideo' — nunca
-  // directo sobre el video. Por eso el texto es navy en los dos casos.
-  const claseLink = 'rounded-lg px-3 py-2 text-sm font-medium text-navy transition-colors hover:bg-papel-hueso'
-  const claseLinkAbierto = 'bg-papel-hueso'
 
-  // Botón de un tab — idéntico en las 2 variantes (mismo texto/estado); lo
-  // que cambia es dónde va su panel (PLAN-v3.md §11.1): colgado del propio
-  // botón en 'solida', dentro del notch compartido en 'sobreVideo'.
-  const botonTab = (id: MenuId, label: string) => (
-    <button
-      key={id}
-      type="button"
-      onClick={() => toggle(id)}
-      aria-expanded={menuAbierto === id}
-      className={`${claseLink} ${menuAbierto === id ? claseLinkAbierto : ''}`}
-    >
-      {label}
-    </button>
-  )
-
-  // 'sobreVideo': solo botones — el panel activo lo renderiza NotchMenu
-  // dentro de la caja que se expande, no un elemento colgado del botón.
-  const tabsBotones = (
-    <>
-      {botonTab('tours', 'Tours ▾')}
-      {botonTab('eventos', 'Eventos ▾')}
-      {botonTab('nosotros', 'Nosotros ▾')}
-      <EnlacePrototipo className={claseLink}>Guías</EnlacePrototipo>
-      {botonTab('ayuda', 'Ayuda ▾')}
-    </>
-  )
+  // Botón de un tab para 'solida': idéntico al de TabsPrincipales (misma
+  // fábrica, nav-tabs.tsx), pero envuelto en su propio panel colgado — en
+  // 'sobreVideo' el panel activo lo pinta NotchMenu, no cada botón.
+  const botonTab = crearBotonTab(menuAbierto, toggle)
 
   // 'solida': cada botón envuelve su propio panel flotante — sin cambios de
   // comportamiento frente a antes de F8, solo con los dropdowns ya extraídos
   // a sus propios componentes (§11.3).
   const tabsConPaneles = (
     <>
+      <Link to="/" className={claseLinkTab}>
+        Inicio
+      </Link>
+
       <div className="relative">
         {botonTab('tours', 'Tours ▾')}
         {menuAbierto === 'tours' ? (
@@ -151,8 +93,6 @@ export function Header({
         ) : null}
       </div>
 
-      <EnlacePrototipo className={claseLink}>Guías</EnlacePrototipo>
-
       <div className="relative">
         {botonTab('ayuda', 'Ayuda ▾')}
         {menuAbierto === 'ayuda' ? (
@@ -166,8 +106,9 @@ export function Header({
 
   return (
     <header className={sobreVideo ? '' : 'sticky top-0 z-40 bg-papel'}>
-      {/* Topbar (WhatsApp + idioma) retirada — vuelve como botones flotantes
-          (pendiente, ver conversación 2026-07-14). */}
+      {/* Topbar (WhatsApp + teléfono + idioma) vive aparte, FUERA de este
+          Header y de la caja del hero — ver components/home/topbar.tsx,
+          montado en App.tsx antes de cada página. */}
       <div
         className={`relative mx-auto flex max-w-contenido items-center justify-between px-5 py-3 ${sobreVideo ? '' : 'border-b border-linea'}`}
         ref={navRef}
@@ -182,7 +123,7 @@ export function Header({
 
         {sobreVideo ? (
           <div className="absolute left-1/2 top-0 z-30 hidden w-max -translate-x-1/2 md:block">
-            <NotchMenu abierto={menuAbierto} tabs={tabsBotones} />
+            <NotchMenu abierto={menuAbierto} tabs={<TabsPrincipales menuAbierto={menuAbierto} toggle={toggle} />} />
           </div>
         ) : (
           <nav className="hidden items-center gap-1 md:flex">{tabsConPaneles}</nav>

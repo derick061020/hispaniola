@@ -50,7 +50,10 @@ export function Hero() {
 
   return (
     <>
-      <section id="hero" className="px-hero-margen pt-hero-margen sm:px-hero-margen-sm sm:pt-hero-margen-sm">
+      {/* pt-hero-margen SOLO en móvil: desde sm: el Topbar (components/home/topbar.tsx)
+          vive justo encima, blanco y sin borde — sm:pt-0 pega el hero a su borde
+          inferior sin espaciado, en vez de repetir el margen general del box. */}
+      <section id="hero" className="px-hero-margen pt-hero-margen sm:px-hero-margen-sm sm:pt-0">
         {/* v3-F13 (PLAN-v3.md §15.5): flex-col + min-h-hero-alto (solo desde
             sm — en móvil el contenido manda). svh, no vh/dvh: vh es el
             viewport GRANDE en móvil (la barra de URL escondida) y dvh baila

@@ -317,6 +317,18 @@
      ese rango por esta misma razón (mega-tours.tsx, mega-eventos.tsx). */
   --spacing-notch-panel-compacto: 28rem; /* 448px */
 
+  /* Ancho de card de MegaTours/MegaEventos (foto + nombre + meta) — COMPARTIDO
+     a propósito entre los 2 megamenús (2026-07-17, pedido de Samuel: "no
+     hagas que las cards sean más anchas, haz que el ancho del mega menú se
+     adapte"). Cada card lleva este ancho FIJO; el panel ya no tiene un ancho
+     propio en rem — es `w-fit` (mega-tours.tsx, mega-eventos.tsx), así que se
+     autoajusta al Nº de columnas × este valor + gaps + padding. Con esto,
+     Tours (4 cols) sigue midiendo exactamente los 880px de siempre, y Eventos
+     (3 cols, desde que se redujo a 3 ocasiones) deja de reservar una 4ª
+     columna vacía — el "espacio blanco raro" que dejaba compartir el ancho
+     fijo de Tours sin compartir su Nº de columnas. */
+  --spacing-mega-card-ancho: 12.5rem; /* 200px */
+
   /* CTA «mar» del hero (pedido de Samuel, 2026-07-14): el botón lg lleva dos
      capas de olas en deriva constante al pie, y el catamarán real vive DENTRO
      del botón, en un hueco reservado a la derecha — al hover zarpa: sale de
@@ -758,6 +770,109 @@
      imagen con texto encima, no cards de texto: necesitan leerse como su
      propia sección, no como una card más del gris de la ficha. */
   --spacing-tambien-alto: 24rem; /* 384px */
+
+  /* ---------- Sección «Contacto» (2026-07-17, pedido de Samuel) ----------
+     Mapa + formulario + 4 cards, tras Reviews (ref. Lumoro). */
+  --spacing-contacto-mapa-movil: 17.5rem; /* 280px — alto del iframe en 1 columna (anti-CLS); en lg estira con el grid (h-auto) */
+
+  /* ---------- Sección «Eventos especiales» (2026-07-17, pedido de Samuel) ----------
+     4 boxes de foto+overlay a igual tamaño (desde lg, fila flex; en móvil/
+     tablet, grid 2×2 sin el juego de hover — no hay hover persistente en
+     táctil). Alto propio (no --spacing-tambien-alto): esta fila pide más
+     presencia que aquella franja de "También te puede gustar". Subido de
+     26rem a 32rem (2026-07-17, 2ª vuelta — Samuel: "haz un poco más altas
+     los box con los eventos"). */
+  --spacing-eventos-especiales-alto: 32rem; /* 512px — desktop, lg: en adelante */
+  /* Acordeón de hover (ref. de Samuel: paneles de destino que se expanden) —
+     mismo idioma `:has()` que .collage (arriba, hover de grupo de 3 fotos),
+     pero por ANCHO (flex-grow) en vez de escala/rotación: al hover, ESE box
+     crece a --hover-flex mientras el resto se adelgaza a --reposo-flex y
+     pierde su contenido (ver .eventos-especiales-contenido en componentes.css). */
+  --eventos-especiales-hover-flex: 2.6;
+  --eventos-especiales-reposo-flex: 0.55;
+  --eventos-especiales-transicion: 500ms;
+
+  /* ---------- Modal de bienvenida (video, 2026-07-17, pedido de Samuel) ----------
+     Popup con el video promocional al entrar a la home — la web actual solo
+     lo expone como thumbnail "click to play" dentro de la página; aquí SÍ es
+     un popup automático, pero UNA VEZ POR SESIÓN (sessionStorage, no
+     localStorage — ver modal-bienvenida.tsx) para no ser invasivo en cada
+     recarga. */
+  --spacing-bienvenida-cerrar: 2.75rem; /* 44px — botón de cerrar, círculo */
+
+  /* ---------- Marquee de checks del widget de reserva (2026-07-17, pedido
+     de Samuel) ---------- Mismo trato que --opiniones-marquee-duracion:
+     FUENTE del prototipo de Figma (playbook animaciones-a-figma), no un
+     número a ojo en el CSS. Frases cortas → loop más rápido que el de
+     Opiniones (45s, cards mucho más anchas). */
+  --widget-checks-duracion: 14s;
+  --spacing-widget-checks-gap: 1.5rem; /* 24px entre frases */
+
+  /* ---------- Footer «océano» (2026-07-17, pedido de Samuel) ----------
+     Reemplaza el corte duro blanco→navy: misma TÉCNICA de espuma que
+     .incluye-espuma (ver §«Incluye» arriba) pero ESTÁTICA — sin video, sin
+     GSAP, sin sticky — y con assets PROPIOS (Samuel prohibió reutilizar
+     incluye-oceano-poster.webp / incluye-espuma-mapa.webp). Tokens espejo de
+     los del incluye A PROPÓSITO, sin var() cruzado: si el incluye cambia, el
+     footer no se entera solo. Solo banda SUPERIOR — el footer es el final de
+     la página, no hay un blanco de vuelta que fundir abajo. */
+  --color-oceano-footer: #0a5e6b; /* fallback bajo la foto — turquesa Caribe (familia --color-aqua-dark hundida un paso), NO el navy del incluye */
+  /* Overlay de legibilidad para el texto blanco del CTA/columnas — mismo
+     método de medición que --color-overlay-incluye (peor caso = p99 de
+     brillo, las crestas iluminadas, no la media). Valor medido sobre el
+     asset final en la Fase 7 de verificación; ver ese comentario para las
+     cifras. */
+  --color-overlay-footer: rgb(6 42 50 / 45%);
+  --spacing-footer-espuma: 20rem; /* 320px — desktop. Más baja que la del incluye (480px): aquí no compite con barco ni ítems, es umbral, no paisaje */
+  --spacing-footer-espuma-movil: 9rem; /* 144px */
+  --footer-espuma-mapa: url('/fotos/footer-espuma-mapa.webp');
+  --footer-espuma-aspecto: 3.299; /* 1600×485 — proporción REAL medida del asset (Magnific + recorte/costura en PIL), no tocar sin regenerarlo */
+  --footer-espuma-sangrado: 2px; /* sello subpíxel del borde — mismo porqué que --incluye-espuma-sangrado */
+  --footer-espuma-tile: calc(var(--spacing-footer-espuma-movil) * var(--footer-espuma-aspecto));
+
+  /* ---------- Página Sostenibilidad (rediseño 2026-07-17, pedido de Samuel:
+     "se ve muy feo ese montón de cajas... mejoralo que se vea más editorial")
+     ---------- Los 3 pilares dejan las cards de --color-papel-hueso por una
+     lista editorial (numeral fantasma + hairline, mismo lenguaje tipográfico
+     que --incluye-numero pero en versión CLARA — esta página vive sobre
+     papel, no sobre el océano del "Incluye" de la home, así que el tinte es
+     aqua puro muy rebajado, no aqua-claro). */
+  --text-sost-numero: 4.5rem; /* 72px — desktop, = --text-incluye-numero (misma familia tipográfica) */
+  --text-sost-numero-movil: 3rem; /* 48px */
+  --color-sost-numero: color-mix(in srgb, var(--color-aqua) 14%, transparent); /* numeral tenue sobre papel — el título se monta encima */
+  --spacing-sost-numero-solape: 1rem; /* 16px — cuánto sube el título sobre el numeral */
+
+  /* Reveal al hacer scroll de los ítems editoriales (misión, pilares, videos,
+     cierre) — GSAP ScrollTrigger.batch, cada bloque entra por su cuenta al
+     cruzar el umbral (no es un timeline scrub único: a diferencia de
+     Experiencia/Incluye —una pieza fija con su propio ritmo—, aquí es una
+     lista larga de secciones apiladas, así que cada una reacciona a SU
+     propio scroll). FUENTE del prototipo de Figma (playbook
+     animaciones-a-figma), no un número "a ojo" en el JS. */
+  --sost-reveal-y: 1.5rem; /* 24px — de dónde sube cada bloque */
+  --sost-reveal-duracion: 0.6s;
+  --sost-reveal-stagger: 0.1; /* s — entre ítems del mismo batch (p. ej. los 3 pilares) */
+
+  /* ---------- Página Guías (rediseño editorial, 2026-07-17, pedido de
+     Samuel: "parece una página con solo cajas... más editorial, más
+     creativa e interesante") ---------- Mismo lenguaje que el rediseño de
+     Sostenibilidad de este mismo día (--text-sost-numero y compañía):
+     numeral fantasma + hairline en vez de cards sobre --color-papel-hueso.
+     Tokens propios, sin var() cruzado con los de Sostenibilidad — mismo
+     criterio que --color-oceano-footer frente a los del Incluye: si un
+     valor cambia en una página, la otra no se entera sola. */
+  --text-guias-numero: 4.5rem; /* 72px — desktop, misma familia tipográfica que --text-incluye-numero/--text-sost-numero */
+  --text-guias-numero-movil: 3rem; /* 48px */
+  --color-guias-numero: color-mix(in srgb, var(--color-aqua) 14%, transparent); /* numeral tenue sobre papel — el título se monta encima */
+  --spacing-guias-numero-solape: 1rem; /* 16px — cuánto sube el título sobre el numeral */
+
+  /* Reveal al hacer scroll (GSAP ScrollTrigger.batch, no timeline scrub):
+     Tips y Guías son listas largas de bloques apilados, no una pieza fija
+     con su propio ritmo — cada `.guias-reveal` entra por su cuenta al
+     cruzar el umbral. Mismo mecanismo que --sost-reveal-*. */
+  --guias-reveal-y: 1.5rem; /* 24px — de dónde sube cada bloque */
+  --guias-reveal-duracion: 0.6s;
+  --guias-reveal-stagger: 0.1; /* s — entre ítems del mismo batch */
 }
 
 body {
