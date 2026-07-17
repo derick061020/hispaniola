@@ -31,7 +31,8 @@ import { DIAS_CORTOS, MESES_CORTOS, parseFechaISO } from '@/lib/fechas'
 // copia de Viator: su urgencia inventada (contador de plaza, «reservado 5+
 // veces»), prohibida por revision-wireframes.md §2.7. `noindex`.
 
-const PASOS = ['Tu menú', 'Recogida', 'Contacto', 'Pago']
+// Orden de las secciones (2026-07-17, Samuel): contacto primero, luego el menú.
+const PASOS = ['Contacto', 'Tu menú', 'Recogida', 'Pago']
 
 function fechaLegible(iso: string | null): string {
   if (!iso) return 'Fecha por confirmar'
@@ -156,12 +157,7 @@ function FlujoReserva({
         <div className="mx-auto grid max-w-6xl grid-cols-1 lg:grid-cols-[minmax(0,1fr)_var(--spacing-ficha-widget)]">
           {/* IZQUIERDA (blanca): cabecera + secciones */}
           <div className="px-5 py-8 sm:px-8 sm:py-10">
-            <div className="mb-6">
-              <h1 className="font-display text-h2 font-semibold text-navy">Completa tu reserva</h1>
-              <p className="mt-1 text-sm text-navy-soft">
-                {tour.nombre} · {fechaTxt} · {personas === 1 ? '1 persona' : `${personas} personas`}
-              </p>
-            </div>
+            <h1 className="sr-only">Completa tu reserva — {tour.nombre}</h1>
 
             <div className="flex flex-col gap-4">
               <SeccionPaso
@@ -169,6 +165,26 @@ function FlujoReserva({
                 titulo={PASOS[0]}
                 estado={estadoDe(0)}
                 onEditar={() => setPaso(0)}
+                resumen={
+                  <p>
+                    <span className="font-medium text-navy">{contacto.nombre || '—'}</span>
+                    {contacto.email ? ` · ${contacto.email}` : ''}
+                    {contacto.telefono ? ` · ${contacto.telefono}` : ''}
+                  </p>
+                }
+              >
+                <PasoContacto datos={contacto} onCambio={(parcial) => setContacto((c) => ({ ...c, ...parcial }))} />
+                <Continuar
+                  habilitado={contacto.nombre.trim() !== '' && contacto.email.trim() !== ''}
+                  onClick={() => setPaso(1)}
+                />
+              </SeccionPaso>
+
+              <SeccionPaso
+                numero={2}
+                titulo={PASOS[1]}
+                estado={estadoDe(1)}
+                onEditar={() => setPaso(1)}
                 resumen={
                   <ul className="flex flex-col gap-0.5">
                     {platos.map((p, i) => (
@@ -186,14 +202,14 @@ function FlujoReserva({
                   onCambio={cambiarPlato}
                   nombrePaquete={nombrePaquete}
                 />
-                <Continuar habilitado={platos.every((p) => p)} onClick={() => setPaso(1)} />
+                <Continuar habilitado={platos.every((p) => p)} onClick={() => setPaso(2)} />
               </SeccionPaso>
 
               <SeccionPaso
-                numero={2}
-                titulo={PASOS[1]}
-                estado={estadoDe(1)}
-                onEditar={() => setPaso(1)}
+                numero={3}
+                titulo={PASOS[2]}
+                estado={estadoDe(2)}
+                onEditar={() => setPaso(2)}
                 resumen={
                   <p>
                     <span className="font-medium text-navy">{recogida.hotel || '—'}</span>
@@ -205,27 +221,7 @@ function FlujoReserva({
                   onCambio={(parcial) => setRecogida((r) => ({ ...r, ...parcial }))}
                   horaSalida={horario?.hora ?? null}
                 />
-                <Continuar habilitado={recogida.hotel.trim() !== ''} onClick={() => setPaso(2)} />
-              </SeccionPaso>
-
-              <SeccionPaso
-                numero={3}
-                titulo={PASOS[2]}
-                estado={estadoDe(2)}
-                onEditar={() => setPaso(2)}
-                resumen={
-                  <p>
-                    <span className="font-medium text-navy">{contacto.nombre || '—'}</span>
-                    {contacto.email ? ` · ${contacto.email}` : ''}
-                    {contacto.telefono ? ` · ${contacto.telefono}` : ''}
-                  </p>
-                }
-              >
-                <PasoContacto datos={contacto} onCambio={(parcial) => setContacto((c) => ({ ...c, ...parcial }))} />
-                <Continuar
-                  habilitado={contacto.nombre.trim() !== '' && contacto.email.trim() !== ''}
-                  onClick={() => setPaso(3)}
-                />
+                <Continuar habilitado={recogida.hotel.trim() !== ''} onClick={() => setPaso(3)} />
               </SeccionPaso>
 
               <SeccionPaso numero={4} titulo={PASOS[3]} estado={estadoDe(3)}>
