@@ -3,24 +3,32 @@ import { Footer } from '@/components/home/footer'
 import { HeroInterna } from '@/components/internas/hero-interna'
 import { CabeceraGuias } from '@/components/guias/cabecera-guias'
 import { TipsRapidos } from '@/components/guias/tips-rapidos'
-import { ListaGuias } from '@/components/guias/lista-guias'
 import { useGuiasReveal } from '@/components/guias/use-guias-reveal'
 import { Meta } from '@/components/seo/meta'
 import { useDevFlag } from '@/dev/use-dev-flag'
 
 // Página Guías (/guias) — mapea tips-for-punta-cana-....php: de página suelta
-// a índice de blog (arquitectura-nueva.md §2). Mismo hero compartido
-// (PLAN-INTERNAS-V2.md) que el resto de páginas internas. Dos bloques: los
-// tips reales de esa página vieja primero (TipsRapidos — es el contenido con
-// más peso que tiene hoy la página), el índice de futuros artículos después.
+// a la página que es hoy, sin más. Mismo hero compartido (PLAN-INTERNAS-V2.md)
+// que el resto de páginas internas. UNA sola sección: TipsRapidos, con las 4
+// preguntas evergreen de la página vieja (esnórquel/arrecife, vela, mar,
+// mariscos) — las 4 de COVID-19 de esa misma página original se dejaron
+// FUERA por obsoletas, decisión de Samuel 2026-07-17.
+//
+// Antes la página tenía 2 bloques (TipsRapidos + ListaGuias, un índice de 5
+// artículos fantasma con "próximamente" al pie) — ListaGuias NO tiene
+// contraparte en la web original y el "próximamente" sonaba raro en un sitio
+// live. Samuel pidió quitarlo el 2026-07-17 ("la web original no dice nada
+// de eso"); sin ListaGuias, la página queda con las 4 preguntas que sí
+// existen. Cuando el cliente dé el copy real de futuros artículos, cada uno
+// se monta como página aparte (mismo patrón que tours/eventos), no como
+// tarjeta placeholder.
 //
 // REDISEÑO EDITORIAL (2026-07-17, pedido de Samuel: "parece una página con
-// solo cajas... más editorial, más creativa e interesante"). Ambos bloques
-// son ahora autocontenidos (cada uno con su propia Etiqueta+h2, ver
-// tips-rapidos.tsx/lista-guias.tsx) — la página ya no envuelve ListaGuias en
-// su propia sección con encabezado duplicado. useGuiasReveal se engancha UNA
-// VEZ aquí (mismo patrón que useSostenibilidadReveal en sostenibilidad.tsx)
-// porque los `.guias-reveal` viven repartidos en los 2 componentes hijos.
+// solo cajas... más editorial, más creativa e interesante"). El bloque es
+// autocontenido (Etiqueta+h2 propios, ver tips-rapidos.tsx) — numeral
+// fantasma + hairline, sin cards. useGuiasReveal se engancha UNA VEZ aquí
+// (mismo patrón que useSostenibilidadReveal en sostenibilidad.tsx) porque
+// los `.guias-reveal` viven repartidos dentro de TipsRapidos.
 export function GuiasPage() {
   const contenidoRef = useRef<HTMLDivElement>(null)
 
@@ -36,16 +44,15 @@ export function GuiasPage() {
     <div>
       <Meta
         titulo="Guías"
-        descripcion="Tips reales sobre esnórquel y navegación en Punta Cana: cómo es el arrecife, cuánto se navega a vela, si el mar es seguro y qué mariscos sirvimos a bordo."
+        descripcion="Tips reales sobre esnórquel y navegación en Punta Cana: cómo es el arrecife, cuánto se navega a vela, si el mar es seguro y qué mariscos sirvemos a bordo."
         ruta="/guias"
       />
       <HeroInterna ctaHref="/#tours">
         <CabeceraGuias />
       </HeroInterna>
 
-      <div ref={contenidoRef} className="mx-auto flex max-w-contenido flex-col gap-16 px-5 py-12 sm:px-10 lg:py-16">
+      <div ref={contenidoRef} className="mx-auto max-w-contenido px-5 py-12 sm:px-10 lg:py-16">
         <TipsRapidos />
-        <ListaGuias />
       </div>
 
       <Footer />

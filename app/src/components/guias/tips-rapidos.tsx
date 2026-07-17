@@ -2,11 +2,10 @@ import { Link } from 'react-router-dom'
 import { Etiqueta } from '@/components/ui/etiqueta'
 import { TIPS_GUIAS } from '@/data/guias'
 
-// El contenido REAL de la página (el resto sigue siendo índice de artículos
-// aún sin escribir, ver lista-guias.tsx) — portado de tips-for-punta-cana-
-// ....php, la página que este /guias reemplaza. Estático y abierto, no en
-// acordeón: es la pieza que da a la página su peso de guía real, no de FAQ
-// de soporte (ese registro ya lo cubre /faq).
+// El contenido REAL de la página — portado de tips-for-punta-cana-
+// snorkeling-and-sailing.php?lang=es, la página que este /guias reemplaza.
+// Estático y abierto, no en acordeón: es la pieza que da a la página su
+// peso de guía real, no de FAQ de soporte (ese registro ya lo cubre /faq).
 //
 // REDISEÑO EDITORIAL (2026-07-17, pedido de Samuel: "parece una página con
 // solo cajas... más editorial, más creativa e interesante"). Antes: 4 cards
@@ -16,7 +15,7 @@ import { TIPS_GUIAS } from '@/data/guias'
 // izquierda, la respuesta (ya es prosa real y larga) en la columna derecha,
 // separados por hairline (`divide-y`/`border-t`) en vez de fondo o caja. El
 // reveal de scroll (`.guias-reveal`) vive en use-guias-reveal.ts, enganchado
-// una sola vez desde la página (guias.tsx) junto con ListaGuias.
+// una sola vez desde la página (guias.tsx).
 export function TipsRapidos() {
   return (
     <section>

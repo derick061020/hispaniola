@@ -16,3 +16,7 @@ app/debug-*.png
 app/app/
 # Capturas estáticas de dev-mode (frames de Figma, no son assets del sitio)
 app/final-*.png
+# Auditorías locales de QA (Playwright, screenshots, console.log). Son
+# output de sesiones puntuales — los .cjs de script y los logs podrían
+# quedarse aquí si la auditoría encuentra un bug reproducible.
+app/audit/

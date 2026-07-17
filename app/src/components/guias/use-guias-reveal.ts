@@ -8,12 +8,13 @@ gsap.registerPlugin(ScrollTrigger)
 // Reveal al hacer scroll de /guias (rediseño editorial 2026-07-17, pedido de
 // Samuel: "parece una página con solo cajas... más editorial, más creativa e
 // interesante"). Mismo mecanismo que use-sostenibilidad-reveal.ts (mismo día,
-// mismo síntoma resuelto ahí primero): Tips y Guías son listas largas de
+// mismo síntoma resuelto ahí primero): TipsRapidos es una lista larga de
 // bloques apilados, no una pieza fija con su propio ritmo — así que cada
 // `.guias-reveal` entra POR SU CUENTA al cruzar el umbral, vía
 // ScrollTrigger.batch (fade + subida, sin scrub). Un solo hook, llamado una
-// vez desde la página, porque los `.guias-reveal` viven repartidos en 2
-// componentes hijos (TipsRapidos/ListaGuias).
+// vez desde la página — los `.guias-reveal` viven repartidos dentro de
+// TipsRapidos (eyebrow, h2 y los 4 artículos), pero el gancho se monta a
+// nivel de página para que el cleanup cubra cualquier reveal futuro.
 //
 // El estado FINAL (opacity 1, sin desplazamiento) es el natural del JSX.
 // Antes se animaba con `gsap.from({ autoAlpha: 0, y })`: en teoría el

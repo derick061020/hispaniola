@@ -1,23 +1,19 @@
-// Página GUÍAS (/guias) — mapea tips-for-punta-cana-....php de la web actual:
-// de página suelta a índice de blog (arquitectura-nueva.md §2, motor SEO que
-// hoy no existe). Dos fuentes reales, ninguna inventada:
-// 1) TIPS_GUIAS: contenido REAL de esa misma página vieja (versión ?lang=es,
-//    HTML descargado y leído línea a línea 2026-07-17), las 4 preguntas
-//    evergreen sobre esnórquel/arrecife, vela, mar y mariscos — limpiadas de
-//    relleno y de un typo del original ("aceite de olive") pero sin cambiar
-//    ningún hecho. Las otras 4 preguntas de esa página son protocolos
-//    COVID-19 (testeo antes de viajar, mascarilla, transporte privado por la
-//    pandemia): decisión de Samuel 2026-07-17, quedan FUERA por obsoletas en
-//    un sitio relanzado en 2026.
-// 2) GUIAS: portado VERBATIM de prototipo/datos.js — 5 títulos + resúmenes de
-//    artículos futuros, ninguno con cuerpo todavía.
+// Página GUÍAS (/guias) — fuente única: TIPS_GUIAS, contenido REAL portado de
+// tips-for-punta-cana-snorkeling-and-sailing.php?lang=es de la web actual
+// (HTML descargado y leído línea a línea 2026-07-17). Son las 4 preguntas
+// evergreen sobre esnórquel/arrecife, vela, mar y mariscos — limpiadas de
+// relleno y de un typo del original ("aceite de olive") pero sin cambiar
+// ningún hecho. Las otras 4 preguntas de esa página son protocolos COVID-19
+// (testeo antes de viajar, mascarilla, transporte privado por la pandemia):
+// decisión de Samuel 2026-07-17, quedan FUERA por obsoletas en un sitio
+// relanzado en 2026.
 //
-// ⚠️ GUIAS es solo índice — el prototipo únicamente tiene título + resumen +
-// tiempo de lectura por artículo, no el cuerpo del texto. Redactar 5
-// artículos completos sería inventar contenido que nadie ha escrito ni
-// aprobado ("contenido jamás inventado", CLAUDE.md). Cuando el cliente/Samuel
-// tenga el copy real de cada artículo, cada entrada gana su página propia
-// (/guias/:slug) con la misma plantilla que tours/eventos.
+// Antes esta página también tenía un segundo bloque (5 "artículos futuros"
+// con "próximamente" al pie) — Samuel pidió quitarlo el 2026-07-17 porque
+// la web original NO tiene ese bloque y "estamos escribiéndolos" sonaba
+// raro en un sitio live. Cuando el cliente dé el copy real de futuros
+// artículos, cada uno se monta como página aparte (mismo patrón que
+// tours/eventos), no como tarjeta placeholder en esta página.
 export type TipGuia = {
   pregunta: string
   respuesta: string
@@ -47,45 +43,6 @@ export const TIPS_GUIAS: TipGuia[] = [
     respuesta:
       'La mayoría de restaurantes y hoteles mantienen su marisco congelado, porque es importado. En nuestros tours es recién capturado localmente, y lo sazonamos con hierbas frescas y aceite de oliva justo frente a ti, en la cocina flotante — la plataforma tiene todos los permisos y supera los requisitos de higiene del Ministerio de Medio Ambiente.',
     enlace: { texto: 'Conoce la cocina flotante →', to: '/nosotros' },
-  },
-]
-
-export type Guia = {
-  slug: string
-  titulo: string
-  resumen: string
-  /** solo el artículo portado de la web actual trae tiempo de lectura */
-  lectura?: string
-  destacado?: boolean
-}
-
-export const GUIAS: Guia[] = [
-  {
-    slug: 'como-elegir-tour',
-    titulo: 'Cómo elegir tour de catamarán en Punta Cana (y no acabar en un party boat de 200)',
-    resumen: 'La guía honesta: qué preguntar, qué señales de alarma, qué está incluido de verdad.',
-    lectura: '6 min de lectura',
-    destacado: true,
-  },
-  {
-    slug: 'que-llevar',
-    titulo: 'Qué llevar a un tour de snorkel',
-    resumen: 'Protector biodegradable, efectivo, y las 3 cosas que todos olvidan.',
-  },
-  {
-    slug: 'mejor-epoca',
-    titulo: 'Mejor época para navegar en Punta Cana',
-    resumen: 'Mes a mes: mar, lluvia, veda de langosta.',
-  },
-  {
-    slug: 'saona-o-cabeza-de-toro',
-    titulo: 'Saona, Cabeza de Toro o piscina natural',
-    resumen: 'Qué verás en cada una y cuál te conviene.',
-  },
-  {
-    slug: 'snorkel-primera-vez',
-    titulo: 'Snorkel por primera vez: no hace falta saber nadar',
-    resumen: 'Cómo lo hacemos con principiantes.',
   },
 ]
 
