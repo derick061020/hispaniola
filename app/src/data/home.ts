@@ -15,6 +15,16 @@ export type Tour = {
   maxPax: number | null
   /** null = sin precio fijo (se cotiza o se consulta) */
   precioLight: number | null
+  /** Snorkel Lovers v3 (2026-07-17): tarifa infantil cuando el tour vende
+   *  por adulto+niño (la web del cliente publica 2 precios separados solo
+   *  para este tour familiar — US$ 114 adulto / US$ 65 niño). Ausente en
+   *  el resto: el widget pinta 1 stepper «Personas» con `precioLight ×
+   *  personas` (modelo clásico). Cuando está presente, el widget pinta 2
+   *  steppers «Adultos» + «Niños» y calcula el total como
+   *  `adultos × precioLight + niños × precioNino`. El Premium (+upgrade) se
+   *  suma a AMBOS — el menú Premium es el mismo plato, no hay tarifa
+   *  infantil diferenciada en la web. */
+  precioNino?: number | null
   booking: 'completo' | 'cotizacion' | 'consulta'
   descripcionCorta: string
   /** nombre de archivo en /fotos (sin extensión) */
@@ -60,8 +70,14 @@ export const TOURS: Tour[] = [
     duracionCorta: '4 h',
     rating: 4.9,
     resenas: 1782,
-    maxPax: 25,
-    precioLight: 98,
+    // v3 (2026-07-17): el «Max. Capacity: 30» de la web del cliente + precio
+    // tarifa dual Adulto US$ 114 / Niño US$ 65 (la web publica 2 tarifas
+    // separadas solo para este tour familiar — el resto del catálogo es 1
+    // precio por persona). El widget detecta `precioNino` y pinta 2 steppers
+    // «Adultos» + «Niños» con icono Baby en el de niños.
+    maxPax: 30,
+    precioLight: 114,
+    precioNino: 65,
     booking: 'completo',
     descripcionCorta:
       'La versión familiar del Semi-Privado: mismo vivero de coral, misma cocina flotante, para que niños y adultos disfruten juntos el día en el mar.',
@@ -162,23 +178,28 @@ export type Ocasion = {
 // LOS 3 EVENTOS de la web actual, en su mismo orden (decisión de Samuel
 // 2026-07-17, mapa-del-sitio.md §"EVENTS & CELEBRATIONS"): la web vieja tiene
 // SOLO 3 ítems de evento — «Events & Party Boat», «Pre-Post Wedding
-// Celebrations» y «MICE» — así que la nueva no debe inventar más. Las
-// ocasiones sueltas de antes (cumpleaños, aniversarios, despedidas, reuniones)
-// eran el desglose del genérico «Events & Party Boat» y se recolapsan en él;
-// siguen dando «scent» desde la `meta`, sin ocupar cada una un slot del menú.
-// Bodas y MICE ya correspondían 1:1 al viejo y conservan su landing propia.
+// Celebrations» y «MICE» — así que la nueva no debe inventar más. Las 3
+// tienen ahora landing propia (los 3 slugs en español son consistentes con el
+// resto del sitio, ver PLAN-EVENTOS.md). Anteriormente el genérico
+// «Eventos y party boat» iba al formulario del hub — ahora tiene su landing
+// `/eventos/party-boat` (clone de ficha de tour con widget de cotización),
+// que es lo que pidió Samuel el 2026-07-17.
+//
+// Bodas y MICE ya correspondían 1:1 al viejo y conservan su landing propia
+// (migradas de la plantilla de "persuasión" a la nueva de "clon de tour").
 //
 // Fotos PROVISIONALES: no existe shooting propio de eventos, así que se
 // reutilizan fotos reales de la galería de charter-privado que mejor encajan
-// con cada ocasión. Pendiente pedirle al cliente fotos reales de eventos (ver
-// app/PLAN-v3.md §9).
+// con cada ocasión. Pendiente pedirle al cliente fotos reales de eventos
+// (ver app/PLAN-v3.md §9).
 export const OCASIONES: Ocasion[] = [
   {
     tipo: 'eventos',
     nombre: 'Eventos y party boat',
     meta: 'Cumpleaños, aniversarios, despedidas y reuniones. Barco entero.',
-    esLanding: false,
+    esLanding: true,
     foto: 'galeria-charter-privado-2',
+    slug: 'party-boat',
   },
   {
     tipo: 'boda',

@@ -438,8 +438,8 @@ export const devSections: DevSection[] = [
     title: 'Landings de eventos',
     screens: [
       {
-        title: 'Landing de evento (plantilla)',
-        route: '/eventos/bodas',
+        title: 'Landing de evento (plantilla v2 — clon de ficha de tour)',
+        route: '/eventos/party-boat',
         status: 'done',
         description:
           'UNA plantilla data-driven para las 2 ocasiones con landing propia (Bodas y Empresas/MICE — las `esLanding: true` de OCASIONES; «Eventos y party boat» va al formulario del hub, que sigue en el prototipo). En Figma es una página con frames de variante, no 2 diseños. Copy portado verbatim de renderBodas/renderEmpresas del prototipo (data/eventos.ts). Anatomía: HERO compartido con la home y la ficha de tour (PLAN-INTERNAS-V2.md §C5, internas/hero-interna.tsx) — mismo box redondeado + Header `sobreVideo` sobre el video de marca, COMPACTO; dentro, cabecera en blanco (migaja, eyebrow, H1 en --text-h2, lead, fila de confianza, CTAs), alineada al mismo max-w-contenido que el resto de la página · banda de cifras (solo empresas: pax/multi-barco/factura/seguro), ya en blanco, debajo del hero · mosaico de fotos reales de charter-privado (`evento.galeria`), ya como bloque del contenido, no incrustado en el hero (iteración 2026-07-17, 2ª vuelta — internas/galeria-mosaico.tsx, misma pieza que la ficha de tour, sin quote propia porque FichaEvento no la tiene) · formatos (3 cards foto+texto) · beneficios (mismo anatómico que IncluyeTour) + testimonio · banda de cierre navy (ancla del «Reservar» del header, #evento-cierre). Es página de PERSUASIÓN, no de conversión directa: el evento se cotiza (sin precio, sin widget, sin barra móvil) — el CTA de cotización es la frontera con el prototipo (EnlacePrototipo), igual que el funnel en la ficha. Lo que NO se pinta y por qué: la galería «Bodas reales» del prototipo (la única foto de boda real es la de la cabecera; rellenar con fotos de otros tours mentiría — mismo criterio que la galería vacía de Isla Saona) y los 6 logos «Han navegado con nosotros» de empresas (no hay logos reales de clientes). Fotos PROVISIONALES de la galería del charter privado, elegidas mirándolas (también las del hero); pendiente shooting de eventos (PLAN-v3.md §9). La home enlaza las 2 landings desde el megamenú de Eventos, el ticker del hero y el menú móvil (unión por `slug` en OCASIONES — el resto de ocasiones sigue por EnlacePrototipo).',
@@ -457,10 +457,34 @@ export const devSections: DevSection[] = [
             note: 'El lightbox del mosaico de la columna de contenido (evento.galeria) — mismo flag y mismo componente (internas/galeria-mosaico.tsx) que la ficha de tour.',
           },
           {
+            label: 'Formulario lleno',
+            kind: 'estado',
+            to: '/eventos/bodas?dev-widget-evento=lleno',
+            note: 'Pre-rellena los 7 campos del widget (widget-evento.tsx) — frame de Figma con el form completo. El banner de descuento y los 3 checks de reassurance son los mismos del widget de tour.',
+          },
+          {
+            label: 'FAQ abierto',
+            kind: 'estado',
+            to: '/eventos/bodas?dev-faq-evento=abierto',
+            note: 'Expande el primer item del acordeón de FAQ al cargar (pages/evento.tsx) — frame de Figma con la FAQ en estado abierto.',
+          },
+          {
+            label: 'Variante: Bodas',
+            kind: 'variante',
+            to: '/eventos/bodas',
+            note: 'La misma plantilla con los datos de bodas: 13 fotos en el mosaico, slogan de quote sobre la foto principal ("May your Anchor be tight..."), tipo de evento FIJO a "Boda" (campo deshabilitado, no select — la URL ya lo predefine), 4 preguntas de FAQ, CTA principal "Pedir cotización de boda".',
+          },
+          {
             label: 'Variante: Empresas / MICE',
             kind: 'variante',
             to: '/eventos/empresas',
-            note: 'La misma plantilla con los datos de empresas: banda de cifras (única de esta variante), CTA secundario «Dossier corporativo (PDF)» (demo en el prototipo → EnlacePrototipo), testimonio institucional sin estrellas y cierre sin WhatsApp (el prototipo solo lo pone en bodas).',
+            note: 'La misma plantilla con los datos de empresas: 4 fotos en el mosaico (grid 2×2, no mosaico 3+4 por tener <7), banda de stats (única de esta variante), tipo de evento en select con 6 valores, 4 preguntas de FAQ, CTA principal "Solicitar propuesta" + CTA secundario "Pedir dossier corporativo (PDF)" → link a WhatsApp con mensaje pre-armado.',
+          },
+          {
+            label: 'Página de gracias (post-envío)',
+            kind: 'variante',
+            to: '/eventos/bodas/gracias?reserva=COT-EVENTO-0000-0000',
+            note: 'Pantalla de confirmación post-envío del formulario (pages/gracias-evento.tsx, 1 columna max-w-3xl). Lee la cotización de localStorage por ?reserva=…: check + "¡Recibimos tu solicitud, {nombre}!", código destacado, resumen del form enviado, timeline "qué sigue" (2 pasos: hoy / día antes del evento), CTA WhatsApp grande con el código pre-armado en el mensaje. Sin código en URL → redirect a /. La página se pinta con el código que se acaba de generar; este deep-link es solo ilustrativo (no hay una reserva demo como en /reservar/:slug/gracias).',
           },
         ],
       },
@@ -504,17 +528,17 @@ export const devSections: DevSection[] = [
         states: [],
       },
       {
-        title: 'Guías (tips reales + índice del blog)',
+        title: 'Guías (tips reales)',
         route: '/guias',
         status: 'done',
         description:
-          'Mapea tips-for-punta-cana-....php: de página suelta a índice de blog (arquitectura-nueva.md §2, motor SEO que hoy no existe). Dos bloques. 1) TipsRapidos: las 4 preguntas evergreen de esa misma página vieja (versión ?lang=es, HTML descargado y leído línea a línea) — esnórquel/arrecife, vela, mar, mariscos — con enlaces reales a /sostenibilidad y /nosotros; las otras 4 preguntas de esa página (protocolos COVID-19: testeo, mascarilla, transporte privado) se dejaron fuera por obsoletas, decisión de Samuel 2026-07-17. 2) ListaGuias: las 5 entradas de GUIAS (prototipo/datos.js) verbatim, SIN páginas de artículo (/guias/:slug) — el prototipo solo tiene título+resumen+lectura, no el cuerpo del texto; inventar 5 artículos completos sería fabricar contenido. Cuando el cliente dé el copy real, cada entrada gana su plantilla (mismo patrón que tours/eventos).\n\nREDISEÑO EDITORIAL 2026-07-17, mismo día que Sostenibilidad y misma queja de Samuel ("parece una página con solo cajas... más editorial, más creativa e interesante, usa animaciones GSAP de ser necesario"). Antes: TipsRapidos y ListaGuias eran cards `bg-papel-hueso ring-1 ring-linea` apiladas, dos veces seguidas. Ahora, mismo lenguaje que PilaresSostenibilidad (misma sesión): numeral fantasma (.guias-numero, aqua muy rebajado sobre papel — tokens propios, --text-guias-numero/--color-guias-numero, NO cruzados con los de Sostenibilidad) con el título/pregunta montado encima (margen negativo), separados por hairline (`divide-y`/`border-t`) en vez de fondo o caja. En TipsRapidos cada fila es numeral+pregunta en una columna angosta junto a la respuesta (ya es prosa real y larga) en una columna ancha. En ListaGuias la entrada `destacado` (hoy la única con tiempo de lectura) rompe el patrón de 2 columnas y ocupa una fila ANCHA de una sola columna con numeral/título más grandes — un artículo destacado real, no una card más gris entre las otras 4. Ambos componentes ganan Etiqueta+h2 propios (autocontenidos, ListaGuias ya no depende de un wrapper en guias.tsx). Reveal de scroll NUEVO (use-guias-reveal.ts): cada bloque `.guias-reveal` entra por su cuenta al cruzar el umbral — GSAP ScrollTrigger.batch, igual mecanismo que use-sostenibilidad-reveal.ts (no timeline scrub: es una lista larga de bloques apilados, no una pieza fija). Un solo hook, llamado UNA VEZ desde la página.',
+          'Mapea tips-for-punta-cana-snorkeling-and-sailing.php?lang=es de la web actual (HTML descargado y leído línea a línea 2026-07-17). UNA sección: TipsRapidos con las 4 preguntas evergreen — esnórquel/arrecife, vela, mar, mariscos — y enlaces reales a /sostenibilidad y /nosotros. Las otras 4 preguntas de esa página original (protocolos COVID-19: testeo, mascarilla, transporte privado) se dejaron fuera por obsoletas en un sitio relanzado en 2026, decisión de Samuel 2026-07-17.\n\nAntes la página tenía 2 bloques (TipsRapidos + ListaGuias, un índice de 5 artículos fantasma con "próximamente" al pie) — ListaGuias NO tenía contraparte en la web original y el "próximamente" sonaba raro en un sitio live. Samuel pidió quitarlo el 2026-07-17 ("la web original no dice nada de eso"). Sin ListaGuias, la página queda solo con TipsRapidos; cuando el cliente dé el copy real de futuros artículos, cada uno se monta como página aparte (mismo patrón que tours/eventos), no como tarjeta placeholder.\n\nREDISEÑO EDITORIAL 2026-07-17, mismo día que Sostenibilidad y misma queja de Samuel ("parece una página con solo cajas... más editorial, más creativa e interesante, usa animaciones GSAP de ser necesario"). Antes: 4 cards `bg-papel-hueso ring-1 ring-linea` apiladas. Ahora, mismo lenguaje que PilaresSostenibilidad (misma sesión): numeral fantasma (.guias-numero, aqua muy rebajado sobre papel — tokens propios, --text-guias-numero/--color-guias-numero, NO cruzados con los de Sostenibilidad) con la pregunta montada encima (margen negativo), separados por hairline (`divide-y`/`border-t`) en vez de fondo o caja. Cada fila es numeral+pregunta en una columna angosta junto a la respuesta (ya es prosa real y larga) en una columna ancha. Etiqueta+h2 propios (autocontenido, no depende de un wrapper en guias.tsx). Reveal de scroll (use-guias-reveal.ts): cada bloque `.guias-reveal` (eyebrow, h2 y los 4 artículos) entra por su cuenta al cruzar el umbral — GSAP ScrollTrigger.batch, igual mecanismo que use-sostenibilidad-reveal.ts (no timeline scrub: es una lista larga de bloques apilados, no una pieza fija). Un solo hook, llamado UNA VEZ desde la página.',
         states: [
           {
             label: 'Sección asentada (sin reveal)',
             kind: 'variante',
             to: '/guias?dev-guias=estatico',
-            note: 'Congela el reveal de scroll (GSAP ScrollTrigger.batch) en su estado FINAL — tips y guías ya visibles, sin desplazamiento. Es EL frame que viaja a Figma. Coincide con lo que ve quien tiene prefers-reduced-motion.',
+            note: 'Congela el reveal de scroll (GSAP ScrollTrigger.batch) en su estado FINAL — los 4 tips ya visibles, sin desplazamiento. Es EL frame que viaja a Figma. Coincide con lo que ve quien tiene prefers-reduced-motion.',
           },
         ],
       },

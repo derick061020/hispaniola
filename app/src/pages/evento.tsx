@@ -144,11 +144,16 @@ export function EventoPage() {
                     collapsible
                     value={acordeonAbierto}
                     onValueChange={setAcordeonAbierto}
-                    className="mt-5"
+                    className="mt-5 flex flex-col gap-3"
                   >
                     {evento.faq.map((q) => (
                       <Accordion.Item key={q.p} value={q.p}>
-                        <Accordion.Trigger>{q.p}</Accordion.Trigger>
+                        <Accordion.Header>
+                          <Accordion.Trigger>
+                            {q.p}
+                            <Accordion.Arrow className="justify-self-end" />
+                          </Accordion.Trigger>
+                        </Accordion.Header>
                         <Accordion.Content>
                           <p>{q.r}</p>
                         </Accordion.Content>

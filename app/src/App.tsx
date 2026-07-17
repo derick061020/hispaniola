@@ -5,6 +5,7 @@ import { ReservarPage } from '@/pages/reservar'
 import { GraciasPage } from '@/pages/gracias'
 import { MiReservaPage } from '@/pages/mi-reserva'
 import { EventoPage } from '@/pages/evento'
+import { GraciasEventoPage } from '@/pages/gracias-evento'
 import { SostenibilidadPage } from '@/pages/sostenibilidad'
 import { NosotrosPage } from '@/pages/nosotros'
 import { GuiasPage } from '@/pages/guias'
@@ -38,6 +39,7 @@ function App() {
         <Route path="/reservar/:slug/gracias" element={<GraciasPage />} />
         <Route path="/mi-reserva" element={<MiReservaPage />} />
         <Route path="/eventos/:slug" element={<EventoPage />} />
+        <Route path="/eventos/:slug/gracias" element={<GraciasEventoPage />} />
         <Route path="/sostenibilidad" element={<SostenibilidadPage />} />
         <Route path="/nosotros" element={<NosotrosPage />} />
         <Route path="/guias" element={<GuiasPage />} />

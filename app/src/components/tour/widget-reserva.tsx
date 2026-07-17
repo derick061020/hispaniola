@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Minus, Plus, Users, Tag } from 'lucide-react'
+import { Minus, Plus, Users, Baby, Tag } from 'lucide-react'
 import * as FancyButton from '@/components/alignui/fancy-button'
 import * as CompactButton from '@/components/alignui/compact-button'
 import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
@@ -42,11 +42,14 @@ import { WHATSAPP_URL, calcularTotalTour, type FichaTour } from '@/data/tours'
 
 type Props = { tour: Tour; ficha: FichaTour }
 
-// Tope del contador de personas de ESTE booking (no el aforo del barco,
-// tour.maxPax — un grupo de 25 no se arma en un solo formulario). Mismo
-// límite que ya traía el Select que este stepper reemplaza (2026-07-17,
-// pedido de Samuel: "− N +" en vez de un desplegable).
-const MAX_PERSONAS = 6
+// Tope del contador de personas de ESTE booking. v3 (2026-07-17, Saona): con
+// subVariantes (Saona: speedboat hasta 25, catamarán hasta 70) el tope
+// crece — el stepper se calcula por tour: el `maxPax` de TOURS (data/home.ts)
+// para tours con subVariantes, o 6 (tope clásico del Select que el stepper
+// reemplaza, conservado para los tours "completo" sin sub-variantes como
+// semi-privado y snorkel-lovers). Un grupo de 25+ no se arma en un solo
+// formulario de los tours clásicos — para eso existe el charter.
+const MAX_PERSONAS_DEFAULT = 6
 
 // Ticker infinito en una sola línea (2026-07-17, pedido de Samuel: "que estén
 // en una fila, en un ticker infinito, para reducir el alto" — antes eran 3
@@ -136,6 +139,15 @@ function Precio({ precio, desde = false }: { precio: number | null; desde?: bool
 export function WidgetReserva({ tour, ficha }: Props) {
   const [fecha, setFecha] = useState<string | null>(null)
   const [horario, setHorario] = useState(0)
+  // v3 (2026-07-17, Snorkel Lovers): tarifa dual Adulto/Niño. Cuando el tour
+  // tiene `precioNino` (Snorkel Lovers), el state es por ROL — `adultos` y
+  // `ninos` se mantienen sincronizados para que la suma viaje al funnel
+  // (`?adultos=N&ninos=M`). Cuando no hay `precioNino`, el state es el
+  // clásico `personas: number`. La suma de adultos+ninos nunca excede
+  // `maxPax` (que para Snorkel Lovers es 30 según la web).
+  const esDual = tour.precioNino !== null && tour.precioNino !== undefined
+  const [adultos, setAdultos] = useState(2)
+  const [ninos, setNinos] = useState(0)
   const [personas, setPersonas] = useState(2)
   // Fase B: el paquete se elige en el widget. Abre en Light (ancla US$ 99);
   // Premium es opt-in explícito — ver la nota de bait-and-switch de arriba.
@@ -148,6 +160,17 @@ export function WidgetReserva({ tour, ficha }: Props) {
   // tramos viva en datos, no en el componente.
   const varianteInicial = ficha.subVariantes?.[0]?.id ?? null
   const [variante, setVariante] = useState<string | null>(varianteInicial)
+  // Tope del stepper de personas:
+  //  - esDual (Snorkel Lovers): el max del tour (30).
+  //  - subVariantes (Saona): el tramo más alto (70 en catamarán).
+  //  - resto: 6 (tope clásico del Select que el stepper reemplaza).
+  const maxPersonas = esDual
+    ? tour.maxPax ?? 30
+    : ficha.subVariantes
+      ? Math.max(...ficha.subVariantes.flatMap((v) => v.tabla.map((t) => t.hasta ?? t.desde)))
+      : MAX_PERSONAS_DEFAULT
+  // Para Snorkel Lovers (dual), adultos + niños no puede superar maxPax.
+  const totalPersonas = esDual ? adultos + ninos : personas
 
   // [dev-mode] deep-link del Glosario Dev — ver src/dev/dev-registry.ts.
   // 'fecha' elige mañana (nunca cae en uno de los 2 días agotados de ejemplo
@@ -209,15 +232,20 @@ export function WidgetReserva({ tour, ficha }: Props) {
   }
 
   // booking 'completo': el precio se calcula con `calcularTotalTour()`, que
-  // entiende los 2 modelos:
-  //  - Light/Premium (semi-privado, snorkel-lovers): `precioLight + upgrade ×
-  //    personas`. El ancla visual es Light; Premium opt-in.
-  //  - SubVariantes (Saona): busca el tramo que contiene `personas` en la
-  //    tabla de la sub-variante activa. `precioPersona` aquí NO es por
-  //    persona — es el precio de la sub-variante mostrada en la cabecera
-  //    del widget (ancla: el tramo más barato), y `total` es el resultado
-  //    del tramo al pax actual.
-  const total = calcularTotalTour(ficha, variante, personas, tour.precioLight)
+  // entiende los 3 modelos (subVariantes, tarifa dual, light/premium clásico).
+  //  - Saona: tramo por pax total según sub-variante.
+  //  - Snorkel Lovers (dual): adultos × precioLight + niños × precioNino
+  //    (×2 si Premium — el menú es el mismo para adultos y niños).
+  //  - Semi-privado, charter: precioLight × personas (+ upgrade si Premium).
+  const total = calcularTotalTour(
+    ficha,
+    variante,
+    esDual ? totalPersonas : personas,
+    tour.precioLight,
+    tour.precioNino,
+    paquete,
+    esDual ? { adultos, ninos } : undefined,
+  )
   // Ancla del widget: el "desde" que se ve en la cabecera. Con
   // subVariantes es el tramo más barato de la 1ª variante; sin ellas, el
   // modelo clásico (precioLight o premium según el toggle).
@@ -361,62 +389,167 @@ export function WidgetReserva({ tour, ficha }: Props) {
         </div>
       ) : null}
 
+      {/* Stepper de personas. 2 modelos:
+          - esDual (Snorkel Lovers, v3 2026-07-17): 2 inputs «Adultos» + «Niños»
+            con icono Baby en el de niños, 1 fila por rol, suma al total por
+            tarifa separada (Adulto 114 / Niño 65 + +15 si Premium).
+          - resto: 1 input «Personas» con icono Users, modelo clásico
+            (precioLight × personas + upgrade si Premium).
+          En el modo dual los 2 steppers comparten el mismo grupo ARIA y el
+          mismo `maxPersonas` global (= maxPax del tour = 30 para snorkel-
+          lovers): la suma adultos+ninos no puede superarlo — el botón + del
+          2º se deshabilita cuando adultos+ninos=maxPersonas. */}
       <div>
-        <span className="mb-1 block text-xs font-medium text-navy-sub" id="widget-label-personas">
-          Personas
-        </span>
-        {/* Stepper "− N +" (2026-07-17, pedido de Samuel: no un desplegable
-            para esto) — CompactButton de AlignUI para los 2 botones, mismo
-            alto (h-10) y forma (rounded-10, border-stroke-soft-200) que el
-            Select de Horario de arriba, para que las 2 filas lean como el
-            mismo sistema de campos. */}
-        <div
-          role="group"
-          aria-labelledby="widget-label-personas"
-          className="flex h-10 items-center justify-between rounded-10 border border-stroke-soft-200 bg-bg-white-0 pl-3 pr-1.5"
-        >
-          <span className="flex items-center gap-2 text-paragraph-sm text-text-strong-950">
-            <Users className="size-5 shrink-0 text-text-sub-600" aria-hidden="true" />
-            {/* key={personas} remonta el span y dispara la animación .stepper-tick
-                en cada cambio (2026-07-17, pedido de Samuel: "como que no se
-                nota" al sumar/restar — el pulso da una señal imposible de
-                perder al lado del icono). tabular-nums evita que el ancho
-                salte al pasar de 9 a 10 personas. */}
-            <span key={personas} aria-live="polite" className="stepper-tick tabular-nums">
-              {personas === 1 ? '1 persona' : `${personas} personas`}
+        {esDual ? (
+          // DUAL: Adultos + Niños
+          <>
+            <div className="mb-1 flex items-baseline justify-between">
+              <span className="text-xs font-medium text-navy-sub">Pasajeros</span>
+              <span className="text-xs text-navy-soft tabular-nums">
+                {totalPersonas} / {maxPersonas}
+              </span>
+            </div>
+            <div role="group" aria-labelledby="widget-label-personas" className="flex flex-col gap-2">
+              <div className="flex h-10 items-center justify-between rounded-10 border border-stroke-soft-200 bg-bg-white-0 pl-3 pr-1.5">
+                <span className="flex items-center gap-2 text-paragraph-sm text-text-strong-950">
+                  <Users className="size-5 shrink-0 text-text-sub-600" aria-hidden="true" />
+                  <span className="text-navy-sub">Adultos</span>
+                </span>
+                <div className="flex items-center gap-2">
+                  <span
+                    key={adultos}
+                    aria-live="polite"
+                    className="stepper-tick min-w-[1.5rem] text-center font-semibold tabular-nums text-navy"
+                  >
+                    {adultos}
+                  </span>
+                  <div className="flex items-center gap-1">
+                    <CompactButton.Root
+                      type="button"
+                      variant="stroke"
+                      fullRadius
+                      aria-label="Quitar un adulto"
+                      disabled={adultos <= 1}
+                      onClick={() => setAdultos((a) => Math.max(1, a - 1))}
+                      className="active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
+                    >
+                      <CompactButton.Icon as={Minus} />
+                    </CompactButton.Root>
+                    <CompactButton.Root
+                      type="button"
+                      variant="stroke"
+                      fullRadius
+                      aria-label="Añadir un adulto"
+                      disabled={adultos + ninos >= maxPersonas}
+                      onClick={() => setAdultos((a) => Math.min(maxPersonas - ninos, a + 1))}
+                      className="active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
+                    >
+                      <CompactButton.Icon as={Plus} />
+                    </CompactButton.Root>
+                  </div>
+                </div>
+              </div>
+              <div className="flex h-10 items-center justify-between rounded-10 border border-stroke-soft-200 bg-bg-white-0 pl-3 pr-1.5">
+                <span className="flex items-center gap-2 text-paragraph-sm text-text-strong-950">
+                  <Baby className="size-5 shrink-0 text-text-sub-600" aria-hidden="true" />
+                  <span className="text-navy-sub">Niños</span>
+                </span>
+                <div className="flex items-center gap-2">
+                  <span
+                    key={ninos}
+                    aria-live="polite"
+                    className="stepper-tick min-w-[1.5rem] text-center font-semibold tabular-nums text-navy"
+                  >
+                    {ninos}
+                  </span>
+                  <div className="flex items-center gap-1">
+                    <CompactButton.Root
+                      type="button"
+                      variant="stroke"
+                      fullRadius
+                      aria-label="Quitar un niño"
+                      disabled={ninos <= 0}
+                      onClick={() => setNinos((n) => Math.max(0, n - 1))}
+                      className="active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
+                    >
+                      <CompactButton.Icon as={Minus} />
+                    </CompactButton.Root>
+                    <CompactButton.Root
+                      type="button"
+                      variant="stroke"
+                      fullRadius
+                      aria-label="Añadir un niño"
+                      disabled={adultos + ninos >= maxPersonas}
+                      onClick={() => setNinos((n) => Math.min(maxPersonas - adultos, n + 1))}
+                      className="active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
+                    >
+                      <CompactButton.Icon as={Plus} />
+                    </CompactButton.Root>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </>
+        ) : (
+          // CLÁSICO: 1 input «Personas» (semi-privado, charter, Saona)
+          <>
+            <span className="mb-1 block text-xs font-medium text-navy-sub" id="widget-label-personas">
+              Personas
             </span>
-          </span>
-          <div className="flex items-center gap-1">
-            {/* Feedback de click en los +/− (override via className, sin tocar
-                el vendor de AlignUI — patrón de personalización de
-                PLAN-ALIGNUI.md). active:scale-90 encoge el botón al apretar;
-                active:bg-navy + active:text-papel lo "invierte" al coral del
-                CTA por un instante; active:shadow-none lo mete en la
-                superficie. Combinados, el gesto se siente. */}
-            <CompactButton.Root
-              type="button"
-              variant="stroke"
-              fullRadius
-              aria-label="Quitar una persona"
-              disabled={personas <= 1}
-              onClick={() => setPersonas((p) => Math.max(1, p - 1))}
-              className="active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
+            {/* v3 (2026-07-17, Saona): si la sub-variante activa tiene un mínimo
+                superior al state actual, mostramos el aviso justo debajo del
+                stepper (no encima) — es info contextual, no título. El state
+                `personas` sigue siendo 2 por defecto; el usuario lo sube con el +. */}
+            {(() => {
+              if (!ficha.subVariantes || !variante) return null
+              const v = ficha.subVariantes.find((s) => s.id === variante)
+              if (!v) return null
+              const min = Math.min(...v.tabla.map((t) => t.desde))
+              if (personas >= min) return null
+              return (
+                <p className="mb-1.5 text-xs text-navy-soft">
+                  {v.nombre} requiere mínimo {min} personas.
+                </p>
+              )
+            })()}
+            <div
+              role="group"
+              aria-labelledby="widget-label-personas"
+              className="flex h-10 items-center justify-between rounded-10 border border-stroke-soft-200 bg-bg-white-0 pl-3 pr-1.5"
             >
-              <CompactButton.Icon as={Minus} />
-            </CompactButton.Root>
-            <CompactButton.Root
-              type="button"
-              variant="stroke"
-              fullRadius
-              aria-label="Añadir una persona"
-              disabled={personas >= MAX_PERSONAS}
-              onClick={() => setPersonas((p) => Math.min(MAX_PERSONAS, p + 1))}
-              className="active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
-            >
-              <CompactButton.Icon as={Plus} />
-            </CompactButton.Root>
-          </div>
-        </div>
+              <span className="flex items-center gap-2 text-paragraph-sm text-text-strong-950">
+                <Users className="size-5 shrink-0 text-text-sub-600" aria-hidden="true" />
+                <span key={personas} aria-live="polite" className="stepper-tick tabular-nums">
+                  {personas === 1 ? '1 persona' : `${personas} personas`}
+                </span>
+              </span>
+              <div className="flex items-center gap-1">
+                <CompactButton.Root
+                  type="button"
+                  variant="stroke"
+                  fullRadius
+                  aria-label="Quitar una persona"
+                  disabled={personas <= 1}
+                  onClick={() => setPersonas((p) => Math.max(1, p - 1))}
+                  className="active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
+                >
+                  <CompactButton.Icon as={Minus} />
+                </CompactButton.Root>
+                <CompactButton.Root
+                  type="button"
+                  variant="stroke"
+                  fullRadius
+                  aria-label="Añadir una persona"
+                  disabled={personas >= maxPersonas}
+                  onClick={() => setPersonas((p) => Math.min(maxPersonas, p + 1))}
+                  className="active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
+                >
+                  <CompactButton.Icon as={Plus} />
+                </CompactButton.Root>
+              </div>
+            </div>
+          </>
+        )}
       </div>
 
       {/* «Ahorra hasta 15%» (decisión de precio, Fase B): el precio mostrado es
@@ -436,6 +569,15 @@ export function WidgetReserva({ tour, ficha }: Props) {
         <FancyButton.Root variant="primary" className="w-full" disabled>
           Elige una fecha
         </FancyButton.Root>
+      ) : total === null ? (
+        // v3 (2026-07-17, Saona): con subVariantes, hay un 2º estado disabled
+        // — la fecha está pero el nº de personas no llega al mínimo del
+        // tramo de la variante activa. Sin este caso el botón se queda
+        // habilitado y "Continuar — —" (que no se ve bien) al cambiar
+        // variante sin ajustar pax.
+        <FancyButton.Root variant="primary" className="w-full" disabled>
+          Ajusta las personas
+        </FancyButton.Root>
       ) : (
         <FancyButton.Root variant="primary" className="w-full" asChild>
           <Link
@@ -448,7 +590,12 @@ export function WidgetReserva({ tour, ficha }: Props) {
               ...(tieneSubVariantes ? { variante: variante ?? '' } : { paquete }),
               fecha,
               horario: String(horario),
-              personas: String(personas),
+              // Snorkel Lovers (tarifa dual, v3 2026-07-17): manda adultos y
+              // niños por separado, Y la suma como `personas` (compatibilidad
+              // con el funnel cuando se construya, que hoy lee `personas`).
+              ...(esDual
+                ? { adultos: String(adultos), ninos: String(ninos), personas: String(totalPersonas) }
+                : { personas: String(personas) }),
             }).toString()}`}
           >
             Continuar — {formatoDinero(total)}
