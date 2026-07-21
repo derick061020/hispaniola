@@ -792,14 +792,6 @@
   --eventos-especiales-reposo-flex: 0.55;
   --eventos-especiales-transicion: 500ms;
 
-  /* ---------- Modal de bienvenida (video, 2026-07-17, pedido de Samuel) ----------
-     Popup con el video promocional al entrar a la home — la web actual solo
-     lo expone como thumbnail "click to play" dentro de la página; aquí SÍ es
-     un popup automático, pero UNA VEZ POR SESIÓN (sessionStorage, no
-     localStorage — ver modal-bienvenida.tsx) para no ser invasivo en cada
-     recarga. */
-  --spacing-bienvenida-cerrar: 2.75rem; /* 44px — botón de cerrar, círculo */
-
   /* ---------- Marquee de checks del widget de reserva (2026-07-17, pedido
      de Samuel) ---------- Mismo trato que --opiniones-marquee-duracion:
      FUENTE del prototipo de Figma (playbook animaciones-a-figma), no un

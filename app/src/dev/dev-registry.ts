@@ -113,21 +113,6 @@ export const devSections: DevSection[] = [
         ],
       },
       {
-        title: 'Modal de bienvenida (video)',
-        route: '/',
-        status: 'done',
-        description:
-          '2026-07-17 (pedido de Samuel): popup con el video promocional al entrar a la home — la web actual solo lo expone como thumbnail "click to play" dentro de la página; aquí es un popup AUTOMÁTICO, pero UNA VEZ POR SESIÓN (sessionStorage, no localStorage — modal-bienvenida.tsx): sobrevive a navegar la SPA en la misma pestaña, pero se olvida al cerrar el navegador o borrar el storage/caché, que es justo cuándo debe reaparecer. Diálogo a mano (NO alignui/modal.tsx — CLAUDE.md reserva AlignUI en la home solo para el Accordion de FAQ): portal a document.body, bloqueo de scroll + foco de entrada + Escape, mismos 3 arreglos que MenuMovil. Embed de YouTube (youtube-nocookie, autoplay=1&mute=1 — el mute es obligatorio porque el modal se abre SIN gesto del usuario y el navegador bloquearía un autoplay con sonido).',
-        states: [
-          {
-            label: 'Modal abierto',
-            kind: 'modal',
-            to: '/?dev-bienvenida=abierto',
-            note: 'Fuerza el modal sin tener que borrar sessionStorage a mano.',
-          },
-        ],
-      },
-      {
         title: 'Hero inmersivo + ticker',
         route: '/',
         status: 'done',

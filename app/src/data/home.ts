@@ -686,6 +686,46 @@ export const QUOTES: Review[] = [
   },
 ]
 
+// ─────────────────────────────────────────────────────────────────────────
+// Barra de confianza multi-plataforma (correcciones v1 del cliente,
+// 2026-07-20 — planes/01-home.md slides 11-12: «agregar logo de google»,
+// «intentar que sea lo más real posible»).
+//
+// ⚠️ LO QUE NO SE INVENTA. La maqueta que mandó el cliente pinta un rating
+// POR PLATAFORMA (Google 4,9 · +900 reseñas / TripAdvisor 4,9 / Viator 4,8
+// Premier). Esos números NO existen en ninguna fuente del proyecto — los
+// generó la IA con la que el cliente hizo la maqueta. Aquí se pinta:
+//   - el agregado REAL (4.9 sobre 1.782 reseñas — el mismo de todo el sitio), y
+//   - de cada plataforma, solo la distinción que SÍ está documentada
+//     (TripAdvisor #1 7 años y los premios Viator vienen de PREMIOS, que
+//     salieron de la web real del cliente).
+// Google entra sin cifra propia a propósito: tenemos reseñas suyas en QUOTES,
+// pero no su recuento. Cuando el cliente dé los datos por plataforma (y las
+// URLs de sus perfiles, pendientes desde PLAN-v3.md §9), se rellenan aquí y
+// `url` deja de ser null → los logos pasan a ser enlaces verificables.
+export type PlataformaResena = {
+  id: 'google' | 'tripadvisor' | 'viator'
+  nombre: string
+  /** Distinción real y documentada. null = no tenemos dato publicable. */
+  distincion: string | null
+  /** Perfil público. null = pendiente del cliente, no se inventa. */
+  url: string | null
+}
+
+export const PLATAFORMAS_RESENAS: PlataformaResena[] = [
+  { id: 'google', nombre: 'Google', distincion: null, url: null },
+  {
+    id: 'tripadvisor',
+    nombre: 'TripAdvisor',
+    distincion: '#1 en actividades acuáticas 7 años',
+    url: null,
+  },
+  { id: 'viator', nombre: 'Viator', distincion: 'Premios 2022 · 2023 · 2024', url: null },
+]
+
+/** Agregado real, el mismo número que usa el hero y el footer. */
+export const RESENAS_AGREGADO = { rating: '4,9', total: 1782 }
+
 export type Fundador = {
   /** Frase que aparece bajo el video (en blockquote con border-left coral). */
   frase: string
@@ -726,6 +766,9 @@ export type ContactoCard = {
   titulo: string
   dato: string
   href?: string
+  /** Verbo de la acción (correcciones v1, slide 14): la maqueta pide que cada
+   *  card diga qué pasa al tocarla, no solo el dato. */
+  cta?: string
 }
 
 export const CONTACTO = {
@@ -742,33 +785,102 @@ export const CONTACTO = {
   mapaEmbedUrl: 'https://www.google.com/maps?q=18.669740,-68.401262&z=16&output=embed',
   confirmacion: 'Recibimos tu mensaje — te respondemos en menos de 24 h (o antes por WhatsApp).',
   microcopy: '¿Ya tienes una reserva? Ten a mano tu código (HSP-XXXX-XXXX) y te ayudamos más rápido.',
+  // Correcciones v1 del cliente (2026-07-20, planes/01-home.md slides 13-14:
+  // «dale más cariño please»). La maqueta pone una card de persona real
+  // arriba — es lo que hace que «hablas con nosotros, no con un call center»
+  // deje de ser una promesa y tenga cara.
+  //
+  // ⚠️ La maqueta la firma una «María C.» que NO existe en ningún dato del
+  // cliente: la inventó la IA de la maqueta. Usamos a EVA, que es quien el
+  // propio cliente identifica como atención al viajero en las OTRAS dos
+  // maquetas (home slide 15 y nosotros slide 2) — un solo nombre en todo el
+  // sitio, y que además es suyo. La fuente es EQUIPO en data/nosotros.ts.
+  persona: {
+    idEquipo: 'eva',
+    texto:
+      'Detrás de cada reserva hay una persona real. Escríbenos y te respondemos nosotros mismos — no un robot ni un call center.',
+    chips: ['Respondemos en minutos', 'Español e inglés', 'Equipo local'],
+  },
+  // Opciones del «¿Sobre qué?» del formulario. Salen de lo que el sitio
+  // vende de verdad (tours, eventos privados, agentes) — no una lista genérica.
+  asuntos: [
+    'Reserva de un tour',
+    'Evento privado o boda',
+    'Cambiar una reserva que ya tengo',
+    'Agencias y agentes de viaje',
+    'Otra cosa',
+  ],
   cards: [
     {
       id: 'whatsapp',
       titulo: 'WhatsApp',
       dato: '+1 829 305 2804',
       href: WHATSAPP_URL,
+      cta: 'Chatear ahora',
     },
     {
       id: 'telefono',
       titulo: 'Teléfono',
       dato: '1-800-657-0016',
       href: 'tel:+18006570016',
+      cta: 'Llamar',
     },
     {
       id: 'email',
       titulo: 'Email',
       dato: 'info@catamarantourspuntacana.com',
       href: 'mailto:info@catamarantourspuntacana.com',
+      cta: 'Escribir',
     },
     {
       id: 'oficina',
       titulo: 'Oficina',
       dato: 'C. P.º del Sol, Punta Cana 23500, República Dominicana',
       href: 'https://maps.app.goo.gl/iuu1EGaNYGCjhreC7',
+      cta: 'Ver en el mapa',
     },
   ] satisfies ContactoCard[],
 }
+
+// ─────────────────────────────────────────────────────────────────────────
+// Pie enriquecido (correcciones v1 del cliente, 2026-07-20 —
+// planes/01-home.md slide 18). El cliente puso de referencia el footer de
+// Civitatis: métodos de pago, badge de valoración, selector de idioma/moneda
+// y redes.
+//
+// ⚠️ MEDIOS DE PAGO — PENDIENTE DE CONFIRMAR CON EL CLIENTE. Los únicos
+// medios que el proyecto documenta hoy son el depósito del 25% online y el
+// «paga en efectivo a bordo» (pages/mi-reserva.tsx). El resto son las redes
+// de tarjeta que cualquier operador con cobro online acepta, puestas aquí
+// para que el cliente las VEA y las corrija — no como afirmación cerrada.
+// Se pintan como texto y no como logo de marca: no tenemos los SVG oficiales
+// y un logo mal reproducido miente más que un nombre bien compuesto.
+// NO PUBLICAR sin que Fernando confirme la lista.
+export const MEDIOS_PAGO: string[] = [
+  'Visa',
+  'Mastercard',
+  'American Express',
+  'PayPal',
+  'Efectivo a bordo',
+]
+
+// Redes del cliente. ⚠️ Las URLs reales NO están en ninguna fuente del
+// proyecto (ni en prototipo/datos.js ni en la auditoría de la web actual) —
+// misma situación que los perfiles de reseñas y los PREMIOS. Con `url: null`
+// el componente pinta un EnlacePrototipo en vez de inventar un destino.
+export type RedSocial = { id: string; nombre: string; url: string | null }
+
+export const REDES: RedSocial[] = [
+  { id: 'instagram', nombre: 'Instagram', url: null },
+  { id: 'facebook', nombre: 'Facebook', url: null },
+  { id: 'tiktok', nombre: 'TikTok', url: null },
+  { id: 'youtube', nombre: 'YouTube', url: null },
+]
+
+// Monedas. Igual que el idioma (SelectorIdioma), es VISUAL: el sitio no tiene
+// conversión real de divisa todavía. Los precios de todo el sitio están en
+// USD, que es como los publica el cliente.
+export const MONEDAS = ['USD', 'EUR', 'DOP'] as const
 
 // ─────────────────────────────────────────────────────────────────────────
 // FAQ de la home (2026-07-17) — reemplaza al layout de galería+FAQ en 2

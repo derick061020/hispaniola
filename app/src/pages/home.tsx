@@ -10,7 +10,6 @@ import { Contacto } from '@/components/home/contacto'
 import { Faq } from '@/components/home/faq'
 import { EventosEspeciales } from '@/components/home/eventos-especiales'
 import { Footer } from '@/components/home/footer'
-import { ModalBienvenida } from '@/components/home/modal-bienvenida'
 import { Meta } from '@/components/seo/meta'
 import { SchemaJsonLd } from '@/components/seo/schema-json-ld'
 import { schemaOrganizacion, schemaFaq } from '@/lib/seo/schema'
@@ -31,15 +30,19 @@ import { FAQ_HOME } from '@/data/home'
 // cards) y Faq (acordeón centrado, AlignUI) — el CTA de cierre se funde en
 // el Footer, que pasa a ser el océano.
 //
-// 2026-07-17 (misma sesión, pedido de Samuel): 2 añadidos nuevos. (1)
-// ModalBienvenida — popup de video al entrar, una vez por sesión
-// (sessionStorage); portal a document.body, no ocupa lugar en el árbol pero
-// vive aquí porque es un comportamiento de LA HOME, no del shell. (2)
-// EventosEspeciales — la vitrina de 4 boxes (Cumpleaños/Bodas/Aniversarios/
-// Despedidas) que la home actual tiene al final de la página. 2ª vuelta
-// (Samuel): pasa de ir justo antes del Footer a vivir entre Reviews y
-// Contacto — separa mejor el bloque de confianza (reseñas) del bloque de
-// conversión/cierre (contacto + FAQ + footer).
+// 2026-07-17 (misma sesión, pedido de Samuel): EventosEspeciales — la vitrina
+// de 4 boxes (Cumpleaños/Bodas/Aniversarios/Despedidas) que la home actual
+// tiene al final de la página. 2ª vuelta (Samuel): pasa de ir justo antes del
+// Footer a vivir entre Reviews y Contacto — separa mejor el bloque de
+// confianza (reseñas) del bloque de conversión/cierre (contacto + FAQ +
+// footer).
+//
+// CORRECCIONES v1 DEL CLIENTE (2026-07-20, correcciones-v1-cliente/planes/
+// 01-home.md): el ModalBienvenida (popup de video al entrar) se ELIMINA —
+// slide 2, «Eliminar popup». El video NO se tira: es el mismo asset que ya
+// usa el hero de fondo, y ahora protagoniza también la sección Experiencia
+// (slide 7, «poner el video del popup inicial aquí... a Fernando le gusta
+// mucho ese video»). Un asset, dos usos, cero popups.
 //
 // EcoFriendly (misma sesión, pedido de Samuel sobre el cintillo "ECO FRIENDLY
 // · NO PLASTIC" de la web actual): entre Premios y Experiencia, la misma
@@ -62,7 +65,6 @@ export function HomePage() {
       />
       <SchemaJsonLd datos={schemaOrganizacion()} />
       <SchemaJsonLd datos={schemaFaq(FAQ_HOME)} />
-      <ModalBienvenida />
       <Hero />
       <Premios />
       <EcoFriendly />

@@ -1,6 +1,14 @@
 import { useEffect, useState } from 'react'
+import { BadgeCheck } from 'lucide-react'
 import { Etiqueta } from '@/components/ui/etiqueta'
-import { QUOTES, FUNDADOR, type Review } from '@/data/home'
+import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
+import {
+  QUOTES,
+  FUNDADOR,
+  PLATAFORMAS_RESENAS,
+  RESENAS_AGREGADO,
+  type Review,
+} from '@/data/home'
 import { useDevFlag } from '@/dev/use-dev-flag'
 
 // «Reseñas verificadas» — rediseño v6 (Pedro, 2026-07-15). Estructura:
@@ -31,6 +39,46 @@ function StarRating({ count = 5 }: { count: number }) {
     <p className="text-estrella text-lg lg:text-xl" aria-label={`${count} de 5 estrellas`}>
       {'★'.repeat(count)}
     </p>
+  )
+}
+
+// Barra de confianza multi-plataforma (correcciones v1, slides 11-12). El
+// agregado grande a la izquierda; las 3 plataformas a la derecha con SU
+// distinción real. Los nombres van como texto y no como logo de marca: no
+// tenemos los SVG oficiales en el repo y un logo mal reproducido se ve peor
+// que el nombre bien compuesto — cuando el cliente mande los assets (y las
+// URLs de sus perfiles) esto pasa a ser una fila de logos enlazados.
+function BarraPlataformas() {
+  return (
+    <div className="mt-8 flex flex-col items-center gap-5 rounded-card-grande bg-papel-hueso px-6 py-5 sm:flex-row sm:justify-center sm:gap-10">
+      <div className="flex items-center gap-3">
+        <p className="font-display text-h2 font-semibold text-navy">{RESENAS_AGREGADO.rating}</p>
+        <div>
+          <StarRating count={5} />
+          <p className="text-sm text-navy-soft">
+            {RESENAS_AGREGADO.total.toLocaleString('es-ES')} reseñas verificadas
+          </p>
+        </div>
+      </div>
+
+      <div
+        aria-hidden="true"
+        className="hidden h-10 w-px shrink-0 bg-linea sm:block"
+      />
+
+      <ul className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
+        {PLATAFORMAS_RESENAS.map((p) => (
+          <li key={p.id} className="text-center sm:text-left">
+            <p className="text-sm font-semibold text-navy">{p.nombre}</p>
+            {/* Sin distinción documentada no se pinta una línea vacía ni se
+                inventa uno — ver el porqué en data/home.ts. */}
+            {p.distincion ? (
+              <p className="mt-0.5 text-xs text-navy-soft">{p.distincion}</p>
+            ) : null}
+          </li>
+        ))}
+      </ul>
+    </div>
   )
 }
 
@@ -92,6 +140,14 @@ function ReviewCard({ review }: { review: Review }) {
         </div>
         <StarRating count={5} />
       </div>
+
+      {/* «Reseña verificada» (correcciones v1, slide 11: «intentar que sea lo
+          más real posible»). No es decoración: todas las de QUOTES vienen de
+          un perfil público real del cliente, y el chip dice de cuál. */}
+      <p className="relative mt-3 flex items-center gap-1.5 text-xs font-medium text-menta-texto">
+        <BadgeCheck className="size-4 shrink-0" aria-hidden="true" />
+        Reseña verificada en {review.plataforma}
+      </p>
     </div>
   )
 }
@@ -152,9 +208,11 @@ export function Reviews() {
         <div className="text-center">
           <Etiqueta>Reseñas verificadas</Etiqueta>
           <h2 className="mt-3 font-display text-h2 font-semibold text-navy sm:text-h2">
-            4.9 de 5 en 1.782 reseñas
+            Lo que dicen nuestros viajeros
           </h2>
         </div>
+
+        <BarraPlataformas />
 
         {/* 2 columnas, mismo alto (items-stretch). El video llena su
             columna al alto del carrusel de la derecha. */}
@@ -206,6 +264,21 @@ export function Reviews() {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Cierre: ver todas + dejar la tuya (correcciones v1, slide 11:
+            «botón agregar reseña»). Los dos son EnlacePrototipo porque el
+            destino real es un perfil público del cliente (Google/TripAdvisor)
+            y esas URLs siguen pendientes — misma regla que los PREMIOS, que
+            tampoco enlazan a nada inventado. En cuanto lleguen, esto pasa a
+            ser un <a> normal con target="_blank". */}
+        <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <EnlacePrototipo className="inline-flex items-center justify-center rounded-btn px-5 py-3 text-sm font-semibold text-navy ring-1 ring-linea transition-colors hover:bg-papel-hueso">
+            Ver las {RESENAS_AGREGADO.total.toLocaleString('es-ES')} reseñas
+          </EnlacePrototipo>
+          <EnlacePrototipo className="inline-flex items-center justify-center rounded-btn bg-coral px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-coral-dark">
+            Déjanos tu reseña
+          </EnlacePrototipo>
         </div>
       </div>
     </section>

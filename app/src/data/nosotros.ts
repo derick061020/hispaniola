@@ -31,6 +31,95 @@
 // /sostenibilidad; esta página solo menciona + enlaza (ArrecifeTeaser, sin
 // cambios), mismo límite que ya existía.
 
+// ─────────────────────────────────────────────────────────────────────────
+// EL EQUIPO CON NOMBRE (correcciones v1 del cliente, 2026-07-20 —
+// planes/03-nosotros.md slide 2 y planes/01-home.md slide 15).
+//
+// Hasta ahora esta página NO podía tener equipo nominal: el comentario de
+// TRIPULACION (abajo) lo dice — «el cliente no ha dado esos datos; inventar
+// un "Capitán José" sería fabricar contenido». Las maquetas que mandó el
+// cliente SÍ traen los nombres y cargos, así que el bloqueo se levanta y
+// estos datos vienen de él, no de nosotros.
+//
+// ⚠️ PENDIENTE DE CONFIRMAR con el cliente antes de publicar: son personas
+// reales y los cargos salieron de una maqueta hecha con IA, no de un
+// documento suyo. Las QUOTES de cada uno vienen de esa misma maqueta —
+// suenan bien pero nadie las ha dicho: hay que validarlas o sustituirlas por
+// frases reales. Mientras tanto se pintan porque el cliente las propuso él.
+//
+// ⚠️ FOTOS: no tenemos. El componente pinta las iniciales en un círculo
+// (mismo placeholder honesto que las reseñas de la home, que tampoco tienen
+// foto de cliente por privacidad). `foto: null` = pedir a Samuel/cliente.
+//
+// Esta es la ÚNICA fuente del equipo: la consumen /nosotros (bloque
+// completo), la home (teaser, equipo-teaser.tsx) y la card de persona de la
+// sección Contacto. Un solo sitio que corregir cuando el cliente confirme.
+export type MiembroEquipo = {
+  id: string
+  nombre: string
+  rol: string
+  /** Año de entrada — el «desde» que da veteranía en la card. */
+  desde: string
+  quote: string
+  /** null = no tenemos retrato; se pintan iniciales. */
+  foto: string | null
+  /** CTA propio de la card. `tipo` decide el destino real. */
+  cta: { label: string; tipo: 'whatsapp' | 'historia' }
+}
+
+export const EQUIPO: MiembroEquipo[] = [
+  {
+    id: 'omar',
+    nombre: 'Omar',
+    rol: 'Fundador y director',
+    desde: '2012',
+    quote: 'Empecé con un solo barco y un sueño: que cada persona se sienta en casa en el mar.',
+    foto: null,
+    cta: { label: 'Nuestra historia', tipo: 'historia' },
+  },
+  {
+    id: 'lola',
+    nombre: 'Lola',
+    rol: 'Tour Leader Manager',
+    desde: '2015',
+    quote: 'Llevo años enseñando este arrecife y todavía me emociona cada salida.',
+    foto: null,
+    cta: { label: 'Escríbele a Lola', tipo: 'whatsapp' },
+  },
+  {
+    id: 'eva',
+    nombre: 'Eva',
+    rol: 'Atención al viajero',
+    desde: '2018',
+    quote: 'Cuando escribes, te respondo yo. Nada de robots — te ayudo a armar tu día perfecto.',
+    foto: null,
+    cta: { label: 'Chatea con Eva', tipo: 'whatsapp' },
+  },
+]
+
+// ─────────────────────────────────────────────────────────────────────────
+// LÍNEA DE TIEMPO de la flota (correcciones v1 — planes/03-nosotros.md
+// slide 2: «De un barco a una flota de seis»).
+//
+// Los años salen de FLOTA (abajo), que a su vez los tomó verbatim de
+// about-hispaniola.php. El único dato que NO estaba ahí es la fundación en
+// 2012, que sí aparece en toda la web («Desde 2012») y en el footer.
+//
+// ⚠️ La maqueta del cliente dice «2012 · Nace Hispaniola con el primer
+// barco», pero sus propias specs fechan el Santa María en 2013. Aquí se
+// separan los dos hechos (2012 = nace la empresa, 2013 = primer catamarán
+// propio) en vez de forzarlos en uno solo. CONFIRMAR con el cliente: si en
+// 2012 ya operaban con otro barco, falta ese dato.
+export type HitoFlota = { anio: string; titulo: string }
+
+export const TIMELINE_FLOTA: HitoFlota[] = [
+  { anio: '2012', titulo: 'Nace Hispaniola Aquatic Adventures' },
+  { anio: '2013', titulo: 'Se construye el Santa María, el primero de la flota' },
+  { anio: '2015', titulo: 'Llega el Forever Teresa, el de mayor eslora' },
+  { anio: '2016', titulo: 'Se incorpora el Maite, el velero' },
+  { anio: 'Hoy', titulo: 'Flota de 6 catamaranes' },
+]
+
 export type MiembroTripulacion = { rol: string }
 
 // TRIPULACION del prototipo — 4 roles, sin nombres propios (el cliente no ha
@@ -42,7 +131,26 @@ export const TRIPULACION: MiembroTripulacion[] = [
   { rol: 'Guía de snorkel' },
 ]
 
-export type BarcoFlota = { nombre: string; meta: string; foto: string; fotoAlt: string }
+// Correcciones v1 (planes/03-nosotros.md slide 5): la maqueta del cliente
+// pide capacidad visible, un «ideal para» y un CTA por barco.
+//  - `capacidad` sale de las tablas REALES del charter (data/tours.ts) y de
+//    las specs de about-hispaniola.php — NO de los «hasta 40 / hasta 80» de
+//    la maqueta, que la IA se inventó y contradicen los tramos que ya
+//    cobramos (p. ej. Maite factura hasta 20 pax, no 30).
+//  - `idealPara` condensa lo que el propio `meta` ya dice, para poder pintarlo
+//    como chip sin repetir el párrafo entero.
+//  - `cta`: 'charter' → los 4 botes que se pueden reservar en el charter
+//    llevan a esa ficha; 'evento' → Joker y Karaya se cotizan como evento.
+export type BarcoFlota = {
+  nombre: string
+  meta: string
+  foto: string
+  fotoAlt: string
+  /** null = no hay cifra documentada (no se inventa). */
+  capacidad: string | null
+  idealPara: string
+  cta: 'charter' | 'evento'
+}
 
 // FLOTA — los 6 catamaranes reales con nombre propio de about-hispaniola.php
 // (no la versión simplificada "Catamarán A/B" de prototipo/datos.js — 2ª
@@ -54,36 +162,56 @@ export const FLOTA: BarcoFlota[] = [
     meta: 'Catamarán de 41 pies propulsado a motor, diseñado y construido en 2013 especialmente para nuestra flota.',
     foto: 'flota-santa-maria',
     fotoAlt: 'Catamarán Santa María navegando con pasajeros a bordo',
+    capacidad: 'Hasta 20',
+    idealPara: 'Ideal para el tour clásico',
+    cta: 'charter',
   },
   {
     nombre: 'Forever Teresa',
     meta: 'Catamarán de 60 pies, lanzado en 2015 bajo las mismas rigurosas especificaciones de nuestra compañía.',
     foto: 'flota-forever-teresa',
     fotoAlt: 'Catamarán Forever Teresa visto desde el aire',
+    capacidad: 'Hasta 120',
+    idealPara: 'Ideal para grupos grandes',
+    cta: 'charter',
   },
   {
     nombre: 'Maite',
     meta: 'Catamarán de vela de 39 pies, incorporado en 2016 — el crucero a vela más moderno de Punta Cana / Bávaro.',
     foto: 'flota-maite',
     fotoAlt: 'Catamarán de vela Maite navegando con la vela desplegada',
+    capacidad: 'Hasta 20',
+    idealPara: 'Ideal para parejas y sunset',
+    cta: 'charter',
   },
   {
     nombre: 'GrandMa',
     meta: 'Catamarán de 40 pies con tobogán — perfecto para grupos medianos, eventos privados y actividades.',
     foto: 'flota-grandma',
     fotoAlt: 'Catamarán GrandMa con pasajeros a bordo',
+    capacidad: 'Hasta 20',
+    idealPara: 'Ideal para familias y actividades',
+    cta: 'charter',
   },
   {
     nombre: 'Joker',
     meta: 'Lancha de dos pisos con tobogán, bar y techo corredizo — pensada para grupos privados.',
     foto: 'flota-joker',
     fotoAlt: 'Catamarán Joker con pasajeros en la cubierta superior',
+    // Joker no entra en las tablas del charter ni en las specs con una cifra
+    // propia — se cotiza. No se le pone un «hasta N» inventado.
+    capacidad: null,
+    idealPara: 'Ideal para grupos privados',
+    cta: 'evento',
   },
   {
     nombre: 'Karaya',
     meta: 'El catamarán más grande del Caribe para eventos: hasta 350 personas en 938 m² repartidos en 2 niveles.',
     foto: 'flota-karaya',
     fotoAlt: 'Karaya, el catamarán de eventos más grande del Caribe, con dos niveles',
+    capacidad: 'Hasta 350',
+    idealPara: 'Ideal para grandes eventos y bodas',
+    cta: 'evento',
   },
 ]
 

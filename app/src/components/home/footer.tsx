@@ -1,9 +1,20 @@
 import { Link } from 'react-router-dom'
-import { TOURS } from '@/data/home'
+import { Facebook, Instagram, Music2, Youtube } from 'lucide-react'
+import { TOURS, MEDIOS_PAGO, REDES, MONEDAS, RESENAS_AGREGADO } from '@/data/home'
 import { WHATSAPP_URL } from '@/data/tours'
 import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
 import { Logo } from '@/components/ui/logo'
 import { Boton } from '@/components/ui/boton'
+import { SelectorIdioma } from '@/components/ui/selector-idioma'
+
+// Iconos de red. lucide no trae TikTok — Music2 es el sustituto razonable
+// (nota musical), que es como se lee TikTok de un vistazo.
+const ICONO_RED: Record<string, typeof Instagram> = {
+  instagram: Instagram,
+  facebook: Facebook,
+  tiktok: Music2,
+  youtube: Youtube,
+}
 
 // Footer «océano» (2026-07-17, pedido de Samuel) — reemplaza el corte duro
 // blanco→navy: misma TÉCNICA de espuma que IncluyeCrucero (ver
@@ -144,7 +155,90 @@ export function Footer() {
         </div>
       </div>
 
-      <div className="relative z-10 mx-auto mt-12 flex max-w-contenido flex-col items-center gap-3 border-t border-white/10 pt-5 text-xs text-white/40 sm:flex-row sm:justify-between">
+      {/* ── Banda de servicio (correcciones v1 del cliente, slide 18) ──
+          Valoración + redes + medios de pago + idioma/moneda. El cliente puso
+          de referencia el pie de Civitatis, que agrupa justo esto: las
+          señales que un turista busca antes de dejar la tarjeta.
+
+          Va DEBAJO de las 4 columnas y ENCIMA del legal: es información de
+          servicio, no navegación. Sobre el océano, así que todo el bloque
+          respira en blancos translúcidos (nada de cards opacas que taparían
+          el agua que costó generar). */}
+      <div className="relative z-10 mx-auto mt-12 grid max-w-contenido gap-6 border-t border-white/10 pt-8 lg:grid-cols-[auto_1fr_auto] lg:items-start">
+        <div>
+          <p className="text-sm font-semibold text-white">Cómo nos valoran</p>
+          <p className="mt-1 text-sm text-white/70">
+            <span className="font-semibold text-white">★ {RESENAS_AGREGADO.rating}</span> ·{' '}
+            {RESENAS_AGREGADO.total.toLocaleString('es-ES')} reseñas · #1 TripAdvisor 7 años
+          </p>
+          <ul className="mt-3 flex flex-wrap items-center gap-2">
+            {REDES.map((red) => {
+              const Icono = ICONO_RED[red.id]
+              const clases =
+                'grid size-9 place-items-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20'
+              // Sin URL real no se inventa un destino: EnlacePrototipo deja
+              // claro (title) que el enlace está pendiente del cliente.
+              return (
+                <li key={red.id}>
+                  {red.url ? (
+                    <a href={red.url} target="_blank" rel="noopener" aria-label={red.nombre} className={clases}>
+                      <Icono className="size-4" aria-hidden="true" />
+                    </a>
+                  ) : (
+                    <EnlacePrototipo aria-label={red.nombre} className={clases}>
+                      <Icono className="size-4" aria-hidden="true" />
+                    </EnlacePrototipo>
+                  )}
+                </li>
+              )
+            })}
+          </ul>
+        </div>
+
+        <div className="lg:px-8">
+          <p className="text-sm font-semibold text-white">Métodos de pago</p>
+          <ul className="mt-3 flex flex-wrap gap-2">
+            {MEDIOS_PAGO.map((m) => (
+              <li
+                key={m}
+                className="rounded-chip bg-white/10 px-3 py-1.5 text-xs font-medium text-white/80"
+              >
+                {m}
+              </li>
+            ))}
+          </ul>
+          <p className="mt-3 text-xs text-white/50">
+            Confirmas con el 25% — el resto, el día del tour.
+          </p>
+        </div>
+
+        <div className="flex flex-col gap-3">
+          <div>
+            <p className="mb-2 text-sm font-semibold text-white">Idioma</p>
+            <SelectorIdioma />
+          </div>
+          <div>
+            <label htmlFor="footer-moneda" className="mb-2 block text-sm font-semibold text-white">
+              Moneda
+            </label>
+            {/* Visual, como el idioma: el sitio publica en USD y no hay
+                conversión real todavía (ver MONEDAS en data/home.ts). */}
+            <select
+              id="footer-moneda"
+              defaultValue="USD"
+              className="rounded-btn border border-white/20 bg-white/10 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-white/30"
+            >
+              {MONEDAS.map((m) => (
+                <option key={m} value={m} className="text-navy">
+                  {m}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div className="relative z-10 mx-auto mt-10 flex max-w-contenido flex-col items-center gap-3 border-t border-white/10 pt-5 text-xs text-white/40 sm:flex-row sm:justify-between">
         <p>© {new Date().getFullYear()} Hispaniola Aquatic Adventures.</p>
         <ul className="flex flex-wrap items-center gap-x-4 gap-y-1">
           <li>
