@@ -413,8 +413,7 @@ export const FICHAS: Record<string, FichaTour> = {
         ],
         tabla: [
           { desde: 1, hasta: 8, precio: 625, tipo: 'grupo', extra: '+ US$ 25 por persona para comida y transporte' },
-          { desde: 9, hasta: 19, precio: 99, tipo: 'persona' },
-          { desde: 20, hasta: 20, precio: 99, tipo: 'persona' },
+          { desde: 9, hasta: 20, precio: 99, tipo: 'persona' },
         ],
       },
       {

@@ -284,8 +284,12 @@ export function Hero() {
         </div>
       </section>
 
-      {/* CTA sticky — solo móvil, persiste al scrollear el resto del home */}
-      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-linea bg-papel p-3 shadow-card md:hidden">
+      {/* CTA sticky — solo móvil, persiste al scrollear el resto del home.
+          pb-[max(...,env(safe-area-inset-bottom))] (auditoría móvil
+          2026-07-17): mismo motivo que barra-movil-ficha.tsx — sin esto, en
+          un iPhone con home indicator el botón queda en la franja del
+          gesto de swipe-to-home. */}
+      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-linea bg-papel px-3 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-card md:hidden">
         <Boton href="#tours" className="w-full">
           Ver disponibilidad
         </Boton>

@@ -1466,16 +1466,34 @@
    hover que puedan "salir" — 3 boxes adelgazados y sin contenido de forma
    permanente se leería como un error, no como un gesto. En móvil/tablet la
    fila es un grid 2×2 fijo (eventos-especiales.tsx) y este bloque no aplica.
+
+   ⚠️ El `display:flex` va DENTRO de `@media (min-width: 64rem)` (= lg) a
+   propósito — antes vivía suelto y ganaba SIEMPRE a la utilidad `grid` del
+   JSX (misma especificidad, este archivo carga después de Tailwind), así
+   que en móvil los 4 boxes quedaban forzados a flex sin el hover que los
+   agranda: 4 columnas apretadas a ~72px con el texto recortado. El grid
+   2×2 de abajo (640/2026-07-17, auditoría responsive) es el fallback real
+   para <lg, no una intención que el flex ignoraba.
    ============================================================ */
 .eventos-especiales-fila {
-  display: flex;
   gap: 1rem;
+}
+
+@media (min-width: 64rem) {
+  .eventos-especiales-fila {
+    display: flex;
+  }
 }
 
 .eventos-especiales-item {
   min-width: 0;
-  flex: 1 1 0%;
-  transition: flex var(--eventos-especiales-transicion) ease;
+}
+
+@media (min-width: 64rem) {
+  .eventos-especiales-item {
+    flex: 1 1 0%;
+    transition: flex var(--eventos-especiales-transicion) ease;
+  }
 }
 
 .eventos-especiales-contenido {

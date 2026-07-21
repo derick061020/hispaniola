@@ -108,18 +108,21 @@ function PantallaIngreso({ onSubmit }: { onSubmit: (codigo: string) => void }) {
             Gestiona tu reserva
           </h1>
           <p className="mt-3 text-sm text-navy-sub sm:text-base">
-            Introduce el código de 14 caracteres que te enviamos por email. Lo encuentras también en
+            Introduce el código de 13 caracteres que te enviamos por email. Lo encuentras también en
             la pantalla de confirmación.
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-4">
+          {/* Sin autoFocus (auditoría móvil 2026-07-17): en móvil dispara el
+              teclado apenas carga la página — quien llega desde un link de
+              WhatsApp/email ni ve el título antes de que el teclado se coma
+              medio viewport. El usuario toca el campo cuando quiere escribir. */}
           <Campo
             etiqueta="Código de reserva"
             value={valor}
             onChange={(e) => setValor(e.target.value.toUpperCase())}
             placeholder="HSP-XXXX-NNNN"
-            autoFocus
             required
           />
           <button

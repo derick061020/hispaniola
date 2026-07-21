@@ -547,6 +547,15 @@ export function WidgetReserva({ tour, ficha, variante: varianteProp, onVarianteC
                   >
                     {adultos}
                   </span>
+                  {/* size-11 (44px) en className, NO en el prop `size` del vendor
+                      (auditoría móvil 2026-07-17): el tamaño "large" propio del
+                      componente es size-6 (24px) — por debajo del mínimo táctil
+                      recomendado (~44px), y este stepper se toca varias veces
+                      seguidas para subir el conteo. tv() mergea `className` con
+                      tailwind-merge, así que sobrescribe el size-6 del vendor sin
+                      tocar compact-button.tsx (regla del proyecto: los vendor no
+                      se editan a mano). Mismo cambio en los otros 5 steppers de
+                      este widget + los 2 de widget-evento.tsx. */}
                   <div className="flex items-center gap-1">
                     <CompactButton.Root
                       type="button"
@@ -555,7 +564,7 @@ export function WidgetReserva({ tour, ficha, variante: varianteProp, onVarianteC
                       aria-label="Quitar un adulto"
                       disabled={adultos <= 1}
                       onClick={() => setAdultos((a) => Math.max(1, a - 1))}
-                      className="active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
+                      className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
                     >
                       <CompactButton.Icon as={Minus} />
                     </CompactButton.Root>
@@ -566,7 +575,7 @@ export function WidgetReserva({ tour, ficha, variante: varianteProp, onVarianteC
                       aria-label="Añadir un adulto"
                       disabled={adultos + ninos >= maxPersonas}
                       onClick={() => setAdultos((a) => Math.min(maxPersonas - ninos, a + 1))}
-                      className="active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
+                      className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
                     >
                       <CompactButton.Icon as={Plus} />
                     </CompactButton.Root>
@@ -594,7 +603,7 @@ export function WidgetReserva({ tour, ficha, variante: varianteProp, onVarianteC
                       aria-label="Quitar un niño"
                       disabled={ninos <= 0}
                       onClick={() => setNinos((n) => Math.max(0, n - 1))}
-                      className="active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
+                      className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
                     >
                       <CompactButton.Icon as={Minus} />
                     </CompactButton.Root>
@@ -605,7 +614,7 @@ export function WidgetReserva({ tour, ficha, variante: varianteProp, onVarianteC
                       aria-label="Añadir un niño"
                       disabled={adultos + ninos >= maxPersonas}
                       onClick={() => setNinos((n) => Math.min(maxPersonas - adultos, n + 1))}
-                      className="active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
+                      className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
                     >
                       <CompactButton.Icon as={Plus} />
                     </CompactButton.Root>
@@ -655,7 +664,7 @@ export function WidgetReserva({ tour, ficha, variante: varianteProp, onVarianteC
                   aria-label="Quitar una persona"
                   disabled={personas <= 1}
                   onClick={() => setPersonas((p) => Math.max(1, p - 1))}
-                  className="active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
+                  className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
                 >
                   <CompactButton.Icon as={Minus} />
                 </CompactButton.Root>
@@ -666,7 +675,7 @@ export function WidgetReserva({ tour, ficha, variante: varianteProp, onVarianteC
                   aria-label="Añadir una persona"
                   disabled={personas >= maxPersonas}
                   onClick={() => setPersonas((p) => Math.min(maxPersonas, p + 1))}
-                  className="active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
+                  className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
                 >
                   <CompactButton.Icon as={Plus} />
                 </CompactButton.Root>

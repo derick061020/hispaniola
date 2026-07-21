@@ -168,7 +168,7 @@ function StepperPersonas({
           aria-label="Quitar una persona"
           disabled={value <= min}
           onClick={() => onChange(Math.max(min, value - 1))}
-          className="active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
+          className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
         >
           <CompactButton.Icon as={Minus} />
         </CompactButton.Root>
@@ -179,7 +179,7 @@ function StepperPersonas({
           aria-label="Añadir una persona"
           disabled={value >= max}
           onClick={() => onChange(Math.min(max, value + 1))}
-          className="active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
+          className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
         >
           <CompactButton.Icon as={Plus} />
         </CompactButton.Root>

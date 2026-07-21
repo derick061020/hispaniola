@@ -66,7 +66,11 @@ export function TourPage() {
   const [variante, setVariante] = useState<string | null>(ficha.subVariantes?.[0]?.id ?? null)
 
   return (
-    <div className="pb-16 md:pb-0">
+    // pb-[calc(4rem+env(safe-area-inset-bottom))] (auditoría móvil 2026-07-17):
+    // BarraMovilFicha ahora crece con la zona segura del iPhone — el padding
+    // reservado aquí tiene que crecer igual o el final de la página queda
+    // tapado en un iPhone con home indicator.
+    <div className="pb-[calc(4rem+env(safe-area-inset-bottom))] md:pb-0">
       <Meta titulo={tour.nombre} descripcion={tour.descripcionCorta} ruta={`/tours/${tour.slug}`} />
       <SchemaJsonLd datos={schemaTour(tour, ficha)} />
       {ficha.faqTour.length > 0 ? <SchemaJsonLd datos={schemaFaq(ficha.faqTour)} /> : null}

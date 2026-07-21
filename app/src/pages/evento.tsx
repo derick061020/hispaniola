@@ -118,7 +118,8 @@ export function EventoPage() {
                   esa promesa). */}
               <div className={BLOQUE_FICHA}>
                 <h2 className="font-display text-h3 font-semibold text-navy">
-                  Sobre {evento.nombre.toLowerCase()}
+                  {/* MICE es sigla, no se minusculiza al bajar el resto del nombre */}
+                  Sobre {evento.nombre.toLowerCase().replace(/\bmice\b/, 'MICE')}
                 </h2>
                 <div className="mt-3 space-y-3 text-sm text-navy-sub">
                   {evento.descripcionLarga.map((parrafo, i) => (

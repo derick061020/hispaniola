@@ -11,11 +11,16 @@ import { WHATSAPP_URL } from '@/data/tours'
 // Mismo idioma que el CTA sticky del hero: bg-papel + border-t hairline.
 // Etapa A: el CTA es el mismo FancyButton primary del widget — un solo
 // lenguaje de botón de acción en toda la ficha (PLAN-ALIGNUI.md).
+//
+// pb-[max(...,env(safe-area-inset-bottom))] (auditoría móvil 2026-07-17):
+// sin esto, en un iPhone con home indicator la barra queda con solo 12px
+// reales hasta el borde — justo la franja del gesto de swipe-to-home. El
+// max() no resta espacio en móviles sin notch (env() da 0 ahí).
 export function BarraMovilFicha({ tour }: { tour: Tour }) {
   const irAlWidget = () => document.getElementById('ficha-widget')?.scrollIntoView({ block: 'center' })
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-30 flex items-center justify-between gap-3 border-t border-linea bg-papel px-5 py-3 md:hidden">
+    <div className="fixed inset-x-0 bottom-0 z-30 flex items-center justify-between gap-3 border-t border-linea bg-papel px-5 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] md:hidden">
       <div className="min-w-0">
         <p className="font-display text-base font-semibold text-navy">
           {tour.precioLight !== null ? formatoDinero(tour.precioLight) : 'Consultar'}

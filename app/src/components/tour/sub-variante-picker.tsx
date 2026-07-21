@@ -68,7 +68,7 @@ export function SubVariantePicker({
               role="tab"
               aria-selected={activo}
               onClick={() => onChange(s.id)}
-              className={`relative z-10 flex items-center justify-center rounded-full px-1 py-2 text-xs font-semibold transition-colors sm:text-sm ${
+              className={`relative z-10 flex items-center justify-center rounded-full px-0.5 py-2 text-center text-xs font-semibold leading-tight transition-colors sm:px-1 sm:text-sm ${
                 activo ? 'text-navy' : 'text-navy-sub/55 hover:text-navy-sub'
               }`}
             >

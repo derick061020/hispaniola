@@ -50,7 +50,11 @@ import { FAQ_HOME } from '@/data/home'
 // propósito: es la línea divisoria, no hace falta un border-b.
 export function HomePage() {
   return (
-    <div className="pb-16 md:pb-0">
+    // pb-[calc(4rem+env(safe-area-inset-bottom))] (auditoría móvil 2026-07-17):
+    // el CTA sticky de hero.tsx ahora crece con la zona segura del iPhone —
+    // el padding reservado aquí tiene que crecer exactamente lo mismo o el
+    // final de la página queda tapado en un iPhone con home indicator.
+    <div className="pb-[calc(4rem+env(safe-area-inset-bottom))] md:pb-0">
       <Meta
         titulo="Catamaranes originales en Punta Cana"
         descripcion="Snorkel en vivero de coral, playa desierta y comida hecha a bordo — grupos pequeños, 4.9★ en 1.782 reseñas y #1 en TripAdvisor 7 años seguidos. Reserva directo, sin comisión de intermediario."

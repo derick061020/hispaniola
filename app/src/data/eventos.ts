@@ -153,9 +153,12 @@ const PARTY_BOAT: FichaEvento = {
   // reassurance, eso lo lleva la home). 3 chips: capacidad, duración
   // típica, "ruta a tu medida" (porque el party boat no tiene ruta fija).
   chips: ['10 a 120 personas', 'Ruta a tu medida', 'WiFi a bordo'],
+  // Traducido del original en inglés de la web del cliente (auditoría
+  // responsive 2026-07-17: la sección quedaba en inglés sobre una web con
+  // default ES). Mismos hechos y promesas, sin añadir ni quitar nada.
   descripcionLarga: [
-    'Celebrating a special occasion? No matter what your event may be, we have the perfect party boat for you. The most beautiful things are not associated with money; they are memories and moments. If you don’t celebrate those, they can pass you by. That being said, if you would like to celebrate a special occasion, no matter what the special event may be, Hispaniola is here to make sure all your wishes are fulfilled.',
-    'Our experienced staff promises to meet your needs so that you can create memories that last a lifetime. We have different size catamarans to fit any size group. Don’t be shy to inquire on how we can turn an event into a forever reminiscence.',
+    '¿Celebras una ocasión especial? Sea cual sea tu evento, tenemos el party boat perfecto para ti. Lo más bonito no tiene que ver con el dinero, sino con los recuerdos y los momentos — si no los celebras, se te pueden pasar de largo. Si quieres celebrar algo especial, sea lo que sea, en Hispaniola nos aseguramos de que se cumplan todos tus deseos.',
+    'Nuestro equipo, con años de experiencia, se compromete a cubrir tus necesidades para que crees recuerdos que duren toda la vida. Tenemos catamaranes de distintos tamaños para cualquier grupo. No dudes en preguntarnos cómo convertimos un evento en un recuerdo para siempre.',
   ],
   // 9 tipos verbatim de la web del cliente + "Otro" para los casos que
   // no encajan. El widget pinta este array como <option>s.
@@ -351,9 +354,12 @@ const BODAS: FichaEvento = {
   // mosaico — mismo lenguaje de quote destacada que la ficha de tour.
   quotePrincipal:
     '“May your Anchor be tight, your cork be loose, your rum be spiced, and your compass be true.”',
+  // Traducido del original en inglés de la web del cliente (auditoría
+  // responsive 2026-07-17: la sección quedaba en inglés sobre una web con
+  // default ES). Mismos hechos y promesas, sin añadir ni quitar nada.
   descripcionLarga: [
-    'Honor your love aboard our catamaran! A perfect way to celebrate before or after your wedding! Thank all your guests by dancing, drinking, snorkeling with colorful fishes and eating delicious seafood while cruising the beautiful coast of Bavaro – Punta Cana.',
-    'Hispaniola Aquatic Adventures is dedicated to the satisfaction of all of our clients. We know how important a Wedding can be and believe that a perfect way to celebrate is to lose sight of the shore. We strongly recommend our 4 hour tour for the best experience possible. More time to enjoy each other’s company & more food! Our 4 hour Seafood package is our clients #1 choice for Wedding Celebrations. An extra hour of unforgettable memories and top notch freshly grilled Seafood. Value for your money guaranteed!',
+    '¡Honra tu amor a bordo de nuestro catamarán! Una forma perfecta de celebrar antes o después de tu boda: agradece a tus invitados bailando, brindando, haciendo esnórquel entre peces de colores y comiendo un delicioso marisco mientras navegan la hermosa costa de Bávaro – Punta Cana.',
+    'En Hispaniola Aquatic Adventures nos dedicamos a la satisfacción de todos nuestros clientes. Sabemos lo importante que es una boda y creemos que la forma perfecta de celebrarla es perder de vista la orilla. Recomendamos nuestro tour de 4 horas para la mejor experiencia posible — más tiempo para disfrutar de la compañía del otro y más comida. Nuestro paquete de mariscos de 4 horas es la opción #1 de nuestros clientes para celebraciones de boda: una hora extra de recuerdos inolvidables y marisco recién hecho a la parrilla. ¡El valor de tu dinero, garantizado!',
   ],
   // En bodas, el tipo es SIEMPRE "Boda" — la landing misma lo
   // predefinine. El widget no pregunta tipo: lo muestra como un chip de
@@ -479,9 +485,12 @@ const EMPRESAS: FichaEvento = {
   sub: 'Meetings · Incentives · Conferences · Exhibitions · Punta Cana – Bavaro.',
   chips: ['Hasta 120 pax por barco', 'Multi-barco', 'Factura fiscal'],
   // MICE no tiene quote de review de 5★ (es institucional, no consumer).
+  // Traducido del original en inglés de la web del cliente (auditoría
+  // responsive 2026-07-17: la sección quedaba en inglés sobre una web con
+  // default ES). Mismos hechos y promesas, sin añadir ni quitar nada.
   descripcionLarga: [
-    'MICE has been a significantly important part of the Travel & Tourism industry for many years.',
-    'No matter which of these above you are involved in, we can help you organize the perfect event. Hispaniola has a large fleet and will have the perfect boat and style of event for all the occasions. Eclipse by Hispaniola is your go-to MICE venue. Punta Cana’s biggest boat (approx. 1000 mt2), a two level catamaran with a maximum capacity of 400 people. We can set up anything from catering, buffets, cocktails, live bands, activities and more right on the water for you. Let our team help you organize the best business affair ever!',
+    'El segmento MICE lleva años siendo una parte muy importante de la industria de viajes y turismo.',
+    'Sea cual sea el tipo de evento que tengas en mente, te ayudamos a organizarlo perfecto. Hispaniola cuenta con una flota amplia y tendrá el barco y el estilo de evento ideal para cada ocasión. Eclipse by Hispaniola es tu sede MICE de referencia: el barco más grande de Punta Cana (~1.000 m²), un catamarán de dos niveles con capacidad máxima para 400 personas. Montamos desde catering, buffets y cócteles hasta bandas en vivo, actividades y mucho más, directamente sobre el agua. Deja que nuestro equipo te ayude a organizar el mejor evento corporativo.',
   ],
   tiposEvento: [
     'Incentivo',
