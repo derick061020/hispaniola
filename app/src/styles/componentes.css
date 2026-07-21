@@ -1620,3 +1620,157 @@
     animation: none;
   }
 }
+
+/* ============================================================
+   Reels sociales (correcciones v1 del cliente, 2026-07-20 —
+   planes/01-home.md slides 8-9 y planes/02-producto.md slide 6).
+   Carrusel horizontal de cards 9:16 con scroll-snap.
+
+   POR QUÉ ES CSS A MEDIDA Y NO UTILIDADES: el conjunto scroll-snap +
+   scrollbar oculta + sangrado a los bordes se expresa mejor como una pieza
+   con nombre que como 12 utilidades repetidas en 2 sitios (home y ficha).
+   Mismo criterio que .ticker-* y .opiniones-marquee-*.
+
+   ⚠️ NO es un marquee: a diferencia del ticker del hero (ambiente, se mueve
+   solo), aquí el visitante ELIGE qué mirar. Un carrusel de video que se
+   desplaza solo pelea con quien intenta leer el título. ============ */
+
+.reel-pista {
+  display: flex;
+  gap: var(--spacing-reel-gap);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  /* El padding vertical deja aire para la sombra de la card en hover; sin él
+     el overflow-x la recortaría (misma trampa que el aire del ticker). */
+  padding-block: var(--spacing-reel-aire);
+  scrollbar-width: none; /* Firefox */
+}
+
+.reel-pista::-webkit-scrollbar {
+  display: none;
+}
+
+.reel-card {
+  position: relative;
+  flex: 0 0 auto;
+  width: var(--spacing-reel-ancho);
+  aspect-ratio: 9 / 16;
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  background: var(--color-navy);
+  box-shadow: var(--shadow-card);
+  scroll-snap-align: start;
+  transition: box-shadow var(--reel-transicion) ease-out;
+}
+
+.reel-card img,
+.reel-card video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: scale var(--reel-transicion) ease-out;
+}
+
+/* El zoom de la foto al pasar el ratón es el mismo gesto que ya usan las
+   cards de los megamenús — un solo idioma de hover en todo el sitio. */
+@media (hover: hover) {
+  .reel-card:hover {
+    box-shadow: var(--shadow-polaroid);
+  }
+
+  .reel-card:hover img,
+  .reel-card:hover video {
+    scale: var(--reel-zoom);
+  }
+}
+
+.reel-card__velo {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, var(--color-overlay-foto) 0%, transparent 55%);
+}
+
+.reel-card__red,
+.reel-card__play {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  color: var(--color-papel);
+  background: rgb(255 255 255 / 18%);
+  backdrop-filter: blur(4px);
+  border-radius: 999px;
+}
+
+.reel-card__red {
+  top: 0.75rem;
+  left: 0.75rem;
+  width: 2rem;
+  height: 2rem;
+}
+
+.reel-card__play {
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  width: 3rem;
+  height: 3rem;
+}
+
+.reel-card__titulo {
+  position: absolute;
+  right: 0.875rem;
+  bottom: 0.875rem;
+  left: 0.875rem;
+  color: var(--color-papel);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  line-height: 1.35;
+  text-wrap: balance;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reel-card,
+  .reel-card img,
+  .reel-card video {
+    transition: none;
+  }
+
+  .reel-card:hover img,
+  .reel-card:hover video {
+    scale: 1;
+  }
+}
+
+/* ============================================================
+   Prueba social — aviso de reserva reciente (correcciones v1 del cliente,
+   2026-07-20, planes/01-home.md slide 19).
+
+   Entrada/salida deslizando desde el borde izquierdo. Es CSS a medida y no
+   utilidades porque el estado "fuera" tiene que seguir ocupando su sitio sin
+   ser interactuable ni anunciable — con `hidden` de Tailwind el aviso
+   aparecería de golpe en vez de deslizarse. ============ */
+
+.prueba-social--dentro,
+.prueba-social--fuera {
+  transition:
+    translate var(--prueba-social-transicion) ease-out,
+    opacity var(--prueba-social-transicion) ease-out;
+}
+
+.prueba-social--dentro {
+  translate: 0 0;
+  opacity: 1;
+}
+
+.prueba-social--fuera {
+  translate: calc(-100% - 1.5rem) 0;
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .prueba-social--dentro,
+  .prueba-social--fuera {
+    transition: opacity var(--prueba-social-transicion) ease-out;
+    translate: 0 0;
+  }
+}

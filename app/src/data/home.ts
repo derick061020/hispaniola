@@ -852,6 +852,85 @@ export const CONTACTO = {
 }
 
 // ─────────────────────────────────────────────────────────────────────────
+// «Míranos en acción» — reels de Instagram y TikTok (correcciones v1 del
+// cliente, 2026-07-20 — planes/01-home.md slides 8-9: «sección instagram y
+// tiktok», con una maqueta de carrusel de reels verticales).
+//
+// ⚠️ LO QUE FALTA Y LO QUE NO SE INVENTA:
+//  - NO tenemos los videos. Cada reel se pinta con una FOTO REAL de las
+//    galerías del cliente como cartel (`foto`), y `video: null`. Cuando
+//    lleguen los reels de verdad, se rellena `video` y la card los reproduce
+//    en hover/click sin tocar el componente.
+//  - NO se pintan contadores de vistas. La maqueta del cliente los trae
+//    («45,2 mil», «120 mil»), pero se los inventó su IA: no tenemos analítica
+//    de sus redes. Un número de vistas falso es exactamente el tipo de dato
+//    que el proyecto no fabrica (misma regla que los ratings por plataforma).
+//  - Los `handle` de terceros («@maria.travels», «@carlos.rd») de la maqueta
+//    TAMPOCO se copian: son cuentas de clientes que nadie ha verificado que
+//    existan ni que hayan dado permiso. Todos los reels van atribuidos a la
+//    cuenta del cliente hasta que él diga lo contrario.
+//
+// El copy de los títulos SÍ describe lo que se ve en cada foto — no es
+// contenido inventado, es el pie de una foto real.
+export type Reel = {
+  id: string
+  titulo: string
+  /** Cartel del reel: foto real de las galerías. */
+  foto: string
+  fotoAlt: string
+  /** Video vertical del reel. null = pendiente del cliente. */
+  video: string | null
+  /** Red donde vive. Decide el icono de la card. */
+  red: 'instagram' | 'tiktok'
+}
+
+export const REELS: Reel[] = [
+  {
+    id: 'martes-a-bordo',
+    titulo: 'Un martes cualquiera a bordo',
+    foto: 'galeria-charter-privado-2',
+    fotoAlt: 'Grupo disfrutando en la cubierta del catamarán',
+    video: null,
+    red: 'instagram',
+  },
+  {
+    id: 'piscina-natural',
+    titulo: 'La piscina natural, desde el agua',
+    foto: 'galeria-isla-saona-4',
+    fotoAlt: 'Aguas turquesa poco profundas de la piscina natural',
+    video: null,
+    red: 'tiktok',
+  },
+  {
+    id: 'cocina-flotante',
+    titulo: 'Así se cocina en medio del mar',
+    foto: 'cocina-flotante',
+    fotoAlt: 'La tripulación cocinando a la parrilla en la cocina flotante',
+    video: null,
+    red: 'instagram',
+  },
+  {
+    id: 'snorkel-coral',
+    titulo: 'Snorkel en el vivero de coral',
+    foto: 'galeria-semi-privado-1',
+    fotoAlt: 'Huéspedes haciendo snorkel sobre el vivero de coral',
+    video: null,
+    red: 'tiktok',
+  },
+  {
+    id: 'sunset',
+    titulo: 'El sunset a vela, el favorito de las parejas',
+    foto: 'flota-maite',
+    fotoAlt: 'El velero Maite navegando con la vela desplegada al atardecer',
+    video: null,
+    red: 'instagram',
+  },
+]
+
+/** Hashtag de la campaña de contenido generado por el cliente (maqueta). */
+export const REELS_HASHTAG = '#HispaniolaMoments'
+
+// ─────────────────────────────────────────────────────────────────────────
 // Pie enriquecido (correcciones v1 del cliente, 2026-07-20 —
 // planes/01-home.md slide 18). El cliente puso de referencia el footer de
 // Civitatis: métodos de pago, badge de valoración, selector de idioma/moneda

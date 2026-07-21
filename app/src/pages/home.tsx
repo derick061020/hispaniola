@@ -10,6 +10,8 @@ import { Reviews } from '@/components/home/reviews'
 import { Contacto } from '@/components/home/contacto'
 import { Faq } from '@/components/home/faq'
 import { EventosEspeciales } from '@/components/home/eventos-especiales'
+import { ReelsSociales } from '@/components/ui/reels-sociales'
+import { PruebaSocial } from '@/components/home/prueba-social'
 import { Footer } from '@/components/home/footer'
 import { Meta } from '@/components/seo/meta'
 import { SchemaJsonLd } from '@/components/seo/schema-json-ld'
@@ -76,9 +78,14 @@ export function HomePage() {
       <IncluyeCrucero />
       <Reviews />
       <EventosEspeciales />
+      <ReelsSociales />
       <Contacto />
       <Faq />
       <Footer />
+      {/* Fijo, fuera del flujo (como lo era ModalBienvenida). Vive aquí y no
+          en el shell porque es un comportamiento de LA HOME. Ver el aviso de
+          honestidad del componente: hoy muestra datos de EJEMPLO marcados. */}
+      <PruebaSocial />
     </div>
   )
 }

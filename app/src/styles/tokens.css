@@ -805,6 +805,22 @@
   --eventos-especiales-reposo-flex: 0.55;
   --eventos-especiales-transicion: 500ms;
 
+  /* ---------- Reels sociales (correcciones v1 del cliente, 2026-07-20 —
+     planes/01-home.md slides 8-9 y planes/02-producto.md slide 6) ----------
+     Carrusel de cards verticales 9:16 con scroll-snap, compartido por la home
+     y la ficha de tour. FUENTE del prototipo de Figma (mismo trato que
+     --ticker-*): estos números salen de aquí, no "a ojo" en el CSS. */
+  --spacing-reel-ancho: 15rem; /* 240px — a 9:16 son 427px de alto, cabe sin dominar la sección */
+  --spacing-reel-gap: 1rem;
+  --spacing-reel-aire: 0.75rem; /* aire vertical para que el overflow-x no recorte la sombra del hover */
+  --reel-zoom: 1.05; /* zoom de la foto en hover — mismo gesto que las cards del megamenú */
+  --reel-transicion: 320ms;
+
+  /* Aviso de reserva reciente (correcciones v1, slide 19). Ver el aviso de
+     honestidad en components/home/prueba-social.tsx: hoy son datos de
+     EJEMPLO marcados como tales, no reservas reales. */
+  --prueba-social-transicion: 420ms;
+
   /* ---------- Marquee de checks del widget de reserva (2026-07-17, pedido
      de Samuel) ---------- Mismo trato que --opiniones-marquee-duracion:
      FUENTE del prototipo de Figma (playbook animaciones-a-figma), no un
