@@ -1,8 +1,6 @@
-import { useState } from 'react'
 import { TituloSeccion } from '@/components/tour/titulo-seccion'
 import { Estrellas } from '@/components/ui/estrellas'
 import { BLOQUE_FICHA } from '@/components/tour/bloque-ficha'
-import { useDevFlag } from '@/dev/use-dev-flag'
 import { QUOTES, type Review, type Tour } from '@/data/home'
 
 // Opiniones (wireframe A5 · fix 1.2 de analisis/revision-wireframes.md).
@@ -31,10 +29,24 @@ import { QUOTES, type Review, type Tour } from '@/data/home'
 // pieza. Pausa al hover (CSS) y con prefers-reduced-motion no avanza sola
 // (WCAG 2.2.2): una sola copia, scrollable a mano.
 //
-// ⚠️ Sin barras de distribución (92% 5★, 6% 4★…): ese dato no existe en
-// ninguna fuente del proyecto. El wireframe las dibujó como placeholder;
-// pintarlas aquí sería inventar estadística. Decisión abierta §13.5 — cuando
-// el cliente dé el dato real (o el motor lo exponga), tienen su sitio hecho.
+// ⚠️ SIGUE SIN BARRAS DE DISTRIBUCIÓN (92% 5★, 6% 4★…), y ahora hay que
+// explicarlo dos veces. El wireframe las dibujó como placeholder y se
+// descartaron porque el dato no existe en ninguna fuente del proyecto
+// (decisión abierta §13.5). Las CORRECCIONES v1 DEL CLIENTE (2026-07-20,
+// planes/02-producto.md slide 5: «mejorar formato de reseñas») vuelven a
+// pedirlas, con una maqueta que muestra 5★ 92% · 4★ 6% · 3★ 1% · 2★ 1% ·
+// 1★ 0%.
+//
+// Esos porcentajes se los inventó la IA con la que el cliente hizo la
+// maqueta: no tenemos el desglose por estrellas de Google, TripAdvisor ni
+// Viator. Una distribución inventada es peor que no tenerla — es una
+// estadística falsa sobre la satisfacción de clientes reales, y además
+// cuadraría sospechosamente bien con el 4.9 que ya mostramos. Así que el
+// hueco sigue reservado y PEDIDO al cliente (ver el plan), no rellenado.
+//
+// Lo que SÍ se ejecuta del slide 5: el formato pasa de marquee a GRID (era
+// la otra mitad de la petición, y es la que sí se puede hacer con datos
+// reales) — ver abajo.
 
 function ReviewCard({ review }: { review: Review }) {
   return (
@@ -53,17 +65,12 @@ function ReviewCard({ review }: { review: Review }) {
   )
 }
 
+// Sin estado: al pasar de marquee a grid desaparecieron el `pausado` (que
+// solo servía para congelar la animación) y el chequeo de reduced-motion (una
+// rejilla estática ya respeta esa preferencia por definición). El deep-link
+// ?dev-opiniones=pausado se retiró del registry en el mismo commit — no
+// quedaba nada que pausar.
 export function OpinionesTour({ tour }: { tour: Tour }) {
-  const [pausado, setPausado] = useState(false)
-
-  // [dev-mode] deep-link del Glosario Dev — ver src/dev/dev-registry.ts
-  useDevFlag('dev-opiniones', (v) => {
-    if (v === 'pausado') setPausado(true)
-  })
-
-  const estatico =
-    typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
-
   return (
     <section id="ancla-opiniones" className={`${BLOQUE_FICHA} scroll-mt-sticky-top`}>
       <TituloSeccion>Opiniones</TituloSeccion>
@@ -79,29 +86,23 @@ export function OpinionesTour({ tour }: { tour: Tour }) {
         </div>
       </div>
 
-      <div
-        className={`opiniones-marquee-wrapper mt-6 ${estatico ? 'opiniones-marquee-wrapper--estatico' : ''}`}
-        role="group"
-        aria-roledescription="carrusel"
-        aria-label="Reseñas de huéspedes"
-      >
-        <div className={`opiniones-marquee-pista ${pausado ? 'opiniones-marquee-pista--pausada' : ''}`}>
-          {QUOTES.map((q) => (
-            <div key={q.id} className="opiniones-marquee-card">
-              <ReviewCard review={q} />
-            </div>
-          ))}
-          {/* Segunda copia para el loop del -50%: oculta a lectores de
-              pantalla (PLAN-v3.md §7.3, mismo trato que el ticker del hero),
-              no hace falta si es estático (reduced-motion). */}
-          {!estatico
-            ? QUOTES.map((q) => (
-                <div key={`dup-${q.id}`} className="opiniones-marquee-card" aria-hidden="true">
-                  <ReviewCard review={q} />
-                </div>
-              ))
-            : null}
-        </div>
+      {/* GRID, no marquee (correcciones v1 del cliente, slide 5: «mejorar
+          formato de reseñas» — su maqueta las pone en rejilla 2×2).
+
+          El marquee horizontal fue decisión de Samuel (PLAN-INTERNAS-V2.md
+          §C3) y tenía su lógica: llenaba el ancho con 5 reseñas sin ocupar
+          alto. Pero el cliente tiene razón en que se lee peor — una reseña
+          que se desplaza obliga a leer al ritmo de la animación, y aquí el
+          visitante está evaluando si compra. En rejilla se leen todas de un
+          vistazo y se pueden comparar.
+
+          ⚠️ REVIERTE UNA DECISIÓN DE SAMUEL a petición del cliente. El CSS
+          .opiniones-marquee-* sigue existiendo (lo usa el marquee de la home)
+          por si se quiere volver. */}
+      <div className="mt-6 grid gap-4 sm:grid-cols-2">
+        {QUOTES.map((q) => (
+          <ReviewCard key={q.id} review={q} />
+        ))}
       </div>
     </section>
   )

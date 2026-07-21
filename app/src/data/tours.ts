@@ -112,6 +112,13 @@ export type FichaTour = {
    *  ⚠️ Isla Saona: [] — no existe galería suya y no se rellena con fotos de
    *  otros tours (mentiría sobre el producto). Su ficha muestra foto única. */
   galeriaCompleta: string[]
+  /** Video del tour para el mosaico de galería (correcciones v1 del cliente,
+   *  2026-07-20 — planes/02-producto.md slide 3: «agregar un video»). Ruta en
+   *  /video. `null` = este tour no tiene video propio todavía y la galería se
+   *  queda solo con fotos. Hoy los 4 apuntan al promocional de marca
+   *  (hero.mp4), que es el único video real que hay; cuando el cliente mande
+   *  clips POR TOUR se cambia aquí y la ficha no se toca. */
+  videoGaleria: string | null
   /** Quote sobre la foto principal del mosaico — portada de primeraResenaTour()
    *  de prototipo/app.js. Prueba social ANTES de scrollear (wireframe A1). */
   quoteDestacada: string
@@ -184,6 +191,7 @@ export const FICHAS: Record<string, FichaTour> = {
       'galeria-semi-privado-6',
       'galeria-semi-privado-7',
     ],
+    videoGaleria: '/video/hero.mp4',
     quoteDestacada: 'El coral fue lo mejor del viaje — la bióloga nos explicó todo.',
     itinerario: [
       {
@@ -310,6 +318,7 @@ export const FICHAS: Record<string, FichaTour> = {
       'galeria-snorkel-lovers-17',
       'galeria-snorkel-lovers-18',
     ],
+    videoGaleria: '/video/hero.mp4',
     quoteDestacada: 'Perfecto para ir con los niños, todos se sintieron seguros.',
     itinerario: [
       {
@@ -501,6 +510,7 @@ export const FICHAS: Record<string, FichaTour> = {
       'galeria-charter-privado-6',
       'galeria-charter-privado-7',
     ],
+    videoGaleria: '/video/hero.mp4',
     quoteDestacada: 'Coordinaron todo a nuestra medida, el barco entero para la familia.',
     itinerario: [
       { hora: '8:05', titulo: 'Recogida en tu hotel', texto: 'Transporte con AC. La hora exacta según tu hotel y el horario del bote.' },
@@ -635,6 +645,7 @@ export const FICHAS: Record<string, FichaTour> = {
       'galeria-isla-saona-10',
       'galeria-isla-saona-11',
     ],
+    videoGaleria: '/video/hero.mp4',
     quoteDestacada: 'La piscina natural con las estrellas gigantes fue lo mejor — y el buffet en la playa, increíble.',
     itinerario: [
       {

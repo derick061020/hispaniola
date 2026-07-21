@@ -116,7 +116,11 @@ export function TourPage() {
                   no ancho completo), no una sección aparte por encima del
                   nav de anclas como en la v1 de PLAN-TOURS.md. Primero en la
                   columna: el visitante ve el producto antes de leer texto. */}
-              <GaleriaMosaico fotos={[tour.foto, ...ficha.galeriaCompleta]} etiqueta={tour.nombre} />
+              <GaleriaMosaico
+                fotos={[tour.foto, ...ficha.galeriaCompleta]}
+                etiqueta={tour.nombre}
+                video={ficha.videoGaleria}
+              />
 
               {/* KPIs de confianza de la empresa, debajo del mosaico (pedido
                   de Samuel, ref. barra de datos de hellocaribetours). */}
@@ -136,6 +140,24 @@ export function TourPage() {
               {tour.booking === 'completo' && ficha.subVariantes && ficha.subVariantes.length > 0 ? (
                 <TablaPreciosCharter ficha={ficha} activa={variante} />
               ) : null}
+              {/* Fila de videos (correcciones v1 del cliente, 2026-07-20 —
+                  planes/02-producto.md slide 6: la maqueta pone aquí, entre
+                  el menú y las opiniones, una fila de «Video Corporativo +
+                  Reel 1/2/3 Clientes»).
+
+                  Es EL MISMO componente que la sección «Míranos en acción» de
+                  la home (components/ui/reels-sociales.tsx), no una pieza
+                  paralela: en Figma será un componente con dos usos. Aquí va
+                  sin fondo propio (la ficha ya vive sobre gris) y con su
+                  propio título. Los datos y el estado de los assets son los
+                  mismos — ver REELS en data/home.ts. */}
+              <ReelsSociales
+                eyebrow="En video"
+                titulo="Así se ve un día con nosotros"
+                lead="Reels de a bordo y de nuestros clientes — el tour antes del tour."
+                conFondo={false}
+              />
+
               <OpinionesTour tour={tour} />
               <FaqTour ficha={ficha} />
             </div>

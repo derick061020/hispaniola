@@ -1,15 +1,14 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Minus, Plus, Users, Baby, Tag, ArrowDown } from 'lucide-react'
+import { Minus, Plus, Users, Baby, Tag, ArrowDown, Check, BadgeCheck, Heart, Share2 } from 'lucide-react'
 import * as FancyButton from '@/components/alignui/fancy-button'
 import * as CompactButton from '@/components/alignui/compact-button'
 import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
-import { ChecksTicker } from '@/components/ui/checks-ticker'
 import { CalendarioWidget } from '@/components/tour/calendario-widget'
 import { SubVariantePicker } from '@/components/tour/sub-variante-picker'
 import { useDevFlag } from '@/dev/use-dev-flag'
 import { hoyISO, sumarDias } from '@/lib/fechas'
-import { formatoDinero, type Tour } from '@/data/home'
+import { formatoDinero, QUOTES, type Tour } from '@/data/home'
 import { WHATSAPP_URL, calcularTotalTour, type FichaTour } from '@/data/tours'
 
 // «El widget ES la página» (wireframe A2): sticky en desktop, con el precio en
@@ -53,13 +52,39 @@ type Props = { tour: Tour; ficha: FichaTour; variante?: string | null; onVariant
 // formulario de los tours clásicos — para eso existe el charter.
 const MAX_PERSONAS_DEFAULT = 6
 
-// Ticker infinito en una sola línea (2026-07-17, pedido de Samuel: "que estén
-// en una fila, en un ticker infinito, para reducir el alto" — antes eran 3
-// líneas apiladas). Reusado por el widget de evento (PLAN-EVENTOS.md §3)
-// desde `components/ui/checks-ticker.tsx` — misma pieza, mismo CSS,
-// misma animacion.
+// Garantías del pie del widget.
+//
+// Historia: eran 3 líneas apiladas → Samuel las pasó a un ticker infinito de
+// una sola línea (2026-07-17: "que estén en una fila, en un ticker infinito,
+// para reducir el alto").
+//
+// CORRECCIONES v1 DEL CLIENTE (2026-07-20, planes/02-producto.md slide 3):
+// Fernando señaló ese ticker con una flecha y escribió «Eso se ve raro». Y
+// tiene razón por una cuestión de contexto: un marquee dentro de una caja
+// estrecha —la caja donde el visitante está decidiendo pagar— hace que la
+// letra pequeña que sostiene la decisión (cancelación, depósito, reembolso)
+// se mueva justo cuando se intenta leer. El movimiento es correcto en el
+// ticker del hero, que es ambiente; aquí compite con la compra.
+//
+// Solución: las 3 garantías se quedan QUIETAS, en dos líneas compactas con su
+// check. Se pierde algo de alto respecto al ticker, pero mucho menos que las
+// 3 líneas originales, porque ahora van en grid y no apiladas.
+//
+// ⚠️ ESTO REVIERTE UNA DECISIÓN DE SAMUEL, a petición del cliente. Si Samuel
+// prefiere recuperar el ticker, `ChecksTicker` (components/ui/checks-ticker.tsx)
+// sigue existiendo intacto —lo usa el widget de evento— y basta con volver a
+// llamarlo aquí.
 function Checks({ lineas }: { lineas: string[] }) {
-  return <ChecksTicker lineas={lineas} />
+  return (
+    <ul className="grid gap-1.5 border-t border-linea pt-3">
+      {lineas.map((l) => (
+        <li key={l} className="flex items-start gap-2 text-xs text-navy-sub">
+          <Check className="mt-0.5 size-3.5 shrink-0 text-menta-texto" aria-hidden="true" />
+          <span>{l}</span>
+        </li>
+      ))}
+    </ul>
+  )
 }
 
 function Caja({ children }: { children: React.ReactNode }) {
@@ -118,6 +143,24 @@ function Precio({
   )
 }
 
+// Clave de la lista de deseos en localStorage. Mismo criterio que
+// lib/reservas.ts: el prototipo persiste en el navegador para sentirse real
+// sin backend.
+const CLAVE_DESEOS = 'hispaniola:deseos'
+
+function leerDeseos(): string[] {
+  if (typeof window === 'undefined') return []
+  try {
+    const bruto = window.localStorage.getItem(CLAVE_DESEOS)
+    const lista: unknown = bruto ? JSON.parse(bruto) : []
+    return Array.isArray(lista) ? lista.filter((x): x is string => typeof x === 'string') : []
+  } catch {
+    // localStorage puede fallar (modo privado de Safari, cuota llena). La
+    // lista de deseos es un extra: si no se puede leer, se sigue sin ella.
+    return []
+  }
+}
+
 export function WidgetReserva({ tour, ficha, variante: varianteProp, onVarianteChange }: Props) {
   const [fecha, setFecha] = useState<string | null>(null)
   const [horario, setHorario] = useState(0)
@@ -134,6 +177,53 @@ export function WidgetReserva({ tour, ficha, variante: varianteProp, onVarianteC
   // Fase B: el paquete se elige en el widget. Abre en Light (ancla US$ 99);
   // Premium es opt-in explícito — ver la nota de bait-and-switch de arriba.
   const [paquete, setPaquete] = useState<'light' | 'premium'>('light')
+
+  // Lista de deseos + compartir (correcciones v1, planes/02-producto.md
+  // slide 4). Estado inicial perezoso: leer localStorage en el render de
+  // arranque, no en un efecto, evita el parpadeo de «no guardado → guardado».
+  const [enDeseos, setEnDeseos] = useState(() => leerDeseos().includes(tour.slug))
+  const [copiado, setCopiado] = useState(false)
+
+  useEffect(() => {
+    const lista = leerDeseos()
+    const siguiente = enDeseos
+      ? Array.from(new Set([...lista, tour.slug]))
+      : lista.filter((s) => s !== tour.slug)
+    try {
+      window.localStorage.setItem(CLAVE_DESEOS, JSON.stringify(siguiente))
+    } catch {
+      // Ver leerDeseos(): si el navegador no deja escribir, el botón sigue
+      // funcionando en la sesión aunque no persista.
+    }
+  }, [enDeseos, tour.slug])
+
+  const compartir = async () => {
+    const url = typeof window !== 'undefined' ? window.location.href : ''
+    // Web Share API donde exista (móvil): abre la hoja nativa del sistema.
+    if (typeof navigator !== 'undefined' && navigator.share) {
+      try {
+        await navigator.share({ title: tour.nombre, url })
+        return
+      } catch {
+        // El usuario canceló la hoja de compartir: no es un error que haya
+        // que reportar, y tampoco hay que caer al portapapeles (ya decidió).
+        return
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(url)
+      setCopiado(true)
+      window.setTimeout(() => setCopiado(false), 2000)
+    } catch {
+      // Sin permiso de portapapeles no hay nada que hacer desde aquí; el
+      // usuario siempre puede copiar la URL de la barra de direcciones.
+    }
+  }
+
+  // Reseña que se incrusta en el widget. Se elige por el slug y no al azar
+  // para que no cambie en cada render (y para que cada tour muestre siempre
+  // la misma, que es lo que esperaría alguien que vuelve a la página).
+  const resenaWidget = QUOTES[tour.slug.length % QUOTES.length]
   // v3 (2026-07-17, Saona): cuando el tour tiene subVariantes (Saona:
   // speedboat / fishing / catamarán), el selector de paquetes pasa a ser un
   // selector de BOTE — el toggle Light/Premium se oculta. El id arranca en
@@ -354,6 +444,31 @@ export function WidgetReserva({ tour, ficha, variante: varianteProp, onVarianteC
 
   return (
     <Caja>
+      {/* Prueba social en la cabecera del widget (correcciones v1 del cliente,
+          planes/02-producto.md slide 4: «agregar los elementos de aceleración
+          de venta»).
+
+          ⚠️ LA MAQUETA DEL CLIENTE PEDÍA MÁS Y NO SE PINTA TODO, a propósito.
+          Traía un badge «Lo más reservado», un «Acaba el 09 de agosto», un
+          «−18% · Antes US$ 120» y un «Pocas fechas con disponibilidad este
+          mes». Ninguno de los cuatro tiene dato detrás: no hay motor de
+          reservas conectado (no sabemos qué tour se reserva más ni cuánta
+          disponibilidad queda) y no hay ninguna promo vigente que justifique
+          un precio tachado. Pintarlos sería urgencia y descuento inventados
+          — exactamente el bait-and-switch contra el que este archivo lleva
+          avisando desde el principio (ver la nota de arriba sobre anclar en
+          99 y cobrar 114). Lo que SÍ es real y por eso sí se pinta: el
+          rating y el número de reseñas, que son los mismos de todo el sitio.
+          Cuando el cliente confirme una promo real o el motor exponga
+          disponibilidad, esos elementos entran aquí sin discusión. */}
+      <div className="flex items-center gap-1.5 text-xs text-navy-sub">
+        <span className="text-estrella" aria-hidden="true">
+          ★
+        </span>
+        <span className="font-semibold text-navy">{tour.rating}</span>
+        <span>· {tour.resenas.toLocaleString('es-ES')} reseñas verificadas</span>
+      </div>
+
       <Precio precio={precioAnclaNum} unidad={unidadAncla} />
 
       {/* v3 (2026-07-17, charter): el cálculo del total en vivo, justo
@@ -743,8 +858,54 @@ export function WidgetReserva({ tour, ficha, variante: varianteProp, onVarianteC
           sumar/quitar personas o cambiar de bote. */}
 
       <Checks
-        lineas={['Confirma con 25% de depósito', 'Cancela gratis hasta 7 días antes', 'Reembolso total por mal clima']}
+        lineas={[
+          'Reserva ahora y paga después: confirmas con solo el 25%',
+          'Cancela gratis hasta 7 días antes',
+          'Reembolso total por mal clima',
+        ]}
       />
+
+      {/* Reseña verificada dentro del widget (correcciones v1, slide 4). La
+          maqueta la pone justo aquí y acierta: es el último argumento antes
+          de decidir. Es una reseña REAL del pool del sitio (QUOTES), no un
+          texto escrito para vender — por eso lleva su plataforma y su firma. */}
+      <figure className="rounded-card bg-papel-hueso p-3">
+        <figcaption className="flex items-center gap-1.5 text-xs font-medium text-menta-texto">
+          <BadgeCheck className="size-3.5 shrink-0" aria-hidden="true" />
+          Reseña verificada en {resenaWidget.plataforma}
+        </figcaption>
+        <blockquote className="mt-1.5 text-xs italic text-navy-sub">
+          «{resenaWidget.texto}»
+        </blockquote>
+        <p className="mt-1.5 text-xs font-semibold text-navy">— {resenaWidget.autor}</p>
+      </figure>
+
+      {/* Lista de deseos + compartir (correcciones v1, slide 4). Guardar vive
+          en localStorage, como el resto del prototipo (lib/reservas.ts hace
+          lo mismo con la reserva). Compartir usa la Web Share API nativa
+          cuando existe (móvil) y cae a copiar el enlace en escritorio. */}
+      <div className="flex items-center justify-between gap-2 border-t border-linea pt-3">
+        <button
+          type="button"
+          onClick={() => setEnDeseos((v) => !v)}
+          aria-pressed={enDeseos}
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-navy-sub transition-colors hover:text-navy"
+        >
+          <Heart
+            className={`size-4 ${enDeseos ? 'fill-coral text-coral' : ''}`}
+            aria-hidden="true"
+          />
+          {enDeseos ? 'En tu lista' : 'Agregar a la lista de deseos'}
+        </button>
+        <button
+          type="button"
+          onClick={compartir}
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-navy-sub transition-colors hover:text-navy"
+        >
+          <Share2 className="size-4" aria-hidden="true" />
+          {copiado ? '¡Enlace copiado!' : 'Compartir'}
+        </button>
+      </div>
     </Caja>
   )
 }

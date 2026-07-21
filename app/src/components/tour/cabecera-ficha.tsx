@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Check, ChevronRight } from 'lucide-react'
+import { Award, Check, ChevronRight } from 'lucide-react'
 import * as Breadcrumb from '@/components/alignui/breadcrumb'
 import * as StatusBadge from '@/components/alignui/status-badge'
 import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
@@ -89,6 +89,27 @@ export function CabeceraFicha({ tour, ficha }: Props) {
             Recogida en hotel
           </StatusBadge.Root>
         ) : null}
+
+        {/* Distintivo de excelencia (correcciones v1 del cliente, 2026-07-20 —
+            planes/02-producto.md slide 2, con una flecha a este punto y la
+            referencia a la ficha de Viator, que muestra ahí su "Distintivo de
+            excelencia").
+
+            ⚠️ ES UN PREMIO REAL, NO UN ADORNO: se pinta el que el cliente
+            tiene documentado y verificado —#1 en actividades acuáticas de
+            Bávaro/Punta Cana durante más de 7 años, el mismo dato que ya
+            sostiene la banda de PREMIOS de la home y el footer— y no el
+            genérico "Distintivo de excelencia" de la maqueta, que no
+            sabríamos de qué año ni de qué plataforma es. NO enlaza a ningún
+            perfil: las URLs verificables siguen pendientes del cliente
+            (PLAN-v3.md §9.5), y un premio sin manera de comprobarlo es
+            justo la crítica que la auditoría ya nos hizo. Cuando lleguen
+            las URLs y los logos en alta, esto pasa a ser un enlace con la
+            insignia oficial. */}
+        <StatusBadge.Root status="pending" variant="light">
+          <StatusBadge.Icon as={Award} />
+          #1 en TripAdvisor · 7 años
+        </StatusBadge.Root>
       </div>
     </div>
   )

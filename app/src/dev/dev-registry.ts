@@ -349,12 +349,6 @@ export const devSections: DevSection[] = [
             note: 'Congela el VIDEO en el poster (igual mecánica que ?dev-hero=poster en la home) — el frame que viaja a Figma (a Figma no va video, va el poster). El hero YA NO monta galería propia — el mosaico vive en el contenido, ver el estado "Galería abierta" más abajo.',
           },
           {
-            label: 'Marquee de opiniones pausado',
-            kind: 'estado',
-            to: '/tours/semi-privado?dev-opiniones=pausado',
-            note: 'PLAN-INTERNAS-V2.md §C3: congela la pista del marquee — el frame que viaja a Figma. El pool son las QUOTES reales de data/home.ts (las mismas 5 de la home); sin enlace de salida, ni a Viator ni ya a TripAdvisor.',
-          },
-          {
             label: '«También te puede gustar» — fundido congelado',
             kind: 'estado',
             to: '/tours/semi-privado?dev-tambien=pausado',
