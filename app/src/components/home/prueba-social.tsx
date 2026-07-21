@@ -112,7 +112,7 @@ export function PruebaSocial() {
           <p className="truncate text-xs text-navy-soft">{tour.nombre}</p>
           {/* La marca de «ejemplo» no es letra pequeña legal: es la diferencia
               entre una demo y un engaño. No quitarla hasta que el dato sea real. */}
-          <p className="mt-1 text-[0.6875rem] uppercase tracking-wide text-navy-soft/70">
+          <p className="mt-1 text-xs uppercase tracking-wide text-navy-soft/70">
             Dato de ejemplo
           </p>
         </div>

@@ -119,7 +119,15 @@ export function HistoriaEquipo() {
                   <p className="mt-1 text-xs text-navy-soft">Desde {m.desde}</p>
                 </div>
               </div>
-              <p className="mt-4 grow text-sm italic text-navy-sub">«{m.quote}»</p>
+              {/* La quote del fundador ya abre la sección de historia, tres
+                  bloques más arriba: repetirla aquí palabra por palabra se
+                  lee como un error de copia. Su card se queda con el rol y el
+                  «desde», que es lo que aporta en la rejilla. */}
+              {m.id === fundador?.id ? (
+                <div className="grow" />
+              ) : (
+                <p className="mt-4 grow text-sm italic text-navy-sub">«{m.quote}»</p>
+              )}
               {m.cta.tipo === 'whatsapp' ? (
                 <a
                   href={WHATSAPP_URL}
