@@ -5,6 +5,7 @@ import { Experiencia } from '@/components/home/experiencia'
 import { ToursGrid } from '@/components/home/tours-grid'
 import { WhyDirect } from '@/components/home/why-direct'
 import { IncluyeCrucero } from '@/components/home/incluye-crucero'
+import { EquipoTeaser } from '@/components/home/equipo-teaser'
 import { Reviews } from '@/components/home/reviews'
 import { Contacto } from '@/components/home/contacto'
 import { Faq } from '@/components/home/faq'
@@ -71,6 +72,7 @@ export function HomePage() {
       <Experiencia />
       <ToursGrid />
       <WhyDirect />
+      <EquipoTeaser />
       <IncluyeCrucero />
       <Reviews />
       <EventosEspeciales />

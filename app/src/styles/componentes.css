@@ -872,101 +872,74 @@
 
 /* ============================================================
    Sección "Experiencia" (v3-F18, pedido de Samuel) — bajo la banda de premios:
-   a un lado el párrafo grande gris/negro, al otro un COLLAGE de 3 fotos
-   "reales": borde blanco fino (--spacing-foto-real-marco, más fino que el
-   passe-partout del photo-stack), --shadow-foto-real (2 capas: contacto +
-   ambiente) y rotación irregular, esparcidas en diagonal.
+   a un lado el párrafo grande gris/negro, al otro la media.
 
-   POR QUÉ ES CSS A MEDIDA: la rotación, la escala y la traslación del hover
-   van en las propiedades `rotate`/`scale`/`translate`, NO en `transform`, A
-   PROPÓSITO — el reveal de scroll (use-experiencia-scroll.ts, GSAP) anima el
-   `transform` (x/y/scale, vía sus proxies), y esas 3 son longhands
-   independientes: así el giro/tamaño/alza del hover y el desplazamiento del
-   reveal conviven sin pisarse (el mismo motivo por el que el barco del CTA
-   separa `rotate` de `transform`). El hover de GRUPO (v3-F18.3, más abajo)
-   toca esas 3 propiedades, nunca `transform`.
+   CORRECCIONES v1 DEL CLIENTE (2026-07-20, planes/01-home.md slides 5 y 7):
+   aquí vivía un COLLAGE de 3 fotos "reales" apiladas, con hover de grupo por
+   `:has()` (v3-F18.3). El cliente pide en su lugar el video promocional —el
+   del popup que el slide 2 manda eliminar—, así que el collage entero
+   (.collage, .collage-foto, su hover de grupo y los tokens
+   --collage-foto-*) se retiró: un token que nadie usa es una variable de
+   Figma que miente. Para recuperarlo: `git revert` del commit que trae este
+   cambio.
 
-   El reveal (opacity/translate/scale iniciales) lo pone GSAP inline; a Figma
-   NO viaja animado: se captura la sección ya asentada (?dev-exp=estatico /
+   El video CONSERVA el lenguaje del collage —passe-partout blanco fino,
+   --shadow-foto-real (2 capas: contacto + ambiente) y una rotación irregular—
+   para que la sección siga teniendo el mismo gesto artesanal. NO se copia el
+   mockup de portátil de la referencia del cliente (six2eight.com): es idioma
+   de agencia SaaS, no de charter premium.
+
+   POR QUÉ ES CSS A MEDIDA: `rotate` va en su propia longhand y NO en
+   `transform`, a propósito — el reveal de scroll (use-experiencia-scroll.ts,
+   GSAP) anima `scale`/`autoAlpha` vía sus proxies, y al ser longhands
+   independientes el giro de reposo y la animación del reveal conviven sin
+   pisarse (el mismo motivo por el que el barco del CTA separa `rotate`).
+
+   El reveal (opacity/scale iniciales) lo pone GSAP inline; a Figma NO viaja
+   animado: se captura la sección ya asentada (?dev-exp=estatico /
    prefers-reduced-motion), que es el estado natural sin GSAP. ============ */
 
-.collage {
+.exp-video {
   position: relative;
   width: 100%;
   max-width: 34rem;
   margin-inline: auto;
-  /* v3-F18.1: 4/4.4 (antes 4/5) — con las fotos más grandes y stackeadas la
-     cascada ocupa menos alto; un box más bajo recorta el aire muerto que
-     quedaba debajo del catamarán. Alto conocido antes de cargar las fotos →
-     sin salto (CLS) que descuadre el ScrollTrigger. */
-  aspect-ratio: 4 / 4.4;
-}
-
-/* v3-F18.3 (Samuel): pivote abajo-centro — la foto "nace" del pie del
-   collage al crecer/rotar en hover, no de su propio centro geométrico
-   (mismo principio que el barco del CTA del hero). */
-.collage-foto {
-  position: absolute;
-  transform-origin: bottom center;
-  rotate: var(--rot);
-  scale: 1;
-  translate: 0 0;
-  filter: grayscale(0);
-  padding: var(--spacing-foto-real-marco);
+  rotate: var(--exp-video-rot);
+  padding: var(--spacing-exp-video-marco);
   background: var(--color-papel);
   border-radius: var(--radius-foto);
   box-shadow: var(--shadow-foto-real);
-  transition:
-    rotate var(--collage-foto-hover-transicion) ease-out,
-    scale var(--collage-foto-hover-transicion) ease-out,
-    translate var(--collage-foto-hover-transicion) ease-out,
-    filter var(--collage-foto-hover-transicion) ease-out,
-    box-shadow var(--collage-foto-hover-transicion) ease-out;
 }
 
-.collage-foto img {
+.exp-video video {
   display: block;
   width: 100%;
   height: auto;
-  aspect-ratio: 4 / 3; /* las webp reales son ~4:3 apaisadas */
+  /* El hero.mp4 es 16:9. Alto conocido antes de que cargue el video → sin
+     salto (CLS) que descuadre el ScrollTrigger, misma razón por la que el
+     collage declaraba su aspect-ratio. */
+  aspect-ratio: 16 / 9;
   object-fit: cover;
   border-radius: calc(var(--radius-foto) - 0.125rem);
 }
 
-/* Hover de GRUPO (v3-F18.3, pedido de Samuel): al pasar el ratón sobre una de
-   las 3 fotos, ESA sube, crece y rota hacia la izquierda; las OTRAS 2 se
-   achican y pierden color (grayscale) — el foco se va a una sola.
+/* Revelado palabra a palabra (correcciones v1, slide 5 — ref. getblue.com).
+   El estado APAGADO es el de reposo en CSS y GSAP lo interpola a 1 con el
+   scroll: así, sin JS (reduced-motion, ?dev-exp=estatico o si GSAP no
+   engancha), el texto se ve ENTERO y legible, nunca a medio encender.
 
-   POR QUÉ ES CSS A MEDIDA (:has()): es una reacción de GRUPO discreta —una
-   foto hovereada, el resto reacciona IGUAL entre sí— no una curva continua
-   por distancia como el dock del ticker (que sí necesita JS para medir). Con
-   `:has()` el propio CSS pregunta "¿hay una .collage-foto en hover dentro de
-   este collage?" y con eso alcanza para expresar el efecto entero sin JS.
-   Sustituye al viejo hover (solo "enderezar" a 0deg): ahora la hovereada
-   rota a --collage-foto-hover-rotacion (pisa su --rot de reposo), no a 0deg.
-
-   ⚠️ Solo con puntero real: en táctil no hay hover que puedan "salir" —
-   dejar 2 fotos en gris permanente por un toque que no se revierte se leería
-   como un error, no como un gesto. */
-@media (hover: hover) {
-  .collage:has(.collage-foto:hover) .collage-foto {
-    scale: var(--collage-foto-reposo-escala);
-    filter: grayscale(1);
-  }
-
-  .collage:has(.collage-foto:hover) .collage-foto:hover {
-    scale: var(--collage-foto-hover-escala);
-    rotate: var(--collage-foto-hover-rotacion);
-    translate: 0 var(--collage-foto-hover-alza);
-    filter: grayscale(0);
-    z-index: 20;
-    box-shadow: var(--shadow-polaroid);
-  }
+   `opacity` sobre el span y no `color`: el párrafo alterna gris (navy-sub) y
+   negro (navy) por segmento —ese contraste ES el diseño de la sección— y
+   animar el color lo aplanaría a un solo tono mientras dura el reveal. */
+.exp-palabra {
+  display: inline;
+  opacity: 1;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .collage-foto {
-    transition: none;
+  .exp-video {
+    /* Sin el reveal, la rotación sola se lee como un descuadre. */
+    rotate: none;
   }
 }
 

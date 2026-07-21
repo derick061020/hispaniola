@@ -1,39 +1,51 @@
 import { useRef, useState } from 'react'
-import { EXPERIENCIA_NARRATIVA, EXPERIENCIA_KICKER, EXPERIENCIA_FOTOS } from '@/data/home'
+import { EXPERIENCIA_NARRATIVA, EXPERIENCIA_KICKER, EXPERIENCIA_VIDEO } from '@/data/home'
 import { useDevFlag } from '@/dev/use-dev-flag'
 import { useExperienciaScroll } from '@/components/home/use-experiencia-scroll'
 
 // "Experiencia" (v3-F18, pedido de Samuel) — sección editorial bajo la banda
 // de premios (que pierde su divider inferior para que fluyan como un bloque):
-// un collage de 3 fotos reales (borde blanco fino + sombra realista,
-// componentes.css) y un párrafo GRANDE alternando gris/negro (síntesis del
-// copy real de la web, en data/home.ts) rematado por un CTA sutil en coral.
+// un párrafo GRANDE alternando gris/negro (síntesis del copy real de la web,
+// en data/home.ts) rematado por un CTA sutil en coral.
 //
-// v3-F18.2 (Samuel): fotos a la IZQUIERDA, texto a la DERECHA (antes al revés).
-// En móvil el texto va primero (se lee antes que se ven las fotos), en desktop
-// las fotos toman la columna izquierda vía `lg:order-*`.
+// v3-F18.2 (Samuel): media a la IZQUIERDA, texto a la DERECHA (antes al
+// revés). En móvil el texto va primero (se lee antes que se ve la media), en
+// desktop la media toma la columna izquierda vía `lg:order-*`.
 //
-// El reveal al hacer scroll (texto y fotos entran escalonados, enganchados al
-// scroll — NO sticky) lo maneja GSAP en use-experiencia-scroll.ts.
+// CORRECCIONES v1 DEL CLIENTE (2026-07-20, planes/01-home.md slides 5 y 7).
+// Dos cambios, los dos sobre esta sección:
+//
+//   Slide 7 — EL COLLAGE SE VA, ENTRA EL VIDEO. Donde había 3 fotos reales
+//   apiladas (con su hover de grupo en :has(), v3-F18.3) ahora va el video
+//   promocional del cliente: el mismo que se auto-abría en el popup de
+//   bienvenida, que el slide 2 manda eliminar («a Fernando le gusta mucho ese
+//   video»). La referencia que puso el cliente es six2eight.com, que lo
+//   incrusta en un mockup de portátil — eso NO se copia: es idioma de agencia
+//   SaaS. El video hereda el passe-partout blanco + sombra realista + la
+//   rotación irregular que ya tenían las fotos, así que el gesto de la
+//   sección no cambia, solo su contenido. El collage (CSS, tokens y
+//   EXPERIENCIA_FOTOS) se borró en el mismo commit — sin cadáveres.
+//
+//   Slide 5 — EL TEXTO SE REVELA PALABRA A PALABRA. Ya había un reveal por
+//   FRASE enganchado al scroll; el cliente pide el formato de getblue.com,
+//   donde el párrafo se va encendiendo conforme bajas. Por eso cada segmento
+//   del copy se trocea aquí en <span> por palabra (.exp-palabra) y el hook
+//   las enciende escalonadas con scrub. El troceo vive en el componente y no
+//   en los datos: EXPERIENCIA_NARRATIVA sigue siendo el copy legible.
 
-// Posición de cada foto en el collage (index = orden en EXPERIENCIA_FOTOS).
-// Cascada diagonal: coral arriba-izq (fondo) → cocina der → catamarán
-// abajo-izq (frente). Las rotaciones son IRREGULARES a propósito (si fueran
-// iguales se leería como un error de alineación, no como un gesto).
-// v3-F18.1 (Samuel): más STACKEADAS que antes — fotos más grandes (62-63% vs
-// 54-58%) y con la cascada comprimida (top 3→49% en vez de 0→56%), así se
-// solapan más y se leen como un montón, no como 3 fotos sueltas.
-const POSICIONES: Array<{ top: string; left?: string; right?: string; width: string; rot: number; z: number }> = [
-  { top: '3%', left: '5%', width: '63%', rot: -5, z: 1 },
-  { top: '25%', right: '3%', width: '61%', rot: 4.5, z: 2 },
-  { top: '49%', left: '13%', width: '63%', rot: -2.5, z: 3 },
-]
+// Trocea un segmento en palabras conservando los espacios. Cada palabra es su
+// propio span para que GSAP pueda encenderlas por separado; el espacio va
+// DENTRO del span (con white-space normal el navegador colapsa el que
+// quedaría entre spans, y el texto se leería "todojunto" al partir líneas).
+function palabras(texto: string): string[] {
+  return texto.split(/(\s+)/).filter((t) => t.length > 0)
+}
 
 export function Experiencia() {
   const sectionRef = useRef<HTMLElement>(null)
 
   // [dev-mode] ?dev-exp=estatico congela el reveal en su estado FINAL (texto y
-  // fotos ya visibles, sin desplazamiento) → frame limpio para Figma. Ver
+  // video ya visibles, sin desplazamiento) → frame limpio para Figma. Ver
   // dev-registry.ts. Sin GSAP enganchado, la sección se ve directamente
   // asentada (el estado natural del JSX).
   const [estatico, setEstatico] = useState(false)
@@ -41,43 +53,31 @@ export function Experiencia() {
   useExperienciaScroll(sectionRef, { activo: !estatico }) // [dev-mode] gate
 
   return (
-    // overflow-x-clip: al arrancar, las fotos se separan hacia afuera (radial)
-    // y podrían asomar por el borde y provocar scroll horizontal en móvil.
-    // `clip` lo evita sin crear un scroll container (no afecta el sticky de
-    // nada) y sin tocar el eje vertical.
-    // v3-F18.2: padding INFERIOR recortado a 2rem (pb-8) — Samuel quiere menos
-    // aire con el grid de tours de abajo, al que el CTA "Ver disponibilidad →"
-    // ya apunta. El TOP mantiene el ritmo de sección (pt-seccion) porque arriba
-    // viene de los premios; abajo la sección "se pega" a los tours a propósito
-    // (el hueco real lo pone ya el pt-seccion de ToursGrid, 7rem).
+    // overflow-x-clip: el marco del video va rotado y podría asomar por el
+    // borde y provocar scroll horizontal en móvil. `clip` lo evita sin crear
+    // un scroll container y sin tocar el eje vertical.
     <section
       ref={sectionRef}
       className="overflow-x-clip bg-papel px-5 pb-8 pt-seccion-sm sm:px-10 sm:pt-seccion"
     >
       <div className="mx-auto grid max-w-contenido grid-cols-1 items-center gap-12 lg:grid-cols-2 lg:gap-16">
-        {/* Collage — 3 fotos reales, borde blanco fino + sombra realista.
-            order-2 lg:order-1 → en móvil va DEBAJO del texto (se lee antes el
-            mensaje); en desktop toma la columna IZQUIERDA. */}
-        <div className="collage order-2 lg:order-1">
-          {EXPERIENCIA_FOTOS.map((f, i) => {
-            const p = POSICIONES[i]
-            return (
-              <figure
-                key={f.foto}
-                className="collage-foto"
-                style={{
-                  top: p.top,
-                  left: p.left,
-                  right: p.right,
-                  width: p.width,
-                  zIndex: p.z,
-                  ['--rot' as string]: `${p.rot}deg`,
-                }}
-              >
-                <img src={`/fotos/${f.foto}.webp`} alt={f.alt} loading="lazy" />
-              </figure>
-            )
-          })}
+        {/* Video — passe-partout blanco + sombra realista, heredados del
+            collage que vivía aquí. order-2 lg:order-1 → en móvil va DEBAJO
+            del texto (se lee antes el mensaje); en desktop toma la columna
+            IZQUIERDA. */}
+        <div className="order-2 lg:order-1">
+          <figure className="exp-video">
+            <video
+              src={EXPERIENCIA_VIDEO.src}
+              poster={EXPERIENCIA_VIDEO.poster}
+              aria-label={EXPERIENCIA_VIDEO.alt}
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+            />
+          </figure>
         </div>
 
         {/* Texto — párrafo grande gris/negro + CTA sutil. order-1 lg:order-2 →
@@ -87,11 +87,15 @@ export function Experiencia() {
             {EXPERIENCIA_NARRATIVA.map((frase, i) => (
               <p
                 key={i}
-                className="exp-linea text-balance font-display text-narrativa-movil font-medium text-navy-sub sm:text-narrativa"
+                className="text-balance font-display text-narrativa-movil font-medium text-navy-sub sm:text-narrativa"
               >
                 {frase.map((seg, j) => (
                   <span key={j} className={seg.fuerte ? 'font-semibold text-navy' : undefined}>
-                    {seg.t}
+                    {palabras(seg.t).map((p, k) => (
+                      <span key={k} className="exp-palabra">
+                        {p}
+                      </span>
+                    ))}
                   </span>
                 ))}
               </p>

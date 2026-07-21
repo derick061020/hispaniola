@@ -517,18 +517,27 @@ export const EXPERIENCIA_NARRATIVA: SegmentoNarrativa[][] = [
 
 export const EXPERIENCIA_KICKER = 'Sin costes ocultos. Sin barcos abarrotados.'
 
-// Fotos REALES de la web actual (no stock). Las 3 cuentan el argumento: el
-// vivero de coral (ahora nombrado en el copy: el arrecife de Cabeza de Toro),
-// la cocina a bordo (langosta recién servida) y el catamarán fondeado (la
-// navegación). Ninguna se repite con la galería del cierre. El ORDEN es el del
-// reveal escalonado (fondo → frente).
-export type FotoExperiencia = { foto: string; alt: string }
+// El VIDEO de la sección Experiencia (correcciones v1 del cliente,
+// 2026-07-20 — planes/01-home.md slide 7: «agregar efecto de video como este
+// [six2eight.com] y poner el video del popup inicial aquí dado que a
+// Fernando le gusta mucho ese video»).
+//
+// Sustituye al collage de 3 fotos reales que vivía aquí (EXPERIENCIA_FOTOS,
+// con su hover de grupo en componentes.css). El collage entero se retiró en
+// el mismo commit para no dejar cadáveres — si el cliente se arrepiente, se
+// recupera con un `git revert` de ese commit.
+//
+// Es EL MISMO asset que el fondo del hero (/video/hero.mp4): el video
+// promocional del cliente, el que hasta ahora se auto-abría en el popup de
+// bienvenida que el slide 2 manda eliminar. Un asset, dos usos, cero popups.
+// El poster es una foto real de la galería, no un frame inventado.
+export type VideoExperiencia = { src: string; poster: string; alt: string }
 
-export const EXPERIENCIA_FOTOS: FotoExperiencia[] = [
-  { foto: 'galeria-semi-privado-1', alt: 'Huéspedes frente al vivero de coral del proyecto de restauración' },
-  { foto: 'galeria-charter-privado-1', alt: 'La tripulación sirviendo langosta recién hecha a bordo' },
-  { foto: 'galeria-snorkel-lovers-2', alt: 'El catamarán de Hispaniola fondeado sobre agua turquesa' },
-]
+export const EXPERIENCIA_VIDEO: VideoExperiencia = {
+  src: '/video/hero.mp4',
+  poster: '/fotos/galeria-snorkel-lovers-2.webp',
+  alt: 'Un día a bordo de un catamarán de Hispaniola: navegación, snorkel y comida hecha al momento',
+}
 
 /** Card del ticker del hero. Son DOS especies, no una: el tour se compra (tiene
  *  precio, duración y aforo) y la ocasión se cotiza (no tiene precio publicado).

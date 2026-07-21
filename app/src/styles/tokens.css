@@ -117,17 +117,11 @@
      lo demás, incluida la sub-card de precio anidada dentro de esta. */
   --radius-card-grande: 1.5rem; /* 24px */
 
-  /* ---------- Hover de GRUPO del collage de "Experiencia" (v3-F18.3, pedido de
-     Samuel) — al pasar el ratón sobre una de las 3 fotos apiladas: esa foto
-     sube, crece un poco y rota hacia la izquierda; las OTRAS 2 se achican y
-     pierden color (grayscale) — el foco se va a una sola. FUENTE del
-     prototipo de Figma (mismo trato que --ticker-* / --cta-*): estos números
-     salen de aquí, no "a ojo" en el CSS. */
-  --collage-foto-hover-escala: 1.08; /* la foto hovereada crece */
-  --collage-foto-hover-rotacion: -4deg; /* rota hacia la IZQUIERDA (negativo), pisa su --rot de reposo */
-  --collage-foto-hover-alza: -0.5rem; /* 8px — "sube un poco" */
-  --collage-foto-reposo-escala: 0.94; /* las otras 2 se achican mientras una está en hover */
-  --collage-foto-hover-transicion: 320ms;
+  /* Los --collage-foto-* (hover de grupo de las 3 fotos apiladas de
+     "Experiencia", v3-F18.3) se retiraron el 2026-07-20: las correcciones v1
+     del cliente sustituyen ese collage por el video del ex-popup (ver
+     .exp-video en componentes.css). No se dejan como cadáver — un token que
+     nadie usa es una variable de Figma que miente. */
 
   /* ---------- Sombra (regla B: sombra suave, a diferencia de Eventus/Synexia) --- */
   --shadow-card: 0 4px 16px rgb(11 37 69 / 8%);
@@ -664,6 +658,25 @@
   --exp-reveal-foto-separacion: 2rem; /* 32px — cuánto se aparta cada foto del centro al arrancar */
   --exp-reveal-stagger: 0.12; /* s — retardo entre frase y frase, y entre foto y foto */
   --exp-reveal-scrub: 0.6; /* s — suavizado del enganche al scroll (0 = pegado duro al pixel) */
+
+  /* Revelado PALABRA A PALABRA (correcciones v1 del cliente, 2026-07-20 —
+     planes/01-home.md slide 5: «agregar un formato de mostrarse esa frase
+     según se hace scroll», ref. getblue.com). El reveal por FRASE que ya
+     había (--exp-reveal-y + stagger) sube un nivel: cada palabra pasa de
+     apagada a su color final conforme avanza el scroll, como si el texto se
+     fuera escribiendo. Es la misma mecánica scrub del hook, solo que el
+     objetivo pasa de .exp-linea a .exp-palabra. */
+  --exp-palabra-apagada: 0.18; /* opacidad de la palabra aún no revelada */
+  --exp-palabra-stagger: 0.055; /* s — retardo entre palabra y palabra */
+
+  /* Marco del VIDEO de Experiencia (correcciones v1 — slide 7: «agregar
+     efecto de video como este [six2eight.com] y poner el video del popup
+     inicial aquí»). El collage de 3 fotos se sustituye por el video del
+     ex-popup. Hereda el lenguaje del passe-partout que ya tenían las fotos
+     (marco blanco + --shadow-foto-real) en vez del mockup de portátil de la
+     referencia, que es idioma de agencia SaaS y no de charter premium. */
+  --spacing-exp-video-marco: 0.5rem; /* 8px — passe-partout del video, algo más generoso que el de foto */
+  --exp-video-rot: -1.5deg; /* mismo gesto irregular que tenían las fotos del collage */
 
   /* ---------- Sección "Reserva directa" (boletos, dentro del banner) ----------
      La comparación aquí-vs-portal hecha OBJETO (pedido de Samuel, 2026-07-15):

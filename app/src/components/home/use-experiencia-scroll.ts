@@ -6,8 +6,19 @@ import { tokenAPx, tokenNum } from '@/lib/lee-tokens'
 gsap.registerPlugin(ScrollTrigger)
 
 // Reveal al hacer scroll de la sección "Experiencia" (pedido de Samuel): a
-// medida que la sección entra en pantalla, el texto (frase a frase) y las 3
-// fotos del collage se ANIMAN — no es sticky, va enganchado al scroll (scrub).
+// medida que la sección entra en pantalla, el texto y la media se ANIMAN —
+// no es sticky, va enganchado al scroll (scrub).
+//
+// CORRECCIONES v1 DEL CLIENTE (2026-07-20, planes/01-home.md slides 5 y 7):
+//   - El texto ya no se revela por FRASE sino PALABRA A PALABRA (ref. que
+//     puso el cliente: getblue.com). Cada palabra pasa de --exp-palabra-apagada
+//     a opacidad plena conforme baja el scroll, como si el párrafo se fuera
+//     escribiendo. Se anima `opacity` y NO `autoAlpha`: autoAlpha mete
+//     visibility:hidden, y con ~80 palabras eso da un párrafo que aparece de
+//     la nada en vez de encenderse desde su estado apagado.
+//   - El collage de 3 fotos se sustituyó por un video (.exp-video), que entra
+//     con el mismo gesto que tenían las fotos (arranca más grande y se asienta)
+//     pero sin el vector radial, que solo tenía sentido con un montón de 3.
 //
 // ⚠️ Las constantes salen de TOKENS (tokens.css, bloque "Experiencia"), no van
 // "a ojo" en el JS: son la FUENTE del prototipo de Figma (mismo trato que
@@ -36,30 +47,11 @@ export function useExperienciaScroll(
     const cs = getComputedStyle(section)
     const rootPx = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16
     const y = tokenAPx(cs, '--exp-reveal-y', rootPx, 28)
-    const fotoEscala = tokenNum(cs, '--exp-reveal-foto-escala', 1.14)
-    const separacion = tokenAPx(cs, '--exp-reveal-foto-separacion', rootPx, 32)
+    const videoEscala = tokenNum(cs, '--exp-reveal-foto-escala', 1.14)
     const stagger = tokenNum(cs, '--exp-reveal-stagger', 0.12)
     const scrub = tokenNum(cs, '--exp-reveal-scrub', 0.6)
-
-    // Vector RADIAL de cada foto = de dónde ARRANCA (apartada del centro del
-    // montón). Se mide en el sitio FINAL de la foto (posición absoluta ya
-    // aplicada): el hook no sabe las posiciones —las decide el componente—, así
-    // que las deduce de la geometría y la animación se adapta sola si cambian.
-    const collage = section.querySelector<HTMLElement>('.collage')
-    const figs = gsap.utils.toArray<HTMLElement>('.collage-foto', section)
-    const outward = new Map<HTMLElement, { x: number; y: number }>()
-    if (collage) {
-      const c = collage.getBoundingClientRect()
-      const cx = c.left + c.width / 2
-      const cy = c.top + c.height / 2
-      for (const el of figs) {
-        const r = el.getBoundingClientRect()
-        const dx = r.left + r.width / 2 - cx
-        const dy = r.top + r.height / 2 - cy
-        const len = Math.hypot(dx, dy) || 1
-        outward.set(el, { x: (dx / len) * separacion, y: (dy / len) * separacion })
-      }
-    }
+    const palabraApagada = tokenNum(cs, '--exp-palabra-apagada', 0.18)
+    const palabraStagger = tokenNum(cs, '--exp-palabra-stagger', 0.055)
 
     // context scopea los selectores DENTRO de la sección y hace revert() en un
     // solo paso (limpia el timeline, el ScrollTrigger y los estilos inline que
@@ -75,29 +67,28 @@ export function useExperienciaScroll(
         },
       })
 
-      // Las fotos arrancan grandes (scale > 1) y separadas (x/y radial), en
-      // opacidad 0, y CONVERGEN a su estado final (transform natural). `rotate`
-      // vive en CSS (longhand aparte de `transform`), así que el giro del
-      // collage no se pisa con este scale/translate.
-      tl.from('.exp-linea', { autoAlpha: 0, y, stagger }).from(
-        figs,
-        {
-          autoAlpha: 0,
-          scale: fotoEscala,
-          x: (_i, el) => outward.get(el as HTMLElement)?.x ?? 0,
-          y: (_i, el) => outward.get(el as HTMLElement)?.y ?? 0,
-          stagger,
-          // GSAP escribe x/y/scale como `translate`/`scale` INLINE (no en
-          // `transform`) — inline gana por especificidad a CUALQUIER regla de
-          // CSS, incluido el hover de grupo del collage (componentes.css,
-          // `.collage-foto:hover`). clearProps quita esas 3 propiedades del
-          // style inline en cuanto el tween se asienta (progress 1), y el CSS
-          // vuelve a mandar — si se scrollea hacia atrás, GSAP las reescribe
-          // solo mientras vuelve a animar.
-          clearProps: 'x,y,scale',
-        },
-        '<',
-      )
+      // El texto se ENCIENDE palabra a palabra (correcciones v1, slide 5).
+      // `opacity` y no `autoAlpha`: las palabras ya son visibles en su estado
+      // apagado (--exp-palabra-apagada, en componentes.css) y lo que anima es
+      // el paso a opacidad plena — con autoAlpha (visibility:hidden) el
+      // párrafo aparecería de la nada en vez de encenderse.
+      tl.from('.exp-palabra', {
+        opacity: palabraApagada,
+        stagger: palabraStagger,
+      })
+
+      // El kicker y el CTA suben como antes: son 2 líneas sueltas, no párrafo
+      // corrido, y el efecto palabra a palabra ahí no aporta. Conservan la
+      // clase .exp-linea; los párrafos de la narrativa ya NO la llevan (sus
+      // palabras se animan por .exp-palabra), así que este selector no
+      // necesita excluirlos.
+      tl.from('.exp-linea', { autoAlpha: 0, y, stagger }, '<')
+
+      // El video entra con el mismo gesto que tenían las fotos: arranca más
+      // grande y se asienta. Sin vector radial (era para un montón de 3) ni
+      // clearProps de x/y (ya no hay hover de grupo que pisar) — pero sí de
+      // `scale`, que el CSS del marco no toca y conviene devolver limpio.
+      tl.from('.exp-video', { autoAlpha: 0, scale: videoEscala, clearProps: 'scale' }, '<')
     }, section)
 
     return () => ctx.revert()

@@ -1,19 +1,24 @@
 import { Link } from 'react-router-dom'
-import { Facebook, Instagram, Music2, Youtube } from 'lucide-react'
 import { TOURS, MEDIOS_PAGO, REDES, MONEDAS, RESENAS_AGREGADO } from '@/data/home'
 import { WHATSAPP_URL } from '@/data/tours'
 import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
 import { Logo } from '@/components/ui/logo'
 import { Boton } from '@/components/ui/boton'
 import { SelectorIdioma } from '@/components/ui/selector-idioma'
+import {
+  IconoFacebook,
+  IconoInstagram,
+  IconoTikTok,
+  IconoYouTube,
+} from '@/components/ui/iconos-redes'
 
-// Iconos de red. lucide no trae TikTok — Music2 es el sustituto razonable
-// (nota musical), que es como se lee TikTok de un vistazo.
-const ICONO_RED: Record<string, typeof Instagram> = {
-  instagram: Instagram,
-  facebook: Facebook,
-  tiktok: Music2,
-  youtube: Youtube,
+// Iconos de red: propios (ui/iconos-redes.tsx) — esta versión de lucide-react
+// ya no exporta iconos de marca, ver el porqué en ese archivo.
+const ICONO_RED: Record<string, (p: { className?: string }) => React.ReactElement> = {
+  instagram: IconoInstagram,
+  facebook: IconoFacebook,
+  tiktok: IconoTikTok,
+  youtube: IconoYouTube,
 }
 
 // Footer «océano» (2026-07-17, pedido de Samuel) — reemplaza el corte duro
