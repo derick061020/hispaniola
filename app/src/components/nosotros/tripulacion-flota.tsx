@@ -1,4 +1,5 @@
-import { Anchor, ChefHat, Fish, Waves } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { Anchor, ArrowRight, ChefHat, Fish, Users, Waves } from 'lucide-react'
 import { Etiqueta } from '@/components/ui/etiqueta'
 import { NOSOTROS, TRIPULACION, FLOTA } from '@/data/nosotros'
 
@@ -81,7 +82,38 @@ export function TripulacionFlota() {
                 </div>
                 <div className={invertido ? 'lg:order-1' : 'lg:order-2'}>
                   <h3 className="font-display text-h3 font-semibold text-navy">{b.nombre}</h3>
+                  {/* Capacidad + «ideal para» (correcciones v1 del cliente,
+                      2026-07-20 — planes/03-nosotros.md slide 5). Las cifras
+                      salen de las tablas REALES del charter (data/tours.ts),
+                      no de los «hasta 40 / hasta 80» de la maqueta, que la IA
+                      se inventó y contradicen los tramos que ya cobramos.
+                      Joker va sin cifra a propósito: se cotiza y no tiene una
+                      capacidad publicada. */}
+                  <div className="mt-3 flex flex-wrap items-center gap-2">
+                    {b.capacidad ? (
+                      <span className="inline-flex items-center gap-1.5 rounded-chip bg-navy px-3 py-1 text-xs font-semibold text-white">
+                        <Users className="size-3.5" aria-hidden="true" />
+                        {b.capacidad}
+                      </span>
+                    ) : null}
+                    <span className="rounded-chip bg-aqua-tint px-3 py-1 text-xs font-medium text-aqua-dark">
+                      {b.idealPara}
+                    </span>
+                  </div>
                   <p className="mt-3 text-lead text-navy-sub">{b.meta}</p>
+                  {/* CTA por barco: los 4 del charter llevan a esa ficha (es
+                      donde se reservan de verdad); Joker y Karaya se cotizan
+                      como evento. */}
+                  <Link
+                    to={b.cta === 'charter' ? '/tours/charter-privado' : '/eventos/bodas'}
+                    className="group mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-coral transition-colors hover:text-coral-dark"
+                  >
+                    {b.cta === 'charter' ? 'Ver tours con este barco' : 'Cotizar para tu evento'}
+                    <ArrowRight
+                      className="size-4 transition-transform duration-200 motion-safe:group-hover:translate-x-1"
+                      aria-hidden="true"
+                    />
+                  </Link>
                 </div>
               </div>
             )

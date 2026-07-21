@@ -2,6 +2,7 @@ import { Footer } from '@/components/home/footer'
 import { HeroInterna } from '@/components/internas/hero-interna'
 import { CabeceraNosotros } from '@/components/nosotros/cabecera-nosotros'
 import { IntroNosotros } from '@/components/nosotros/intro-nosotros'
+import { HistoriaEquipo } from '@/components/nosotros/historia-equipo'
 import { ExperienciaABordo } from '@/components/nosotros/experiencia-abordo'
 import { CocinaFlotante } from '@/components/nosotros/cocina-flotante'
 import { TripulacionFlota } from '@/components/nosotros/tripulacion-flota'
@@ -34,6 +35,10 @@ export function NosotrosPage() {
       <div className="mx-auto max-w-contenido px-5 py-12 sm:px-10 lg:py-16">
         <div className="flex flex-col gap-12 lg:gap-16">
           <IntroNosotros />
+          {/* Correcciones v1 del cliente (planes/03-nosotros.md slide 2):
+              historia con linea de tiempo + el equipo con nombre. Va aqui,
+              entre la bienvenida y lo que se vive a bordo. */}
+          <HistoriaEquipo />
           <ExperienciaABordo />
           <CocinaFlotante />
           <TripulacionFlota />
