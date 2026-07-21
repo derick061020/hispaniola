@@ -76,6 +76,17 @@ export function MiReservaPage() {
 // resto de la lógica vive en DetalleReserva.
 function PantallaIngreso({ onSubmit }: { onSubmit: (codigo: string) => void }) {
   const [valor, setValor] = useState('')
+  // CORRECCIONES v1 DEL CLIENTE (2026-07-20, planes/07-mi-reserva.md): la
+  // maqueta añade un toggle «Con código / Con email» — poder recuperar la
+  // reserva con el email con que se reservó, no solo con el código.
+  //
+  // ⚠️ Sin backend, el acceso por email NO puede validar nada (no hay a quién
+  // preguntar), exactamente igual que hoy pasa con el código: la pantalla de
+  // detalle muestra SIEMPRE la reserva de ejemplo. Se construye el toggle
+  // porque es la estructura que el cliente quiere ver y porque cuando llegue
+  // el motor solo hay que cambiar lo que pasa en el submit — pero no se finge
+  // una búsqueda que no existe.
+  const [modo, setModo] = useState<'codigo' | 'email'>('codigo')
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault()
     const limpio = valor.trim()
@@ -83,7 +94,7 @@ function PantallaIngreso({ onSubmit }: { onSubmit: (codigo: string) => void }) {
     onSubmit(limpio)
   }
   return (
-    <div className="min-h-screen bg-papel">
+    <div className="min-h-screen bg-papel-hueso">
       <Meta
         titulo="Mi reserva"
         descripcion="Gestiona tu reserva: cambia el menú, la recogida o los datos, o paga el saldo. Introduce tu código HSP-XXXX-NNNN."
@@ -99,53 +110,107 @@ function PantallaIngreso({ onSubmit }: { onSubmit: (codigo: string) => void }) {
           </Link>
         </div>
       </header>
-      <main className="mx-auto max-w-md px-5 py-12 sm:px-8 sm:py-20">
-        <div className="text-center">
-          <div className="mx-auto grid size-14 place-items-center rounded-full bg-aqua-tint text-aqua-dark">
-            <Ticket className="size-7" aria-hidden="true" strokeWidth={2} />
+      {/* La maqueta del cliente presenta esta pantalla como una card blanca
+          sobre fondo gris — un poco más «producto» que el papel plano que
+          tenía. Mismo contenido, solo el envoltorio. */}
+      <main className="bg-papel-hueso px-5 py-12 sm:px-8 sm:py-20">
+        <div className="mx-auto max-w-md rounded-card-grande bg-papel p-6 shadow-card ring-1 ring-linea sm:p-8">
+          <div className="text-center">
+            <div className="mx-auto grid size-14 place-items-center rounded-full bg-aqua-tint text-aqua-dark">
+              <Ticket className="size-7" aria-hidden="true" strokeWidth={2} />
+            </div>
+            <h1 className="mt-5 font-display text-2xl font-semibold text-navy sm:text-3xl">
+              Gestiona tu reserva
+            </h1>
+            <p className="mt-3 text-sm text-navy-sub">
+              Accede con el código de tu reserva o con el email con el que reservaste. Podrás ver tu
+              itinerario, la hora de recogida y hacer cambios.
+            </p>
           </div>
-          <h1 className="mt-5 font-display text-2xl font-semibold text-navy sm:text-3xl">
-            Gestiona tu reserva
-          </h1>
-          <p className="mt-3 text-sm text-navy-sub sm:text-base">
-            Introduce el código de 13 caracteres que te enviamos por email. Lo encuentras también en
-            la pantalla de confirmación.
-          </p>
+
+          {/* Toggle código / email. Mismo lenguaje visual que el selector de
+              paquete del widget de reserva (pista gris + thumb blanco). */}
+          <div
+            role="group"
+            aria-label="Cómo quieres acceder"
+            className="relative mt-6 grid grid-cols-2 gap-1 rounded-full bg-linea p-1"
+          >
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-y-1 left-1 w-[calc(50%-0.375rem)] rounded-full bg-papel shadow-sm transition-transform duration-200 ease-out motion-reduce:transition-none"
+              style={{ transform: modo === 'email' ? 'translateX(calc(100% + 0.25rem))' : 'translateX(0)' }}
+            />
+            {(['codigo', 'email'] as const).map((m) => (
+              <button
+                key={m}
+                type="button"
+                onClick={() => {
+                  setModo(m)
+                  setValor('')
+                }}
+                aria-pressed={modo === m}
+                className={`relative z-10 rounded-full px-3 py-2 text-sm font-semibold transition-colors ${
+                  modo === m ? 'text-navy' : 'text-navy-sub/55 hover:text-navy-sub'
+                }`}
+              >
+                {m === 'codigo' ? 'Con código' : 'Con email'}
+              </button>
+            ))}
+          </div>
+
+          <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+            {/* Sin autoFocus (auditoría móvil 2026-07-17): en móvil dispara el
+                teclado apenas carga la página — quien llega desde un link de
+                WhatsApp/email ni ve el título antes de que el teclado se coma
+                medio viewport. El usuario toca el campo cuando quiere escribir. */}
+            {modo === 'codigo' ? (
+              <Campo
+                etiqueta="Código de reserva"
+                value={valor}
+                onChange={(e) => setValor(e.target.value.toUpperCase())}
+                placeholder="HSP-XXXX-NNNN"
+                required
+              />
+            ) : (
+              <Campo
+                etiqueta="Email de la reserva"
+                type="email"
+                value={valor}
+                onChange={(e) => setValor(e.target.value)}
+                placeholder="tu@email.com"
+                required
+              />
+            )}
+            <p className="text-xs text-navy-soft">
+              {modo === 'codigo'
+                ? 'Búscalo en el email de confirmación de Hispaniola — empieza por HSP.'
+                : 'Te enviaremos un enlace de acceso al correo con el que hiciste la reserva.'}
+            </p>
+            <button
+              type="submit"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-btn bg-coral px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-coral-dark"
+            >
+              Ver mi reserva
+              <ChevronRight className="size-4" aria-hidden="true" />
+            </button>
+            <p className="text-center text-xs text-navy-soft">Tu reserva es privada y segura.</p>
+          </form>
+
+          <div className="mt-6 border-t border-linea pt-5">
+            <p className="text-center text-xs text-navy-soft">
+              ¿Sigues sin encontrarla? Escríbenos por{' '}
+              <a
+                href="https://wa.me/18293052804"
+                target="_blank"
+                rel="noopener"
+                className="font-semibold text-aqua-dark hover:underline"
+              >
+                WhatsApp
+              </a>{' '}
+              y la buscamos.
+            </p>
+          </div>
         </div>
-
-        <form onSubmit={handleSubmit} className="mt-8 space-y-4">
-          {/* Sin autoFocus (auditoría móvil 2026-07-17): en móvil dispara el
-              teclado apenas carga la página — quien llega desde un link de
-              WhatsApp/email ni ve el título antes de que el teclado se coma
-              medio viewport. El usuario toca el campo cuando quiere escribir. */}
-          <Campo
-            etiqueta="Código de reserva"
-            value={valor}
-            onChange={(e) => setValor(e.target.value.toUpperCase())}
-            placeholder="HSP-XXXX-NNNN"
-            required
-          />
-          <button
-            type="submit"
-            className="inline-flex w-full items-center justify-center gap-2 rounded-btn bg-coral px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-coral-dark"
-          >
-            Ver mi reserva
-            <ChevronRight className="size-4" aria-hidden="true" />
-          </button>
-        </form>
-
-        <p className="mt-6 text-center text-xs text-navy-soft">
-          ¿No encuentras el código? Escríbenos por{' '}
-          <a
-            href="https://wa.me/18293052804"
-            target="_blank"
-            rel="noopener"
-            className="font-semibold text-aqua-dark hover:underline"
-          >
-            WhatsApp
-          </a>
-          .
-        </p>
       </main>
     </div>
   )
