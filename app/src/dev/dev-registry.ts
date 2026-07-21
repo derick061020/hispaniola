@@ -587,7 +587,23 @@ export const devSections: DevSection[] = [
         route: '/faq',
         status: 'done',
         description:
-          'Mapea frequently-asked-questions.php. Las 6 categorías / 14 preguntas completas de FAQ_CATEGORIAS (prototipo/datos.js), un Accordion AlignUI independiente por categoría (mismo vendor que home/faq.tsx y tour/faq-tour.tsx). Es la versión completa de la FAQ curada de la home (FAQ_HOME, 6 preguntas) — su "Ver todas las preguntas →" trae aquí. NAV_AYUDA.faq.to apunta aquí.',
+          'Mapea frequently-asked-questions.php. Las 6 categorías / 14 preguntas completas de FAQ_CATEGORIAS (prototipo/datos.js), un Accordion AlignUI independiente por categoría (mismo vendor que home/faq.tsx y tour/faq-tour.tsx). Es la versión completa de la FAQ curada de la home (FAQ_HOME, 6 preguntas) — su "Ver todas las preguntas →" trae aquí. NAV_AYUDA.faq.to apunta aquí.\n\nCORRECCIONES v1 DEL CLIENTE (2026-07-20, planes/08-faq.md): la maqueta pedía CHIPS DE FILTRO por categoría y era lo único que faltaba — el resto de la página ya coincidía con lo que el cliente propone. El filtro es client-side y NO destructivo: por defecto («Todos») se pintan las 6 categorías como siempre, así que los enlaces directos a las anclas (#comida, #a-bordo…) siguen funcionando; al elegir una categoría se muestra solo esa.',
+        states: [],
+      },
+      {
+        title: 'Blog (índice)',
+        route: '/blog',
+        status: 'wip',
+        description:
+          'PÁGINA NUEVA de las correcciones v1 del cliente (2026-07-20, planes/06-blog.md slides 1-3). No existía nada de blog en el proyecto. Mismo hero compartido (HeroInterna) y mismo esqueleto que /guias y /faq — el blog es una interna más, no un microsite. Estructura: artículo destacado + rejilla filtrable por categoría (mismos chips que la página FAQ, un solo idioma de filtro en el sitio) + newsletter.\n\n⚠️ STATUS WIP — LA ESTRUCTURA ESTÁ, EL CONTENIDO NO. Un blog son artículos escritos, y redactar 7 posts inventándose datos sobre Punta Cana es justo lo que este proyecto no hace. Así que: los títulos, categorías y extractos son los que propuso el cliente en su maqueta, pero solo UN artículo tiene cuerpo — la guía de esnórquel, escrita íntegramente con contenido REAL que ya vivía en el proyecto (TIPS_GUIAS de data/guias.ts, que viene de la web del cliente). Los demás llevan `cuerpo: null`: se pintan con su card pero marcados «Próximamente» y SIN enlace, en vez de llevar a una página vacía. Cuando se escriban, basta rellenar `cuerpo` y la card se vuelve navegable sola.\n\n⚠️ DECISIÓN ABIERTA — BLOG vs. /guias. Las dos páginas tienen una categoría «Guías de Punta Cana», y el primer artículo cubre el mismo tema que el primer bloque de /guias. Hoy no se canibalizan porque el blog casi no tiene contenido, pero al escribir los artículos hay que decidir si el blog absorbe /guias, si /guias enlaza al blog o si cada uno cubre cosas distintas. Es también decisión de SEO. El blog se enlaza desde el dropdown «Nosotros» (es contenido de marca, no soporte) y desde la columna Empresa del footer.',
+        states: [],
+      },
+      {
+        title: 'Blog (artículo)',
+        route: '/blog/esnorquel-punta-cana-honesto',
+        status: 'wip',
+        description:
+          'Página de artículo (/blog/:slug) — correcciones v1 del cliente. A diferencia del resto de internas NO usa HeroInterna: un artículo se abre con su titular y su portada, no con el hero de marca — meter el video del catamarán encima de un texto de 6 minutos empujaría el contenido fuera del primer viewport sin aportar nada.\n\nSolo se renderiza si el artículo tiene `cuerpo`; los propuestos sin escribir no enlazan desde el índice y, si alguien llega a su URL a mano, cae en el 404 en vez de ver una página en blanco. Cierra con CTA a los tours (es contenido de marca y termina ofreciendo el producto, sin disfrazarlo de párrafo), artículos relacionados y newsletter.\n\nEl cuerpo se guarda como array de párrafos en data/blog.ts — suficiente para un puñado de artículos. Si el blog crece, aquí es donde entraría markdown/MDX (decisión abierta en el plan, junto con quién escribe los artículos).',
         states: [],
       },
       {

@@ -10,6 +10,8 @@ import { SostenibilidadPage } from '@/pages/sostenibilidad'
 import { NosotrosPage } from '@/pages/nosotros'
 import { GuiasPage } from '@/pages/guias'
 import { FaqPage } from '@/pages/faq'
+import { BlogPage } from '@/pages/blog'
+import { ArticuloPage } from '@/pages/articulo'
 import { AgentesPage } from '@/pages/agentes'
 import { ReservaDirectaPage } from '@/pages/reserva-directa'
 import { ContactoPage } from '@/pages/contacto'
@@ -44,6 +46,11 @@ function App() {
         <Route path="/nosotros" element={<NosotrosPage />} />
         <Route path="/guias" element={<GuiasPage />} />
         <Route path="/faq" element={<FaqPage />} />
+        {/* Blog (correcciones v1 del cliente, planes/06-blog.md). El artículo
+            va DESPUÉS del índice: React Router v6 no lo necesita (no hay
+            ambigüedad entre /blog y /blog/:slug) pero se lee mejor. */}
+        <Route path="/blog" element={<BlogPage />} />
+        <Route path="/blog/:slug" element={<ArticuloPage />} />
         <Route path="/agentes-de-viaje" element={<AgentesPage />} />
         <Route path="/reserva-directa" element={<ReservaDirectaPage />} />
         <Route path="/contacto" element={<ContactoPage />} />

@@ -333,6 +333,17 @@ export const NAV_NOSOTROS: ItemNav[] = [
     descripcion: 'Mira la página de Sostenibilidad para toda la historia.',
     to: '/sostenibilidad',
   },
+  // Blog (correcciones v1 del cliente, 2026-07-20 — planes/06-blog.md). Entra
+  // en «Nosotros» y no en «Ayuda»: es contenido de marca (historias y guías
+  // de quienes navegan la costa), no soporte al cliente. Deja el dropdown de
+  // Nosotros en 3 ítems, que es el número que su grid de 2 columnas ya
+  // manejaba en Ayuda.
+  {
+    id: 'blog',
+    nombre: 'Blog',
+    descripcion: 'Guías honestas, historias del mar y consejos reales para tu viaje.',
+    to: '/blog',
+  },
 ]
 
 // Ayuda (PLAN-v3.md §12.2) — FAQ_CATEGORIAS del prototipo: 6 categorías, 14

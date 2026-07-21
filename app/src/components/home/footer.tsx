@@ -107,6 +107,12 @@ export function Footer() {
               </Link>
             </li>
             <li>
+              {/* Correcciones v1 del cliente (planes/06-blog.md): página nueva. */}
+              <Link to="/blog" className="hover:text-white">
+                Blog
+              </Link>
+            </li>
+            <li>
               <Link to="/agentes-de-viaje" className="font-semibold hover:text-white">
                 Agentes de viaje
               </Link>
