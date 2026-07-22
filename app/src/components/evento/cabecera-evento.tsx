@@ -1,53 +1,29 @@
-import { Link } from 'react-router-dom'
-import { ChevronRight } from 'lucide-react'
-import * as Breadcrumb from '@/components/alignui/breadcrumb'
-import * as StatusBadge from '@/components/alignui/status-badge'
-import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
 import { Quote } from 'lucide-react'
+import * as StatusBadge from '@/components/alignui/status-badge'
 import type { FichaEvento } from '@/data/eventos'
 
 // Cabecera de las landings de eventos (PLAN-EVENTOS.md) — clon de la
-// `cabecera-ficha.tsx` con 2 diferencias:
-//
-// 1) Los chips son GENÉRICOS del producto (no reassurance del cliente) — la
-//    home ya carga 4.9★ y #1 TripAdvisor. Aquí los chips cuentan lo que
-//    distingue a ESTE evento (capacidad, duración, "ruta a medida"…).
-// 2) La migaja tiene "Eventos" como 2do tramo (no "Tours"). EnlacePrototipo
-//    porque el hub `/eventos` general (sin landing) ya no existe — las 3
-//    landings son el catálogo completo.
+// `cabecera-ficha.tsx`: los chips son GENÉRICOS del producto (no
+// reassurance del cliente) — la home ya carga 4.9★ y #1 TripAdvisor. Aquí
+// los chips cuentan lo que distingue a ESTE evento (capacidad, duración,
+// "ruta a medida"…).
 //
 // Reusa el mismo lenguaje visual de la ficha: Header DENTRO del hero
 // (HeroInterna), cabecera blanca sobre el video de marca, todo en
-// max-w-contenido para que el H1 alinie con el resto de la página.
+// max-w-contenido para que el H1 alinie con el resto de la página. Sin
+// migaja (retirada de todos los heros de internas, 2026-07-22, pedido de
+// Samuel — este archivo la traía vía Breadcrumb de AlignUI, igual que
+// cabecera-ficha.tsx).
 
 type Props = { evento: FichaEvento }
 
 export function CabeceraEvento({ evento }: Props) {
   return (
     <div>
-      {/* Migaja: Inicio / Eventos / {nombre}. "Eventos" va por
-          EnlacePrototipo: no hay hub general en este build, las 3
-          landings son el catálogo completo. Mismo trato que "Tours" en
-          la ficha de tour. El asChild pone los estilos del Item
-          directamente sobre el Link. */}
-      <nav aria-label="Migaja de pan" className="migaja-sobre-foto">
-        <Breadcrumb.Root>
-          <Breadcrumb.Item asChild>
-            <Link to="/">Inicio</Link>
-          </Breadcrumb.Item>
-          <Breadcrumb.ArrowIcon as={ChevronRight} className="size-4 self-center" />
-          <Breadcrumb.Item asChild>
-            <EnlacePrototipo>Eventos</EnlacePrototipo>
-          </Breadcrumb.Item>
-          <Breadcrumb.ArrowIcon as={ChevronRight} className="size-4 self-center" />
-          <Breadcrumb.Item active>{evento.nombre}</Breadcrumb.Item>
-        </Breadcrumb.Root>
-      </nav>
-
       {/* Mismo --text-h2 que la ficha de tour (32px). El H1 manda por
           jerarquía, no por tamaño — el hero de la home es el único con
           --text-hero. text-balance equilibra las 2 líneas en desktop. */}
-      <h1 className="mt-3 text-balance font-display text-h2 font-semibold text-white">
+      <h1 className="text-balance font-display text-h2 font-semibold text-white">
         {evento.titulo}
       </h1>
 

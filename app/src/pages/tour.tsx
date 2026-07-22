@@ -14,7 +14,7 @@ import { FaqTour } from '@/components/tour/faq-tour'
 import { AnclasFicha } from '@/components/tour/anclas-ficha'
 import { BLOQUE_FICHA } from '@/components/tour/bloque-ficha'
 import { DescripcionTour } from '@/components/tour/descripcion-tour'
-import { KpisTour } from '@/components/tour/kpis-tour'
+import { DatosTour } from '@/components/tour/datos-tour'
 import { GaleriaMosaico } from '@/components/internas/galeria-mosaico'
 import { ReelsSociales } from '@/components/ui/reels-sociales'
 import { TambienTeGusta } from '@/components/internas/tambien-te-gusta'
@@ -123,9 +123,11 @@ export function TourPage() {
                 video={ficha.videoGaleria}
               />
 
-              {/* KPIs de confianza de la empresa, debajo del mosaico (pedido
-                  de Samuel, ref. barra de datos de hellocaribetours). */}
-              <KpisTour />
+              {/* Ficha técnica del tour, debajo del mosaico (Samuel
+                  2026-07-22, ref. los «trip facts» de Viator). Sustituye a
+                  los KPIs de empresa que vivían aquí — ver datos-tour.tsx
+                  para el porqué del cambio de sujeto. */}
+              <DatosTour tour={tour} ficha={ficha} />
 
               <div className={BLOQUE_FICHA}>
                 <h2 className="font-display text-h3 font-semibold text-navy">{promesa}</h2>
@@ -148,16 +150,30 @@ export function TourPage() {
 
                   Es EL MISMO componente que la sección «Míranos en acción» de
                   la home (components/ui/reels-sociales.tsx), no una pieza
-                  paralela: en Figma será un componente con dos usos. Aquí va
-                  sin fondo propio (la ficha ya vive sobre gris) y con su
-                  propio título. Los datos y el estado de los assets son los
-                  mismos — ver REELS en data/home.ts. */}
-              <ReelsSociales
-                eyebrow="En video"
-                titulo="Así se ve un día con nosotros"
-                lead="Reels de a bordo y de nuestros clientes — el tour antes del tour."
-                conFondo={false}
-              />
+                  paralela: en Figma será un componente con dos variantes. Los
+                  datos y el estado de los assets son los mismos — ver REELS
+                  en data/home.ts.
+
+                  2026-07-22 (Samuel: «hay espaciados, padding, alineaciones
+                  erradas y raras»): pasa a `variante="bloque"` y se envuelve
+                  en BLOQUE_FICHA, como el resto de la columna. Antes se
+                  colaba aquí una SECCIÓN de página completa —con su padding
+                  de sección y su sangrado a los bordes de la ventana— dentro
+                  de una columna de cards: de ahí las cards desalineadas 40px
+                  respecto al título y el bloque de 932px de alto para 450px
+                  de reels. El envoltorio lo pone la página (y no el
+                  componente) para que `ui/reels-sociales.tsx` siga sin saber
+                  nada de la ficha. `conHashtag={false}`: aquí no se invita a
+                  irse a Instagram a media decisión de compra. */}
+              <div className={BLOQUE_FICHA}>
+                <ReelsSociales
+                  variante="bloque"
+                  conHashtag={false}
+                  eyebrow="En video"
+                  titulo="Así se ve un día con nosotros"
+                  lead="Reels de a bordo y de nuestros clientes — el tour antes del tour."
+                />
+              </div>
 
               <OpinionesTour tour={tour} />
               <FaqTour ficha={ficha} />

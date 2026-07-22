@@ -1,52 +1,55 @@
+import { useState } from 'react'
 import { TituloSeccion } from '@/components/tour/titulo-seccion'
 import { Estrellas } from '@/components/ui/estrellas'
 import { BLOQUE_FICHA } from '@/components/tour/bloque-ficha'
+import { useDevFlag } from '@/dev/use-dev-flag'
 import { QUOTES, type Review, type Tour } from '@/data/home'
 
 // Opiniones (wireframe A5 · fix 1.2 de analisis/revision-wireframes.md).
 //
-// PLAN-INTERNAS-V2.md (§C3, pedido de Samuel): fuera el link de salida —
-// «no quiero que lleven a TripAdvisor» — y el resumen (rating + reseñas
-// verificadas) pasa a preceder un MARQUEE horizontal infinito de reseñas, en
-// vez de una sola quote fija. El ⚠️ anti-Viator de siempre sigue vigente en
-// otro sentido: CERO enlaces de salida en esta sección, ni a Viator ni ya a
-// TripAdvisor — nada que distraiga de la decisión en el momento exacto en
-// que se está tomando.
+// FORMATO: DOS TICKERS EN DIRECCIONES OPUESTAS (Samuel, 2026-07-22: «las
+// reseñas que sean solo 2 filas, una ticker infinita hacia la izquierda y
+// otra infinita a la derecha»).
 //
-// El pool de reseñas es QUOTES (data/home.ts) — las mismas 5 reales que usa
-// la home, no un texto redactado para la ficha: no hay reseñas por-tour en
-// ninguna fuente del proyecto (prototipo/datos.js tampoco las tiene), y
-// inventarlas sería peor que reusar las genéricas. Si el loop se siente
-// corto, hacen falta más reseñas REALES (pedirlas, no inventarlas — ver
-// PLAN-INTERNAS-V2.md §Decisiones abiertas). La quote destacada de ESTE tour
-// (`ficha.quoteDestacada`) sigue haciendo su trabajo donde ya vivía — flotando
-// sobre la 1ª foto del mosaico, ahora incrustado en el propio hero
-// (internas/galeria-hero.tsx) — así que no se pierde, solo deja de
-// repetirse aquí.
+// Es la tercera forma que toma esta sección, así que conviene dejar el hilo:
+// una quote fija → marquee de una fila (Samuel, PLAN-INTERNAS-V2 §C3) →
+// rejilla 2×2 (correcciones v1 del cliente, «mejorar formato de reseñas») →
+// dos tickers opuestos. La rejilla resolvía un problema real (una fila que
+// se desplaza obliga a leer al ritmo de la animación) pero costaba mucho
+// alto: cinco reseñas en rejilla son tres filas de card, en mitad de la
+// página donde el visitante ya lleva leyendo itinerario, menú y precios.
+// Las dos filas cruzadas devuelven el alto y arreglan lo que sí fallaba del
+// marquee original: se pausa al hover, así que quien quiera leer una reseña
+// la para; y con dos direcciones el ojo no persigue nada — hay movimiento
+// permanente en pantalla sin que ninguna fila «se escape».
 //
-// Mecánica: pista duplicada 2x, igual que el ticker del hero — ver el
-// bloque .opiniones-marquee-* en componentes.css para el porqué de cada
-// pieza. Pausa al hover (CSS) y con prefers-reduced-motion no avanza sola
-// (WCAG 2.2.2): una sola copia, scrollable a mano.
+// ⚠️ LAS DOS FILAS LLEVAN LAS MISMAS 5 RESEÑAS, no 10. La segunda va
+// ROTADA (empieza por la 3ª) para que las columnas no queden emparejadas y
+// no se lea como una fila duplicada. No es un truco de relleno, es todo el
+// material que hay: el pool es QUOTES (data/home.ts), las mismas 5 reales
+// que usa la home. No existen reseñas por-tour en ninguna fuente del
+// proyecto (prototipo/datos.js tampoco las tiene) e inventarlas sería peor
+// que reusarlas. Si el loop se siente corto, hacen falta más reseñas
+// REALES — pedirlas, no escribirlas.
 //
-// ⚠️ SIGUE SIN BARRAS DE DISTRIBUCIÓN (92% 5★, 6% 4★…), y ahora hay que
-// explicarlo dos veces. El wireframe las dibujó como placeholder y se
-// descartaron porque el dato no existe en ninguna fuente del proyecto
-// (decisión abierta §13.5). Las CORRECCIONES v1 DEL CLIENTE (2026-07-20,
-// planes/02-producto.md slide 5: «mejorar formato de reseñas») vuelven a
-// pedirlas, con una maqueta que muestra 5★ 92% · 4★ 6% · 3★ 1% · 2★ 1% ·
-// 1★ 0%.
-//
+// ⚠️ SIGUE SIN BARRAS DE DISTRIBUCIÓN (92% 5★, 6% 4★…). El wireframe las
+// dibujó como placeholder y las correcciones v1 del cliente las volvieron a
+// pedir con una maqueta que muestra 5★ 92% · 4★ 6% · 3★ 1% · 2★ 1% · 1★ 0%.
 // Esos porcentajes se los inventó la IA con la que el cliente hizo la
 // maqueta: no tenemos el desglose por estrellas de Google, TripAdvisor ni
 // Viator. Una distribución inventada es peor que no tenerla — es una
-// estadística falsa sobre la satisfacción de clientes reales, y además
-// cuadraría sospechosamente bien con el 4.9 que ya mostramos. Así que el
-// hueco sigue reservado y PEDIDO al cliente (ver el plan), no rellenado.
+// estadística falsa sobre la satisfacción de clientes reales, y encima
+// cuadraría sospechosamente bien con el 4.9 que ya mostramos. El hueco
+// sigue reservado y PEDIDO al cliente, no rellenado.
 //
-// Lo que SÍ se ejecuta del slide 5: el formato pasa de marquee a GRID (era
-// la otra mitad de la petición, y es la que sí se puede hacer con datos
-// reales) — ver abajo.
+// CERO ENLACES DE SALIDA, como siempre (Samuel: «no quiero que lleven a
+// TripAdvisor»): nada que distraiga de la decisión en el momento exacto en
+// que se está tomando.
+//
+// Mecánica: pista duplicada 2× y loop invisible con `translate: -50% 0`,
+// igual que el ticker del hero — ver .opiniones-marquee-* en componentes.css
+// para el porqué de cada pieza. La fila que va a la derecha es la MISMA
+// animación con `animation-direction: reverse`, no un segundo keyframe.
 
 function ReviewCard({ review }: { review: Review }) {
   return (
@@ -65,12 +68,65 @@ function ReviewCard({ review }: { review: Review }) {
   )
 }
 
-// Sin estado: al pasar de marquee a grid desaparecieron el `pausado` (que
-// solo servía para congelar la animación) y el chequeo de reduced-motion (una
-// rejilla estática ya respeta esa preferencia por definición). El deep-link
-// ?dev-opiniones=pausado se retiró del registry en el mismo commit — no
-// quedaba nada que pausar.
+function Fila({
+  reviews,
+  derecha = false,
+  pausado,
+  estatico,
+}: {
+  reviews: Review[]
+  derecha?: boolean
+  pausado: boolean
+  estatico: boolean
+}) {
+  const card = (r: Review, key: string, oculto: boolean) => (
+    // items-stretch es el default del flex de la pista, así que las cards de
+    // una misma fila se igualan solas a la más alta — no hace falta fijarles
+    // un alto (que se rompería con la reseña más larga o dejaría hueco con
+    // la más corta). Y como las dos filas llevan las mismas 5 reseñas, las
+    // dos acaban con el mismo alto sin coordinarse.
+    <div key={key} aria-hidden={oculto || undefined} className="opiniones-marquee-card">
+      <ReviewCard review={r} />
+    </div>
+  )
+
+  return (
+    <div className={`opiniones-marquee-wrapper ${estatico ? 'opiniones-marquee-wrapper--estatico' : ''}`}>
+      <div
+        className={`opiniones-marquee-pista ${derecha ? 'opiniones-marquee-pista--derecha' : ''} ${
+          pausado ? 'opiniones-marquee-pista--pausada' : ''
+        }`}
+      >
+        {reviews.map((r) => card(r, r.id, false))}
+        {/* 2ª copia para el loop del -50%, oculta a lectores de pantalla —
+            mismo trato que el ticker del hero. Sin animación no hace falta:
+            la fila se recorre a mano. */}
+        {!estatico ? reviews.map((r) => card(r, `dup-${r.id}`, true)) : null}
+      </div>
+    </div>
+  )
+}
+
 export function OpinionesTour({ tour }: { tour: Tour }) {
+  const [pausado, setPausado] = useState(false)
+  // [dev-mode] ?dev-opiniones=pausado congela las dos filas en su posición
+  // actual — el frame que viaja a Figma (a Figma no va animación). Vuelve al
+  // registry: se había retirado cuando la sección pasó a rejilla y no
+  // quedaba nada que pausar.
+  useDevFlag('dev-opiniones', (v) => {
+    if (v === 'pausado') setPausado(true)
+  })
+
+  // WCAG 2.2.2: sin movimiento automático, una sola copia y scroll a mano.
+  // Se lee en runtime porque la @media de CSS no es consultable desde JS sin
+  // matchMedia — mismo patrón que ChecksTicker.
+  const estatico =
+    typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+  // La 2ª fila arranca por la 3ª reseña. Con 5 cards, rotar 2 deja las dos
+  // filas desfasadas de forma que ninguna columna repite autor a la vista.
+  const rotadas = [...QUOTES.slice(2), ...QUOTES.slice(0, 2)]
+
   return (
     <section id="ancla-opiniones" className={`${BLOQUE_FICHA} scroll-mt-sticky-top`}>
       <TituloSeccion>Opiniones</TituloSeccion>
@@ -86,23 +142,16 @@ export function OpinionesTour({ tour }: { tour: Tour }) {
         </div>
       </div>
 
-      {/* GRID, no marquee (correcciones v1 del cliente, slide 5: «mejorar
-          formato de reseñas» — su maqueta las pone en rejilla 2×2).
-
-          El marquee horizontal fue decisión de Samuel (PLAN-INTERNAS-V2.md
-          §C3) y tenía su lógica: llenaba el ancho con 5 reseñas sin ocupar
-          alto. Pero el cliente tiene razón en que se lee peor — una reseña
-          que se desplaza obliga a leer al ritmo de la animación, y aquí el
-          visitante está evaluando si compra. En rejilla se leen todas de un
-          vistazo y se pueden comparar.
-
-          ⚠️ REVIERTE UNA DECISIÓN DE SAMUEL a petición del cliente. El CSS
-          .opiniones-marquee-* sigue existiendo (lo usa el marquee de la home)
-          por si se quiere volver. */}
-      <div className="mt-6 grid gap-4 sm:grid-cols-2">
-        {QUOTES.map((q) => (
-          <ReviewCard key={q.id} review={q} />
-        ))}
+      {/* Las filas SANGRAN hasta el borde del bloque (-mx-6 / -mx-8 = el
+          padding de BLOQUE_FICHA, en negativo). Un marquee que empieza y
+          acaba dentro del padding se lee como una lista recortada; llegando
+          al canto se lee como algo que sigue más allá — que es la idea. El
+          difuminado de los extremos (mask en el wrapper) hace el resto:
+          las cards se desvanecen en vez de aparecer y desaparecer de golpe
+          contra el borde de la card. */}
+      <div className="-mx-6 mt-6 flex flex-col gap-4 sm:-mx-8">
+        <Fila reviews={QUOTES} pausado={pausado} estatico={estatico} />
+        <Fila reviews={rotadas} derecha pausado={pausado} estatico={estatico} />
       </div>
     </section>
   )

@@ -1,4 +1,4 @@
-import type { AnchorHTMLAttributes, ButtonHTMLAttributes } from 'react'
+import { forwardRef, type AnchorHTMLAttributes, type ButtonHTMLAttributes, type Ref } from 'react'
 import { Link, type LinkProps } from 'react-router-dom'
 
 const clasesBase =
@@ -9,16 +9,24 @@ const clasesBase =
 // un botón nuevo: mismo componente de Figma con una property "tamaño". 'md'
 // (default) se queda igual en el resto de usos (header, CTA sticky, menú
 // móvil) — no cambia nada donde no se pidió.
-// 'sm' (isla-flotante.tsx, pedido de Samuel 2026-07-17): el Reservar de la
-// isla flotante — redondo del todo, no --radius-btn (10px, el de md/lg): a
-// este alto de botón, 10px no se lee "redondo" al lado de una píldora.
-// El radio vive por tamaño (no en clasesBase) precisamente para esto: sm
-// necesita uno distinto sin tocar md/lg. py-4 (no py-2): flota SEPARADO de
-// la píldora de logo+tabs, pero tiene que igualar su alto EN REPOSO (52px,
-// medido) para que las 2 piezas lean como un solo cluster — ver el
-// comentario de isla-flotante.tsx sobre por qué no se limita a `stretch`.
+// 'sm': el Reservar FUNDIDO dentro de NavFlotante (nav-flotante.tsx,
+// 2026-07-21). Redondo del todo, no --radius-btn (10px, el de md/lg): a este
+// alto, 10px no se lee "redondo". El radio vive por tamaño (no en
+// clasesBase) precisamente para esto: sm necesita uno distinto sin tocar
+// md/lg.
+// REDISEÑADO 2026-07-21, 2ª vuelta (antes: py-4, 52px de alto) — esa altura
+// venía de la isla-flotante original (2026-07-17), donde el Reservar flotaba
+// SEPARADO de la píldora de logo+tabs, como chip aparte, y tenía que igualar
+// el alto de ESA píldora en reposo. Ahora vive FUNDIDO en la misma barra que
+// los tabs (mismo padre flex), así que el listón ya no es aquella píldora —
+// es la altura de los propios tabs (claseLinkTab: px-3 py-2 text-sm, 36px
+// medido). py-4 lo dejaba 16px más alto que el resto de la fila y se leía
+// como un botón ajeno asomando por encima, no como parte de un solo cluster
+// (Samuel: "no veo centrado el menú de tabs con respecto a logo y botón" —
+// el desbalance era de ALTURA, no de posición horizontal, que ya medía
+// centrada). py-2 iguala esos 36px.
 const tamaños = {
-  sm: 'rounded-full px-4 py-4 text-sm shadow-sm',
+  sm: 'rounded-full px-4 py-2 text-sm shadow-sm',
   md: 'rounded-btn px-5 py-3 text-sm shadow-sm',
   // motion-safe: (no motion-reduce plano) — con prefers-reduced-motion:reduce
   // el hover no desplaza el botón, solo cambia de color (Trampa §15.10 №6).
@@ -37,13 +45,30 @@ type Props = {
   | ({ href?: undefined; to?: undefined } & ButtonHTMLAttributes<HTMLButtonElement>)
 )
 
-export function Boton({ className = '', tamaño = 'md', ...props }: Props) {
+// forwardRef (2026-07-21, pedido de Samuel — "mete gsap y usalo"): el
+// Reservar fundido de NavFlotante necesita un ref real para que gsap pueda
+// animarlo directamente (entrada Y salida, interrumpible) — antes era una
+// función simple, sin manera de exponer el nodo DOM subyacente. 3 elementos
+// posibles (Link/a/button) → el ref es la unión de los dos que de verdad
+// ocurren (ningún consumidor actual necesita apuntar a un <button>, pero se
+// tipa completo por si acaso).
+export const Boton = forwardRef<HTMLAnchorElement | HTMLButtonElement, Props>(function Boton(
+  { className = '', tamaño = 'md', ...props },
+  ref,
+) {
   const clases = `${clasesBase} ${tamaños[tamaño]} ${className}`
   if ('to' in props && props.to !== undefined) {
-    return <Link className={clases} {...(props as LinkProps)} />
+    return <Link ref={ref as Ref<HTMLAnchorElement>} className={clases} {...(props as LinkProps)} />
   }
   if (props.href !== undefined) {
-    return <a className={clases} {...(props as AnchorHTMLAttributes<HTMLAnchorElement>)} />
+    return <a ref={ref as Ref<HTMLAnchorElement>} className={clases} {...(props as AnchorHTMLAttributes<HTMLAnchorElement>)} />
   }
-  return <button type="button" className={clases} {...(props as ButtonHTMLAttributes<HTMLButtonElement>)} />
-}
+  return (
+    <button
+      ref={ref as Ref<HTMLButtonElement>}
+      type="button"
+      className={clases}
+      {...(props as ButtonHTMLAttributes<HTMLButtonElement>)}
+    />
+  )
+})

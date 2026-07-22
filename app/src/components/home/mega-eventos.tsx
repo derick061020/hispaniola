@@ -49,15 +49,17 @@ export function MegaEventos() {
           // Bodas y MICE llevan a su landing real; «Eventos y party boat»
           // sigue en el prototipo (formulario del hub) — misma unión por
           // `slug` que antes tenía ItemOcasion.
+          // data-mega-item: ver el comentario en item-menu.tsx — marcador
+          // que TabsConPaneles (nav-tabs.tsx) anima con stagger al abrir.
           if (o.slug) {
             return (
-              <Link key={o.tipo} to={`/eventos/${o.slug}`} className="group block w-mega-card-ancho">
+              <Link key={o.tipo} to={`/eventos/${o.slug}`} className="group block w-mega-card-ancho" data-mega-item>
                 {contenido}
               </Link>
             )
           }
           return (
-            <EnlacePrototipo key={o.tipo} className="group block w-mega-card-ancho">
+            <EnlacePrototipo key={o.tipo} className="group block w-mega-card-ancho" data-mega-item>
               {contenido}
             </EnlacePrototipo>
           )

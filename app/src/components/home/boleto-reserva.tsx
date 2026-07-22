@@ -20,8 +20,7 @@ import { BENEFICIOS_DIRECTO, BOLETO_TOUR, formatoDinero } from '@/data/home'
 // JS, dónde cae `.boleto-perforacion` (offsetTop respecto a la superficie —
 // que ya es el sitio CORRECTO por flujo normal, sin cálculo a mano) y se
 // escribe como `--boleto-notch-y` para que el mask corte justo ahí. Mismo
-// reparto "JS mide, CSS pinta" que el dock del ticker (use-ticker-dock.ts) y
-// el notch dinámico del header (notch-menu.tsx).
+// reparto "JS mide, CSS pinta" que el dock del ticker (use-ticker-dock.ts).
 //
 // ⚠️ Microcopy nuevo, pendiente de reconciliar con datos.js (fuente canónica
 // del copy): «En un portal», «Reservando directo» y «El mismo tour. Nada

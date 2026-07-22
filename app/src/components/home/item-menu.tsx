@@ -1,12 +1,17 @@
 import type { ComponentType } from 'react'
 import { Link } from 'react-router-dom'
-import { CircleHelp, Compass, Fish, MessageCircle, TicketCheck, User, Users } from 'lucide-react'
+import { CircleHelp, Compass, Fish, MessageCircle, Newspaper, TicketCheck, User, Users } from 'lucide-react'
 import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
 import type { ItemNav } from '@/data/home'
 
 const ICONOS: Record<string, ComponentType<{ className?: string }>> = {
   tripulacion: Users,
   arrecife: Fish,
+  // 2026-07-20 (correcciones v1 del cliente) — entrada nueva para el ítem
+  // "Blog" de NAV_NOSOTROS (data/home.ts). Faltaba: se agregó el ítem sin
+  // su ícono, exactamente el escenario que el comentario de abajo advertía
+  // — pantalla en blanco al abrir el dropdown, detectado hoy con Playwright.
+  blog: Newspaper,
   faq: CircleHelp,
   reserva: TicketCheck,
   guias: Compass,
@@ -54,12 +59,23 @@ export function ItemMenu({ item }: { item: ItemNav }) {
   // Con `to` es página real (Link SPA — hoy solo "El arrecife…" → /sostenibilidad);
   // sin él sigue siendo placeholder del prototipo. Misma unión por dato que las
   // ocasiones del megamenú.
+  //
+  // data-mega-item (2026-07-22, pedido de Samuel: "que los elementos de
+  // dentro del megamenú también aparezcan con animación, con interpolación
+  // cada uno"): marcador SIN estilo — TabsConPaneles (nav-tabs.tsx) lo
+  // busca con querySelectorAll al abrir el panel y anima cada uno con un
+  // stagger corto. No pasa por props (ItemMenu no sabe ni le importa que lo
+  // estén animando desde afuera) — mismo trato que MegaTours/MegaEventos.
   if (item.to) {
     return (
-      <Link to={item.to} className={clases}>
+      <Link to={item.to} className={clases} data-mega-item>
         {contenido}
       </Link>
     )
   }
-  return <EnlacePrototipo className={clases}>{contenido}</EnlacePrototipo>
+  return (
+    <EnlacePrototipo className={clases} data-mega-item>
+      {contenido}
+    </EnlacePrototipo>
+  )
 }

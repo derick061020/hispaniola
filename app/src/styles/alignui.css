@@ -115,8 +115,6 @@
   /* ---------- Radios del sistema AlignUI ---------- */
   /* ¡Ya coinciden! --radius-btn de Hispaniola es 0.625rem = el radius-10. */
   --radius-10: var(--radius-btn);
-  /* 1.25rem — mismo valor que --radius-notch, pero ese token documenta el
-     notch del header; el 20 del sistema AlignUI se declara con su valor. */
   --radius-20: 1.25rem;
 
   /* ---------- Text styles del sistema AlignUI ----------
@@ -206,6 +204,11 @@
   --shadow-fancy-buttons-primary: 0 1px 2px 0 #0e121b3d, 0 0 0 1px var(--color-primary-base);
   --shadow-fancy-buttons-error: 0 1px 2px 0 #0e121b3d, 0 0 0 1px var(--color-error-base);
   --shadow-fancy-buttons-stroke: 0 1px 3px 0 #0e121b1f, 0 0 0 1px var(--color-stroke-soft-200);
+  /* Tooltip (2026-07-22, con el vendor alignui/tooltip.tsx): sombra difusa +
+     hairline de contacto, la receta del kit. Es la única sombra del sistema
+     que se lee sobre una FOTO (la insignia de excelencia vive en el hero),
+     por eso pesa más que --shadow-regular-md. */
+  --shadow-tooltip: 0 12px 24px 0 #0e121b14, 0 1px 2px 0 #0e121b0a;
 
   /* ---------- Animaciones del sistema (Accordion) ----------
      En v3 estos keyframes salían del tailwind.config del vendor; la altura la

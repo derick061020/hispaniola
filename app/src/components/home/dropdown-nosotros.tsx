@@ -1,15 +1,16 @@
 import { NAV_NOSOTROS } from '@/data/home'
 import { ItemMenu } from './item-menu'
 
-// Dropdown "Nosotros" (PLAN-v3.md §12) — grid de 2 columnas de ItemMenu, con
-// w-notch-panel (624px, mayor que la fila de tabs) para que la caja del
-// notch lo abrace en vez de flotar centrado con aire muerto a los lados.
-// 2 ítems → 2 columnas × 1 fila, encaja solo.
+// Dropdown "Nosotros" (PLAN-v3.md §12) — grid de 2 columnas de ItemMenu,
+// ancho fijo w-notch-panel (624px) como div propio colgado de su botón
+// (nav-tabs.tsx) — no relacionado con ningún contenedor que lo "abrace"
+// (ese acoplamiento existía con NotchMenu, retirado 2026-07-21 6ª vuelta).
+// 3 ítems (tripulación, arrecife, blog) → 2 columnas × 2 filas (1 celda
+// vacía), la 3ª entrada (blog) es de 2026-07-20, correcciones v1 del cliente.
 //
-// v3-F13 (PLAN-v3.md §15.4): el notch está centrado y crece simétrico — a
-// 624px se come el logo/Reservar por debajo de `lg` (1024px, el punto donde
-// el sitio libre alcanza). Entre md y lg va la variante compacta (448px,
-// mismo ancho que ya usan los megamenús en ese rango por esta misma razón).
+// v3-F13 (PLAN-v3.md §15.4): variante compacta (448px) entre md y lg, mismo
+// ancho que ya usan los megamenús en ese rango por la misma razón (menos
+// sitio libre en el viewport a ese breakpoint).
 export function DropdownNosotros() {
   return (
     <div className="grid w-notch-panel-compacto grid-cols-2 gap-1 p-3 lg:w-notch-panel">

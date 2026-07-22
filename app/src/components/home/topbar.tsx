@@ -10,7 +10,7 @@ import { SelectorIdioma } from '@/components/ui/selector-idioma'
 // hero (ver el comentario que reemplaza, header.tsx) y quedó como backlog
 // (botones flotantes). Vuelve, pero no como esos botones flotantes: vive
 // FUERA de la caja del hero, con fondo blanco sólido — por eso es shell
-// aparte (App.tsx, mismo patrón que IslaFlotante) y no una fila del propio
+// aparte (App.tsx, mismo patrón que NavFlotante) y no una fila del propio
 // Header, que hoy solo existe en su variante `sobreVideo` (transparente
 // sobre el video) y necesita justo lo contrario. Delgada y en texto apagado
 // a propósito: es utilidad, no protagonismo — el Header sigue siendo la

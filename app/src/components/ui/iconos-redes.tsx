@@ -58,3 +58,36 @@ export function IconoYouTube({ className = '' }: Props) {
     </svg>
   )
 }
+
+// IconoX + IconoWhatsApp (correcciones v1, 2026-07-22): compartir artículo de
+// blog (blog/compartir-articulo.tsx), no la fila «Síguenos» del footer — por
+// eso no están en REDES/ICONO_RED de footer.tsx. Mismo criterio de arriba:
+// glifos propios porque lucide-react no trae iconos de marca.
+export function IconoX({ className = '' }: Props) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} fill="none" aria-hidden="true">
+      <path
+        d="M4.5 4.5l15 15M19.5 4.5l-15 15"
+        stroke="currentColor"
+        strokeWidth="2.1"
+        strokeLinecap="round"
+      />
+    </svg>
+  )
+}
+
+export function IconoWhatsApp({ className = '' }: Props) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} fill="none" aria-hidden="true">
+      <path
+        d="M12 3.5a8.5 8.5 0 0 0-7.3 12.8L3.5 20.5l4.3-1.1A8.5 8.5 0 1 0 12 3.5z"
+        stroke="currentColor"
+        strokeWidth="1.8"
+      />
+      <path
+        d="M8.8 8.4c.2-.5.5-.5.7-.5h.5c.2 0 .4 0 .6.4.2.5.6 1.5.7 1.6.1.1.1.3 0 .5-.1.2-.2.3-.3.4-.1.1-.3.3-.4.4-.1.1-.3.3-.1.6.2.3.8 1.2 1.6 2 1.1 1 2 1.3 2.3 1.4.3.1.5.1.7-.1.2-.2.7-.8.9-1 .2-.2.4-.2.6-.1l1.5.7c.2.1.4.2.5.3.1.1.1.6-.1 1.1-.2.5-1.2 1.1-1.7 1.1-.4 0-1 0-3-.8-2.4-1-4-3.4-4.1-3.6-.1-.2-1-1.3-1-2.5 0-1.2.6-1.7.8-2z"
+        fill="currentColor"
+      />
+    </svg>
+  )
+}

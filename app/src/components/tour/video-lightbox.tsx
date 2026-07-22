@@ -1,0 +1,99 @@
+import { useEffect, useRef } from 'react'
+import { X } from 'lucide-react'
+import * as CompactButton from '@/components/alignui/compact-button'
+import * as Modal from '@/components/alignui/modal'
+
+// Reproductor a pantalla completa del video del mosaico (Samuel, 2026-07-22:
+// «el video del grid, que al darle click se abra y se reproduzca»).
+//
+// Antes, la celda del video del mosaico abría el LIGHTBOX DE FOTOS: el
+// visitante veía un video moviéndose, lo pulsaba esperando verlo, y le salía
+// una foto fija. El cartel prometía una cosa y el clic daba otra.
+//
+// Es una pieza aparte de GaleriaLightbox y no una variante suya a propósito:
+// comparten el andamiaje (Modal de AlignUI sobre navy/95) pero nada más — una
+// galería es un carrusel con contador y flechas, un video es UN elemento con
+// sus propios controles nativos. Meterlos en el mismo componente habría dado
+// un archivo con dos mitades excluyentes. En Figma son dos frames del mismo
+// overlay, no dos variantes de un componente.
+//
+// Sonido: el video del mosaico se reproduce MUDO como cartel animado; aquí
+// arranca CON sonido, que es justo lo que el visitante fue a buscar al hacer
+// clic. Los controles nativos (`controls`) en vez de unos propios: reproducir
+// un video es el gesto más estandarizado de la web, y unos controles a medida
+// solo tendrían que reimplementar barra, volumen y pantalla completa peor.
+export function VideoLightbox({
+  src,
+  poster,
+  etiqueta,
+  onCerrar,
+}: {
+  src: string
+  /** Foto de portada — el mismo `poster` de la celda del mosaico. */
+  poster: string
+  /** Describe el video para lectores de pantalla (el nombre del tour). */
+  etiqueta: string
+  onCerrar: () => void
+}) {
+  const video = useRef<HTMLVideoElement>(null)
+
+  // Devolver el foco al disparador al cerrar — misma trampa (y mismo
+  // arreglo) que en GaleriaLightbox: el Root se desmonta por render
+  // condicional del padre, así que Radix no llega a restaurarlo y el foco
+  // caía a BODY.
+  useEffect(() => {
+    const disparador = document.activeElement as HTMLElement | null
+    return () => disparador?.focus()
+  }, [])
+
+  // autoPlay del atributo NO sirve aquí: con `controls` y sonido, los
+  // navegadores bloquean la reproducción automática. Se pide a mano y, si el
+  // navegador la rechaza, el video se queda en su poster con el play nativo
+  // encima — el usuario lo arranca con un clic más. Nunca una pantalla negra.
+  useEffect(() => {
+    video.current?.play().catch(() => {})
+  }, [])
+
+  return (
+    <Modal.Root open onOpenChange={(abierto) => (abierto ? undefined : onCerrar())}>
+      <Modal.Content
+        showClose={false}
+        overlayClassName="bg-navy/95 p-0 backdrop-blur-none"
+        className="flex h-dvh w-screen max-w-none flex-col rounded-none bg-transparent shadow-none focus:outline-none"
+        aria-describedby={undefined}
+        // Clic en el FONDO cierra; el video para la propagación para que
+        // tocar la barra de progreso no cierre el reproductor.
+        onClick={onCerrar}
+      >
+        <Modal.Title className="sr-only">Video de {etiqueta}</Modal.Title>
+
+        <div className="flex items-center justify-end px-5 py-4">
+          <Modal.Close asChild>
+            <CompactButton.Root
+              variant="ghost"
+              size="large"
+              aria-label="Cerrar video"
+              className="text-white hover:bg-white/10 hover:text-white"
+            >
+              <CompactButton.Icon as={X} />
+            </CompactButton.Root>
+          </Modal.Close>
+        </div>
+
+        <div className="flex flex-1 items-center justify-center px-2 pb-6 sm:px-5">
+          <video
+            ref={video}
+            src={src}
+            poster={poster}
+            controls
+            playsInline
+            preload="metadata"
+            aria-label={`Video de ${etiqueta}`}
+            onClick={(e) => e.stopPropagation()}
+            className="max-h-full max-w-full rounded-card"
+          />
+        </div>
+      </Modal.Content>
+    </Modal.Root>
+  )
+}

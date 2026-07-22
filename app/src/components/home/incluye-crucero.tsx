@@ -60,10 +60,16 @@ export function IncluyeCrucero() {
     <section
       ref={sectionRef}
       id="incluye"
+      // data-nav-oscuro (2026-07-22): sentinel que observa NavFlotante para
+      // pintar el texto de los tabs en blanco al pasar por esta sección —
+      // ver el comentario en home/hero.tsx. Aquí SÍ va en el <section>
+      // entero (a diferencia del hero/wd-banner): bg-navy cubre toda la
+      // caja, padding incluido, sin zona transparente que dé falso positivo.
       // mt-* : gap blanco que separa el océano del banner de Reserva directa.
       // pt/pb con --spacing-incluye-espuma incluido: reserva sitio para las
       // bandas de espuma arriba/abajo, así el texto blanco nunca cae sobre la
       // espuma blanca. Tokens, no valores a ojo (van a Figma).
+      data-nav-oscuro
       className="relative mt-incluye-gap-movil overflow-x-clip bg-navy pb-[calc(var(--spacing-seccion-sm)+var(--spacing-incluye-espuma-movil))] pt-[calc(var(--spacing-seccion-sm)+var(--spacing-incluye-espuma-movil))] sm:mt-incluye-gap sm:pb-[calc(var(--spacing-seccion)+var(--spacing-incluye-espuma))] sm:pt-[calc(var(--spacing-seccion)+var(--spacing-incluye-espuma))]"
     >
       {/* Océano — el barco vive FUERA de esta capa para poder asomar por encima

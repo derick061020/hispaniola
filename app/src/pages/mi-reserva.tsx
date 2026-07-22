@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
-import { Check, ChevronRight, CreditCard, MapPin, Pencil, Ticket, Users, Utensils } from 'lucide-react'
+import { ArrowLeft, Check, ChevronRight, CreditCard, KeyRound, MapPin, Pencil, Ticket, Users, Utensils } from 'lucide-react'
 import { Logo } from '@/components/ui/logo'
 import { Meta } from '@/components/seo/meta'
 import { fechaLarga } from '@/lib/fechas'
@@ -101,20 +101,25 @@ function PantallaIngreso({ onSubmit }: { onSubmit: (codigo: string) => void }) {
         ruta="/mi-reserva"
       />
       <header className="border-b border-linea">
-        <div className="mx-auto flex max-w-3xl items-center justify-between px-5 py-3 sm:px-8">
-          <Link to="/" aria-label="Inicio de Hispaniola Aquatic Adventures">
+        <div className="mx-auto grid max-w-3xl grid-cols-3 items-center px-5 py-3 sm:px-8">
+          <Link
+            to="/"
+            className="inline-flex items-center gap-1.5 justify-self-start text-sm font-semibold text-aqua-dark hover:underline"
+          >
+            <ArrowLeft className="size-4" aria-hidden="true" />
+            Volver al inicio
+          </Link>
+          <Link to="/" aria-label="Inicio de Hispaniola Aquatic Adventures" className="justify-self-center">
             <Logo compacto />
           </Link>
-          <Link to="/" className="text-sm font-semibold text-aqua-dark hover:underline">
-            ← Volver al inicio
-          </Link>
+          <div aria-hidden="true" className="justify-self-end" />
         </div>
       </header>
       {/* La maqueta del cliente presenta esta pantalla como una card blanca
           sobre fondo gris — un poco más «producto» que el papel plano que
           tenía. Mismo contenido, solo el envoltorio. */}
       <main className="bg-papel-hueso px-5 py-12 sm:px-8 sm:py-20">
-        <div className="mx-auto max-w-md rounded-card-grande bg-papel p-6 shadow-card ring-1 ring-linea sm:p-8">
+        <div className="mx-auto max-w-md rounded-card-grande bg-papel p-6 ring-1 ring-linea sm:p-8">
           <div className="text-center">
             <div className="mx-auto grid size-14 place-items-center rounded-full bg-aqua-tint text-aqua-dark">
               <Ticket className="size-7" aria-hidden="true" strokeWidth={2} />
@@ -249,25 +254,24 @@ function DetalleReserva({ codigoIngresado }: { codigoIngresado: string }) {
       />
 
       <header className="border-b border-linea">
-        <div className="mx-auto flex max-w-3xl items-center justify-between px-5 py-3 sm:px-8">
-          <Link to="/" aria-label="Inicio de Hispaniola Aquatic Adventures">
+        <div className="mx-auto grid max-w-3xl grid-cols-3 items-center px-5 py-3 sm:px-8">
+          <Link
+            to="/"
+            className="inline-flex items-center gap-1.5 justify-self-start text-sm font-semibold text-aqua-dark hover:underline"
+          >
+            <ArrowLeft className="size-4" aria-hidden="true" />
+            Volver al inicio
+          </Link>
+          <Link to="/" aria-label="Inicio de Hispaniola Aquatic Adventures" className="justify-self-center">
             <Logo compacto />
           </Link>
-          {/* 2026-07-17: link "Usar otro código" — para volver a la pantalla
-              de ingreso y meter otro código. Va a la izquierda de "Volver
-              al inicio" porque esa es la acción típica cuando se prueba
-              con varios códigos o se equivoca uno. */}
-          <div className="flex items-center gap-4">
-            <Link
-              to="/mi-reserva"
-              className="text-sm font-semibold text-aqua-dark hover:underline"
-            >
-              Usar otro código
-            </Link>
-            <Link to="/" className="text-sm font-semibold text-aqua-dark hover:underline">
-              ← Volver al inicio
-            </Link>
-          </div>
+          <Link
+            to="/mi-reserva"
+            className="inline-flex items-center gap-1.5 justify-self-end rounded-btn border border-linea bg-papel px-3 py-1.5 text-sm font-medium text-navy transition-colors hover:bg-papel-hueso"
+          >
+            <KeyRound className="size-3.5" aria-hidden="true" />
+            Usar otro código
+          </Link>
         </div>
       </header>
 

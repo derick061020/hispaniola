@@ -36,7 +36,9 @@ export function MegaTours() {
     <div className="w-fit max-w-[92vw] p-4">
       <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
         {TOURS.map((t) => (
-          <Link key={t.slug} to={`/tours/${t.slug}`} className="group block w-mega-card-ancho">
+          // data-mega-item: ver el comentario en item-menu.tsx — marcador
+          // que TabsConPaneles (nav-tabs.tsx) anima con stagger al abrir.
+          <Link key={t.slug} to={`/tours/${t.slug}`} className="group block w-mega-card-ancho" data-mega-item>
             {/* El zoom vive en el contenedor con overflow-hidden, no en el
                 <img>: escalar la imagen suelta crecería su caja y empujaría al
                 texto de debajo. */}

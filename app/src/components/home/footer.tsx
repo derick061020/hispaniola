@@ -4,7 +4,9 @@ import { WHATSAPP_URL } from '@/data/tours'
 import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
 import { Logo } from '@/components/ui/logo'
 import { Boton } from '@/components/ui/boton'
+import { MarcaPago } from '@/components/ui/marcas-pago'
 import { SelectorIdioma } from '@/components/ui/selector-idioma'
+import { PERFILES_TRABAJO } from '@/data/trabaja'
 import {
   IconoFacebook,
   IconoInstagram,
@@ -118,6 +120,27 @@ export function Footer() {
               </Link>
             </li>
           </ul>
+
+          {/* ── Trabaja con nosotros (correcciones v1 del cliente,
+              2026-07-22) ── Sub-bloque de «Empresa», no una 5ª columna: son
+              enlaces de PARTNERS, hermanos de «Agentes de viaje» que ya vive
+              justo encima, y una columna propia para tres links rompería el
+              ritmo de 4 que sostiene el resto del footer. Los tres van a la
+              MISMA página con distinto `?perfil=` — la etiqueta de cada uno
+              sale tal cual de PERFILES_TRABAJO (data/trabaja.ts), que es la
+              lista que pidió el cliente. */}
+          <h5 className="mt-7 text-sm font-semibold uppercase tracking-wide text-white/50">
+            Trabaja con nosotros
+          </h5>
+          <ul className="mt-3 flex flex-col gap-2 text-sm text-white/80">
+            {PERFILES_TRABAJO.map((p) => (
+              <li key={p.id}>
+                <Link to={`/trabaja-con-nosotros?perfil=${p.id}`} className="hover:text-white">
+                  {p.enlace}
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
 
         <div>
@@ -208,18 +231,25 @@ export function Footer() {
 
         <div className="lg:px-8">
           <p className="text-sm font-semibold text-white">Métodos de pago</p>
+          {/* 2026-07-22 (pedido de Samuel): cajitas de tamaño fijo con el logo
+              dentro, no chips de texto que se ensanchaban con el nombre. El
+              detalle de por qué así y de dónde salen los logos, en
+              ui/marcas-pago.tsx. */}
           <ul className="mt-3 flex flex-wrap gap-2">
             {MEDIOS_PAGO.map((m) => (
-              <li
-                key={m}
-                className="rounded-chip bg-white/10 px-3 py-1.5 text-xs font-medium text-white/80"
-              >
-                {m}
+              <li key={m.id}>
+                <MarcaPago medio={m} />
               </li>
             ))}
           </ul>
+          {/* «Efectivo a bordo» era la 5ª cajita y baja aquí, a la frase que
+              ya hablaba del saldo: no es una marca, y un pictograma genérico
+              entre logos era justo lo que delataba que las cajas no eran
+              todas lo mismo (ver el porqué largo en data/home.ts). El dato
+              se conserva — es el ÚNICO medio de pago que el proyecto tiene
+              confirmado. */}
           <p className="mt-3 text-xs text-white/50">
-            Confirmas con el 25% — el resto, el día del tour.
+            Confirmas con el 25% online. El resto, el día del tour — también en efectivo a bordo.
           </p>
         </div>
 

@@ -1,80 +1,100 @@
-import { useEffect, useState } from 'react'
+import { useRef, useState } from 'react'
 import { BadgeCheck } from 'lucide-react'
 import { Etiqueta } from '@/components/ui/etiqueta'
+import { Estrellas } from '@/components/ui/estrellas'
 import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
+import { BotonSonido } from '@/components/ui/boton-sonido'
+import { useFilaArrastrable } from '@/components/home/use-fila-arrastrable'
 import {
-  QUOTES,
-  FUNDADOR,
+  RESENAS_MURO,
+  VIDEO_TESTIMONIOS,
   PLATAFORMAS_RESENAS,
   RESENAS_AGREGADO,
   type Review,
+  type VideoTestimonio,
 } from '@/data/home'
 import { useDevFlag } from '@/dev/use-dev-flag'
 
-// «Reseñas verificadas» — rediseño v6 (Pedro, 2026-07-15). Estructura:
+// «Reseñas verificadas» — v7 (Samuel, 2026-07-22, sobre la maqueta de las
+// correcciones v1 del cliente). Estructura:
 //
-//   [Eyebrow centrado]
-//   [h2 centrado: «4.9 de 5 en 1.782 reseñas»]
-//   ┌──────────────────┬──────────────────────────────────┐
-//   │                  │  «                              │
-//   │  <video>         │  [Carrusel step-based, 2 cards] │
-//   │  + gradient      │  r0/r1 → r1/r2 → r2/r3 → ...    │
-//   │  + texto blanco  │  (comilla decorativa de fondo)  │
-//   │  abajo-izq       │  (avanza, espera 4s, avanza...)  │
-//   │                  │                                  │
-//   └──────────────────┴──────────────────────────────────┘
+//   [Eyebrow + h2 + lead, centrados]
+//   [Barra de confianza: agregado + las 3 plataformas con su nota]
+//   ┌───────────────────────┬───────────────────────┐
+//   │ video-testimonio 1    │ video-testimonio 2    │
+//   │ (estrellas · quote ·  │                       │
+//   │  quiénes son y de     │                       │
+//   │  dónde nos visitaron) │                       │
+//   └───────────────────────┴───────────────────────┘
+//   ┌───────────────────────────────────────────────┐
+//   │ ←←← fila 1 de cards                           │
+//   │ fila 2 de cards →→→                           │
+//   │ ←←← fila 3 de cards                           │
+//   └───────────────────────────────────────────────┘
+//   [Ver las N reseñas]  [Déjanos tu reseña]
 //
-// El video llena toda la altura de su columna (mismo alto que el
-// carrusel). El carrusel es step-based, NO un ticker continuo: avanza
-// una posición, espera 4s, avanza otra. Loop invisible con pista
-// duplicada + truco de "saltar sin transición" al wrap (CSS transitions
-// + estado React).
+// QUÉ CAMBIA RESPECTO A LA v6 y por qué. La v6 era «1 video a la izquierda +
+// slider vertical de 2 quotes a la derecha». Tenía dos problemas que el
+// cliente señaló en su PDF y Samuel confirmó: (a) el slider enseñaba 2
+// reseñas de 5 y obligaba a esperar a que rotara para ver el resto —
+// exactamente lo contrario de lo que hace la prueba social, que funciona por
+// VOLUMEN; y (b) el único video era un mensaje de la marca (los
+// cofundadores), no un cliente. Ahora el volumen se ve de un golpe (3 filas
+// desfilando) y los dos videos son testimonios de gente que vino.
 //
-// ⚠️ El video es placeholder (hero.mp4 = catamaran navegando, asset real
-// de la marca). La referencia visual pide un video del cofundador hablando
-// a cámara en primer plano — cuando llegue, se cambia solo el `src`.
+// El desfile no es decorativo: al pausarse en hover y poder arrastrarse, la
+// sección deja de ser un carrusel que manda y pasa a ser un muro que se
+// puede recorrer. Mecánica en use-fila-arrastrable.ts + el bloque
+// .reviews-muro-* de componentes.css.
 
-function StarRating({ count = 5 }: { count: number }) {
-  return (
-    <p className="text-estrella text-lg lg:text-xl" aria-label={`${count} de 5 estrellas`}>
-      {'★'.repeat(count)}
-    </p>
-  )
-}
+/** Cuántas veces se repite el grupo de cards dentro de cada pista. El porqué
+ *  de que sean 3 y no 2 está en componentes.css (.reviews-muro-*): el
+ *  desfile puede llegar a -1 copia y el arrastre a otra, y hace falta una
+ *  tercera para que la ventana nunca se quede vacía. */
+const COPIAS_EN_PISTA = 3
+
+/** En cuántas filas se reparte el muro. */
+const FILAS = 3
 
 // Barra de confianza multi-plataforma (correcciones v1, slides 11-12). El
-// agregado grande a la izquierda; las 3 plataformas a la derecha con SU
-// distinción real. Los nombres van como texto y no como logo de marca: no
-// tenemos los SVG oficiales en el repo y un logo mal reproducido se ve peor
-// que el nombre bien compuesto — cuando el cliente mande los assets (y las
-// URLs de sus perfiles) esto pasa a ser una fila de logos enlazados.
+// agregado grande a la izquierda; las 3 plataformas a la derecha, cada una
+// con SU nota, sus estrellas y su distinción.
+//
+// Los nombres van como texto y no como logo de marca: no tenemos los SVG
+// oficiales en el repo y un logo mal reproducido se ve peor que el nombre
+// bien compuesto — cuando el cliente mande los assets (y las URLs de sus
+// perfiles) esto pasa a ser una fila de logos enlazados.
+//
+// ⚠️ Las notas por plataforma vienen del PDF del cliente y están marcadas
+// como `porConfirmar` en data/home.ts — hay que pedírselas por escrito antes
+// de publicar. Ahí está el razonamiento completo.
 function BarraPlataformas() {
   return (
-    <div className="mt-8 flex flex-col items-center gap-5 rounded-card-grande bg-papel-hueso px-6 py-5 sm:flex-row sm:justify-center sm:gap-10">
-      <div className="flex items-center gap-3">
-        <p className="font-display text-h2 font-semibold text-navy">{RESENAS_AGREGADO.rating}</p>
+    <div className="mt-8 flex flex-col gap-6 rounded-card-grande bg-papel-hueso px-6 py-6 lg:flex-row lg:items-center lg:gap-10 lg:px-8">
+      {/* Agregado real — el mismo número que el hero y el footer */}
+      <div className="flex shrink-0 items-center gap-4">
+        <p className="font-display text-hero-movil font-semibold leading-none text-navy">
+          {RESENAS_AGREGADO.rating}
+        </p>
         <div>
-          <StarRating count={5} />
-          <p className="text-sm text-navy-soft">
+          <Estrellas calificacion={5} />
+          <p className="mt-1 text-sm text-navy-soft">
             {RESENAS_AGREGADO.total.toLocaleString('es-ES')} reseñas verificadas
           </p>
         </div>
       </div>
 
-      <div
-        aria-hidden="true"
-        className="hidden h-10 w-px shrink-0 bg-linea sm:block"
-      />
+      <div aria-hidden="true" className="hidden h-12 w-px shrink-0 bg-linea lg:block" />
 
-      <ul className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
+      <ul className="grid flex-1 gap-5 sm:grid-cols-3 sm:gap-6">
         {PLATAFORMAS_RESENAS.map((p) => (
-          <li key={p.id} className="text-center sm:text-left">
-            <p className="text-sm font-semibold text-navy">{p.nombre}</p>
-            {/* Sin distinción documentada no se pinta una línea vacía ni se
-                inventa uno — ver el porqué en data/home.ts. */}
-            {p.distincion ? (
-              <p className="mt-0.5 text-xs text-navy-soft">{p.distincion}</p>
-            ) : null}
+          <li key={p.id}>
+            <div className="flex items-center gap-2">
+              <p className="text-sm font-semibold text-navy">{p.nombre}</p>
+              <p className="text-sm font-semibold text-navy">{p.rating}</p>
+              <Estrellas calificacion={p.ratingNumero} />
+            </div>
+            <p className="mt-1 text-xs text-navy-soft">{p.distincion}</p>
           </li>
         ))}
       </ul>
@@ -95,175 +115,239 @@ function Iniciales({ nombre }: { nombre: string }) {
   return (
     <div
       aria-hidden="true"
-      className="grid size-12 shrink-0 place-items-center rounded-full bg-aqua-tint text-base font-semibold text-aqua-dark"
+      className="grid size-10 shrink-0 place-items-center rounded-full bg-aqua-tint text-sm font-semibold text-aqua-dark"
     >
       {iniciales}
     </div>
   )
 }
 
-function ReviewCard({ review }: { review: Review }) {
+// Video-testimonio. Es la MISMA caja de la v6 (video a sangre + degradado
+// navy + texto blanco abajo), con tres cambios pedidos por Samuel:
+//   - encima de la frase, la prueba de que es una reseña: estrellas + dónde
+//     la dejó,
+//   - la frase, que es lo que ya teníamos, y
+//   - debajo, una línea más pequeña y sutil con quiénes son y de dónde nos
+//     visitaron (lo que en las cards del muro es el `lugar`).
+// El chip «Video testimonio» arriba a la izquierda es de la maqueta del
+// cliente: sin él, un video que arranca solo y sin sonido se lee como
+// ambiente de marca, no como alguien contando su día.
+function VideoTestimonioBox({ testimonio }: { testimonio: VideoTestimonio }) {
+  const videoRef = useRef<HTMLVideoElement>(null)
   return (
-    // overflow-hidden en la card: recorta la comilla decorativa en el borde
-    // superior de la card (en vez de depender del overflow:hidden del
-    // contenedor del carrusel). La card pasa a ser una unidad visual
-    // autocontenida — su contenido nunca sale de sus límites, pase lo que
-    // pase con el carrusel o el layout padre. Mismo efecto visual que
-    // `overflow: clip` pero con soporte universal.
-    <div className="relative flex h-full flex-col justify-between overflow-hidden rounded-card bg-papel-hueso p-6 lg:p-7">
-      {/* Comilla decorativa de fondo — más grande aún (21rem → 28rem =
-          448px) y con menos margin negativo arriba (-top-12 → -top-4 en
-          móvil, lg:-top-16 → lg:-top-6 en desktop): la comilla ya no
-          "asoma" tanto por encima del card, sino que vive más dentro
-          del card, más integrada al contenido. Opacidad se mantiene
-          (text-navy/5) — sigue siendo un watermark editorial sutil. */}
-      <span
-        aria-hidden="true"
-        className="pointer-events-none absolute right-8 -top-4 select-none font-serif text-[28rem] leading-none text-navy/5 lg:-top-6"
-      >
-        &ldquo;
-      </span>
-      {/* Texto del testimonio — full width arriba, relative para ir por
-          encima de la comilla decorativa. */}
-      <p className="relative text-base text-navy lg:text-lg">
-        &ldquo;{review.texto}&rdquo;
-      </p>
+    <figure className="relative aspect-[4/3] overflow-hidden rounded-card-grande bg-navy shadow-card sm:aspect-[16/10]">
+      <video
+        ref={videoRef}
+        className="absolute inset-0 size-full object-cover"
+        src={testimonio.videoSrc}
+        poster={testimonio.videoPoster}
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="metadata"
+        aria-label={`Video testimonio de ${testimonio.quienes}`}
+      />
+      {/* Degradado para legibilidad: denso abajo (donde va el texto), se
+          desvanece hacia arriba. Solo tokens — sin valores sueltos. */}
+      <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-navy/85 via-navy/40 to-transparent" />
 
-      {/* Bottom: 3 sub-columnas (foto | nombre+social | estrellas a la derecha) */}
-      <div className="relative mt-6 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-4">
-        <Iniciales nombre={review.autor} />
-        <div className="min-w-0">
-          <p className="truncate text-sm font-semibold text-navy lg:text-base">{review.autor}</p>
-          <p className="truncate text-xs text-navy-soft lg:text-sm">
-            {review.plataforma} · {review.fecha}
-          </p>
+      <span className="absolute left-5 top-5 rounded-chip bg-white/15 px-3 py-1 text-xs font-medium text-white ring-1 ring-white/25 backdrop-blur-sm">
+        Video testimonio
+      </span>
+
+      {/* Arriba a la DERECHA: es la única esquina libre — el chip ocupa la
+          izquierda y el figcaption toma toda la banda de abajo. */}
+      <BotonSonido videoRef={videoRef} className="absolute right-5 top-5 z-10" />
+
+      <figcaption className="absolute inset-x-0 bottom-0 p-6 text-white lg:p-8">
+        <div className="flex items-center gap-2">
+          <Estrellas calificacion={5} sobreOscuro />
+          <span className="text-xs text-white/80">Reseña en {testimonio.plataforma}</span>
         </div>
-        <StarRating count={5} />
+        <blockquote className="mt-3 font-display text-h3 font-semibold">
+          &ldquo;{testimonio.frase}&rdquo;
+        </blockquote>
+        {/* La línea sutil: quiénes son y de dónde nos visitaron. Deliberadamente
+            más pequeña y más apagada que la frase — es el pie de la cita, no
+            compite con ella. */}
+        <p className="mt-2 text-sm text-white/70">
+          {testimonio.quienes} · {testimonio.procedencia}
+        </p>
+      </figcaption>
+    </figure>
+  )
+}
+
+// Card del muro — formato convencional de reseña (pedido de Samuel: «cards
+// de testimonios más convencionales»), leído de un vistazo mientras pasa:
+// quién · dónde la dejó · nota · texto · verificada. Adiós a la comilla
+// decorativa gigante de la v6: a este tamaño se comía la mitad de la card.
+function CardResena({ review, oculto }: { review: Review; oculto: boolean }) {
+  return (
+    <article
+      // aria-hidden en las copias del loop: el lector de pantalla oiría la
+      // misma reseña 3 veces (mismo trato que el ticker del hero).
+      aria-hidden={oculto || undefined}
+      // `border` y NO `ring`: Tailwind pinta el ring como box-shadow POR FUERA
+      // de la caja, y la fila lleva overflow-hidden al ras del alto de la card
+      // — el hairline de arriba y el de abajo caían justo en el corte y no se
+      // veían (la card parecía abierta por los dos lados). El border va dentro
+      // del border-box, así que sobrevive al recorte.
+      className="reviews-muro-card flex flex-col gap-3 rounded-card border border-linea bg-papel p-5"
+    >
+      <header className="flex items-start justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-3">
+          <Iniciales nombre={review.autor} />
+          <div className="min-w-0">
+            <p className="truncate text-sm font-semibold text-navy">{review.autor}</p>
+            <p className="truncate text-xs text-navy-soft">{review.lugar}</p>
+          </div>
+        </div>
+        <span className="shrink-0 rounded-chip bg-papel-hueso px-2.5 py-1 text-xs text-navy-soft">
+          {review.plataforma}
+        </span>
+      </header>
+
+      <div className="flex items-center gap-2">
+        <Estrellas calificacion={review.estrellas} />
+        <span className="text-xs text-navy-soft">{review.fecha}</span>
       </div>
 
-      {/* «Reseña verificada» (correcciones v1, slide 11: «intentar que sea lo
-          más real posible»). No es decoración: todas las de QUOTES vienen de
-          un perfil público real del cliente, y el chip dice de cuál. */}
-      <p className="relative mt-3 flex items-center gap-1.5 text-xs font-medium text-menta-texto">
+      {/* line-clamp: las reseñas no miden lo mismo y sin tope una card el
+          doble de alta desalinea la fila entera (todas estiran al alto de la
+          más alta). 4 líneas es lo que se alcanza a leer mientras pasa. */}
+      <p className="line-clamp-4 text-sm text-navy">&ldquo;{review.texto}&rdquo;</p>
+
+      <p className="mt-auto flex items-center gap-1.5 text-xs font-medium text-menta-texto">
         <BadgeCheck className="size-4 shrink-0" aria-hidden="true" />
-        Reseña verificada en {review.plataforma}
+        Reseña verificada
       </p>
+    </article>
+  )
+}
+
+function FilaMuro({
+  resenas,
+  indice,
+  pausado,
+  reducirMovimiento,
+}: {
+  resenas: Review[]
+  /** 0, 1, 2 — decide duración y sentido. La del medio va al revés. */
+  indice: number
+  pausado: boolean
+  reducirMovimiento: boolean
+}) {
+  const copias = reducirMovimiento ? 1 : COPIAS_EN_PISTA
+  const { arrastreRef, arrastrando, manejadores } = useFilaArrastrable({
+    copias,
+    activo: !reducirMovimiento,
+  })
+
+  return (
+    <div
+      className="reviews-muro-fila"
+      style={{
+        // pan-y: el gesto vertical sigue siendo scroll de la página. Sin esto
+        // el navegador se queda el arrastre horizontal y el dedo no mueve la
+        // fila en móvil.
+        touchAction: 'pan-y',
+        cursor: reducirMovimiento ? undefined : arrastrando ? 'grabbing' : 'grab',
+        userSelect: arrastrando ? 'none' : undefined,
+      }}
+      {...manejadores}
+      role="group"
+      aria-label={`Reseñas de clientes, fila ${indice + 1}`}
+    >
+      <div ref={arrastreRef} className="reviews-muro-arrastre">
+        <div
+          className={[
+            'reviews-muro-pista',
+            // Cada fila lee SU token de duración vía su clase (descoordinadas,
+            // el muro respira). La clase y no un style inline: ver el porqué
+            // en componentes.css — con el nombre de la variable armado en
+            // runtime, Tailwind no la emite y la fila se queda quieta.
+            `reviews-muro-pista--fila-${indice + 1}`,
+            indice === 1 ? 'reviews-muro-pista--derecha' : '',
+            pausado || arrastrando ? 'reviews-muro-pista--pausada' : '',
+          ]
+            .filter(Boolean)
+            .join(' ')}
+        >
+          {Array.from({ length: copias }).flatMap((_, copia) =>
+            resenas.map((r) => (
+              <CardResena key={`${copia}-${r.id}`} review={r} oculto={copia > 0} />
+            )),
+          )}
+        </div>
+      </div>
     </div>
   )
 }
 
 export function Reviews() {
-  const N = QUOTES.length
-  const [index, setIndex] = useState(0)
-  const [noTransition, setNoTransition] = useState(false)
   const [pausado, setPausado] = useState(false)
 
-  // [dev-mode] ?dev-reviews=pausado congela el carrusel → frame limpio
+  // [dev-mode] ?dev-reviews=pausado congela las 3 filas → frame limpio
   // para Figma. Misma mecánica que ?dev-ticker=pausado.
   useDevFlag('dev-reviews', (v) => setPausado(v === 'pausado')) // [dev-mode]
 
-  // Auto-advance step-by-step. Lee intervalo y transición de tokens.css
-  // (FUENTE del prototipo de Figma — playbook animaciones-a-figma).
-  useEffect(() => {
-    if (pausado) return
-    if (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    const ms = leerMs('--reviews-step-intervalo', 5000)
-    const id = window.setInterval(() => {
-      setIndex((i) => i + 1)
-    }, ms)
-    return () => window.clearInterval(id)
-  }, [pausado, N])
+  const reducirMovimiento =
+    typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-  // Wrap invisible: cuando index llega a N (entró en la copia duplicada,
-  // visualmente igual a 0), esperamos a que termine la transition CSS y
-  // saltamos a 0 SIN transition. El usuario nunca ve el "salto" porque
-  // la posición visual es la misma (la copia es idéntica a la primera).
-  // Trampa: el re-enable de la transition tiene que esperar 2 frames
-  // para que React aplique el cambio antes de que la transition tome el
-  // control otra vez (un solo rAF no basta en React 19 strict mode).
-  useEffect(() => {
-    if (index !== N) return
-    const transMs = leerMs('--reviews-step-transicion', 700)
-    const id = window.setTimeout(() => {
-      setNoTransition(true)
-      setIndex(0)
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          setNoTransition(false)
-        })
-      })
-    }, transMs + 50)
-    return () => window.clearTimeout(id)
-  }, [index, N])
-
-  // Pista duplicada: la segunda mitad es idéntica a la primera, así
-  // translateY(-N * cardHeight) (el wrap) muestra el mismo par de cards
-  // que translateY(0) — sin él, el "salto" del wrap sería visible.
-  const pista = [...QUOTES, ...QUOTES]
+  // Reparto en 3 filas alternando (0,1,2,0,1,2…) y no en 3 bloques seguidos:
+  // así las 5 reseñas REALES —que en RESENAS_MURO van una de cada cuatro—
+  // caen repartidas entre las tres filas en vez de amontonarse en la primera.
+  const filas = Array.from({ length: FILAS }, (_, f) =>
+    RESENAS_MURO.filter((_, i) => i % FILAS === f),
+  )
 
   return (
     <section className="px-5 py-seccion-sm sm:px-10 sm:py-seccion">
       <div className="mx-auto max-w-contenido">
-        {/* Header centrado: eyebrow + h2 */}
         <div className="text-center">
           <Etiqueta>Reseñas verificadas</Etiqueta>
-          <h2 className="mt-3 font-display text-h2 font-semibold text-navy sm:text-h2">
+          <h2 className="mt-3 font-display text-h2 font-semibold text-navy">
             Lo que dicen nuestros viajeros
           </h2>
+          <p className="mx-auto mt-3 max-w-2xl text-lead text-navy-sub">
+            Miles de familias, parejas y grupos de amigos ya vivieron su día en el Caribe con
+            nosotros.
+          </p>
         </div>
 
         <BarraPlataformas />
 
-        {/* 2 columnas, mismo alto (items-stretch). El video llena su
-            columna al alto del carrusel de la derecha. */}
-        <div className="mt-10 grid grid-cols-1 gap-10 lg:grid-cols-2 lg:items-stretch">
-          {/* IZQUIERDA — video con gradient + texto blanco abajo-izquierda */}
-          <div className="relative overflow-hidden rounded-card bg-navy shadow-card">
-            <video
-              className="absolute inset-0 size-full object-cover"
-              src={FUNDADOR.videoSrc}
-              poster={FUNDADOR.videoPoster}
-              autoPlay
-              muted
-              loop
-              playsInline
-              preload="metadata"
-              aria-label="Video del equipo de Hispaniola Aquatic Adventures"
-            />
-            {/* Gradient para legibilidad: denso abajo (donde va el texto),
-               se desvanece hacia arriba. Solo tokens — sin valores sueltos. */}
-            <div className="absolute inset-0 bg-gradient-to-t from-navy/85 via-navy/40 to-transparent" />
-            {/* Texto en la parte inferior, alineado a la izquierda */}
-            <div className="absolute bottom-0 left-0 right-0 p-6 text-white lg:p-8">
-              <p className="text-base italic lg:text-lg">
-                &ldquo;{FUNDADOR.frase}&rdquo;
-              </p>
-              <p className="mt-3 text-sm lg:text-base">
-                <span className="font-semibold">{FUNDADOR.nombre}</span>
-                <span className="opacity-80"> · {FUNDADOR.cargo}</span>
-              </p>
-            </div>
-          </div>
+        <div className="mt-6 grid gap-6 lg:grid-cols-2">
+          {VIDEO_TESTIMONIOS.map((t) => (
+            <VideoTestimonioBox key={t.id} testimonio={t} />
+          ))}
+        </div>
 
-          {/* DERECHA — carrusel step-based */}
-          <div
-            className="flex flex-col"
-            onPointerEnter={() => setPausado(true)}
-            onPointerLeave={() => setPausado(false)}
-          >
-            <div className="reviews-step-container overflow-hidden">
-              <div
-                className={`reviews-step-track ${noTransition ? '' : 'reviews-step-track--animated'}`}
-                style={{ transform: `translateY(calc(-${index} * (var(--reviews-card-alto) + var(--reviews-step-gap))))` }}
-              >
-                {pista.map((q, i) => (
-                  <div key={i} className="reviews-step-slot">
-                    <ReviewCard review={q} />
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+        {/* Las 3 filas, directamente sobre el papel: el muro nació dentro de un
+            panel gris (bg-papel-hueso) y Samuel lo quitó — con la barra de
+            plataformas ya en gris justo encima, el segundo bloque gris partía
+            la sección en dos cajas y las cards perdían el protagonismo. Sobre
+            blanco, lo único que define cada card es su hairline, y por eso ese
+            borde tiene que verse entero (ver el comentario de CardResena).
+
+            Va acotado al ancho de contenido (no a sangre) por una razón
+            mecánica además de estética: una copia de fila mide ~6 cards ≈
+            2100px, y el loop solo se ve continuo mientras la ventana visible
+            sea más estrecha que una copia. A ancho de contenido (1400px) eso
+            se cumple siempre; a sangre, en un monitor ultra-ancho podría
+            asomar el hueco. */}
+        <div className="mt-8 flex flex-col gap-reviews-fila">
+          {filas.map((resenas, i) => (
+            <FilaMuro
+              key={i}
+              resenas={resenas}
+              indice={i}
+              pausado={pausado}
+              reducirMovimiento={reducirMovimiento}
+            />
+          ))}
         </div>
 
         {/* Cierre: ver todas + dejar la tuya (correcciones v1, slide 11:
@@ -272,7 +356,7 @@ export function Reviews() {
             y esas URLs siguen pendientes — misma regla que los PREMIOS, que
             tampoco enlazan a nada inventado. En cuanto lleguen, esto pasa a
             ser un <a> normal con target="_blank". */}
-        <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
+        <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <EnlacePrototipo className="inline-flex items-center justify-center rounded-btn px-5 py-3 text-sm font-semibold text-navy ring-1 ring-linea transition-colors hover:bg-papel-hueso">
             Ver las {RESENAS_AGREGADO.total.toLocaleString('es-ES')} reseñas
           </EnlacePrototipo>
@@ -283,14 +367,4 @@ export function Reviews() {
       </div>
     </section>
   )
-}
-
-// Lee un token de tiempo del :root (--x: 4s | 400ms) y lo devuelve en ms.
-// Mismo helper que ui/carrusel-imagenes.tsx.
-function leerMs(nombre: string, fallback: number): number {
-  if (typeof window === 'undefined') return fallback
-  const bruto = getComputedStyle(document.documentElement).getPropertyValue(nombre).trim()
-  const n = parseFloat(bruto)
-  if (Number.isNaN(n)) return fallback
-  return bruto.endsWith('ms') ? n : n * 1000
 }

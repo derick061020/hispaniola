@@ -3,13 +3,8 @@ import { Link, useLocation } from 'react-router-dom'
 import { Menu } from 'lucide-react'
 import { Logo } from '@/components/ui/logo'
 import { Boton } from '@/components/ui/boton'
-import { MegaTours } from './mega-tours'
-import { MegaEventos } from './mega-eventos'
-import { DropdownNosotros } from './dropdown-nosotros'
-import { DropdownAyuda } from './dropdown-ayuda'
 import { MenuMovil } from './menu-movil'
-import { NotchMenu } from './notch-menu'
-import { claseLinkTab, crearBotonTab, TabsPrincipales } from './nav-tabs'
+import { TabsConPaneles } from './nav-tabs'
 import { useMenuDropdown } from '@/lib/use-menu-dropdown'
 import { useDevFlag } from '@/dev/use-dev-flag'
 
@@ -17,12 +12,21 @@ export type MenuId = 'tours' | 'eventos' | 'nosotros' | 'ayuda'
 
 // v3: el header vive DENTRO del box del hero (app/PLAN-v3.md §4), así que
 // necesita una variante transparente sobre el video. 'solida' (default) es
-// la barra opaca de siempre; 'sobreVideo' quita el fondo blanco/sticky y
-// pasa el texto a blanco para leerse sobre el video del hero.
+// la barra opaca de siempre (única usuaria: no-encontrado.tsx, la 404 —
+// necesita su propio nav completo porque no tiene hero ni NavFlotante); NO
+// se toca en este cambio. 'sobreVideo' quita el fondo blanco/sticky y pasa
+// el texto a blanco para leerse sobre el video del hero.
 //
-// `ctaHref`: el botón «Reservar» apunta al grid de tours en la home (#tours,
-// el default), pero en la ficha de tour ese ancla NO existe y el botón no
-// haría nada — allí apunta al widget de reserva (PLAN-TOURS.md §7).
+// 2026-07-21 (pedido de Samuel): 'sobreVideo' pierde los TABS de escritorio
+// (antes un notch cortado en el bisel del hero) — ese trabajo lo hace ahora,
+// site-wide, un solo componente flotante y fijo (nav-flotante.tsx, "vidrio"
+// oscuro, visible desde que carga la página). Logo y CTA «Reservar» SÍ
+// siguen aquí, en desktop también — viven en flujo normal (NO fijos: se van
+// con el scroll junto con el resto del hero), a diferencia de los tabs.
+// Cuando el usuario scrollea y este logo sale de vista, NavFlotante funde su
+// propia versión compacta (logo + Reservar) dentro del panel de tabs — ver
+// el comentario de nav-flotante.tsx. Por eso el logo lleva `id="logo-hero"`
+// solo en esta variante: es el sentinel que ese observer usa para saberlo.
 export function Header({
   variante = 'solida',
   ctaHref = '#tours',
@@ -52,84 +56,50 @@ export function Header({
 
   const sobreVideo = variante === 'sobreVideo'
 
-  // Botón de un tab para 'solida': idéntico al de TabsPrincipales (misma
-  // fábrica, nav-tabs.tsx), pero envuelto en su propio panel colgado — en
-  // 'sobreVideo' el panel activo lo pinta NotchMenu, no cada botón.
-  const botonTab = crearBotonTab(menuAbierto, toggle)
-
-  // 'solida': cada botón envuelve su propio panel flotante — sin cambios de
-  // comportamiento frente a antes de F8, solo con los dropdowns ya extraídos
-  // a sus propios componentes (§11.3).
-  const tabsConPaneles = (
-    <>
-      <Link to="/" className={claseLinkTab}>
-        Inicio
-      </Link>
-
-      <div className="relative">
-        {botonTab('tours', 'Tours ▾')}
-        {menuAbierto === 'tours' ? (
-          <div className="absolute left-0 top-full mt-2 rounded-card bg-papel shadow-card ring-1 ring-linea">
-            <MegaTours />
-          </div>
-        ) : null}
-      </div>
-
-      <div className="relative">
-        {botonTab('eventos', 'Eventos ▾')}
-        {menuAbierto === 'eventos' ? (
-          <div className="absolute left-0 top-full mt-2 rounded-card bg-papel shadow-card ring-1 ring-linea">
-            <MegaEventos />
-          </div>
-        ) : null}
-      </div>
-
-      <div className="relative">
-        {botonTab('nosotros', 'Nosotros ▾')}
-        {menuAbierto === 'nosotros' ? (
-          <div className="absolute left-0 top-full mt-2 rounded-card bg-papel shadow-card ring-1 ring-linea">
-            <DropdownNosotros />
-          </div>
-        ) : null}
-      </div>
-
-      <div className="relative">
-        {botonTab('ayuda', 'Ayuda ▾')}
-        {menuAbierto === 'ayuda' ? (
-          <div className="absolute right-0 top-full mt-2 rounded-card bg-papel shadow-card ring-1 ring-linea">
-            <DropdownAyuda />
-          </div>
-        ) : null}
-      </div>
-    </>
-  )
-
   return (
     <header className={sobreVideo ? '' : 'sticky top-0 z-40 bg-papel'}>
       {/* Topbar (WhatsApp + teléfono + idioma) vive aparte, FUERA de este
           Header y de la caja del hero — ver components/home/topbar.tsx,
-          montado en App.tsx antes de cada página. */}
+          montado en App.tsx antes de cada página.
+          px-5 sm:px-10 (no solo px-5): mismo padding lateral que usa
+          CUALQUIER OTRO contenedor max-w-contenido del sitio (Topbar,
+          hero-interna.tsx, footer, todas las páginas internas) — sin el
+          sm:px-10, el logo/nav de aquí quedaba más pegado al borde que el
+          resto del contenido debajo, desalineado con el Topbar que vive
+          justo encima (detectado visualmente por Samuel). */}
       <div
-        className={`relative mx-auto flex max-w-contenido items-center justify-between px-5 py-3 ${sobreVideo ? '' : 'border-b border-linea'}`}
+        className={`relative mx-auto flex max-w-contenido items-center justify-between px-5 py-3 sm:px-10 ${sobreVideo ? '' : 'border-b border-linea'}`}
         ref={navRef}
       >
         {/* El logo lleva a la home. Mientras el sitio era una sola página no
             hacía falta y era un <img> suelto; desde que existe la ficha, es la
             salida universal a casa y su ausencia se nota (verificado en el
-            flujo de QA: era el único paso que no navegaba). */}
-        <Link to="/" aria-label="Hispaniola Aquatic Adventures — inicio">
+            flujo de QA: era el único paso que no navegaba).
+            id="logo-hero" SOLO en 'sobreVideo': sentinel de NavFlotante (ver
+            su comentario) — cuando este logo sale de vista, NavFlotante funde
+            su propia versión compacta dentro del panel de tabs. 'solida' no
+            lo necesita (no tiene NavFlotante propio, la 404 es autónoma). */}
+        <Link to="/" aria-label="Hispaniola Aquatic Adventures — inicio" id={sobreVideo ? 'logo-hero' : undefined}>
           <Logo sobreOscuro={sobreVideo} />
         </Link>
 
-        {sobreVideo ? (
-          <div className="absolute left-1/2 top-0 z-30 hidden w-max -translate-x-1/2 md:block">
-            <NotchMenu abierto={menuAbierto} tabs={<TabsPrincipales menuAbierto={menuAbierto} toggle={toggle} />} />
-          </div>
-        ) : (
-          <nav className="hidden items-center gap-1 md:flex">{tabsConPaneles}</nav>
+        {/* 2026-07-21: los TABS de escritorio de 'sobreVideo' (antes un
+            NotchMenu cortado en el bisel del hero) se retiran — NavFlotante
+            (App.tsx) los reemplaza, site-wide y ya visible desde que carga la
+            página. Logo y CTA (a los lados) SÍ se quedan aquí — ver más
+            abajo. 'solida' no cambia. */}
+        {sobreVideo ? null : (
+          <nav className="hidden items-center gap-1 md:flex">
+            <TabsConPaneles menuAbierto={menuAbierto} toggle={toggle} />
+          </nav>
         )}
 
         <div className="flex items-center gap-2">
+          {/* CTA de escritorio: se queda en 'sobreVideo' también (a
+              diferencia de los tabs) — vive en flujo normal, no fijo, así que
+              se va con el scroll. NavFlotante funde su propia versión
+              compacta cuando este boton sale de vista junto con el logo (ver
+              nav-flotante.tsx). 'solida' no cambia: sigue visible desde sm. */}
           <span className="hidden sm:inline-flex">
             <Boton href={ctaHref}>Reservar</Boton>
           </span>

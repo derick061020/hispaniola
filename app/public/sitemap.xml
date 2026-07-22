@@ -43,6 +43,11 @@
     <priority>0.5</priority>
   </url>
   <url>
+    <loc>https://hispaniolaaquaticadventures.com/trabaja-con-nosotros</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
     <loc>https://hispaniolaaquaticadventures.com/eventos/bodas</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>

@@ -1,7 +1,9 @@
 import { useRef, useState } from 'react'
 import { EXPERIENCIA_NARRATIVA, EXPERIENCIA_KICKER, EXPERIENCIA_VIDEO } from '@/data/home'
+import { BotonSonido } from '@/components/ui/boton-sonido'
 import { useDevFlag } from '@/dev/use-dev-flag'
 import { useExperienciaScroll } from '@/components/home/use-experiencia-scroll'
+import { useExperienciaVideoEtapa } from '@/components/home/use-experiencia-video-etapa'
 
 // "Experiencia" (v3-F18, pedido de Samuel) — sección editorial bajo la banda
 // de premios (que pierde su divider inferior para que fluyan como un bloque):
@@ -19,12 +21,8 @@ import { useExperienciaScroll } from '@/components/home/use-experiencia-scroll'
 //   apiladas (con su hover de grupo en :has(), v3-F18.3) ahora va el video
 //   promocional del cliente: el mismo que se auto-abría en el popup de
 //   bienvenida, que el slide 2 manda eliminar («a Fernando le gusta mucho ese
-//   video»). La referencia que puso el cliente es six2eight.com, que lo
-//   incrusta en un mockup de portátil — eso NO se copia: es idioma de agencia
-//   SaaS. El video hereda el passe-partout blanco + sombra realista + la
-//   rotación irregular que ya tenían las fotos, así que el gesto de la
-//   sección no cambia, solo su contenido. El collage (CSS, tokens y
-//   EXPERIENCIA_FOTOS) se borró en el mismo commit — sin cadáveres.
+//   video»). El collage (CSS, tokens y EXPERIENCIA_FOTOS) se borró en el
+//   mismo commit — sin cadáveres.
 //
 //   Slide 5 — EL TEXTO SE REVELA PALABRA A PALABRA. Ya había un reveal por
 //   FRASE enganchado al scroll; el cliente pide el formato de getblue.com,
@@ -32,17 +30,38 @@ import { useExperienciaScroll } from '@/components/home/use-experiencia-scroll'
 //   del copy se trocea aquí en <span> por palabra (.exp-palabra) y el hook
 //   las enciende escalonadas con scrub. El troceo vive en el componente y no
 //   en los datos: EXPERIENCIA_NARRATIVA sigue siendo el copy legible.
+//
+// 2ª vuelta de correcciones v1 (2026-07-22, mismo slide 7 — lo que el cliente
+// señalaba de six2eight.com no era el mockup de portátil, era el RECORRIDO de
+// scroll del video: crece hasta llenar la pantalla, se mantiene fijo un
+// tramo, y encoge a su columna de siempre). Ese recorrido —SOLO desktop, ver
+// use-experiencia-video-etapa.ts— pinea `.exp-etapa` (el grid entero) y
+// transforma `.exp-video`; el texto (`.exp-texto`) espera invisible hasta que
+// el video termina de encoger. El video en sí pierde el marco de la 1ª
+// vuelta (passe-partout + sombra + rotación) por bordes limpios y
+// redondeados (componentes.css) — así se ve el video de la propia
+// referencia, sin el gesto artesanal que tenía el collage.
 
-// Trocea un segmento en palabras conservando los espacios. Cada palabra es su
-// propio span para que GSAP pueda encenderlas por separado; el espacio va
-// DENTRO del span (con white-space normal el navegador colapsa el que
-// quedaría entre spans, y el texto se leería "todojunto" al partir líneas).
+// Trocea un segmento en palabras CONSERVANDO los espacios como piezas
+// aparte (el split captura el separador). Cada trozo se pinta en su propio
+// span, pero solo las palabras llevan .exp-palabra: los espacios quedan como
+// texto inline normal.
+//
+// Por qué separarlos (2026-07-22, ola del texto): .exp-palabra pasó a
+// `display: inline-block` para poder TRASLADARSE — los inline puros ignoran
+// `transform`, así que sin eso las palabras no podrían subir a su sitio. Y un
+// inline-block que solo contiene un espacio lo colapsa a cero: si los espacios
+// llevaran la misma clase, el párrafo se leería "todojunto". De paso el
+// stagger de la ola ya no gasta pasos en huecos invisibles.
 function palabras(texto: string): string[] {
   return texto.split(/(\s+)/).filter((t) => t.length > 0)
 }
 
+const esEspacio = (t: string) => /^\s+$/.test(t)
+
 export function Experiencia() {
   const sectionRef = useRef<HTMLElement>(null)
+  const videoRef = useRef<HTMLVideoElement>(null)
 
   // [dev-mode] ?dev-exp=estatico congela el reveal en su estado FINAL (texto y
   // video ya visibles, sin desplazamiento) → frame limpio para Figma. Ver
@@ -51,23 +70,37 @@ export function Experiencia() {
   const [estatico, setEstatico] = useState(false)
   useDevFlag('dev-exp', (v) => setEstatico(v === 'estatico')) // [dev-mode]
   useExperienciaScroll(sectionRef, { activo: !estatico }) // [dev-mode] gate
+  useExperienciaVideoEtapa(sectionRef, { activo: !estatico }) // [dev-mode] gate — recorrido del video (solo desktop)
 
   return (
-    // overflow-x-clip: el marco del video va rotado y podría asomar por el
-    // borde y provocar scroll horizontal en móvil. `clip` lo evita sin crear
-    // un scroll container y sin tocar el eje vertical.
-    <section
-      ref={sectionRef}
-      className="overflow-x-clip bg-papel px-5 pb-8 pt-seccion-sm sm:px-10 sm:pt-seccion"
-    >
-      <div className="mx-auto grid max-w-contenido grid-cols-1 items-center gap-12 lg:grid-cols-2 lg:gap-16">
-        {/* Video — passe-partout blanco + sombra realista, heredados del
-            collage que vivía aquí. order-2 lg:order-1 → en móvil va DEBAJO
-            del texto (se lee antes el mensaje); en desktop toma la columna
-            IZQUIERDA. */}
+    // Aire recortado (2026-07-22, Samuel: «esta sección tiene mucho aire con
+    // la de arriba y mucho más aún con la de abajo», y luego «reducir el
+    // gap entre el cintillo eco-friendly y la sección del video»). Arriba
+    // pasa de pt-seccion (7rem) a pt-8 (2rem): encima solo va el cintillo
+    // eco-friendly, que es una franja fina, no una sección con su propio
+    // aire. Abajo queda en 0 — ToursGrid ya trae su pt-seccion (7rem), que
+    // es la separación estándar entre secciones; el pb-8 de antes se sumaba
+    // a eso y por eso el hueco de abajo cantaba más que el de arriba.
+    //
+    // OJO: en desktop este padding NO es el grueso del hueco que se ve bajo
+    // el cintillo — ese lo manda --exp-etapa-inicio-top-vh (cuán abajo
+    // arranca el video para asomarse). Ver el comentario del token.
+    <section ref={sectionRef} className="bg-papel px-5 pb-0 pt-8 sm:px-10">
+      {/* .exp-etapa: el grid entero es lo que use-experiencia-video-etapa.ts
+          PINEA en desktop mientras dura el recorrido del video — el video y
+          el texto siguen siendo hijos normales de este mismo grid, nunca se
+          reparentan (ver el hook para el porqué). */}
+      <div className="exp-etapa mx-auto grid max-w-contenido grid-cols-1 items-center gap-12 lg:grid-cols-2 lg:gap-16">
+        {/* Video — bordes limpios y redondeados (componentes.css, 2ª vuelta
+            de correcciones v1: la referencia six2eight.com no llevaba marco).
+            order-2 lg:order-1 → en móvil va DEBAJO del texto (se lee antes el
+            mensaje); en desktop toma la columna IZQUIERDA — su posición aquí
+            ES el estado "final" al que el recorrido pineado vuelve al
+            encoger. */}
         <div className="order-2 lg:order-1">
           <figure className="exp-video">
             <video
+              ref={videoRef}
               src={EXPERIENCIA_VIDEO.src}
               poster={EXPERIENCIA_VIDEO.poster}
               aria-label={EXPERIENCIA_VIDEO.alt}
@@ -77,12 +110,23 @@ export function Experiencia() {
               playsInline
               preload="metadata"
             />
+            {/* Va DENTRO del figure a propósito: así sigue al vídeo durante
+                todo el recorrido pineado, que lo mueve y lo escala.
+                .exp-video-controles deshace esa escala — si no, el botón
+                crecería con el vídeo; el porqué, en componentes.css. */}
+            <BotonSonido
+              videoRef={videoRef}
+              className="exp-video-controles absolute bottom-4 right-4 z-10"
+            />
           </figure>
         </div>
 
         {/* Texto — párrafo grande gris/negro + CTA sutil. order-1 lg:order-2 →
-            primero en móvil, columna DERECHA en desktop. */}
-        <div className="order-1 lg:order-2">
+            primero en móvil, columna DERECHA en desktop. .exp-texto: en
+            desktop el hook lo mantiene invisible mientras el video crece y se
+            mantiene grande, y lo enciende recién cuando el video encoge a su
+            columna (ver use-experiencia-video-etapa.ts). */}
+        <div className="exp-texto order-1 lg:order-2">
           <div className="space-y-4">
             {EXPERIENCIA_NARRATIVA.map((frase, i) => (
               <p
@@ -92,7 +136,7 @@ export function Experiencia() {
                 {frase.map((seg, j) => (
                   <span key={j} className={seg.fuerte ? 'font-semibold text-navy' : undefined}>
                     {palabras(seg.t).map((p, k) => (
-                      <span key={k} className="exp-palabra">
+                      <span key={k} className={esEspacio(p) ? undefined : 'exp-palabra'}>
                         {p}
                       </span>
                     ))}

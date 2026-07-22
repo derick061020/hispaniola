@@ -30,12 +30,42 @@ export function BlogPage() {
         descripcion="Guías honestas, historias del mar y consejos reales para tu viaje a Punta Cana, contados por quienes navegan esta costa desde 2012."
         ruta="/blog"
       />
-      <HeroInterna ctaHref="/#tours">
-        <CabeceraBlog />
-      </HeroInterna>
+      {/* El fondo pasa de blanco a --color-fondo-ficha (el gris frío que ya
+          usan las páginas internas) a la altura del propio hero, no en un
+          punto arbitrario más abajo: así el gris ya está "puesto" antes de
+          llegar al contenido y no hay una línea dura entre el hero y la
+          rejilla de artículos. Blanco hasta la mitad del hero, degradado
+          suave de ahí al final — pedido de Samuel con referencia visual. */}
+      <div
+        style={{
+          background:
+            'linear-gradient(to bottom, var(--color-papel) 0%, var(--color-papel) 50%, var(--color-fondo-ficha) 100%)',
+        }}
+      >
+        <HeroInterna ctaHref="/#tours">
+          <CabeceraBlog />
+        </HeroInterna>
+      </div>
 
-      <div className="mx-auto max-w-contenido px-5 py-12 sm:px-10 lg:py-16">
-        <ListaArticulos />
+      <div className="bg-fondo-ficha">
+        <div className="mx-auto max-w-contenido px-5 pt-12 sm:px-10 lg:pt-16">
+          <ListaArticulos />
+        </div>
+        {/* Footer/.footer-espuma (footer.tsx) da por hecho que justo ENCIMA
+            hay --color-papel (así se ve en el resto del sitio, todo blanco
+            hasta el footer) — la espuma es blanca y funde contra eso. Esta
+            página rompe ese supuesto: el fondo justo antes del footer es
+            --color-fondo-ficha (gris), no papel, así que la espuma quedaba
+            recortada en seco contra el gris. En vez de tocar el Footer
+            compartido (rompería el resto de páginas, que sí son blancas),
+            esta franja SOLO existe aquí: sustituye al py-12/lg:py-16 de
+            abajo (mismo alto exacto, h-12/lg:h-16) y funde el gris al papel
+            antes de llegar al footer. */}
+        <div
+          aria-hidden="true"
+          className="h-12 lg:h-16"
+          style={{ background: 'linear-gradient(to top, var(--color-papel) 0%, transparent 100%)' }}
+        />
       </div>
 
       <Footer />

@@ -7,7 +7,7 @@ import { Header } from '@/components/home/header'
 // al crawler. `noindex` porque una 404 no es contenido que valga indexar.
 //
 // Header (auditoría responsive 2026-07-17): la página no tenía NINGÚN nav —
-// sin `id="hero"` tampoco activa IslaFlotante, así que un usuario perdido
+// sin `id="hero"` tampoco activa NavFlotante, así que un usuario perdido
 // quedaba sin más salida que "Volver al inicio". El Header 'solida' (mismo
 // que el resto del sitio fuera de la home/ficha) da logo + Tours/Eventos/
 // Nosotros/Ayuda + Reservar en desktop, y el menú hamburguesa completo en

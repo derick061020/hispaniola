@@ -2,7 +2,9 @@ import { useRef, useState } from 'react'
 import { Footer } from '@/components/home/footer'
 import { HeroInterna } from '@/components/internas/hero-interna'
 import { CabeceraSostenibilidad } from '@/components/sostenibilidad/cabecera-sostenibilidad'
-import { PilaresSostenibilidad } from '@/components/sostenibilidad/pilares-sostenibilidad'
+import { IntroSostenibilidad } from '@/components/sostenibilidad/intro-sostenibilidad'
+import { RecorridoSostenibilidad } from '@/components/sostenibilidad/recorrido-sostenibilidad'
+import { ImpactoSostenibilidad } from '@/components/sostenibilidad/impacto-sostenibilidad'
 import { VideosSostenibilidad } from '@/components/sostenibilidad/videos-sostenibilidad'
 import { CierreSostenibilidad } from '@/components/sostenibilidad/cierre-sostenibilidad'
 import { Meta } from '@/components/seo/meta'
@@ -14,6 +16,12 @@ import { useSostenibilidadReveal } from '@/components/sostenibilidad/use-sosteni
 // web actual: sustainability.php (intro + 3 pilares + cierre) y
 // competitive-advantage.php (la frase + los 7 videos), tal como preveía la
 // arquitectura (arquitectura-nueva.md: Competitive Advantage se absorbe aquí).
+//
+// Orden del contenido (3ª vuelta, 2026-07-22): misión + video → EL RECORRIDO
+// de los 3 pilares (zigzag con la curva, la estela y el catamarán) → banda de
+// impacto (las 6 cifras) → los 7 videos → cierre. La banda de impacto va justo
+// DESPUÉS del recorrido a propósito: los pilares cuentan QUÉ se hace y las
+// cifras rematan CUÁNTO — separarlas con los videos en medio rompía el remate.
 //
 // PLAN-INTERNAS-V2.md (2026-07-17, Samuel): adopta el HERO COMPARTIDO con la
 // home, la ficha de tour y las landings de evento (internas/hero-interna.tsx)
@@ -47,7 +55,9 @@ export function SostenibilidadPage() {
 
       <div ref={contenidoRef} className="mx-auto max-w-contenido px-5 py-12 sm:px-10 lg:py-16">
         <div className="flex flex-col gap-16 lg:gap-24">
-          <PilaresSostenibilidad />
+          <IntroSostenibilidad />
+          <RecorridoSostenibilidad activo={!estatico} /> {/* [dev-mode] gate */}
+          <ImpactoSostenibilidad />
           <VideosSostenibilidad />
           <CierreSostenibilidad />
         </div>

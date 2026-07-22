@@ -24,6 +24,21 @@ const HOLGURA = (ALTO_FILA - ALTO_RENDER) / 2
 const ALTO_RENDER_COMPACTO = 44
 const ALTO_FILA_COMPACTO = 36
 const HOLGURA_COMPACTO = (ALTO_FILA_COMPACTO - ALTO_RENDER_COMPACTO) / 2
+// Ancho FIJO del compacto (2026-07-22, pedido de Samuel: "al cambiar entre
+// oscuro/claro los elementos se mueven"). El logo compacto es el ÚNICO que
+// alterna `sobreOscuro` EN CALIENTE, sin remontar (nav-flotante.tsx, según
+// `sobreOscuro` cambia con el scroll) — claro y oscuro son dos ARCHIVOS con
+// proporciones nativas DISTINTAS (250×110 vs 512×240), así que el ancho que
+// antes salía de `(alto × ancho) / alto` de CADA variante cambiaba unos px
+// al alternar, y ese cambio empujaba todo lo que comparte fila con él
+// (tabs, Reservar) — el "salto" que se veía no era percepción, era un
+// resize real del `<img>`. Fijar el ancho a la proporción de UNA sola
+// variante (claro, la que ya era el default) y forzar la otra a encajar
+// ahí con `object-contain` (en vez de dejar que cada variante mida lo
+// suyo) es lo que lo vuelve estable — la variante oscura queda unos px más
+// angosta DENTRO de esa caja fija (letterboxing invisible, es solo
+// transparencia del PNG) en vez de ensanchar la fila entera.
+const ANCHO_RENDER_COMPACTO = Math.round((ALTO_RENDER_COMPACTO * VARIANTES.claro.ancho) / VARIANTES.claro.alto)
 
 export function Logo({
   className = '',
@@ -37,15 +52,16 @@ export function Logo({
   const { src, ancho, alto } = sobreOscuro ? VARIANTES.oscuro : VARIANTES.claro
   const altoRender = compacto ? ALTO_RENDER_COMPACTO : ALTO_RENDER
   const holgura = compacto ? HOLGURA_COMPACTO : HOLGURA
+  const anchoRender = compacto ? ANCHO_RENDER_COMPACTO : Math.round((altoRender * ancho) / alto)
 
   return (
     <img
       src={src}
       alt="Hispaniola Aquatic Adventures"
-      width={Math.round((altoRender * ancho) / alto)}
+      width={anchoRender}
       height={altoRender}
       style={{ marginBlock: holgura }}
-      className={`w-auto ${compacto ? 'h-11' : 'h-16'} ${className}`}
+      className={`${compacto ? 'h-11 object-contain object-left' : 'w-auto h-16'} ${className}`}
     />
   )
 }

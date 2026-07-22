@@ -25,8 +25,9 @@ export type PilarSost = {
   id: string
   titulo: string
   texto: string
-  /** cifras destacadas del pilar (solo "operación") — se muestran aparte del párrafo, como highlight editorial */
-  stats?: StatSost[]
+  /** foto de apoyo del paso en el recorrido (nombre en /public/fotos, sin extensión) */
+  foto: string
+  fotoAlt: string
 }
 
 export type VideoSost = {
@@ -54,7 +55,9 @@ export const SOSTENIBILIDAD = {
   // Hero corto a propósito (rediseño 2026-07-17, pedido de Samuel: "el texto
   // de la descripción del hero está muy largo") — la declaración completa
   // (Bávaro Reefs Foundation, "empoderar a nuestra gente", RD) no se pierde:
-  // se muda a `mision`, el bloque editorial grande que abre PilaresSostenibilidad.
+  // se muda a `mision`, el bloque editorial que abre la página. Desde
+  // 2026-07-22 ese bloque vive en IntroSostenibilidad, a dos columnas con un
+  // video al lado (y por eso baja de tamaño: --text-sost-mision).
   sub: 'No es un añadido: es la base de cómo operamos, en el mar y en tierra.',
   misionEyebrow: 'Nuestra misión',
   mision: 'En Hispaniola Aquatic Adventures protegemos los ecosistemas de los que dependemos, empoderamos a nuestra gente y dejamos una huella positiva en cada lugar donde operamos — a través de la Bávaro Reefs Foundation, la organización sin fines de lucro que sostiene esta misión en la República Dominicana.',
@@ -65,16 +68,34 @@ export const SOSTENIBILIDAD = {
   fotoAlt: 'Buceo de snorkel sobre el arrecife de coral que la fundación restaura',
 
   pilaresTitulo: 'Cómo lo hacemos realidad',
+  // ⚠️ FOTOS DE APOYO del recorrido (2026-07-22, 3ª vuelta): una por paso, va
+  // apareciendo según avanza el recorrido. Todas son fotos REALES del cliente
+  // (galerías de los tours), ninguna de stock — ojo con las `equipo-*.webp`,
+  // que SÍ son stock de estudio y por eso no se usan aquí.
+  // Ninguna repite las 3 del hero de esta misma página (ver `galeria` arriba).
   pilares: [
     {
       id: 'conservacion',
       titulo: 'Conservación y áreas protegidas',
       texto: 'Con aportes económicos directos y colaboración activa, apoyamos a la Bávaro Reefs Foundation en hitos ambientales reales: la creación y ampliación de áreas marinas protegidas, la recuperación y el monitoreo de la tortuga verde en la República Dominicana, y la restauración de coral en Coral Garden, hoy uno de los sitios de restauración de arrecife más efectivos del país.',
+      // La foto MÁS literal de todo el proyecto para este pilar: una estructura
+      // de vivero de coral con su placa de Hispaniola, lista para sembrar.
+      foto: 'galeria-snorkel-lovers-15',
+      fotoAlt: 'Estructura de vivero de coral de Hispaniola lista para sembrarse en el arrecife',
     },
     {
       id: 'comunidades',
       titulo: 'Apoyo directo a las comunidades',
       texto: 'Sostenibilidad también es cuidar a las personas. Más allá de la acción ambiental, apoyamos de forma activa a un orfanato local, contribuyendo al bienestar y desarrollo de niños vulnerables de nuestra comunidad. Para nosotros, la protección del medioambiente y la responsabilidad social van de la mano.',
+      // ⚠️ PROVISIONAL — decisión consciente de Samuel (2026-07-22): NO existe
+      // ni una foto del orfanato ni de la acción comunitaria en todo el
+      // proyecto, así que esta ilustra "personas", no lo que dice el texto.
+      // Es EL pendiente de contenido de esta página: pedir al cliente fotos
+      // propias de la fundación (mismo pendiente que la foto de cabecera).
+      // Sustituir en cuanto lleguen — no hace falta tocar código, solo este
+      // par de campos.
+      foto: 'galeria-snorkel-lovers-12',
+      fotoAlt: 'Dos personas haciendo snorkel juntas sobre el arrecife',
     },
     {
       id: 'operacion',
@@ -84,12 +105,41 @@ export const SOSTENIBILIDAD = {
       // versión de este copy; los montos exactos ($3.50/$2.00) se muestran
       // aparte, en `stats`.
       texto: 'La sostenibilidad empieza por dentro: invertimos en nuestro equipo con salario justo, formación continua y altos estándares de seguridad, para que cada experiencia refleje nuestra misión. Un porcentaje adicional se destina a los equipos de oficina y ventas, la base de un servicio impecable en cada reserva.',
-      stats: [
-        { valor: 'US$ 3.50', label: 'por huésped, directo a nuestro equipo operativo' },
-        { valor: 'US$ 2.00', label: 'por huésped, a las iniciativas de la fundación' },
-      ],
+      // Tripulación REAL uniformada trabajando en el bar flotante. Se descartó
+      // cocina-flotante.webp (también real y también del equipo) porque el
+      // primer plano son dos turistas sin camiseta haciendo el payaso: lee
+      // como fiesta, no como "salario justo, formación y estándares de
+      // seguridad", que es lo que dice el párrafo.
+      foto: 'bar-flotante',
+      fotoAlt: 'Tripulación de Hispaniola atendiendo el bar flotante en el mar',
     },
   ] satisfies PilarSost[],
+
+  // ---------- Banda de impacto (2026-07-22, pedido de Samuel) ----------
+  // ⚠️ PROCEDENCIA DE LAS CIFRAS: las 4 de `impacto` (corales, tortugas, m² de
+  // arrecife, niños) NO salen de sustainability.php — la página vieja cuenta
+  // los hitos en prosa, sin números. Vienen del MOCKUP que aportó Samuel el
+  // 2026-07-22 ("además de eso debemos agregar estos datos"), o sea son dato
+  // del cliente y se transcriben tal cual, sin redondear ni maquillar — mismo
+  // trato que los US$ 3.50 / 2.00. Quedan pendientes de contrastar contra las
+  // memorias reales de la Bávaro Reefs Foundation antes de publicar (mismo
+  // pendiente que las fotos propias de la fundación, app/PLAN-v3.md §9).
+  impactoEyebrow: 'Nuestro impacto',
+  impactoTitulo: 'Tu reserva deja huella real',
+  impacto: [
+    { valor: '12.000+', label: 'corales sembrados' },
+    { valor: '350', label: 'tortugas verdes monitoreadas' },
+    { valor: '5.000 m²', label: 'de arrecife en restauración' },
+    { valor: '200+', label: 'niños apoyados' },
+  ] satisfies StatSost[],
+  // Los 2 aportes por huésped VIVÍAN dentro del pilar "operación" (como
+  // `stats`); suben aquí porque son la BISAGRA de la banda: explican de dónde
+  // salen las 4 cifras de arriba. Dejarlos en los dos sitios los duplicaba.
+  aportesTitulo: 'De cada reserva',
+  aportes: [
+    { valor: 'US$ 3.50', label: 'por huésped, a nuestro equipo operativo' },
+    { valor: 'US$ 2.00', label: 'por huésped, a las iniciativas de la fundación' },
+  ] satisfies StatSost[],
 
   videosEyebrow: 'Nuestra ventaja competitiva',
   videosTitulo: 'Lo que nos diferencia, en video',

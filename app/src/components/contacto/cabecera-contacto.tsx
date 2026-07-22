@@ -1,24 +1,15 @@
-import { Link } from 'react-router-dom'
 import { Etiqueta } from '@/components/ui/etiqueta'
 import { CONTACTO } from '@/data/home'
 
 // Above the fold de /contacto — children de HeroInterna (PLAN-INTERNAS-V2.md),
-// mismo anatómico blanco-sobre-foto que Nosotros y Sostenibilidad: migaja ·
-// eyebrow · H1 · lead. Mapea contact.php de la web actual (H1 "Contact Us").
+// mismo anatómico blanco-sobre-foto que Nosotros y Sostenibilidad: eyebrow ·
+// H1 · lead. Mapea contact.php de la web actual (H1 "Contact Us"). Sin
+// migaja (retirada de todos los heros de internas, 2026-07-22, pedido de
+// Samuel).
 export function CabeceraContacto() {
   return (
     <div>
-      <nav aria-label="Migaja de pan" className="text-xs text-white/70">
-        <Link to="/" className="hover:text-white">
-          Inicio
-        </Link>
-        <span className="px-1.5 text-white/40">/</span>
-        <span className="text-white/90">Contacto</span>
-      </nav>
-
-      <Etiqueta sobreOscuro className="mt-4">
-        {CONTACTO.eyebrow}
-      </Etiqueta>
+      <Etiqueta sobreOscuro>{CONTACTO.eyebrow}</Etiqueta>
 
       <h1 className="mt-3 max-w-2xl text-balance font-display text-h2 font-semibold text-white">{CONTACTO.titulo}</h1>
 

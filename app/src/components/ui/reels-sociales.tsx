@@ -1,8 +1,9 @@
-import { Play } from 'lucide-react'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { ChevronLeft, ChevronRight, Play } from 'lucide-react'
 import { Etiqueta } from '@/components/ui/etiqueta'
-import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
 import { IconoInstagram, IconoTikTok } from '@/components/ui/iconos-redes'
-import { REELS, REELS_HASHTAG, REDES, type Reel } from '@/data/home'
+import { VideoLightbox } from '@/components/tour/video-lightbox'
+import { REELS, REELS_HASHTAG, type Reel } from '@/data/home'
 
 // «Míranos en acción» — carrusel de reels de Instagram/TikTok (correcciones
 // v1 del cliente, 2026-07-20). Cubre DOS peticiones con una sola pieza:
@@ -23,15 +24,50 @@ import { REELS, REELS_HASHTAG, REDES, type Reel } from '@/data/home'
 // ⚠️ Estado de los datos (ver REELS en data/home.ts): hoy son FOTOS reales de
 // las galerías del cliente haciendo de cartel, con `video: null`. No hay
 // contadores de vistas (la maqueta los traía inventados) ni handles de
-// terceros. Cuando lleguen los reels reales solo cambia el dato.
+// terceros. Cuando lleguen los reels reales solo cambia el dato: la card ya
+// sabe abrirlos (VideoLightbox), igual que el video del mosaico.
+//
+// ─────────────────────────────────────────────────────────────────────────
+// 2ª VUELTA DE LA FICHA (Samuel, 2026-07-22): «mejora la disposición de los
+// videos reels, hay espaciados, padding, alineaciones erradas y raras, darle
+// más cariño a esta parte». Lo que estaba mal, medido en la ficha:
+//
+// 1. LA PRIMERA CARD NO SE ALINEABA CON EL TÍTULO. La pista llevaba un
+//    sangrado a los bordes (`-mx-5 sm:-mx-10`) pensado para cuando la sección
+//    ocupa el ancho de la ventana — en la home, donde deslizar hasta el canto
+//    de la pantalla es lo correcto. Dentro de la columna de la ficha ese mismo
+//    sangrado dejaba las cards 40px a la izquierda del H2. De ahí la
+//    «alineación rara»: no era una sensación, eran 40px reales.
+// 2. LA SECCIÓN TRAÍA SU PROPIO PADDING DE SECCIÓN (`py-seccion`) dentro de
+//    una columna que YA separa sus bloques con `gap-8`. El espaciado se
+//    sumaba dos veces y el bloque medía 932px de alto para 450px de reels.
+// 3. NO SE VEÍA QUE HUBIERA MÁS. La 4ª card quedaba cortada por el borde sin
+//    ninguna flecha ni pista de que aquello se desplazaba — parecía un
+//    recorte, no un carrusel.
+//
+// La solución es la `variante`: la sección de la home y el bloque de la ficha
+// dejan de ser el mismo layout con un fondo distinto. En Figma son 2 variantes
+// del mismo componente.
 
 // Scroll horizontal con snap, no marquee automático: aquí el visitante ELIGE
 // qué mirar (a diferencia del ticker del hero, que es ambiente). Un carrusel
 // de video que se mueve solo pelea con el usuario justo cuando quiere leer.
-function CardReel({ reel }: { reel: Reel }) {
+function CardReel({ reel, onAbrir }: { reel: Reel; onAbrir: (r: Reel) => void }) {
   const IconoRed = reel.red === 'instagram' ? IconoInstagram : IconoTikTok
+
+  // Sin video real, la card no es pulsable: un botón que no hace nada es peor
+  // que una imagen. El play se queda igualmente porque describe el FORMATO
+  // (esto es un reel vertical), que es información verdadera aunque el clip
+  // todavía no exista.
+  const Envoltorio = reel.video ? 'button' : 'article'
+
   return (
-    <article className="reel-card group">
+    <Envoltorio
+      className="reel-card group"
+      {...(reel.video
+        ? { type: 'button' as const, onClick: () => onAbrir(reel), 'aria-label': `Ver el reel: ${reel.titulo}` }
+        : {})}
+    >
       {reel.video ? (
         <video
           src={reel.video}
@@ -53,14 +89,12 @@ function CardReel({ reel }: { reel: Reel }) {
         <IconoRed className="size-4" />
       </span>
 
-      {/* El play es señal de "esto es un video", no un botón funcional
-          mientras no haya video que reproducir. */}
       <span className="reel-card__play" aria-hidden="true">
-        <Play className="size-5 fill-current" />
+        <Play className="size-5 translate-x-px fill-current" />
       </span>
 
       <p className="reel-card__titulo">{reel.titulo}</p>
-    </article>
+    </Envoltorio>
   )
 }
 
@@ -69,66 +103,193 @@ type Props = {
   titulo?: string
   eyebrow?: string
   lead?: string
-  /** La ficha va sobre gris y no necesita fondo propio. */
-  conFondo?: boolean
+  /**
+   * `seccion` (home): franja a ancho completo, con su propio fondo y su
+   * padding de sección; la pista sangra hasta el borde de la pantalla en
+   * móvil.
+   * `bloque` (ficha): una card más de la columna — sin padding ni fondo
+   * propios (los pone el envoltorio BLOQUE_FICHA del padre) y con la pista
+   * sangrando solo lo que mide ese padding, para que las cards lleguen al
+   * canto de la card sin desalinearse del título.
+   */
+  variante?: 'seccion' | 'bloque'
+  /**
+   * El «¿Navegaste con nosotros? Etiquétanos con #…».
+   * `false` en la ficha (Samuel, 2026-07-22): ahí el visitante está a media
+   * decisión de compra y una invitación a irse a Instagram es una salida más.
+   * En la home sí tiene sentido: allí la sección ES la invitación.
+   *
+   * Antes se llamaba `conRedes` y encendía también una fila de botones
+   * Instagram/Facebook/TikTok. Esos botones se retiraron (Samuel, misma
+   * fecha): las tres redes ya viven como iconos en el footer, a un scroll de
+   * distancia, así que aquí solo repetían enlaces de salida y le robaban el
+   * cierre a la sección, que es el hashtag.
+   */
+  conHashtag?: boolean
 }
 
 export function ReelsSociales({
   titulo = 'Míranos en acción',
   eyebrow = 'Reels · Instagram · TikTok',
   lead = 'Un día a bordo se vive mejor en video. Estos somos nosotros — y nuestros clientes disfrutando el Caribe.',
-  conFondo = true,
+  variante = 'seccion',
+  conHashtag = true,
 }: Props) {
-  return (
-    <section
-      className={`px-5 py-seccion-sm sm:px-10 sm:py-seccion ${conFondo ? 'bg-papel' : ''}`}
-    >
-      <div className="mx-auto max-w-contenido">
-        <div>
-          <Etiqueta>{eyebrow}</Etiqueta>
-          <h2 className="mt-3 font-display text-h2 font-semibold text-navy">{titulo}</h2>
-          <p className="mt-3 max-w-2xl text-lead text-navy-sub">{lead}</p>
-        </div>
+  const pista = useRef<HTMLDivElement>(null)
+  const [alInicio, setAlInicio] = useState(true)
+  const [alFinal, setAlFinal] = useState(false)
+  const [hayScroll, setHayScroll] = useState(false)
+  const [reelAbierto, setReelAbierto] = useState<Reel | null>(null)
 
-        {/* El wrapper sangra a los lados en móvil (-mx-5) para que las cards
-            se deslicen hasta el borde real de la pantalla en vez de chocar
-            contra el padding de la sección. El padding se devuelve por dentro
-            para que la primera card no quede pegada al canto. */}
-        <div className="reel-pista -mx-5 mt-8 px-5 sm:-mx-10 sm:px-10">
-          {REELS.map((r) => (
-            <CardReel key={r.id} reel={r} />
-          ))}
-        </div>
+  const esBloque = variante === 'bloque'
 
-        <div className="mt-8 flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <ul className="flex flex-wrap items-center gap-2">
-            {REDES.filter((r) => r.id === 'instagram' || r.id === 'tiktok' || r.id === 'facebook').map(
-              (red) => {
-                const clases =
-                  'inline-flex items-center rounded-btn px-4 py-2 text-sm font-semibold text-navy ring-1 ring-linea transition-colors hover:bg-papel-hueso'
-                return (
-                  <li key={red.id}>
-                    {red.url ? (
-                      <a href={red.url} target="_blank" rel="noopener" className={clases}>
-                        {red.nombre}
-                      </a>
-                    ) : (
-                      // Sin URL real no se inventa destino (misma regla que
-                      // los premios y los perfiles de reseñas).
-                      <EnlacePrototipo className={clases}>{red.nombre}</EnlacePrototipo>
-                    )}
-                  </li>
-                )
-              },
-            )}
-          </ul>
+  // Estado de las flechas. El margen de 2px absorbe los redondeos
+  // sub-píxel del scroll (a 1440px, scrollLeft acaba en 1673.6 contra un
+  // máximo de 1673.59…, y sin margen la flecha derecha nunca se apagaba).
+  //
+  // `hayScroll` decide si las flechas EXISTEN. Desde que la card crece para
+  // llenar la fila (.reel-card en componentes.css), en la home de escritorio
+  // los 5 reels caben enteros y no hay nada que desplazar: dos flechas
+  // apagadas ahí no informan de nada, solo parecen un control roto. Donde sí
+  // sobra contenido —la columna estrecha de la ficha, o un escritorio
+  // pequeño— reaparecen solas.
+  const medir = useCallback(() => {
+    const el = pista.current
+    if (!el) return
+    setAlInicio(el.scrollLeft <= 2)
+    setAlFinal(el.scrollLeft >= el.scrollWidth - el.clientWidth - 2)
+    setHayScroll(el.scrollWidth > el.clientWidth + 2)
+  }, [])
 
-          <p className="text-sm text-navy-sub">
-            ¿Navegaste con nosotros? Etiquétanos con{' '}
-            <span className="font-semibold text-coral">{REELS_HASHTAG}</span> y sal en nuestra web.
-          </p>
+  useEffect(() => {
+    medir()
+    // También al redimensionar: al pasar de móvil a escritorio cabe otro
+    // número de cards y las flechas tienen que recalcularse.
+    window.addEventListener('resize', medir)
+    return () => window.removeEventListener('resize', medir)
+  }, [medir])
+
+  // Un paso = el ancho visible menos una card, para que quede siempre una
+  // card de solape. Sin ese solape el usuario pierde el hilo de dónde estaba
+  // (es el mismo criterio del «page down» de un documento, que nunca salta
+  // una pantalla exacta).
+  const mover = (direccion: 1 | -1) => {
+    const el = pista.current
+    if (!el) return
+    const card = el.firstElementChild as HTMLElement | null
+    const paso = card ? el.clientWidth - card.offsetWidth : el.clientWidth * 0.8
+    el.scrollBy({ left: direccion * paso, behavior: 'smooth' })
+  }
+
+  const flechas = (
+    // Solo en escritorio: en táctil se desliza con el dedo y dos botones
+    // ahí solo quitarían sitio a las cards.
+    <div className="hidden items-center gap-2 sm:flex">
+      {(
+        [
+          { dir: -1 as const, Icono: ChevronLeft, etiqueta: 'Reels anteriores', apagada: alInicio },
+          { dir: 1 as const, Icono: ChevronRight, etiqueta: 'Más reels', apagada: alFinal },
+        ]
+      ).map(({ dir, Icono, etiqueta, apagada }) => (
+        <button
+          key={dir}
+          type="button"
+          onClick={() => mover(dir)}
+          disabled={apagada}
+          aria-label={etiqueta}
+          className="grid size-10 place-items-center rounded-full text-navy ring-1 ring-linea transition-colors hover:bg-papel-hueso disabled:pointer-events-none disabled:opacity-35"
+        >
+          <Icono className="size-5" />
+        </button>
+      ))}
+    </div>
+  )
+
+  const cabecera = (
+    <>
+      <Etiqueta>{eyebrow}</Etiqueta>
+      {/* En la ficha el título baja a --text-h3: ahí es el título de UN
+          bloque de la columna y tiene que pesar lo mismo que «Itinerario» o
+          «Opiniones» (TituloSeccion), no más. En la home sigue siendo un H2
+          de sección a ancho completo. */}
+      <h2 className={`mt-3 font-display font-semibold text-navy ${esBloque ? 'text-h3' : 'text-h2'}`}>
+        {titulo}
+      </h2>
+      <p className={`mt-2 max-w-2xl text-navy-sub ${esBloque ? '' : 'mx-auto text-lead'}`}>{lead}</p>
+    </>
+  )
+
+  const contenido = (
+    <>
+      {/* La cabecera se compone distinto en cada variante, y no es capricho:
+          en la HOME va CENTRADA (Samuel, 2026-07-22) porque es una sección a
+          ancho completo y el resto de secciones de la home abren igual —
+          eyebrow, título y lead centrados. En la FICHA sigue alineada a la
+          izquierda y compartiendo fila con las flechas: allí es un bloque más
+          de una columna de bloques, todos alineados a la izquierda, y
+          centrarlo lo sacaría del ritmo de la página.
+          `items-end` en la fila de la ficha alinea por la línea base del lead,
+          no por el centro de un bloque de 3 líneas contra un botón de 40px. */}
+      {esBloque ? (
+        <div className="flex items-end justify-between gap-6">
+          <div>{cabecera}</div>
+          {hayScroll ? flechas : null}
         </div>
+      ) : (
+        <div className="text-center">{cabecera}</div>
+      )}
+
+      {/* El sangrado (salir del contenedor y devolver el padding por dentro)
+          vive en CSS y no en utilidades, porque además del margin y el
+          padding necesita un tercer valor que Tailwind no expresa bien aquí
+          —scroll-padding-inline— y los tres tienen que moverse juntos o la
+          alineación se rompe sin avisar. Ver .reel-pista--sangrada en
+          componentes.css: ahí está el bug que esto arregla. */}
+      <div
+        ref={pista}
+        onScroll={medir}
+        className={`reel-pista reel-pista--sangrada mt-6 ${
+          esBloque ? 'reel-pista--en-bloque' : 'reel-pista--en-seccion'
+        }`}
+      >
+        {REELS.map((r) => (
+          <CardReel key={r.id} reel={r} onAbrir={setReelAbierto} />
+        ))}
       </div>
+
+      {/* Las flechas de la home van DEBAJO y centradas, no en la fila del
+          título: con la cabecera centrada, colgarlas a la derecha dejaba el
+          bloque descompensado. Y solo aparecen si sobra contenido — ver
+          `hayScroll`. */}
+      {!esBloque && hayScroll ? <div className="mt-6 flex justify-center">{flechas}</div> : null}
+
+      {conHashtag ? (
+        <p className="mt-8 text-center text-sm text-navy-sub">
+          ¿Navegaste con nosotros? Etiquétanos con{' '}
+          <span className="font-semibold text-coral">{REELS_HASHTAG}</span> y sal en nuestra web.
+        </p>
+      ) : null}
+
+      {reelAbierto?.video ? (
+        <VideoLightbox
+          src={reelAbierto.video}
+          poster={`/fotos/${reelAbierto.foto}.webp`}
+          etiqueta={reelAbierto.titulo}
+          onCerrar={() => setReelAbierto(null)}
+        />
+      ) : null}
+    </>
+  )
+
+  // En `bloque` no hay <section> ni max-w propios: el componente ES el
+  // contenido de la card que le pone el padre, y la anchura la manda la
+  // columna. Envolverlo aquí en otro contenedor centrado volvería a meter el
+  // desalineado que este cambio quita.
+  if (esBloque) return contenido
+
+  return (
+    <section className="bg-papel px-5 py-seccion-sm sm:px-10 sm:py-seccion">
+      <div className="mx-auto max-w-contenido">{contenido}</div>
     </section>
   )
 }

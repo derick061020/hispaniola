@@ -5,9 +5,9 @@ import { Experiencia } from '@/components/home/experiencia'
 import { ToursGrid } from '@/components/home/tours-grid'
 import { WhyDirect } from '@/components/home/why-direct'
 import { IncluyeCrucero } from '@/components/home/incluye-crucero'
-import { EquipoTeaser } from '@/components/home/equipo-teaser'
 import { Reviews } from '@/components/home/reviews'
 import { Contacto } from '@/components/home/contacto'
+import { EquipoTeaser } from '@/components/home/equipo-teaser'
 import { Faq } from '@/components/home/faq'
 import { EventosEspeciales } from '@/components/home/eventos-especiales'
 import { ReelsSociales } from '@/components/ui/reels-sociales'
@@ -54,6 +54,12 @@ import { FAQ_HOME } from '@/data/home'
 // (mismo papel blanco, ver el comentario de premios.tsx) — ahora ese bloque
 // queda partido por esta franja, con su propio fondo (--color-menta) a
 // propósito: es la línea divisoria, no hace falta un border-b.
+//
+// EquipoTeaser se MUEVE de entre WhyDirect e IncluyeCrucero a debajo de
+// Contacto (2026-07-22, pedido de Samuel): antes vivía en la zona de "por
+// qué nosotros" de mitad de página; ahora cierra junto con Contacto y Faq —
+// zona de cierre/confianza, justo antes del Footer. El rediseño de las cards
+// (retrato + rol/antigüedad + hover) va en equipo-teaser.tsx.
 export function HomePage() {
   return (
     // pb-[calc(4rem+env(safe-area-inset-bottom))] (auditoría móvil 2026-07-17):
@@ -74,12 +80,12 @@ export function HomePage() {
       <Experiencia />
       <ToursGrid />
       <WhyDirect />
-      <EquipoTeaser />
       <IncluyeCrucero />
       <Reviews />
       <EventosEspeciales />
       <ReelsSociales />
       <Contacto />
+      <EquipoTeaser />
       <Faq />
       <Footer />
       {/* Fijo, fuera del flujo (como lo era ModalBienvenida). Vive aquí y no

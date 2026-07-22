@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom'
 import { Etiqueta } from '@/components/ui/etiqueta'
 import { SOSTENIBILIDAD } from '@/data/sostenibilidad'
 
@@ -7,20 +6,12 @@ import { SOSTENIBILIDAD } from '@/data/sostenibilidad'
 // la ficha de tour y las landings de evento), sobre las fotos reales del
 // arrecife en fundido en vez de una imagen fija al lado. Sin CTA: esta
 // página informa, no cotiza — mismo criterio que antes de adoptar el hero.
+// Sin migaja (retirada de todos los heros de internas, 2026-07-22, pedido
+// de Samuel).
 export function CabeceraSostenibilidad() {
   return (
     <div>
-      <nav aria-label="Migaja de pan" className="text-xs text-white/70">
-        <Link to="/" className="hover:text-white">
-          Inicio
-        </Link>
-        <span className="px-1.5 text-white/40">/</span>
-        <span className="text-white/90">Sostenibilidad</span>
-      </nav>
-
-      <Etiqueta sobreOscuro className="mt-4">
-        {SOSTENIBILIDAD.eyebrow}
-      </Etiqueta>
+      <Etiqueta sobreOscuro>{SOSTENIBILIDAD.eyebrow}</Etiqueta>
 
       <h1 className="mt-3 max-w-2xl text-balance font-display text-h2 font-semibold text-white">
         {SOSTENIBILIDAD.titulo}

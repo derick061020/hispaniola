@@ -538,16 +538,27 @@ export const EXPERIENCIA_KICKER = 'Sin costes ocultos. Sin barcos abarrotados.'
 // el mismo commit para no dejar cadáveres — si el cliente se arrepiente, se
 // recupera con un `git revert` de ese commit.
 //
-// Es EL MISMO asset que el fondo del hero (/video/hero.mp4): el video
-// promocional del cliente, el que hasta ahora se auto-abría en el popup de
-// bienvenida que el slide 2 manda eliminar. Un asset, dos usos, cero popups.
-// El poster es una foto real de la galería, no un frame inventado.
+// CORRECCIÓN (2026-07-22): la 1ª vuelta asumió que era EL MISMO asset que el
+// fondo del hero (/video/hero.mp4) — Samuel aclaró que NO: el video del popup
+// es uno distinto, de YouTube (id K65cchLFwRs, canal propio del cliente), con
+// la presentadora hablando a cámara — confirmado también en
+// analisis/direccion-visual.md §del hero (ahí se descartó ESE MISMO id para
+// el fondo del hero por llevar subtítulos incrustados en todo el metraje sin
+// tramo limpio; aquí sí es el uso correcto, es justamente el video del popup).
+// Se extrajo con yt-dlp (contenido propio del cliente, mismo trato que
+// hero.mp4/incluye-oceano-cenital.mp4 — no hay stock ni assets inventados) a
+// /video/experiencia-presentadora.mp4. Los subtítulos quedan incrustados
+// (vienen "horneados" en el video de origen, no se pueden quitar sin
+// re-editar) — al hacer loop se reinician de golpe; aceptado por Samuel como
+// costo del video real vs. no tener video. El poster es un frame real del
+// propio clip (ffmpeg, sin CTA tipo "click the link" que no aplica fuera de
+// YouTube), no una foto de la galería ni un frame inventado.
 export type VideoExperiencia = { src: string; poster: string; alt: string }
 
 export const EXPERIENCIA_VIDEO: VideoExperiencia = {
-  src: '/video/hero.mp4',
-  poster: '/fotos/galeria-snorkel-lovers-2.webp',
-  alt: 'Un día a bordo de un catamarán de Hispaniola: navegación, snorkel y comida hecha al momento',
+  src: '/video/experiencia-presentadora.mp4',
+  poster: '/fotos/experiencia-presentadora-poster.webp',
+  alt: 'Presentadora de Hispaniola explicando cómo elegir la excursión correcta en Punta Cana',
 }
 
 /** Card del ticker del hero. Son DOS especies, no una: el tour se compra (tiene
@@ -622,9 +633,7 @@ export const BENEFICIOS_DIRECTO: BeneficioDirecto[] = [
 export const BOLETO_TOUR = TOURS[0]
 
 // ─────────────────────────────────────────────────────────────────────────
-// Sección «Reseñas verificadas» (v5, pedido de Samuel 2026-07-15): video
-// del cofundador a la izquierda + 2 reseñas grandes a la derecha, en
-// slider vertical auto-rotante. Las reseñas aquí son el bloque que demuestra
+// Sección «Reseñas verificadas». Las reseñas aquí son el bloque que demuestra
 // la prueba social — el "link ver más" sigue SIN apuntar a Viator
 // (NOTAS['home-reviews'] del prototipo): no regalar tráfico al canal que
 // vende el mismo tour.
@@ -633,10 +642,19 @@ export const BOLETO_TOUR = TOURS[0]
 // tiene presencia propia y verificable (la auditoría del sitio
 // —analisis/auditoria-web-actual.md— los marcó como los 2 canales
 // principales de prueba social del cliente).
+//
+// v7 (2026-07-22, pedido de Samuel sobre la maqueta del cliente): la sección
+// pasa de «1 video + slider vertical de 2 quotes» a MURO de reseñas —
+// 2 video-testimonios arriba + 3 filas de cards en marquee infinito. Eso
+// obliga a tres cosas en los datos, y las tres están abajo:
+//   1. un pool mucho más grande de reseñas (QUOTES solo tenía 5),
+//   2. rating POR plataforma en la barra de confianza, y
+//   3. los 2 video-testimonios como dato (antes había un solo FUNDADOR).
 
 export type Review = {
   id: string
-  /** Línea superior: "Family from New York", "Honeymoon from London"... */
+  /** Quién es y de dónde nos visitó: "Familia de Nueva York", "Luna de miel
+   *  desde Londres"… Se pinta como línea meta bajo el nombre. */
   lugar: string
   texto: string
   autor: string
@@ -647,16 +665,17 @@ export type Review = {
   //              (ui/insignia-confianza.tsx, mismo patrón).
 }
 
-// 5 reseñas: número pensado para el slider vertical (con 2 visibles a la vez
-// el "salto" entre la última y la primera se ve natural — el contenido es
-// distinto pero el ritmo se mantiene). Portadas del prototipo y de reseñas
-// reales de la web actual (mismo pool que el cerebro ya tenía aprobado).
+// LAS 5 REALES. Portadas del prototipo y de reseñas reales de la web actual
+// (mismo pool que el cerebro ya tenía aprobado). Este array es el que usan la
+// ficha de tour (opiniones-tour.tsx) y el widget de reserva: ahí NO puede
+// entrar relleno — una reseña junto al precio, en el momento de decidir,
+// tiene que ser de verdad.
 // ⚠️ Avatares: NO tenemos fotos de clientes (privacidad). El componente
 // pinta iniciales en un círculo aqua-tint — placeholder honesto, no inventado.
 export const QUOTES: Review[] = [
   {
     id: 'ny',
-    lugar: 'Family from New York',
+    lugar: 'Familia de Nueva York',
     texto:
       'El vivero de coral fue lo mejor del viaje — la bióloga nos explicó todo, y la comida a bordo, increíble.',
     autor: 'Jessica M.',
@@ -666,7 +685,7 @@ export const QUOTES: Review[] = [
   },
   {
     id: 'tx',
-    lugar: 'Couple from Texas',
+    lugar: 'Pareja desde Texas',
     texto:
       'Trato excelente, grupo pequeño como prometían — no como otros catamaranes llenos de gente. Parecía que el barco era solo nuestro.',
     autor: 'Carlos R.',
@@ -676,7 +695,7 @@ export const QUOTES: Review[] = [
   },
   {
     id: 'cdmx',
-    lugar: 'Family from Mexico City',
+    lugar: 'Familia de Ciudad de México',
     texto:
       'Reservamos directo por WhatsApp y nos resolvieron todo en minutos. La recogida fue puntual y el barco impecable. Repetiríamos sin dudar.',
     autor: 'Ana P.',
@@ -686,7 +705,7 @@ export const QUOTES: Review[] = [
   },
   {
     id: 'lhr',
-    lugar: 'Honeymoon from London',
+    lugar: 'Luna de miel desde Londres',
     texto:
       'Un día perfecto de luna de miel. Snorkel privado, almuerzo romántico en una playa desierta, tripulación atenta. Vale cada euro.',
     autor: 'Sophie L.',
@@ -696,7 +715,7 @@ export const QUOTES: Review[] = [
   },
   {
     id: 'bcn',
-    lugar: 'Family from Barcelona',
+    lugar: 'Familia de Barcelona',
     texto:
       'Los niños disfrutaron muchísimo del snorkel con la bióloga marina. El equipo súper atento con ellos. Una experiencia para repetir.',
     autor: 'Marta V.',
@@ -706,68 +725,291 @@ export const QUOTES: Review[] = [
   },
 ]
 
+// ⚠️⚠️ RELLENO — HAY QUE SUSTITUIRLO POR RESEÑAS REALES ANTES DE PUBLICAR ⚠️⚠️
+//
+// Estas 13 NO son reseñas de clientes: están escritas para poder construir y
+// evaluar el MURO de 3 filas en marquee (decisión de Samuel 2026-07-22, al
+// elegir ese diseño sabiendo que solo teníamos 5 reseñas reales). Con 5, las
+// 3 filas repetían la misma cara tres veces en pantalla y el diseño no se
+// podía juzgar.
+//
+// Van APARTE de QUOTES a propósito, no mezcladas: así el relleno no puede
+// colarse en la ficha de tour ni en el widget de reserva (que importan
+// QUOTES), que es donde una reseña falsa haría daño de verdad — al lado del
+// precio, en el momento de decidir. Solo el muro de la home consume la mezcla
+// (RESENAS_MURO, abajo).
+//
+// Mismo criterio que las fotos de stock del equipo (data/nosotros.ts): se
+// salta la regla de CLAUDE.md «contenido real, nunca inventado» de forma
+// consciente, marcada y temporal, para que el diseño se pueda ver. Cuando el
+// cliente exporte sus reseñas de Google/TripAdvisor/Viator, este array se
+// borra entero y RESENAS_MURO pasa a ser QUOTES.
+export const QUOTES_RELLENO: Review[] = [
+  {
+    id: 'r-mia',
+    lugar: 'Familia de Miami',
+    texto:
+      'Nos recogieron en el hotel a la hora exacta y volvimos con los niños dormidos de tanto nadar. Día redondo.',
+    autor: 'Laura G.',
+    plataforma: 'Google',
+    fecha: 'jun 2026',
+    estrellas: 5,
+  },
+  {
+    id: 'r-tor',
+    lugar: 'Pareja desde Toronto',
+    texto:
+      'Reservamos el catamarán privado para nuestro aniversario. La tripulación nos dejó el barco decorado sin que lo pidiéramos.',
+    autor: 'Daniel & Erin',
+    plataforma: 'TripAdvisor',
+    fecha: 'jun 2026',
+    estrellas: 5,
+  },
+  {
+    id: 'r-mad',
+    lugar: 'Grupo de amigos desde Madrid',
+    texto:
+      'Éramos doce y no nos sentimos un número. Música, piscina natural y langosta a bordo. Repetimos fijo.',
+    autor: 'Javier S.',
+    plataforma: 'Viator',
+    fecha: 'may 2026',
+    estrellas: 5,
+  },
+  {
+    id: 'r-chi',
+    lugar: 'Familia de Chicago',
+    texto:
+      'Mi madre tiene 71 años y pudo bajar al agua sin problema: la tripulación estuvo pendiente de ella todo el rato.',
+    autor: 'Michelle T.',
+    plataforma: 'Google',
+    fecha: 'may 2026',
+    estrellas: 5,
+  },
+  {
+    id: 'r-bog',
+    lugar: 'Pareja desde Bogotá',
+    texto:
+      'La piscina natural de Saona es otro nivel. Y el almuerzo, muy por encima de lo que esperábamos de un tour.',
+    autor: 'Andrés M.',
+    plataforma: 'TripAdvisor',
+    fecha: 'may 2026',
+    estrellas: 5,
+  },
+  {
+    id: 'r-bos',
+    lugar: 'Luna de miel desde Boston',
+    texto:
+      'Nos cambiaron la fecha por lluvia sin discutir ni cobrar nada. Ese detalle vale más que cualquier descuento.',
+    autor: 'Nicole R.',
+    plataforma: 'Google',
+    fecha: 'abr 2026',
+    estrellas: 5,
+  },
+  {
+    id: 'r-buenosaires',
+    lugar: 'Familia de Buenos Aires',
+    texto:
+      'Contratamos directo por WhatsApp y salió más barato que por la agencia del hotel. Cero intermediarios.',
+    autor: 'Gustavo P.',
+    plataforma: 'Facebook',
+    fecha: 'abr 2026',
+    estrellas: 5,
+  },
+  {
+    id: 'r-par',
+    lugar: 'Pareja desde París',
+    texto:
+      'El equipo habla español, inglés y se hizo entender en francés. Nos explicaron cada parada del recorrido.',
+    autor: 'Camille D.',
+    plataforma: 'TripAdvisor',
+    fecha: 'abr 2026',
+    estrellas: 5,
+  },
+  {
+    id: 'r-sto',
+    lugar: 'Grupo de trabajo desde Santo Domingo',
+    texto:
+      'Organizamos la integración de la empresa a bordo. Todo salió en hora y el equipo se encargó de absolutamente todo.',
+    autor: 'Rosanna C.',
+    plataforma: 'Google',
+    fecha: 'mar 2026',
+    estrellas: 5,
+  },
+  {
+    id: 'r-den',
+    lugar: 'Familia de Denver',
+    texto:
+      'Barco impecable, chalecos para los niños y hielo hasta el final. Se nota que el barco es suyo y lo cuidan.',
+    autor: 'Brian K.',
+    plataforma: 'Viator',
+    fecha: 'mar 2026',
+    estrellas: 5,
+  },
+  {
+    id: 'r-mil',
+    lugar: 'Pareja desde Milán',
+    texto:
+      'Escogimos el menú por persona al reservar: langosta para mí, vegetariano para ella. Ninguna otra agencia lo permitía.',
+    autor: 'Elena F.',
+    plataforma: 'TripAdvisor',
+    fecha: 'feb 2026',
+    estrellas: 5,
+  },
+  {
+    id: 'r-hou',
+    lugar: 'Familia de Houston',
+    texto:
+      'Salimos temprano y evitamos la multitud de otros catamaranes. Estuvimos casi solos en la primera parada.',
+    autor: 'Sarah W.',
+    plataforma: 'Google',
+    fecha: 'feb 2026',
+    estrellas: 5,
+  },
+  {
+    id: 'r-lim',
+    lugar: 'Familia de Lima',
+    texto:
+      'Nos explicaron el vivero de coral y los niños ayudaron a sembrar. Volvieron hablando de eso toda la semana.',
+    autor: 'Patricia N.',
+    plataforma: 'Facebook',
+    fecha: 'ene 2026',
+    estrellas: 5,
+  },
+]
+
+// El pool del muro de la home: reales primero, relleno después. El componente
+// lo reparte en 3 filas (reviews.tsx) — el orden de aquí decide qué reseña
+// cae en qué fila, así que las 5 reales quedan repartidas entre las tres y no
+// amontonadas en la primera.
+export const RESENAS_MURO: Review[] = QUOTES.flatMap((real, i) => [
+  real,
+  ...QUOTES_RELLENO.slice(i * 3, i * 3 + 3),
+])
+
 // ─────────────────────────────────────────────────────────────────────────
 // Barra de confianza multi-plataforma (correcciones v1 del cliente,
 // 2026-07-20 — planes/01-home.md slides 11-12: «agregar logo de google»,
 // «intentar que sea lo más real posible»).
 //
-// ⚠️ LO QUE NO SE INVENTA. La maqueta que mandó el cliente pinta un rating
-// POR PLATAFORMA (Google 4,9 · +900 reseñas / TripAdvisor 4,9 / Viator 4,8
-// Premier). Esos números NO existen en ninguna fuente del proyecto — los
-// generó la IA con la que el cliente hizo la maqueta. Aquí se pinta:
-//   - el agregado REAL (4.9 sobre 1.782 reseñas — el mismo de todo el sitio), y
-//   - de cada plataforma, solo la distinción que SÍ está documentada
-//     (TripAdvisor #1 7 años y los premios Viator vienen de PREMIOS, que
-//     salieron de la web real del cliente).
-// Google entra sin cifra propia a propósito: tenemos reseñas suyas en QUOTES,
-// pero no su recuento. Cuando el cliente dé los datos por plataforma (y las
-// URLs de sus perfiles, pendientes desde PLAN-v3.md §9), se rellenan aquí y
-// `url` deja de ser null → los logos pasan a ser enlaces verificables.
+// ⚠️ LOS RATINGS POR PLATAFORMA SON DEL CLIENTE, NO NUESTROS. Hasta
+// 2026-07-22 esta barra pintaba SOLO el agregado real (4,9 / 1.782) porque
+// las cifras por plataforma de la maqueta (Google 4,9 · +900 reseñas /
+// TripAdvisor 4,9 / Viator 4,8 Premier) no existen en ninguna fuente del
+// proyecto: las generó la IA con la que el cliente hizo esa maqueta.
+//
+// Samuel decide ese día pintarlas igualmente, con dos condiciones que son las
+// que hacen que esto no sea inventarse un dato: (a) las cifras salen del PDF
+// que mandó el CLIENTE sobre su propio negocio —es su afirmación, no
+// nuestra— y (b) quedan marcadas aquí como `porConfirmar` para pedírselas
+// por escrito antes de publicar. Si el cliente las desmiente, se bajan a null
+// y la barra vuelve a enseñar solo el agregado.
+//
+// Las `distincion` NO vienen de esa maqueta: son las documentadas de verdad
+// (TripAdvisor #1 7 años y los premios Viator salen de PREMIOS, que se sacó
+// de la web real del cliente). Google no tiene distinción propia, así que
+// enseña su recuento.
+//
+// Las URLs de perfil siguen pendientes desde PLAN-v3.md §9: cuando lleguen,
+// `url` deja de ser null → cada plataforma pasa a ser un enlace verificable.
 export type PlataformaResena = {
   id: 'google' | 'tripadvisor' | 'viator'
   nombre: string
-  /** Distinción real y documentada. null = no tenemos dato publicable. */
-  distincion: string | null
+  /** Nota media en esa plataforma, en formato es-ES ("4,9"). */
+  rating: string
+  /** Valor numérico del mismo rating — es el que rellena las estrellas
+   *  fraccionales (4,8 → la 5ª estrella al 80%). */
+  ratingNumero: number
+  /** Segunda línea: distinción documentada o recuento de la plataforma. */
+  distincion: string
+  /** true mientras el dato venga de la maqueta del cliente y no de un
+   *  documento suyo. Lo lee el Dev Mode / el traspaso, no la UI. */
+  porConfirmar: boolean
   /** Perfil público. null = pendiente del cliente, no se inventa. */
   url: string | null
 }
 
 export const PLATAFORMAS_RESENAS: PlataformaResena[] = [
-  { id: 'google', nombre: 'Google', distincion: null, url: null },
+  {
+    id: 'google',
+    nombre: 'Google',
+    rating: '4,9',
+    ratingNumero: 4.9,
+    distincion: 'Más de 900 reseñas',
+    porConfirmar: true,
+    url: null,
+  },
   {
     id: 'tripadvisor',
     nombre: 'TripAdvisor',
+    rating: '4,9',
+    ratingNumero: 4.9,
     distincion: '#1 en actividades acuáticas 7 años',
+    porConfirmar: true,
     url: null,
   },
-  { id: 'viator', nombre: 'Viator', distincion: 'Premios 2022 · 2023 · 2024', url: null },
+  {
+    id: 'viator',
+    nombre: 'Viator',
+    rating: '4,8',
+    ratingNumero: 4.8,
+    distincion: 'Premier · premios 2022 · 2023 · 2024',
+    porConfirmar: true,
+    url: null,
+  },
 ]
 
 /** Agregado real, el mismo número que usa el hero y el footer. */
 export const RESENAS_AGREGADO = { rating: '4,9', total: 1782 }
 
-export type Fundador = {
-  /** Frase que aparece bajo el video (en blockquote con border-left coral). */
+// Los 2 VIDEO-TESTIMONIOS de la cabecera de la sección (2026-07-22).
+// Sustituyen al antiguo `FUNDADOR` —un solo video, con la frase de los
+// cofundadores— porque la maqueta del cliente y el pedido de Samuel piden
+// dos, y que sean RESEÑAS DE CLIENTES, no un mensaje de la marca: la sección
+// entera va de gente que ya vino.
+//
+// Frases, nombres y procedencia: de la maqueta del PDF del cliente (slides
+// 11-12), igual que los ratings por plataforma de arriba — dato suyo sobre su
+// propio negocio, pendiente de confirmar por escrito.
+//
+// ⚠️ LOS VIDEOS SON PLACEHOLDER, y aquí no hay matiz: son clips de MARCA
+// (el catamarán navegando y la presentadora de la sección Experiencia), no
+// clientes hablando a cámara. Están para poder montar y evaluar el bloque —
+// «2 video-testimonios reales» lleva pedido al cliente desde
+// correcciones-v1-cliente/planes/01-home.md. Cuando lleguen, se cambia solo
+// el `videoSrc`/`videoPoster` de cada uno.
+export type VideoTestimonio = {
+  id: string
+  /** La frase que se lee dentro de la caja del video. */
   frase: string
-  nombre: string
-  cargo: string
-  /** Video a la izquierda. Placeholder: hero.mp4 (catamaran navegando, asset
-   *  real del cliente). La referencia pide un video del cofundador hablando
-   *  a cámara en primer plano — cuando llegue, se cambia solo este `src`. */
+  /** Quién o quiénes son y de dónde nos visitaron — línea pequeña y sutil
+   *  bajo la frase. */
+  quienes: string
+  procedencia: string
+  plataforma: Review['plataforma']
   videoSrc: string
   videoPoster: string
 }
 
-export const FUNDADOR: Fundador = {
-  frase:
-    'Cada huésped que sube a uno de nuestros barcos es parte de la familia. Esa es la diferencia.',
-  // Pendiente nombre real del cofundador (de la marca: la marca langosta +
-  // "Hispaniola" script). De momento un placeholder honesto, no inventado.
-  nombre: 'Los cofundadores',
-  cargo: 'Hispaniola Aquatic Adventures · Punta Cana, desde 2012',
-  videoSrc: '/video/hero.mp4',
-  videoPoster: '/fotos/hero-video-poster.webp',
-}
+export const VIDEO_TESTIMONIOS: VideoTestimonio[] = [
+  {
+    id: 'aniversario',
+    frase: 'Celebramos nuestro aniversario y fue mágico.',
+    quienes: 'Marisol & Pedro',
+    procedencia: 'nos visitaron desde Santo Domingo',
+    plataforma: 'Google',
+    videoSrc: '/video/hero.mp4',
+    videoPoster: '/fotos/hero-video-poster.webp',
+  },
+  {
+    id: 'amigos',
+    frase: 'Grupo de amigos, cero estrés. Repetiríamos sin pensarlo.',
+    quienes: 'Emily & friends',
+    procedencia: 'nos visitaron desde Chicago',
+    plataforma: 'TripAdvisor',
+    videoSrc: '/video/experiencia-presentadora.mp4',
+    videoPoster: '/fotos/experiencia-presentadora-poster.webp',
+  },
+]
 
 // ─────────────────────────────────────────────────────────────────────────
 // Sección «Contacto» (2026-07-17, pedido de Samuel) — mapa + formulario +
@@ -821,6 +1063,19 @@ export const CONTACTO = {
       'Detrás de cada reserva hay una persona real. Escríbenos y te respondemos nosotros mismos — no un robot ni un call center.',
     chips: ['Respondemos en minutos', 'Español e inglés', 'Equipo local'],
   },
+  // CANAL PREFERIDO del formulario. Las correcciones v1 (slide 13) ya lo
+  // pedían y el comentario de contacto.tsx lo daba por hecho, pero nunca se
+  // llegó a construir — el formulario solo tenía el «¿Sobre qué?». Se añade
+  // con el rediseño del 2026-07-22.
+  //
+  // Los ids coinciden a propósito con los de `cards`: el mismo icono sirve
+  // para la fila de contacto y para el chip del canal, sin una segunda tabla
+  // de iconos que mantener sincronizada.
+  canales: [
+    { id: 'whatsapp', label: 'WhatsApp' },
+    { id: 'email', label: 'Email' },
+    { id: 'telefono', label: 'Teléfono' },
+  ] satisfies { id: ContactoCard['id']; label: string }[],
   // Opciones del «¿Sobre qué?» del formulario. Salen de lo que el sitio
   // vende de verdad (tours, eventos privados, agentes) — no una lista genérica.
   asuntos: [
@@ -952,15 +1207,39 @@ export const REELS_HASHTAG = '#HispaniolaMoments'
 // «paga en efectivo a bordo» (pages/mi-reserva.tsx). El resto son las redes
 // de tarjeta que cualquier operador con cobro online acepta, puestas aquí
 // para que el cliente las VEA y las corrija — no como afirmación cerrada.
-// Se pintan como texto y no como logo de marca: no tenemos los SVG oficiales
-// y un logo mal reproducido miente más que un nombre bien compuesto.
 // NO PUBLICAR sin que Fernando confirme la lista.
-export const MEDIOS_PAGO: string[] = [
-  'Visa',
-  'Mastercard',
-  'American Express',
-  'PayPal',
-  'Efectivo a bordo',
+//
+// 2026-07-22 (pedido de Samuel: "en vez de que diga mastercard, visa, paypal
+// en unos chips… que estén todos los logos en armonía dentro de sus cajitas
+// para darle homogeneidad"): dejan de ser strings sueltos y pasan a
+// `{ id, nombre, marca }` — `marca` es lo que se PINTA dentro de la cajita.
+// El porqué de las dos formas de marca vive en ui/marcas-pago.tsx; en corto:
+// `glifo` cuando existe un logo real en la familia de iconos que ya usa el
+// proyecto (Remix), `texto` cuando no — y ahí se compone el nombre en vez de
+// dibujar un logo de memoria (la razón original por la que esto era texto:
+// un logo mal reproducido miente más que un nombre bien compuesto).
+// «Efectivo a bordo» SALE de esta lista y baja al pie de la banda, como
+// frase. Dos razones, y la segunda pesa más que la primera: (1) no es una
+// marca — dibujarlo obliga a un pictograma genérico, y probado con el
+// billete de Remix a 18px la caja se leía como una CÁMARA de fotos, no como
+// dinero; (2) una fila que se pide homogénea aguanta wordmarks y logos
+// mezclados, pero no un icono conceptual entre logos de marca: es el eslabón
+// que delata que las cajas no son todas lo mismo. El dato no se pierde — es
+// el único medio de pago que el proyecto tiene CONFIRMADO (pages/mi-reserva),
+// así que pasa a la línea de debajo, que ya hablaba del saldo del día del
+// tour.
+export type MedioPago = {
+  id: string
+  /** Nombre accesible — es el `title` de la cajita y su texto para lectores. */
+  nombre: string
+  marca: { tipo: 'glifo'; glifo: 'visa' | 'mastercard' | 'paypal' } | { tipo: 'texto'; texto: string }
+}
+
+export const MEDIOS_PAGO: MedioPago[] = [
+  { id: 'visa', nombre: 'Visa', marca: { tipo: 'glifo', glifo: 'visa' } },
+  { id: 'mastercard', nombre: 'Mastercard', marca: { tipo: 'glifo', glifo: 'mastercard' } },
+  { id: 'amex', nombre: 'American Express', marca: { tipo: 'texto', texto: 'AMEX' } },
+  { id: 'paypal', nombre: 'PayPal', marca: { tipo: 'glifo', glifo: 'paypal' } },
 ]
 
 // Redes del cliente. ⚠️ Las URLs reales NO están en ninguna fuente del
@@ -984,29 +1263,75 @@ export const MONEDAS = ['USD', 'EUR', 'DOP'] as const
 // ─────────────────────────────────────────────────────────────────────────
 // FAQ de la home (2026-07-17) — reemplaza al layout de galería+FAQ en 2
 // columnas (la galería photo-stack sale de la home; la galería completa
-// sigue en prototipo/). Curaduría de 6 preguntas de FAQ_CATEGORIAS
-// (prototipo/datos.js, 6 categorías / 14 preguntas) — una por categoría.
-// Las 3 primeras ya vivían curadas en la sección anterior; #4 y #5 son
-// verbatim nuevas de datos.js, #6 ya estaba curada.
+// sigue en prototipo/). Curaduría de FAQ_CATEGORIAS (prototipo/datos.js) —
+// arrancó con 6 preguntas, una por categoría.
+//
+// AMPLIADA A 12 (2026-07-22, pedido de Samuel con maqueta): la home deja de
+// ser un aperitivo de 6 y pasa a cubrir las 12 dudas que de verdad frenan la
+// reserva — en el layout de 2 columnas la lista larga es lo que le da cuerpo
+// a la columna derecha. Orden = el de la maqueta (clima → pagos → logística →
+// comida → a bordo → accesibilidad), no el de las categorías.
+//
+// PROCEDENCIA DE LAS RESPUESTAS (regla del proyecto: el contenido se porta,
+// no se inventa). 9 son verbatim/recompuestas de FAQ_CATEGORIAS y MEDIOS_PAGO.
+// Las 3 preguntas NUEVAS de la maqueta que no tenían respuesta en ninguna
+// fuente se resuelven así:
+//   · «¿Dónde y a qué hora es la salida?» → se compone de dos hechos que sí
+//     son canónicos (hora confirmada por WhatsApp la tarde anterior +
+//     recogida en hotel salvo charters).
+//   · «¿Aceptan tarjeta…?» → tarjeta/efectivo salen de la FAQ de reservas y
+//     las marcas de MEDIOS_PAGO. Lo de pagar «en el hotel» se traduce a «el
+//     día del tour», que es el hecho que sí tenemos.
+//   · ⚠️ «¿Es apto para embarazadas o personas mayores?» → NO hay política
+//     del cliente sobre esto en ninguna fuente. En vez de inventarse una
+//     (es una respuesta de seguridad, la peor para improvisar), la respuesta
+//     deriva a WhatsApp. PENDIENTE de confirmar con el cliente.
 export type FaqItem = { p: string; r: string }
 
 export const FAQ_HOME: FaqItem[] = [
-  { p: '¿Qué pasa si llueve el día de mi tour?', r: 'Reembolso total o cambio de fecha, sin costo.' },
-  { p: '¿Puedo pagar solo el depósito?', r: 'Sí, confirmas con el 25% y pagas el resto el día del tour.' },
+  {
+    p: '¿Qué pasa si llueve el día de mi tour?',
+    r: 'Reembolso total o cambio de fecha, sin costo. Solo cancelamos si las condiciones no son seguras.',
+  },
+  {
+    p: '¿Puedo cancelar mi reserva?',
+    r: 'Cancelación gratis hasta 7 días antes del tour. Después de esa fecha aplica la política de cancelación.',
+  },
+  {
+    p: '¿Puedo pagar solo el depósito?',
+    r: 'Sí, confirmas con el 25% y pagas el resto el día del tour.',
+  },
   {
     p: '¿Incluye recogida en mi hotel?',
     r: 'Sí, en todos los tours (excepto charters con punto de encuentro propio).',
   },
   {
+    p: '¿Dónde y a qué hora es la salida?',
+    r: 'Te confirmamos la hora exacta de recogida por WhatsApp la tarde anterior a tu tour. Salvo en los charters con punto de encuentro propio, pasamos a buscarte por tu hotel.',
+  },
+  {
     p: '¿Puedo elegir mi plato?',
-    r: 'Sí, cada persona elige su plato al reservar: Mariscos, Carne, Surf & Turf o Vegetariano.',
+    r: 'Sí, cada persona elige su plato al reservar: Mariscos, Carne, Surf & Turf o Vegetariano. Puedes cambiarlo desde Mi Reserva hasta 24 horas antes.',
+  },
+  { p: '¿Hay baño a bordo?', r: 'Sí, todos nuestros barcos tienen baño.' },
+  {
+    p: '¿Qué debo llevar?',
+    r: 'Traje de baño, toalla, protector solar biodegradable y el efectivo del saldo si aplica.',
   },
   {
     p: '¿Puedo ir si no sé nadar?',
     r: 'Sí, el snorkel es en aguas poco profundas y con chaleco salvavidas disponible.',
   },
   {
+    p: '¿Es apto para embarazadas o personas mayores?',
+    r: 'Depende del tour y de cómo esté el mar ese día. Escríbenos por WhatsApp antes de reservar y te decimos cuál te conviene.',
+  },
+  {
     p: '¿Los niños pueden ir en todos los tours?',
-    r: 'En Snorkel Lovers sí; Semi-Privado Premium es solo para adultos.',
+    r: 'En Snorkel Lovers sí; Semi-Privado Premium es solo para adultos (18+). Tenemos chalecos infantiles de todas las tallas.',
+  },
+  {
+    p: '¿Aceptan tarjeta? ¿Puedo pagar en el hotel?',
+    r: 'Aceptamos Visa, Mastercard, American Express y PayPal desde Mi Reserva. El saldo también puedes pagarlo el día del tour, en efectivo, con 5% de descuento.',
   },
 ]

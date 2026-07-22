@@ -14,6 +14,15 @@ import { useDevFlag } from '@/dev/use-dev-flag' // [dev-mode]
 // 2026-07-17). El widget se pega más abajo, con --spacing-sticky-top, que ya
 // se recalculó para NO contar el header (solo esta fila + 1rem de aire).
 //
+// ⚠️ 2026-07-22: la ficha ahora TAMBIÉN muestra la píldora del nav flotante
+// (antes se excluía y esta página se quedaba sin menú de sitio), y aun así
+// esta fila sigue en `top-0`. Es una decisión de Samuel, no un descuido:
+// «aquí me importa mucho más el menú interno de las secciones y debe estar
+// totalmente arriba». La píldora, en esta página, NO se queda fija — se va
+// con el hero (ver nav-flotante.tsx), así que el tope del viewport vuelve a
+// ser de esta barra sola y no hay nada que apilar ni ningún offset que
+// derivar.
+//
 // El ancla «Menú» solo existe en 'completo' (charter cotiza su menú a medida,
 // Saona no tiene paquetes): un índice que apunta a una sección inexistente es
 // peor que no tener índice.
@@ -38,7 +47,7 @@ import { useDevFlag } from '@/dev/use-dev-flag' // [dev-mode]
 // es más fiable que `offsetLeft` para esto: no se lia con el `offsetParent`
 // del flex item (sería la `relative` interna, pero la geometría del `gap-1` +
 // padding del contenedor puede desfasar la lectura). `useLayoutEffect` +
-// `ResizeObserver` (mismo idioma que notch-menu.tsx). No se renderiza hasta
+// `ResizeObserver` (mismo idioma que use-ticker-dock.ts). No se renderiza hasta
 // el primer measure: si apareciera en `left:0/width:0` y la transición se
 // disparara hacia la primera activa, la barra saldría DEL borde superior
 // izquierdo. `left` y `width` animan con transition; `top` se setea directo

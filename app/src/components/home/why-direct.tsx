@@ -45,7 +45,13 @@ export function WhyDirect() {
 
   return (
     <section ref={sectionRef} className="wd-section relative w-full py-seccion-sm sm:py-seccion">
-      <div className="wd-banner">
+      {/* data-nav-oscuro (2026-07-22): sentinel que observa NavFlotante para
+          pintar el texto de los tabs en blanco al pasar por este banner —
+          ver el comentario en home/hero.tsx. Va en .wd-banner (la foto +
+          overlay oscuro), NO en el <section> de afuera: ese tiene padding
+          transparente (py-seccion) alrededor del banner, sin nada oscuro
+          detrás — marcarlo ahí daría un falso positivo en ese padding. */}
+      <div data-nav-oscuro className="wd-banner">
         {/* Fondo: foto de playa + overlay de legibilidad (capa aparte para que
             los boletos puedan sobresalir del banner sin recortarse). */}
         <div aria-hidden className="wd-banner-fondo">

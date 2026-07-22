@@ -5,6 +5,32 @@
    ============================================================ */
 
 /* ============================================================
+   Nav flotante NO FIJO — solo en la ficha de tour (2026-07-22).
+
+   Samuel, sobre la ficha: «aquí haz que el menú fijo no se ponga fijo, aquí
+   me importa mucho más el menú interno de las secciones y debe estar
+   totalmente arriba». La píldora se ve sobre el hero como en cualquier otra
+   página, pero se VA con el scroll en vez de quedarse: en esta página el
+   chrome fijo de arriba es de la fila de anclas (Itinerario · Incluye · Menú
+   · Opiniones · FAQ), que es lo que de verdad se usa mientras se lee una
+   ficha larga. Dos barras compitiendo por la misma franja le quitaban sitio
+   a la que importa.
+
+   `position: absolute` y no `fixed`: sin ancestro posicionado, el bloque
+   contenedor es el bloque inicial —anclado en el origen del DOCUMENTO, no
+   del viewport— así que la píldora se queda donde el hero la dejó y sube con
+   el scroll, sin un solo listener. El `top` ya lo pone .nav-flotante-envoltorio
+   (--spacing-nav-flotante-top, el que despeja el Topbar); aquí no se toca,
+   porque el estado «fijo» —que era el único que lo cambiaba— no existe en
+   esta variante. La transición de `top` también se apaga: sin estado al que
+   transicionar, solo podría dispararse por accidente.
+   ============================================================ */
+.nav-flotante-envoltorio--en-flujo {
+  position: absolute;
+  transition: none;
+}
+
+/* ============================================================
    Ticker del hero (v3) — pie del hero, loop infinito de cards.
 
    POR QUÉ ES CSS A MEDIDA: la pista se duplica 2x en el JSX y se desplaza
@@ -88,110 +114,165 @@
 }
 
 /* ============================================================
-   Notch del header (v3) — el contenedor de los tabs del menú (Tours,
-   Eventos...) "cuelga" del borde superior del hero, como el notch de la
-   cámara de una MacBook: blanco, pegado al borde, con las esquinas de ABAJO
-   redondeadas (convexas, se mete en el video) y un remate CÓNCAVO arriba,
-   justo donde el lateral del notch se junta con la línea borde-del-hero
-   (blanco arriba, en el margen con el body — video abajo, dentro del hero).
+   Nav flotante — panel "vidrio" (2026-07-21, pedido de Samuel).
 
-   POR QUÉ ES CSS A MEDIDA: un `border-radius` normal en las 2 esquinas de
-   arriba haría un rectángulo con esquinas convexas ahí, que se lee como un
-   recorte pegado con costura. El notch real "talla" el remate al revés: la
-   curva se dobla hacia adentro del notch en vez de hacia afuera. Se
-   consigue con un radial-gradient en dos cuadraditos a los lados del notch:
-   dentro del radio = transparente (se ve el video); fuera = blanco (el
-   notch "sigue"). Solo aplica en desktop — en móvil el <nav> ya está oculto.
+   Reemplaza dos piezas que existían por separado y se veían distintas entre
+   sí: el notch cortado en el bisel del hero (blanco sólido, esquinas
+   cóncavas, vivía DENTRO de cada Header sobreVideo) y la isla flotante tipo
+   Dynamic Island (blanco sólido también, aparecía recién al pasar el hero,
+   con el logo fundido en la píldora). Ahora es UN panel — mismo componente,
+   mismo aspecto, visible desde que carga la página Y mientras se scrollea
+   (nav-flotante.tsx).
 
-   ⚠️ El centro del círculo NO va en la esquina que toca al notch (eso da un
-   círculo con costura — el error que se vio la primera vez: la tangente del
-   arco quedaba perpendicular al lateral recto del notch, no paralela, así
-   que se notaba el punto de unión). El centro va en la esquina OPUESTA
-   (fuera del notch): así el arco es tangente a la vez a la pared vertical
-   del notch Y a la línea horizontal del borde del hero — la curva entra y
-   sale en línea recta, sin costura.
-   ============================================================ */
+   POR QUÉ EL FONDO ES "VIDRIO" Y NO BLANCO SÓLIDO: pedido explícito de
+   Samuel — efecto liquid glass tipo Apple. Investigado antes de construir
+   (ver el comentario de --color-vidrio en tokens.css): la distorsión de
+   canto que Apple usa en su UI nativa no tiene soporte fiable en Safari/
+   Firefox — CSS puro (blur + saturate) sí, y es lo que usa el propio
+   apple.com en su navbar web. `background` + `backdrop-filter` con el
+   prefijo -webkit- (Safari histórico) + sin prefijo (Firefox 103+, Chrome,
+   Safari moderno).
 
-.notch-esquina {
-  position: absolute;
-  top: 0;
-  width: var(--radius-notch);
-  height: var(--radius-notch);
-  pointer-events: none;
-}
+   2ª VUELTA (2026-07-21, pedido de Samuel): "por defecto sin fondo, pero...
+   un efecto [de contraste] a la altura del menú... y ya luego al hacer
+   scroll si se activa el fondo del menú y aparece el logo y botón". El
+   vidrio deja de ser incondicional — pasa a un pseudo-elemento (::before)
+   que solo se activa con la clase .nav-pildora--vidrio. En reposo, el
+   contraste lo da el scrim del propio hero (--color-scrim-nav, tokens.css),
+   no este panel.
+   POR QUÉ UN PSEUDO-ELEMENTO Y NO backdrop-filter DIRECTO EN .nav-pildora:
+   así el fondo entra/sale con una transition de opacity (suave en los DOS
+   sentidos) sin tocar el layout — .nav-pildora mantiene su border-radius
+   SIEMPRE puesto (nunca condicional), y el ::before hereda ese radio con
+   `border-radius: inherit` en vez de repetir el token, así la forma nunca
+   "salta" a cuadrada en ningún punto de la animación (el borde redondeado
+   que Samuel pidió mantener). `isolation: isolate` + `z-index: -1` en el
+   pseudo: sin esto, un elemento posicionado (::before es absolute) pinta
+   ENCIMA del contenido estático de al lado (los tabs) por orden de
+   stacking — quedaría tapando el texto en vez de detrás.
 
-.notch-esquina--izquierda {
-  right: 100%;
-  background: radial-gradient(circle at bottom left, transparent var(--radius-notch), var(--color-papel) calc(var(--radius-notch) + 1px));
-}
-
-.notch-esquina--derecha {
-  left: 100%;
-  background: radial-gradient(circle at bottom right, transparent var(--radius-notch), var(--color-papel) calc(var(--radius-notch) + 1px));
-}
-
-/* ============================================================
-   Notch dinámico (v3-F8, PLAN-v3.md §11) — al abrir un menú (Tours,
-   Eventos...) la caja del notch se EXPANDE (ancho y alto) y el panel del
-   menú se muestra DENTRO, en vez de colgar como card flotante debajo del
-   botón — como la Dynamic Island de Apple, pero sobre nuestro notch MacBook.
-
-   POR QUÉ ES CSS A MEDIDA: `width`/`height` no se pueden transicionar hacia
-   `auto`/`max-content` — el navegador no sabe interpolar hacia un valor que
-   no es un número fijo. El reparto es el mismo que el dock del ticker
-   (§10): JS mide el tamaño real de tabs + panel (notch-menu.tsx) y solo
-   escribe --notch-ancho/--notch-alto; la transición vive aquí, en CSS.
-
-   ⚠️ El overflow:hidden va en LA CAJA, no en el marco que la envuelve — las
-   esquinas cóncavas (.notch-esquina, arriba) viven fuera de la caja
-   (posicionadas contra el marco) precisamente para no quedar recortadas por
-   ese overflow, que existe solo para contener el panel durante el morph. */
-.notch-caja {
-  width: var(--notch-ancho, max-content);
-  height: var(--notch-alto, auto);
-  overflow: hidden;
-  border-radius: 0 0 var(--radius-notch) var(--radius-notch);
-  transition:
-    width var(--notch-transicion) var(--notch-easing),
-    height var(--notch-transicion) var(--notch-easing);
-}
-
-/* Variante de la isla flotante (isla-flotante.tsx, 2026-07-17) — MISMO morph
-   de ancho/alto que el notch de siempre, pero flotando con margen del borde
-   en vez de cortado en él: las 4 esquinas redondeadas (no solo las de abajo)
-   y borde + sombra propios, ya que aquí no hay marco/esquinas cóncavas que
-   sugieran "recorte en el bisel". */
-.notch-caja--flotante {
+   SIN MORPH (2026-07-21, 6ª vuelta — pedido de Samuel: "cambiar la lógica
+   que teníamos de que el menú se adaptara al mega menú, ahora quiero que sea
+   más convencional, el menú queda igual y simplemente se abre el mega menú
+   que es un div separado del módulo"). Hasta esta vuelta, .notch-caja (el
+   nombre anterior de esta clase) medía su contenido con JS (notch-menu.tsx,
+   ResizeObserver) y animaba width/height para "absorber" el panel del menú
+   activo dentro de la misma caja — estilo Dynamic Island. Se retiró por
+   completo: .nav-pildora es un tamaño FIJO (shrink-to-fit normal, sin width/
+   height propios ni transición de esas propiedades) y cada dropdown
+   (TabsConPaneles, nav-tabs.tsx) cuelga de su propio botón como un div
+   `absolute` aparte — el mismo patrón que Header 'solida' ya usaba en la
+   404, ahora compartido por los dos. Sin JS midiendo nada, .nav-pildora
+   cambia de ancho al instante cuando Logo/Reservar se montan o desmontan
+   (nav-flotante.tsx) — no se nota porque coincide con el momento en que gsap
+   los tiene en opacity/scale ~0 (ver el comentario de esa lógica ahí). */
+.nav-pildora {
+  position: relative;
+  isolation: isolate;
   border-radius: var(--radius-card-grande);
-  border: 1px solid var(--color-linea);
-  box-shadow: var(--shadow-card);
 }
 
-/* El panel entra en fade cuando la caja ya va llegando a su tamaño final —
-   el delay evita ver el contenido recortado a mitad de morph. Todo sale de
-   --notch-transicion con calc(): cero números nuevos a ojo. */
-.notch-panel {
-  animation: notch-panel-entrada calc(var(--notch-transicion) * 2 / 3) var(--notch-easing) both;
-  animation-delay: calc(var(--notch-transicion) / 3);
+.nav-pildora::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  /* --vidrio-fondo/--vidrio-canto: indirección para que
+     .nav-pildora--vidrio-oscuro pueda cambiar SOLO el color (no todo el
+     bloque background/backdrop-filter/box-shadow) sin pelear por
+     especificidad — ver el comentario ahí. */
+  background: var(--vidrio-fondo, var(--color-vidrio));
+  backdrop-filter: blur(var(--blur-vidrio)) saturate(var(--saturate-vidrio));
+  -webkit-backdrop-filter: blur(var(--blur-vidrio)) saturate(var(--saturate-vidrio));
+  border: 1px solid var(--vidrio-canto, var(--color-vidrio-borde));
+  box-shadow: var(--shadow-card-flotante);
+  opacity: 0;
+  transition: opacity var(--notch-fondo-transicion) var(--notch-fondo-easing);
 }
 
-@keyframes notch-panel-entrada {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+.nav-pildora--vidrio::before {
+  opacity: 1;
+}
+
+/* Vidrio OSCURO adaptativo (2026-07-22, 8ª vuelta — ver el comentario
+   completo en tokens.css, bloque "VIDRIO OSCURO ADAPTATIVO"). Modificador
+   ADICIONAL sobre .nav-pildora--vidrio (nav-flotante.tsx añade esta clase
+   cuando `fijo && sobreOscuro`) — solo pisa el color, reutilizando el mismo
+   ::before/blur/saturate/transition de arriba. */
+.nav-pildora--vidrio-oscuro {
+  --vidrio-fondo: var(--color-vidrio-oscuro);
+  --vidrio-canto: var(--color-vidrio-oscuro-borde);
+}
+
+/* .panel-vidrio existió aquí entre 2026-07-22 (7ª vuelta) y esta misma fecha
+   (10ª vuelta, pedido de Samuel: "haz que el mega menú siempre tenga fondo
+   sólido") — el fondo translúcido del mega-menú (compartía tokens con
+   .nav-pildora::before) queda retirado sin reemplazo: el panel ahora es
+   SIEMPRE `bg-papel ring-1 ring-linea` (ver nav-tabs.tsx, "Fondo del panel:
+   SIEMPRE sólido"), lo mismo que ya usaba 'solida'. El ajuste de contraste
+   que lo acompañaba (`.panel-vidrio .text-navy-soft` → --color-navy-sub) se
+   retira con él — sin fondo translúcido, --color-navy-soft vuelve a leerse
+   bien por sí solo. Ver el historial de git si hace falta revisitar la
+   receta vidrio. */
+
+/* La entrada/salida de Logo + Reservar fundidos vivió aquí como @keyframes
+   hasta el 2026-07-21 (4ª vuelta) — pasó a gsap (nav-flotante.tsx, "GSAP, no
+   @keyframes" en el comentario de cabecera): un @keyframes solo anima el
+   MONTAJE, no un unmount de React, así que la salida era instantánea; gsap
+   anima las dos direcciones y es interrumpible si el scroll tiembla justo
+   en el umbral. transform-origin (por qué cada lado ancla su origen en el
+   borde que toca los tabs) ahora se fija inline en el JSX, junto al resto
+   de esa lógica. */
+
+/* Envoltorio fixed de NavFlotante (2026-07-21, 5ª vuelta — pedido de Samuel:
+   ver --spacing-nav-flotante-top-fijo en tokens.css para el porqué). `top`
+   anima con --notch-transicion/--notch-easing (el easing de morph que ya
+   usa el resto de la UI, no exclusivo de este panel — ver esos tokens en
+   tokens.css) — es un movimiento del PANEL, no un fundido, y sube en el
+   mismo instante (mismo disparador, `!logoVisible`) en que gsap empieza a
+   fundir el logo/Reservar, como una sola transformación coherente. */
+.nav-flotante-envoltorio {
+  top: var(--spacing-nav-flotante-top);
+  transition: top var(--notch-transicion) var(--notch-easing);
+}
+
+.nav-flotante-envoltorio--fijo {
+  top: var(--spacing-nav-flotante-top-fijo);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .notch-caja {
+  .nav-pildora::before {
     transition: none;
   }
 
-  .notch-panel {
-    animation: none;
+  .nav-flotante-envoltorio {
+    transition: none;
   }
+}
+
+/* Scrim superior del hero — ver --color-scrim-nav en tokens.css para el
+   porqué. mask-image (no solo el gradiente de background) desvanece el
+   BLUR también: sin la máscara, backdrop-filter corta en seco en el borde
+   inferior de la banda — con ella, la nitidez del video vuelve gradual, sin
+   línea visible.
+
+   border-radius propio en las esquinas superiores (2026-07-22, ver el
+   comentario de --color-scrim-nav en tokens.css): sin esto, este elemento
+   dependía SOLO del overflow-hidden del ancestro para recortarse, y
+   backdrop-filter + mask-image en el mismo elemento no siempre respeta ese
+   clip heredado — se veían cuadros translúcidos saliendo de la esquina
+   redondeada del hero. Repetirlo aquí (mismo --radius-hero) lo hace
+   independiente de esa ruta frágil: border-radius SIEMPRE recorta el
+   backdrop-filter/mask del propio elemento, no depende de overflow. */
+.scrim-nav-superior {
+  height: var(--spacing-scrim-nav-alto);
+  border-radius: var(--radius-hero) var(--radius-hero) 0 0;
+  background: linear-gradient(180deg, var(--color-scrim-nav) 0%, transparent 100%);
+  backdrop-filter: blur(var(--blur-scrim-nav));
+  -webkit-backdrop-filter: blur(var(--blur-scrim-nav));
+  mask-image: linear-gradient(180deg, black 0%, transparent 100%);
+  -webkit-mask-image: linear-gradient(180deg, black 0%, transparent 100%);
 }
 
 /* ============================================================
@@ -883,19 +964,21 @@
    Figma que miente. Para recuperarlo: `git revert` del commit que trae este
    cambio.
 
-   El video CONSERVA el lenguaje del collage —passe-partout blanco fino,
-   --shadow-foto-real (2 capas: contacto + ambiente) y una rotación irregular—
-   para que la sección siga teniendo el mismo gesto artesanal. NO se copia el
-   mockup de portátil de la referencia del cliente (six2eight.com): es idioma
-   de agencia SaaS, no de charter premium.
+   La 1ª vuelta de correcciones v1 le puso al video el lenguaje del collage
+   —passe-partout blanco fino, --shadow-foto-real (2 capas) y una rotación
+   irregular— para que la sección siguiera con el mismo gesto artesanal.
 
-   POR QUÉ ES CSS A MEDIDA: `rotate` va en su propia longhand y NO en
-   `transform`, a propósito — el reveal de scroll (use-experiencia-scroll.ts,
-   GSAP) anima `scale`/`autoAlpha` vía sus proxies, y al ser longhands
-   independientes el giro de reposo y la animación del reveal conviven sin
-   pisarse (el mismo motivo por el que el barco del CTA separa `rotate`).
+   2ª vuelta (2026-07-22, mismo slide 7): lo que el cliente señalaba de la
+   referencia (six2eight.com) no era ese marco — era el RECORRIDO de scroll
+   (el video crece hasta llenar la pantalla, se mantiene fijo un tramo y
+   encoge a su sitio; vive en use-experiencia-video-etapa.ts, SOLO desktop).
+   Para ese gesto el marco artesanal sobra: el video pasa a bordes limpios y
+   redondeados (--radius-exp-video), sin passe-partout ni sombra ni giro —
+   así se ve el video de la propia referencia. Tampoco se copia el mockup de
+   portátil de six2eight.com: es idioma de agencia SaaS, no de charter
+   premium.
 
-   El reveal (opacity/scale iniciales) lo pone GSAP inline; a Figma NO viaja
+   El reveal (opacity/scale del texto) lo pone GSAP inline; a Figma NO viaja
    animado: se captura la sección ya asentada (?dev-exp=estatico /
    prefers-reduced-motion), que es el estado natural sin GSAP. ============ */
 
@@ -904,11 +987,23 @@
   width: 100%;
   max-width: 34rem;
   margin-inline: auto;
-  rotate: var(--exp-video-rot);
-  padding: var(--spacing-exp-video-marco);
-  background: var(--color-papel);
-  border-radius: var(--radius-foto);
-  box-shadow: var(--shadow-foto-real);
+  overflow: hidden; /* recorta el video al borde redondeado — ya no hay passe-partout que lo enmarque */
+  border-radius: var(--radius-exp-video);
+}
+
+/* Botón de sonido del vídeo de Experiencia. Vive DENTRO de .exp-video para
+   seguirlo durante el recorrido pineado, pero NO debe crecer con él: en el
+   tramo grande GSAP escala el figure ~1.8x y un botón escalado a la par se
+   vería enorme justo cuando el vídeo llena la pantalla.
+   use-experiencia-video-etapa.ts publica la escala aplicada en
+   --exp-video-escala y aquí se deshace, así que el botón mide lo mismo en
+   todo el recorrido (verificado: 36px constantes de punta a punta).
+   transform-origin en la esquina donde se ancla: al deshacer la escala desde
+   el centro se despegaría de ella. El margen a la esquina SÍ sigue escalando
+   — y está bien, un vídeo más grande pide más aire. */
+.exp-video-controles {
+  transform: scale(calc(1 / var(--exp-video-escala, 1)));
+  transform-origin: bottom right;
 }
 
 .exp-video video {
@@ -920,7 +1015,6 @@
      collage declaraba su aspect-ratio. */
   aspect-ratio: 16 / 9;
   object-fit: cover;
-  border-radius: calc(var(--radius-foto) - 0.125rem);
 }
 
 /* Revelado palabra a palabra (correcciones v1, slide 5 — ref. getblue.com).
@@ -930,17 +1024,18 @@
 
    `opacity` sobre el span y no `color`: el párrafo alterna gris (navy-sub) y
    negro (navy) por segmento —ese contraste ES el diseño de la sección— y
-   animar el color lo aplanaría a un solo tono mientras dura el reveal. */
-.exp-palabra {
-  display: inline;
-  opacity: 1;
-}
+   animar el color lo aplanaría a un solo tono mientras dura el reveal.
 
-@media (prefers-reduced-motion: reduce) {
-  .exp-video {
-    /* Sin el reveal, la rotación sola se lee como un descuadre. */
-    rotate: none;
-  }
+   `inline-block` y no `inline` (2026-07-22, la OLA del texto en desktop): un
+   inline puro IGNORA `transform`, así que las palabras no podrían subir a su
+   sitio. Los espacios NO llevan esta clase — van como texto suelto entre los
+   spans (ver experiencia.tsx), porque un inline-block que solo contiene un
+   espacio lo colapsa a cero y el párrafo se leería "todojunto". El estado de
+   reposo sigue siendo el FINAL (visible, sin desplazar ni desenfocar): sin JS
+   el texto se ve entero, y GSAP solo pinta el estado inicial. */
+.exp-palabra {
+  display: inline-block;
+  opacity: 1;
 }
 
 /* ============================================================
@@ -1231,85 +1326,132 @@
   }
 }
 
-/* Migaja AlignUI (Breadcrumb) sobre foto — hero-interna.tsx (§C1). El vendor
-   (components/alignui/breadcrumb.tsx) fija sus colores vía los slots
-   --color-text-strong-950/-sub-600/-disabled-300 (alignui.css los mapea a
-   navy/navy-sub/linea-fuerte para uso sobre PAPEL); sobre una foto esos leen
-   casi invisibles. En vez de pelear la utility con otra clase (mismo peso de
-   cascada, orden de generación no controlable desde el JSX), se re-tema el
-   scope: mismo patrón que alignui.css usa para mapear AlignUI → Hispaniola,
-   aquí acotado a este wrapper. El vendor no se toca. */
-.migaja-sobre-foto {
-  --color-text-strong-950: var(--color-papel);
-  --color-text-sub-600: rgb(255 255 255 / 75%);
-  --color-text-disabled-300: rgb(255 255 255 / 45%);
-}
 
 /* ============================================================
-   Reviews step carousel (v6, pedido de Pedro 2026-07-15) — carrusel
-   step-based de la sección «Reseñas verificadas»: avanza 1 slot,
-   espera, avanza otro. NO es un ticker continuo. La pista está
-   duplicada 2x (mismo truco que el ticker del hero y las olas del CTA)
-   y el wrap se hace invisible saltando a la posición 0 sin transition
-   (mecánica en reviews.tsx → useEffect del wrap, con setTimeout +
-   rAF para reactivar la transition tras el salto).
+   Muro de reseñas (v7, 2026-07-22, pedido de Samuel) — 3 filas de cards
+   en marquee infinito dentro de «Reseñas verificadas»: la 1ª y la 3ª
+   hacia la izquierda, la 2ª hacia la derecha. Sustituye al slider
+   vertical step-based de la v6 (.reviews-step-*, retirado con él).
 
-   POR QUÉ ES CSS A MEDIDA + estado React (no solo CSS): el paso
-   discreto + wrap invisible no se puede expresar con keyframes
-   continuas; necesitamos control JS sobre el índice. PERO la
-   transición entre pasos es CSS puro (transition en
-   .reviews-step-track--animated), los delays salen de tokens.css
-   (--reviews-step-*), y el layout (altura de cada slot, gap) sale
-   de los mismos tokens.
+   DOS CAPAS, y esto es lo importante de todo el bloque:
 
-   Trampa del -50% (misma que el ticker horizontal): si el gap va como
-   `gap` en la pista, el wrap "salta". La separación va como
-   `margin-bottom` en CADA slot (no en la última, no en la primera: en
-   TODAS), y la pista sin gap. Así la suma (altura × N) +
-   (margin × N) = la altura exacta de N slots, y el empalme del wrap
-   con la pista duplicada es invisible.
+     .reviews-muro-arrastre   ← translate del ARRASTRE (lo escribe el JS)
+       └ .reviews-muro-pista  ← animation del MARQUEE (puro CSS)
+
+   Están separadas a propósito. El marquee es una @keyframes que no se
+   puede "pausar y reanudar desde otra posición" sin recalcularla en JS;
+   el arrastre es una posición arbitraria del usuario. Si compartieran
+   el mismo transform, uno pisaría al otro en cada frame. Apiladas, cada
+   una manda en la suya y el navegador las suma: la fila sigue
+   desfilando exactamente igual desde donde la dejó el dedo.
+
+   POR QUÉ 3 COPIAS Y NO 2. El marquee recorre -1 copia (33.333% de una
+   pista de 3) y el arrastre está normalizado por el hook a (-1 copia, 0]
+   — ver use-fila-arrastrable.ts. En el peor caso los dos se suman: -2
+   copias. Con 2 copias eso deja la ventana vacía; con 3, la tercera
+   siempre está ahí para cubrirla. El precio son 6 cards extra por fila.
+
+   La trampa del gap es la de siempre (ticker del hero, marquee de
+   opiniones): la separación va como `margin-right` en CADA card, nunca
+   como `gap` de la pista — un gap del flex no se repite entre la última
+   card de una copia y la primera de la siguiente, así que el empalme
+   del loop se vería como un tirón.
    ============================================================ */
 
-.reviews-step-container {
-  /* Altura = 2 cards (--reviews-card-alto) + 1 gap
-     (--reviews-step-gap) — la ventana visible muestra 2 cards en todo
-     momento. */
-  height: calc(2 * var(--reviews-card-alto) + var(--reviews-step-gap));
+.reviews-muro-fila {
   overflow: hidden;
-  position: relative;
+  /* Las cards se disuelven en los dos bordes en vez de cortarse a
+     cuchillo — el corte recto delata la caja y hace que la fila parezca
+     estar "dentro de un recuadro" en vez de venir de fuera. */
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    black var(--spacing-reviews-desvanecido),
+    black calc(100% - var(--spacing-reviews-desvanecido)),
+    transparent
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black var(--spacing-reviews-desvanecido),
+    black calc(100% - var(--spacing-reviews-desvanecido)),
+    transparent
+  );
 }
 
-.reviews-step-track {
+.reviews-muro-arrastre {
+  width: max-content;
+  /* --reviews-arrastre lo escribe el hook directamente en el style del
+     nodo (no vía estado de React): en un arrastre son ~60 escrituras por
+     segundo y cada una sería un render. Mismo reparto "JS mide, CSS
+     pinta" que el dock del ticker. */
+  translate: var(--reviews-arrastre, 0px) 0;
+}
+
+.reviews-muro-pista {
   display: flex;
-  flex-direction: column;
+  width: max-content;
+  animation: reviews-muro-desfile var(--reviews-muro-duracion) linear infinite;
   will-change: transform;
 }
 
-.reviews-step-track--animated {
-  /* Solo se aplica cuando no estamos en el wrap (noTransition desactiva
-     la transición para el salto invisible del wrap). */
-  transition: transform var(--reviews-step-transicion) cubic-bezier(0.4, 0, 0.2, 1);
+/* La 2ª fila va al revés. `reverse` sobre las MISMAS keyframes en vez de
+   unas propias: así solo hay una animación que trasladar a Figma, y la
+   dirección es una variante de la misma pieza. */
+.reviews-muro-pista--derecha {
+  animation-direction: reverse;
 }
 
-.reviews-step-slot {
-  height: var(--reviews-card-alto);
-  margin-bottom: var(--reviews-step-gap);
+/* Una clase por fila en vez de un style inline con
+   `var(--reviews-fila-duracion-${i})` armado en el TSX. No es cosmético:
+   Tailwind v4 solo emite las variables de @theme que VE referenciadas, y un
+   nombre construido en runtime no lo ve nadie — las filas 2 y 3 salían con
+   animation-duration: 0s (quietas) mientras la 1 funcionaba por casualidad,
+   porque su nombre aparecía escrito entero en otro archivo. Referenciadas
+   aquí, las tres existen siempre. De regalo, la fila pasa a ser una variante
+   con nombre, que es lo que viaja a Figma. */
+.reviews-muro-pista--fila-1 {
+  --reviews-muro-duracion: var(--reviews-fila-duracion-1);
+}
+.reviews-muro-pista--fila-2 {
+  --reviews-muro-duracion: var(--reviews-fila-duracion-2);
+}
+.reviews-muro-pista--fila-3 {
+  --reviews-muro-duracion: var(--reviews-fila-duracion-3);
+}
+
+/* Pausa: al pasar el puntero por la fila (para poder leer una reseña sin
+   perseguirla) y mientras se arrastra. La clase la pone React; el hover
+   es CSS puro. */
+.reviews-muro-fila:hover .reviews-muro-pista,
+.reviews-muro-pista--pausada {
+  animation-play-state: paused;
+}
+
+.reviews-muro-card {
+  width: var(--spacing-reviews-card-ancho);
+  margin-right: var(--spacing-reviews-card-gap);
   flex-shrink: 0;
 }
-.reviews-step-slot:last-child {
-  /* El margin del ÚLTIMO slot también suma al total — sin esto la suma
-     (cardHeight + margin) no es constante entre slots y la transición
-     se descuadra al final de la pista. */
-  margin-bottom: var(--reviews-step-gap);
+
+@keyframes reviews-muro-desfile {
+  to {
+    /* 1/3 de la pista = 1 copia exacta. Al llegar, la copia 2 está
+       justo donde arrancó la 1: el salto de vuelta a 0 es invisible. */
+    translate: -33.3333% 0;
+  }
 }
 
-/* Con prefers-reduced-motion: sin auto-advance, la pista es scrollable
-   a mano. Mostrar 3 cards de alto + 2 gaps para que se note que hay
-   más contenido. */
+/* WCAG 2.2.2 — con prefers-reduced-motion nada se mueve solo: una sola
+   copia por fila, recorrible a mano (el arrastre sigue funcionando, y
+   además queda el scroll nativo). */
 @media (prefers-reduced-motion: reduce) {
-  .reviews-step-container {
-    overflow-y: auto;
-    height: calc(3 * var(--reviews-card-alto) + 2 * var(--reviews-step-gap));
+  .reviews-muro-fila {
+    overflow-x: auto;
+  }
+
+  .reviews-muro-pista {
+    animation: none;
   }
 }
 
@@ -1324,16 +1466,35 @@
    nombre de clase si una cambia mañana. ============================================================ */
 .opiniones-marquee-wrapper {
   overflow: hidden;
+  /* Difuminado en los dos extremos (2026-07-22, con las 2 filas cruzadas):
+     las cards SANGRAN hasta el canto del bloque, y sin máscara aparecían y
+     desaparecían de golpe contra el borde gris de la card, que es lo que
+     delata un marquee como truco. Con el fade se leen como algo que entra y
+     sale de campo. El % es pequeño (7%) a propósito: lo justo para matar el
+     canto sin comerse la primera reseña legible. */
+  mask-image: linear-gradient(to right, transparent, black 7%, black 93%, transparent);
 }
 
 .opiniones-marquee-wrapper--estatico {
   overflow-x: auto;
+  /* Sin máscara en modo estático: ahí la fila se recorre a mano y un
+     difuminado sobre lo que el usuario está arrastrando estorba en vez de
+     ayudar. */
+  mask-image: none;
 }
 
 .opiniones-marquee-pista {
   display: flex;
   width: max-content;
   animation: opiniones-marquee-desfile var(--opiniones-marquee-duracion) linear infinite;
+}
+
+/* La fila que va HACIA LA DERECHA es la misma animación al revés, no un 2º
+   keyframe: con `reverse`, la pista parte de -50% y vuelve a 0, así que el
+   punto de salto invisible es exactamente el mismo (y si algún día cambia
+   --opiniones-marquee-duracion, cambian las dos filas a la vez). */
+.opiniones-marquee-pista--derecha {
+  animation-direction: reverse;
 }
 
 .opiniones-marquee-wrapper--estatico .opiniones-marquee-pista {
@@ -1351,9 +1512,17 @@
 }
 
 .opiniones-marquee-card {
-  width: var(--spacing-opiniones-card-ancho);
+  width: var(--spacing-opiniones-card-ancho-movil);
   margin-right: var(--spacing-opiniones-gap);
   flex-shrink: 0;
+}
+
+/* sm: (40rem) — la card recupera su ancho completo. Ver el porqué del
+   estrechamiento en --spacing-opiniones-card-ancho-movil (tokens.css). */
+@media (min-width: 40rem) {
+  .opiniones-marquee-card {
+    width: var(--spacing-opiniones-card-ancho);
+  }
 }
 
 @keyframes opiniones-marquee-desfile {
@@ -1559,6 +1728,102 @@
 }
 
 /* ============================================================
+   Página Sostenibilidad — EL RECORRIDO de los 3 pilares (2026-07-22, Samuel:
+   "que lo transformemos como en recorrido con su progress bar que va
+   avanzando, pero no lineal, sino curvo... y en vez de la flechita verde que
+   sea el barquito"). Aquí vive solo la PINTURA; el trazado (el atributo `d`) y
+   el viewBox los calcula use-recorrido-sostenibilidad.ts midiendo la posición
+   real de cada punto. Todo esto es lg+ — el JSX no pinta ni el SVG ni el barco
+   por debajo de 1024px. */
+.recorrido-trazo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  /* El trazo se sale del contenedor por arriba y por abajo
+     (--spacing-recorrido-margen) para que el barco entre y salga de cuadro
+     navegando: sin overflow visible, el SVG lo recortaría en seco. */
+  overflow: visible;
+  pointer-events: none;
+}
+
+/* UN solo trazo, gris punteado y quieto — ya no hay estela de progreso que se
+   dibuje encima (ver tokens.css: el progreso lo marca la foto de cada paso). */
+.recorrido-ruta {
+  fill: none;
+  stroke: var(--color-recorrido-ruta);
+  stroke-width: var(--recorrido-ruta-grosor);
+  stroke-dasharray: var(--recorrido-ruta-punteado);
+  stroke-linecap: round;
+}
+
+/* La foto de apoyo de cada paso. El estado NATURAL es visible: así en móvil
+   —donde no hay recorrido ni GSAP— las 3 salen en su sitio dentro del flujo,
+   y es también lo que queda si falla el JS. En desktop el hook las oculta y
+   va destapando la del paso activo. */
+.recorrido-imagen {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+}
+
+@media (min-width: 1024px) {
+  .recorrido-imagen {
+    width: var(--spacing-recorrido-imagen);
+  }
+
+  /* El ladeo va en la longhand `rotate` y no en `transform`: GSAP escribe
+     `transform` para el desplazamiento de entrada (--recorrido-imagen-y), y
+     las dos propiedades componen sin pisarse (mismo truco que el cabeceo del
+     barco). Alterna de signo para que no parezcan 3 fotos clonadas. */
+  .recorrido-imagen--izq {
+    rotate: calc(var(--recorrido-imagen-giro) * -1);
+  }
+
+  .recorrido-imagen--der {
+    rotate: var(--recorrido-imagen-giro);
+  }
+}
+
+.recorrido-barco {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--spacing-recorrido-barco);
+  filter: var(--recorrido-barco-sombra);
+  pointer-events: none;
+}
+
+/* ⚠️ El cabeceo va en el <img> INTERIOR, no en .recorrido-barco: GSAP escribe
+   `transform` en el contenedor para llevarlo por el trazado, así que animar
+   ahí la rotación sería pisarse con el motion path (el último que escriba
+   gana). Dos capas = cada una con su transform, sin pelea. */
+.recorrido-barco img {
+  display: block;
+  width: 100%;
+  height: auto;
+  animation: recorrido-barco-cabeceo var(--recorrido-barco-balanceo-duracion) ease-in-out infinite alternate;
+}
+
+@keyframes recorrido-barco-cabeceo {
+  from {
+    rotate: calc(var(--recorrido-barco-balanceo-angulo) * -1);
+  }
+  to {
+    rotate: var(--recorrido-barco-balanceo-angulo);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .recorrido-barco img {
+    animation: none; /* la travesía la apaga el hook (queda asentada), esto quita el cabeceo en reposo */
+  }
+}
+
+/* ============================================================
    Página Guías — numeral fantasma de cada tip/artículo (rediseño editorial
    2026-07-17). Mismo truco que .sost-numero/.sost-item-titulo (mismo día,
    misma queja de Samuel — "solo cajas" — resuelta con el mismo lenguaje),
@@ -1622,6 +1887,100 @@
 }
 
 /* ============================================================
+   Chips de urgencia del widget de reserva (2026-07-22, pedido de Samuel).
+   El movimiento ES el mensaje aquí: un chip quieto que dice «lo más
+   reservado» es una etiqueta más; uno cuyo icono no para de moverse se lee
+   como algo que está pasando ahora. Ver components/tour/chips-urgencia.tsx
+   para el porqué de los datos (y de su deuda).
+
+   ⚠️ Los dos bucles NO se pausan al hover, a diferencia de los tickers de
+   la página: un ticker se pausa para poder LEER lo que se mueve, pero aquí
+   lo que se mueve es un icono de 16px sin contenido que leer — pausarlo solo
+   apagaría la señal justo cuando el visitante se ha acercado. ============ */
+
+.icono-fuego {
+  width: 1em;
+  height: 1em;
+}
+
+/* transform-box: fill-box es obligatorio en SVG: sin él, transform-origin se
+   resuelve contra el viewBox del <svg> y la llama escala desde una esquina
+   fuera de sí misma. Con fill-box, el 50% 100% cae en la BASE de la llama,
+   que es donde un fuego está anclado. */
+.icono-fuego__silueta,
+.icono-fuego__nucleo {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+}
+
+.icono-fuego__silueta {
+  animation: fuego-envolvente var(--fuego-envolvente-duracion) ease-in-out infinite;
+}
+
+.icono-fuego__nucleo {
+  animation: fuego-nucleo var(--fuego-nucleo-duracion) ease-in-out infinite;
+}
+
+/* Escala anisotrópica (X y Y en direcciones opuestas): estirarse a lo alto
+   ADELGAZANDO es lo que hace una llama y lo que la distingue de un latido,
+   que crece por igual en los dos ejes. */
+@keyframes fuego-envolvente {
+  0%,
+  100% {
+    transform: scale(1, 1);
+  }
+  30% {
+    transform: scale(0.94, 1.07);
+  }
+  65% {
+    transform: scale(1.04, 0.96);
+  }
+}
+
+@keyframes fuego-nucleo {
+  0%,
+  100% {
+    transform: scale(1, 1);
+    opacity: 0.92;
+  }
+  35% {
+    transform: scale(0.86, 1.14);
+    opacity: 0.65;
+  }
+  70% {
+    transform: scale(1.08, 0.9);
+    opacity: 1;
+  }
+}
+
+/* El reloj de arena voltea, se queda quieto un rato largo y vuelve a
+   voltear. Ese silencio entre vueltas es todo el efecto: un giro continuo
+   sería un spinner («cargando»), y la pausa es lo que lo convierte en un
+   reloj que alguien está dando la vuelta. Por eso el giro ocupa solo el
+   primer 18% del ciclo. */
+.icono-reloj {
+  animation: reloj-voltea var(--reloj-voltea-duracion) ease-in-out infinite;
+}
+
+@keyframes reloj-voltea {
+  0% {
+    rotate: 0deg;
+  }
+  18%,
+  100% {
+    rotate: 180deg;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .icono-fuego__silueta,
+  .icono-fuego__nucleo,
+  .icono-reloj {
+    animation: none;
+  }
+}
+
+/* ============================================================
    Reels sociales (correcciones v1 del cliente, 2026-07-20 —
    planes/01-home.md slides 8-9 y planes/02-producto.md slide 6).
    Carrusel horizontal de cards 9:16 con scroll-snap.
@@ -1650,10 +2009,67 @@
   display: none;
 }
 
+/* ---------- Sangrado del carrusel (2026-07-22) ----------
+   La pista se sale de su contenedor por los dos lados y devuelve por dentro
+   el mismo valor como padding, para que la PRIMERA card empiece alineada con
+   el título y las demás se escapen hacia el canto. Los dos usos sangran
+   distinto porque su contenedor tiene distinto padding: la sección de la home
+   (px-5 / sm:px-10) y el bloque de la ficha (BLOQUE_FICHA, p-6 / sm:p-8).
+
+   ⚠️ scroll-padding-inline NO ES DECORATIVO — ES EL ARREGLO. Bug medido en la
+   ficha (Samuel: «alineaciones erradas y raras»): con `scroll-snap-type: x
+   mandatory` y scroll-padding en `auto`, el navegador considera que el
+   scrollport empieza en el borde del PADDING BOX, así que al cargar
+   auto-desplazaba la pista 32px para encajar la 1ª card en ese borde —
+   exactamente los 32px del padding-left, que quedaban anulados. Resultado:
+   scrollLeft=32 sin que nadie hubiera tocado nada, y la 1ª card 32px a la
+   izquierda del H2. Igualando scroll-padding al padding, el punto de encaje
+   pasa a ser el borde del CONTENIDO y la alineación se sostiene.
+   Estaba igual en la home (ahí eran 20px en móvil y 40px en escritorio); se
+   arregla de una vez para los dos usos, que es la ventaja de que compartan
+   componente. */
+.reel-pista--sangrada {
+  margin-inline: calc(var(--reel-sangrado) * -1);
+  padding-inline: var(--reel-sangrado);
+  scroll-padding-inline: var(--reel-sangrado);
+}
+
+.reel-pista--en-seccion {
+  --reel-sangrado: var(--spacing-reel-sangrado-seccion);
+}
+
+.reel-pista--en-bloque {
+  --reel-sangrado: var(--spacing-reel-sangrado-bloque);
+}
+
+/* sm: (40rem) — el mismo salto que hacen los paddings de sus contenedores. */
+@media (min-width: 40rem) {
+  .reel-pista--en-seccion {
+    --reel-sangrado: var(--spacing-reel-sangrado-seccion-sm);
+  }
+
+  .reel-pista--en-bloque {
+    --reel-sangrado: var(--spacing-reel-sangrado-bloque-sm);
+  }
+}
+
 .reel-card {
   position: relative;
-  flex: 0 0 auto;
-  width: var(--spacing-reel-ancho);
+  /* grow: 1 — LA CARD CRECE PARA LLENAR LA FILA cuando todas caben, y se
+     queda en su ancho base cuando no (2026-07-22, Samuel: «los videos no
+     están llegando hasta el extremo, hay un espacio a la derecha»). No era un
+     problema de scroll: son 5 reels de 240px + gaps = 1264px dentro de un
+     carril de 1400px, así que sobraban ~136px por la derecha y la fila se
+     leía descuadrada contra un título que sí llegaba al canto.
+     La gracia de resolverlo con flex-grow en vez de fijar otro ancho es que
+     el reparto lo hace el propio flex: si el espacio libre es positivo (todas
+     caben) se reparte entre las cards; si es negativo (no caben) no hay nada
+     que repartir, se quedan en --spacing-reel-ancho y vuelve el scroll. Sigue
+     funcionando con 5 reels, con 9 y en la columna estrecha de la ficha, sin
+     una sola media query.
+     shrink: 0 — nunca por debajo del ancho base: una card de reel más
+     estrecha que eso deja de leerse como un vertical de móvil. */
+  flex: 1 0 var(--spacing-reel-ancho);
   aspect-ratio: 9 / 16;
   overflow: hidden;
   border-radius: var(--radius-card);
@@ -1661,6 +2077,14 @@
   box-shadow: var(--shadow-card);
   scroll-snap-align: start;
   transition: box-shadow var(--reel-transicion) ease-out;
+  /* La card se renderiza como <button> cuando el reel TIENE video (hoy
+     ninguno lo tiene — ver REELS en data/home.ts) y como <article> cuando no.
+     Estas dos declaraciones son para ese día: un <button> centra su texto y
+     hereda el chrome del sistema, y el título del reel va alineado a la
+     izquierda igual que en la variante article. Ponerlo ahora cuesta dos
+     líneas; descubrirlo el día que lleguen los videos cuesta una sesión. */
+  text-align: left;
+  appearance: none;
 }
 
 .reel-card img,
@@ -1696,7 +2120,11 @@
   display: grid;
   place-items: center;
   color: var(--color-papel);
-  background: rgb(255 255 255 / 18%);
+  background: var(--color-reel-control);
+  /* El borde es un highlight especular (blanco muy opaco), no un contorno
+     elegido por contraste contra el relleno — misma regla que el vidrio del
+     nav flotante. Es lo que le da canto al disco sobre cualquier foto. */
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 34%);
   backdrop-filter: blur(4px);
   border-radius: 999px;
 }
@@ -1714,6 +2142,15 @@
   translate: -50% -50%;
   width: 3rem;
   height: 3rem;
+  transition: scale var(--reel-transicion) ease-out;
+}
+
+/* El play crece con la card, no por su cuenta: es el mismo gesto único de
+   hover que ya hace la foto (zoom) y el mosaico de la ficha. */
+@media (hover: hover) {
+  .reel-card:hover .reel-card__play {
+    scale: 1.1;
+  }
 }
 
 .reel-card__titulo {
@@ -1731,12 +2168,14 @@
 @media (prefers-reduced-motion: reduce) {
   .reel-card,
   .reel-card img,
-  .reel-card video {
+  .reel-card video,
+  .reel-card__play {
     transition: none;
   }
 
   .reel-card:hover img,
-  .reel-card:hover video {
+  .reel-card:hover video,
+  .reel-card:hover .reel-card__play {
     scale: 1;
   }
 }
@@ -1745,32 +2184,197 @@
    Prueba social — aviso de reserva reciente (correcciones v1 del cliente,
    2026-07-20, planes/01-home.md slide 19).
 
-   Entrada/salida deslizando desde el borde izquierdo. Es CSS a medida y no
-   utilidades porque el estado "fuera" tiene que seguir ocupando su sitio sin
-   ser interactuable ni anunciable — con `hidden` de Tailwind el aviso
-   aparecería de golpe en vez de deslizarse. ============ */
+   Entrada/salida por GSAP (prueba-social.tsx), no CSS — 2026-07-22, 2ª
+   vuelta del rediseño a ticket: la vuelta anterior usaba clases CSS
+   `.prueba-social--dentro/--fuera` (translate+opacity) para TODO el ciclo
+   (entrada Y salida), pero la salida ahora es el desgarro de las 2 mitades
+   (ver "Ticket con recorte semicircular" abajo) — con las 2 mitades
+   desmontándose del todo tras el desgarro (React, no un reset a mano), ya
+   no hace falta la clase `--fuera` para "esconder" nada: esas 2 clases y
+   `--prueba-social-transicion` (tokens.css) se retiraron, sin reemplazo. */
 
-.prueba-social--dentro,
-.prueba-social--fuera {
-  transition:
-    translate var(--prueba-social-transicion) ease-out,
-    opacity var(--prueba-social-transicion) ease-out;
+/* Ticket con recorte semicircular (2026-07-22, rediseño — pedido de Samuel:
+   "que se parezca a un ticket con los recortes semicirculares que
+   aprendimos a hacer en reserva directa").
+
+   4ª VUELTA — LA CAUSA REAL ERA LA POSICIÓN, NO EL COMPOSITE (Samuel probó
+   2 recetas distintas —`intersect` en la 2ª vuelta, `exclude` en la 3ª— y
+   ninguna mostró el corte en su navegador; pero confirmó que ESTE MISMO
+   navegador sí muestra bien los cortes de .boleto-superficie, why-
+   direct.tsx, que usa `intersect` sin ningún prefijo). Esa pista descarta
+   por completo la teoría de soporte de `mask-composite` (las 2 vueltas
+   anteriores perseguían la pista equivocada) — la única diferencia real
+   entre .boleto-superficie (funciona) y este ticket (no funcionaba) era la
+   POSICIÓN del círculo: el boleto corta a una altura INTERMEDIA de un
+   borde lateral (`at 0 var(--bn)` / `at 100% var(--bn)` — extremo en un
+   eje, punto medio en el otro), mientras este ticket cortaba en las
+   ESQUINAS de cada mitad (`at 100% 0` / `at 100% 100%` — extremo en LOS
+   DOS ejes a la vez). Un radial-gradient centrado exactamente en una
+   esquina matemática es válido en el spec, pero en la práctica hay
+   motores que lo redondean/recortan mal (típicamente por cómo resuelven
+   el bounding box del mask en un punto exacto de doble extremo) — de ahí
+   que ni intersect ni exclude "arreglaran" nada: el problema nunca fue el
+   modo de composición.
+
+   SOLUCIÓN: el corte vuelve a vivir en una ÚNICA superficie que abarca el
+   ticket ENTERO (foto + texto), no en cada mitad por separado — exactamente
+   la arquitectura de .boleto-superficie, con los ejes intercambiados: el
+   boleto corta a lo ANCHO completo, a una ALTURA intermedia (--bn, medida
+   por JS porque el contenido de arriba varía); este ticket corta a lo ALTO
+   completo, a un ANCHO intermedio — pero ese ancho NO varía con el
+   contenido (es siempre el ancho fijo de la columna de la foto,
+   --spacing-alerta-imagen-ancho, tokens.css), así que no hace falta medir
+   nada con JS: el círculo se centra en `at var(--spacing-alerta-imagen-
+   ancho) 0` / `100%` — extremo en Y, punto medio (no esquina) en X. Mismo
+   `mask-composite: intersect` que .boleto-superficie, sin prefijos, tal
+   cual el navegador de Samuel ya demostró soportar.
+
+   `.alerta-venta-imagen`/`.alerta-venta-info` (foto/texto, ver
+   prueba-social.tsx) no tienen mask propio — son piezas de CONTENIDO puro.
+
+   5ª VUELTA — LA SUPERFICIE PASA A SER HERMANA DEL CONTENIDO, NO MADRE
+   (Samuel: "al caer los tickets, desaparecen no con el extremo de la
+   pantalla sino antes... seguro agregaste un overflow"). No era un
+   overflow: la 4ª vuelta desvanecía la opacity de `fichaRef` (el wrapper
+   exterior) durante el desgarro para tapar el fantasma del contorno — pero
+   `fichaRef` era ANCESTRO de la superficie Y del contenido (foto/texto),
+   así que ese fade se combinaba con la caída de las 2 mitades y las hacía
+   desvanecerse en el aire, en vez de caer sólidas hasta salir de la
+   pantalla por su cuenta (que ya alcanzaban a hacer con margen — el aviso
+   vive a solo ~20px del borde real). La opacity de un padre se COMPONE con
+   la de sus hijos: no hay forma de apagar "solo el contorno" sin apagar
+   también lo que cae adentro, mientras compartan el mismo ancestro.
+
+   Ahora `.alerta-venta-superficie` es HERMANA de la fila de contenido
+   (foto + texto), no madre — las dos son hijas directas de `fichaRef`
+   (que en sí no tiene fondo, sombra ni mask propios: nada suyo que
+   fantasmee). La superficie es `absolute inset-0` (mismo tamaño que
+   `fichaRef`, sentada DETRÁS por stacking, ver el comentario en
+   prueba-social.tsx) y trae ella sola el fondo + el corte + `shadow-card`
+   (el contorno completo del ticket en reposo) — con esto, se puede
+   desvanecer SOLO la superficie (rápido, sin arrastrar el contenido)
+   mientras foto y texto caen por su cuenta, sólidas, hasta que la
+   pantalla las recorta de verdad. Mismo principio de capas independientes
+   que separa `.boleto` de `.boleto-superficie`, llevado un paso más allá
+   porque acá, a diferencia del boleto (una ilustración estática), el
+   contenido necesita moverse SIN el fondo.
+
+   SIN RING, FONDO GRIS (7ª vuelta — Samuel probó un `ring-inset` que sí se
+   veía bien sobre blanco, pero no le gustó el look; pidió quitarlo y usar
+   en su lugar un fondo gris clarito). `--color-papel-hueso` en vez de
+   `--color-papel`: se separa de las secciones/cards blancas de atrás sin
+   necesitar una línea propia — mismo gris que ganan las 2 mitades de
+   contenido al desgarrarse (prueba-social.tsx, `desgarrar()`), así el
+   ticket entero es un solo tono, en reposo y cayendo.
+
+   UN POCO MÁS OSCURO (8ª vuelta, mismo día — Samuel: "ponle un gris un
+   poco mas oscurito al ticket"): `--color-fondo-ficha` en vez de
+   `--color-papel-hueso` — no un hex nuevo, sino el OTRO gris que ya existe
+   en tokens.css para este mismo problema (su propio comentario ahí:
+   "--color-papel-hueso... casi no contrasta contra una card blanca
+   encima; [--color-fondo-ficha] sí separa el bloque del fondo"), hasta
+   ahora reservado para el fondo de página de las internas. Un paso más
+   frío y oscuro, no un salto grande.
+
+   Y OTRO PASO MÁS (11ª vuelta, mismo día — Samuel lo pidió otra vez: "y
+   ponle un gris un poco mas oscurito"). Acá ya no quedaba token que
+   reutilizar: el siguiente valor hacia abajo en la familia era
+   --color-linea, que es un color de BORDE y usarlo de relleno mentiría en
+   el traspaso a Figma. Nace --color-alerta-ticket, cuarto escalón de la
+   familia fría, con el mismo paso entre escalones que los anteriores. Su
+   comentario en tokens.css documenta que es el SUELO: el texto meta
+   (--color-navy-soft) queda a 4.58:1 sobre él, y un escalón más rompe la AA.
+
+   DOS INSTANCIAS, UNA POR MITAD (9ª vuelta — Samuel: "cuando se separan se
+   va el border radius y los agujeros"). Esta clase ya NO se usa una sola vez
+   como superficie suelta detrás del contenido: ahora la llevan LAS DOS
+   mitades del ticket, cada una con su copia del ANCHO COMPLETO (w-72) y
+   anclada a un lado (`left-0` la de la foto, `right-0` la del texto),
+   recortada por el `overflow-hidden` de su columna. Así cada mitad conserva
+   su radio y su media luna del corte al caer, en vez de quedar como un
+   rectángulo pelado cuando la superficie única se desvanecía.
+
+   ⚠️ Por eso el corte NO se movió a las esquinas de cada mitad, que sería lo
+   evidente: las coordenadas del mask siguen siendo las del ticket ENTERO
+   (--spacing-alerta-imagen-ancho, una posición INTERMEDIA del ancho) y es el
+   recorte de la columna el que enseña solo media luna a cada lado. Un corte
+   centrado en la esquina de un trozo es justo la geometría que no se
+   renderiza bien y que costó 3 vueltas diagnosticar (ver prueba-social.tsx,
+   "LA POSICIÓN DEL CORTE"). Si algún día cambia el ancho del ticket, tiene
+   que cambiar en los 3 sitios a la vez: `fichaRef` y las 2 copias. */
+.alerta-venta-superficie {
+  background: var(--color-alerta-ticket);
+  mask-image:
+    radial-gradient(circle var(--spacing-alerta-notch) at var(--spacing-alerta-imagen-ancho) 0, transparent var(--spacing-alerta-notch), #000 calc(var(--spacing-alerta-notch) + 1px)),
+    radial-gradient(circle var(--spacing-alerta-notch) at var(--spacing-alerta-imagen-ancho) 100%, transparent var(--spacing-alerta-notch), #000 calc(var(--spacing-alerta-notch) + 1px));
+  mask-composite: intersect;
 }
 
-.prueba-social--dentro {
-  translate: 0 0;
-  opacity: 1;
+/* La línea punteada de la costura vivía acá (border-left de la mitad de
+   texto) hasta que Samuel notó que sobresalía por los 2 agujeros del corte
+   — al vivir en la fila de CONTENIDO (sin mask, sentada ENCIMA de
+   .alerta-venta-superficie por stacking, ver prueba-social.tsx) nada la
+   recortaba donde el corte hace su agujero. Se movió DENTRO de
+   .alerta-venta-superficie (un div propio, ver el JSX) — al vivir en el
+   elemento con el mask, el mismo corte que perfora el fondo perfora
+   también la línea, cortándola justo en el borde de cada agujero en vez
+   de asomar por encima. */
+
+/* Carrusel de destacados del blog (components/blog/carrusel-destacados.tsx):
+   sin CSS propio — el sangrado hasta el borde del viewport (para que los
+   vecinos asomen) se calcula midiendo el DOM real (getBoundingClientRect +
+   document.documentElement.clientWidth) en el propio componente, no con
+   variables CSS ni unidades de viewport. Detalle completo del porqué en el
+   comentario de cabecera de ese archivo. */
+
+/* ============ Sección «Contacto» — punto de disponibilidad ============
+   Rediseño 2026-07-22 (Samuel: «me parece horrible»). Esta es la única pieza
+   que necesita CSS propio; toda la estructura del panel (carril + formulario
+   + mapa a sangre) es Tailwind sobre tokens en home/contacto.tsx.
+   ⚠️ El mapa (.contacto-mapa) tuvo aquí un filtro de desaturado + tinte navy
+   entre la 3ª y la 5ª vuelta de ese rediseño — se retiró (Samuel: «que no se
+   vea gris, que se vea normal a colores») junto con los tokens
+   --contacto-mapa-filtro/--color-overlay-mapa en tokens.css. */
+
+/* Punto de disponibilidad («Respondemos en minutos»). Dos capas: el punto
+   sólido, siempre quieto, y un eco que se expande y se apaga — así el
+   indicador sigue legible en el frame 0 y con prefers-reduced-motion, donde
+   solo se apaga el eco. Nunca desaparece el punto en sí. */
+.contacto-pulso {
+  position: relative;
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: var(--radius-chip);
+  background: var(--color-menta-texto);
 }
 
-.prueba-social--fuera {
-  translate: calc(-100% - 1.5rem) 0;
-  opacity: 0;
+.contacto-pulso::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: inherit;
+  animation: contacto-pulso var(--contacto-pulso-duracion) ease-out infinite;
+}
+
+@keyframes contacto-pulso {
+  0% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  /* Se apaga ANTES del final del ciclo (70%) y se queda quieto el resto: el
+     silencio entre latidos es lo que lo hace leer como "hay alguien ahí" en
+     vez de como un spinner. */
+  70%,
+  100% {
+    opacity: 0;
+    transform: scale(2.6);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .prueba-social--dentro,
-  .prueba-social--fuera {
-    transition: opacity var(--prueba-social-transicion) ease-out;
-    translate: 0 0;
+  .contacto-pulso::after {
+    animation: none;
   }
 }

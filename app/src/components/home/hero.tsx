@@ -65,11 +65,28 @@ export function Hero() {
             v3-F21 (Samuel, 2026-07-15): sube a 84svh (antes 78svh) — el hero
             «un poco más alto», ya NO persiguiendo que la banda de premios se
             vea entera sin scroll (--spacing-hero-alto, tokens.css). */}
-        <div className="relative flex flex-col rounded-hero sm:min-h-hero-alto">
+        {/* data-nav-oscuro (2026-07-22): sentinel que observa NavFlotante
+            (nav-flotante.tsx) para saber si el texto de los tabs debe ir
+            blanco (sobre esta caja oscura) o negro (sobre el resto de la
+            página) — ver el comentario "SOBRE OSCURO" ahí. Va en la caja
+            REDONDEADA con el video, no en el `<section id="hero">` de
+            afuera: ese tiene padding transparente (--spacing-hero-margen)
+            alrededor, que no es oscuro y daría un falso positivo en el
+            borde. */}
+        <div data-nav-oscuro className="relative flex flex-col rounded-hero sm:min-h-hero-alto">
           <div className="absolute inset-0 overflow-hidden rounded-hero">
+            {/* rounded-hero también AQUÍ, no solo en el div ancestro (Samuel,
+                2026-07-22, con captura: "en las 4 esquinas no se ve el border
+                redondeando"). El <video> es un elemento reemplazado con su
+                propia capa de composición (decodificación por GPU) que en
+                varios navegadores IGNORA el overflow-hidden+border-radius de
+                un ANCESTRO — el rectángulo del vídeo se pintaba entero,
+                asomando cuadrado por las 4 esquinas redondeadas. border-
+                radius puesto en el propio elemento sí recorta su contenido
+                siempre, sea cual sea la ruta de composición. */}
             <video
               ref={videoRef}
-              className="absolute inset-0 size-full object-cover"
+              className="absolute inset-0 size-full rounded-hero object-cover"
               poster="/fotos/hero-video-poster.webp"
               autoPlay={!reducirMovimiento && !forzarPoster}
               muted
@@ -91,6 +108,9 @@ export function Hero() {
                 background: 'linear-gradient(180deg, transparent 45%, var(--color-overlay-hero) 100%)',
               }}
             />
+            {/* Refuerzo de contraste solo en la franja del nav — ver el
+                comentario de --color-scrim-nav en tokens.css. */}
+            <div className="scrim-nav-superior absolute inset-x-0 top-0" />
           </div>
 
           <div className="relative z-10 flex flex-1 flex-col">

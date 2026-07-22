@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Minus, Plus, Users, Baby, Tag, ArrowDown, Check, BadgeCheck, Heart, Share2 } from 'lucide-react'
+import { Minus, Plus, Users, Baby, Tag, ArrowDown, BadgeCheck, Heart, Share2 } from 'lucide-react'
 import * as FancyButton from '@/components/alignui/fancy-button'
 import * as CompactButton from '@/components/alignui/compact-button'
 import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
+import { ChecksTicker } from '@/components/ui/checks-ticker'
 import { CalendarioWidget } from '@/components/tour/calendario-widget'
+import { ChipsUrgencia } from '@/components/tour/chips-urgencia'
 import { SubVariantePicker } from '@/components/tour/sub-variante-picker'
 import { useDevFlag } from '@/dev/use-dev-flag'
 import { hoyISO, sumarDias } from '@/lib/fechas'
@@ -52,40 +54,29 @@ type Props = { tour: Tour; ficha: FichaTour; variante?: string | null; onVariant
 // formulario de los tours clásicos — para eso existe el charter.
 const MAX_PERSONAS_DEFAULT = 6
 
-// Garantías del pie del widget.
+// Garantías del pie del widget — TICKER (components/ui/checks-ticker.tsx).
 //
-// Historia: eran 3 líneas apiladas → Samuel las pasó a un ticker infinito de
-// una sola línea (2026-07-17: "que estén en una fila, en un ticker infinito,
-// para reducir el alto").
+// Historia completa, porque esta línea ha ido y venido tres veces y conviene
+// que la próxima persona no la mueva sin saberlo:
+//  1. Empezaron como 3 líneas apiladas.
+//  2. 2026-07-17, Samuel: «que estén en una fila, en un ticker infinito, para
+//     reducir el alto». → ticker.
+//  3. 2026-07-20, correcciones v1: Fernando señaló el ticker con una flecha —
+//     «Eso se ve raro» — y se volvió a 3 checks quietos en grid. El argumento
+//     era razonable: un marquee dentro de la caja donde se decide pagar mueve
+//     la letra pequeña justo cuando se intenta leer.
+//  4. 2026-07-22, Samuel: «recuerda que lo que está abajo del widget, los 3
+//     checks de reserva ahora, cancela gratis y reembolso, debe ser un ticker
+//     infinito de una línea». → ticker otra vez, y esta vez es la buena.
 //
-// CORRECCIONES v1 DEL CLIENTE (2026-07-20, planes/02-producto.md slide 3):
-// Fernando señaló ese ticker con una flecha y escribió «Eso se ve raro». Y
-// tiene razón por una cuestión de contexto: un marquee dentro de una caja
-// estrecha —la caja donde el visitante está decidiendo pagar— hace que la
-// letra pequeña que sostiene la decisión (cancelación, depósito, reembolso)
-// se mueva justo cuando se intenta leer. El movimiento es correcto en el
-// ticker del hero, que es ambiente; aquí compite con la compra.
-//
-// Solución: las 3 garantías se quedan QUIETAS, en dos líneas compactas con su
-// check. Se pierde algo de alto respecto al ticker, pero mucho menos que las
-// 3 líneas originales, porque ahora van en grid y no apiladas.
-//
-// ⚠️ ESTO REVIERTE UNA DECISIÓN DE SAMUEL, a petición del cliente. Si Samuel
-// prefiere recuperar el ticker, `ChecksTicker` (components/ui/checks-ticker.tsx)
-// sigue existiendo intacto —lo usa el widget de evento— y basta con volver a
-// llamarlo aquí.
-function Checks({ lineas }: { lineas: string[] }) {
-  return (
-    <ul className="grid gap-1.5 border-t border-linea pt-3">
-      {lineas.map((l) => (
-        <li key={l} className="flex items-start gap-2 text-xs text-navy-sub">
-          <Check className="mt-0.5 size-3.5 shrink-0 text-menta-texto" aria-hidden="true" />
-          <span>{l}</span>
-        </li>
-      ))}
-    </ul>
-  )
-}
+// Quien decide es Samuel, y su argumento de 2026-07-17 no ha caducado: el
+// widget de esta 2ª vuelta ha CRECIDO (chips de urgencia arriba, reseña
+// verificada, deseos/compartir abajo), así que las tres líneas apiladas
+// cuestan ahora más alto del que costaban cuando el cliente las pidió — y
+// el alto del widget es lo que decide si el CTA cabe en el primer viewport.
+// Además el ticker ya es el lenguaje del widget de evento (misma pieza,
+// mismo componente en Figma), así que volver a él también deshace una
+// divergencia entre dos widgets que deberían ser hermanos.
 
 function Caja({ children }: { children: React.ReactNode }) {
   // Mismo lenguaje «objeto suave» que la TourCard de la home: la decisión de
@@ -444,24 +435,29 @@ export function WidgetReserva({ tour, ficha, variante: varianteProp, onVarianteC
 
   return (
     <Caja>
+      {/* Chips de aceleración, lo primero del widget (Samuel, 2026-07-22).
+          Van ARRIBA DEL TODO, antes incluso del rating: son el motivo por el
+          que alguien deja de leer y mira el precio.
+
+          ⚠️ SON MAQUETA, NO DATO — y eso tiene su propia nota larga en
+          components/tour/chips-urgencia.tsx, incluido qué hay que enchufar
+          cuando el motor de reservas exista. Esto DEROGA en parte el aviso
+          que sigue aquí abajo: de los 4 elementos de urgencia que pedía la
+          maqueta del cliente, ahora se pintan 2 (los que Samuel pidió
+          explícitamente) y siguen fuera los otros 2 —el «−18% · Antes
+          US$ 120» y el «pocas fechas disponibles»—, que son los que tocan
+          el PRECIO y la DISPONIBILIDAD. Esa frontera no es arbitraria: un
+          badge de popularidad exagerado es marketing; un precio tachado
+          falso o una escasez falsa es lo que la ley llama publicidad
+          engañosa, y además es justo el bait-and-switch contra el que este
+          archivo lleva avisando desde el primer día. */}
+      <ChipsUrgencia />
+
       {/* Prueba social en la cabecera del widget (correcciones v1 del cliente,
           planes/02-producto.md slide 4: «agregar los elementos de aceleración
-          de venta»).
-
-          ⚠️ LA MAQUETA DEL CLIENTE PEDÍA MÁS Y NO SE PINTA TODO, a propósito.
-          Traía un badge «Lo más reservado», un «Acaba el 09 de agosto», un
-          «−18% · Antes US$ 120» y un «Pocas fechas con disponibilidad este
-          mes». Ninguno de los cuatro tiene dato detrás: no hay motor de
-          reservas conectado (no sabemos qué tour se reserva más ni cuánta
-          disponibilidad queda) y no hay ninguna promo vigente que justifique
-          un precio tachado. Pintarlos sería urgencia y descuento inventados
-          — exactamente el bait-and-switch contra el que este archivo lleva
-          avisando desde el principio (ver la nota de arriba sobre anclar en
-          99 y cobrar 114). Lo que SÍ es real y por eso sí se pinta: el
-          rating y el número de reseñas, que son los mismos de todo el sitio.
-          Cuando el cliente confirme una promo real o el motor exponga
-          disponibilidad, esos elementos entran aquí sin discusión. */}
-      <div className="flex items-center gap-1.5 text-xs text-navy-sub">
+          de venta»). El rating y el número de reseñas SÍ son reales y son los
+          mismos de todo el sitio. */}
+      <div className="-mt-1 flex items-center gap-1.5 text-xs text-navy-sub">
         <span className="text-estrella" aria-hidden="true">
           ★
         </span>
@@ -857,13 +853,19 @@ export function WidgetReserva({ tour, ficha, variante: varianteProp, onVarianteC
           «US$ 99 × 12 personas · tramo 9-19 pax» cambiar en vivo al
           sumar/quitar personas o cambiar de bote. */}
 
-      <Checks
-        lineas={[
-          'Reserva ahora y paga después: confirmas con solo el 25%',
-          'Cancela gratis hasta 7 días antes',
-          'Reembolso total por mal clima',
-        ]}
-      />
+      {/* border-t + pt-3 en un envoltorio, no en el propio ticker: el ticker
+          es `overflow: hidden` y un borde suyo se recortaría contra su
+          propia pista. La hairline separa el bloque de garantías del CTA,
+          igual que lo hacía la lista quieta a la que sustituye. */}
+      <div className="border-t border-linea pt-3">
+        <ChecksTicker
+          lineas={[
+            'Reserva ahora y paga después: confirmas con solo el 25%',
+            'Cancela gratis hasta 7 días antes',
+            'Reembolso total por mal clima',
+          ]}
+        />
+      </div>
 
       {/* Reseña verificada dentro del widget (correcciones v1, slide 4). La
           maqueta la pone justo aquí y acierta: es el último argumento antes

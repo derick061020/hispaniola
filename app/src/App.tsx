@@ -13,13 +13,14 @@ import { FaqPage } from '@/pages/faq'
 import { BlogPage } from '@/pages/blog'
 import { ArticuloPage } from '@/pages/articulo'
 import { AgentesPage } from '@/pages/agentes'
+import { TrabajaConNosotrosPage } from '@/pages/trabaja-con-nosotros'
 import { ReservaDirectaPage } from '@/pages/reserva-directa'
 import { ContactoPage } from '@/pages/contacto'
 import { LegalPage } from '@/pages/legal'
 import { FundacionesPage } from '@/pages/fundaciones'
 import { NoEncontradoPage } from '@/pages/no-encontrado'
 import { ScrollAlNavegar } from '@/lib/scroll-al-navegar'
-import { IslaFlotante } from '@/components/home/isla-flotante'
+import { NavFlotante } from '@/components/home/nav-flotante'
 import { Topbar } from '@/components/home/topbar'
 import { DevMode } from '@/dev/dev-mode'
 
@@ -30,10 +31,10 @@ function App() {
           ficha desde el footer de la home aterriza con el scroll al fondo. */}
       <ScrollAlNavegar />
       {/* Fuera de <Routes>: en flujo normal (no fixed, a diferencia de
-          IslaFlotante), así queda ANTES del hero de cada página con su propio
+          NavFlotante), así queda ANTES del hero de cada página con su propio
           fondo blanco — nunca dentro de la caja del hero. */}
       <Topbar />
-      <IslaFlotante />
+      <NavFlotante />
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/tours/:slug" element={<TourPage />} />
@@ -52,6 +53,10 @@ function App() {
         <Route path="/blog" element={<BlogPage />} />
         <Route path="/blog/:slug" element={<ArticuloPage />} />
         <Route path="/agentes-de-viaje" element={<AgentesPage />} />
+        {/* Correcciones v1 del cliente (2026-07-22): página nueva. Los tres
+            enlaces del footer ("Como proveedor…", "…creador…", "…afiliado")
+            traen aquí con `?perfil=`, no a tres rutas gemelas. */}
+        <Route path="/trabaja-con-nosotros" element={<TrabajaConNosotrosPage />} />
         <Route path="/reserva-directa" element={<ReservaDirectaPage />} />
         <Route path="/contacto" element={<ContactoPage />} />
         <Route path="/legal/:slug" element={<LegalPage />} />

@@ -1,9 +1,7 @@
-import { Link } from 'react-router-dom'
-import { Award, Check, ChevronRight } from 'lucide-react'
-import * as Breadcrumb from '@/components/alignui/breadcrumb'
+import { Award, BadgeCheck, Check, ShieldCheck } from 'lucide-react'
 import * as StatusBadge from '@/components/alignui/status-badge'
-import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
 import { Estrellas } from '@/components/ui/estrellas'
+import { InsigniaTooltip } from '@/components/ui/insignia-tooltip'
 import type { Tour } from '@/data/home'
 import type { FichaTour } from '@/data/tours'
 
@@ -32,29 +30,29 @@ type Props = { tour: Tour; ficha: FichaTour }
 export function CabeceraFicha({ tour, ficha }: Props) {
   return (
     <div>
-      {/* Migaja: Breadcrumb del sistema (portado de las docs públicas — el
-          plan lo daba por inexistente mirando solo los templates Pro, decisión
-          §13.1 reabierta y cerrada). "Tours" es el listado, que vive solo en
-          el prototipo (depende del motor de reservas) — de ahí EnlacePrototipo.
-          El asChild pone los estilos del Item directamente sobre el Link. */}
-      <nav aria-label="Migaja de pan" className="migaja-sobre-foto">
-        <Breadcrumb.Root>
-          <Breadcrumb.Item asChild>
-            <Link to="/">Inicio</Link>
-          </Breadcrumb.Item>
-          <Breadcrumb.ArrowIcon as={ChevronRight} className="size-4 self-center" />
-          <Breadcrumb.Item asChild>
-            <EnlacePrototipo>Tours</EnlacePrototipo>
-          </Breadcrumb.Item>
-          <Breadcrumb.ArrowIcon as={ChevronRight} className="size-4 self-center" />
-          <Breadcrumb.Item active>{tour.nombre}</Breadcrumb.Item>
-        </Breadcrumb.Root>
-      </nav>
+      {/* El premio ENCABEZA la ficha (Samuel, 2026-07-22: «lo de #1 en
+          TripAdvisor ponlo arriba del título, no al final del hero, y ponle
+          en blanco»). Antes cerraba la fila de chips, que es el peor sitio
+          posible para el argumento más fuerte del producto: el visitante ya
+          había pasado por encima de otros 4 chips cuando llegaba a él.
+          Arriba del H1 funciona como el eyebrow de una portada — se lee
+          ANTES que el nombre del tour, y le da contexto.
+          En blanco liso, no en StatusBadge: como badge era una píldora más
+          en una fila de píldoras; suelto sobre la foto se lee como el sello
+          que es. Es el ÚNICO eyebrow del sitio que no usa <Etiqueta> (aqua
+          claro) — aquí el blanco es el pedido explícito. */}
+      <p className="flex items-center gap-2 text-eyebrow font-semibold uppercase tracking-[0.12em] text-white">
+        <Award className="size-4 shrink-0" aria-hidden="true" />
+        #1 en TripAdvisor · 7 años
+      </p>
 
       {/* --text-h2 (32px), no un tamaño nuevo: en Figma es el mismo text style
           que el título de sección. El H1 de la ficha manda por jerarquía
           (es el <h1> de la página), no por tamaño — el hero de la home es el
-          único sitio con --text-hero. */}
+          único sitio con --text-hero. Sin migaja (retirada de todos los
+          heros de internas, 2026-07-22, pedido de Samuel — este archivo la
+          traía vía Breadcrumb de AlignUI, .migaja-sobre-foto en
+          componentes.css). */}
       <h1 className="mt-3 text-balance font-display text-h2 font-semibold text-white">{ficha.tituloLargo}</h1>
 
       <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2">
@@ -68,9 +66,19 @@ export function CabeceraFicha({ tour, ficha }: Props) {
 
         {/* Los chips siguen a renderFicha() del prototipo, no al wireframe: la
             cancelación gratis no se promete en 'consulta' (Isla Saona no tiene
-            ni precio confirmado), y la recogida en hotel solo se anuncia en los
-            tours de horario fijo. El chip "WiFi a bordo" del wireframe no está:
-            el WiFi se cuenta en la sección Incluye de la home, no aquí. */}
+            ni precio confirmado). El chip "WiFi a bordo" del wireframe no está:
+            el WiFi se cuenta en la sección Incluye de la home, no aquí.
+
+            2026-07-22: se retiran los chips «{duración}» y «Recogida en
+            hotel». No es una poda por gusto — esos dos hechos ahora se
+            publican, con su icono y su contexto, en la ficha técnica que
+            hay bajo el mosaico (tour/datos-tour.tsx). Repetirlos aquí
+            dejaba la fila en 7 elementos y, peor, gastaba el sitio más
+            valioso de la página en metadatos que el visitante no necesita
+            hasta más abajo. Lo que se queda en el hero son los ARGUMENTOS
+            (rating, cancelación, las dos insignias) y el único metadato que
+            sí filtra público desde el primer segundo: la audiencia — a quien
+            viaja con niños le importa leer «Solo adultos» antes de nada. */}
         {tour.booking !== 'consulta' ? (
           <StatusBadge.Root status="completed" variant="light">
             <StatusBadge.Icon as={Check} />
@@ -80,36 +88,47 @@ export function CabeceraFicha({ tour, ficha }: Props) {
         <StatusBadge.Root status="disabled" variant="stroke">
           {tour.audienciaChip}
         </StatusBadge.Root>
-        <StatusBadge.Root status="disabled" variant="stroke">
-          {ficha.duracion}
-        </StatusBadge.Root>
-        {tour.booking === 'completo' ? (
-          <StatusBadge.Root status="completed" variant="stroke">
-            <StatusBadge.Dot />
-            Recogida en hotel
-          </StatusBadge.Root>
-        ) : null}
 
-        {/* Distintivo de excelencia (correcciones v1 del cliente, 2026-07-20 —
-            planes/02-producto.md slide 2, con una flecha a este punto y la
-            referencia a la ficha de Viator, que muestra ahí su "Distintivo de
-            excelencia").
+        {/* Distintivo de excelencia + Garantía del mejor precio (Samuel,
+            2026-07-22, con el texto del tooltip escrito por él). El #1 en
+            TripAdvisor que ocupaba este sitio SUBE al eyebrow (arriba).
 
-            ⚠️ ES UN PREMIO REAL, NO UN ADORNO: se pinta el que el cliente
-            tiene documentado y verificado —#1 en actividades acuáticas de
-            Bávaro/Punta Cana durante más de 7 años, el mismo dato que ya
-            sostiene la banda de PREMIOS de la home y el footer— y no el
-            genérico "Distintivo de excelencia" de la maqueta, que no
-            sabríamos de qué año ni de qué plataforma es. NO enlaza a ningún
-            perfil: las URLs verificables siguen pendientes del cliente
-            (PLAN-v3.md §9.5), y un premio sin manera de comprobarlo es
-            justo la crítica que la auditoría ya nos hizo. Cuando lleguen
-            las URLs y los logos en alta, esto pasa a ser un enlace con la
-            insignia oficial. */}
-        <StatusBadge.Root status="pending" variant="light">
-          <StatusBadge.Icon as={Award} />
-          #1 en TripAdvisor · 7 años
-        </StatusBadge.Root>
+            ⚠️ POR QUÉ AHORA SÍ SE PINTA EL «DISTINTIVO DE EXCELENCIA». En la
+            v1 de correcciones se descartó a propósito: la maqueta del cliente
+            lo copiaba de Viator, donde es un premio DE VIATOR con su año y su
+            criterio — y nosotros no podemos otorgarnos un premio ajeno. Lo
+            que cambia es el TEXTO que Samuel eligió para el tooltip: «cumple
+            NUESTROS estándares de calidad más altos». Eso ya no es un premio
+            de un tercero sin verificar, es un criterio propio de Hispaniola
+            sobre su propio catálogo — el mismo tipo de afirmación que la web
+            ya hace («no más del 35% de capacidad», «grupo pequeño»). Por eso
+            el tooltip es obligatorio y no decorativo: es lo que separa una
+            insignia honesta de una medalla inventada.
+
+            ⚠️ PENDIENTE DEL CLIENTE: el criterio EXACTO por el que un tour
+            gana esta insignia (¿rating mínimo? ¿nº de reseñas? ¿todos los
+            tours la llevan?). Hoy la llevan todos, que es tanto como no
+            llevarla. En cuanto haya criterio, se condiciona aquí.
+
+            «Garantía del mejor precio» sí tiene respaldo desde el día uno: es
+            la tesis entera de la sección Reserva Directa de la home (los dos
+            boletos al mismo precio, BENEFICIOS_DIRECTO en data/home.ts) y del
+            «ahorras hasta 15%» del widget. No es una promesa nueva. */}
+        <InsigniaTooltip
+          icono={BadgeCheck}
+          titulo="Insignia de excelencia"
+          texto="Esta experiencia está muy bien valorada por los viajeros y cumple nuestros estándares de calidad más altos."
+        >
+          Distintivo de excelencia
+        </InsigniaTooltip>
+
+        <InsigniaTooltip
+          icono={ShieldCheck}
+          titulo="Garantía del mejor precio"
+          texto="Reservando aquí pagas lo mismo o menos que en cualquier portal — y encima eliges menú, confirmas con el 25% y hablas directo con el equipo del barco."
+        >
+          Garantía del mejor precio
+        </InsigniaTooltip>
       </div>
     </div>
   )

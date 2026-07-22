@@ -28,6 +28,21 @@
      navy, no el hueso cálido de --color-papel-hueso (ese casi no contrasta
      contra una card blanca encima; este sí separa el bloque del fondo). */
   --color-fondo-ficha: #eef1f4;
+  /* Superficie del ticket de «prueba social» (prueba-social.tsx). Cuarto
+     escalón de la misma familia fría: papel → hueso → fondo-ficha → este.
+     Nace el 2026-07-22 tras dos pedidos seguidos de Samuel de oscurecer el
+     ticket ("ponle un gris un poco mas oscurito" ×2): el primero se resolvió
+     saltando de --color-papel-hueso a --color-fondo-ficha (tokens que ya
+     existían), pero para el segundo ya no quedaba escalón — el siguiente
+     valor hacia abajo era --color-linea, que es un color de BORDE y usarlo
+     de relleno mentiría en Figma. Mismo paso entre escalones que el que hay
+     de hueso a fondo-ficha (~8 puntos por canal), no un salto.
+     ⚠️ Es el suelo de este degradado: medido, el texto meta del ticket
+     (--color-navy-soft, el "Reservado hace N min") da 4.58:1 sobre este
+     gris — pasa la AA (4.5:1) con poco margen. Un escalón más oscuro la
+     rompe, así que si Samuel vuelve a pedir más oscuro hay que oscurecer
+     también ese texto, no solo el fondo. */
+  --color-alerta-ticket: #e6ebf0;
   --color-navy: #0b2545; /* texto fuerte, footer, headings */
   --color-navy-sub: #42525f; /* texto secundario sobre papel */
   --color-navy-soft: #5b6b78; /* meta/caption sobre papel */
@@ -51,6 +66,21 @@
      como amber-300 suelto de Tailwind (sin token) en la fila de rating del
      hero. Mismo valor, ahora tokenizado. */
   --color-estrella: #fcd34d;
+  /* Chips de urgencia sobre el widget de reserva (2026-07-22, pedido de
+     Samuel: «lo más reservado» con llama animada + «acaba el 28 de julio»).
+     Familia coral —la misma del CTA— porque es el mismo lenguaje: coral es
+     "esto es la reserva". Fondo al 10% para que el chip pese como una nota
+     y no como un segundo botón compitiendo con «Continuar», y texto en
+     coral-dark porque el coral puro a 12px sobre su propio tinte no llega al
+     4.5:1 de la AA (mismo motivo por el que --color-aqua-dark existe). */
+  --color-urgencia-fondo: color-mix(in srgb, var(--color-coral) 10%, white);
+  --color-urgencia-texto: var(--color-coral-dark);
+  /* Núcleo de la llama del chip «Lo más reservado» — el mismo amarillo de las
+     estrellas: es el único cálido de la paleta y un fuego sin núcleo claro
+     se lee como una mancha. Token propio (no --color-estrella directo) para
+     que el día que la llama cambie de temperatura no haya que decidir si se
+     mueven también las estrellas de las reseñas. */
+  --color-fuego-nucleo: var(--color-estrella);
   --color-overlay-hero: rgb(11 37 69 / 45%); /* gradiente sobre foto de hero */
   --color-overlay-hero-suave: rgb(11 37 69 / 20%);
   /* Pie oscuro de una foto que lleva texto ENCIMA (megamenú de Eventos). No
@@ -59,6 +89,163 @@
      —con un casco de barco blanco al fondo— el texto pequeño se queda por
      debajo del 4.5:1 de la AA. Una sola capa, más opaca, hace el mismo trabajo. */
   --color-overlay-foto: rgb(11 37 69 / 70%);
+
+  /* ---------- Vidrio (nav flotante, 2026-07-21, pedido de Samuel) ----------
+     Reemplaza el notch/isla de fondo sólido por un efecto "liquid glass" tipo
+     Apple: CSS puro (backdrop-filter blur+saturate), sin librerías de
+     distorsión. Investigado antes de construir (reactbits Fluid Glass,
+     rdev/liquid-glass-react, liquid-glass.maxrovensky.com): las tres usan
+     SVG feDisplacementMap o WebGL para el refractado de canto y las TRES
+     avisan que Safari/Firefox no lo muestran — solo funciona completo en
+     Chromium. Un header persistente no puede depender de eso (el público de
+     un sitio de turismo en iPhone es justo el que se queda sin efecto). El
+     propio apple.com resuelve su navbar con el blur simple, no con la
+     distorsión — esa parte solo la usan en UI nativa, renderizada por su
+     compositor, no por el motor del navegador.
+     OSCURO, no blanco (2026-07-21, pedido de Samuel): los textos del panel
+     pasan a blanco — necesitan un relleno oscuro detrás para tener contraste
+     en las DOS situaciones (sobre el video del hero y sobre contenido ya
+     scrolleado), así que no puede ser el mismo vidrio claro que antes. El
+     borde sigue siendo blanco (no oscuro): es lo que de verdad insinúa
+     "canto de vidrio" — un borde oscuro sobre relleno oscuro no se vería.
+     NEGRO NEUTRO, no navy (2026-07-21, 3ª vuelta — pedido de Samuel: "que el
+     menú fijo no tenga el azul corporativo, quiero que sea un negro
+     neutro"): la 1ª vuelta usaba el canal de --color-navy con alpha — se
+     leía como un tinte de marca en vez de vidrio ahumado neutro. R=G=B
+     (sin matiz) para que no quede ningún casque de color.
+     BLANCO otra vez (2026-07-22, 7ª vuelta — pedido de Samuel: "probemos...
+     el vidrio del menú fijo sea blanco 40%"): revierte la decisión de arriba.
+     Con el relleno claro, el texto de los tabs YA NO puede seguir en blanco
+     en este estado — pasa a negro (nav-tabs.tsx, variante 'flotante' con la
+     nueva prop `fijo`). El mega-menú (TabsConPaneles, nav-tabs.tsx) adoptó
+     este mismo vidrio por un tiempo (.panel-vidrio, componentes.css) — desde
+     el 2026-07-22 (10ª vuelta, "que el mega menú siempre tenga fondo
+     sólido") el panel volvió a `bg-papel` sólido en TODOS los casos, .panel-
+     vidrio se retiró por completo. 'solida' (404) nunca cambió: bg-papel
+     siempre, nada que desenfocar ahí.
+     Reservar y el logo fundido (Boton/Logo `sobreOscuro`) no cambian:
+     Reservar es un botón coral sólido ajeno a este vidrio, su texto blanco
+     no depende de este tinte.
+     BORDE MÁS BLANCO QUE EL RELLENO, no más oscuro (misma vuelta — corrige
+     un primer intento: se había puesto un borde oscuro translúcido
+     razonando "un borde claro sobre un relleno ya claro no se vería", al
+     revés de la física real. Pedido de Samuel: "en un vidrio los bordes se
+     ven más blancos y brillantes que el lado plano del vidrio" — el canto
+     de un vidrio real siempre es más brillante que su cara, sin importar
+     cuán claro sea el relleno; es un highlight especular, no un contorno
+     que necesite CONTRASTAR con el fondo). Blanco más opaco que el relleno,
+     no menos — la PROPORCIÓN entre los dos es lo que importa, no el % en
+     absoluto (ver el ajuste de abajo).
+     12% / 16% (2026-07-22, "probemos con el fondo en 12%... y el borde a
+     16%"): relleno mucho más sutil que el 40% de la vuelta anterior — el
+     vidrio pesa menos, casi transparente, con el highlight del borde apenas
+     un poco por encima (mantiene la misma relación borde>relleno de arriba,
+     ahora con los dos números más bajos).
+     VIDRIO OSCURO ADAPTATIVO (2026-07-22, 8ª vuelta — pedido de Samuel:
+     "cuando el menú fijo detecte secciones oscuras de fondo y se pone el
+     texto blanco, que también el fondo sea negro translúcido como
+     teníamos hace unas versiones atrás"). El texto de los tabs ya se
+     adapta a `sobreOscuro` (nav-tabs.tsx/nav-flotante.tsx) — pero antes de
+     esta vuelta el RELLENO de la píldora seguía siendo SIEMPRE el claro de
+     arriba, así que sobre una sección oscura (incluye-crucero.tsx,
+     why-direct.tsx) quedaba texto blanco sobre un vidrio blanco casi
+     transparente — poco cuerpo, se leía deslavado. Estos 2 tokens son el
+     mismo par pero con la receta OSCURA de la 3ª vuelta (--color-vidrio
+     antes de la 7ª): negro neutro (R=G=B, sin matiz de marca) al 62%,
+     borde blanco al 18% — vuelve exactamente el valor histórico, no uno
+     recalibrado a la proporción 12/16 de arriba. `.nav-pildora--vidrio-
+     oscuro` (componentes.css) los activa como modificador ADICIONAL sobre
+     `.nav-pildora--vidrio`, no lo reemplaza — mismo blur/saturate, mismo
+     mecanismo de opacity-transition, solo cambian relleno y borde. El panel
+     del mega-menú nunca usó estos tokens oscuros — su contenido es navy
+     fijo, nunca blanco, así que un relleno oscuro ahí rompería su propio
+     contraste; desde el 2026-07-22 (10ª vuelta) tampoco usa YA los tokens
+     claros de arriba: el panel es siempre `bg-papel` sólido (ver "Fondo del
+     panel: SIEMPRE sólido" en nav-tabs.tsx). */
+  --color-vidrio: rgb(255 255 255 / 12%); /* relleno del panel */
+  --color-vidrio-borde: rgb(255 255 255 / 16%); /* borde MÁS blanco/opaco que el relleno — highlight de canto, no contorno */
+  --color-vidrio-oscuro: rgb(18 18 18 / 62%); /* relleno oscuro — solo para la píldora, cuando sobreOscuro */
+  --color-vidrio-oscuro-borde: rgb(255 255 255 / 18%); /* mismo principio (borde MÁS claro que el relleno), valor histórico */
+  --blur-vidrio: 20px; /* mismo valor que usa Apple en apple.com */
+  --saturate-vidrio: 200%; /* satura lo que se ve DETRÁS del blur — sin esto el blur se ve lavado/gris */
+
+  /* Fundido del fondo del nav flotante (2026-07-21, 3ª vuelta — pedido de
+     Samuel: "la transición entre menú estático y fijo se siente tosca").
+     Antes .notch-caja::before compartía --notch-transicion/--notch-easing
+     con el morph de ancho/alto (pensado para una FORMA que cambia de
+     tamaño: "arranque vivo, aterrizaje suave", casi con rebote) — un fundido
+     de opacity con esa misma curva se sentía brusco, no elegante. Token
+     aparte, más largo y sin nada de rebote (ease-out puro): el vidrio se
+     asienta un pelín DESPUÉS de que el ancho ya terminó de crecer, en vez de
+     que todo pare en seco al mismo milisegundo — ese remate extra es lo que
+     lo hace sentir cuidado en vez de mecánico. El morph de ancho/alto (JS
+     mide, CSS anima) no cambia — solo el relleno tiene su propio ritmo. */
+  --notch-fondo-transicion: 450ms;
+  --notch-fondo-easing: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Scrim superior del hero (2026-07-21, 2ª vuelta — pedido de Samuel: "por
+     defecto sin fondo [el nav flotante], pero... un efecto como el de esta
+     otra web que tiene un degradado con transparencia y blur, a la altura
+     del menú, para crear mayor contraste con el video de fondo" — referencia:
+     web de una fundación con nav sin caja, solo texto blanco sobre un
+     degradado oscuro difuminado). Vive DENTRO de la capa de media del hero
+     (home/hero.tsx, internas/hero-interna.tsx).
+     2026-07-22: SÍ repite --radius-hero (en sus esquinas superiores, propio
+     del elemento, no heredado) — bug reportado por Samuel con captura:
+     "unos cuadros con transparencia que salen del border radius". Confiar
+     solo en el overflow-hidden del ANCESTRO para recortar este elemento no
+     bastaba: backdrop-filter + mask-image en el mismo elemento es la
+     combinación que, en algunos navegadores/rutas de composición GPU, no
+     intersecta bien con el clip redondeado de un ANCESTRO — el blur se
+     "escapaba" en las esquinas como pequeños rectángulos translúcidos justo
+     donde debía curvarse. border-radius en el propio elemento SÍ recorta su
+     propio backdrop-filter/mask siempre (no depende de overflow), así que
+     es un blindaje que no dependía de esa ruta frágil.
+     Independiente de --color-overlay-hero (tinte parejo sobre TODA la foto):
+     este es un refuerzo LOCAL, solo en la franja donde vive el nav, para los
+     casos en que el video de fondo aclara justo ahí (crestas, reflejos) y el
+     tinte parejo no basta.
+     35% → 55% (2026-07-21, 3ª vuelta, pedido de Samuel: "más oscuro para
+     mejorar contraste") — el primer valor se quedaba corto justo en las
+     zonas más claras del video (espuma, cielo). 4ª vuelta (mismo día, valor
+     exacto de Samuel): rgb(4 17 33 / 80%) — más oscuro y más opaco todavía,
+     y --spacing-scrim-nav-alto sube a 12rem (antes 9rem) — banda más alta,
+     el degradado tiene más recorrido antes de desvanecerse del todo. */
+  --color-scrim-nav: rgb(4 17 33 / 80%);
+  --blur-scrim-nav: 8px;
+  --spacing-scrim-nav-alto: 12rem;
+
+  /* Offset superior de NavFlotante (nav-flotante.tsx) — despeja el Topbar
+     (WhatsApp/teléfono/idioma, topbar.tsx: py-1.5 + texto xs ≈ 34px medido),
+     que vive ENCIMA en flujo normal (no fixed) en las mismas páginas donde
+     NavFlotante también se muestra. Con solo top-4 (16px) los dos se
+     solapan 18px — a 1440px no se nota porque el panel es angosto y
+     centrado mientras el Topbar tiene texto en los extremos, pero es un
+     choque real que aparecería con menos ancho o un panel más ancho (mega-
+     menú abierto). 44px = 34px del Topbar + 10px de aire. */
+  --spacing-nav-flotante-top: 2.75rem;
+
+  /* Offset "fijo" de NavFlotante (2026-07-21, 5ª vuelta — pedido de Samuel:
+     "cuando el header vaya fijo... está quedando muy abajo, tiene mucho
+     aire arriba... moverlo más hacia arriba para que no estorbe"). El offset
+     de arriba existe SOLO para despejar el Topbar — pero el Topbar vive en
+     flujo normal (no fixed), así que en cuanto se scrollea más allá del
+     hero ya no está ahí para chocar. Mismo valor que el top-4 (16px) que se
+     descartó arriba por chocar con el Topbar: correcto ahora que, en este
+     estado, el Topbar ya no está en pantalla. Activo cuando `!logoVisible`
+     (nav-flotante.tsx) — el mismo disparador del logo/Reservar fundidos, NO
+     el de `fondo` (que también se activa con un menú abierto SIN scrollear,
+     momento en el que el Topbar sigue ahí y este valor volvería a chocar). */
+  --spacing-nav-flotante-top-fijo: 1rem;
+
+  /* Dónde se pega la columna izquierda de la FAQ de la home (home/faq.tsx,
+     layout 2 columnas de 2026-07-22). NO puede usar --spacing-sticky-top:
+     ese token mide la fila de anclas de la FICHA, que en la home no existe.
+     Aquí el único chrome fijo es la píldora de NavFlotante en su estado
+     `fijo`: 16px de offset (--spacing-nav-flotante-top-fijo) + 52px de alto
+     medido (px-2 py-2 sobre tabs de 36px) + 16px de aire = 84px. */
+  --spacing-faq-sticky-top: 5.25rem; /* 84px */
+
 
   /* ---------- Tipografía ---------- */
   --font-display: 'Poppins', ui-sans-serif, system-ui, sans-serif;
@@ -245,31 +432,47 @@
      aquí horizontal y dentro del bloque de opiniones de la ficha. */
   --opiniones-marquee-duracion: 45s;
   --spacing-opiniones-card-ancho: 20rem; /* 320px */
+  /* Móvil (2026-07-22, con las 2 filas cruzadas): a 390px de pantalla, la
+     ventana legible del marquee son ~300px (350 de bloque menos el
+     difuminado de los dos extremos), así que una card de 320px NUNCA cabe
+     entera — y como un marquee siempre está a medio recorrido, en móvil no
+     había un solo momento en que se pudiera leer una reseña completa. Con
+     272px la card cabe dentro de la ventana legible y siempre hay una
+     entera a la vista. En escritorio no hace falta: con 904px se ven 2 y
+     media, y la del medio siempre está completa. */
+  --spacing-opiniones-card-ancho-movil: 17rem; /* 272px */
   --spacing-opiniones-gap: 1rem; /* 16px — margin, no gap: mismo motivo que
     .ticker-card (componentes.css) — con la pista duplicada, un `gap` del
     flex desincroniza el -50% del loop del punto exacto donde arranca la
     2ª copia. */
 
-  /* Slider step-based de «Reseñas verificadas» (v6, pedido de Pedro
-     2026-07-15) — carrusel que avanza 1 slot, espera, avanza otro.
-     NO es un ticker continuo: la pista está duplicada 2x (mismo truco
-     que el ticker del hero) y el wrap se hace invisible saltando a
-     la posición 0 sin transition (mecánica en reviews.tsx → useEffect
-     del wrap, con setTimeout + doble rAF para reactivar la transition
-     tras el salto). Los delays y la geometría del slot salen de aquí,
-     no "a ojo" en el hook.
-     Pausa al hover; prefers-reduced-motion → scroll manual. */
-  /* 5 reseñas × 5s de intervalo entre pasos = 25s de ciclo completo. */
-  --reviews-step-intervalo: 5s;
-  --reviews-step-transicion: 700ms; /* avance entre slots — easing
-                                       cubic-bezier(0.4, 0, 0.2, 1) en
-                                       el CSS (mismo que el carrusel
-                                       de la TourCard). */
-  --reviews-card-alto: 18rem; /* 288px — alto de cada card de testimonio.
-                                  Es el alto del slot (sumado al gap
-                                  --reviews-step-gap, da la altura de
-                                  1 card + 1 espacio en la pista). */
-  --reviews-step-gap: 1.5rem; /* 24px entre cards de la pista */
+  /* Muro de reseñas de «Reseñas verificadas» (v7, 2026-07-22, pedido de
+     Samuel) — 3 filas de cards en marquee infinito: 1ª y 3ª hacia la
+     izquierda, 2ª hacia la derecha. Sustituye al slider vertical
+     step-based de la v6 (--reviews-step-*, retirado con él).
+
+     Las 3 duraciones son DISTINTAS y primos entre sí a ojo (70/85/78):
+     con la misma duración las tres filas cambian de cara a la vez y se
+     lee como una sola pieza deslizándose. Descoordinadas, el muro
+     respira. Van aquí y no en el TSX porque son FUENTE del prototipo
+     de Figma (playbook animaciones-a-figma) — el JS no las lee, las
+     aplica el CSS. */
+  --reviews-fila-duracion-1: 70s;
+  --reviews-fila-duracion-2: 85s;
+  --reviews-fila-duracion-3: 78s;
+  --spacing-reviews-card-ancho: 21rem; /* 336px — ancho fijo de cada card
+                                          del muro (las filas son marquee:
+                                          sin ancho fijo no hay loop
+                                          calculable). */
+  --spacing-reviews-card-gap: 1.25rem; /* 20px — va como margin-right en la
+    card, NO como gap de la pista: con la pista repetida, un `gap` del flex
+    desincroniza el punto exacto donde arranca la copia siguiente y el loop
+    "salta" (misma trampa que .ticker-card y .opiniones-marquee-card). */
+  --spacing-reviews-fila: 1.25rem; /* 20px entre las 3 filas (genera la
+                                      utilidad gap-reviews-fila) */
+  --spacing-reviews-desvanecido: 5rem; /* ancho del fundido lateral de cada
+    fila — las cards no se cortan a cuchillo contra el borde del panel,
+    se disuelven (mask-image). */
 
   /* Cinta de premios (dentro de la sección de stats). Los 7 badges son MUY
      heterogéneos (bloque navy del LTG, cuadrado amarillo de WeddingWire,
@@ -298,17 +501,19 @@
      ella y el hueco no se entera. */
   --spacing-premios-aire: calc(var(--spacing-ticker-alto) / 2 + 3rem); /* 34px de vuelo + 48px de hueco real */
 
-  /* Panel de dropdown simple (Nosotros/Ayuda) dentro del notch (PLAN-v3.md
-     §12.4). ⚠️ TIENE que ser mayor que la fila de tabs (457px medidos) o la
-     caja del notch se queda en el ancho de los tabs y el panel flota
-     centrado con aire muerto a los lados — el bug que esta fase arregla.
+  /* Panel de dropdown simple (Nosotros/Ayuda), PLAN-v3.md §12.4 — ancho fijo
+     del panel en sí (2 columnas de ItemMenu), no relacionado con el tamaño
+     de ningún contenedor: cuelga como div aparte de su botón (dropdown-
+     nosotros.tsx/dropdown-ayuda.tsx), mismo patrón que los megamenús.
      v3-F13: sube de 32rem (512px) a 39rem (624px, pedido de Samuel) — a 512px
-     las 2 columnas iban apretadas (PLAN-v3.md §15.2). */
+     las 2 columnas iban apretadas (PLAN-v3.md §15.2). El nombre "notch" es
+     historia (nació cuando este panel SÍ vivía dentro del notch morphing,
+     retirado 2026-07-21 6ª vuelta) — no se renombra por no arrastrar un
+     cambio de token a los 2 consumidores por una cuestión de nombre. */
   --spacing-notch-panel: 39rem; /* 624px */
-  /* v3-F13: variante compacta para md–lg (PLAN-v3.md §15.4) — el notch está
-     centrado y crece simétrico; a 768–1023px el sitio libre antes de tapar el
-     logo/Reservar no llega a 624px. Mismo ancho que ya usan los megamenús en
-     ese rango por esta misma razón (mega-tours.tsx, mega-eventos.tsx). */
+  /* v3-F13: variante compacta para md–lg (PLAN-v3.md §15.4) — mismo ancho
+     que ya usan los megamenús en ese rango (mega-tours.tsx, mega-eventos.tsx),
+     por la misma razón: menos sitio libre en el viewport a este breakpoint. */
   --spacing-notch-panel-compacto: 28rem; /* 448px */
 
   /* Ancho de card de MegaTours/MegaEventos (foto + nombre + meta) — COMPARTIDO
@@ -648,15 +853,7 @@
      con getComputedStyle, no van "a ojo" en el JS. A Figma NO viaja animado: se
      captura la sección ya asentada (?dev-exp=estatico / prefers-reduced-motion). */
   --exp-reveal-y: 1.75rem; /* 28px — de dónde sube cada frase del texto */
-  /* v3-F18.1 (Samuel): las fotos ARRANCAN más grandes y más separadas del
-     montón, en opacidad 0, y CONVERGEN a su sitio (estado estático) mientras
-     encogen. La separación es RADIAL: cada foto se aparta del centro del
-     collage a lo largo de su propio radio (lo calcula el hook midiendo cada
-     foto), así que sale disparada hacia afuera y vuelve — no un desplazamiento
-     uniforme. Sustituye al viejo --exp-reveal-foto-y (subían todas en bloque). */
-  --exp-reveal-foto-escala: 1.14; /* escala inicial (>1 = más grandes al arrancar) */
-  --exp-reveal-foto-separacion: 2rem; /* 32px — cuánto se aparta cada foto del centro al arrancar */
-  --exp-reveal-stagger: 0.12; /* s — retardo entre frase y frase, y entre foto y foto */
+  --exp-reveal-stagger: 0.12; /* s — retardo entre frase y frase (kicker/CTA) */
   --exp-reveal-scrub: 0.6; /* s — suavizado del enganche al scroll (0 = pegado duro al pixel) */
 
   /* Revelado PALABRA A PALABRA (correcciones v1 del cliente, 2026-07-20 —
@@ -669,14 +866,102 @@
   --exp-palabra-apagada: 0.18; /* opacidad de la palabra aún no revelada */
   --exp-palabra-stagger: 0.055; /* s — retardo entre palabra y palabra */
 
-  /* Marco del VIDEO de Experiencia (correcciones v1 — slide 7: «agregar
-     efecto de video como este [six2eight.com] y poner el video del popup
-     inicial aquí»). El collage de 3 fotos se sustituye por el video del
-     ex-popup. Hereda el lenguaje del passe-partout que ya tenían las fotos
-     (marco blanco + --shadow-foto-real) en vez del mockup de portátil de la
-     referencia, que es idioma de agencia SaaS y no de charter premium. */
-  --spacing-exp-video-marco: 0.5rem; /* 8px — passe-partout del video, algo más generoso que el de foto */
-  --exp-video-rot: -1.5deg; /* mismo gesto irregular que tenían las fotos del collage */
+  /* LA OLA del texto — SOLO DESKTOP (2026-07-22, pedido de Samuel): cuando el
+     video encoge y libera la columna derecha, el párrafo no aparece de golpe
+     — «se van como poniendo en su posición desde abajo creando un efecto tipo
+     ola y se va desblureando». Cada palabra sube a su sitio desde un poco más
+     abajo, desenfocada, escalonada respecto de la anterior.
+
+     Reemplaza al encendido palabra a palabra en desktop (ese sigue vivo en
+     móvil, --exp-palabra-*): con la sección pineada, un reveal atado a una
+     posición de scroll propia no tendría contra qué avanzar, así que la ola
+     va atada al PROGRESO del recorrido (timeline pausado + .progress(), ver
+     use-experiencia-video-etapa.ts).
+
+     Los "segundos" aquí no son segundos: el timeline está pausado y se
+     scrubea, así que lo único que importa es la PROPORCIÓN entre duración y
+     stagger — es la que decide cuánto se solapan las palabras y, por tanto,
+     lo suave o lo marcada que se ve la ola. */
+  --exp-ola-y: 1.25rem; /* 20px — desde cuánto más abajo sube cada palabra */
+  --exp-ola-blur: 0.5rem; /* 8px — desenfoque inicial, que se va a 0 al llegar a su sitio */
+  --exp-ola-stagger: 0.03; /* retardo entre palabra y palabra (marca el paso de la ola) */
+  --exp-ola-dur: 0.55; /* lo que tarda CADA palabra; contra el stagger define el solapamiento */
+
+  /* VIDEO de Experiencia — correcciones v1 (ref. six2eight.com que dio el
+     cliente). La 1ª vuelta le puso al video el marco del collage que
+     sustituyó (passe-partout + --shadow-foto-real + rotación); lo que el
+     cliente señalaba de six2eight.com no era ese marco sino el RECORRIDO: el
+     video CRECE con el scroll hasta ocupar buena parte de la pantalla, se
+     queda FIJO ahí un tramo, y luego ENCOGE a su sitio de siempre en la
+     columna. Eso jubila --spacing-exp-video-marco y --exp-video-rot (bordes
+     limpios ahora, ver --radius-exp-video) y
+     --exp-reveal-foto-escala/--exp-reveal-foto-separacion (el reveal de
+     escala ya no aplica en desktop — lo reemplaza el recorrido de abajo; en
+     móvil sigue vivo, renombrado --exp-video-movil-escala).
+
+     SOLO DESKTOP (lg+, como --incluye-*): en pantallas angostas no hay aire
+     para un video que crece a pantalla completa. El recorrido vive en
+     use-experiencia-video-etapa.ts (no en use-experiencia-scroll.ts: son dos
+     mecánicas distintas — una hace scrub normal, la otra PINEA la sección).
+
+     CÓMO ESTÁ ARMADO (el porqué de cada token; el historial completo de
+     idas y venidas con el cliente vive en dev-registry.ts, no aquí):
+
+     · DÓNDE PINEA = DÓNDE TERMINA. El pin congela la fila con su techo a
+       nav + --exp-etapa-dock-margen y no la mueve en todo el recorrido, así
+       que ese ES el sitio donde se asienta al final: ENCOGE acaba en
+       transform IDENTIDAD. Que el reposo no lleve transform importa — un
+       desplazamiento permanente descuadra la posición VISUAL respecto de la
+       de LAYOUT y se ve como aire fantasma antes y después de la sección.
+
+     · EL PEEK es entonces un desplazamiento del ARRANQUE, no del final:
+       --exp-etapa-inicio-top-vh pone el borde SUPERIOR del video a esa
+       fracción del alto de ventana en progreso 0, y CRECE lo trae al centro.
+       No es un mask que se abre (eso lo descartó Samuel expresamente): el
+       transform inicial se aplica también ANTES de que el pin enganche, así
+       que el video entra asomándose con scroll normal y al pinear el
+       progreso sigue en 0 — mismo transform, cero salto.
+
+     · INICIO comparte centro X con GRANDE, para que el video crezca desde el
+       centro y no en diagonal desde su columna izquierda. Su tamaño se
+       expresa relativo al NATURAL («un poco más grande» que donde termina) y
+       el hook lo acota a GRANDE: si lo superara, CRECE encogería.
+
+     · GRANDE se centra DE VERDAD en la ventana (los dos ejes). El tope de
+       alto deja ~14% de margen arriba y abajo, de sobra para no chocar con
+       el nav flotante.
+
+     CRECE/MANTIENE se leen de token; ENCOGE es el resto. El tamaño/posición
+     de cada tramo se calcula en el hook contra la ventana real
+     (getBoundingClientRect + clientWidth/innerHeight) — lo que se tokeniza
+     aquí son las PROPORCIONES, no pixels. */
+  --exp-etapa-recorrido-vh: 2.6; /* múltiplo de 100vh que dura TODO el recorrido pineado */
+  /* EL DIAL DEL HUECO: este token y el gap que se ve entre el cintillo
+     eco-friendly y el video son LA MISMA COSA. En progreso 0 el video se
+     coloca con su borde superior a esta fracción del alto de ventana (de ahí
+     que se asome), y lo que queda por ENCIMA de él —hasta el cintillo— es
+     hueco, porque el texto que acabará ahí todavía está invisible. Subirlo
+     asoma más el video y agranda el hueco; bajarlo lo achica y el video
+     arranca más entero. 0.66 → 0.48 → 0.38 → 0.30 (2026-07-22, Samuel pidió
+     menos hueco tres veces seguidas, manteniendo el recorrido).
+     ⚠️ ESTAMOS EN EL SUELO PRÁCTICO (~0.30): por debajo el video deja de
+     «asomarse» desde abajo — arrancaría casi en su sitio y el CRECE inicial
+     ya no se leería como una entrada, que es todo el sentido del efecto. Si
+     hiciera falta MENOS hueco todavía, la palanca ya NO es este token sino
+     el pt-8 de la sección (experiencia.tsx) y el items-center de su grid,
+     que juntos dejan ~150px fijos por encima del video antes de que el pin
+     arranque — y que son además los que mandan en móvil, donde no hay pin. */
+  --exp-etapa-inicio-top-vh: 0.3;
+  --exp-etapa-inicio-escala: 1.18; /* tamaño INICIAL, relativo a su tamaño natural en la columna (se acota a GRANDE) */
+  --exp-etapa-crecer: 0.34; /* fracción en la que el video CRECE (inicio → grande) */
+  --exp-etapa-mantener: 0.26; /* fracción en la que se queda FIJO ya grande (el resto encoge) */
+  --exp-etapa-dock-margen: 8rem; /* aire bajo el nav donde PINEA la fila — y por tanto donde se asienta al final */
+  --exp-etapa-grande-vw: 0.76; /* ancho GRANDE, fracción del ancho de ventana (sin barra de scroll) */
+  --exp-etapa-grande-max: 62rem; /* tope del ancho grande, para no desbocarse en pantallas muy anchas */
+  --exp-etapa-grande-vh: 0.72; /* tope de ALTO grande, fracción del alto de ventana (manda si el 16:9 no cabe) */
+  --exp-etapa-scrub: 0.5; /* s — suavizado del enganche al scroll del recorrido */
+  --exp-video-movil-escala: 1.14; /* fallback SOLO móvil/tablet (<1024px): reveal simple sin recorrido */
+  --radius-exp-video: 1.5rem; /* 24px — esquinas limpias (six2eight), ya sin passe-partout */
 
   /* ---------- Sección "Reserva directa" (boletos, dentro del banner) ----------
      La comparación aquí-vs-portal hecha OBJETO (pedido de Samuel, 2026-07-15):
@@ -757,7 +1042,14 @@
      una barra sticky persistente; el único chrome fijo en la ficha es la nav
      de anclas (pegada a top-0). Antes sumaba header-alto y eso dejaba una
      banda vacía sobre la nav Y empujaba el widget/las secciones ~77px de más.
-     Ahora: alto de la fila de anclas + 1rem de aire. */
+     Ahora: alto de la fila de anclas + 1rem de aire.
+
+     ⚠️ 2026-07-22: esta cuenta SIGUE SIENDO SOLO la fila de anclas, aunque
+     desde ese día la ficha también muestre la píldora del nav flotante. No es
+     un olvido: en esta página la píldora NO se queda fija (decisión de Samuel
+     — ver nav-flotante.tsx), se va con el hero, así que no hay una segunda
+     barra permanente que despejar. Si algún día se volviera fija aquí, este
+     token tendría que sumar su alto. */
   --spacing-sticky-top: calc(var(--spacing-anclas-alto) + 1rem);
   /* Columna del widget de reserva en desktop (T-F3). */
   --spacing-ficha-widget: 24rem; /* 384px */
@@ -770,6 +1062,14 @@
      Tailwind plana (h-56/sm:h-72), como el resto de alturas ad hoc de la
      ficha. */
   --spacing-galeria-ficha-alto: 22rem; /* 352px — lg: en adelante */
+  /* Alto del video VERTICAL 9:16 que abre el mosaico por la izquierda
+     (Samuel, 2026-07-22) cuando la fila se rompe en móvil y el video pasa a
+     ir encima de la rejilla. Su ANCHO no es un token: lo deriva el
+     aspect-ratio (352 × 9/16 = 198px), que es lo que mantiene el formato
+     vertical intacto a cualquier alto. En sm: en adelante el video no usa
+     este valor — copia el alto de la fila (h-full), así video y rejilla
+     comparten línea de base superior e inferior. */
+  --spacing-galeria-video-alto-movil: 22rem; /* 352px → 198px de ancho */
 
   /* ---------- Internas v2 (PLAN-INTERNAS-V2.md) ----------
      Hero compartido de la ficha de tour y la landing de evento: mismo
@@ -785,8 +1085,85 @@
   --spacing-tambien-alto: 24rem; /* 384px */
 
   /* ---------- Sección «Contacto» (2026-07-17, pedido de Samuel) ----------
-     Mapa + formulario + 4 cards, tras Reviews (ref. Lumoro). */
-  --spacing-contacto-mapa-movil: 17.5rem; /* 280px — alto del iframe en 1 columna (anti-CLS); en lg estira con el grid (h-auto) */
+     Nació como mapa + formulario + 4 cards, tras Reviews (ref. Lumoro).
+
+     REDISEÑADA 2026-07-22 (Samuel: «me parece horrible, mejorar diseño y
+     estructura... haz un buen research tipo Apple, Stripe, Bolt»). El
+     problema no era ninguna de las piezas por separado, era que había SEIS
+     losas del mismo peso apiladas (card de persona, formulario, bloque de
+     reserva, 4 cards de contacto, mapa) — cada una con su propio
+     rounded-card-grande + ring-1 y todas sobre el mismo papel blanco. Sin
+     figura/fondo y sin jerarquía, un formulario de conversión se lee como un
+     volcado de cajas.
+
+     Las tres reglas que se traen de la investigación (Stripe design system:
+     paneles «quiet bg» alternos, «hairline rules between rows» en vez de
+     zebra/cards, elevación reservada a UNA card; y el patrón de filas con
+     chevron de apple.com/contact):
+       1. Las 4 cards de contacto dejan de ser cards: WhatsApp sube a CTA
+          primario, Teléfono/Email bajan a FILAS con hairline.
+       2. Un único panel recorta TODA la sección — no seis losas repitiendo
+          rounded-card-grande + ring-1 cada una.
+       3. Dentro del panel no hay más elevación que el propio hairline; todo
+          lo demás se separa con líneas de 1px.
+
+     2ª vuelta (mismo día, Samuel tras ver el primer rediseño): «quita el
+     gris, debe ser blanco; quita la sombra del box» — el bg-fondo-ficha de
+     la sección y el shadow-card del panel se revierten. El panel se recorta
+     SOLO con ring-1 ring-linea sobre el papel blanco; el carril interior
+     (bg-papel-hueso) sigue haciendo el trabajo de separar visualmente
+     carril/formulario, que es lo que de verdad importaba.
+
+     3ª vuelta (mismo día): «el mapa debe aparecer en grande, tal vez abajo,
+     y lo de "¿ya tienes una reserva?" donde actualmente dice Oficina» —
+     los dos bloques se INTERCAMBIAN de sitio respecto al primer rediseño:
+       · El mapa (con la dirección de Oficina como caption) deja el carril y
+         pasa a ser una banda GRANDE a todo el ancho del panel, cerrando la
+         sección — recupera el protagonismo que tenía en la versión anterior
+         a este rediseño (ref. Lumoro), pero ya con el tratamiento de marca
+         (desaturado + tinte, ver --contacto-mapa-filtro más abajo).
+       · «¿Ya tienes una reserva?» deja de ser la franja a lo ancho al pie
+         del panel y pasa a vivir DENTRO del carril, en el hueco que dejó el
+         mapa — es la pieza que de verdad pertenece junto a Eva/WhatsApp/
+         teléfono/email: las 4 formas de decir «habla con nosotros» más una
+         5ª de «gestiona lo tuyo», todas en el mismo carril de acciones.
+
+     4ª vuelta (mismo día): «que el mapa esté separado de este módulo de
+     contacto, que abarque el 100% de la pantalla en ancho, y este embed
+     para poder movernos, y la dirección de oficina y eso lo dejamos como
+     footer del módulo». El mapa se independiza por completo del panel:
+       · Deja de estar DENTRO del panel (banda a todo el ancho DEL PANEL) y
+         pasa a ser su propio bloque A SANGRE (100% del ancho de la
+         PANTALLA), fuera del `mx-auto max-w-5xl` del módulo — ver
+         MapaInteractivo en contacto.tsx.
+       · Deja de ir INERTE: ya no es un enlace-tarjeta a Google Maps, es un
+         embed real que se arrastra y se hace zoom.
+       · La dirección de Oficina se queda en el panel, pero ya SOLO como
+         texto (footer del módulo, PieOficina) — el mapa visual vive aparte.
+
+     5ª vuelta (mismo día): «que el mapa sea un poco más alto y no se vea
+     gris, que se vea normal a colores» — dos cambios:
+       · Alto: sube de 17.5rem/20rem (móvil/desktop) a 20rem/24rem.
+       · Color: se RETIRA el tinte de marca (desaturado + overlay navy) de
+         la 3ª vuelta — los tokens --contacto-mapa-filtro/--color-overlay-
+         mapa se eliminan (ya no los usa nadie). Tenía sentido cuando el
+         mapa vivía encajado dentro del panel; separado y a sangre como
+         quedó en la 4ª vuelta, ya no compite con nada, y a colores nativos
+         se navega mejor un embed que ahora es de verdad interactivo. */
+  --spacing-contacto-rail: 21rem; /* 336px — carril izquierdo (persona + filas + bloque de reserva); el formulario se lleva el resto */
+  /* El mapa, A SANGRE bajo el módulo (4ª vuelta) — ya NO vive recortado por
+     el `overflow-hidden rounded-card-grande` del panel, así que sin radio
+     propio: tocando el borde real de la pantalla, una esquina redondeada
+     ahí se leería como que el mapa NO llega hasta el borde.
+     Alto reservado en los dos breakpoints = anti-CLS (el iframe no tiene
+     proporción propia). */
+  --spacing-contacto-mapa: 24rem; /* 384px — desktop */
+  --spacing-contacto-mapa-movil: 20rem; /* 320px — móvil */
+  /* Punto de disponibilidad junto a «Respondemos en minutos» — el latido es
+     lo que convierte una promesa escrita en una señal de que hay alguien al
+     otro lado ahora mismo. Lento a propósito: es un estado, no una alerta.
+     FUENTE del prototipo de Figma, igual que --ticker-duracion. */
+  --contacto-pulso-duracion: 2.4s;
 
   /* ---------- Sección «Eventos especiales» (2026-07-17, pedido de Samuel) ----------
      4 boxes de foto+overlay a igual tamaño (desde lg, fila flex; en móvil/
@@ -815,11 +1192,77 @@
   --spacing-reel-aire: 0.75rem; /* aire vertical para que el overflow-x no recorte la sombra del hover */
   --reel-zoom: 1.05; /* zoom de la foto en hover — mismo gesto que las cards del megamenú */
   --reel-transicion: 320ms;
+  /* Cuánto sangra la pista fuera de su contenedor (2026-07-22). Cada valor
+     ES el padding del contenedor correspondiente, escrito aquí para que la
+     relación sea explícita y no un número suelto en el CSS:
+       seccion → px-5 / sm:px-10 de la sección de la home
+       bloque  → p-6  / sm:p-8  de BLOQUE_FICHA (tour/bloque-ficha.ts)
+     Si cambia el padding de BLOQUE_FICHA, este par cambia con él o el
+     carrusel deja de llegar al canto. Ver .reel-pista--sangrada en
+     componentes.css para qué se hace con ellos (y por qué hace falta
+     scroll-padding). */
+  --spacing-reel-sangrado-seccion: 1.25rem;
+  --spacing-reel-sangrado-seccion-sm: 2.5rem;
+  --spacing-reel-sangrado-bloque: 1.5rem;
+  --spacing-reel-sangrado-bloque-sm: 2rem;
+  /* Relleno del play y del icono de red de la card (2026-07-22). Eran blanco
+     al 18%: se veían sobre las fotos oscuras y DESAPARECÍAN sobre las claras
+     — medido en el reel de la playa, donde el play quedaba blanco sobre
+     arena blanca. Un control flotante sobre foto arbitraria no puede
+     confiar en el fondo, así que la relación se invierte: mancha oscura +
+     icono blanco funciona en las dos direcciones (es lo que hacen los
+     controles nativos de video, y el propio play del mosaico de la ficha).
+     El highlight del borde va aparte, en componentes.css. */
+  --color-reel-control: rgb(11 37 69 / 42%);
 
-  /* Aviso de reserva reciente (correcciones v1, slide 19). Ver el aviso de
-     honestidad en components/home/prueba-social.tsx: hoy son datos de
-     EJEMPLO marcados como tales, no reservas reales. */
-  --prueba-social-transicion: 420ms;
+  /* ---------- Chips de urgencia del widget (2026-07-22, pedido de Samuel) ----------
+     Ritmos de los dos iconos animados. Los tres números son PRIMOS ENTRE SÍ a
+     propósito: con 1.8s y 1.1s, silueta y núcleo de la llama vuelven a
+     coincidir solo cada ~20s, así que el fuego nunca se ve repetir un patrón
+     — que es justo lo que delata a una animación en bucle.
+     El reloj va mucho más lento (5.4s) porque su movimiento es un EVENTO
+     (voltear), no una vibración: a ritmo de llama parecería nervioso. */
+  --fuego-envolvente-duracion: 1.8s;
+  --fuego-nucleo-duracion: 1.1s;
+  --reloj-voltea-duracion: 5.4s;
+
+  /* Aviso de reserva reciente (correcciones v1, slide 19) — rediseñado a
+     ticket el 2026-07-22 (pedido de Samuel: "que tenga la imagen del
+     producto... que se parezca a un ticket con los recortes semicirculares
+     que aprendimos a hacer en reserva directa"). Ver components/home/
+     prueba-social.tsx para el porqué ya NO lleva la marca «Dato de ejemplo»
+     visible (los números siguen siendo de EJEMPLO por dentro — no hay motor
+     de reservas — solo cambió si el visitante lo ve escrito en pantalla).
+     --spacing-alerta-notch es la MISMA técnica de corte que --spacing-boleto-
+     notch (why-direct.tsx) pero a escala de un toast, no de un boleto de
+     25rem: un radio más chico se ve proporcional en una tarjeta de ~18rem.
+     --prueba-social-transicion (420ms, CSS translate+opacity) se retiró en
+     la 2ª vuelta del mismo día: la entrada/salida pasó por completo a GSAP
+     (prueba-social.tsx) — ver "Prueba social" en componentes.css.
+     --spacing-alerta-imagen-ancho (4ª vuelta): el corte semicircular volvió
+     a vivir en UNA superficie que abarca todo el ticket (.alerta-venta-
+     superficie, componentes.css), no en cada mitad por separado — este
+     token es el ANCHO fijo de la columna de la foto, el mismo valor que
+     usa la clase `w-[...]` en prueba-social.tsx, así que el corte (que se
+     posiciona con este mismo token) y el layout real de la columna nunca
+     pueden desalinearse. */
+  --spacing-alerta-notch: 0.5rem; /* 8px — radio del corte semicircular de la perforación (misma familia que --spacing-boleto-notch, escalado abajo) */
+  --spacing-alerta-imagen-ancho: 6rem; /* 96px — ancho de la columna de la foto; también la posición X del corte (ver .alerta-venta-superficie) */
+  /* Ancho total del ticket. Tokenizado el 2026-07-22 (10ª vuelta) porque
+     dejó de vivir en un solo sitio: desde que cada mitad lleva su propia
+     superficie del ancho completo (ver .alerta-venta-superficie), el mismo
+     número aparece en 3 elementos (`fichaRef` + las 2 copias) y tenían que
+     moverse juntos o el embaldosado se desalinea. Antes era un `w-72`
+     suelto repetido; ahora un solo token que los tres leen. */
+  --spacing-alerta-ancho: 20rem; /* 320px */
+  /* Alto MÍNIMO del ticket (11ª vuelta, Samuel: "hacer un poco más grande la
+     imagen para que el ticket en general crezca"). No es el alto real: la
+     fila sigue estirándose si el texto pidiera más. Existe porque el alto lo
+     dictaba SOLO el bloque de texto (~58px) y la foto se limitaba a
+     estirarse hasta ahí — sin un mínimo propio, agrandar la columna de la
+     foto la ensanchaba pero la dejaba igual de baja. Con esto la foto manda
+     y el ticket crece en los dos ejes. */
+  --spacing-alerta-alto: 4.5rem; /* 72px */
 
   /* ---------- Marquee de checks del widget de reserva (2026-07-17, pedido
      de Samuel) ---------- Mismo trato que --opiniones-marquee-duracion:
@@ -851,6 +1294,57 @@
   --footer-espuma-sangrado: 2px; /* sello subpíxel del borde — mismo porqué que --incluye-espuma-sangrado */
   --footer-espuma-tile: calc(var(--spacing-footer-espuma-movil) * var(--footer-espuma-aspecto));
 
+  /* Cajitas de método de pago del footer (2026-07-22, pedido de Samuel: "en
+     vez de que diga mastercard, visa, paypal en unos chips… que estén todos
+     los logos en armonía dentro de sus cajitas para darle homogeneidad").
+     Antes cada medio era un chip que se ENSANCHABA con su nombre ("Visa" =
+     46px, "Efectivo a bordo" = 132px) — imposible que una fila así se lea
+     homogénea, porque el ancho lo decidía el texto. La homogeneidad sale de
+     fijar las 3 cosas que la rompían: la caja mide siempre lo mismo (ancho ×
+     alto), la marca de dentro se normaliza a una MISMA altura óptica sea
+     glifo o wordmark, y todas comparten color (blanco) por venir de una sola
+     familia de iconos. Proporción de la caja ≈ 8:5, la de una tarjeta vista
+     de lejos — no es casual, es lo que hace que la fila se lea como
+     "tarjetas aceptadas" y no como botones. */
+  /* ---------- «Trabaja con nosotros» (/trabaja-con-nosotros, 2026-07-22)
+     ---------- Carril izquierdo del panel: los 3 perfiles seleccionables +
+     «qué pasa después» + el atajo de WhatsApp; el formulario se lleva el
+     resto. Token PROPIO y no var(--spacing-contacto-rail) aunque sean
+     parientes: son dos módulos distintos (y dos componentes distintos en
+     Figma), y si un día el carril de Contacto cambia, este no debe enterarse
+     solo — mismo criterio que los tokens espejo del footer vs. el incluye.
+     Más ancho que el de Contacto (336px) porque aquí las filas llevan
+     descripción de dos líneas, no solo un dato. */
+  --spacing-trabaja-rail: 23rem; /* 368px */
+
+  --spacing-pago-caja-ancho: 3.5rem; /* 56px */
+  --spacing-pago-caja-alto: 2.25rem; /* 36px */
+  /* Altura de la marca DENTRO de la caja, en TRES tallas — no una sola. Ese
+     es todo el truco de la "armonía": si las 5 marcas se pintan al mismo
+     tamaño NOMINAL no se ven del mismo tamaño, porque cada glifo llena su
+     viewBox de 24px de forma distinta (medido sobre los propios paths de
+     Remix, en unidades de ese viewBox):
+       · Visa       22 × 16  — wordmark con dos filetes, silueta ligera
+       · Mastercard 22 × 13.6 — dos círculos macizos, ancha y baja
+       · PayPal     17 × 20.7 — vertical, la más alta de todas
+     Así que la talla va por CLASE ÓPTICA, no por marca: lineal (la más
+     ligera: su tinta real son cuatro letras pequeñas entre dos filetes, así
+     que necesita la caja MÁS GRANDE para pesar lo mismo — medido a 20px se
+     leía apagada frente a las otras tres), sólida (las manchas macizas bajan
+     un punto para no pesar de más) y alta (las verticales bajan dos, o
+     PayPal descuella sobre la fila). En Figma son 3 variables de tamaño, no
+     una por marca. */
+  --spacing-pago-marca-lineal: 1.5rem; /* 24px — Visa */
+  --spacing-pago-marca-solida: 1.125rem; /* 18px — Mastercard */
+  --spacing-pago-marca-alta: 1rem; /* 16px — PayPal */
+  /* Wordmark (AMEX): no hay logo real que dibujar, así que se compone el
+     nombre. 10px + tracking deja su altura de mayúscula (~7px) en la misma
+     mancha visual que las letras del glifo de Visa dentro de su caja de
+     20px — que es contra lo que hay que igualar, no contra el alto total del
+     glifo (esos 20px son filete + aire, no letra). */
+  --text-pago-marca: 0.625rem; /* 10px */
+  --tracking-pago-marca: 0.08em;
+
   /* ---------- Página Sostenibilidad (rediseño 2026-07-17, pedido de Samuel:
      "se ve muy feo ese montón de cajas... mejoralo que se vea más editorial")
      ---------- Los 3 pilares dejan las cards de --color-papel-hueso por una
@@ -874,6 +1368,82 @@
   --sost-reveal-duracion: 0.6s;
   --sost-reveal-stagger: 0.1; /* s — entre ítems del mismo batch (p. ej. los 3 pilares) */
 
+  /* ---------- Declaración de misión (2026-07-22, Samuel: "el texto que está
+     al principio en grande redúcele un poco el tamaño y a la derecha agrégale
+     un video") ---------- Baja de --text-narrativa (32px) porque ya NO ocupa
+     el ancho completo: comparte fila con el video, así que a 32px la columna
+     de texto salía a ~28 caracteres por línea (medida ilegible, un rabo de
+     palabra por renglón). Token propio y no un --text-narrativa más pequeño:
+     la narrativa de la home sigue a 32px, esta es OTRA pieza. */
+  --text-sost-mision: 1.625rem; /* 26px — desktop, junto al video */
+  --text-sost-mision--line-height: 1.45;
+  --text-sost-mision-movil: 1.25rem; /* 20px — móvil (el video baja debajo) */
+  --text-sost-mision-movil--line-height: 1.55;
+
+  /* ---------- El RECORRIDO de los 3 pilares (2026-07-22, Samuel: "que lo
+     transformemos como en recorrido con su progress bar que va avanzando,
+     pero no lineal, sino curvo... y en vez de la flechita verde que sea el
+     barquito del hover del botón del hero") ---------- Los 3 pilares dejan la
+     lista apilada por un zigzag: el trazo curvo los enhebra, la ESTELA (el
+     progress bar) se dibuja al scrollear y el catamarán real la navega.
+     El trazado NO se dibuja a mano en un viewBox fijo — se MIDE en runtime
+     desde la posición real de cada numeral (use-recorrido-sostenibilidad.ts),
+     así que aquí no viven coordenadas, solo el aspecto y el ritmo.
+     FUENTE del prototipo de Figma (playbook animaciones-a-figma): a Figma
+     viaja el frame asentado (?dev-sost=estatico), no el movimiento. */
+  /* La RUTA es gris punteada SIEMPRE (2026-07-22, 3ª vuelta, Samuel: "que la
+     línea siempre esté dotted gris... así aseguramos que la línea no estorba
+     al texto"). Antes eran DOS trazos superpuestos: uno punteado tenue y otro
+     aqua sólido que se dibujaba con el scroll haciendo de progress bar. Se
+     retira el aqua: cruzando por encima del texto, una línea sólida de color
+     competía con la lectura justo donde el ojo está leyendo. Quien marca el
+     progreso ahora es la FOTO que aparece en cada paso (--recorrido-imagen-*),
+     que además suma apoyo visual en vez de restar legibilidad. */
+  --color-recorrido-ruta: var(--color-linea-fuerte); /* gris hairline — el mismo de los bordes de la página, para que la ruta se lea como estructura y no como acento */
+  --recorrido-ruta-grosor: 2; /* unidades de usuario del SVG = px (el viewBox se sincroniza 1:1 con el contenedor) */
+  --recorrido-ruta-punteado: 2 10; /* dash gap — punto redondo separado, no raya: lee como "ruta" en carta náutica */
+
+  /* La FOTO de apoyo de cada paso: aparece cuando el recorrido llega a su
+     pilar y se retira al pasar al siguiente (solo una visible a la vez).
+     Vive en la mitad VACÍA de la fila —el zigzag deja media rejilla libre
+     enfrente de cada tarjeta— así que no tapa texto y de paso ocupa el hueco
+     muerto que dejaba la maqueta anterior. */
+  --spacing-recorrido-imagen: 18rem; /* 288px de ancho */
+  --recorrido-imagen-giro: 3deg; /* ladeo alterno, como las polaroids de la referencia */
+  --recorrido-imagen-duracion: 0.45s; /* fundido de entrada/salida */
+  --recorrido-imagen-y: 1.25rem; /* 20px — de dónde sube al aparecer */
+  --spacing-recorrido-barco: 4.5rem; /* 72px de ancho — el catamarán del CTA (276×360) a esta escala mide 94px de alto. Baja de 5.5rem (2026-07-22, 2ª vuelta): desde que la ruta pasa POR ENCIMA del texto, el barco también lo cruza, y a 88px tapaba media línea al pasar. A 72px sigue leyéndose como barco y estorba menos de paso */
+  --recorrido-barco-sombra: drop-shadow(0 8px 12px rgb(11 37 69 / 22%)); /* sombra CLARA (sobre papel), no la del "Incluye" (que va sobre océano navy) */
+  --recorrido-barco-balanceo-angulo: 2.5deg; /* cabeceo en reposo — algo más que el del "Incluye" (1.4deg): aquí el barco es más pequeño y el gesto se pierde */
+  --recorrido-barco-balanceo-duracion: 5s;
+  --recorrido-scrub: 0.6; /* s de amortiguación del scroll → el barco no va "pegado al píxel" */
+  /* Rango de scroll del recorrido. Se ensancha en la 3ª vuelta (antes:
+     `top 72%` → `bottom 85%`) tras MEDIRLO: con la sección ya compactada
+     (~840px de alto), aquel rango daba ~720px de scroll para toda la
+     travesía —menos de una pantalla—, así que el barco atracaba mientras la
+     sección seguía entrando y la foto del 1er pilar se veía un suspiro. Con
+     este par son ~1.330px, o sea ~440px por paso: tiempo de sobra para leer
+     cada pilar con su foto puesta. `bottom 25%` es el tope útil — más abajo,
+     el barco seguiría navegando cuando la sección ya casi ha salido. */
+  --recorrido-entrada: top 80%; /* zarpa en cuanto la sección asoma */
+  --recorrido-salida: bottom 25%; /* y atraca cuando está a punto de salir por arriba */
+  --spacing-recorrido-margen: 4rem; /* 64px — cuánto asoma el trazo por ENCIMA del 1er numeral y por DEBAJO del último: el barco entra y sale de cuadro navegando, no aparece clavado sobre el número */
+  --spacing-recorrido-fila: 3.5rem; /* 56px de aire vertical entre pilares. Baja de 11rem (2026-07-22, 2ª vuelta, Samuel: "los textos están muy alejados entre ellos"): aquellos 176px hacían falta cuando la curva tenía que bornear POR EL PASILLO, sin tocar texto — necesitaba recorrido vertical para girar. Desde que puede cruzar por encima, la curva gira sobre el propio texto y ese aire sobra: dejaba una sección larguísima con dos huecos muertos */
+
+  /* ---------- Banda de impacto (2026-07-22, Samuel: "hay que meter todos
+     esos datos... no me gusta la idea de meter un box y dentro más boxes,
+     más estético, más minimalista") ---------- Por eso NO hay token de fondo
+     ni de radio aquí: la banda no es una caja. Las cifras se sostienen solas
+     sobre papel, separadas por hairlines (--color-linea, el que ya usa toda
+     la página) — el "box dentro de box" del mockup se resuelve quitando
+     los dos boxes, no anidando mejor. */
+  --text-sost-impacto: 2.75rem; /* 44px — desktop; por encima de --text-h2 (32px) a propósito: sin caja de color que las destaque, el PESO tipográfico es lo único que hace que las cifras manden */
+  --text-sost-impacto--line-height: 1;
+  --text-sost-impacto-movil: 2rem; /* 32px */
+  --text-sost-impacto-movil--line-height: 1;
+  --text-sost-aporte: 1.5rem; /* 24px — los US$ por huésped: cifras de SEGUNDO orden (son el cómo, no el cuánto), así que bajan un escalón claro respecto a --text-sost-impacto */
+  --text-sost-aporte--line-height: 1.15;
+
   /* ---------- Página Guías (rediseño editorial, 2026-07-17, pedido de
      Samuel: "parece una página con solo cajas... más editorial, más
      creativa e interesante") ---------- Mismo lenguaje que el rediseño de
@@ -894,6 +1464,101 @@
   --guias-reveal-y: 1.5rem; /* 24px — de dónde sube cada bloque */
   --guias-reveal-duracion: 0.6s;
   --guias-reveal-stagger: 0.1; /* s — entre ítems del mismo batch */
+
+  /* ---------- Cintillo Eco-friendly (CORRECCIONES v1 DEL CLIENTE,
+     planes/01-home.md slide 4: "rehacer con un formato más moderno y
+     actual") ---------- El layout y el copy no cambian (el sello YA es un
+     rediseño propio, ver eco-friendly.tsx) — lo que se pule es la animación.
+     A diferencia de Experiencia/Incluye (timeline scrub) esto es un disparo
+     ÚNICO al entrar en pantalla, mismo mecanismo que --sost-reveal-* y
+     --guias-reveal-* (ScrollTrigger, once:true): el cintillo
+     es angosto y se cruza rápido, no tiene sentido scrubearlo pixel a pixel.
+     El sello, además, se DIBUJA: sus 3 trazos de línea (contorno de la hoja,
+     nervadura, venillas — los `<path className="eco-sello-trazo">` de
+     SelloEco) arrancan invisibles y GSAP los revela con stroke-dashoffset,
+     como un boceto completándose.
+     2ª vuelta (Samuel: "se siente que pasa desapercibido porque el stroke
+     se parece al color de la hoja") — el trazo se dibuja SOLO, sobre nada
+     (máximo contraste posible: nada detrás con lo que confundirse), y el
+     disco + anillo punteado + relleno translúcido (.eco-sello-fondo) entran
+     DESPUÉS con rebote, como si el boceto se llenara de tinta de golpe. Dos
+     beats (línea → color), no los dos a la vez — la 1ª versión los
+     solapaba y el relleno ya mostraba la silueta completa antes de que el
+     trazo terminara, así que dibujar el contorno encima no aportaba nada
+     nuevo que ver. FUENTE del prototipo de Figma (playbook
+     animaciones-a-figma), no "a ojo" en el JS. */
+  --eco-reveal-y: 1rem; /* 16px — de dónde sube cada texto; más corto que --sost-reveal-y (24px), el cintillo es angosto y un salto grande se vería fuera de escala */
+  --eco-reveal-duracion: 0.5s; /* también el pop de .eco-sello-fondo */
+  --eco-reveal-stagger: 0.08; /* s — entre los 2 textos ("Eco-friendly" / "Cero plástico a bordo") */
+  --eco-sello-dibujo-duracion: 0.9s; /* s — cuánto tarda cada trazo en completarse */
+  --eco-sello-dibujo-retraso: 0.15s; /* s — pausa de suspenso ENTRE que el trazo termina y el color empieza a entrar (no a la vez: el hueco es lo que hace notar el remate) */
+
+  /* ---------- Carrusel de destacados del blog (2026-07-22, pedido de
+     Samuel: "un slider de al menos 4 cards... la que viene se pone más
+     grande y activa mientras la activa se pone para la izquierda e
+     inactiva") ---------- FUENTE del prototipo de Figma (playbook
+     animaciones-a-figma): intervalo/transición salen de aquí, no a ojo en
+     el componente. Mismo truco de pista repetida para el loop invisible que
+     el ticker del hero (--ticker-duracion) o el muro de reseñas
+     (--reviews-fila-duracion-*), pero con salto sin transition en vez de
+     animación continua, y con escala/opacidad además de posición (el activo
+     crece, los vecinos que asoman a los extremos se achican). El ancho/espaciado de cada slide vive en el propio
+     componente (son fracciones del ancho del contenedor, no un valor fijo
+     que tenga sentido como token). */
+  --carrusel-destacados-intervalo: 6s;
+  --carrusel-destacados-transicion: 700ms;
+
+  /* ---------- Equipo (home) — rediseño de cards + reordenado (2026-07-22,
+     pedido de Samuel: mover la sección debajo de Contacto, cards con
+     retrato grande + rol/antigüedad + nombre sobre degradado + frase/CTA al
+     hover, y que las 3 cards arranquen "en escalones" y se alineen al
+     hacer scroll) ---------- El nivel de cada card sale de aquí, no a ojo
+     en el JS: es la FUENTE del prototipo de Figma (playbook
+     animaciones-a-figma) — mismo trato que --exp-reveal-* y --ticker-*.
+     Enganchado al scroll con scrub (NO sticky, NO once) — mismo mecanismo
+     que --banner-scrub (use-why-direct-scroll.ts): el estado FINAL
+     (alineadas, y:0) es el natural del CSS; GSAP solo pinta el inicial
+     escalonado con `.fromTo()`. */
+  --equipo-scroll-nivel: 2.5rem; /* 40px — ALTURA DE UN ESCALÓN; el patrón (use-equipo-scroll.ts) da 1/2/3 escalones según la card, todas POR DEBAJO de su sitio final */
+  --equipo-scroll-scrub: 0.4; /* s — suavizado del enganche al scroll */
+
+  /* ---------- /nosotros — rediseño fiel a la maqueta del cliente
+     (2026-07-22, correcciones v1 slides 1-5) ---------- FUENTE del prototipo
+     de Figma (playbook animaciones-a-figma): los 3 efectos de esta página
+     toman sus constantes de aquí, no de números a ojo en los hooks. Los tres
+     estados FINALES son los NATURALES del JSX — GSAP solo pinta el inicial,
+     así que con reduced-motion (o con los flags ?dev-nosotros=*) la página se
+     ve directamente asentada, que es el frame que viaja a Figma.
+
+     1. APERTURA de la foto de «Quiénes somos»: el marco se abre desde una
+        rendija central (clip-path inset lateral → 0) mientras la foto se
+        desplaza por dentro. El parallax SÍ va con scrub (el scroll es la
+        curva); la apertura no — es un gesto de entrada, y engancharla al
+        píxel obliga a scrollear para ver la foto entera. */
+  --nosotros-apertura-duracion: 1.1s;
+  --nosotros-apertura-rendija: 22%; /* cuánto tapa el clip-path a CADA lado al arrancar; 50% sería la foto cerrada del todo */
+  --nosotros-apertura-parallax: 3.5rem; /* 56px — recorrido de la foto DENTRO del marco a lo largo del scroll (por eso la img va escalada, si no asomaría el hueco) */
+  --nosotros-apertura-scrub: 0.5; /* s — suavizado del parallax */
+
+  /* 2. LÍNEA DE TIEMPO de la historia: el riel se TRAZA de izquierda a
+        derecha enganchado al scroll y cada hito hace pop justo cuando el
+        trazo lo alcanza. El pop no lleva scrub a propósito: un punto que
+        crece y decrece según el usuario sube y baja se lee como un fallo, no
+        como un efecto. */
+  --nosotros-timeline-scrub: 0.6; /* s — suavizado del trazado del riel */
+  --nosotros-timeline-pop: 0.45s; /* duración del pop de cada hito (punto + año + texto) */
+  --nosotros-timeline-pop-escala: 0.6; /* de qué tamaño arranca el punto antes del pop */
+
+  /* 3. CASCADAS de entrada (las 3 paradas del itinerario y las 6 cards de la
+        flota). Misma receta que --sost-reveal-* (batch, once, sin scrub): un
+        bloque que ya pasó de largo no tiene sentido engancharlo al píxel.
+        La diferencia es `--nosotros-cascada-x`: en la flota, además de subir,
+        cada card entra desplazada en horizontal según su columna — eso es lo
+        que dibuja la DIAGONAL en vez de tres filas planas. */
+  --nosotros-cascada-y: 2.5rem; /* 40px — desde cuánto más abajo entra cada card */
+  --nosotros-cascada-x: 1.25rem; /* 20px — desfase lateral POR COLUMNA (solo la flota; las paradas van a 0) */
+  --nosotros-cascada-duracion: 0.7s;
+  --nosotros-cascada-stagger: 0.1; /* s — entre card y card */
 }
 
 body {

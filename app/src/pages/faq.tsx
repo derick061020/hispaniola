@@ -12,14 +12,14 @@ export function FaqPage() {
     <div>
       <Meta
         titulo="Preguntas frecuentes"
-        descripcion="Reservas y pagos, qué llevar, comida, clima y niños — las 14 preguntas más frecuentes sobre los tours de Hispaniola."
+        descripcion="Reservas y pagos, qué llevar, comida, clima y niños — las 17 preguntas más frecuentes sobre los tours de Hispaniola."
         ruta="/faq"
       />
       <HeroInterna ctaHref="/#tours">
         <CabeceraFaq />
       </HeroInterna>
 
-      <div className="mx-auto max-w-3xl px-5 py-12 sm:px-10 lg:py-16">
+      <div className="mx-auto max-w-5xl px-5 py-12 sm:px-10 lg:py-16">
         <CategoriasFaq />
       </div>
 

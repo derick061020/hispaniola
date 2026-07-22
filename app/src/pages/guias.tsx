@@ -23,12 +23,13 @@ import { useDevFlag } from '@/dev/use-dev-flag'
 // se monta como página aparte (mismo patrón que tours/eventos), no como
 // tarjeta placeholder.
 //
-// REDISEÑO EDITORIAL (2026-07-17, pedido de Samuel: "parece una página con
-// solo cajas... más editorial, más creativa e interesante"). El bloque es
-// autocontenido (Etiqueta+h2 propios, ver tips-rapidos.tsx) — numeral
-// fantasma + hairline, sin cards. useGuiasReveal se engancha UNA VEZ aquí
-// (mismo patrón que useSostenibilidadReveal en sostenibilidad.tsx) porque
-// los `.guias-reveal` viven repartidos dentro de TipsRapidos.
+// CORRECCIONES v1 DEL CLIENTE (2026-07-22, "Guías de Punta Cana - Ajustes
+// web".pdf): TipsRapidos pasa a formato tipo revista — cada guía es una fila
+// foto+texto que alterna de lado, con dato destacado y CTAs, cerrando con
+// "Más guías en camino" (ver tips-rapidos.tsx). El bloque es autocontenido
+// (Etiqueta+h2 propios). useGuiasReveal se engancha UNA VEZ aquí (mismo patrón
+// que useSostenibilidadReveal en sostenibilidad.tsx) porque los `.guias-reveal`
+// viven repartidos dentro de TipsRapidos.
 export function GuiasPage() {
   const contenidoRef = useRef<HTMLDivElement>(null)
 
