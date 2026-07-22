@@ -54,8 +54,23 @@
   padding-block: var(--spacing-ticker-aire);
 }
 
+/* La barra se OCULTA, el scroll se queda (2026-07-22, pedido de Samuel: a un
+   cliente le salían barras «en varios lugares» y a él no). El motivo de la
+   asimetría: estas pistas solo pasan a `overflow-x: auto` con
+   prefers-reduced-motion, y quien lo tiene activado suele tener también las
+   scrollbars clásicas de Windows —las que ocupan sitio y se ven siempre— en
+   vez de las overlay que se autoocultan. Misma receta que .reel-pista, que
+   ya lo resolvía en su sitio. Se repite en los otros tres marquees
+   (.opiniones-marquee-wrapper--estatico, .widget-checks-wrapper--estatico y
+   .reviews-muro-fila bajo reduced-motion) — son los cuatro que quedan
+   scrolleables al congelarse. */
 .ticker-wrapper--estatico {
   overflow-x: auto;
+  scrollbar-width: none; /* Firefox */
+}
+
+.ticker-wrapper--estatico::-webkit-scrollbar {
+  display: none;
 }
 
 /* Sin la segunda copia (estatico/reduced-motion), la animacion no tiene a
@@ -1458,8 +1473,15 @@
    copia por fila, recorrible a mano (el arrastre sigue funcionando, y
    además queda el scroll nativo). */
 @media (prefers-reduced-motion: reduce) {
+  /* Barra oculta, scroll intacto — ver .ticker-wrapper--estatico. Aquí son
+     3 filas, o sea 3 barras apiladas en la misma sección. */
   .reviews-muro-fila {
     overflow-x: auto;
+    scrollbar-width: none; /* Firefox */
+  }
+
+  .reviews-muro-fila::-webkit-scrollbar {
+    display: none;
   }
 
   .reviews-muro-pista {
@@ -1489,10 +1511,15 @@
 
 .opiniones-marquee-wrapper--estatico {
   overflow-x: auto;
+  scrollbar-width: none; /* Firefox — ver .ticker-wrapper--estatico */
   /* Sin máscara en modo estático: ahí la fila se recorre a mano y un
      difuminado sobre lo que el usuario está arrastrando estorba en vez de
      ayudar. */
   mask-image: none;
+}
+
+.opiniones-marquee-wrapper--estatico::-webkit-scrollbar {
+  display: none;
 }
 
 .opiniones-marquee-pista {
@@ -1562,6 +1589,11 @@
 
 .widget-checks-wrapper--estatico {
   overflow-x: auto;
+  scrollbar-width: none; /* Firefox — ver .ticker-wrapper--estatico */
+}
+
+.widget-checks-wrapper--estatico::-webkit-scrollbar {
+  display: none;
 }
 
 .widget-checks-pista {
