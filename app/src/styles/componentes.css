@@ -183,8 +183,19 @@
      bloque background/backdrop-filter/box-shadow) sin pelear por
      especificidad — ver el comentario ahí. */
   background: var(--vidrio-fondo, var(--color-vidrio));
+  /* SIN -webkit-backdrop-filter escrito a mano, A PROPÓSITO (2026-07-22).
+     La cadena de build ya auto-prefija: donde el fuente declara solo la
+     propiedad estándar, el bundle sale con las DOS. Pero cuando el fuente
+     declara el par a mano, el minificador colapsa ambas en una y conserva
+     la PREFIJADA (era la última) — y Chrome/Firefox no reconocen
+     `-webkit-backdrop-filter` (CSS.supports() da false), así que el vidrio
+     desaparecía en producción mientras en dev, sin minificar, se veía bien.
+     Este bloque y .scrim-nav-superior eran los dos únicos sitios con el par
+     escrito a mano, y eran exactamente los dos rotos. El par de mask-image
+     de ahí abajo NO tiene el problema (el minificador sí lo respeta) y se
+     queda como está. Si algún día hay que dar soporte a Safari < 18 con más
+     control, el sitio es la config de build, no volver a escribir el par. */
   backdrop-filter: blur(var(--blur-vidrio)) saturate(var(--saturate-vidrio));
-  -webkit-backdrop-filter: blur(var(--blur-vidrio)) saturate(var(--saturate-vidrio));
   border: 1px solid var(--vidrio-canto, var(--color-vidrio-borde));
   box-shadow: var(--shadow-card-flotante);
   opacity: 0;
@@ -269,8 +280,9 @@
   height: var(--spacing-scrim-nav-alto);
   border-radius: var(--radius-hero) var(--radius-hero) 0 0;
   background: linear-gradient(180deg, var(--color-scrim-nav) 0%, transparent 100%);
+  /* Sin -webkit- a mano: ver el porqué en .nav-pildora::before. Este era el
+     otro sitio con el par escrito, y perdía el blur en producción igual. */
   backdrop-filter: blur(var(--blur-scrim-nav));
-  -webkit-backdrop-filter: blur(var(--blur-scrim-nav));
   mask-image: linear-gradient(180deg, black 0%, transparent 100%);
   -webkit-mask-image: linear-gradient(180deg, black 0%, transparent 100%);
 }
