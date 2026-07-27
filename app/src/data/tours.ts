@@ -7,6 +7,8 @@
 // duplica: la página une `TOURS` (nombre, precio, rating, chip, foto de
 // portada) con `FICHAS` por slug. Si un campo vive en home.ts, se lee de allí.
 
+import type { AddOn } from '@/lib/tarifas'
+
 export type PasoItinerario = { hora: string; titulo: string; texto: string }
 
 /** Horario publicado del tour. SIN `quedan N` a propósito: el aforo restante
@@ -149,6 +151,12 @@ export type FichaTour = {
    *  transversales del charter (lista simple, no buffet ni Light/Premium).
    *  Charter es el único caso actual. */
   menuCharter?: MenuCharterTour
+  /** [v2 2026-07-27] Extras opcionales que el widget vende como UPSELL.
+   *  Portados del tarifario real (TARIFARIO-WEB-ORIGINAL.md §4-C). El texto
+   *  del álbum de fotos cambia por producto a propósito: en charter ya
+   *  regalan «todas» las fotos, así que ahí solo se vende la máxima calidad
+   *  — prometer «el álbum completo» sería falso. */
+  addOns?: AddOn[]
 }
 
 export const FICHAS: Record<string, FichaTour> = {
@@ -243,6 +251,21 @@ export const FICHAS: Record<string, FichaTour> = {
       },
     ],
     tambienTeGusta: ['snorkel-lovers', 'charter-privado'],
+    // [v2] Upsells del semi-privado. El álbum es el único que la web original
+    // documenta aquí literalmente («the full album via Dropbox for just $20
+    // per group»). Aquí SÍ se puede decir «álbum completo»: lo gratis son
+    // «los mejores momentos», no todas las fotos.
+    addOns: [
+      {
+        id: 'album-fotos',
+        etiqueta: 'El álbum completo, en máxima calidad',
+        descripcion:
+          'Las mejores fotos del día quedan gratis en nuestro Facebook. El álbum entero, en resolución original y sin recortar, te lo llevas por US$ 20 para todo el grupo.',
+        base: 'grupo',
+        precio: 20,
+        porDefecto: true,
+      },
+    ],
   },
 
   'snorkel-lovers': {
@@ -376,6 +399,20 @@ export const FICHAS: Record<string, FichaTour> = {
       },
     ],
     tambienTeGusta: ['semi-privado', 'charter-privado'],
+    // [v2] Snorkel Lovers. La web original NO ofrece aquí el álbum, pero
+    // Samuel decidió el 07-27 extenderlo a los 6 productos: la política del
+    // negocio es uniforme y son sus otras páginas las que no lo tienen escrito.
+    addOns: [
+      {
+        id: 'album-fotos',
+        etiqueta: 'El álbum completo, en máxima calidad',
+        descripcion:
+          'Las mejores fotos del día quedan gratis en nuestro Facebook. El álbum entero, en resolución original y sin recortar, te lo llevas por US$ 20 para todo el grupo.',
+        base: 'grupo',
+        precio: 20,
+        porDefecto: true,
+      },
+    ],
   },
 
   'charter-privado': {
@@ -429,7 +466,7 @@ export const FICHAS: Record<string, FichaTour> = {
         id: 'grandma',
         nombre: 'GrandMa',
         descripcion: 'Crucero ágil 3h · hasta 20 pax',
-        capacidad: 'Hasta 20 personas',
+        capacidad: 'Hasta 50 personas',
         duracion: '3 horas',
         foto: 'flota-grandma',
         horarios: [
@@ -437,23 +474,32 @@ export const FICHAS: Record<string, FichaTour> = {
           { hora: '12:00 PM', regreso: '2:55 PM' },
           { hora: '3:00 PM', regreso: '6:00 PM' },
         ],
+        // [tarifa-v2] Corregido 2026-07-27 contra la web original. Antes:
+        // `1-20 grupo 825` — 825 es el «from us$» (precio de escaparate tras
+        // descuentos), NO una tarifa. La tabla real tiene dos tramos.
         tabla: [
-          { desde: 1, hasta: 20, precio: 825, tipo: 'grupo' },
+          { desde: 1, hasta: 12, precio: 900, tipo: 'grupo' },
+          { desde: 13, hasta: 50, precio: 75, tipo: 'persona' },
         ],
       },
       {
         id: 'santa-maria',
         nombre: 'Santa Maria',
         descripcion: 'Crucero premium 4h · hasta 20 pax',
-        capacidad: 'Hasta 20 personas (plated) o más con skewers',
+        capacidad: 'Hasta 45 personas (plated hasta 20, skewers desde 21)',
         duracion: '4 horas',
         foto: 'flota-santa-maria',
         horarios: [
           { hora: '9:00 AM', regreso: '12:55 PM' },
           { hora: '2:00 PM', regreso: '6:00 PM' },
         ],
+        // [tarifa-v2] Corregido 2026-07-27: 1150 era el «from us$», no la
+        // tarifa. Ojo — en Santa Maria el «from» (1150) era MAYOR que su
+        // propio precio de grupo real (1000): la web del cliente anuncia un
+        // «desde» más caro que su tarifa. Otro motivo para no usar los «from».
         tabla: [
-          { desde: 1, hasta: 20, precio: 1150, tipo: 'grupo' },
+          { desde: 1, hasta: 13, precio: 1000, tipo: 'grupo', extra: '+ US$ 25 por persona para comida y transporte' },
+          { desde: 14, hasta: 45, precio: 99, tipo: 'persona' },
         ],
       },
       {
@@ -467,11 +513,36 @@ export const FICHAS: Record<string, FichaTour> = {
           { hora: '9:00 AM', regreso: '12:00 PM' },
           { hora: '3:00 PM', regreso: '6:00 PM' },
         ],
+        // [tarifa-v2] Corregido 2026-07-27: el primer tramo era 1750 («from
+        // us$»); la tarifa real de grupo es 1600. Los otros 3 tramos ya
+        // estaban bien. Esta es la variante de 3h — la de 4h vive abajo.
         tabla: [
-          { desde: 1, hasta: 18, precio: 1750, tipo: 'grupo' },
+          { desde: 1, hasta: 18, precio: 1600, tipo: 'grupo' },
           { desde: 19, hasta: 25, precio: 85, tipo: 'persona' },
           { desde: 26, hasta: 29, precio: 2225, tipo: 'grupo' },
           { desde: 30, hasta: 120, precio: 75, tipo: 'persona' },
+        ],
+      },
+      {
+        // [tarifa-v2] NUEVA (2026-07-27): el Forever Teresa se vende en DOS
+        // duraciones con tarifarios distintos, no solo 3h. La web original
+        // los lista como dos bloques de precios separados bajo el mismo
+        // barco. Antes el repo solo tenía la de 3h.
+        id: 'forever-teresa-4h',
+        nombre: 'Forever Teresa · 4h',
+        descripcion: 'Catamarán grande 4h · hasta 120 pax',
+        capacidad: '1-120 personas (precios por tramo)',
+        duracion: '4 horas',
+        foto: 'flota-forever-teresa',
+        horarios: [
+          { hora: '9:00 AM', regreso: '12:55 PM' },
+          { hora: '2:00 PM', regreso: '6:00 PM' },
+        ],
+        tabla: [
+          { desde: 1, hasta: 18, precio: 1600, tipo: 'grupo', extra: '+ US$ 25 por persona para comida y transporte' },
+          { desde: 19, hasta: 25, precio: 110, tipo: 'persona' },
+          { desde: 26, hasta: 28, precio: 2775, tipo: 'grupo', extra: '+ US$ 25 por persona para comida y transporte' },
+          { desde: 29, hasta: 120, precio: 99, tipo: 'persona' },
         ],
       },
     ],
@@ -549,6 +620,21 @@ export const FICHAS: Record<string, FichaTour> = {
       { p: '¿Y si llueve?', r: 'Reembolso total o cambio de fecha, sin costo.' },
     ],
     tambienTeGusta: ['semi-privado', 'snorkel-lovers'],
+    // [v2] Charter privado. OJO con el texto del álbum: la web original de
+    // este tour promete que «TODAS las fotos» se suben gratis a Facebook, así
+    // que aquí NO se puede vender «el álbum completo» — solo la máxima
+    // calidad. Si no, contradice lo que ellos mismos prometen.
+    addOns: [
+      {
+        id: 'album-fotos',
+        etiqueta: 'Tus fotos en máxima calidad',
+        descripcion:
+          'Todas las fotos del día se suben gratis a nuestro Facebook. Los archivos originales, sin comprimir y en máxima resolución, por US$ 20 para todo el grupo.',
+        base: 'grupo',
+        precio: 20,
+        porDefecto: true,
+      },
+    ],
   },
 
   'isla-saona': {
@@ -570,22 +656,30 @@ export const FICHAS: Record<string, FichaTour> = {
         id: 'speedboat',
         nombre: 'Speedboat',
         descripcion: 'La forma más rápida y exclusiva',
-        capacidad: '6-9 personas (+US$ 130 pax adicional hasta 25)',
+        capacidad: 'Hasta 10 personas (+US$ 130 por persona desde 11, hasta 25)',
         tabla: [
-          { desde: 6, hasta: 6, precio: 1100, tipo: 'grupo' },
+          // [tarifa-v2] Corregido 2026-07-27 contra la web original. Tenía
+          // TRES errores: (a) empezaba en `desde: 6`, así que 1-5 personas no
+          // encontraban tramo y el total salía null; (b) el tramo de 9 decía
+          // 1340 cuando son 1280 — 1340 es el de 10, que faltaba entero;
+          // (c) el salto a per-persona era en 10 y es en 11.
+          { desde: 1, hasta: 6, precio: 1100, tipo: 'grupo' },
           { desde: 7, hasta: 7, precio: 1160, tipo: 'grupo' },
           { desde: 8, hasta: 8, precio: 1220, tipo: 'grupo' },
-          { desde: 9, hasta: 9, precio: 1340, tipo: 'grupo' },
-          { desde: 10, hasta: 25, precio: 130, tipo: 'persona' },
+          { desde: 9, hasta: 9, precio: 1280, tipo: 'grupo' },
+          { desde: 10, hasta: 10, precio: 1340, tipo: 'grupo' },
+          { desde: 11, hasta: 25, precio: 130, tipo: 'persona' },
         ],
       },
       {
         id: 'fishing',
         nombre: 'Fishing Town',
         descripcion: 'Con parada en Mano Juan y Playa Toro',
-        capacidad: '6-10 personas (+US$ 140 pax adicional hasta 25)',
+        capacidad: 'Hasta 10 personas (+US$ 140 por persona desde 11, hasta 25)',
         tabla: [
-          { desde: 6, hasta: 6, precio: 1200, tipo: 'grupo' },
+          // [tarifa-v2] Corregido 2026-07-27: empezaba en `desde: 6` → 1-5
+          // personas no encontraban tramo y el total salía null.
+          { desde: 1, hasta: 6, precio: 1200, tipo: 'grupo' },
           { desde: 7, hasta: 7, precio: 1270, tipo: 'grupo' },
           { desde: 8, hasta: 8, precio: 1340, tipo: 'grupo' },
           { desde: 9, hasta: 9, precio: 1410, tipo: 'grupo' },
@@ -716,6 +810,32 @@ export const FICHAS: Record<string, FichaTour> = {
       },
     ],
     tambienTeGusta: ['semi-privado', 'charter-privado'],
+    // [v2] Saona. La langosta SÍ está documentada en su web para los 3 botes
+    // («Optional add-on during check-out: Lobster 30$US per person») y es el
+    // único add-on por PERSONA: se marca una vez y multiplica por todo el
+    // grupo (confirmado por el cliente en la reunión del 07-24).
+    // La nota de marzo-junio es literal de su web — dato honesto que evita
+    // una queja previsible, así que se porta tal cual.
+    addOns: [
+      {
+        id: 'langosta',
+        etiqueta: 'Súbele langosta a todo el grupo',
+        descripcion:
+          'Langosta para cada persona a bordo, además del buffet. Se añade al reservar.',
+        base: 'persona',
+        precio: 30,
+        nota: 'De marzo a junio la langosta puede no estar disponible; en ese caso se sustituye por camarón gigante.',
+      },
+      {
+        id: 'album-fotos',
+        etiqueta: 'El álbum completo, en máxima calidad',
+        descripcion:
+          'Las mejores fotos del día quedan gratis en nuestro Facebook. El álbum entero, en resolución original y sin recortar, te lo llevas por US$ 20 para todo el grupo.',
+        base: 'grupo',
+        precio: 20,
+        porDefecto: true,
+      },
+    ],
   },
 }
 
