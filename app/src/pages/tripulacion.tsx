@@ -17,14 +17,18 @@ import { EQUIPO_PAGINA } from '@/data/equipo'
 // que su propia maqueta titulaba.
 //
 // [v2 2026-07-28, pedido de Samuel] LA PÁGINA SE ALINEA CON EL PDF (slides
-// 36-43), que es MÁS DIRECTA que la versión anterior. Cuatro tiempos y nada
-// más:
+// 36-43), que es MÁS DIRECTA que la versión anterior. Cuatro tiempos, más un
+// remate:
 //   1. Hero: badge + título + descripción. Y SOLO eso — los 3 KPIs que vivían
 //      dentro se bajan a la franja.
 //   2. FranjaEquipo: la info compacta (cuántas personas, cuántos
 //      departamentos, desde cuándo, y que el equipo es de RD + España).
 //   3. Filtros por departamento + todo el equipo (GridEquipo).
-//   4. Cierre «¿Quieres remar con nosotros?» (dentro de GridEquipo).
+//   4. Cierre «¿Quieres remar con nosotros?» (CierreEquipo).
+//   5. MuroTripulacion: los dos tickers de retratos, mudos y a sangre, DESPUÉS
+//      del CTA. No está en el PDF — es el «algo chulo» que pidió Samuel para
+//      una sección que por naturaleza es monótona. Ver ese componente para por
+//      qué va al final y sin cabecera.
 //
 // SALE «Bienvenido a la familia Hispaniola» (nosotros/intro-nosotros.tsx). Se
 // había reubicado aquí el 07-27 al desaparecer /nosotros, como colocación
@@ -55,19 +59,17 @@ export function TripulacionPage() {
         />
       </HeroInterna>
 
-      {/* La franja pega arriba, contra el hero: el orden del PDF es hero →
-          datos → filtros → gente, sin respiros de por medio. */}
-      <div className="mx-auto max-w-contenido px-5 pt-12 sm:px-10 lg:pt-16">
-        <FranjaEquipo />
-      </div>
-
-      {/* El muro va A SANGRE, así que vive FUERA del contenedor de contenido
-          —igual que ReelsSociales en /instalaciones—. Se cuela entre la franja
-          y la rejilla: primero el número, luego las caras, luego el orden. */}
-      <MuroTripulacion />
-
-      <div className="mx-auto max-w-contenido px-5 pb-12 sm:px-10 lg:pb-16">
+      {/* UN SOLO contenedor para franja + rejilla + cierre, con `gap` entre
+          ellos. Estuvieron partidos en dos mientras el muro se colaba en medio
+          (uno con pt-, otro con pb-); al mudarse el muro al final, esa partición
+          se quedó sin motivo y con un efecto feo: entre los dos bloques no había
+          NINGUNA separación —el pt- del primero y el pb- del segundo son
+          exteriores— y los chips de filtro salían pegados al canto de la franja
+          de datos. Un contenedor y un gap: no hay dos paddings que puedan
+          desincronizarse. */}
+      <div className="mx-auto max-w-contenido px-5 py-12 sm:px-10 lg:py-16">
         <div className="flex flex-col gap-10 lg:gap-12">
+          <FranjaEquipo />
           <GridEquipo />
           {/* El cierre va fuera de GridEquipo (donde vivía): no depende del
               filtro ni del equipo, es el remate de la página. */}
@@ -76,6 +78,13 @@ export function TripulacionPage() {
           </div>
         </div>
       </div>
+
+      {/* El muro va A SANGRE, así que vive FUERA del contenedor de contenido
+          —igual que ReelsSociales en /instalaciones—, y va AL FINAL, DESPUÉS
+          del banner de CTA (pedido de Samuel, 2026-07-28): la página cierra
+          con su llamada a la acción y lo último que ves antes del footer son
+          las caras pasando. Sin cabecera, así que no compite con nada. */}
+      <MuroTripulacion />
 
       <Footer />
     </div>

@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react'
 import { Check } from 'lucide-react'
 import { Boton } from '@/components/ui/boton'
 import { Etiqueta } from '@/components/ui/etiqueta'
@@ -39,7 +40,14 @@ export function Ubicacion() {
           Cabeza de Toro · Cabo Engaño
         </p>
 
-        <div className="mt-4 w-fit rounded-card bg-papel px-5 py-4 shadow-card-flotante ring-1 ring-linea sm:absolute sm:-bottom-7 sm:right-6 sm:mt-0">
+        {/* Etiqueta de papel, no card: mismo lenguaje de objetos que el recibo
+            y la hoja de razones (.boleto — papel, hairline, sombra de dos
+            capas y un giro mínimo). Un rectángulo blanco con ring aquí era lo
+            único de la página que volvía a parecer una card. */}
+        <div
+          className="boleto mt-4 w-fit bg-papel px-5 py-4 sm:absolute sm:-bottom-7 sm:right-6 sm:mt-0"
+          style={{ ['--rot' as string]: 'var(--pqr-papel-rot-nuestra)' } as CSSProperties}
+        >
           <p className="font-display text-3xl font-semibold leading-none text-coral">
             {UBICACION.cifra}
           </p>

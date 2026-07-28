@@ -44,36 +44,22 @@ export function ImpactoSostenibilidad() {
           con dos boxes anidados dentro. Esto es una sola superficie neutra,
           plana, sin nada anidado — y el aqua sigue siendo solo el acento de
           las cifras, nunca el fondo (dirección visual B). */}
-      <div className="sost-reveal mt-8 rounded-card-grande bg-papel-hueso px-6 py-8 sm:px-10 sm:py-10">
-        <div className="grid grid-cols-2 gap-x-8 gap-y-10 lg:grid-cols-4 lg:gap-x-12">
-          {SOSTENIBILIDAD.impacto.map((s) => (
-            <div key={s.label}>
-              <p className="font-display text-sost-impacto-movil font-semibold text-aqua-dark sm:text-sost-impacto">
-                {s.valor}
-              </p>
-              <p className="mt-2 text-sm text-navy-soft">{s.label}</p>
-            </div>
-          ))}
-        </div>
-
-        {/* Los 2 importes por huésped: dentro de la MISMA superficie, que es
-            lo que ahora dice «esto explica las cifras de arriba» — antes lo
-            decía el hairline que las separaba. Bajan de tamaño y van en navy
-            para leerse como nota al pie y no como una segunda tanda de
-            titulares compitiendo. */}
-        <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-baseline sm:gap-10">
-          <p className="shrink-0 text-eyebrow font-semibold uppercase tracking-[0.12em] text-navy-soft">
-            {SOSTENIBILIDAD.aportesTitulo}
-          </p>
-          <div className="flex flex-col gap-x-12 gap-y-3 sm:flex-row sm:flex-wrap">
-            {SOSTENIBILIDAD.aportes.map((a) => (
-              <p key={a.label} className="flex flex-wrap items-baseline gap-x-2">
-                <span className="font-display text-sost-aporte font-semibold text-navy">{a.valor}</span>
-                <span className="text-sm text-navy-soft">{a.label}</span>
-              </p>
-            ))}
+      {/* [v2 2026-07-28, 2ª vuelta, Samuel: «yo solo pondría en el cuadro gris
+          los 4 puntos»] Los 2 importes por huésped VIVÍAN aquí dentro, como
+          pie de esta misma superficie. Se van a sección propia
+          (aporte-sostenibilidad.tsx, justo debajo): de pie de bloque no se
+          entendían — dos cifras sueltas con un rótulo lateral, sin decir de
+          dónde salen ni en qué se gastan. La superficie se queda con lo que
+          de verdad es una sola idea: 4 cifras de RESULTADO. */}
+      <div className="sost-reveal mt-8 grid grid-cols-2 gap-x-8 gap-y-10 rounded-card-grande bg-papel-hueso px-6 py-8 sm:px-10 sm:py-10 lg:grid-cols-4 lg:gap-x-12">
+        {SOSTENIBILIDAD.impacto.map((s) => (
+          <div key={s.label}>
+            <p className="font-display text-sost-impacto-movil font-semibold text-aqua-dark sm:text-sost-impacto">
+              {s.valor}
+            </p>
+            <p className="mt-2 text-sm text-navy-soft">{s.label}</p>
           </div>
-        </div>
+        ))}
       </div>
     </section>
   )

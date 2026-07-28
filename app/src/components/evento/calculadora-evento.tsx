@@ -32,9 +32,22 @@ import { totalPaqueteEvento, type PaqueteEvento } from '@/data/eventos'
 
 const DEPOSITO = 0.25
 
-export function CalculadoraEvento({ paquetes }: { paquetes: PaqueteEvento[] }) {
+export function CalculadoraEvento({
+  paquetes,
+  elegido,
+  onElegir,
+}: {
+  paquetes: PaqueteEvento[]
+  /** [v2 2026-07-28, 2ª vuelta] El paquete elegido SUBE a pages/evento.tsx:
+   *  el bloque de paquetes de la columna izquierda marca el mismo que está
+   *  activo aquí, y se puede elegir desde cualquiera de los dos. Mismo patrón
+   *  que `variante` en la ficha de tour, que gobierna a la vez el widget y la
+   *  tabla de precios del charter — dos piezas que hablan del mismo dato no
+   *  pueden tener cada una el suyo. */
+  elegido: string | null
+  onElegir: (id: string) => void
+}) {
   const conPrecio = paquetes.filter((p) => p.precioBase !== null)
-  const [elegido, setElegido] = useState(conPrecio[0]?.id ?? '')
   const [personas, setPersonas] = useState(12)
 
   if (conPrecio.length === 0) return null
@@ -124,7 +137,7 @@ export function CalculadoraEvento({ paquetes }: { paquetes: PaqueteEvento[] }) {
                 type="button"
                 role="tab"
                 aria-selected={activo}
-                onClick={() => setElegido(p.id)}
+                onClick={() => onElegir(p.id)}
                 className={`relative z-10 flex items-center justify-center rounded-full px-0.5 py-2 text-center text-xs font-semibold leading-tight transition-colors sm:px-1 sm:text-sm ${
                   activo ? 'text-navy' : 'text-navy-sub/55 hover:text-navy-sub'
                 }`}

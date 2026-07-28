@@ -1,5 +1,4 @@
-import { Link } from 'react-router-dom'
-import { ArrowRight, Check } from 'lucide-react'
+import { Check } from 'lucide-react'
 import { Etiqueta } from '@/components/ui/etiqueta'
 import { COCINA_FLOTANTE, EXPERIENCIA, EXPERIENCIA_ABORDO } from '@/data/nosotros'
 
@@ -112,18 +111,22 @@ export function ExperienciaABordo() {
         ))}
       </div>
 
-      <div className="mt-10 flex justify-center">
-        <Link
-          to="/#tours"
-          className="group inline-flex items-center gap-2 rounded-btn bg-coral px-6 py-3.5 text-sm font-semibold text-white shadow-boton-fancy transition hover:bg-coral-dark"
-        >
-          {EXPERIENCIA.cta}
-          <ArrowRight
-            className="size-4 transition-transform duration-200 motion-safe:group-hover:translate-x-1"
-            aria-hidden="true"
-          />
-        </Link>
-      </div>
+      {/* [v2 2026-07-28, Samuel: «quita el CTA que está debajo de las 3 cards,
+          el que dice "Vive este día — ver disponibilidad", ya que abajo ya hay
+          un banner con CTA»] FUERA el botón de cierre de esta franja.
+
+          El CTA se puso el 2026-07-22 porque la maqueta de /nosotros remataba
+          así la sección y allí era el único de la página. Esa página ya no
+          existe: esta franja vive ahora dentro de /instalaciones y su banda de
+          cierre («Ven a conocernos en persona») queda a un scroll corto,
+          apuntando al mismo sitio (/#tours). Dos botones coral idénticos
+          seguidos no dan dos oportunidades de convertir: se restan, y el de
+          arriba corta la lectura justo antes del remate real de la página.
+
+          ⚠️ Si esta franja vuelve a colocarse en una página SIN banda de cierre
+          propia, hay que devolvérselo — es el motivo por el que existía.
+          `EXPERIENCIA.cta` se queda en data/nosotros.ts, sin consumidores, por
+          eso mismo. */}
     </section>
   )
 }

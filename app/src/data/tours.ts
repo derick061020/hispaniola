@@ -181,6 +181,21 @@ export type FichaTour = {
    *  Son ventajas REALES sacadas de `incluye`/`menuPremium` de esta misma
    *  ficha — no se inventa ninguna. */
   ventajasPremium?: string[]
+  /** [v2 2026-07-28] El widget de esta ficha abre SIEMPRE en piel premium
+   *  (oscura con terminaciones doradas), haya o no toggle Light/Premium.
+   *
+   *  Pedido de Samuel: «Isla Saona y Charter Privado, que el widget sea tema
+   *  oscuro, porque esos 2 servicios son premium de base». Y encaja con cómo
+   *  están construidos: los dos se venden por sub-variantes (barco/tarifario),
+   *  o sea que NO tienen toggle Light/Premium — no hay un Light contra el que
+   *  contrastar porque no existe versión Light del producto. La piel oscura
+   *  deja de ser el estado «has subido a Premium» y pasa a ser lo que ES el
+   *  servicio.
+   *
+   *  ⚠️ Es SOLO la piel del widget. No toca precios, ni `upgradePremium`, ni
+   *  el comparador, ni la banda «estás en Premium» de la página (esos siguen
+   *  colgando de `menuLight`/`upgradePremium`, que en estos dos no existen). */
+  widgetPremiumDeBase?: true
   /** [v2 2026-07-27] Extras opcionales que el widget vende como UPSELL.
    *  Portados del tarifario real (TARIFARIO-WEB-ORIGINAL.md §4-C). El texto
    *  del álbum de fotos cambia por producto a propósito: en charter ya
@@ -322,29 +337,39 @@ export const FICHAS: Record<string, FichaTour> = {
       { hora: '9:00 AM', regreso: '1:00 PM' },
       { hora: '1:00 PM', regreso: '5:00 PM' },
     ],
-    // v3 (2026-07-17, pedido de Samuel: «quitar la opción de premium/light,
-    // dejar los 8 menús»): la web del cliente NO publica Premium para
-    // snorkel-lovers — solo Adulto 114 / Niño 65 como tarifa única. El
-    // menúLight queda VACÍO a propósito (no se borra del modelo: el widget
-    // y MenuTour lo detectan y ocultan la opción). El menúPremium pasa a
-    // ser EL menú del tour (sin nombre "Premium", renombrado a "Tu menú"
-    // en MenuTour cuando no hay menuLight). Para semi-privado, en cambio,
-    // sigue con menuLight + menuPremium (la web sí publica el upgrade).
-    upgradePremium: null,
-    // dejar los 8 menús»): la web del cliente NO publica Premium para
-    // snorkel-lovers — solo Adulto 114 / Niño 65 como tarifa única. El
-    // menúLight queda VACÍO a propósito (no se borra del modelo: el widget
-    // y MenuTour lo detectan y ocultan la opción). El menúPremium pasa a
-    // ser EL menú del tour (sin nombre "Premium", renombrado a "Tu menú"
-    // en MenuTour cuando no hay menuLight). Para semi-privado, en cambio,
-    // sigue con menuLight + menuPremium (la web sí publica el upgrade).
+    // ── LIGHT / PREMIUM, DE VUELTA (2026-07-28, pedido de Samuel: «al tour
+    // snorkel también ponle selector Premium/Light, igual que semi-privado,
+    // Premium por defecto») ──────────────────────────────────────────────
+    //
+    // HISTORIA, porque este campo ha ido y venido: el 2026-07-17 Samuel pidió
+    // «quitar la opción de premium/light, dejar los 8 menús» — la web del
+    // cliente publica para snorkel-lovers una tarifa única (Adulto 114 /
+    // Niño 65) y no anuncia upgrade. Se puso `upgradePremium: null` y el
+    // toggle desapareció. `menuLight` volvió poco después (el funnel
+    // necesitaba platos que enseñar si alguien entraba con `?paquete=light`),
+    // así que hoy la ficha ya tiene los DOS menús: 2 platos a la parrilla y
+    // los 8 de la carta grande. Lo único que faltaba para volver a tener el
+    // selector era el precio del salto.
+    //
+    // ⚠️⚠️ LOS 15 DÓLARES SON UN SUPUESTO, NO UN DATO. El tarifario del
+    // cliente no publica upgrade para este tour; 15 es el upgrade REAL de
+    // semi-privado, que es el mismo barco, la misma cocina y los mismos 8
+    // platos. Es la única referencia que existe en el proyecto y por eso se
+    // usa — pero HAY QUE CONFIRMARLO CON FERNANDO antes de publicar. Si el
+    // número cambia, se cambia aquí y ya: el widget, el comparador, la banda
+    // «estás en Premium» y el funnel lo leen todos de este campo.
+    //
+    // Al ser tarifa dual, el upgrade se suma POR PERSONA a las dos tarifas
+    // (adulto 114→129, niño 65→80) — ver `calcularTotalTour()`.
+    upgradePremium: 15,
     // v3 fix (2026-07-17, pedido de Samuel): el refactor a "solo Adulto
-    // 114 / Niño 65" deja menuLight vacio A PROPOSITO, pero el widget
-    // y el funnel de la ficha AUN no estan actualizados a ese modelo
-    // (siguen aceptando y mostrando paquete=light). Hasta que se
-    // termine el refactor, restaurar menuLight para que el paso 2
-    // del funnel de snorkel-lovers tenga platos que mostrar cuando
-    // el usuario entra con ?paquete=light.
+    // 114 / Niño 65" dejó menuLight vacío A PROPÓSITO, pero el widget
+    // y el funnel de la ficha AÚN no estaban actualizados a ese modelo
+    // (seguían aceptando y mostrando paquete=light). Hasta que se
+    // terminara el refactor, se restauró menuLight para que el paso 2
+    // del funnel de snorkel-lovers tuviera platos que mostrar cuando
+    // el usuario entrara con ?paquete=light. Desde el 07-28 ya no es un
+    // parche: es la mitad Light del comparador, otra vez.
     menuLight: [
       { nombre: 'Pechuga de pollo a la parrilla', desc: 'Con papas y vegetales', foto: 'plato-chicken-bodegon' },
       { nombre: 'Filete de pescado a la parrilla', desc: 'Con papas y vegetales', foto: 'plato-fish-bodegon' },
@@ -378,6 +403,25 @@ export const FICHAS: Record<string, FichaTour> = {
         foto: 'plato-kids-meal',
         soloNinos: true,
       },
+    ],
+    // [2026-07-28] Las 4 ventajas del salto a Premium, que estrena este tour
+    // al recuperar el selector. Mismo criterio que las de semi-privado: se
+    // SACAN de los arrays de esta misma ficha y no se inventa ninguna —
+    // langosta, Angus y Surf & Turf están en `menuPremium`; el 8 contra 2 es
+    // aritmética de los dos arrays; el vegetariano y el cóctel también están.
+    //
+    // La cuarta es la que NO tiene semi-privado y aquí sí toca: el Kid's Meal
+    // vive en `menuPremium`, así que en Light no hay plato infantil. Es el
+    // argumento más honesto que existe para este tour en concreto, que es el
+    // familiar de la casa.
+    //
+    // ⚠️ No se menciona «las fotos incluidas» (la 4ª de semi-privado): aquí
+    // el álbum es un add-on de pago, no algo que traiga el Premium.
+    ventajasPremium: [
+      'Langosta, Angus certificado y Surf & Turf en el plato',
+      '8 platos a elegir en vez de 2',
+      'Opciones vegetarianas y cóctel de mariscos',
+      "Kid's Meal para los más pequeños",
     ],
     // v3 (2026-07-17, web del cliente): 18 fotos reales de la excursión
     // familiar (la web tenía `images/excursions/educational/{4,5,7,8,10,11,
@@ -478,6 +522,10 @@ export const FICHAS: Record<string, FichaTour> = {
   },
 
   'charter-privado': {
+    // [2026-07-28] Widget en piel oscura SIEMPRE — ver `widgetPremiumDeBase`
+    // en el tipo. Alquilar el barco entero para tu grupo no tiene versión
+    // Light: aquí la piel premium no anuncia un upgrade, describe el producto.
+    widgetPremiumDeBase: true,
     tituloLargo: 'Charter Privado — el barco entero para tu grupo',
     audiencia: 'Tu grupo',
     // [v2 2026-07-28, plan 01 §7 — slide 2] «3-4 horas» → «3 o 4 horas». La
@@ -524,8 +572,28 @@ export const FICHAS: Record<string, FichaTour> = {
           { hora: '9:00 AM', regreso: '1:00 PM' },
           { hora: '2:00 PM', regreso: '6:00 PM' },
         ],
+        // [tarifa-v2 · corregido 2026-07-28, lo cazó Samuel: «el +25 eso solo
+        // para comida, ¿no?»] Sí, y de ahí salen dos correcciones:
+        //  1) EL TEXTO DECÍA DE MÁS. Ponía «para comida y transporte»; el
+        //     tarifario extraído de la web dice literalmente «+ US$ 25.00
+        //     p/persona (comida)» — el transporte no aparece en ninguna de las
+        //     5 tarifas (TARIFARIO-WEB-ORIGINAL.md §1). Se quita.
+        //  2) NO ES UN RECARGO, ES OPCIONAL. Decisión de Samuel del 2026-07-27,
+        //     escrita en el TARIFARIO §B: «el +25 / +45 es una COMIDA OPCIONAL,
+        //     no entra en el precio base, se modela como add-on y solo suma si
+        //     el usuario la elige». Pintarlo como un «+» pegado al precio del
+        //     tramo lo leía como obligatorio, que es justo lo contrario.
+        // ⚠️ PENDIENTE (no es un olvido de este cambio, es deuda anterior): el
+        // add-on `comida` NO existe todavía en `addOns` de la ficha, así que el
+        // widget no permite elegirlo — hoy solo se ANUNCIA aquí. Antes de
+        // cablearlo hay que resolver dos cosas con el cliente, porque el
+        // modelo actual de AddOn no da para las dos: (a) el importe cambia por
+        // BARCO (25 en charter, 45 en el catamarán de Saona) y los add-ons hoy
+        // son de la ficha entera, no de la sub-variante; y (b) el tarifario
+        // solo lo lista en los tramos de GRUPO — falta confirmar si en los
+        // tramos por persona la comida ya va incluida en la tarifa por cabeza.
         tabla: [
-          { desde: 1, hasta: 8, precio: 625, tipo: 'grupo', extra: '+ US$ 25 por persona para comida y transporte' },
+          { desde: 1, hasta: 8, precio: 625, tipo: 'grupo', extra: 'Comida opcional: + US$ 25 por persona' },
           { desde: 9, hasta: 20, precio: 99, tipo: 'persona' },
         ],
       },
@@ -565,7 +633,7 @@ export const FICHAS: Record<string, FichaTour> = {
         // propio precio de grupo real (1000): la web del cliente anuncia un
         // «desde» más caro que su tarifa. Otro motivo para no usar los «from».
         tabla: [
-          { desde: 1, hasta: 13, precio: 1000, tipo: 'grupo', extra: '+ US$ 25 por persona para comida y transporte' },
+          { desde: 1, hasta: 13, precio: 1000, tipo: 'grupo', extra: 'Comida opcional: + US$ 25 por persona' },
           { desde: 14, hasta: 45, precio: 99, tipo: 'persona' },
         ],
       },
@@ -612,9 +680,9 @@ export const FICHAS: Record<string, FichaTour> = {
           { hora: '2:00 PM', regreso: '6:00 PM' },
         ],
         tabla: [
-          { desde: 1, hasta: 18, precio: 1600, tipo: 'grupo', extra: '+ US$ 25 por persona para comida y transporte' },
+          { desde: 1, hasta: 18, precio: 1600, tipo: 'grupo', extra: 'Comida opcional: + US$ 25 por persona' },
           { desde: 19, hasta: 25, precio: 110, tipo: 'persona' },
-          { desde: 26, hasta: 28, precio: 2775, tipo: 'grupo', extra: '+ US$ 25 por persona para comida y transporte' },
+          { desde: 26, hasta: 28, precio: 2775, tipo: 'grupo', extra: 'Comida opcional: + US$ 25 por persona' },
           { desde: 29, hasta: 120, precio: 99, tipo: 'persona' },
         ],
       },
@@ -758,6 +826,11 @@ export const FICHAS: Record<string, FichaTour> = {
   },
 
   'isla-saona': {
+    // [2026-07-28] Widget en piel oscura SIEMPRE — ver `widgetPremiumDeBase`
+    // en el tipo. Saona se vende eligiendo bote (speedboat / fishing town /
+    // catamarán), no eligiendo menú: no hay Light contra el que contrastar, y
+    // el día completo a la isla es el producto caro de la casa.
+    widgetPremiumDeBase: true,
     tituloLargo: 'Isla Saona — día completo, elige tu bote',
     audiencia: 'Día completo',
     duracion: 'Día completo (8 horas)',
@@ -818,7 +891,7 @@ export const FICHAS: Record<string, FichaTour> = {
             hasta: 30,
             precio: 1950,
             tipo: 'grupo',
-            extra: '+ US$ 45 por persona para comida y transporte',
+            extra: 'Comida opcional: + US$ 45 por persona',
           },
           { desde: 31, hasta: 70, precio: 105, tipo: 'persona' },
         ],

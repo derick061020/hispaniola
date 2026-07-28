@@ -6,9 +6,11 @@ import { CabeceraSostenibilidad } from '@/components/sostenibilidad/cabecera-sos
 import { IntroSostenibilidad } from '@/components/sostenibilidad/intro-sostenibilidad'
 import { RecorridoSostenibilidad } from '@/components/sostenibilidad/recorrido-sostenibilidad'
 import { ImpactoSostenibilidad } from '@/components/sostenibilidad/impacto-sostenibilidad'
+import { AporteSostenibilidad } from '@/components/sostenibilidad/aporte-sostenibilidad'
 import { VideosSostenibilidad } from '@/components/sostenibilidad/videos-sostenibilidad'
 import { FundacionTeaser } from '@/components/sostenibilidad/fundacion-teaser'
-import { CierreSostenibilidad } from '@/components/sostenibilidad/cierre-sostenibilidad'
+import { ProyectosSostenibilidad } from '@/components/sostenibilidad/proyectos-sostenibilidad'
+import { CierreDoble } from '@/components/sostenibilidad/cierre-doble'
 import { Meta } from '@/components/seo/meta'
 import { ANCLAS_VENTAJA, SOSTENIBILIDAD } from '@/data/sostenibilidad'
 import { useDevFlag } from '@/dev/use-dev-flag'
@@ -33,12 +35,26 @@ import { useSostenibilidadReveal } from '@/components/sostenibilidad/use-sosteni
 // mantiene ese tab, slide 20), lo que cambió es cómo se vende. Renombrar 8
 // componentes y una constante que consumen blog/guías/flota no compra nada.
 //
-// Orden del contenido (3ª vuelta, 2026-07-22): misión + video → EL RECORRIDO
-// de los 3 pilares (zigzag con la curva y el catamarán) → banda de impacto
-// (las 6 cifras) → los 7 videos → teaser de la fundación → cierre. La banda de
-// impacto va justo DESPUÉS del recorrido a propósito: los pilares cuentan QUÉ
-// se hace y las cifras rematan CUÁNTO — separarlas con los videos en medio
-// rompía el remate. Ese orden es también el de los chips de anclas.
+// Orden del contenido: misión + video → EL RECORRIDO de los 3 pilares (zigzag
+// con la curva y el catamarán) → banda de impacto (las 4 cifras) → A DÓNDE VA
+// TU APORTE (los 2 importes por huésped) → los 7 videos → teaser de la
+// fundación → los 5 proyectos → membresías → cierre. La banda de impacto va
+// justo DESPUÉS del recorrido a propósito (3ª vuelta, 2026-07-22): los
+// pilares cuentan QUÉ se hace y las cifras rematan CUÁNTO — separarlas con
+// los videos en medio rompía el remate. El aporte va pegado a las cifras
+// porque es el mecanismo que las financia: resultado → de dónde sale. Y los
+// tres últimos bloques son el tramo de la fundación, en el orden de los
+// slides 62-64: quién es → en qué trabaja → cómo apoyarla.
+//
+// Ese orden es también el de los 7 chips (ANCLAS_VENTAJA) — y no por
+// casualidad: un índice que no sigue el orden de lectura desincroniza el
+// resaltado al scrollear.
+//
+// ⚠️ [v2 2026-07-28] Los slides 63 (los 5 proyectos) y 64 (membresías) se
+// traen AQUÍ además de a /fundacion, por pedido de Samuel. El copy no se
+// duplica —los dos sitios leen data/fundacion.ts— pero el TEXTO sí se ve en
+// dos páginas. Si eso acaba molestando, la decisión es cuál de las dos lo
+// cuenta, no retocar uno de los dos textos para «diferenciarlos».
 //
 // PLAN-INTERNAS-V2.md (2026-07-17, Samuel): adopta el HERO COMPARTIDO con la
 // home, la ficha de tour y las landings de evento (internas/hero-interna.tsx)
@@ -80,9 +96,11 @@ export function VentajaCompetitivaPage() {
           <IntroSostenibilidad />
           <RecorridoSostenibilidad activo={!estatico} /> {/* [dev-mode] gate */}
           <ImpactoSostenibilidad />
+          <AporteSostenibilidad />
           <VideosSostenibilidad />
           <FundacionTeaser />
-          <CierreSostenibilidad />
+          <ProyectosSostenibilidad activo={!estatico} /> {/* [dev-mode] gate */}
+          <CierreDoble />
         </div>
       </div>
 

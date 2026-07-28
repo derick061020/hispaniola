@@ -1,27 +1,32 @@
 import { useState } from 'react'
 import { useFilaArrastrable } from '@/components/home/use-fila-arrastrable'
-import { Etiqueta } from '@/components/ui/etiqueta'
 import { useDevFlag } from '@/dev/use-dev-flag'
-import { EQUIPO_COMPLETO, EQUIPO_PAGINA, TOTAL_EQUIPO, type MiembroEquipoV2 } from '@/data/equipo'
+import { EQUIPO_COMPLETO, type MiembroEquipoV2 } from '@/data/equipo'
 
-// «Somos 70» — el muro de tripulación ([v2 2026-07-28, pedido de Samuel:
-// «entiendo que es una sección monótona, y eso está bien, pero me gustaría
-// darle algo chulo»).
+// El muro de tripulación ([v2 2026-07-28, pedido de Samuel: «entiendo que es
+// una sección monótona, y eso está bien, pero me gustaría darle algo chulo»).
 //
-// QUÉ ES: las ~70 personas pasando en dos filas cruzadas, a sangre, entre la
-// franja de datos y la rejilla por departamento. Es la foto de familia — el
-// «≈ 70» de la franja deja de ser un número y se ve.
+// QUÉ ES: las caras del equipo pasando en dos filas cruzadas, a sangre. Nada
+// más — ni eyebrow, ni titular, ni descripción, ni un solo nombre.
 //
-// POR QUÉ VA ANTES Y NO EN LUGAR DE LA REJILLA: la rejilla es la parte ÚTIL
-// (buscar a alguien, filtrar por departamento) y este muro está diseñado para
-// NO poder usarse — desfila solo, no se puede pinchar, no lleva nombres. Son
-// dos trabajos distintos y por eso son dos bloques, no uno.
+// 2ª VUELTA (mismo día, Samuel): la 1ª versión llevaba cabecera («LA FOTO DE
+// FAMILIA / Somos 70 / …») y vivía ENTRE la franja de datos y la rejilla.
+// Ahora es SOLO LOS DOS TICKERS y va AL FINAL, después del banner de CTA. Los
+// dos cambios van juntos y se explican igual: con cabecera, esto era una
+// sección más que había que leer, y colocada en medio partía en dos el
+// recorrido útil de la página (datos → filtros → gente). Al final y mudo, es
+// un remate: la página termina de contar lo suyo, cierra con el CTA, y lo
+// último que ves antes del footer son las caras pasando. No pide nada.
+//
+// POR QUÉ NO SUSTITUYE A LA REJILLA: la rejilla es la parte ÚTIL (buscar a
+// alguien, filtrar por departamento) y este muro está diseñado para NO poder
+// usarse — desfila solo, no se puede pinchar, no lleva nombres. Son dos
+// trabajos distintos y por eso son dos bloques.
 //
 // SIN NOMBRES NI CARGOS a propósito, y no por ahorrar: a esta escala la cara
-// mide 136px y cualquier rótulo sería ilegible; además, el mensaje del bloque
-// es la CANTIDAD, no quién es cada uno — eso lo cuenta la rejilla de abajo con
-// sitio para hacerlo bien. Un rótulo aquí competiría con el titular y no se
-// leería en ninguno de los dos sitios.
+// mide 136px (96px en móvil) y cualquier rótulo sería ilegible. El mensaje del
+// bloque es la CANTIDAD, no quién es cada uno — eso lo cuenta la rejilla, que
+// tiene sitio para hacerlo bien.
 //
 // La mecánica (dos capas, marquee CSS + arrastre JS, 3 copias, fundido
 // lateral, pausa al hover, una sola copia con reduced-motion) es la del muro
@@ -126,32 +131,32 @@ export function MuroTripulacion() {
   const reducirMovimiento =
     typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
+  // SOLO QUIEN TIENE RETRATO. Este bloque es un muro de CARAS: un hueco de
+  // marca cada tres posiciones —que en la rejilla es correcto, porque allí la
+  // card lleva nombre y cargo aunque no haya foto— aquí sería una baldosa
+  // oscura sin ninguna información, y salen tantas que el muro se lee a
+  // cuadros. La rejilla de abajo sigue enseñando a todo el mundo, así que
+  // nadie desaparece de la página: lo que se filtra es el escaparate, no el
+  // censo. Por eso tampoco se toca el «Somos {TOTAL_EQUIPO}» del titular, que
+  // sigue contando a la plantilla entera.
+  const conRetrato = EQUIPO_COMPLETO.filter((m) => m.foto)
+
   // Reparto alternando (par arriba, impar abajo) y no en dos mitades: los
   // departamentos vienen agrupados en el array, así que partirlo por la mitad
   // dejaría la fila de arriba con oficina y playa y la de abajo con cocina y
   // fundación. Alternando, cada fila mezcla toda la empresa, que es lo que el
   // bloque quiere decir.
   const filas = Array.from({ length: FILAS }, (_, i) =>
-    EQUIPO_COMPLETO.filter((_, n) => n % FILAS === i),
+    conRetrato.filter((_, n) => n % FILAS === i),
   )
 
   return (
-    <section className="py-seccion-sm sm:py-seccion">
-      <div className="mx-auto max-w-contenido px-5 text-center sm:px-10">
-        <Etiqueta>{EQUIPO_PAGINA.muroEyebrow}</Etiqueta>
-        <h2 className="mt-3 font-display text-h2 font-semibold text-navy">
-          Somos {TOTAL_EQUIPO}
-        </h2>
-        <p className="mx-auto mt-2 max-w-2xl text-lead text-navy-sub">
-          {EQUIPO_PAGINA.muroLead}
-        </p>
-      </div>
-
-      {/* Las filas van A SANGRE, fuera del max-w-contenido: el muro tiene que
-          entrar y salir de campo por el canto de la ventana. Dentro del
-          contenedor se leería como un carrusel dentro de una caja, que es
-          justo lo contrario de lo que hace este bloque. */}
-      <div className="mt-8 flex flex-col gap-muro-equipo-fila">
+    // Las filas van A SANGRE y SIN CONTENEDOR: el muro tiene que entrar y
+    // salir de campo por el canto de la ventana. Dentro del max-w-contenido se
+    // leería como un carrusel dentro de una caja, que es lo contrario de lo
+    // que hace este bloque.
+    <section className="pb-seccion-sm sm:pb-seccion" aria-label="Retratos del equipo">
+      <div className="flex flex-col gap-muro-equipo-fila">
         {filas.map((gente, i) => (
           <FilaMuro
             key={i}

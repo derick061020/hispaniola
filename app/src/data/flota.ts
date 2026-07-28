@@ -1,6 +1,5 @@
 import type { LucideIcon } from 'lucide-react'
 import {
-  Anchor,
   Compass,
   Gauge,
   Leaf,
@@ -325,6 +324,19 @@ type PerfilTecnico = {
   aseos: string
   motores: string
   potencia: string
+  /**
+   * La MISMA potencia de `potencia`, pero en número — los caballos TOTALES
+   * (los dos motores sumados). Existe para poder DIBUJARLA: la ficha técnica
+   * la pinta como una barra de progreso con el catamarán navegando hasta su
+   * marca (ver `potenciaDe` más abajo y flota/barra-potencia.tsx).
+   *
+   * Se declara aparte en vez de sacarlo de la cadena con una expresión
+   * regular —que es como se resolvió primero para el titular— porque un dato
+   * que gobierna un elemento visual no puede depender de que nadie cambie
+   * nunca el formato del texto. El día que alguien escriba «480 CV» o «2x240
+   * hp», la regex devuelve null y la barra se queda en cero sin avisar.
+   */
+  potenciaHp: number
   transmision: string
   crucero: string
   maxima: string
@@ -353,6 +365,7 @@ const PERFILES: Record<string, PerfilTecnico> = {
     aseos: '1 aseo marino con lavabo',
     motores: '2 × Yanmar 4LHA-STP, diésel intraborda',
     potencia: '2 × 240 hp (480 hp totales)',
+    potenciaHp: 480,
     transmision: 'Línea de ejes con hélices de 3 palas en bronce-níquel',
     crucero: '12 nudos',
     maxima: '18 nudos',
@@ -376,6 +389,7 @@ const PERFILES: Record<string, PerfilTecnico> = {
     aseos: '3 aseos marinos con lavabo',
     motores: '2 × Cummins QSB 6.7, diésel intraborda',
     potencia: '2 × 380 hp (760 hp totales)',
+    potenciaHp: 760,
     transmision: 'Línea de ejes con hélices de 4 palas y timones hidráulicos',
     crucero: '11 nudos',
     maxima: '16 nudos',
@@ -403,6 +417,7 @@ const PERFILES: Record<string, PerfilTecnico> = {
     aseos: '2 aseos marinos, uno por casco',
     motores: '2 × Yanmar 3YM30, diésel intraborda (auxiliares)',
     potencia: '2 × 29 hp (58 hp totales)',
+    potenciaHp: 58,
     transmision: 'Saildrive con hélices abatibles de 2 palas',
     crucero: '7 nudos a motor · 8-9 nudos a vela con viento de 15 nudos',
     maxima: '9 nudos a motor',
@@ -433,6 +448,7 @@ const PERFILES: Record<string, PerfilTecnico> = {
     aseos: '1 aseo marino con lavabo',
     motores: '2 × Yanmar 4JH110, diésel intraborda',
     potencia: '2 × 110 hp (220 hp totales)',
+    potenciaHp: 220,
     transmision: 'Línea de ejes con hélices de 3 palas',
     crucero: '10 nudos',
     maxima: '15 nudos',
@@ -461,6 +477,7 @@ const PERFILES: Record<string, PerfilTecnico> = {
     aseos: '1 aseo marino con lavabo',
     motores: '2 × Suzuki DF300, gasolina fueraborda',
     potencia: '2 × 300 hp (600 hp totales)',
+    potenciaHp: 600,
     transmision: 'Fueraborda con hélices de acero inoxidable de 4 palas',
     crucero: '18 nudos',
     maxima: '32 nudos',
@@ -488,6 +505,7 @@ const PERFILES: Record<string, PerfilTecnico> = {
     aseos: '6 aseos, dos de ellos adaptados',
     motores: '2 × Caterpillar C7.1, diésel intraborda',
     potencia: '2 × 300 hp (600 hp totales)',
+    potenciaHp: 600,
     transmision: 'Línea de ejes con hélices en tobera y propulsor de proa',
     crucero: '7 nudos',
     maxima: '10 nudos',
@@ -807,23 +825,44 @@ export function fichaTecnicaDe(barco: BarcoFlota): GrupoSpec[] {
   return grupos
 }
 
+// [v2 2026-07-28] Aquí vivió `titularesTecnicos`, que devolvía las 4 cifras de
+// cabecera del modal (eslora · pasaje · año · potencia). Se retira en dos
+// pasos y por dos motivos distintos, que conviene no confundir:
+//
+//   1. La POTENCIA se salió de la rejilla porque en una casilla de 180px la
+//      cadena se cortaba a media palabra («2 × 240 hp (480 hp …») y una cifra
+//      truncada no informa de nada. Ahora es la barra navegable (`potenciaDe`),
+//      donde además deja de ser un número suelto: dice cuánto es ESO comparado
+//      con el resto de la flota.
+//   2. Las otras tres se cayeron enteras (Samuel: «preferiría incluso solo la
+//      barra y ya»). No se pierde nada: eslora, pasaje y año son las primeras
+//      filas de Identificación, Dimensiones y Capacidad, dos pantallazos más
+//      abajo en la misma ficha. Estaban dichas dos veces.
+
+/** El caballaje total más alto de la flota — el final del recorrido de la barra. */
+const POTENCIA_MAXIMA_FLOTA = Math.max(...Object.values(PERFILES).map((p) => p.potenciaHp))
+
 /**
- * Las 4 cifras que abren el modal, antes de la ficha larga.
+ * La potencia de un barco lista para dibujarse (flota/barra-potencia.tsx).
  *
- * La potencia se reduce al TOTAL entre paréntesis («2 × 240 hp (480 hp
- * totales)» → «480 hp»): en una casilla de titular, la cadena completa se
- * corta a media palabra y una cifra truncada no informa de nada. El desglose
- * por motor sigue entero en el bloque de propulsión, que es su sitio.
+ * LA ESCALA ES LA FLOTA, NO UN MÁXIMO INVENTADO. Se podría normalizar contra
+ * un tope redondo (1.000 hp) y quedaría más «limpio», pero no significaría
+ * nada: 480 sobre 1.000 es una cifra arbitraria. Sobre los 760 hp del Forever
+ * Teresa —el más potente que tenemos— la barra contesta la única pregunta que
+ * alguien se hace mirándola: *¿este barco es de los fuertes o de los
+ * tranquilos?* Y se recalibra sola cuando entre un barco más potente.
  */
-export function titularesTecnicos(barco: BarcoFlota) {
+export function potenciaDe(barco: BarcoFlota) {
   const p = PERFILES[barco.nombre]
-  const total = p?.potencia.match(/\(([^)]*)\)/)?.[1]?.replace(' totales', '')
-  return [
-    { label: 'Eslora', valor: barco.eslora, icono: Ruler },
-    { label: 'Pasaje', valor: barco.capacidad, icono: Users },
-    { label: 'Año', valor: barco.anio, icono: Anchor },
-    { label: 'Potencia', valor: total ?? p?.potencia ?? null, icono: Gauge },
-  ]
+  if (!p) return null
+  return {
+    hp: p.potenciaHp,
+    /** El desglose por motor, tal cual va en el bloque de propulsión. */
+    detalle: p.motores,
+    maximo: POTENCIA_MAXIMA_FLOTA,
+    /** 0-1. El barco de la punta se dibuja sobre esta fracción del recorrido. */
+    fraccion: p.potenciaHp / POTENCIA_MAXIMA_FLOTA,
+  }
 }
 
 // [v2 2026-07-28] `FICHA_TECNICA_AVISO` se retira (Samuel: «quita de la ficha

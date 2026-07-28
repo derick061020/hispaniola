@@ -195,12 +195,10 @@ export const EQUIPO_PAGINA = {
     // desmiente, es lo primero que cae.
     { id: 'origen', valor: 'RD + España', etiqueta: 'equipo local y gerencia' },
   ],
-  // Muro de retratos ([v2 2026-07-28) — equipo/muro-tripulacion.tsx. El
-  // titular NO vive aquí: es «Somos {TOTAL_EQUIPO}», y ese número se deriva
-  // del array como todos los de esta página.
-  muroEyebrow: 'La foto de familia',
-  muroLead:
-    'De la oficina al mar, de la cocina al arrecife. Esta es toda la gente que hace posible tu día.',
+  // El muro de retratos (equipo/muro-tripulacion.tsx) NO tiene copy: es solo
+  // los dos tickers, sin eyebrow ni titular ni descripción (2ª vuelta del
+  // 2026-07-28, pedido de Samuel). Aquí vivían `muroEyebrow` y `muroLead`, y
+  // se retiran con la cabecera en vez de quedarse huérfanos.
   cierreEyebrow: 'Trabaja con nosotros',
   cierreTitulo: '¿Quieres remar con nosotros?',
   // Foto de fondo del banner de cierre (equipo/cierre-equipo.tsx). Mar abierto

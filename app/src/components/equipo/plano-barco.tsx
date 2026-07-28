@@ -30,9 +30,12 @@ import { DEPARTAMENTOS, contarPorDepartamento, type DepartamentoId } from '@/dat
  *  barco (% del ancho/alto de la caja del recorte). Los porcentajes están
  *  medidos contra catamaran-recorte.webp: el trampolín de proa cae abajo a la
  *  izquierda y la bañera/cabina a la derecha del mástil. */
+// La separación VERTICAL entre los dos es lo que hay que respetar si se
+// mueven: los rótulos miden ~180×48px y a poco que se acerquen se pisan (pasó
+// en la 1ª versión, con 82% y 76%).
 const A_BORDO: { id: DepartamentoId; x: string; y: string; zona: string }[] = [
-  { id: 'playa', x: '26%', y: '82%', zona: 'Cubierta y proa' },
-  { id: 'cocina', x: '63%', y: '76%', zona: 'Cocina flotante' },
+  { id: 'playa', x: '16%', y: '93%', zona: 'Cubierta y proa' },
+  { id: 'cocina', x: '52%', y: '70%', zona: 'Cocina flotante' },
 ]
 
 const EN_TIERRA: { id: DepartamentoId; zona: string }[] = [
@@ -118,11 +121,21 @@ export function PlanoBarco({
         </p>
       </div>
 
-      <div className="mt-10 grid grid-cols-1 items-center gap-10 lg:grid-cols-[minmax(0,17rem)_1fr] lg:gap-6">
+      {/* justify-center + un ancho tope para el barco: la 1ª versión dejaba
+          que la columna del barco se comiera todo el espacio sobrante y el
+          catamarán salía a 600px con el mástil entero, así que los dos puntos
+          de a bordo quedaban amontonados abajo y arriba había medio panel
+          vacío. Con el barco acotado, las dos zonas pesan parecido. */}
+      <div className="mt-10 flex flex-col items-center gap-8 lg:flex-row lg:items-end lg:justify-center lg:gap-14">
         {/* EN TIERRA — columna de puntos. No hay ilustración del complejo
             todavía (ver la cabecera), así que en vez de inventarse un dibujo
             se declara como lo que es: la lista de los que no están a bordo. */}
-        <div className="flex flex-col gap-3">
+        {/* Alineada ABAJO (lg:items-end del padre) y no centrada: el barco es
+            una figura alta y estrecha, y centrar la columna contra él dejaba
+            medio panel vacío arriba. Pegadas al mismo canto inferior, las dos
+            zonas comparten «línea de flotación» y el bloque se lee como un
+            plano en vez de como dos cosas sueltas. */}
+        <div className="flex w-full max-w-xs flex-col gap-3 lg:pb-6">
           <p className="text-eyebrow font-semibold uppercase tracking-[0.12em] text-navy-soft">
             En tierra
           </p>
@@ -141,11 +154,11 @@ export function PlanoBarco({
             La línea de flotación es el degradado de la sección, no una raya:
             el cliente ya pidió menos rayas (slide 8) y aquí el cambio de color
             del panel hace el mismo trabajo. */}
-        <div className="relative">
-          <p className="mb-3 text-center text-eyebrow font-semibold uppercase tracking-[0.12em] text-navy-soft lg:text-right">
+        <div className="relative w-full max-w-sm">
+          <p className="mb-2 text-center text-eyebrow font-semibold uppercase tracking-[0.12em] text-navy-soft">
             A bordo
           </p>
-          <div className="relative mx-auto w-full max-w-xl">
+          <div className="relative">
             <img
               src="/fotos/catamaran-recorte.webp"
               alt="Uno de los catamaranes de Hispaniola, visto desde el costado"

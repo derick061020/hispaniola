@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useAnclasActiva, irAlAncla } from '@/components/ui/use-anclas-activa'
 
@@ -48,6 +49,22 @@ export type AnclaChip = {
 // contenido resta más de lo que suma.
 export function NavAnclasChips({ anclas }: { anclas: AnclaChip[] }) {
   const [activa] = useAnclasActiva(anclas.filter((a) => !a.to).map((a) => a.id))
+
+  // Un chip cuyo ancla no existe NO rompe nada: el enlace no hace scroll y el
+  // scroll-spy ignora el id sin rechistar. Eso es exactamente lo que lo hace
+  // peligroso — se cuela renombrando el id de una sección y no se nota hasta
+  // que alguien lo pulsa. Aviso en consola solo en desarrollo (a producción no
+  // viaja: Vite elimina la rama entera con import.meta.env.DEV en false).
+  useEffect(() => {
+    if (!import.meta.env.DEV) return
+    const huerfanos = anclas.filter((a) => !a.to && !document.getElementById(a.id))
+    if (huerfanos.length > 0) {
+      console.warn(
+        `[NavAnclasChips] ${huerfanos.length} chip(s) apuntan a una sección que no existe en esta página:`,
+        huerfanos.map((a) => `${a.label} → #${a.id}`),
+      )
+    }
+  }, [anclas])
 
   return (
     <nav

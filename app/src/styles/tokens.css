@@ -562,6 +562,10 @@
   --spacing-muro-equipo-card-ancho: 8.5rem; /* 136px — retrato pequeño: el
     muro tiene que dar sensación de CANTIDAD, y a este ancho caben ~10 caras
     por pantalla. Más grande y son 4 personas desfilando, que es otra cosa. */
+  --spacing-muro-equipo-card-ancho-movil: 6rem; /* 96px. A 390px de ventana,
+    los 136px de escritorio dejan menos de 3 caras en pantalla y el muro deja
+    de decir «somos muchos», que es su único trabajo. Mismo criterio que
+    --spacing-opiniones-card-ancho-movil. */
   --spacing-muro-equipo-card-gap: 0.75rem; /* 12px — margin-right en la card,
     NO gap de la pista (ver --spacing-reviews-card-gap: con la pista repetida,
     un `gap` del flex desincroniza el arranque de la copia y el loop salta). */
@@ -1694,6 +1698,27 @@
         La diferencia es `--nosotros-cascada-x`: en la flota, además de subir,
         cada card entra desplazada en horizontal según su columna — eso es lo
         que dibuja la DIAGONAL en vez de tres filas planas. */
+  /* ---------- Barra de potencia de la ficha técnica (/flota) ----------
+     [v2 2026-07-28, pedido de Samuel] La cifra de potencia deja de ser un
+     número en una casilla y pasa a ser un RECORRIDO: una pista gruesa con
+     fondo de océano que se llena hasta la marca del barco, con el recorte
+     real del catamarán navegando en la punta. Más caballos = llega más lejos.
+
+     FUENTE del prototipo de Figma (mismo trato que --ticker-* o --carrusel-*):
+     la duración y la curva salen de aquí, no de números a ojo en el TSX.
+
+     La curva NO es un ease-out cualquiera: arranca decidido y ATRACA suave,
+     sin rebote. Un barco que se pasa de su marca y vuelve atrás contradice lo
+     único que la barra está diciendo (cuánta potencia tiene). El recorrido es
+     largo a propósito —casi un segundo— porque el gesto ES el dato: si el
+     barco aparece ya colocado, la barra vuelve a ser un número. */
+  --flota-potencia-duracion: 950ms;
+  --flota-potencia-easing: cubic-bezier(0.22, 1, 0.36, 1);
+  /* Alto de la pista. Tiene que dar para que el agua se lea como agua y no
+     como una línea de color: por debajo de ~48px la foto del océano no
+     enseña textura y el efecto se pierde. */
+  --spacing-flota-potencia-alto: 3.5rem; /* 56px */
+
   --nosotros-cascada-y: 2.5rem; /* 40px — desde cuánto más abajo entra cada card */
   --nosotros-cascada-x: 1.25rem; /* 20px — desfase lateral POR COLUMNA (solo la flota; las paradas van a 0) */
   --nosotros-cascada-duracion: 0.7s;
@@ -1720,6 +1745,87 @@
   --spacing-bento-zona-alto: 26rem; /* 416px — lg: en adelante */
   --spacing-bento-zona-alto-movil: 17rem; /* 272px */
   --spacing-bento-hueco: 0.5rem; /* 8px — mismo aire fino que las celdas del mosaico de la ficha */
+
+  /* ---------- Página LA FUNDACIÓN (rediseño 2026-07-28, 2ª vuelta) --------
+     Samuel: «me parece aburrido, genérico, IA slop… que sea digerible y fácil
+     a la vista». Tres piezas nuevas, tres grupos de tokens. */
+
+  /* EL HILO de la línea de tiempo (fundacion/cronologia-fundacion.tsx). Mismo
+     color y misma intención que la ruta del recorrido de /ventaja-competitiva
+     (--color-recorrido-ruta): estructura gris, no acento. Punteado y no
+     sólido a propósito — un filete sólido sería una DIVISORIA más, y de esas
+     el cliente ha pedido quitar tres tandas; esto no separa dos bloques,
+     conecta tres paradas. */
+  --color-fund-hilo: var(--color-linea-fuerte);
+  --fund-hilo-grosor: 2px; /* a 1px el «dotted» del navegador se lee como raya continua */
+
+  /* Las dos fotos CLAVADAS sobre el panel navy del proyecto insignia
+     (fundacion/arrecife-artificial.tsx). Ángulos propios y NO reusan
+     --pqr-foto-rot-*: aquéllas son papeles sueltos sobre una mesa clara y
+     éstas dos pruebas sobre un panel oscuro. Distintos entre sí y de signo
+     contrario — dos fotos con la misma inclinación se leen como plantilla. */
+  --fund-foto-rot-1: -2.5deg;
+  --fund-foto-rot-2: 3deg;
+
+  /* El velo del cierre de membresías (fundacion/membresias-fundacion.tsx)
+     sobre la cenital del agua de Bávaro. DOS paradas, no un tinte parejo:
+     --color-overlay-foto (70%) uniforme apagaba la foto entera y se perdía
+     justo el turquesa que justifica ponerla. Como el texto vive centrado y
+     bajo, el peso del velo baja con él: arriba sobrevive el agua, abajo el
+     blanco lee holgado. */
+  --fund-velo-arriba: rgb(11 37 69 / 40%);
+  --fund-velo-abajo: rgb(11 37 69 / 72%);
+
+  /* EL BARRIDO HORIZONTAL de los 5 frentes (2026-07-28, Samuel: «que cada
+     cosa en la que trabaje la fundación sea una card grande y que se
+     desplacen horizontalmente con GSAP»). La mecánica está en
+     fundacion/use-frentes-horizontal.ts.
+
+     El ancho de la card sale de la FOTO, no al revés: los originales de
+     /fotos miden 368px de ancho, así que la columna de imagen se planta en
+     384px (24rem) — un pelo por encima del original, sin desenfoque— y la
+     card mide lo que hace falta para que el texto tenga una columna cómoda
+     al lado de esos 384px sin pasarse de vuelta de lectura. 74vw es el techo
+     en pantallas estrechas de escritorio: por encima de eso la card siguiente
+     deja de asomar y el bloque no se lee como algo que se barre. */
+  /* [2026-07-28, 4ª vuelta — Samuel: «que cada card abarque toda la pantalla
+     para que sea protagonista cuando está presente en el scroll horizontal»]
+     La card pasa de 58rem/74vw a EL ANCHO DE LA VENTANA. El párrafo de arriba
+     («por encima de 74vw la card siguiente deja de asomar») deja de aplicar
+     porque ya no hace falta que asome: con el escenario a sangre, lo que
+     cuenta que esto se barre es que la card ENTRA Y SALE por los cantos de la
+     pantalla, no que se vea un trozo de la siguiente.
+     100vw y no 100% porque la pista es `w-max` en fila: un porcentaje no
+     resuelve contra nada ahí. Que 100vw incluya la barra de scroll da igual —
+     todo esto vive dentro del `overflow-hidden` del viewport, así que el
+     sobrante se recorta y no genera scroll horizontal de página.
+     ⚠️ El CONTENIDO de la card no se estira con ella: va centrado en
+     max-w-contenido (ver frentes-fundacion.tsx). Si se estirara, la columna
+     de texto pasaría de 800px de vuelta de lectura y la foto —originales de
+     368px— tendría que ampliarse hasta verse blanda. */
+  --spacing-fund-frente: 100vw;
+  --spacing-fund-frente-foto: 24rem; /* 384px — ver arriba: los originales miden 368 */
+  /* Alto mínimo de la card. En vh y no en rem porque la card vive DENTRO de
+     una pantalla pinchada: lo que tiene que decidir su tamaño es cuánto
+     ocupa del viewport, no un número fijo que en un portátil se coma la
+     pantalla y en un monitor grande flote perdido en el centro. */
+  --spacing-fund-frente-alto: 54vh;
+
+  /* Cuánto scroll cuesta pasar de una card a la SIGUIENTE (2026-07-28, 2ª
+     vuelta: el barrido pasa de un arrastre libre a pasos con snap, ver
+     fundacion/use-frentes-horizontal.ts). Sustituye a --fund-recorrido-factor,
+     que escalaba el recorrido contra el ancho total de la pista: con pasos, lo
+     que tiene que ser predecible es cuánto cuesta CADA transición, no el
+     total.
+     0.8 pantallas por paso: por debajo de ~0.6 el snap se dispara casi con
+     rozar la rueda y el bloque se pasa dos cards de golpe; por encima de 1
+     cada transición cuesta una pantalla entera de scroll y seis cards se
+     vuelven un peaje.
+     ⚠️ EN PANTALLAS, NO EN `vh`. Se escribió primero como `80vh` y el hook
+     medía 0: `getComputedStyle` devuelve las custom properties SIN RESOLVER
+     («80vh», literal), así que una unidad relativa al viewport no sobrevive
+     al viaje a JS. Como número puro se multiplica por `innerHeight` allí. */
+  --fund-paso-pantallas: 0.8;
 }
 
 body {

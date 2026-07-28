@@ -84,10 +84,19 @@ export function PasajerosPopover({
         <div className="absolute left-0 top-full z-20 mt-2 w-full rounded-card bg-papel p-4 shadow-card ring-1 ring-linea">
           <p className="mb-3 text-xs text-navy-sub">Hasta {max} pasajeros en total.</p>
           {children}
+          {/* `text-papel`, NO `text-white` (2026-07-28). El resto del panel ya
+              seguía al tema oscuro del widget premium —vive dentro de
+              `.widget-premium`, que redefine los tokens— pero este botón se
+              quedaba ilegible: en ese ámbito `--color-navy` pasa a ser el
+              color de TEXTO claro, así que `bg-navy` se vuelve un fondo casi
+              blanco… con el rótulo en blanco fijo encima. Con `text-papel` el
+              rótulo viaja con el tema: blanco sobre navy en claro, y oscuro
+              sobre el botón claro en premium. Un token en vez de un color
+              literal y las dos pieles salen bien sin una segunda clase. */}
           <button
             type="button"
             onClick={() => setAbierto(false)}
-            className="mt-4 w-full rounded-btn bg-navy px-4 py-2.5 text-sm font-semibold text-white transition hover:brightness-110"
+            className="mt-4 w-full rounded-btn bg-navy px-4 py-2.5 text-sm font-semibold text-papel transition hover:brightness-110"
           >
             Aplicar
           </button>

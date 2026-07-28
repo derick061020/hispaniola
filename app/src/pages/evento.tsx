@@ -60,6 +60,41 @@ export function EventoPage() {
     if (v === 'cerrado') setAcordeonAbierto('')
   })
 
+  // [v2 2026-07-28, 2ª vuelta] EL PAQUETE ELEGIDO VIVE AQUÍ, no dentro del
+  // widget: lo comparten la calculadora de reserva (columna derecha) y el
+  // bloque de paquetes (columna izquierda), que se marca solo con el que esté
+  // activo y también puede cambiarlo. Mismo patrón —y misma razón— que
+  // `variante` en pages/tour.tsx, donde el bote elegido en el widget pinta la
+  // fila de la tabla de precios del charter: dos piezas que hablan del mismo
+  // dato no pueden tener cada una el suyo.
+  // Arranca en el primero con precio (el Premium), igual que arrancaba el
+  // useState que vivía dentro de la calculadora.
+  const [paquete, setPaquete] = useState<string | null>(
+    evento?.paquetes?.items.find((p) => p.precioBase !== null)?.id ?? null,
+  )
+
+  // Elegir desde la izquierda (las cards) tiene una diferencia con elegirlo
+  // desde el widget: en móvil el widget está al final de la página, así que
+  // marcar la card sin más dejaría el efecto fuera de pantalla. Por debajo de
+  // lg se lleva al visitante al widget, que es donde ve el total cambiar; en
+  // desktop no se toca el scroll (el widget es sticky y ya está a la vista).
+  const elegirPaquete = (id: string) => {
+    setPaquete(id)
+    if (window.matchMedia('(min-width: 1024px)').matches) return
+    document.getElementById('evento-widget')?.scrollIntoView({
+      block: 'start',
+      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+    })
+  }
+
+  // [dev-mode] ?dev-paquete=premium|package-i|package-ii|package-iii deja ese
+  // paquete elegido al cargar — el frame de Figma con la selección puesta.
+  // Antes este flag solo pintaba un borde coral en una card; ahora mueve el
+  // estado de verdad, así que enseña también el widget con SU total.
+  useDevFlag('dev-paquete', (v) => {
+    if (evento?.paquetes?.items.some((p) => p.id === v)) setPaquete(v)
+  })
+
   // Slug desconocido → a la home, como en la ficha de tour. Un 404
   // diseñado es otra pantalla (y otro plan): fingir una aquí sería
   // inventarse una página que nadie ha aprobado.
@@ -166,11 +201,12 @@ export function EventoPage() {
               <QueOfrecemos evento={evento} />
               <IncluyeEvento evento={evento} />
 
-              {/* Paquetes (solo party-boat). Misma card soft-UI que el
-                  resto, con 4 cards (Premium destacado + 3 paquetes
-                  estándar). Se pinta SOLO si el evento tiene `paquetes`
-                  en data. */}
-              <PaquetesEvento evento={evento} />
+              {/* Paquetes (party-boat y bodas — comparten el mismo array,
+                  ver PAQUETES_COMIDA en data/eventos.ts). Misma card
+                  soft-UI que el resto, con 4 cards (Premium destacado + 3
+                  paquetes estándar). Se pinta SOLO si el evento tiene
+                  `paquetes` en data, así que MICE no lo lleva. */}
+              <PaquetesEvento evento={evento} elegido={paquete} onElegir={elegirPaquete} />
 
               {/* FAQ — solo si hay preguntas. La web del cliente de
                   party boat NO tenía FAQ propia, así que su landing
@@ -237,11 +273,17 @@ export function EventoPage() {
                   mismo formulario que quien organiza una boda de 120 con menú a
                   medida. Con la calculadora arriba, el caso simple se resuelve
                   solo y el formulario queda para lo que de verdad se cotiza. */}
-              {evento.paquetes ? <CalculadoraEvento paquetes={evento.paquetes.items} /> : null}
+              {evento.paquetes ? (
+                <CalculadoraEvento
+                  paquetes={evento.paquetes.items}
+                  elegido={paquete}
+                  onElegir={elegirPaquete}
+                />
+              ) : null}
               {/* [v2 2026-07-28] El formulario se PLIEGA solo cuando encima
-                  tiene la reserva online — si no hay calculadora (bodas,
-                  empresas), el formulario ES el widget y sería absurdo
-                  esconderlo. Ver el porqué en widget-evento.tsx. */}
+                  tiene la reserva online — si no hay calculadora (MICE), el
+                  formulario ES el widget y sería absurdo esconderlo. Ver el
+                  porqué en widget-evento.tsx. */}
               <WidgetEvento evento={evento} colapsable={Boolean(evento.paquetes)} />
             </div>
           </div>

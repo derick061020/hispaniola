@@ -1,15 +1,55 @@
-import { useState } from 'react'
-import { Check, Sparkles, Package } from 'lucide-react'
+import type { CSSProperties } from 'react'
+import { Check, Minus, Sparkles, Package } from 'lucide-react'
 import { TituloSeccion } from '@/components/tour/titulo-seccion'
 import { BLOQUE_FICHA } from '@/components/tour/bloque-ficha'
-import { useDevFlag } from '@/dev/use-dev-flag'
 import type { FichaEvento, PaqueteEvento } from '@/data/eventos'
 
-// "Paquetes" de las landings de evento (PLAN-EVENTOS.md §3) — solo
-// presente en party-boat (la web del cliente vende 4 paquetes para
-// eventos). Misma estructura que el comparador de paquetes de la
-// ficha de tour (`menu-tour.tsx`) pero sin el toggle Light/Premium —
-// cada paquete es INDEPENDIENTE, no un upgrade de otro.
+// "Paquetes" de las landings de evento (PLAN-EVENTOS.md §3) — presente en
+// party-boat y en bodas, que comparten el MISMO array de 4 paquetes
+// (`PAQUETES_COMIDA` en data/eventos.ts: la web del cliente publica el
+// tarifario idéntico en las dos). MICE no los tiene: se cotiza a medida.
+// Cada paquete es INDEPENDIENTE, no un upgrade de otro.
+//
+// ── QUÉ CONFUNDÍA Y CÓMO SE ARREGLA (2026-07-28, 2ª vuelta) ───────────────
+// Samuel: «está bastante mejor, pero aún parece que confunde un poco; debe
+// ser lo más sencillo de entender». Diagnóstico de las tres cosas que
+// confundían, porque el layout ya estaba bien y el problema era otro:
+//
+//  1) CADA CARD LISTABA COSAS DISTINTAS. #I tenía 1 línea y el Premium 7, así
+//     que comparar obligaba a leer 4 listas y recordarlas. Y no hay escalera
+//     que valga: #III NO es «#II y algo más» —pierde el hot dog—, así que
+//     tampoco se podía resumir con un «todo lo anterior +…» sin mentir.
+//     → Ahora los 4 paquetes enseñan LOS MISMOS 8 platos EN EL MISMO ORDEN,
+//       con ✓ lo que entra y — lo que no. Es una tabla comparativa, pero
+//       dibujada dentro de las cards: se compara moviendo el ojo en
+//       horizontal, sin tabla que en móvil haya que scrollear de lado. De
+//       paso desaparece el hueco raro de #I: el vacío pasa a ser información.
+//       El orden de los platos NO es el del dato: es el de aparición ordenando
+//       los paquetes de más barato a más caro, así que la lista se lee como
+//       lo que suma cada escalón.
+//  2) EL PRECIO ESTABA A MEDIAS. Se leía «US$ 660.00» grande y el «+US$ 55
+//     por persona extra» abajo del todo, en gris, separado por toda la card.
+//     Con grupos de 20-40 personas (el caso típico) el precio de verdad es
+//     otro, así que el número grande se leía como el total.
+//     → El precio ahora va con su condición pegada: «hasta 12 personas ·
+//       +US$ 55 por persona extra», debajo mismo. Y el TOTAL real sigue
+//       calculándose en el widget, que es donde se pone el nº de invitados.
+//  3) LAS CARDS NO HACÍAN NADA. Se leían 4 paquetes y la acción estaba en
+//     otro sitio (el widget), sin relación visible entre lo que se lee y lo
+//     que se reserva.
+//     → Cada card tiene su botón «Elegir» y queda MARCADA cuando es la
+//       elegida, en sincronía con el selector del widget: se elige aquí y el
+//       widget cambia (y su Total con él), o se elige allí y aquí se marca.
+//       El estado vive en pages/evento.tsx, igual que `variante` en la ficha
+//       de tour gobierna a la vez el widget y la tabla de precios del charter
+//       — mismo patrón, misma razón: dos piezas que hablan del mismo dato no
+//       pueden tener cada una el suyo.
+//
+// ⚠️ VOLVER ATRÁS: la versión anterior (mismo layout, pero cada card con solo
+// sus propios items, el extra de precio al pie y sin selección) está en el
+// commit 78e9a67 — `git checkout 78e9a67 -- app/src/components/evento/paquetes-evento.tsx`.
+// Lo que NO cambia en esta vuelta es el layout que Samuel aprobó: el
+// destacado a fila completa en horizontal y los otros 3 al lado.
 //
 // Layout (2026-07-28, pedido de Samuel: «el Hispaniola Premium Package debe
 // abarcar el ancho completo posible, y las otras 3 una al lado de la otra»):
@@ -19,69 +59,80 @@ import type { FichaEvento, PaqueteEvento } from '@/data/eventos'
 //  - Es jerarquía, no capricho de rejilla: el 2×2 anterior daba a los 4
 //    paquetes exactamente el mismo peso, y el Premium es el que la casa
 //    quiere vender (y el único que el badge llama «el más completo»).
-//    Ahora la página lo dice con el ESPACIO, que es el argumento que se
-//    lee sin leer. De paso, el Premium es el que más items tiene (7): en
-//    una card estrecha era una lista larguísima y en la ancha caben en 2
-//    columnas.
-//  - Historial: la versión anterior era 1 col en móvil y 2×2 desde lg
-//    (Samuel 2026-07-17, «estan muy apretados, ponlos en un grid de 2
-//    columnas» — venían de 4 columnas con fotos diminutas). El trío de
-//    abajo no vuelve a aquel apretón: sus cards son más CORTAS que las de
-//    entonces (foto 3:2 y no 4:3, precio y capacidad en una línea), así
-//    que a 1/3 de la columna respiran.
+//  - Historial: 4 columnas con fotos diminutas → 2×2 desde lg (Samuel
+//    2026-07-17, «estan muy apretados») → esto.
 //  - En móvil, todo apilado a 1 columna (incluido el destacado, que pierde
 //    el formato horizontal): a 390px una foto lateral dejaría el texto en
 //    un canal de 160px.
-//  - Cada card: foto (si tiene) + nombre + precio + capacidad + items
-//    con check + extra de precio. El Premium lleva un badge "Most
-//    complete" y un acento aqua en el borde (mismo lenguaje que la
-//    card "recomendado" de la ficha de tour, pero en lugar del coral
-//    usa aqua — el coral está reservado para el CTA del widget).
-//  - La card "premium" se pinta primero, con un fondo `bg-aqua-tint`
-//    sutil para destacar.
-//  - El click en una card NO navega a otro lado — el form sigue
-//    siendo la única acción. La card es informativa: el visitante
-//    LEE los 4 paquetes, luego rellena el form mencionando el que
-//    quiere en el campo "mensaje".
-//
-// Si en el futuro se quiere que el form incluya el paquete
-// seleccionado como campo separado, este componente ya pasa el id
-// del paquete por hover/focus — solo hay que levantar el estado al
-// padre (pages/evento.tsx) y añadir un hidden input al widget.
+//  - El acento aqua (ring-2) ya NO significa «premium» sino «elegido» — el
+//    mismo idioma que el selector del widget. El Premium se distingue por su
+//    badge y su fondo `bg-aqua-tint/40`, que no se pisan con la selección.
 
-function Card({ paquete, ancha = false }: { paquete: PaqueteEvento; ancha?: boolean }) {
+/** Los platos que aparecen en ALGÚN paquete, en orden de escalón: se recorren
+ *  los paquetes de más barato a más caro y se van añadiendo los que no
+ *  estaban. Así la columna de platos se lee como la progresión de la oferta
+ *  (hot dog → pollo/res/papas → camarón/tempura/fish sticks → langosta) en
+ *  vez del orden en que el cliente los escribió en cada paquete. */
+function platosDe(items: PaqueteEvento[]): string[] {
+  const porPrecio = [...items].sort(
+    (a, b) => (a.precioBase ?? Number.POSITIVE_INFINITY) - (b.precioBase ?? Number.POSITIVE_INFINITY),
+  )
+  const platos: string[] = []
+  for (const paquete of porPrecio) {
+    for (const item of paquete.items) {
+      if (!platos.includes(item.titulo)) platos.push(item.titulo)
+    }
+  }
+  return platos
+}
+
+function Card({
+  paquete,
+  platos,
+  ancha = false,
+  elegido,
+  onElegir,
+}: {
+  paquete: PaqueteEvento
+  /** la MISMA lista para las 4 cards — ver el porqué arriba */
+  platos: string[]
+  ancha?: boolean
+  elegido: boolean
+  onElegir: () => void
+}) {
   const esPremium = paquete.destacado === 'premium'
+  // El precio completo en una línea: la cifra grande sin su condición al lado
+  // es la que se leía como total.
+  const incluidas = paquete.incluyeHasta ?? null
+
   return (
     <article
       className={[
-        // h-full: la card ocupa toda la altura de su fila del grid
-        // (Tailwind grid strechea los hijos por defecto, pero el
-        // h-full lo hace explícito para que el `flex-1` del ul de
-        // items empuje el footer al fondo en CUALQUIER cantidad
-        // de items — pedido de Samuel 2026-07-17).
-        'flex h-full flex-col overflow-hidden rounded-card ring-1',
+        // h-full: la card ocupa toda la altura de su fila del grid, para que
+        // el `flex-1` de la lista empuje el botón al fondo y los 3 de la fila
+        // queden con el botón en el mismo Y.
+        'flex h-full flex-col overflow-hidden rounded-card transition',
         // La variante ancha se vuelve HORIZONTAL a partir de sm: foto a un
         // lado, contenido al otro. Debajo de sm sigue siendo la card de
         // siempre (foto arriba), como las otras 3.
         ancha ? 'sm:flex-row' : '',
-        esPremium ? 'ring-2 ring-aqua bg-aqua-tint/40' : 'ring-linea',
+        // ring-2 aqua = ELEGIDO (mismo idioma que el selector del widget).
+        // Sin elegir, hairline gris. El Premium aporta lo suyo con el fondo.
+        elegido ? 'ring-2 ring-aqua' : 'ring-1 ring-linea',
+        esPremium ? 'bg-aqua-tint/40' : '',
         // Sin sombras (Samuel: "que no tenga sombras las cajas").
-        // Antes: hover:shadow-card. Ahora: sin transition-shadow
-        // tampoco, para que no se note el cambio al quitarlo.
       ].join(' ')}
     >
-      {/* Foto (si tiene) o placeholder.
-          El recorte cambia con la variante: la ancha no fija proporción a
-          partir de sm —se estira al alto de la card, que lo manda el
-          texto—, y la compacta usa 3:2 en vez de 4:3 para no comerse media
-          card cuando solo mide un tercio de la columna. */}
+      {/* Foto (si tiene) o placeholder. El recorte cambia con la variante: la
+          ancha no fija proporción a partir de sm —se estira al alto de la
+          card—, y la compacta usa 3:2 para no comerse media card cuando solo
+          mide un tercio de la columna. */}
       {paquete.foto ? (
         <div
-          className={
-            ancha
-              ? 'aspect-[3/2] overflow-hidden bg-papel-hueso sm:aspect-auto sm:w-2/5 sm:shrink-0'
-              : 'aspect-[3/2] overflow-hidden bg-papel-hueso'
-          }
+          className={[
+            'aspect-[3/2] overflow-hidden bg-papel-hueso',
+            ancha ? 'sm:aspect-auto sm:w-2/5 sm:shrink-0' : '',
+          ].join(' ')}
         >
           <img
             src={`/fotos/${paquete.foto}.webp`}
@@ -113,40 +164,61 @@ function Card({ paquete, ancha = false }: { paquete: PaqueteEvento; ancha?: bool
           {paquete.nombre}
         </h3>
 
-        <p
-          className={`mt-1 font-display font-semibold text-navy ${ancha ? 'text-2xl' : 'text-xl'}`}
-        >
+        <p className={`mt-1 font-display font-semibold text-navy ${ancha ? 'text-2xl' : 'text-xl'}`}>
           {paquete.precio}
         </p>
+        {/* El precio y su condición, juntos. `extraPrecio` es texto del
+            cliente ("US$ 99.00 por persona extra") — se pinta tal cual. */}
         <p className="text-xs text-navy-soft">
-          {paquete.capacidad} · {paquete.meta}
+          {incluidas !== null ? `Hasta ${incluidas} personas` : paquete.capacidad}
+          {paquete.extraPrecio ? <> · +{paquete.extraPrecio}</> : null}
         </p>
+        <p className="mt-0.5 text-xs text-navy-soft">{paquete.meta}</p>
 
-        {/* Items con check. `flex-1` empuja el footer (extraPrecio)
-            al fondo de la card, sin importar cuántos items tenga
-            el paquete — los 3 paquetes de la fila de abajo quedan
-            con su footer en el mismo Y.
-            En la card ancha la lista pasa a 2 columnas desde sm: el
-            Premium tiene 7 items y en una sola columna a ancho completo
-            sería una lista larga con medio metro de aire a la derecha. */}
+        {/* LOS MISMOS PLATOS EN LAS 4 CARDS. `flex-1` empuja el botón al
+            fondo. Si el paquete no publica menú (no es el caso hoy, pero
+            bodas podría), se dice en vez de pintar 8 rayas. */}
         {paquete.items.length > 0 ? (
           <ul
-            className={`mt-4 flex-1 space-y-2 ${
-              ancha ? 'sm:grid sm:grid-cols-2 sm:gap-x-6 sm:gap-y-2 sm:space-y-0' : ''
+            className={`mt-4 flex-1 space-y-1.5 ${
+              // grid-flow-col + tantas filas como la mitad de los platos: las
+              // 2 columnas de la card ancha se llenan HACIA ABAJO y no en
+              // zigzag. Con el relleno por filas (el de por defecto) el orden
+              // de los platos quedaba 1-2 / 3-4 en horizontal y dejaba de
+              // coincidir con la columna vertical de las otras 3 cards —
+              // justo lo que hace comparable la lista.
+              ancha ? 'sm:grid sm:grid-flow-col sm:gap-x-6 sm:gap-y-1.5 sm:space-y-0' : ''
             }`}
+            style={
+              ancha
+                ? ({ gridTemplateRows: `repeat(${Math.ceil(platos.length / 2)}, auto)` } as CSSProperties)
+                : undefined
+            }
           >
-            {paquete.items.map((it) => (
-              <li key={it.titulo} className="flex items-start gap-2 text-sm text-navy-sub">
-                <Check
-                  className="mt-0.5 size-4 shrink-0 text-menta-texto"
-                  aria-hidden="true"
-                />
-                <span>
-                  {it.titulo}
-                  {it.texto ? <span className="text-navy-soft"> · {it.texto}</span> : null}
-                </span>
-              </li>
-            ))}
+            {platos.map((plato) => {
+              const item = paquete.items.find((i) => i.titulo === plato)
+              return (
+                <li
+                  key={plato}
+                  className={`flex items-start gap-2 text-sm ${
+                    item ? 'text-navy-sub' : 'text-navy-soft/60'
+                  }`}
+                >
+                  {item ? (
+                    <Check className="mt-0.5 size-4 shrink-0 text-menta-texto" aria-hidden="true" />
+                  ) : (
+                    <Minus className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
+                  )}
+                  <span>
+                    {/* Para lectores de pantalla el icono no dice nada: la
+                        palabra sí. */}
+                    <span className="sr-only">{item ? 'Incluido: ' : 'No incluido: '}</span>
+                    {plato}
+                    {item?.texto ? <span className="text-navy-soft"> · {item.texto}</span> : null}
+                  </span>
+                </li>
+              )
+            })}
           </ul>
         ) : (
           <p className="mt-4 flex-1 text-sm italic text-navy-soft">
@@ -154,75 +226,104 @@ function Card({ paquete, ancha = false }: { paquete: PaqueteEvento; ancha?: bool
           </p>
         )}
 
-        {paquete.extraPrecio ? (
-          <p className="mt-auto border-t border-linea pt-3 text-xs text-navy-soft">
-            {paquete.extraPrecio}
-          </p>
-        ) : null}
+        {/* LA CARD YA HACE ALGO. El botón elige el paquete en el widget de
+            reserva; si ya es el elegido, lo dice y deja de ser pulsable
+            (repetir la acción no hace nada y un botón que no hace nada
+            miente). `aria-pressed` para que el estado no sea solo color. */}
+        <button
+          type="button"
+          onClick={onElegir}
+          aria-pressed={elegido}
+          className={`mt-4 w-full rounded-btn px-4 py-2.5 text-sm font-semibold transition ${
+            elegido
+              ? 'cursor-default bg-aqua-tint text-aqua-dark'
+              : 'bg-papel text-navy ring-1 ring-linea hover:bg-papel-hueso'
+          }`}
+        >
+          {elegido ? (
+            <span className="flex items-center justify-center gap-1.5">
+              <Check className="size-4" aria-hidden="true" />
+              Elegido
+            </span>
+          ) : (
+            'Elegir este paquete'
+          )}
+        </button>
       </div>
     </article>
   )
 }
 
-export function PaquetesEvento({ evento }: { evento: FichaEvento }) {
+export function PaquetesEvento({
+  evento,
+  elegido,
+  onElegir,
+}: {
+  evento: FichaEvento
+  /** id del paquete activo en el widget de reserva (pages/evento.tsx) */
+  elegido: string | null
+  onElegir: (id: string) => void
+}) {
   const paquetes = evento.paquetes
   if (!paquetes || paquetes.items.length === 0) return null
 
-  // [dev-mode] deep-link del Glosario Dev — ver src/dev/dev-registry.ts.
-  // 'package-i' / 'package-ii' / 'package-iii' / 'premium' añade un
-  // borde más grueso a la card correspondiente (frame de Figma con
-  // un paquete destacado). No se usa en producción.
-  const [destacado, setDestacado] = useState<string | null>(null)
-  useDevFlag('dev-paquete', (v) => {
-    if (['premium', 'package-i', 'package-ii', 'package-iii'].includes(v)) {
-      setDestacado(v)
-    }
-  })
+  const platos = platosDe(paquetes.items)
+
+  // El destacado va SOLO en su fila; el resto, uno al lado del otro. Sale del
+  // DATO (`destacado: 'premium'`), no de la posición en el array: si mañana el
+  // cliente marca otro paquete, la maqueta le sigue sin tocar este archivo. Si
+  // ninguno está marcado, `resto` los tiene a todos y la sección cae a la fila
+  // de N — no queda un hueco.
+  const destacados = paquetes.items.filter((p) => p.destacado)
+  const resto = paquetes.items.filter((p) => !p.destacado)
 
   return (
     <section id="ancla-paquetes" className={`${BLOQUE_FICHA} scroll-mt-sticky-top`}>
       <TituloSeccion>{paquetes.titulo}</TituloSeccion>
       <p className="mt-2 text-sm text-navy-sub">{paquetes.intro}</p>
+      {/* La instrucción, una línea: sin ella, 4 cards con botón son 4 botones
+          sin destino claro. */}
+      {/* Sin referencias de sitio («arriba a la derecha»): en móvil el widget
+          está debajo, no al lado. */}
+      {/* «Los N» sale del array y no de un 4 escrito a mano: el mismo bloque
+          lo pintan ya dos landings (party boat y bodas) y el día que el
+          cliente añada o quite un paquete, la frase no puede quedarse
+          mintiendo. */}
+      <p className="mt-1 text-sm text-navy-soft">
+        Los {paquetes.items.length} llevan lo mismo a bordo —todo lo de «{evento.incluyeTitulo}»
+        arriba—; lo que cambia es el menú, la duración y el precio. Elige uno y el total de tu grupo
+        se calcula solo.
+      </p>
 
-      {/* El destacado va SOLO en su fila; el resto, uno al lado del otro.
-          `destacados` sale del dato (`destacado: 'premium'`), no de la
-          posición en el array: si mañana el cliente marca otro paquete como
-          el suyo, la maqueta le sigue sin tocar este archivo. Si ningún
-          paquete está marcado, `resto` los tiene a todos y la sección cae a
-          la fila de N — no queda un hueco. */}
       <div className="mt-5 flex flex-col gap-4">
-        {paquetes.items
-          .filter((p) => p.destacado)
-          .map((p) => (
-            <div
-              key={p.id}
-              className={destacado === p.id ? 'ring-2 ring-coral ring-offset-2 rounded-card' : ''}
-            >
-              <Card paquete={p} ancha />
-            </div>
-          ))}
+        {destacados.map((p) => (
+          <Card
+            key={p.id}
+            paquete={p}
+            platos={platos}
+            ancha
+            elegido={p.id === elegido}
+            onElegir={() => onElegir(p.id)}
+          />
+        ))}
 
-        {/* sm:grid-cols-3 y no lg: a 640px los 3 ya caben (≈190px cada uno,
-            con la foto en 3:2 y el precio en su línea). En la columna de la
-            ficha en desktop rondan los 220px. */}
+        {/* sm:grid-cols-3 y no lg: a 640px los 3 ya caben (≈190px cada uno).
+            En la columna de la ficha en desktop rondan los 220px. */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-          {paquetes.items
-            .filter((p) => !p.destacado)
-            .map((p) => (
-              <div
-                key={p.id}
-                className={destacado === p.id ? 'ring-2 ring-coral ring-offset-2 rounded-card' : ''}
-              >
-                <Card paquete={p} />
-              </div>
-            ))}
+          {resto.map((p) => (
+            <Card
+              key={p.id}
+              paquete={p}
+              platos={platos}
+              elegido={p.id === elegido}
+              onElegir={() => onElegir(p.id)}
+            />
+          ))}
         </div>
       </div>
 
       {paquetes.nota ? (
-        <p className="mt-5 border-t border-linea pt-4 text-xs text-navy-soft">
-          {paquetes.nota}
-        </p>
+        <p className="mt-5 border-t border-linea pt-4 text-xs text-navy-soft">{paquetes.nota}</p>
       ) : null}
     </section>
   )

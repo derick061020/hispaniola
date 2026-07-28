@@ -93,17 +93,29 @@ function Retrato({ miembro }: { miembro: MiembroEquipo }) {
   // Sin foto: mismo placeholder honesto que las reseñas de la home, pero a
   // tamaño de retrato (no un círculo pequeño) para que la card no se rompa
   // si algún día se añade un miembro sin foto todavía.
+  //
+  // `iniciales` (2026-07-28) manda sobre la inicial suelta: con nombre y
+  // apellidos —o con una razón social— una sola letra no identifica a nadie.
+  // Lo usan los tres de /fundacion, que van sin retrato A PROPÓSITO (no hay
+  // foto de los cofundadores y las caras de /fotos/equipo-*.webp son stock:
+  // ponérsela a una persona real con nombre y apellidos sería inventarle un
+  // retrato). Ahí esto deja de ser un placeholder de maqueta y es el diseño
+  // de la card, así que el monograma sube de tamaño.
   return (
     <div aria-hidden="true" className="absolute inset-0 flex items-center justify-center bg-aqua-tint">
-      <span className="font-display text-6xl font-semibold text-aqua-dark">{miembro.nombre.slice(0, 1)}</span>
+      <span className="font-display text-6xl font-semibold text-aqua-dark sm:text-7xl">
+        {miembro.iniciales ?? miembro.nombre.slice(0, 1)}
+      </span>
     </div>
   )
 }
 
 function CardMiembro({ miembro, hrefHistoria }: { miembro: MiembroEquipo; hrefHistoria: string }) {
-  const esWhatsapp = miembro.cta.tipo === 'whatsapp'
+  const esWhatsapp = miembro.cta?.tipo === 'whatsapp'
 
-  const cta = esWhatsapp ? (
+  // Sin `cta` no se pinta la fila del hover (los tres de /fundacion no tienen
+  // adónde mandar a nadie — ver el tipo en data/nosotros.ts).
+  const cta = !miembro.cta ? null : esWhatsapp ? (
     <a
       href={WHATSAPP_URL}
       target="_blank"
@@ -171,9 +183,11 @@ function CardMiembro({ miembro, hrefHistoria }: { miembro: MiembroEquipo; hrefHi
           </p>
         ) : null}
         <p className="font-display text-h3 font-semibold text-navy">{miembro.nombre}</p>
-        <div className="overflow-hidden transition-all duration-300 sm:max-h-0 sm:opacity-0 sm:group-hover:max-h-8 sm:group-hover:opacity-100">
-          {cta}
-        </div>
+        {cta ? (
+          <div className="overflow-hidden transition-all duration-300 sm:max-h-0 sm:opacity-0 sm:group-hover:max-h-8 sm:group-hover:opacity-100">
+            {cta}
+          </div>
+        ) : null}
       </div>
     </div>
   )

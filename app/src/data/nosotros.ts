@@ -113,14 +113,28 @@ export type MiembroEquipo = {
   /** null = no tenemos retrato; se pintan iniciales. */
   foto: string | null
   /**
+   * Monograma del fallback sin foto. Sin esto se pinta la INICIAL sola
+   * (`nombre[0]`), que basta para un nombre de pila («Omar» → O) pero se
+   * queda corto con nombre y apellidos o con una razón social. Lo estrenan
+   * los tres de /fundacion (FS · MR · HAA), que van sin retrato a propósito
+   * — ver el ⚠️ de data/fundacion.ts. Se ignora si hay `foto`.
+   */
+  iniciales?: string
+  /**
    * true = NO es una persona real, es un rol de relleno para maquetar (ver el
    * comentario largo de arriba). Con foto de stock puesta ya no se distingue a
    * simple vista — este flag es lo único que lo dice. Se filtran en /nosotros;
    * hay que quitarlas o sustituirlas por gente real antes de publicar.
    */
   placeholder?: true
-  /** CTA propio de la card. `tipo` decide el destino real. */
-  cta: { label: string; tipo: 'whatsapp' | 'historia' }
+  /**
+   * CTA propio de la card. `tipo` decide el destino real.
+   * OPCIONAL desde el 2026-07-28: los tres de /fundacion no tienen adónde
+   * mandar a nadie (no hay página por persona ni WhatsApp propio), y un
+   * enlace de relleno que apunte a la misma página en la que ya estás es
+   * ruido. Sin `cta` la card no pinta la fila del hover.
+   */
+  cta?: { label: string; tipo: 'whatsapp' | 'historia' }
 }
 
 export const EQUIPO: MiembroEquipo[] = [

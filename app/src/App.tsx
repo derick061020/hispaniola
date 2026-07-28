@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route, Navigate, useParams } from 'react-router-dom'
 import { HomePage } from '@/pages/home'
 import { TourPage } from '@/pages/tour'
 import { ReservarPage } from '@/pages/reservar'
@@ -28,6 +28,39 @@ import { NavFlotante } from '@/components/home/nav-flotante'
 import { Topbar } from '@/components/home/topbar'
 import { DevMode } from '@/dev/dev-mode'
 
+// ── UNA FICHA, UN COMPONENTE ─────────────────────────────────────────────
+// [v2 2026-07-28, reportado por Samuel: «Maite en el widget está seleccionado
+// por defecto, pero en la tabla hay que volver a darle click para que se ponga
+// como activa»]
+//
+// La causa no estaba en la tabla ni en el widget, sino aquí. React Router
+// REUTILIZA el mismo componente cuando solo cambia el parámetro de la ruta
+// (/tours/semi-privado → /tours/charter-privado es la misma <Route>), y los
+// inicializadores de `useState` solo corren al MONTAR. Resultado: se llegaba a
+// la ficha del charter con el `variante` de la ficha anterior — `null` viniendo
+// del semi-privado (que no tiene botes), o `'speedboat'` viniendo de Saona, que
+// no existe en el charter. El widget pintaba su bote por defecto y la tabla no
+// resaltaba ninguno, hasta que un clic los volvía a poner de acuerdo.
+//
+// `key={slug}` fuerza a React a DESMONTAR y montar de nuevo al cambiar de
+// ficha, que es la forma idiomática de decir «esto ya no es la misma página».
+// Se arregla de una vez para todo el estado de la página —bote, paquete,
+// personas, acordeones— y no solo para el síntoma reportado; con un
+// `useEffect` de reseteo habría que acordarse de añadir cada estado futuro.
+//
+// Reproducido y verificado en el navegador: antes, semi-privado → charter
+// dejaba la tabla sin ningún barco activo; ahora entra con Maite marcado, igual
+// que entrando por URL directa.
+function TourPorSlug() {
+  const { slug } = useParams()
+  return <TourPage key={slug} />
+}
+
+function EventoPorSlug() {
+  const { slug } = useParams()
+  return <EventoPage key={slug} />
+}
+
 function App() {
   return (
     <>
@@ -41,11 +74,11 @@ function App() {
       <NavFlotante />
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/tours/:slug" element={<TourPage />} />
+        <Route path="/tours/:slug" element={<TourPorSlug />} />
         <Route path="/reservar/:slug" element={<ReservarPage />} />
         <Route path="/reservar/:slug/gracias" element={<GraciasPage />} />
         <Route path="/mi-reserva" element={<MiReservaPage />} />
-        <Route path="/eventos/:slug" element={<EventoPage />} />
+        <Route path="/eventos/:slug" element={<EventoPorSlug />} />
         <Route path="/eventos/:slug/gracias" element={<GraciasEventoPage />} />
         {/* [v2 2026-07-28] `/sostenibilidad` → `/ventaja-competitiva`: el
             cliente encuadra esta página como su VENTAJA COMPETITIVA (slides

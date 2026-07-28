@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight } from 'lucide-react'
 import * as Modal from '@/components/alignui/modal'
-import { fichaTecnicaDe, titularesTecnicos } from '@/data/flota'
+import { BarraPotencia } from './barra-potencia'
+import { fichaTecnicaDe, potenciaDe } from '@/data/flota'
 import type { BarcoFlota } from '@/data/nosotros'
 
 // LA FICHA TÉCNICA COMPLETA — el modal del botón secundario de la card
@@ -19,8 +20,12 @@ import type { BarcoFlota } from '@/data/nosotros'
 // es tenerlos, no comunicarlos. Aquí van en TRES NIVELES de lectura, y cada
 // visitante para donde le interesa:
 //
-//   NIVEL 1 · Los 4 titulares (eslora · pasaje · año · potencia). Se leen sin
-//     scroll y contestan «¿es el barco que me imaginaba?».
+//   NIVEL 1 · LA POTENCIA, dibujada como un recorrido navegable (ver
+//     flota/barra-potencia.tsx). Abre la ficha sin scroll y contesta de un
+//     vistazo «¿este barco es de los fuertes o de los tranquilos?». Aquí hubo
+//     además tres cifras sueltas (eslora · pasaje · año) dentro de un panel
+//     gris; se retiraron el 2026-07-28 porque estaban dichas otra vez dos
+//     pantallazos más abajo, en Identificación, Dimensiones y Capacidad.
 //   NIVEL 2 · Los 9 bloques temáticos, con su ÍNDICE lateral fijo. Quien
 //     viene a mirar seguridad va directo a seguridad sin leer propulsión.
 //   NIVEL 3 · Cada fila lleva su `nota`: qué significa el dato para quien va
@@ -45,7 +50,7 @@ import type { BarcoFlota } from '@/data/nosotros'
 // Se quitó el cartel, no la criba.
 export function FichaTecnicaModal({ barco, onCerrar }: { barco: BarcoFlota; onCerrar: () => void }) {
   const grupos = fichaTecnicaDe(barco)
-  const titulares = titularesTecnicos(barco).filter((t) => t.valor)
+  const potencia = potenciaDe(barco)
   const [activo, setActivo] = useState(grupos[0]?.id ?? '')
 
   // ⚠️ EL CONTENEDOR DE SCROLL SE GUARDA EN ESTADO, NO EN UNA `useRef`.
@@ -171,9 +176,10 @@ export function FichaTecnicaModal({ barco, onCerrar }: { barco: BarcoFlota; onCe
                 así, no hace falta repetirlo dentro. Y el tipo deja de ser un
                 párrafo propio para ir en la misma línea que el nombre, que es
                 donde se lee igual de bien ocupando cero altura extra.
-              · Los 4 titulares BAJAN al contenido scrolleable. Son una
-                entrada, no un panel de control: se leen al abrir y a partir
-                de ahí estorban. Ahí sí pueden crecer y quedar cómodos.
+              · Los titulares BAJAN al contenido scrolleable. Son una entrada,
+                no un panel de control: se leen al abrir y a partir de ahí
+                estorban. (En una 2ª pasada se retiraron del todo salvo la
+                potencia — ver el bloque de la barra, más abajo.)
               · EL FOOTER FIJO DESAPARECE y el CTA sube AQUÍ, a la derecha de
                 la misma barra. Se cumple lo que pidió («que el botón esté
                 siempre presente en algún lado, pero no como footer fijo»)
@@ -248,19 +254,23 @@ export function FichaTecnicaModal({ barco, onCerrar }: { barco: BarcoFlota; onCe
           </nav>
 
           <div ref={setCuerpo} className="scroll-sutil min-w-0 flex-1 overflow-y-auto px-5 py-5 sm:px-7">
-            {/* Los 4 titulares, ahora DENTRO del scroll (ver la barra de
-                arriba). Al no competir por el cromo fijo pueden respirar: la
-                cifra manda y la etiqueta va debajo, en vez de apretarse al
-                lado de un icono. */}
-            {titulares.length > 0 ? (
-              <dl className="mb-9 grid grid-cols-2 gap-x-6 gap-y-6 rounded-card bg-papel-hueso px-6 py-5 sm:grid-cols-4">
-                {titulares.map((t) => (
-                  <div key={t.label} className="min-w-0">
-                    <dt className="text-xs text-navy-soft">{t.label}</dt>
-                    <dd className="mt-0.5 font-display text-lead font-semibold text-navy">{t.valor}</dd>
-                  </div>
-                ))}
-              </dl>
+            {/* LA BARRA DE POTENCIA ABRE LA FICHA, Y ABRE SOLA.
+                Samuel, 2026-07-28: «me gusta el banner de potencia, pero lo
+                metiste como dentro de una caja con más info que está como
+                suelta; preferiría incluso solo la barra y ya».
+
+                Tenía razón en el diagnóstico: el panel gris juntaba dos cosas
+                que no son la misma —tres cifras sueltas y una ilustración— y
+                el conjunto se leía como un cajón de sastre. Y las tres cifras
+                no hacían falta ahí: eslora, pasaje y año son las primeras
+                filas de Identificación, Dimensiones y Capacidad, o sea que
+                estaban dichas dos veces a dos pantallazos de distancia.
+
+                Queda la barra sola, sin caja, como entrada de la ficha. */}
+            {potencia ? (
+              <div className="mb-9">
+                <BarraPotencia hp={potencia.hp} maximo={potencia.maximo} fraccion={potencia.fraccion} />
+              </div>
             ) : null}
 
             <div className="flex flex-col gap-9">

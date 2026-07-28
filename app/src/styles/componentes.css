@@ -2521,6 +2521,36 @@
   background-color: color-mix(in srgb, var(--color-navy) 32%, transparent);
 }
 
+/* ============================================================
+   Barra de potencia de la ficha técnica (/flota) — flota/barra-potencia.tsx.
+   [v2 2026-07-28, pedido de Samuel]
+
+   La estela (el agua recorrida) y el barco de la punta viajan con la MISMA
+   duración y la misma curva, porque son el mismo movimiento: si divergen aunque
+   sea 50ms, el barco se despega del borde del agua y se ve que son dos piezas.
+   Por eso comparten token y no llevan `transition: all` (que además animaría
+   cosas que no queremos, como el color al hacer hover).
+
+   La animación arranca en el montaje del modal, desde cero: es el gesto lo que
+   comunica el dato. Con `prefers-reduced-motion` no hay recorrido — la barra
+   aparece ya en su marca, que es el mismo estado final (y el frame que viaja a
+   Figma).
+   ============================================================ */
+.potencia-estela {
+  transition: width var(--flota-potencia-duracion) var(--flota-potencia-easing);
+}
+
+.potencia-barco {
+  transition: left var(--flota-potencia-duracion) var(--flota-potencia-easing);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .potencia-estela,
+  .potencia-barco {
+    transition: none;
+  }
+}
+
 /* [v2 2026-07-28] Aquí vivió `.scroll-sutil-premium`, un modificador con el
    pulgar en oro para la tira horizontal de la banda oscura de /flota. Se
    retira el mismo día: esa banda volvió al tema claro (Samuel: «quita todo ese
@@ -2822,9 +2852,17 @@
 }
 
 .muro-equipo-card {
-  width: var(--spacing-muro-equipo-card-ancho);
+  width: var(--spacing-muro-equipo-card-ancho-movil);
   margin-right: var(--spacing-muro-equipo-card-gap);
   flex-shrink: 0;
+}
+
+/* sm: (40rem) — el retrato recupera su ancho completo. El porqué del
+   estrechamiento está en --spacing-muro-equipo-card-ancho-movil. */
+@media (min-width: 40rem) {
+  .muro-equipo-card {
+    width: var(--spacing-muro-equipo-card-ancho);
+  }
 }
 
 @keyframes muro-equipo-desfile {
@@ -2850,6 +2888,59 @@
   .muro-equipo-pista {
     animation: none;
   }
+}
+
+/* ============================================================
+   Página LA FUNDACIÓN — rediseño 2026-07-28, 2ª vuelta (Samuel: «me parece
+   aburrido, genérico, IA slop… que sea digerible y fácil a la vista»).
+   Tres piezas que no salen de utilidades de Tailwind. El porqué de cada
+   número está en el grupo «Página LA FUNDACIÓN» de tokens.css.
+   ============================================================ */
+
+/* EL HILO de la línea de tiempo (cronologia-fundacion.tsx). Un `border-top`
+   punteado y nada más: el hilo es un hermano flex con `flex-1`, así que
+   quien decide su largo es la rejilla — no hay ni un elemento absoluto ni una
+   medición en JS, a diferencia de la ruta curva del recorrido de
+   /ventaja-competitiva (que sí necesita hook porque serpentea). */
+.fund-hilo {
+  border-top: var(--fund-hilo-grosor) dotted var(--color-fund-hilo);
+}
+
+/* Foto CLAVADA sobre el panel navy del proyecto insignia
+   (arrecife-artificial.tsx): passe-partout blanco fino + la sombra de dos
+   capas de las fotos reales del proyecto + un ángulo propio (--rot, del JSX).
+   Se endereza al pasar el ratón, igual que .boleto y .pqr-foto: mismo gesto,
+   misma familia.
+
+   Clase propia y no un reuso de .pqr-foto: aquélla está namespaceada a
+   /por-que-reservar y describe SU escena (papeles sobre una mesa clara). El
+   día que a aquella hoja le cambien el marco, este panel no tiene por qué
+   moverse — la receta es la misma, la decisión no. */
+.fund-foto {
+  rotate: var(--rot, 0deg);
+  padding: var(--spacing-foto-real-marco);
+  background: var(--color-papel);
+  border-radius: var(--radius-foto);
+  box-shadow: var(--shadow-foto-real);
+  transition: rotate 300ms ease-out;
+}
+
+@media (hover: hover) {
+  .fund-foto:hover {
+    rotate: 0deg;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fund-foto {
+    transition: none;
+  }
+}
+
+/* El velo del cierre de membresías (membresias-fundacion.tsx) sobre la
+   cenital del agua de Bávaro: gradiente vertical, no tinte parejo. */
+.fund-velo {
+  background: linear-gradient(180deg, var(--fund-velo-arriba) 0%, var(--fund-velo-abajo) 100%);
 }
 
 /* ── Superficies premium: panel, cards y cifra ─────────────────────────────
@@ -2992,6 +3083,16 @@
 .premium-nota-clara {
   background: color-mix(in srgb, var(--color-premium-oro) 10%, #fff);
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-premium-oro) 40%, transparent);
+}
+
+/* La pista de los 5 frentes: GSAP le escribe la `x` a ~60 fps mientras dura
+   el barrido (use-frentes-horizontal.ts). El aviso al compositor evita que
+   el navegador re-pinte la fila entera —cinco cards con foto— en cada frame.
+   Solo desde lg: por debajo no hay barrido, la lista baja en vertical. */
+@media (min-width: 64rem) {
+  .fund-pista {
+    will-change: transform;
+  }
 }
 
 /* ── Widget de reserva en modo PREMIUM ─────────────────────────────────────

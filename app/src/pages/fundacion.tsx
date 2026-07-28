@@ -1,8 +1,11 @@
 import { Footer } from '@/components/home/footer'
 import { HeroInterna } from '@/components/internas/hero-interna'
-import { Boton } from '@/components/ui/boton'
 import { Etiqueta } from '@/components/ui/etiqueta'
 import { Meta } from '@/components/seo/meta'
+import { CronologiaFundacion } from '@/components/fundacion/cronologia-fundacion'
+import { FrentesFundacion } from '@/components/fundacion/frentes-fundacion'
+import { FundadoresFundacion } from '@/components/fundacion/fundadores-fundacion'
+import { CierreDoble } from '@/components/sostenibilidad/cierre-doble'
 import { FUNDACION } from '@/data/fundacion'
 
 // Página de la Fundación (/fundacion) — correcciones v2, plan 08 §3-§5
@@ -20,6 +23,31 @@ import { FUNDACION } from '@/data/fundacion'
 // (slide 58) — ese contenido vive aquí, así que esos chips son enlaces con
 // hash, no anclas locales. Si se renombra un id, hay que tocar
 // ANCLAS_VENTAJA en data/sostenibilidad.ts.
+//
+// ══ REDISEÑO 2026-07-28, 2ª vuelta (Samuel: «a la página de /fundacion hay
+// que darle un rediseño al contenido urgente, me parece aburrido, genérico,
+// IA slop, debe ser más atractivo, creativo, que sea digerible y fácil a la
+// vista») ══
+//
+// La versión anterior tenía TODO el contenido correcto y CERO forma: hero
+// genérico, dos párrafos de 60 palabras, una caja gris de fundadores, un
+// rectángulo navy con un párrafo dentro, cinco bloques de texto idénticos con
+// numeral gigante, y un recuadro blanco con borde al final. 3.900px de alto y
+// ni una sola imagen. Ese es el diagnóstico exacto de «IA slop»: contenido
+// real presentado como relleno.
+//
+// Lo que lo arregla no es más copy —el copy es del cliente y es bueno— sino
+// (a) DARLE FORMA al que hay: la historia pasa a línea de tiempo de 3 paradas
+// y los 5 proyectos a rejilla escaneable con una palabra clave cada uno; y
+// (b) ENSEÑAR EL TRABAJO: las fotos del vivero de coral, de los arrecifes
+// artificiales y de las jornadas con niños llevaban meses en el proyecto (las
+// usa data/instalaciones.ts) y esta página, la que HABLA de todo eso, era la
+// única sin una imagen. Ver el ✅ RESUELTO en la cabecera de data/fundacion.ts.
+//
+// El orden narrativo también cambia: los 3 hitos (2016 · 3er vivero ·
+// Ministerio) suben AL HERO como credenciales. Son las tres razones por las
+// que merece la pena seguir leyendo — enterrados a media página no servían de
+// nada, y de paso liberan la primera sección para que la historia respire.
 export function FundacionPage() {
   return (
     <div>
@@ -28,116 +56,71 @@ export function FundacionPage() {
         descripcion="Fundación Ecológica Arrecifes de Bávaro: restauración coralina y arrecifes artificiales desde 2016, en colaboración con el Ministerio de Medio Ambiente."
         ruta="/fundacion"
       />
-      <HeroInterna ctaHref="/ventaja-competitiva">
+
+      {/* El hero deja el video de marca (el catamarán, que es de la EMPRESA)
+          por la cenital del agua de Bávaro, que es de lo que va esta página.
+          [v2 2026-07-28, 5ª vuelta] FUERA LOS 3 HITOS que vivían aquí como
+          credenciales a la derecha (Samuel: «quita los 3 puntos que pusimos a
+          la derecha en el hero»). El hero vuelve a una sola columna —badge,
+          título y descripción— y con ella se va también `anchoCompleto`, que
+          existía solo para que esa banda derecha tuviera sitio.
+          ⚠️ No se pierde ningún dato: 2016, el tercer vivero del país y el
+          convenio con Medio Ambiente los cuenta la línea de tiempo de justo
+          debajo (CronologiaFundacion), que es de donde salieron. Y siguen
+          visibles como los 3 features del teaser de /ventaja-competitiva. */}
+      <HeroInterna
+        ctaHref="/ventaja-competitiva"
+        imagen={{
+          src: '/fotos/arrecife-fondo-cenital.webp',
+          alt: 'Vista cenital del agua turquesa de Playa Bávaro',
+        }}
+      >
         <div className="max-w-3xl">
-          <Etiqueta sobreOscuro>{FUNDACION.teaserEyebrow}</Etiqueta>
-          <h1 className="mt-3 font-display text-4xl font-semibold text-white sm:text-5xl">
-            {FUNDACION.nombreLegal}
+          <Etiqueta sobreOscuro>{FUNDACION.nombreLegal}</Etiqueta>
+          <h1 className="mt-3 text-balance font-display text-4xl font-semibold text-white sm:text-5xl">
+            {FUNDACION.lema}
           </h1>
-          <p className="mt-4 text-lg text-white/85">Cuidar los arrecifes empieza con las personas.</p>
+          <p className="mt-4 max-w-2xl text-lg text-white/85">{FUNDACION.heroTexto}</p>
         </div>
       </HeroInterna>
 
-      <div className="mx-auto max-w-contenido px-5 py-12 sm:px-10 lg:py-16">
+      {/* ⚠️ EL CONTENEDOR ESTÁ PARTIDO EN DOS, y no es un descuido: entre los
+          dos va el barrido de los frentes A SANGRE (2026-07-28, 4ª vuelta —
+          Samuel: «que no se vea el desborde del overflow hidden, la idea es
+          que las cards desaparezcan con los extremos de la pantalla»). Para
+          que el recorte caiga en los cantos de la VENTANA y no en los del
+          contenedor, ese bloque no puede vivir dentro de `max-w-contenido`.
+          Se saca de la columna en vez de sangrarlo con `100vw` + margen
+          negativo: ese truco mete la barra de scroll en la cuenta y deja la
+          página con scroll horizontal en Windows. */}
+      <div className="mx-auto max-w-contenido px-5 pt-12 sm:px-10 lg:pt-16">
         <div className="flex flex-col gap-16 lg:gap-24">
-          <section className="grid gap-10 lg:grid-cols-[1.4fr_1fr] lg:items-start">
-            <div className="flex flex-col gap-4">
-              {FUNDACION.historia.map((p) => (
-                <p key={p.slice(0, 24)} className="text-lg leading-relaxed text-navy/80">
-                  {p}
-                </p>
-              ))}
+          <CronologiaFundacion />
 
-              {/* Los 3 hitos en fila: ni las 3 cards con ring de la maqueta
-                  ni hairlines (Samuel 2026-07-28: «al cliente no le gusta
-                  tanta línea»). Los agrupa una SUPERFICIE papel-hueso, plana
-                  y sin borde — mismo recurso que la banda de impacto y el
-                  teaser de /ventaja-competitiva, para que las dos páginas
-                  hablen el mismo idioma. */}
-              <div className="mt-8 grid grid-cols-3 gap-4 rounded-card bg-papel-hueso p-6">
-                {FUNDACION.hitos.map((h) => (
-                  <div key={h.cifra}>
-                    <p className="font-display text-h3 font-semibold text-aqua-dark">{h.cifra}</p>
-                    <p className="mt-1 text-sm text-navy-soft">{h.texto}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* «LOS FUNDADORES» (slide 62). Quién está detrás es un dato
-                institucional y se lee como ficha, no como 3 tarjetas sueltas
-                — así que va agrupado, pero con SUPERFICIE en vez de con
-                líneas (2026-07-28): fuera el borde del marco Y fuera las
-                divisorias entre las 3 filas. Dos líneas menos y el bloque
-                sigue leyéndose como una unidad. */}
-            <div className="rounded-card bg-papel-hueso p-6">
-              <Etiqueta>Los fundadores</Etiqueta>
-              <ul className="mt-4 flex flex-col gap-4">
-                {FUNDACION.fundadores.map((f) => (
-                  <li key={f.nombre}>
-                    <p className="font-display text-base font-semibold text-navy">{f.nombre}</p>
-                    <p className="mt-0.5 text-sm text-navy-soft">{f.rol}</p>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </section>
+          <FundadoresFundacion />
 
           <section id="proyectos" className="scroll-mt-header-alto">
             <Etiqueta>{FUNDACION.proyectosEyebrow}</Etiqueta>
-            <h2 className="mt-3 font-display text-h2 font-semibold text-navy">
+            <h2 className="mt-2 font-display text-h2 font-semibold text-navy">
               {FUNDACION.proyectosTitulo}
             </h2>
             <p className="mt-3 max-w-2xl text-lead text-navy-sub">{FUNDACION.proyectosLead}</p>
-
-            <div className="mt-10 rounded-card bg-navy p-8">
-              <h3 className="font-display text-h3 font-semibold text-white">
-                {FUNDACION.proyectoDestacado.titulo}
-              </h3>
-              <p className="mt-3 max-w-2xl text-white/80">{FUNDACION.proyectoDestacado.texto}</p>
-            </div>
-
-            {/* Patrón «editorial de listas apiladas» de la casa: numeral
-                fantasma + hairline, cero cards con ring. Es la 4ª vez que
-                aparece en el proyecto (Nosotros → Sostenibilidad → Guías →
-                esta) y ya está documentado en los Aprendizajes del cerebro
-                como la cura del olor a «esto es solo cajas». La maqueta del
-                cliente lo pintaba como cards con ring — se usa el patrón de
-                la casa. */}
-            <ol className="mt-10 divide-y divide-linea border-t border-linea">
-              {FUNDACION.proyectos.map((p, i) => (
-                <li key={p.titulo} className="relative pb-8 pt-10">
-                  <p className="sost-numero" aria-hidden="true">
-                    {String(i + 1).padStart(2, '0')}
-                  </p>
-                  <div className="relative">
-                    <h3 className="sost-item-titulo font-display text-h3 font-semibold text-navy">
-                      {p.titulo}
-                    </h3>
-                    <p className="mt-2 max-w-2xl text-navy-sub">{p.texto}</p>
-                  </div>
-                </li>
-              ))}
-            </ol>
           </section>
+        </div>
+      </div>
 
-          <section
-            id="membresias"
-            className="scroll-mt-header-alto rounded-card border border-linea px-6 py-10 text-center"
-          >
-            <h2 className="font-display text-h3 font-semibold text-navy">
-              {FUNDACION.membresiasTitulo}
-            </h2>
-            <p className="mx-auto mt-3 max-w-xl text-navy-sub">{FUNDACION.membresiasTexto}</p>
-            {/* A /contacto pelado, sin `?asunto=` — /contacto no lee query
-                params hoy (a diferencia de /trabaja-con-nosotros, que sí con
-                `?perfil=`). Precargar el asunto pide un campo nuevo en ese
-                formulario: se hará cuando el cliente defina qué son las
-                membresías, junto con los niveles y el cobro. */}
-            <Boton to="/contacto" className="mt-6">
-              {FUNDACION.membresiasCta}
-            </Boton>
-          </section>
+      {/* El barrido, fuera de la columna. «Arrecifes artificiales» ya no va
+          suelto encima: es la PRIMERA de las seis cards. */}
+      <FrentesFundacion />
+
+      {/* pt- propio: el barrido de arriba termina pegado a su última card, así
+          que la separación con el cierre la pone este contenedor. */}
+      <div className="mx-auto max-w-contenido px-5 pb-12 pt-16 sm:px-10 lg:pb-16 lg:pt-24">
+        <div className="flex flex-col gap-16 lg:gap-24">
+          {/* El cierre es el MISMO bloque de dos tarjetas que remata
+              /ventaja-competitiva (Samuel: «ese está mejor»), no una copia:
+              sustituye a la banda de membresías con foto, que se retira. */}
+          <CierreDoble id="membresias" anclaClase="scroll-mt-header-alto" />
         </div>
       </div>
 

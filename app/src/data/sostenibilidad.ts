@@ -20,6 +20,19 @@ export type StatSost = {
   label: string
 }
 
+/**
+ * Un importe por huésped de la sección «A dónde va tu aporte». Son 4 campos y
+ * no 2 a propósito: con solo cifra + etiqueta (como estaba hasta el
+ * 2026-07-28) no se entendía ni por quién se paga ni en qué se gasta.
+ */
+export type AporteSost = {
+  valor: string
+  /** «por huésped» — el matiz que lo separa de «por reserva» */
+  unidad: string
+  destino: string
+  detalle: string
+}
+
 export type PilarSost = {
   /** ancla estable para deep-links / migaja interna */
   id: string
@@ -43,11 +56,16 @@ export type PilarSost = {
  * plan 08 §2). En el ORDEN REAL de la página, no en el de la maqueta — ver
  * ui/nav-anclas-chips.tsx para el porqué.
  *
- * ⚠️ Los `id` sin `to` tienen que existir como `id` de una sección de esta
- * página; los que llevan `to` apuntan a secciones de /fundacion (pages/
- * fundacion.tsx). Si se renombra un id allí o aquí, esta lista se queda
- * apuntando al vacío — el chip no rompe nada (el scroll-spy ignora los ids
- * que no existen), pero deja de llevar a ninguna parte.
+ * ⚠️ Cada `id` tiene que existir como `id` de una sección de ESTA página. Si
+ * se renombra uno, el chip deja de llevar a ninguna parte (no rompe nada: el
+ * scroll-spy ignora los ids inexistentes, que es justo lo que lo hace fácil
+ * de no notar). El componente los verifica en desarrollo — ver el aviso de
+ * consola en ui/nav-anclas-chips.tsx.
+ *
+ * [v2 2026-07-28] «Proyectos» y «Membresías» eran enlaces a /fundacion; pasan
+ * a anclas LOCALES porque los slides 63 y 64 ya viven también en esta página
+ * (Samuel: «la info del slide 63 parece que no está… y el slide 64 tampoco»).
+ * Los 7 chips son ahora 7 secciones de aquí, en el orden real de lectura.
  */
 export const ANCLAS_VENTAJA = [
   { id: 'conservacion', label: 'Conservación' },
@@ -55,8 +73,8 @@ export const ANCLAS_VENTAJA = [
   { id: 'ancla-impacto', label: 'Impacto por huésped' },
   { id: 'ancla-videos', label: 'En video' },
   { id: 'ancla-fundacion', label: 'La fundación' },
-  { id: 'fundacion-proyectos', label: 'Proyectos', to: '/fundacion#proyectos' },
-  { id: 'fundacion-membresias', label: 'Membresías', to: '/fundacion#membresias' },
+  { id: 'ancla-proyectos', label: 'Proyectos' },
+  { id: 'ancla-membresias', label: 'Membresías' },
 ]
 
 export type VideoSost = {
@@ -192,15 +210,41 @@ export const SOSTENIBILIDAD = {
   // Los 2 aportes por huésped VIVÍAN dentro del pilar "operación" (como
   // `stats`); suben aquí porque son la BISAGRA de la banda: explican de dónde
   // salen las 4 cifras de arriba. Dejarlos en los dos sitios los duplicaba.
-  // [v2 2026-07-28, slide 61] «Por cada huésped» sube al rótulo de la fila y
-  // sale de las dos etiquetas, donde se repetía. Además es más EXACTO que el
-  // «De cada reserva» que tenía: los importes son por huésped, no por
-  // reserva — una reserva de seis paga seis veces.
-  aportesTitulo: 'Por cada huésped',
+  // ---------- A dónde va tu aporte (slide 61) ----------
+  // [v2 2026-07-28, 2ª vuelta, pedido de Samuel: «lo de por cada huésped e
+  // iniciativas a la fundación, como que no se entiende mucho el dinero que
+  // se da, está raro; yo solo pondría en el cuadro gris los 4 puntos, y eso
+  // del dinero hay que ubicarlo de mejor forma en otra parte»]
+  //
+  // Los 2 importes vivían como PIE de la banda de impacto: dos cifras en una
+  // fila, con un rótulo lateral, sin decir de dónde salen ni para qué. Tenía
+  // razón — así se leían como una nota al margen, no como el mecanismo.
+  // Ahora son SECCIÓN PROPIA (sostenibilidad/aporte-sostenibilidad.tsx),
+  // justo debajo de las cifras, y cada importe dice las tres cosas que hacen
+  // falta para entenderlo: cuánto, por quién (por huésped, no por reserva) y
+  // en qué se gasta. El «de forma fija, no de lo que sobre» del lead es lo
+  // que separa esto de un donativo simbólico, que es como sonaba antes.
+  //
+  // El detalle del equipo NO repite el del pilar «Operación responsable»: allí
+  // se cuenta la política (salario justo, formación, seguridad), aquí a qué
+  // partida va el dinero, con el vocabulario del propio cliente.
+  aporteEyebrow: 'Operaciones responsables',
+  aporteTitulo: 'A dónde va tu aporte',
+  aporteLead: 'La sostenibilidad empieza desde adentro. Por eso, por cada huésped que sube a bordo, una parte de la reserva ya está destinada — de forma fija, no de lo que sobre.',
   aportes: [
-    { valor: 'US$ 3.50', label: 'a nuestro equipo operativo' },
-    { valor: 'US$ 2.00', label: 'a las iniciativas de la fundación' },
-  ] satisfies StatSost[],
+    {
+      valor: 'US$ 3.50',
+      unidad: 'por huésped',
+      destino: 'A nuestro equipo operativo',
+      detalle: 'Compensación justa, capacitación, seguridad y prácticas responsables.',
+    },
+    {
+      valor: 'US$ 2.00',
+      unidad: 'por huésped',
+      destino: 'A las iniciativas de la fundación',
+      detalle: 'Restauración de coral, monitoreo de tortugas verdes y trabajo con la comunidad.',
+    },
+  ] satisfies AporteSost[],
 
   // [v2 2026-07-28, slide 59] Eyebrow y titular se INTERCAMBIAN de papel. El
   // eyebrow decía «Nuestra ventaja competitiva», que desde el reencuadre (§1)
@@ -212,8 +256,42 @@ export const SOSTENIBILIDAD = {
   videosTitulo: 'Míralo con tus propios ojos',
   videosTexto: 'Una serie de videos cortos que muestran los factores clave que nos distinguen de otras empresas que ofrecen servicios similares en la zona.',
 
-  cierreTitulo: 'Dejar una huella positiva',
-  cierreTexto: 'Todo negocio deja una huella allí donde opera. La nuestra queremos que sea positiva: de la conservación marina y el trabajo comunitario a la operación ética y el desarrollo de nuestro equipo. A través de la Bávaro Reefs Foundation contribuimos no solo a experiencias inolvidables en el mar, sino a arrecifes más sanos, comunidades más fuertes y un futuro más sostenible para la República Dominicana.',
+  // ---------- Cierre: las 2 tarjetas de CTA (slide 64) ----------
+  // [v2 2026-07-28, 5ª vuelta, Samuel: «los 2 banners CTA que estén uno al
+  // lado del otro y sean similares a cards de precios; por supuesto no tienen
+  // precios, pero estéticamente sean de ese estilo»]
+  //
+  // El slide 64 son dos bandas apiladas (la verde de membresías y la navy de
+  // «Arrecifes más sanos…»). Pasan a dos tarjetas gemelas en paralelo, con la
+  // anatomía de una tabla de precios: rótulo, titular, texto, lista de
+  // puntos y un botón a ancho completo abajo. La de reservar va destacada
+  // (oscura, sobre la foto), como el «plan recomendado» de esa anatomía.
+  //
+  // ⚠️ LOS PUNTOS NO SON INVENTADOS. Son datos que ya viven en el proyecto:
+  // los dos importes por huésped (`aportes`, portados de sustainability.php),
+  // el reconocimiento del tercer vivero y el convenio con Medio Ambiente
+  // (`FUNDACION.hitos`, slide 62) y dos de los cinco frentes reales de la
+  // fundación (`FUNDACION.frentes`, slide 63). Una tabla de precios se
+  // sostiene con lo que de verdad incluye — inventar viñetas para rellenar la
+  // forma sería exactamente lo contrario.
+  //
+  // El eyebrow y el titular adoptan los del cliente (su slide separa
+  // «DEJANDO UNA HUELLA POSITIVA» de «Arrecifes más sanos, comunidades más
+  // fuertes»), y el texto se acorta al suyo: el nuestro decía lo mismo en 55
+  // palabras y, junto a la tarjeta de membresías, desequilibraba la pareja.
+  cierreEyebrow: 'Dejando una huella positiva',
+  cierreTitulo: 'Arrecifes más sanos, comunidades más fuertes',
+  cierreTexto: 'Cada empresa deja una huella donde opera. La nuestra queremos que sea positiva: de la conservación marina al trabajo comunitario, la operación ética y el desarrollo de nuestro equipo. Reservar con nosotros es sumar a un futuro más sostenible para la República Dominicana.',
+  cierrePuntos: [
+    'US$ 3.50 por huésped a nuestro equipo operativo',
+    'US$ 2.00 por huésped a las iniciativas de la fundación',
+    'Tercer vivero de coral más importante del país',
+  ],
+  membresiasPuntos: [
+    'Restauración coralina y arrecifes artificiales',
+    'Educación ambiental con centros y comunidad',
+    'Convenio con el Ministerio de Medio Ambiente',
+  ],
   // Foto de fondo del cierre (2026-07-17, pedido de Samuel: "ponle el mismo
   // background de fondo del mar que tiene el banner de nosotros"). Mismo
   // asset que /nosotros (ArrecifeTeaser) y el mismo idioma visual — foto

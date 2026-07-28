@@ -51,7 +51,10 @@ import { EQUIPO } from '@/data/nosotros'
 // que engancha por las clases `.nosotros-timeline` / `.timeline-*`: se
 // conservan literalmente para no duplicar un hook que ya funciona.
 export function FamiliaHispaniola() {
-  const fundador = EQUIPO.find((m) => m.cta.tipo === 'historia')
+  // `cta?.` — el campo es opcional desde el 2026-07-28 (las cards de
+  // /fundacion no llevan CTA). Aquí no cambia nada: los miembros de EQUIPO lo
+  // siguen teniendo todos.
+  const fundador = EQUIPO.find((m) => m.cta?.tipo === 'historia')
 
   return (
     <section className="flex flex-col gap-14 lg:gap-20">

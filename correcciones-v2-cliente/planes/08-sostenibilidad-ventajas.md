@@ -3,7 +3,9 @@
 > Fuente: slides 57–64 del PDF.
 > Cruzado con: `pages/sostenibilidad.tsx`, `data/sostenibilidad.ts`,
 > `components/sostenibilidad/*` (6 componentes), `App.tsx`.
-> Estado: propuesta para revisar con Samuel. No ejecutado.
+> Estado: **EJECUTADO el 2026-07-28** (pedido de Samuel: «cambia el slug a
+> ventaja-competitiva, mira los slides 57 al 64 e incluye lo que no hay»).
+> Ver «Qué quedó hecho» al final del documento.
 
 ## TL;DR — el 70% de esto ya está construido
 
@@ -311,3 +313,163 @@ porque la página va a crecer justo alrededor de ellas.
 **Este plan es el más rentable de los ocho**: casi todo se puede hacer sin
 esperar nada, el contenido nuevo es excelente, y de paso salda una deuda técnica
 que el propio proyecto se había apuntado (el patrón editorial, 4ª aparición).
+
+---
+
+## Qué quedó hecho (2026-07-28)
+
+| § | Trabajo | Estado |
+|---|---|---|
+| — | **Slug `/sostenibilidad` → `/ventaja-competitiva`** | ✅ 301 real en `netlify.toml` + `<Navigate>` en `App.tsx`; sitemap, menú, footer, `/flota`, `/por-que-reservar`, `/fundacion` y los deep-links del Dev Mode actualizados. El archivo de página se renombró a `pages/ventaja-competitiva.tsx`; los componentes y los datos se quedan en `sostenibilidad/` (el dominio del contenido no cambió) |
+| §1 | Reencuadre a «ventaja competitiva» | ✅ ya venía del 07-27 (eyebrow del hero) |
+| §2 | Los 7 chips de anclas (slide 58) | ✅ `ui/nav-anclas-chips.tsx`, en el ORDEN REAL de la página. El scroll-spy se extrajo de `tour/anclas-ficha.tsx` a `ui/use-anclas-activa.ts` y ahora lo comparten las dos barras. `NavFlotante` cede el tope del viewport en esta ruta (`cedeElTope`, antes `esFicha`) — mismo criterio que la ficha. **La advertencia del GSAP no se materializó**: verificado saltando a cada ancla, el recorrido del catamarán se recalcula bien. Sí hubo que subir la barra a `z-40`: el barco va en `z-30` y le pasaba por delante |
+| §3 | Bloque de la fundación (slide 62) | ✅ `/fundacion` gana el bloque «LOS FUNDADORES» y los 3 hitos sobre hairline; el copy sale a `data/fundacion.ts`. En `/ventaja-competitiva` va como **teaser** (`sostenibilidad/fundacion-teaser.tsx`), no duplicado |
+| §4 | Los 5 proyectos (slide 63) | ✅ ya venía del 07-27, en `/fundacion`. **Pendiente la deuda técnica**: el patrón editorial sigue copiado por 4ª vez, sin extraer a `ui/lista-editorial.tsx` |
+| — | Hitos ambientales (slide 60) | ✅ los 3 logros salen de la prosa del pilar de conservación y se cuentan aparte, sobre hairlines dentro del paso del recorrido |
+| §5 | CTA de cierre + membresías | ✅ el cierre se queda con un solo remate («Reserva y deja tu huella»); el 2º botón a la fundación se retira porque el teaser de justo encima ya lo lleva. Membresías → `/contacto`, opción (a) |
+| — | Copy del cliente | ✅ videos: eyebrow y titular intercambiados («Lo que nos diferencia, en video» / «Míralo con tus propios ojos»); aportes: «De cada reserva» → «Por cada huésped» |
+
+**De hairlines a superficies (Samuel, mismo día, en dos tiempos).** Primero:
+*«no uses tantas líneas divisorias, al cliente no le gusta tanta línea»*. Se
+retiran las divisorias de las 4 cifras de la banda de impacto (iban entre 2
+hairlines + 3 verticales — 5 líneas para 4 datos), de los 3 hitos del teaser,
+de los 3 hitos ambientales del pilar, y en `/fundacion` de los hitos y de las 3
+filas de «Los fundadores».
+
+Y acto seguido, al verlo: *«esos elementos se ven flotando sin más, las líneas
+tenían su propósito, hay que reemplazarlas por otra forma que cumpla ese
+propósito pero que no sea líneas»*. **Correcto — el propósito era AGRUPAR.**
+Quien agrupa sin dibujar nada es una SUPERFICIE: `--color-papel-hueso`, plana,
+sin borde ni sombra ni ring, que es lo que ya hace `equipo/franja-equipo.tsx`.
+Se aplica el MISMO recurso a los cinco bloques, para que sea un solo device
+reconocible y no cinco soluciones distintas. De paso, «Los fundadores» pierde
+también el borde de su marco: la superficie ya agrupa.
+
+⚠️ Esto **no reabre** lo que Samuel rechazó del mockup el 2026-07-22 («no me
+gusta meter un box y dentro más boxes»): aquello era un box VERDE con dos boxes
+anidados dentro. Esto es una superficie neutra, plana y sin nada anidado, y el
+aqua sigue siendo solo el acento de las cifras — nunca el fondo (dirección B).
+
+Y tercera vuelta: *«dale un fondo a cada uno de los puntos, no un fondo general
+a los 3»*. Correcto — un fondo único volvía a leer los 3 hitos como una lista
+corrida, que es el mismo defecto que tenían con hairlines. Una superficie por
+hito dice que son tres datos independientes. Aplicado en el teaser y en
+`/fundacion`.
+
+Se conserva el patrón editorial de los 5 proyectos (numeral fantasma +
+hairline): es el de la casa y lleva 4 usos aprobados; tocarlo cambiaría también
+Nosotros, Sostenibilidad y Guías.
+
+**El dinero sale a sección propia: «A dónde va tu aporte».** Samuel: *«lo de por
+cada huésped e iniciativas a la fundación, como que no se entiende mucho el
+dinero que se da, está raro; yo solo pondría en el cuadro gris los 4 puntos, y
+eso del dinero hay que ubicarlo de mejor forma en otra parte»*.
+
+El diagnóstico es exacto y el defecto no era el sitio: era que **faltaba la
+mitad de la información**. Un importe suelto no dice de dónde sale ni en qué se
+gasta, y leído como pie de la banda de impacto parecía un donativo simbólico.
+La sección nueva (`sostenibilidad/aporte-sostenibilidad.tsx`) hace que cada
+importe cuente las tres cosas que hacen falta: **cuánto** (la cifra, en aqua),
+**por quién** (por huésped, no por reserva — una reserva de seis paga seis
+veces) y **en qué** (el detalle), bajo un lead que aclara que la partida es
+fija «y no de lo que sobre». Una superficie por importe: con los dos en la
+misma volvían a leerse como «una cifra y otra cifra».
+
+Va pegada **debajo** de las 4 cifras y no en cualquier otro sitio: las cifras
+son el resultado y esto es el mecanismo que lo financia. Separarlos más los
+desconectaría. La banda gris se queda solo con los 4 puntos.
+
+**El tramo de la fundación se muda entero a `/ventaja-competitiva`
+(2026-07-28, 4ª vuelta).** Samuel pidió tres cosas seguidas: la disposición del
+slide 62 en el teaser (*«a la derecha pon los fundadores, y esos 3 puntos
+actuales ponlos abajo antes del botón CTA»*), traer el slide 63 (*«parece que no
+está, agrégalo pero no así con box, puede ser con una barra de progreso vertical
+y van apareciendo los puntos»*) y traer el slide 64 (*«tampoco está, agrega que
+son CTAs importantes para apoyar la fundación»*).
+
+- **Teaser**: adopta el reparto del slide 62. Es mejor que el nuestro — los 3
+  hitos son el remate del párrafo que acaba de mencionar 2016, el vivero y el
+  Ministerio; «quién está detrás» es otra pregunta y merece su propia caja. Y
+  el CTA cierra la columna, después de todo el argumento.
+- **Los 5 proyectos**: `sostenibilidad/proyectos-sostenibilidad.tsx` +
+  `use-progreso-proyectos.ts`. Barra vertical con scrub y marcadores que se
+  encienden con la punta. **Un solo ScrollTrigger** gobierna las dos cosas: con
+  uno por punto, el marcador se encendería desincronizado de la barra, que es
+  justo lo que el efecto promete. Estado natural del JSX = recorrido hecho
+  (reduced-motion, `?dev-sost=estatico` y el frame de Figma).
+- **Membresías**: sobre superficie clara, no sobre la cenital con velo navy de
+  la versión de `/fundacion` — aquí lleva pegado debajo el cierre, que usa ese
+  mismo asset con ese mismo velo.
+
+> ⚠️ **DUPLICACIÓN CONSCIENTE, y hay que decidirla.** Los slides 63 y 64 viven
+> ahora en `/ventaja-competitiva` **y** en `/fundacion`. El copy no se duplica
+> (los cuatro componentes leen `data/fundacion.ts`), pero el texto se ve en dos
+> páginas. Esto deroga de facto el límite entre páginas que se fijó el
+> 2026-07-26. Si molesta, la decisión es **cuál de las dos lo cuenta** — no
+> retocar uno de los dos textos para «diferenciarlos», que es como se acaba con
+> dos versiones que dicen cosas distintas.
+
+**Quinta vuelta, mismo día — tres ajustes más:**
+
+- **Fundadores con las cards de equipo.** *«Que los fundadores se vean
+  reutilizando las cards de tripulación, tal vez haya que cambiar la
+  disposición de la sección»*. Hay que cambiarla, sí: esas cards son retratos
+  4:5 a sangre y tres no caben en una columna de 5/12. El teaser pasa a **dos
+  tiempos** (institucional arriba, fundadores en fila abajo) y **reutiliza el
+  componente** que `/fundacion` ya monta, no un markup parecido — así las dos
+  páginas enseñan los mismos tres, y las fotos, cuando lleguen, entran en los
+  dos sitios tocando un solo `foto: null`.
+- **Barra centrada y en zigzag.** Cabecera centrada y, desde `lg`, el eje al
+  medio con los frentes alternando lado (los de la izquierda alineados a la
+  derecha, para que los dos lados *miren* al eje). En móvil el eje se queda a
+  la izquierda: a 390px, dos columnas de texto son dos columnas de tres
+  palabras.
+- **Los 2 CTA como tabla de precios.** `membresias-sostenibilidad.tsx` y
+  `cierre-sostenibilidad.tsx` **se retiran** y su contenido pasa a
+  `cierre-doble.tsx`: dos tarjetas gemelas con rótulo, titular, texto, lista
+  con checks y botón a ancho completo. `items-stretch` + `mt-auto` es lo que
+  hace que los dos botones caigan a la misma altura pese a textos distintos —
+  en una tabla de precios se compara en horizontal y, si los botones bailan,
+  se rompe. La de reservar va destacada (foto + velo navy, el tratamiento del
+  cierre que sustituye), como el «plan recomendado» de esa anatomía.
+  > ⚠️ Los puntos con check **no son viñetas de relleno**: salen de datos que
+  > ya existen (los importes por huésped, los hitos y dos de los cinco
+  > frentes). Inventar viñetas para rellenar la forma sería lo contrario de lo
+  > que sostiene una tabla de precios.
+
+**Sexta vuelta — el teaser y el cierre de `/fundacion`:**
+
+- **Los 3 hitos vuelven a la derecha** del teaser (*«queda más equilibrado»*).
+  La 5ª vuelta los había bajado al pie del texto siguiendo el slide 62, pero
+  eso fue cuando los fundadores ocupaban la derecha; al mudarse los fundadores
+  a su propia fila, esa columna quedó vacía y todo el peso se apilaba a la
+  izquierda.
+- **El cierre de `/fundacion` pasa a ser el mismo bloque de dos tarjetas** que
+  remata `/ventaja-competitiva` (*«ese está mejor»*) — el mismo componente con
+  props `id`/`anclaClase`, no una copia. `MembresiasFundacion` se retira.
+- **El barrido horizontal de `/fundacion`** absorbe «Arrecifes artificiales»
+  como primera card, pasa a **cards de 100vw** y sale del contenedor para que
+  el recorte caiga en los cantos de la ventana. Se saca de la columna en vez
+  de sangrarlo con `100vw` + margen negativo: ese truco mete la barra de
+  scroll en la cuenta y deja la página con scroll horizontal en Windows
+  (verificado: `scrollWidth − clientWidth = 0`). El **contenido** de la card
+  no crece con ella — con `max-w-contenido` el título se iba a una sola línea
+  de lado a lado y quedaba un desierto hasta la foto, que no puede ampliarse
+  sin verse blanda (los originales miden 368px de ancho).
+
+Los **7 chips** pasan a ser 7 anclas locales y quedan verificados uno a uno:
+los 7 existen, aterrizan bajo la barra y activan su propio chip. `NavAnclasChips`
+avisa por consola en desarrollo si alguno apunta al vacío — un ancla rota no
+rompe nada (el scroll-spy la ignora sin rechistar) y por eso se colaba sin que
+nadie lo notara.
+
+**Sigue pendiente y no depende de nosotros:**
+- Fijar **un solo nombre** para la entidad (hoy cuatro en sus materiales).
+- **Confirmar los dos cofundadores** antes de publicar sus nombres completos.
+- **Contrastar las 4 cifras** de la banda de impacto contra las memorias reales.
+- **Fotos propias de la fundación** (pendiente desde la v1) — por eso ni la
+  página ni el teaser llevan imagen.
+- **Niveles y precios de las membresías**, y la pasarela de cobro.
+
+**Decisión abierta para Samuel:** los chips son solo desktop (`md:`), igual que
+la barra de la ficha. En móvil no se pintan.

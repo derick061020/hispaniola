@@ -3,6 +3,17 @@
   command = "npm run build"
   publish = "dist"
 
+# [v2 2026-07-28] La página de sostenibilidad pasa a `/ventaja-competitiva`
+# (encuadre del cliente, slides 57-64). `/sostenibilidad` es URL indexada y
+# enlazada desde fuera: 301 REAL en el servidor, no solo el <Navigate> del
+# router — un 200 al index.html haría que Google siguiera viendo la vieja como
+# página propia. Va ANTES del catch-all: Netlify aplica la primera que casa.
+[[redirects]]
+  from = "/sostenibilidad"
+  to = "/ventaja-competitiva"
+  status = 301
+  force = true
+
 [[redirects]]
   from = "/*"
   to = "/index.html"

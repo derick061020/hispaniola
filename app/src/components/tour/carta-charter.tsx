@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { Plus, UtensilsCrossed } from 'lucide-react'
 import { GaleriaLightbox } from '@/components/tour/galeria-lightbox'
-import { IlustracionLangosta } from '@/components/tour/ilustracion-langosta'
 import { useOrigenExpansion } from '@/lib/use-expansion-flip'
 import { formatoDinero } from '@/data/home'
 import type { MenuCharterTour } from '@/data/tours'
@@ -53,6 +52,19 @@ import type { MenuCharterTour } from '@/data/tours'
 //     rectángulo apagado y del oro solo sobrevive un hairline al 22%. Ahora es
 //     un degradado de oro con tinta negra encima —pan de oro, no bloque
 //     oscuro— y una langosta que se mueve al pasar el ratón.
+//
+//     [2026-07-28, 3ª vuelta] La langosta pasa de SVG dibujado a mano a FOTO
+//     recortada: `/fotos/langosta.webp`. Samuel insistió («una imagen png que
+//     obtengas de internet y le quites el fondo») y el resultado le da la
+//     razón — una langosta real y roja sobre el oro vende comida; una silueta
+//     vectorial, por bien dibujada que esté, parece un icono.
+//     ⚠️ Es el ÚNICO asset del sitio que no es del cliente. Es CC0 (dominio
+//     público) de Wikimedia Commons, recortada aquí con Python: segmentación
+//     por dominancia de rojo y no por luminancia, porque el original está
+//     sobre una bandeja BLANCA y un umbral de brillo se habría llevado por
+//     delante las sombras y dejado el borde de la loza. Procedencia y licencia
+//     quedan anotadas en `public/fotos/CREDITOS.md`; se sustituye por una foto
+//     del cliente cambiando solo el archivo.
 //
 //  5. LAS FOTOS SE ABREN. Mismo lightbox y misma expansión desde el origen que
 //     el mosaico de la ficha (GaleriaLightbox + useOrigenExpansion): quien se
@@ -200,7 +212,7 @@ export function CartaCharter({ menu, etiqueta }: { menu: MenuCharterTour; etique
           `group`: el hover de TODA la franja mueve la langosta, no solo el de
           la langosta — es la franja entera la que responde. */}
       {menu.addOn ? (
-        <div className="group relative mt-2.5 flex flex-col gap-3 overflow-hidden rounded-card bg-gradient-to-br from-premium-oro-oscuro via-premium-oro-claro to-premium-oro p-4 ring-1 ring-premium-oro-oscuro/40 sm:flex-row sm:items-center sm:gap-4 sm:p-5 sm:pr-36">
+        <div className="group relative mt-2.5 flex flex-col gap-3 overflow-hidden rounded-card bg-gradient-to-br from-premium-oro-oscuro via-premium-oro-claro to-premium-oro p-4 ring-1 ring-premium-oro-oscuro/40 sm:flex-row sm:items-center sm:gap-4 sm:p-5 sm:pr-44">
           {/* La langosta: decorativa, anclada al canto derecho y SANGRANDA
               (sale del marco por la derecha). Un emblema centrado y entero
               parecería un icono de lista; recortado por el borde parece un
@@ -210,11 +222,20 @@ export function CartaCharter({ menu, etiqueta }: { menu: MenuCharterTour; etique
               movimiento; `pointer-events-none` evita que se coma clics.
               Se oculta por debajo de sm: en una franja estrecha se solaparía
               con el precio, que es el dato que no puede estorbarse.
-              El `sm:pr-36` de la franja le RESERVA el sitio: en la primera
-              vuelta la langosta caía justo encima del «US$ 30 por persona» y,
-              aunque la cifra iba montada por delante, se leía sobre un enredo
-              de pinzas. Ahora el texto termina antes y ella tiene su esquina. */}
-          <IlustracionLangosta className="pointer-events-none absolute -right-5 top-1/2 hidden h-20 -translate-y-1/2 text-coral-dark/85 transition-transform duration-500 ease-out motion-safe:group-hover:-translate-y-[calc(50%+0.35rem)] motion-safe:group-hover:-rotate-6 sm:block" />
+              El `sm:pr-44` de la franja le RESERVA el sitio: la langosta cae
+              justo donde iba el «US$ 30 por persona» y, aunque la cifra va
+              montada por delante, se leía sobre un enredo de pinzas. El
+              reservado tiene que cubrir lo que la imagen mete DENTRO del marco
+              (ancho pintado menos lo que sangra por la derecha) — con pr-36 se
+              quedaba corto por unos 25 px y una pinza seguía pisando la
+              palabra «persona». */}
+          <img
+            src="/fotos/langosta.webp"
+            alt=""
+            aria-hidden="true"
+            loading="lazy"
+            className="pointer-events-none absolute -right-6 top-1/2 hidden h-24 -translate-y-1/2 transition-transform duration-500 ease-out motion-safe:group-hover:-translate-y-[calc(50%+0.35rem)] motion-safe:group-hover:-rotate-6 sm:block"
+          />
 
           {/* Icono y texto viajan juntos en su propia fila: en móvil la franja
               se apila (texto arriba, precio debajo) y sin este envoltorio el

@@ -124,9 +124,13 @@ export type FichaEvento = {
   /** titulo + cards de "Qué incluye" */
   incluyeTitulo: string
   incluye: BeneficioEvento[]
-  /** null/undefined = el evento no tiene paquetes. Presente solo en
-   *  party-boat (la web del cliente vende 4 paquetes para eventos) y
-   *  en el futuro para bodas si cotiza a un menú cerrado. */
+  /** null/undefined = el evento no tiene paquetes. Presente en party-boat
+   *  y en BODAS: las dos landings de la web del cliente venden LOS MISMOS
+   *  4 paquetes a LOS MISMOS precios (TARIFARIO-WEB-ORIGINAL.md §3), así
+   *  que `items` apunta al mismo array compartido (`PAQUETES_COMIDA`) y
+   *  lo único propio de cada landing es el `titulo`/`intro`.
+   *  MICE no los tiene: los eventos corporativos se cotizan a medida —
+   *  su widget sigue siendo solo el formulario. */
   paquetes?: {
     titulo: string
     /** copy introductorio bajo el titulo */
@@ -174,7 +178,127 @@ export type FichaEvento = {
   ctaPrincipal: string
   /** CTA secundario opcional del widget (ej: "Dossier corporativo PDF") */
   ctaSecundaria?: string
+  /** [v2 2026-07-28] Copy de la línea tras la que se PLIEGA el formulario
+   *  de cotización — solo se ve en las landings con paquetes (party boat,
+   *  bodas), donde el widget lleva arriba la reserva online y el
+   *  formulario queda para lo que no cabe en un paquete. Es copy por
+   *  ocasión: en party boat el caso a cotizar es «no encaja en un
+   *  paquete»; en una boda, la ceremonia y el montaje. Ver
+   *  components/evento/widget-evento.tsx. */
+  cotizacionPlegada?: { titulo: string; sub: string }
 }
+
+// ────────────────────────────────────────────────────────────────────
+// LOS 4 PAQUETES DE COMIDA — compartidos por party boat y bodas
+// ────────────────────────────────────────────────────────────────────
+//
+// `events-party-boat-puntacana.php` y `weddings.php` publican EXACTAMENTE
+// los mismos 4 paquetes con los mismos precios y los mismos menús
+// (verificado en correcciones-v2-cliente/TARIFARIO-WEB-ORIGINAL.md §3, y
+// así lo pedía ya el plan 03-eventos.md: «un solo array de paquetes
+// consumido por las dos landings»). La ÚNICA diferencia entre las dos
+// ocasiones es que bodas suma «Champagne toast» a los incluidos comunes
+// — y eso vive en el `incluye` de bodas, no en los paquetes.
+//
+// Por eso es UN array y no dos copias: un cambio de precio del cliente se
+// edita en un sitio. Dos copias se desincronizan el día que suba el
+// Premium y alguien actualice solo party boat.
+//
+// Los items de cada paquete vienen de la web del cliente con el mismo
+// patrón "1p/p" cuando aplica.
+const PAQUETES_COMIDA: PaqueteEvento[] = [
+  {
+    id: 'premium',
+    nombre: 'Hispaniola Premium Package',
+    nombreCorto: 'Premium',
+    precio: 'US$ 1,188.00',
+    precioBase: 1188,
+    incluyeHasta: 12,
+    porPersonaExtra: 99,
+    capacidad: '1-12 personas',
+    meta: '4 horas a bordo',
+    foto: 'paquete-premium',
+    fotoAlt: 'Hispaniola Premium Package — langosta, brochetas y fries en plato blanco',
+    items: [
+      { titulo: 'Chicken Skewer', texto: '1p/p' },
+      { titulo: 'Beef Skewer', texto: '1p/p' },
+      { titulo: 'Shrimp Skewer', texto: '1p/p' },
+      { titulo: 'Shrimp Tempura', texto: '1 p/p' },
+      { titulo: 'Fish Sticks', texto: '' },
+      { titulo: 'French Fries', texto: '' },
+      { titulo: 'Lobster', texto: '' },
+    ],
+    extraPrecio: 'US$ 99.00 por persona extra',
+    destacado: 'premium',
+  },
+  {
+    id: 'package-i',
+    nombre: 'Package #I',
+    nombreCorto: '#I',
+    precio: 'US$ 660.00',
+    precioBase: 660,
+    incluyeHasta: 12,
+    porPersonaExtra: 55,
+    capacidad: '1-12 personas',
+    meta: '3 horas a bordo · 2 paradas',
+    foto: 'paquete-i',
+    fotoAlt: 'Package #I del party boat',
+    items: [{ titulo: 'Hot Dog', texto: '1p/p' }],
+    // Las "Vegetarian Substitutions" del cliente son reemplazos, no items
+    // extra — el plato de cada comensal es O el hot dog O el vegetariano.
+    // Por ahora el form los lleva como items; si quieres separarlos, dime
+    // y abro un sub-campo.
+    extraPrecio: 'US$ 55.00 por persona extra',
+  },
+  {
+    id: 'package-ii',
+    nombre: 'Package #II',
+    nombreCorto: '#II',
+    precio: 'US$ 780.00',
+    precioBase: 780,
+    incluyeHasta: 12,
+    porPersonaExtra: 65,
+    capacidad: '1-12 personas',
+    meta: '3 horas a bordo · 2 paradas',
+    foto: 'paquete-ii',
+    fotoAlt: 'Package #II del party boat',
+    items: [
+      { titulo: 'Hot Dog', texto: '1p/p' },
+      { titulo: 'Chicken Skewer', texto: '1p/p' },
+      { titulo: 'Beef Skewer', texto: '1p/p' },
+      { titulo: 'French Fries', texto: '' },
+    ],
+    extraPrecio: 'US$ 65.00 por persona extra',
+  },
+  {
+    id: 'package-iii',
+    nombre: 'Package #III',
+    nombreCorto: '#III',
+    precio: 'US$ 900.00',
+    precioBase: 900,
+    incluyeHasta: 12,
+    porPersonaExtra: 75,
+    capacidad: '1-12 personas',
+    meta: '3 horas a bordo · 2 paradas',
+    foto: 'paquete-iii',
+    fotoAlt: 'Package #III del party boat',
+    items: [
+      { titulo: 'Chicken Skewer', texto: '1p/p' },
+      { titulo: 'Beef Skewer', texto: '1p/p' },
+      { titulo: 'Shrimp Skewer', texto: '1p/p' },
+      { titulo: 'Shrimp Tempura', texto: '1 p/p' },
+      { titulo: 'Fish Sticks', texto: '' },
+      { titulo: 'French Fries', texto: '' },
+    ],
+    extraPrecio: 'US$ 75.00 por persona extra',
+  },
+]
+
+/** Nota al pie del bloque de paquetes — verbatim del original, y también
+ *  compartida: los descuentos, el aviso de langosta y la regla de las
+ *  sustituciones vegetarianas son del tarifario, no de la ocasión. */
+const NOTA_PAQUETES =
+  '*"Starting At Rates" con los descuentos aplicables: hasta 5% cliente recurrente · 5% reserva con 30+ días · 5% pago en efectivo. La langosta puede no estar disponible de marzo a junio (se reemplaza por langostino salvaje). Las opciones vegetarianas aplican SOLO a su paquete y no se pueden intercambiar con otros.'
 
 // ────────────────────────────────────────────────────────────────────
 // 1) PARTY BOAT — /events-party-boat-puntacana.php
@@ -261,105 +385,19 @@ const PARTY_BOAT: FichaEvento = {
     { titulo: 'Fruit Skewers', texto: 'Brochetas de fruta fresca (1p/p).' },
     { titulo: 'Mini Turkey & Cheese Croissant', texto: 'Aperitivo de pavo y queso (1p/p).' },
   ],
-  // 4 paquetes verbatim de la sección "All Packages" de la web del
-  // cliente. SOLO party boat los tiene — bodas y empresas cotizan a
-  // medida, no tienen paquetes públicos. Los items de cada paquete
-  // vienen de la web del cliente con el mismo patrón "1p/p" cuando
-  // aplica. NOTA al pie: avisos de langosta y de opciones
-  // vegetarianas (verbatim del original).
+  // Los 4 paquetes de la sección "All Packages" de la web del cliente —
+  // el array compartido con bodas (ver PAQUETES_COMIDA arriba: las dos
+  // landings del cliente publican los mismos 4 a los mismos precios).
+  // Lo propio de esta landing es el titulo y el intro.
   paquetes: {
     titulo: 'Paquetes de comida',
-    intro:
-      'El party boat se cotiza con uno de estos 4 paquetes de comida. Cada uno incluye todo lo de "Qué incluye" arriba; lo que cambia es el menú, la capacidad y la duración.',
-    items: [
-      {
-        id: 'premium',
-        nombre: 'Hispaniola Premium Package',
-        nombreCorto: 'Premium',
-        precio: 'US$ 1,188.00',
-    precioBase: 1188,
-    incluyeHasta: 12,
-    porPersonaExtra: 99,
-        capacidad: '1-12 personas',
-        meta: '4 horas a bordo',
-        foto: 'paquete-premium',
-        fotoAlt: 'Hispaniola Premium Package — langosta, brochetas y fries en plato blanco',
-        items: [
-          { titulo: 'Chicken Skewer', texto: '1p/p' },
-          { titulo: 'Beef Skewer', texto: '1p/p' },
-          { titulo: 'Shrimp Skewer', texto: '1p/p' },
-          { titulo: 'Shrimp Tempura', texto: '1 p/p' },
-          { titulo: 'Fish Sticks', texto: '' },
-          { titulo: 'French Fries', texto: '' },
-          { titulo: 'Lobster', texto: '' },
-        ],
-        extraPrecio: 'US$ 99.00 por persona extra',
-        destacado: 'premium',
-      },
-      {
-        id: 'package-i',
-        nombre: 'Package #I',
-        nombreCorto: '#I',
-        precio: 'US$ 660.00',
-    precioBase: 660,
-    incluyeHasta: 12,
-    porPersonaExtra: 55,
-        capacidad: '1-12 personas',
-        meta: '3 horas a bordo · 2 paradas',
-        foto: 'paquete-i',
-        fotoAlt: 'Package #I del party boat',
-        items: [{ titulo: 'Hot Dog', texto: '1p/p' }],
-        // Las "Vegetarian Substitutions" del cliente son reemplazos,
-        // no items extra — el plato de cada comensal es O el hot dog
-        // O el vegetariano. Por ahora el form los lleva como items;
-        // si quieres separarlos, dime y abro un sub-campo.
-        extraPrecio: 'US$ 55.00 por persona extra',
-      },
-      {
-        id: 'package-ii',
-        nombre: 'Package #II',
-        nombreCorto: '#II',
-        precio: 'US$ 780.00',
-    precioBase: 780,
-    incluyeHasta: 12,
-    porPersonaExtra: 65,
-        capacidad: '1-12 personas',
-        meta: '3 horas a bordo · 2 paradas',
-        foto: 'paquete-ii',
-        fotoAlt: 'Package #II del party boat',
-        items: [
-          { titulo: 'Hot Dog', texto: '1p/p' },
-          { titulo: 'Chicken Skewer', texto: '1p/p' },
-          { titulo: 'Beef Skewer', texto: '1p/p' },
-          { titulo: 'French Fries', texto: '' },
-        ],
-        extraPrecio: 'US$ 65.00 por persona extra',
-      },
-      {
-        id: 'package-iii',
-        nombre: 'Package #III',
-        nombreCorto: '#III',
-        precio: 'US$ 900.00',
-    precioBase: 900,
-    incluyeHasta: 12,
-    porPersonaExtra: 75,
-        capacidad: '1-12 personas',
-        meta: '3 horas a bordo · 2 paradas',
-        foto: 'paquete-iii',
-        fotoAlt: 'Package #III del party boat',
-        items: [
-          { titulo: 'Chicken Skewer', texto: '1p/p' },
-          { titulo: 'Beef Skewer', texto: '1p/p' },
-          { titulo: 'Shrimp Skewer', texto: '1p/p' },
-          { titulo: 'Shrimp Tempura', texto: '1 p/p' },
-          { titulo: 'Fish Sticks', texto: '' },
-          { titulo: 'French Fries', texto: '' },
-        ],
-        extraPrecio: 'US$ 75.00 por persona extra',
-      },
-    ],
-    nota:
-      '*"Starting At Rates" con los descuentos aplicables: hasta 5% cliente recurrente · 5% reserva con 30+ días · 5% pago en efectivo. La langosta puede no estar disponible de marzo a junio (se reemplaza por langostino salvaje). Las opciones vegetarianas aplican SOLO a su paquete y no se pueden intercambiar con otros.',
+    // El intro dice para QUÉ son en esta ocasión; lo que tienen en común y
+    // en qué se diferencian lo dice la línea de instrucción del propio
+    // bloque (paquetes-evento.tsx), que es la misma para las dos landings.
+    // Antes se decía dos veces seguidas.
+    intro: 'El party boat se reserva con uno de estos 4 paquetes de comida.',
+    items: PAQUETES_COMIDA,
+    nota: NOTA_PAQUETES,
   },
   // Foto de portada (la 1ª del mosaico). Sin quote sobre la foto: el
   // party boat no tiene un review de 5★ "famoso" que destaque.
@@ -388,6 +426,10 @@ const PARTY_BOAT: FichaEvento = {
   cierreCta: 'Pedir cotización',
   cierreWhatsapp: false,
   ctaPrincipal: 'Pedir cotización',
+  cotizacionPlegada: {
+    titulo: '¿Tu evento no encaja en un paquete?',
+    sub: 'Bodas, grupos grandes o menú a medida — te cotizamos gratis en 24 h.',
+  },
 }
 
 // ────────────────────────────────────────────────────────────────────
@@ -470,7 +512,28 @@ const BODAS: FichaEvento = {
     { titulo: 'Fotos', texto: 'De todo el evento, subidas a nuestro Facebook — gratis.' },
     { titulo: 'Comida', texto: 'Recién hecha en nuestra cocina flotante — menú a medida.' },
     { titulo: 'Coordinadora', texto: 'Una persona vuestra de principio a fin.' },
+    // 8º ítem, y es EL dato que separa bodas de party boat: las dos
+    // ocasiones comparten los 4 paquetes y los mismos incluidos comunes,
+    // y bodas suma el brindis (TARIFARIO-WEB-ORIGINAL.md §3: «+ Champagne
+    // toast solo en bodas»). Va aquí y no dentro de un paquete porque en
+    // la web del cliente entra en TODOS.
+    { titulo: 'Champagne toast', texto: 'Brindis con todos los invitados — solo en bodas.' },
   ],
+  // MISMOS 4 PAQUETES QUE PARTY BOAT, mismo array (PAQUETES_COMIDA):
+  // `weddings.php` publica el tarifario idéntico —mismos precios, mismos
+  // menús, misma base 1-12 + persona extra— y así lo pedía el plan
+  // 03-eventos.md. Con esto la landing de bodas gana lo mismo que ganó
+  // party boat: el bloque de paquetes en la columna izquierda y la
+  // reserva online (calculadora) encima del formulario, sin tocar
+  // pages/evento.tsx — las dos piezas se pintan solas cuando el evento
+  // tiene `paquetes`.
+  paquetes: {
+    titulo: 'Paquetes de comida',
+    intro:
+      'La comida de la boda sale de estos 4 paquetes — el mismo tarifario que el resto de eventos a bordo, con el brindis de champagne incluido.',
+    items: PAQUETES_COMIDA,
+    nota: NOTA_PAQUETES,
+  },
   // La única foto de boda real del repo: la novia a bordo con su
   // grupo. ES LA PORTADA — la 1ª del mosaico. Las 12 siguientes son la
   // galería del cliente.
@@ -518,6 +581,13 @@ const BODAS: FichaEvento = {
   cierreCta: 'Pedir cotización de boda',
   cierreWhatsapp: true,
   ctaPrincipal: 'Pedir cotización de boda',
+  // En party boat lo que se cotiza es «lo que no cabe en un paquete»; en
+  // una boda, lo que hay ALREDEDOR de la comida (ceremonia, montaje,
+  // coordinación), que es justo lo que ningún paquete cierra.
+  cotizacionPlegada: {
+    titulo: '¿Vuestra boda necesita más que un paquete?',
+    sub: 'Ceremonia a bordo, decoración o menú a medida — os cotizamos gratis en 24 h.',
+  },
 }
 
 // ────────────────────────────────────────────────────────────────────
@@ -538,6 +608,13 @@ const BODAS: FichaEvento = {
 // karayapuntacana.com (un sitio externo, no verificado). El usuario
 // corporativo que quiera el snorkel activity ya está en la landing de
 // party boat; el segundo link se omite por no tener URL aprobada.
+//
+// ⚠️ SIN `paquetes` A PROPÓSITO (Samuel, 2026-07-28: «en MICE sí deja el
+// formulario como está»). Party boat y bodas ganan reserva online porque
+// tienen tarifario público de precio cerrado; un incentivo de 300 pax en
+// convoy multi-barco no lo tiene y no lo puede tener. Sin `paquetes`, la
+// página no pinta el bloque de paquetes ni la calculadora, y el formulario
+// se queda desplegado —es el widget entero— exactamente como hasta ahora.
 
 const EMPRESAS: FichaEvento = {
   slug: 'empresas',

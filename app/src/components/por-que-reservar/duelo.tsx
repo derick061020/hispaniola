@@ -84,6 +84,7 @@ export function Duelo() {
                   aria-hidden="true"
                 />
                 <span className="font-display text-lg font-semibold leading-snug text-navy">
+                  <span className="sr-only">Con nosotros: </span>
                   {f.nosotros}
                 </span>
               </p>
@@ -100,7 +101,10 @@ export function Duelo() {
               ) : null}
               <p className="flex items-start gap-2">
                 <X className="mt-1 size-4 shrink-0 text-linea-fuerte" aria-hidden="true" />
-                <span className="text-lg leading-snug text-navy-soft">{f.otros}</span>
+                <span className="text-lg leading-snug text-navy-soft">
+                  <span className="sr-only">Otros tours: </span>
+                  {f.otros}
+                </span>
               </p>
             </div>
           </li>

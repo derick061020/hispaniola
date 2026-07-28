@@ -24,7 +24,26 @@ import * as Tooltip from '@/components/alignui/tooltip'
 // La información que explica NO es decorativa: dice quién paga y quién no. Si
 // en móvil no se pudiera abrir, una familia descubriría el precio real en el
 // paso de pago — justo el patrón que este proyecto evita.
-export function PistaInfo({ texto, etiqueta }: { texto: string; etiqueta: string }) {
+// `sobreOscuro` (2026-07-28) — POR QUÉ HACE FALTA UNA PROP Y NO BASTA CON LOS
+// TOKENS. El widget en modo premium se oscurece redefiniendo variables de
+// color dentro de `.widget-premium`, y todo lo que vive DENTRO de ese ámbito
+// se entera solo. El contenido de este tooltip NO vive dentro: Radix lo
+// PORTALIZA al final del <body>, fuera del ámbito, así que se quedaba en su
+// variante clara — un globo blanco saltando sobre un widget negro, justo en
+// los tramos de edad (niños y bebés), que es donde Samuel lo vio.
+//
+// La alternativa era portalizar dentro del widget, y no vale: el widget tiene
+// scroll propio y `overflow`, así que el globo quedaría recortado por el borde
+// de la caja. Se pasa la piel, que es un booleano.
+export function PistaInfo({
+  texto,
+  etiqueta,
+  sobreOscuro = false,
+}: {
+  texto: string
+  etiqueta: string
+  sobreOscuro?: boolean
+}) {
   const [hover, setHover] = useState(false)
   const [fijado, setFijado] = useState(false)
   const disparador = useRef<HTMLButtonElement>(null)
@@ -61,7 +80,7 @@ export function PistaInfo({ texto, etiqueta }: { texto: string; etiqueta: string
         </Tooltip.Trigger>
 
         <Tooltip.Content
-          variant="light"
+          variant={sobreOscuro ? 'dark' : 'light'}
           size="medium"
           side="top"
           collisionPadding={16}

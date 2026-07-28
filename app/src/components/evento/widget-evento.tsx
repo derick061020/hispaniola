@@ -62,8 +62,9 @@ type Props = {
   evento: FichaEvento
   /** [v2 2026-07-28] El formulario arranca PLEGADO, detrás de una línea de
    *  invitación. Lo activa pages/evento.tsx solo cuando la columna tiene
-   *  arriba la reserva online (hoy: party boat). Sin calculadora —bodas,
-   *  empresas— el formulario ES el widget y se pinta abierto, como siempre. */
+   *  arriba la reserva online (party boat y bodas, las dos landings con
+   *  paquetes de precio cerrado). Sin calculadora —MICE— el formulario ES
+   *  el widget y se pinta abierto, como siempre. */
   colapsable?: boolean
 }
 
@@ -486,7 +487,7 @@ export function WidgetEvento({ evento, colapsable = false }: Props) {
     </>
   )
 
-  // ── SIN CALCULADORA (bodas, empresas): el formulario ES el widget ───────
+  // ── SIN CALCULADORA (MICE): el formulario ES el widget ──────────────────
   if (!colapsable) {
     return (
       <Caja>
@@ -496,19 +497,25 @@ export function WidgetEvento({ evento, colapsable = false }: Props) {
     )
   }
 
-  // ── CON CALCULADORA (party boat): teaser en la columna + modal ──────────
+  // ── CON CALCULADORA (party boat, bodas): teaser en la columna + modal ───
   // El teaser cabe en 3 líneas a propósito (Samuel, 2026-07-28: «que entre
   // sin que haya que hacer scroll»): junto a la calculadora recortada, la
   // columna entera cabe en una ventana de portátil, así que el visitante ve
   // los DOS caminos —comprar y cotizar— sin mover la página.
+  // El copy del teaser sale del DATO (`cotizacionPlegada`) porque nombra el
+  // caso que sí hay que cotizar, y ese caso cambia con la ocasión: en party
+  // boat es «no cabe en un paquete»; en bodas, la ceremonia y el montaje.
+  // Decirle «Bodas, grupos grandes…» a quien está en la landing de bodas
+  // sería mandarle a donde ya está.
   return (
     <>
       <Caja>
         <p className="font-display text-base font-semibold text-navy">
-          ¿Tu evento no encaja en un paquete?
+          {evento.cotizacionPlegada?.titulo ?? '¿Tu evento no encaja en un paquete?'}
         </p>
         <p className="-mt-2 text-sm text-navy-sub">
-          Bodas, grupos grandes o menú a medida — te cotizamos gratis en 24 h.
+          {evento.cotizacionPlegada?.sub ??
+            'Grupos grandes o menú a medida — te cotizamos gratis en 24 h.'}
         </p>
         {/* `basic` (neutro) a propósito: el coral de esta columna es del CTA
             de reserva, y dos botones coral seguidos serían dos «acción

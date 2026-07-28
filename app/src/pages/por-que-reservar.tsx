@@ -1,9 +1,9 @@
 import { Footer } from '@/components/home/footer'
 import { HeroInterna } from '@/components/internas/hero-interna'
 import { CabeceraPorQueReservar } from '@/components/por-que-reservar/cabecera-por-que-reservar'
-import { LaCuenta } from '@/components/por-que-reservar/la-cuenta'
-import { CaraACara } from '@/components/por-que-reservar/cara-a-cara'
-import { Razones } from '@/components/por-que-reservar/razones'
+import { Recibo } from '@/components/por-que-reservar/recibo'
+import { Duelo } from '@/components/por-que-reservar/duelo'
+import { HojaRazones } from '@/components/por-que-reservar/hoja-razones'
 import { Ubicacion } from '@/components/por-que-reservar/ubicacion'
 import { Cierre } from '@/components/por-que-reservar/cierre'
 import { Meta } from '@/components/seo/meta'
@@ -22,10 +22,19 @@ import { Meta } from '@/components/seo/meta'
 // contenido propio. La URL vieja redirige aquí (App.tsx): estaba enlazada
 // desde el footer y desde la ficha, y se ha compartido por WhatsApp.
 //
-// Orden: hero con pruebas → LA CUENTA (lo que pagarías suelto, la mejor idea
-// del PowerPoint) → CARA A CARA (la tabla) → 19 RAZONES (agrupadas, con foto)
-// → UBICACIÓN → CIERRE. Es una escalera: primero el dinero, después el
-// detalle, y al final el sitio y la despedida.
+// Orden: hero con pruebas → EL RECIBO (lo que pagarías suelto, la mejor idea
+// del PowerPoint) → EL DUELO (foto real contra hueco vacío) → LA HOJA de las
+// 19 razones → UBICACIÓN → CIERRE. Es una escalera: primero el dinero,
+// después el detalle, y al final el sitio y la despedida.
+//
+// OBJETOS, NO CAJAS (2026-07-28, 2ª vuelta). La primera versión del cuerpo
+// eran cuatro secciones con el mismo esqueleto —eyebrow, H2, párrafo, rejilla
+// de cards con ring-1 y bullets de check— y Samuel la rechazó entera:
+// «horrible, genérico e IA slop». Tenía razón: era una plantilla repetida
+// cuatro veces, y encima no se parecía a nada de lo que esta web ya sabe
+// hacer. Los tres bloques centrales se rehicieron con la anatomía de papel
+// que YA existe en el proyecto (.boleto: papel, troquel real, sello, código
+// de barras) — un recibo, un duelo y una hoja, en vez de tres rejillas.
 //
 // ⚠️ NO ES UNA PÁGINA PARA RETENER, y eso decide su diseño. El cliente fue
 // explícito en la reunión del 07-24 (33:30): «no es tampoco para que la gente
@@ -54,9 +63,9 @@ export function PorQueReservarPage() {
       </HeroInterna>
 
       <div className="mx-auto flex max-w-contenido flex-col gap-16 px-5 py-12 sm:px-10 lg:gap-24 lg:py-16">
-        <LaCuenta />
-        <CaraACara />
-        <Razones />
+        <Recibo />
+        <Duelo />
+        <HojaRazones />
         <Ubicacion />
         <Cierre />
       </div>
