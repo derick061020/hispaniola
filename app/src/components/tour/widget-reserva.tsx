@@ -12,19 +12,46 @@ import { useDevFlag } from '@/dev/use-dev-flag'
 import { hoyISO, sumarDias } from '@/lib/fechas'
 import { formatoDinero, QUOTES, type Tour } from '@/data/home'
 import { WHATSAPP_URL, calcularTotalTour, type FichaTour } from '@/data/tours'
+import { ALBUM_UPSELL, totalAddOns, saltoDeTramo } from '@/lib/tarifas'
+import { AddOnsWidget } from '@/components/tour/add-ons-widget'
 
 // «El widget ES la página» (wireframe A2): sticky en desktop, con el precio en
 // el primer viewport — en la web actual ese precio está a 6 pantallas de
 // scroll. Es la superficie de decisión de todo el sitio.
 //
-// ⚠️ El precio ABRE SIEMPRE en Light (`precioLight`), nunca en Premium: la card
-// de la home y este widget prometen «desde US$ 99». Fase B (2026-07-17): el
-// paquete ya se ELIGE aquí (selector Light/Premium) y al pasar a Premium el
-// precio de cabecera y el total del CTA saltan a la tarifa Premium — pero es un
-// opt-in EXPLÍCITO del visitante, con Light por defecto, así que se mantiene el
-// guardarraíl anti bait-and-switch (analisis/revision-wireframes.md §1.1: lo
-// prohibido es ANCLAR en 99 y cobrar 114 sin que el usuario lo pida). El
-// «ahorra hasta 15%» junto al CTA son los descuentos reales (recurrente +
+// ⚠️⚠️ EL WIDGET ABRE EN PREMIUM (US$ 114), NO EN LIGHT. Esto INVIERTE la
+// decisión anterior y NO es un descuido — no lo «corrijas» sin leer esto.
+//
+// Historia, para que la próxima vuelta no deshaga trabajo:
+//  - Hasta 2026-07-27 abría en Light (US$ 99) a propósito. La card del grid, el
+//    ticker del hero, el megamenú y el <meta> de SEO prometen «desde US$ 99», y
+//    arrancar en Premium significa que quien entró por el 99 ve 114 sin haberlo
+//    pedido. Eso es bait-and-switch, y era una de las 7 correcciones P1 de
+//    analisis/revision-wireframes.md §1.1.
+//  - El cliente lo pidió igual y explícitamente (slide 4 del PDF de
+//    correcciones v2: «poner aquí por defecto el premium»), y en la reunión del
+//    07-24 (17:40) dejó claro el porqué: «jugando con ese sesgo de que por 15
+//    dólares más tiene premium».
+//  - Samuel decidió el 2026-07-27 aplicarlo LITERAL, sabiendo la consecuencia, y
+//    que el ancla de US$ 99 NO se toca en el resto del sitio.
+//
+// O sea: el patrón está reabierto A PROPÓSITO. Si hay que cerrarlo, es cambiar
+// el useState de `paquete` a 'light' — pero es decisión de negocio, no limpieza.
+//
+// MECÁNICA DE DOS ESTADOS que pidió el cliente (reunión 07-24, 15:36-17:44):
+//   - Con LIGHT elegido   → Premium se muestra como «+US$ 15» (el salto, no el
+//     total). Ese framing ya existía en el bloque de menú de la columna
+//     izquierda; aquí se replica en el selector, que es lo que pedía Samuel
+//     (15:46: «yo lo hice así en el lado izquierdo… sería ponerlo igual en el
+//     selector derecho»).
+//   - Con PREMIUM elegido → su precio real, US$ 114.
+//
+// El «precio anterior US$ 129» del slide 5 NO se pinta: no está verificado que
+// 129 fuera nunca tarifa de lista real, y un tachado que no existió es
+// publicidad engañosa. Pendiente de que Fernando lo confirme por escrito
+// (TARIFARIO-WEB-ORIGINAL.md §4-B).
+//
+// El «ahorra hasta 15%» junto al CTA son los descuentos reales (recurrente +
 // anticipación + efectivo) mostrados SOBRE el precio de lista, no anclados en
 // él (decisión de precio de Samuel: se ancla en la tarifa que todos pagan).
 //
@@ -165,9 +192,11 @@ export function WidgetReserva({ tour, ficha, variante: varianteProp, onVarianteC
   const [adultos, setAdultos] = useState(2)
   const [ninos, setNinos] = useState(0)
   const [personas, setPersonas] = useState(2)
-  // Fase B: el paquete se elige en el widget. Abre en Light (ancla US$ 99);
-  // Premium es opt-in explícito — ver la nota de bait-and-switch de arriba.
-  const [paquete, setPaquete] = useState<'light' | 'premium'>('light')
+  // [v2 2026-07-27] ABRE EN PREMIUM. Cambio pedido explícitamente por el
+  // cliente (slide 4 del PDF v2: «poner aquí por defecto el premium») y
+  // ratificado por Samuel el 07-27 sabiendo la consecuencia. Ver la nota
+  // larga del encabezado del archivo.
+  const [paquete, setPaquete] = useState<'light' | 'premium'>('premium')
 
   // Lista de deseos + compartir (correcciones v1, planes/02-producto.md
   // slide 4). Estado inicial perezoso: leer localStorage en el render de
@@ -367,7 +396,7 @@ export function WidgetReserva({ tour, ficha, variante: varianteProp, onVarianteC
   //    null, así que el cálculo no suma nada).
   //  - Semi-privado (con Light/Premium): precioLight × personas
   //    (+ upgrade si Premium).
-  const total = calcularTotalTour(
+  const totalTour = calcularTotalTour(
     ficha,
     variante,
     esDual ? totalPersonas : personas,
@@ -376,6 +405,18 @@ export function WidgetReserva({ tour, ficha, variante: varianteProp, onVarianteC
     paquete,
     esDual ? { adultos, ninos } : undefined,
   )
+
+  // [v2 2026-07-27] Add-ons: se suman DESPUÉS del precio del tour y se
+  // muestran como línea aparte en el desglose, nunca fundidos en el precio
+  // base — así el visitante siempre ve qué parte del total es el tour y qué
+  // parte eligió añadir.
+  const addOns = ficha.addOns ?? []
+  const [addOnsElegidos, setAddOnsElegidos] = useState<string[]>(() =>
+    addOns.filter((a) => a.porDefecto && ALBUM_UPSELL.porDefecto).map((a) => a.id),
+  )
+  const paxParaAddOns = esDual ? totalPersonas : personas
+  const importeAddOns = totalAddOns(addOns, addOnsElegidos, paxParaAddOns)
+  const total = totalTour === null ? null : totalTour + importeAddOns
   // Ancla del widget: el "desde" que se ve en la cabecera. Con
   // subVariantes, es el precio del TRAMO ACTIVO de la variante activa
   // (charter: cambia al cambiar de bote o de pax — antes era el tramo
@@ -412,6 +453,9 @@ export function WidgetReserva({ tour, ficha, variante: varianteProp, onVarianteC
         (tr) => tr.desde <= paxActuales && (tr.hasta === null || tr.hasta >= paxActuales),
       ) ?? null
     : null
+  // [v2] ¿La siguiente persona cruza de tramo? Se calcula aquí y se pinta
+  // junto al stepper, ANTES de que el precio salte — ver el aviso más abajo.
+  const salto = subActiva ? saltoDeTramo(subActiva.tabla, paxActuales) : null
   // Lo que se muestra en la cabecera: si hay tramo, su precio unitario
   // (por persona o por grupo, según `tipo`). Si no, el "desde" de la
   // home como fallback. La cabecera SIEMPRE dice la verdad del momento:
@@ -531,11 +575,21 @@ export function WidgetReserva({ tour, ficha, variante: varianteProp, onVarianteC
               className="pointer-events-none absolute inset-y-1 left-1 w-[calc(50%-0.375rem)] rounded-full bg-papel shadow-sm transition-transform duration-200 ease-out motion-reduce:transition-none"
               style={{ transform: paquete === 'premium' ? 'translateX(calc(100% + 0.25rem))' : 'translateX(0)' }}
             />
+            {/* [v2 2026-07-27] MECÁNICA DE DOS ESTADOS (reunión 07-24,
+                15:36-17:44). Premium no muestra siempre lo mismo:
+                  · con Light elegido  → «+US$ 15», el SALTO. Un incremento
+                    pequeño convence mucho mejor que un total grande, y es el
+                    framing que el propio bloque de menú ya usaba en la columna
+                    izquierda. Samuel pidió literalmente replicarlo aquí.
+                  · con Premium elegido → su precio real, US$ 114.
+                Light siempre muestra su precio real: es el ancla del sitio y
+                no se toca. */}
             {[
               { id: 'light' as const, nombre: 'Light', precio: precioBase },
               { id: 'premium' as const, nombre: 'Premium', precio: precioBase + upgrade },
             ].map((p) => {
               const activo = paquete === p.id
+              const muestraSalto = p.id === 'premium' && paquete === 'light' && upgrade > 0
               return (
                 <button
                   key={p.id}
@@ -547,7 +601,9 @@ export function WidgetReserva({ tour, ficha, variante: varianteProp, onVarianteC
                   }`}
                 >
                   {p.nombre}
-                  <span className={`font-normal ${activo ? 'text-navy-soft' : ''}`}>{formatoDinero(p.precio)}</span>
+                  <span className={`font-normal ${activo ? 'text-navy-soft' : ''}`}>
+                    {muestraSalto ? `+${formatoDinero(upgrade)}` : formatoDinero(p.precio)}
+                  </span>
                 </button>
               )
             })}
@@ -795,6 +851,40 @@ export function WidgetReserva({ tour, ficha, variante: varianteProp, onVarianteC
           </>
         )}
       </div>
+
+      {/* [v2 2026-07-27] Aviso de SALTO DE TRAMO. Los tarifarios reales del
+          charter y de Saona funcionan por sustitución: al cruzar un tramo, la
+          reserva deja de pagar «el barco» y pasa a pagar por cabeza, así que
+          UNA persona más puede subir el total cientos de dólares (Forever
+          Teresa 4h: de 18 a 19 personas, +US$ 490; Saona catamarán: de 30 a
+          31, +US$ 1.305). Sin explicación se lee como un fallo del widget y se
+          abandona la reserva. El motivo real lo dio el cliente en la reunión
+          del 07-24 (07:06): a partir de cierto número hay que llevar más
+          tripulación por normativa. */}
+      {salto !== null ? (
+        <p className="rounded-lg border border-linea bg-papel-hueso px-3 py-2 text-xs leading-relaxed text-navy-sub">
+          Con <strong className="text-navy">{paxActuales + 1} personas</strong> cambia la tarifa de
+          este barco: pasa a {formatoDinero(salto.hasta)}. Las normativas de navegación exigen más
+          tripulación a partir de ese grupo.
+        </p>
+      ) : null}
+
+      {/* [v2 2026-07-27] Upsells. Aparecen SOLO con la reserva ya configurada
+          (fecha elegida): mientras el visitante todavía está formando el
+          precio —subiendo el contador, comparando barcos— un extra compite con
+          la decisión principal y engorda un total que aún se está evaluando.
+          Al final, cuando ya decidió ir, US$ 20 sobre una reserva de varios
+          cientos es un sí fácil. Es la posición de «order bump» y es lo que
+          Samuel pidió: «llamativo en su momento, pero no invasivo». */}
+      {addOns.length > 0 && fecha !== null ? (
+        <AddOnsWidget
+          addOns={addOns}
+          personas={paxParaAddOns}
+          elegidos={addOnsElegidos}
+          onCambiar={setAddOnsElegidos}
+          mensajeAlDesmarcar={ALBUM_UPSELL.mensajeAlDesmarcar}
+        />
+      ) : null}
 
       {/* «Ahorra hasta 15%» (decisión de precio, Fase B): el precio mostrado es
           el de LISTA (el que todos pagan); los descuentos —recurrente +
