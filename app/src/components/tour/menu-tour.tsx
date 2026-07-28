@@ -45,9 +45,17 @@ const GRID_PLATOS = 'grid-cols-2 sm:grid-cols-2 lg:grid-cols-3'
 function PlatoCard({ plato, piel = 'claro' }: { plato: PlatoMenu; piel?: 'claro' | 'premium' }) {
   const oscuro = piel === 'premium'
   return (
+    // [v2 2026-07-28, pedido de Samuel: «que lo que esté dorado sea la card como
+    // tal, no el contenedor padre»] En premium, LA CARD es la pieza oscura y
+    // dorada: trae su propio fondo profundo, su luz y su hairline de oro
+    // (`.premium-card`). Antes el color lo ponía el contenedor y estas cards
+    // solo se teñían por dentro, así que el oro no marcaba nada — sobre un
+    // bloque entero en negro, lo oscuro deja de significar «premium».
+    // `ring` solo en la piel clara: `.premium-card` ya dibuja su filo con un
+    // inset, y superponer los dos daba un doble borde a contraluz.
     <figure
-      className={`relative overflow-hidden rounded-card ring-1 ${
-        oscuro ? 'bg-premium-superficie ring-premium-borde' : 'bg-papel ring-linea'
+      className={`relative overflow-hidden rounded-card ${
+        oscuro ? 'premium-card' : 'bg-papel ring-1 ring-linea'
       }`}
     >
       {plato.foto ? (
@@ -147,32 +155,30 @@ function PaqueteMenu({
 }) {
   const oscuro = piel === 'premium'
   return (
-    <div
-      className={`rounded-card-grande p-4 sm:p-5 ${
-        oscuro ? 'bg-premium-fondo' : 'bg-fondo-ficha'
-      }`}
-    >
-      <div
-        className={`mb-4 flex items-baseline justify-between gap-3 border-b pb-3 ${
-          oscuro ? 'border-premium-borde' : 'border-linea'
-        }`}
-      >
-        <h3
-          className={`flex items-center gap-2.5 font-display text-h3 font-semibold ${
-            oscuro ? 'text-premium-texto' : 'text-navy'
-          }`}
-        >
+    // [v2 2026-07-28] El CONTENEDOR ya no cambia de piel: gris claro del sitio
+    // en los dos paquetes. El slab negro que envolvía al Premium se comía la
+    // sección entera —y con 7 platos en rejilla de 3 dejaba un hueco negro
+    // enorme abajo— además de aplanar las cards, que quedaban dentro de algo
+    // del mismo color. Quien viste de premium ahora es cada card.
+    <div className="rounded-card-grande bg-fondo-ficha p-4 sm:p-5">
+      <div className="mb-4 flex items-baseline justify-between gap-3 border-b border-linea pb-3">
+        <h3 className="flex items-center gap-2.5 font-display text-h3 font-semibold text-navy">
           Menú {nombre}
+          {/* Mismo metal que el badge del comparador y el thumb del selector:
+              una sola pieza de oro en todo el sistema. */}
           {badge ? (
-            <span className="rounded-full bg-premium-oro px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide text-premium-fondo">
+            <span className="premium-metal rounded-full px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide text-premium-fondo">
               {badge}
             </span>
           ) : null}
         </h3>
         {precio ? (
           <span
+            // El precio del Premium se queda en oro —oscuro, para que lea sobre
+            // gris claro— porque es el único sitio de la cabecera donde el
+            // acento sigue aportando: marca el «+US$ 15» frente al total Light.
             className={`shrink-0 font-display text-lg font-semibold ${
-              oscuro ? 'text-premium-oro' : 'text-navy'
+              oscuro ? 'text-premium-oro-hondo' : 'text-navy'
             }`}
           >
             {precio}

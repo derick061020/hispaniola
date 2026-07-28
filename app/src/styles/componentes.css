@@ -2946,3 +2946,50 @@
   );
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-premium-oro) 34%, transparent);
 }
+
+/* ── Card premium AUTÓNOMA, sobre fondo claro ──────────────────────────────
+   Samuel, 2026-07-28: «que la caja que explica las cosas sea el mismo estilo
+   que el resto de la web, blanco [...] y la card de premium sea la que está
+   dorada [...] que lo que esté dorado sea la card como tal, no el contenedor
+   padre».
+
+   CAMBIO DE ENFOQUE, y es el correcto: hasta ahora lo premium se aplicaba al
+   CONTENEDOR (la sección entera en negro), con las cards dentro apenas
+   distinguiéndose del fondo. Eso tenía dos problemas: la página se partía en
+   dos mundos —secciones blancas y de golpe un bloque negro a sangre— y, sobre
+   todo, el oro no marcaba NADA, porque cuando todo el bloque es oscuro lo
+   oscuro deja de significar «premium».
+   Ahora el contenedor es blanco como el resto del sitio y el modo oscuro/oro
+   se concentra en LA CARD. El contraste vuelve a ser información: en una
+   página clara, la única pieza oscura es la que quieres que miren.
+
+   `.premium-card-destacada` (la de arriba) NO sirve aquí: da por hecho un
+   panel oscuro detrás, así que sobre blanco se ve como un rectángulo gris sin
+   apoyo. Esta se basta sola — trae su propio fondo profundo y su luz. */
+.premium-card {
+  background:
+    radial-gradient(
+      120% 90% at 10% 0%,
+      color-mix(in srgb, var(--color-premium-oro) 16%, transparent) 0%,
+      transparent 60%
+    ),
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, #fff 6%, var(--color-premium-superficie)) 0%,
+      var(--color-premium-fondo) 100%
+    );
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 8%),
+    inset 0 0 0 1px color-mix(in srgb, var(--color-premium-oro) 38%, transparent),
+    0 14px 36px -16px rgb(0 0 0 / 55%);
+}
+
+/* La píldora del delta, versión para fondo CLARO. El oro de marca (#c9a227)
+   sobre blanco da 2,3:1 de contraste — ilegible en texto pequeño. Por eso el
+   relleno es un lavado de oro y el texto usa --color-premium-oro-hondo, que
+   sobre ese lavado pasa de 5:1. El hairline sigue siendo de oro pleno: ahí no
+   hay texto que leer, solo un filo que ver. */
+.premium-nota-clara {
+  background: color-mix(in srgb, var(--color-premium-oro) 10%, #fff);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-premium-oro) 40%, transparent);
+}

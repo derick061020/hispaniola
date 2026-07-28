@@ -32,25 +32,27 @@ export function ComparadorPremium({ tour, ficha }: { tour: Tour; ficha: FichaTou
   if (!ventajas || ventajas.length === 0 || upgrade === null || precioLight === null) return null
 
   return (
+    // [v2 2026-07-28, pedido de Samuel] La SECCIÓN vuelve al estilo del resto
+    // del sitio: papel, hairline y radio grande, igual que el bloque de menú
+    // que va justo debajo. Antes era un panel negro a sangre y partía la
+    // página en dos mundos. Lo oscuro se concentra ahora en la card Premium,
+    // que es lo que tiene que destacar — ver `.premium-card` en componentes.css.
     <section
       id="ancla-comparador"
-      // [v2 2026-07-28] `premium-panel` en vez de `bg-premium-fondo`: el negro
-      // liso no se lee como material caro, se lee como un hueco. Ver el bloque
-      // «Superficies premium» en componentes.css.
-      className="overflow-hidden rounded-card premium-panel p-6 sm:p-10"
+      className="overflow-hidden rounded-card-grande bg-papel p-6 ring-1 ring-linea sm:p-8"
     >
-      <p className="text-eyebrow font-semibold uppercase tracking-[0.14em] text-premium-oro">
+      <p className="text-eyebrow font-semibold uppercase tracking-[0.14em] text-aqua-dark">
         Light o Premium
       </p>
-      <h2 className="mt-3 font-display text-h3 font-semibold text-premium-texto">
+      <h2 className="mt-3 font-display text-h3 font-semibold text-navy">
         La misma ruta, dos maneras de vivirla
       </h2>
-      <p className="mt-3 max-w-xl text-premium-texto-suave">
+      <p className="mt-3 max-w-xl text-navy-sub">
         Mismo barco, mismo itinerario, mismas paradas. Lo que cambia es lo que te sirven a bordo.
       </p>
 
       {/* La píldora del delta: el argumento entero cabe en una frase. */}
-      <p className="premium-nota mt-5 inline-flex rounded-full px-4 py-1.5 text-sm font-semibold text-premium-oro">
+      <p className="premium-nota-clara mt-5 inline-flex rounded-full px-4 py-1.5 text-sm font-semibold text-premium-oro-hondo">
         Toda la diferencia son {formatoDinero(upgrade)} por persona
       </p>
 
@@ -58,7 +60,7 @@ export function ComparadorPremium({ tour, ficha }: { tour: Tour; ficha: FichaTou
         {/* PREMIUM primero y destacado: es lo que el cliente quiere que domine
             la vista. Que domine la VISTA no es lo mismo que dominar el precio
             — el ancla del sitio sigue siendo el Light. */}
-        <div className="premium-card-destacada rounded-card p-6">
+        <div className="premium-card rounded-card p-6">
           <div className="flex items-baseline justify-between gap-3">
             <h3 className="font-display text-xl font-semibold text-premium-texto">Premium</h3>
             {/* Mismo metal que el thumb del selector: es LA MISMA pieza de oro
@@ -89,15 +91,17 @@ export function ComparadorPremium({ tour, ficha }: { tour: Tour; ficha: FichaTou
             «malo» de la comparación — y además es el precio que ancla todo el
             sitio. Las mismas 4 líneas tachadas bajo «no incluye» dicen lo que
             te pierdes sin llamar mala a la opción barata. */}
-        <div className="premium-card-sobria rounded-card p-6">
+        {/* Light en el gris claro del sitio (bg-fondo-ficha), no en oscuro:
+            sobre una sección blanca, dos cards oscuras no comparan nada. */}
+        <div className="rounded-card border border-linea bg-fondo-ficha p-6">
           <div className="flex items-baseline justify-between gap-3">
-            <h3 className="font-display text-xl font-semibold text-premium-texto">Light</h3>
+            <h3 className="font-display text-xl font-semibold text-navy">Light</h3>
           </div>
-          <p className="mt-1 font-display text-2xl font-semibold text-premium-texto">
+          <p className="mt-1 font-display text-2xl font-semibold text-navy">
             {formatoDinero(precioLight)}
-            <span className="ml-1 text-sm font-normal text-premium-texto-suave">por persona</span>
+            <span className="ml-1 text-sm font-normal text-navy-soft">por persona</span>
           </p>
-          <p className="mt-5 text-[11px] font-semibold uppercase tracking-wide text-premium-texto-suave">
+          <p className="mt-5 text-[11px] font-semibold uppercase tracking-wide text-navy-soft">
             No incluye
           </p>
           <ul className="mt-3 flex flex-col gap-3">
@@ -108,7 +112,7 @@ export function ComparadorPremium({ tour, ficha }: { tour: Tour; ficha: FichaTou
                 // ocupan dos líneas y el resultado parecía un error de la página, no
                 // una lista de exclusiones. La cabecera «No incluye» y la ✕ de cada
                 // fila ya dicen exactamente lo mismo, y lo dicen limpio.
-                className="flex items-start gap-2.5 text-sm text-premium-texto-suave"
+                className="flex items-start gap-2.5 text-sm text-navy-sub"
               >
                 <X className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
                 {v}
