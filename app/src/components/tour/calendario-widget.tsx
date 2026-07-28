@@ -144,9 +144,17 @@ function diaSemanaLargo(iso: string): string {
 export function CalendarioWidget({
   fecha,
   onSeleccionar,
+  hora = null,
 }: {
   fecha: string | null
   onSeleccionar: (iso: string) => void
+  /** [v2 2026-07-28] Hora de salida elegida, para mostrarla junto a la fecha
+   *  (pedido de Samuel: «que quede súper claro fecha y hora que se está
+   *  escogiendo»). Al haber pasado el horario a píldoras de una línea, el
+   *  campo de fecha es el único sitio donde las dos decisiones se leen
+   *  juntas — y son las dos que definen la reserva.
+   *  `null` = todavía no hay horario (o el tour no publica ninguno). */
+  hora?: string | null
 }) {
   const [abierto, setAbierto] = useState(false)
   const wrapRef = useRef<HTMLDivElement>(null)
@@ -193,14 +201,30 @@ export function CalendarioWidget({
       <button
         type="button"
         onClick={() => setAbierto((a) => !a)}
-        aria-label="Fecha del tour"
+        // El nombre accesible incluye la hora: quien navega con lector de
+        // pantalla tiene que oír la misma información que se ve.
+        aria-label={
+          fecha && hora
+            ? `Fecha y hora del tour: ${formatoFechaCorta(fecha)}, salida ${hora}`
+            : 'Fecha del tour'
+        }
         aria-expanded={abierto}
         className={`flex h-10 w-full items-center gap-2 rounded-10 border bg-bg-white-0 px-3 text-left text-paragraph-sm text-text-strong-950 transition ${
           fecha ? 'border-stroke-soft-200' : 'border-aqua/40 ring-1 ring-aqua/20'
         }`}
       >
         <CalendarDays className="size-5 shrink-0 text-aqua-dark" aria-hidden="true" />
-        <span className={fecha ? '' : 'text-text-sub-600'}>{fecha ? formatoFechaCorta(fecha) : 'Elige una fecha'}</span>
+        <span className={fecha ? '' : 'text-text-sub-600'}>
+          {fecha ? formatoFechaCorta(fecha) : 'Elige una fecha'}
+          {fecha && hora ? (
+            <>
+              <span className="mx-1.5 text-navy-soft/50" aria-hidden="true">
+                &middot;
+              </span>
+              <span className="font-semibold">{hora}</span>
+            </>
+          ) : null}
+        </span>
         <ChevronDown
           className={`ml-auto size-4 shrink-0 text-text-sub-600 transition-transform ${abierto ? 'rotate-180' : ''}`}
           aria-hidden="true"

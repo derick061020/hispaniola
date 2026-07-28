@@ -510,6 +510,14 @@ export function WidgetReserva({
         (tr) => tr.desde <= paxActuales && (tr.hasta === null || tr.hasta >= paxActuales),
       ) ?? null
     : null
+  // [v2 2026-07-28] Los horarios del bote activo se calculan AQUÍ, en el
+  // cuerpo, y no dentro del bloque de horario: el campo de fecha también los
+  // necesita para mostrar la hora elegida junto al día. Dos lecturas del mismo
+  // dato en sitios distintos se desincronizan; una sola no.
+  const horariosActivos =
+    subActiva?.horarios && subActiva.horarios.length > 0 ? subActiva.horarios : ficha.horarios
+  const horaElegida = horariosActivos[horario]?.hora ?? null
+
   // [v2] ¿La siguiente persona cruza de tramo? Se calcula aquí y se pinta
   // junto al stepper, ANTES de que el precio salte — ver el aviso más abajo.
   const salto = subActiva ? saltoDeTramo(subActiva.tabla, paxActuales) : null
@@ -700,7 +708,7 @@ export function WidgetReserva({
         </div>
       ) : null}
 
-      <CalendarioWidget fecha={fecha} onSeleccionar={setFecha} />
+      <CalendarioWidget fecha={fecha} onSeleccionar={setFecha} hora={horaElegida} />
 
       {/* Horario: aparece SOLO tras elegir fecha (2ª vuelta 2026-07-17, pedido
           de Samuel — el flujo tiene que ser obvio: "qué tocar primero y
@@ -725,9 +733,6 @@ export function WidgetReserva({
         // si no, los globales de la ficha. Esto evita que se muestren
         // horarios de OTRO bote cuando el usuario cambia de Maite a
         // GrandMa.
-        const subActiva = ficha.subVariantes?.find((s) => s.id === variante)
-        const horariosActivos =
-          subActiva?.horarios && subActiva.horarios.length > 0 ? subActiva.horarios : ficha.horarios
         return (
           // [v2 2026-07-28] HORARIO REDISEÑADO (pedido de Samuel: «dejar solo
           // el texto de salida… pero no me convence cómo se escoge»).
@@ -1171,7 +1176,12 @@ export function WidgetReserva({
           son el mismo dato de credibilidad, así que leerlos juntos incluso
           funciona mejor que separados por la cita. */}
       <figure className="rounded-card bg-papel-hueso p-3">
-        <figcaption className="flex items-baseline justify-between gap-2 text-xs font-medium text-menta-texto">
+        {/* items-CENTER, no items-baseline: el lado izquierdo es a su vez un
+            flex con un SVG dentro, y un contenedor flex expone como línea base
+            la de su primer hijo — el icono, que no tiene baseline de texto. El
+            resultado era la firma visiblemente más abajo que el título. Con los
+            dos lados al mismo tamaño de letra, centrar es lo que los alinea. */}
+        <figcaption className="flex items-center justify-between gap-2 text-xs font-medium text-menta-texto">
           <span className="flex min-w-0 items-center gap-1.5">
             <BadgeCheck className="size-3.5 shrink-0" aria-hidden="true" />
             <span className="truncate">Reseña verificada en {resenaWidget.plataforma}</span>
