@@ -47,6 +47,50 @@ const MEGA_ITEM_Y_INICIAL = 6
 const MEGA_ITEM_STAGGER = 0.035
 const MEGA_ITEM_RETRASO = 0.03 // el panel arranca solo una fracción antes que sus ítems
 
+// ── CAMBIO DE TAB CON EL PANEL YA ABIERTO ──────────────────────────────────
+// [v2 2026-07-27, pedido de Samuel] Hasta ahora esto no estaba animado: el
+// panel solo tenía entrada y salida, así que ir de Eventos a Ayuda cambiaba el
+// contenido DE GOLPE (el comentario de MEGA_ITEM_* de arriba lo daba por bueno
+// a propósito, para no entorpecer la navegación). Samuel pidió darle viveza:
+// «que rebote mínimamente, se contraiga un poco y crezca y vuelva a estado
+// normal, como quien toca un resorte», y que el contenido se EMPUJE según de
+// qué lado esté el tab que tocas.
+//
+// Dos animaciones a la vez, ambas cortas:
+//
+// 1. RESORTE del panel — se contrae a MEGA_CAMBIO_ESCALA y vuelve a 1 con un
+//    `back.out` alto, que sobrepasa el 1 y se asienta. Contraer→crecer→asentar
+//    en un solo tween; una timeline de 3 pasos se sentiría lenta y aquí lo que
+//    manda es que no estorbe.
+//
+// 2. EMPUJE direccional del contenido — la dirección sale de la POSICIÓN
+//    RELATIVA de los tabs (ORDEN_TABS), no de un valor fijo: si el tab nuevo
+//    está a la derecha del actual, el contenido viejo sale por la izquierda y
+//    el nuevo entra desde la derecha; si está a la izquierda, al revés. Así el
+//    gesto coincide con lo que el ojo espera al mirar la fila de tabs.
+//
+// Los dos arrancan a la vez (posición 0 de la timeline): son la misma
+// interacción, no una secuencia.
+const MEGA_CAMBIO_ESCALA = 0.97 // cuánto se contrae — apenas, es un guiño
+const MEGA_CAMBIO_DURACION = 0.28 // el empuje
+const MEGA_CAMBIO_EASE = 'power3.out' // sale rápido y frena, sensación de deslizamiento
+const MEGA_CAMBIO_RESORTE_DURACION = 0.36 // el rebote dura algo más que el empuje: remata
+const MEGA_CAMBIO_RESORTE_EASE = 'back.out(3)' // overshoot claro — es el "resorte"
+const MEGA_CAMBIO_DESPLAZAMIENTO = 100 // % del ancho: empuje completo, un desplazamiento parcial se lee como "tembleque", no como empujar
+
+// Orden VISUAL de los tabs, que es el que decide la dirección del empuje.
+// ⚠️ Tiene que coincidir con el orden en que se pintan abajo (y con el del
+// menú móvil): si divergen, el contenido entrará por el lado contrario al que
+// el usuario acaba de tocar y la animación se sentirá "al revés" sin que sea
+// obvio por qué.
+const ORDEN_TABS: MenuId[] = ['nosotros', 'tours', 'eventos', 'sostenibilidad', 'ayuda']
+
+/** +1 = el tab nuevo está a la DERECHA del actual (el contenido entra desde la
+ *  derecha y el viejo sale por la izquierda). −1 = al revés. */
+function direccionEntre(desde: MenuId, hasta: MenuId): 1 | -1 {
+  return ORDEN_TABS.indexOf(hasta) > ORDEN_TABS.indexOf(desde) ? 1 : -1
+}
+
 // Sin color: el color depende de dónde vive el tab (ver las variantes
 // abajo) — 'solida' (Header, fondo blanco sólido) necesita navy; 'flotante'
 // (NavFlotante) necesita blanco o negro según qué haya DETRÁS del panel en
@@ -224,9 +268,100 @@ export function TabsConPaneles({
   // contenido real encogiéndose.
   const [idMostrado, setIdMostrado] = useState<MenuId | null>(null)
 
+  // [v2 2026-07-27] El tab que se está YENDO mientras dura el empuje, con la
+  // dirección ya resuelta. Mientras existe, el panel pinta DOS contenidos: el
+  // entrante en flujo (es quien manda el ancho del panel, que cambia según el
+  // tab) y el saliente en `absolute`, deslizándose fuera. Al terminar el tween
+  // se limpia y vuelve a haber uno solo.
+  const [saliente, setSaliente] = useState<{ id: MenuId; dir: 1 | -1 } | null>(null)
+  const cajaCambioRef = useRef<HTMLDivElement>(null)
+  const entranteRef = useRef<HTMLDivElement>(null)
+  const salienteRef = useRef<HTMLDivElement>(null)
+  // Espejo de `idMostrado` en un ref: el efecto de abajo necesita el valor
+  // ANTERIOR sin volver a dispararse cuando `idMostrado` cambia.
+  const idMostradoRef = useRef<MenuId | null>(null)
+
   useEffect(() => {
-    if (menuAbierto !== null) setIdMostrado(menuAbierto)
+    if (menuAbierto === null) return
+    const anterior = idMostradoRef.current
+    // Solo hay empuje si YA había un panel abierto con otro contenido. Abrir
+    // desde cerrado sigue usando la animación de entrada de siempre.
+    if (anterior !== null && anterior !== menuAbierto) {
+      setSaliente({ id: anterior, dir: direccionEntre(anterior, menuAbierto) })
+    }
+    idMostradoRef.current = menuAbierto
+    setIdMostrado(menuAbierto)
   }, [menuAbierto])
+
+  // Al cerrar del todo se olvida el último tab: si no, reabrir el mismo menú
+  // más tarde intentaría empujar desde un estado que ya no está en pantalla.
+  useEffect(() => {
+    if (!panelMontado) idMostradoRef.current = null
+  }, [panelMontado])
+
+  useLayoutEffect(() => {
+    if (!saliente) return
+    const entrante = entranteRef.current
+    if (!entrante) {
+      setSaliente(null)
+      return
+    }
+
+    // Mismo criterio que el resto del sitio: sin animación, el cambio es
+    // instantáneo. La navegación no depende del movimiento.
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setSaliente(null)
+      return
+    }
+
+    const d = saliente.dir
+    const tl = gsap.timeline({ onComplete: () => setSaliente(null) })
+
+    // El contenido nuevo entra desde el lado del tab que se tocó…
+    tl.fromTo(
+      entrante,
+      { xPercent: d * MEGA_CAMBIO_DESPLAZAMIENTO, opacity: 0 },
+      {
+        xPercent: 0,
+        opacity: 1,
+        duration: MEGA_CAMBIO_DURACION,
+        ease: MEGA_CAMBIO_EASE,
+      },
+      0,
+    )
+    // …y empuja al viejo hacia el lado contrario, a la vez y a la misma
+    // velocidad: si no fueran simultáneos se leería como dos animaciones
+    // seguidas, no como un empujón.
+    if (salienteRef.current) {
+      tl.to(
+        salienteRef.current,
+        {
+          xPercent: -d * MEGA_CAMBIO_DESPLAZAMIENTO,
+          opacity: 0,
+          duration: MEGA_CAMBIO_DURACION,
+          ease: MEGA_CAMBIO_EASE,
+        },
+        0,
+      )
+    }
+    // El resorte del panel entero, encima de todo lo anterior.
+    if (panelRef.current) {
+      tl.fromTo(
+        panelRef.current,
+        { scale: MEGA_CAMBIO_ESCALA },
+        {
+          scale: 1,
+          duration: MEGA_CAMBIO_RESORTE_DURACION,
+          ease: MEGA_CAMBIO_RESORTE_EASE,
+        },
+        0,
+      )
+    }
+
+    return () => {
+      tl.kill()
+    }
+  }, [saliente])
 
   useEffect(() => {
     if (abierto) setPanelMontado(true)
@@ -285,18 +420,45 @@ export function TabsConPaneles({
   // Un solo slot de panel — el CONTENIDO sale de `idMostrado` (no
   // `menuAbierto` directo, ver el comentario arriba), la POSICIÓN no cambia
   // (ver el comentario "CENTRADO AL GRUPO" más arriba).
-  const panel =
-    idMostrado === 'tours' ? (
+  // [v2 2026-07-27] Extraído a función porque durante el empuje hay que pintar
+  // DOS contenidos a la vez (el que entra y el que sale).
+  const contenidoDe = (id: MenuId | null) =>
+    id === 'tours' ? (
       <MegaTours />
-    ) : idMostrado === 'eventos' ? (
+    ) : id === 'eventos' ? (
       <MegaEventos />
-    ) : idMostrado === 'nosotros' ? (
+    ) : id === 'nosotros' ? (
       <DropdownNosotros />
-    ) : idMostrado === 'sostenibilidad' ? (
+    ) : id === 'sostenibilidad' ? (
       <DropdownSostenibilidad />
-    ) : idMostrado === 'ayuda' ? (
+    ) : id === 'ayuda' ? (
       <DropdownAyuda />
     ) : null
+
+  const panel = (
+    // overflow-hidden: durante el empuje el contenido saliente se va FUERA de
+    // la caja, y sin recorte se vería deslizarse por encima del hero. El radio
+    // acompaña al del panel para que el recorte no cuadre las esquinas.
+    <div ref={cajaCambioRef} className="relative overflow-hidden rounded-card">
+      {/* El SALIENTE va en `absolute` a propósito: así no cuenta para el
+          tamaño de la caja y es el entrante quien manda el ancho del panel
+          (que cambia entre tabs — Tours es mucho más ancho que
+          Sostenibilidad). Si contara, el panel se quedaría con el ancho del
+          más grande de los dos durante toda la transición y daría un salto al
+          terminar. `w-max` para que conserve SU ancho natural mientras sale,
+          no el del entrante. */}
+      {saliente ? (
+        <div
+          ref={salienteRef}
+          aria-hidden="true"
+          className="pointer-events-none absolute left-0 top-0 w-max"
+        >
+          {contenidoDe(saliente.id)}
+        </div>
+      ) : null}
+      <div ref={entranteRef}>{contenidoDe(idMostrado)}</div>
+    </div>
+  )
 
   return (
     <div className="relative flex items-center gap-1">
