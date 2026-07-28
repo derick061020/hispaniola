@@ -55,10 +55,14 @@ import { useDevFlag } from '@/dev/use-dev-flag' // [dev-mode]
 // mismo `text-sm` single-line). `motion-safe:` apaga la transición con
 // prefers-reduced-motion.
 export function AnclasFicha({ tour }: { tour: Tour }) {
+  // [v2 2026-07-27] «Menú» sube al primer puesto para seguir el orden nuevo de
+  // la página (pages/tour.tsx: el menú se movió por encima del itinerario,
+  // slide 11). Este array TIENE que ir en el mismo orden que las secciones o
+  // el resaltado de la pestaña activa al hacer scroll se desincroniza.
   const anclas = [
+    ...(tour.booking === 'completo' ? [{ id: 'ancla-menu', label: 'Menú' }] : []),
     { id: 'ancla-itinerario', label: 'Itinerario' },
     { id: 'ancla-incluye', label: 'Incluye' },
-    ...(tour.booking === 'completo' ? [{ id: 'ancla-menu', label: 'Menú' }] : []),
     { id: 'ancla-opiniones', label: 'Opiniones' },
     { id: 'ancla-faq', label: 'FAQ' },
   ]

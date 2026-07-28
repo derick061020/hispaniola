@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { ChevronLeft, ChevronRight, Play } from 'lucide-react'
 import { Etiqueta } from '@/components/ui/etiqueta'
-import { IconoInstagram, IconoTikTok } from '@/components/ui/iconos-redes'
 import { VideoLightbox } from '@/components/tour/video-lightbox'
 import { REELS, REELS_HASHTAG, type Reel } from '@/data/home'
 
@@ -53,7 +52,6 @@ import { REELS, REELS_HASHTAG, type Reel } from '@/data/home'
 // qué mirar (a diferencia del ticker del hero, que es ambiente). Un carrusel
 // de video que se mueve solo pelea con el usuario justo cuando quiere leer.
 function CardReel({ reel, onAbrir }: { reel: Reel; onAbrir: (r: Reel) => void }) {
-  const IconoRed = reel.red === 'instagram' ? IconoInstagram : IconoTikTok
 
   // Sin video real, la card no es pulsable: un botón que no hace nada es peor
   // que una imagen. El play se queda igualmente porque describe el FORMATO
@@ -85,9 +83,13 @@ function CardReel({ reel, onAbrir }: { reel: Reel; onAbrir: (r: Reel) => void })
       {/* Degradado de pie para que el título lea sobre cualquier foto. */}
       <div className="reel-card__velo" aria-hidden="true" />
 
-      <span className="reel-card__red" aria-label={reel.red === 'instagram' ? 'Instagram' : 'TikTok'}>
-        <IconoRed className="size-4" />
-      </span>
+      {/* [v2 2026-07-27] FUERA el badge de red social (slide 21: «serán 5
+          videos fijos, no serán dinámicos»). El cliente no pedía un número —ya
+          eran 5— sino que esto DEJE DE PARECER un feed de Instagram/TikTok en
+          vivo. El badge de red comunicaba «feed conectado», que es una promesa
+          que nadie va a cumplir: no hay integración con la API de Instagram ni
+          la habrá (sería backend, bloqueado por Derick/Odoo). El campo `red` de
+          REELS queda sin consumidores. */}
 
       <span className="reel-card__play" aria-hidden="true">
         <Play className="size-5 translate-x-px fill-current" />
@@ -129,11 +131,17 @@ type Props = {
 }
 
 export function ReelsSociales({
-  titulo = 'Míranos en acción',
-  eyebrow = 'Reels · Instagram · TikTok',
+  titulo = 'Así se ve un día con nosotros',
+  // [v2 2026-07-27] El eyebrow deja de nombrar las redes («Reels · Instagram ·
+  // TikTok») por lo mismo que se fue el badge de red: no es un feed conectado,
+  // son videos nuestros. Se reutiliza el tono que la ficha de tour ya usaba y
+  // que era el correcto desde el principio.
+  eyebrow = 'En video',
   lead = 'Un día a bordo se vive mejor en video. Estos somos nosotros — y nuestros clientes disfrutando el Caribe.',
   variante = 'seccion',
-  conHashtag = true,
+  // [v2] El hashtag también sugería feed en vivo → apagado por defecto. La
+  // ficha ya lo pasaba en false; ahora ese es el comportamiento normal.
+  conHashtag = false,
 }: Props) {
   const pista = useRef<HTMLDivElement>(null)
   const [alInicio, setAlInicio] = useState(true)

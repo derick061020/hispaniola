@@ -54,7 +54,11 @@ import { useDevFlag } from '@/dev/use-dev-flag'
 const COPIAS_EN_PISTA = 3
 
 /** En cuántas filas se reparte el muro. */
-const FILAS = 3
+// [v2 2026-07-27] De 3 filas a 2 (slide 3: «Dejar en 2 filas»). Con menos
+// filas cada una lleva MAS cards, asi que la pista es mas larga: las
+// duraciones de .reviews-muro-* en componentes.css se reajustan a la par o el
+// muro se ve lento.
+const FILAS = 2
 
 // Barra de confianza multi-plataforma (correcciones v1, slides 11-12). El
 // agregado grande a la izquierda; las 3 plataformas a la derecha, cada una

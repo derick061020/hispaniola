@@ -8,15 +8,13 @@ import { IncluyeCrucero } from '@/components/home/incluye-crucero'
 import { Reviews } from '@/components/home/reviews'
 import { Contacto } from '@/components/home/contacto'
 import { EquipoTeaser } from '@/components/home/equipo-teaser'
-import { Faq } from '@/components/home/faq'
 import { EventosEspeciales } from '@/components/home/eventos-especiales'
 import { ReelsSociales } from '@/components/ui/reels-sociales'
 import { PruebaSocial } from '@/components/home/prueba-social'
 import { Footer } from '@/components/home/footer'
 import { Meta } from '@/components/seo/meta'
 import { SchemaJsonLd } from '@/components/seo/schema-json-ld'
-import { schemaOrganizacion, schemaFaq } from '@/lib/seo/schema'
-import { FAQ_HOME } from '@/data/home'
+import { schemaOrganizacion } from '@/lib/seo/schema'
 
 // Home completa (F0-F6) — ver app/PLAN.md. v3: el Header vive DENTRO del
 // Hero (app/PLAN-v3.md §4), ya no se monta aquí como hermano.
@@ -73,7 +71,13 @@ export function HomePage() {
         ruta="/"
       />
       <SchemaJsonLd datos={schemaOrganizacion()} />
-      <SchemaJsonLd datos={schemaFaq(FAQ_HOME)} />
+      {/* [v2 2026-07-27] El schema de FAQ SALE de la home junto con la sección
+          (slide 22: «quitar preguntas de la home»). Los datos estructurados
+          tienen que reflejar contenido VISIBLE — publicar un FAQ schema de algo
+          que ya no está en la página va contra las directrices de Google. Se
+          pierde el rich snippet de FAQ de la home; la mitigación es que /faq
+          (que sí lo tiene) gana peso en el menú nuevo, donde sube a la primera
+          posición de «Ayuda». */}
       <Hero />
       <Premios />
       <EcoFriendly />
@@ -81,12 +85,15 @@ export function HomePage() {
       <ToursGrid />
       <WhyDirect />
       <IncluyeCrucero />
-      <Reviews />
+      {/* [v2 2026-07-27] «Eventos especiales» sube por encima de las reseñas
+          (slide 9). No rompe el razonamiento del 2026-07-17 que la bajó aquí
+          —«separa el bloque de confianza de la conversión»—: Reviews sigue
+          pegada a Contacto/cierre, que era el punto. */}
       <EventosEspeciales />
+      <Reviews />
       <ReelsSociales />
       <Contacto />
       <EquipoTeaser />
-      <Faq />
       <Footer />
       {/* Fijo, fuera del flujo (como lo era ModalBienvenida). Vive aquí y no
           en el shell porque es un comportamiento de LA HOME. Ver el aviso de

@@ -41,9 +41,20 @@ export function CabeceraFicha({ tour, ficha }: Props) {
           en una fila de píldoras; suelto sobre la foto se lee como el sello
           que es. Es el ÚNICO eyebrow del sitio que no usa <Etiqueta> (aqua
           claro) — aquí el blanco es el pedido explícito. */}
-      <p className="flex items-center gap-2 text-eyebrow font-semibold uppercase tracking-[0.12em] text-white">
-        <Award className="size-4 shrink-0" aria-hidden="true" />
-        #1 en TripAdvisor · 7 años
+      {/* [v2 2026-07-27] MÁS PESO (slide 8: «destacar mucho más ese mensaje, es
+          un logro que hay que destacar»). Ojo: es 2ª vuelta sobre algo ya
+          entregado — Samuel ya lo subió aquí el 07-22; el cliente pide MÁS de
+          lo que ya se hizo, no algo nuevo.
+          Pasa de texto pequeño suelto a insignia con caja propia: fondo
+          translúcido, borde y el laurel más grande. Sin pasarse — hay
+          diagnóstico documentado de «hero cargado» en el cerebro, así que
+          crece esto y NO se añade nada más a su lado. */}
+      <p className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-3.5 py-1.5 text-sm font-semibold tracking-[0.06em] text-white backdrop-blur-sm">
+        <Award className="size-5 shrink-0" aria-hidden="true" />
+        <span>
+          <span className="font-bold">#1 en TripAdvisor</span>
+          <span className="opacity-80"> · 7 años seguidos</span>
+        </span>
       </p>
 
       {/* --text-h2 (32px), no un tamaño nuevo: en Figma es el mismo text style

@@ -457,8 +457,18 @@
      respira. Van aquí y no en el TSX porque son FUENTE del prototipo
      de Figma (playbook animaciones-a-figma) — el JS no las lee, las
      aplica el CSS. */
-  --reviews-fila-duracion-1: 70s;
-  --reviews-fila-duracion-2: 85s;
+  /* [v2 2026-07-27] El muro baja de 3 filas a 2 (slide 3 del cliente). Con una
+     fila menos, las MISMAS reseñas se reparten entre dos pistas: cada una es
+     ~1,5× más larga y, a la misma duración, el muro se arrastraría. Las dos
+     duraciones que quedan bajan proporcionalmente para conservar la velocidad
+     percibida (70→48s, 85→58s), manteniendo la diferencia entre ellas: si las
+     dos filas duran lo mismo cambian de cara a la vez y el muro se lee como
+     una sola pieza deslizándose en vez de respirar.
+     La 3ª se queda declarada aunque hoy no la consuma nadie: FILAS es una
+     constante de reviews.tsx y volver a 3 tiene que seguir siendo cambiar un
+     número, no reconstruir los tokens. */
+  --reviews-fila-duracion-1: 48s;
+  --reviews-fila-duracion-2: 58s;
   --reviews-fila-duracion-3: 78s;
   --spacing-reviews-card-ancho: 21rem; /* 336px — ancho fijo de cada card
                                           del muro (las filas son marquee:

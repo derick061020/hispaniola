@@ -68,7 +68,17 @@ export function DatosTour({ tour, ficha }: { tour: Tour; ficha: FichaTour }) {
     // Las dos hairlines de fuera (border-y) se conservan: es info de apoyo
     // enmarcada, no una card más — con ring y fondo competiría con el
     // mosaico que tiene justo encima.
-    <ul className={`grid grid-cols-1 gap-y-5 border-y border-linea py-5 sm:grid-cols-2 sm:gap-x-8 ${columnas} lg:gap-x-0`}>
+    // [v2 2026-07-27] FUERA LAS RAYITAS (slide 8: «muchas rayitas separadoras,
+    // eliminarlas o con algún fondo tipo glassmorphism»). El cliente tiene
+    // razón: eran 5 líneas —2 horizontales del border-y + 3 verticales entre
+    // columnas— dentro de una franja de ~60px, y se leía rayado.
+    //
+    // Se sustituyen por un FONDO SÓLIDO SUAVE con radio, no por glass. El
+    // glass tiene historial en esta base de código: el commit 29cebf4 arregló
+    // que un minificador se comía `backdrop-filter` y el bug SOLO se veía en
+    // producción. Meter glass nuevo reabre esa puerta a cambio de nada — el
+    // problema del cliente son las líneas, no la falta de transparencia.
+    <ul className={`grid grid-cols-1 gap-y-5 rounded-2xl bg-papel-hueso px-5 py-5 gap-x-8 sm:grid-cols-2 ${columnas}`}>
       {datos.map((d) => (
         <li
           key={d.etiqueta}
@@ -82,7 +92,11 @@ export function DatosTour({ tour, ficha }: { tour: Tour; ficha: FichaTour }) {
           // que este bloque venía a arreglar. Anclados arriba, la fila de
           // iconos y la de etiquetas quedan a la misma altura pase lo que
           // pase con el largo del valor.
-          className="flex items-start gap-3 lg:border-l lg:border-linea lg:px-5 lg:first:border-l-0 lg:first:pl-0"
+          // [v2] Sin `border-l`: las 3 líneas verticales entre columnas eran la
+          // mitad del «rayado» que el cliente señaló. El fondo común del <ul>
+          // ya dice que los cuatro campos son una misma tabla; la retícula
+          // sigue alineando los iconos sin necesidad de dibujar la separación.
+          className="flex items-start gap-3"
         >
           <span
             aria-hidden="true"

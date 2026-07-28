@@ -33,24 +33,38 @@ import type { FichaTour, PlatoBuffet, PlatoMenu } from '@/data/tours'
 // apoyo — mismo idioma que el widget de Fase B (precio de lista, no anclado en
 // el descuento).
 
-const GRID_PLATOS = 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4'
+// [v2 2026-07-27] DE 4 COLUMNAS A 3 (reunión 07-24, 24:29 — Samuel: «en vez de
+// que sean cuatro columnas que sean tres, para que la comida sea más grande»,
+// y Miguel justo antes: «la comida tiene que llamar la atención»). Con menos
+// columnas cada foto ocupa más ancho, que es exactamente lo que el cliente
+// pedía. Sube también el alto de la foto (h-28 → h-36) para que la card no
+// quede desproporcionada al ensancharse.
+const GRID_PLATOS = 'grid-cols-2 sm:grid-cols-2 lg:grid-cols-3'
 
 function PlatoCard({ plato }: { plato: PlatoMenu }) {
   return (
-    <figure className="overflow-hidden rounded-card bg-papel ring-1 ring-linea">
+    <figure className="relative overflow-hidden rounded-card bg-papel ring-1 ring-linea">
       {plato.foto ? (
         <img
           src={`/fotos/${plato.foto}.webp`}
           alt=""
           aria-hidden="true"
           loading="lazy"
-          className="h-28 w-full object-cover"
+          className="h-36 w-full object-cover"
         />
       ) : (
-        <div className="grid h-28 w-full place-items-center bg-aqua-tint text-aqua-dark">
+        <div className="grid h-36 w-full place-items-center bg-aqua-tint text-aqua-dark">
           <UtensilsCrossed className="size-6" aria-hidden="true" />
         </div>
       )}
+      {/* [v2] El Kid's Meal vive DENTRO del menú (así está en la web original,
+          como una tarjeta más), no en una carta aparte. El chip es lo que lo
+          distingue sin sacarlo de su sitio. */}
+      {plato.soloNinos ? (
+        <span className="absolute left-2 top-2 rounded-full bg-navy px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-white">
+          Niños
+        </span>
+      ) : null}
       <figcaption className="p-3">
         <p className="font-display text-sm font-semibold text-navy">{plato.nombre}</p>
         {plato.desc ? <p className="mt-0.5 text-xs text-navy-soft">{plato.desc}</p> : null}

@@ -23,7 +23,15 @@ export type PreguntaTour = { p: string; r: string }
 
 /** Un plato del menú de un paquete. `foto` solo la tienen los 4 platos
  *  fotografiados en /fotos (plato-*); el resto son de texto (no hay asset). */
-export type PlatoMenu = { nombre: string; desc?: string; foto?: string }
+export type PlatoMenu = {
+  nombre: string
+  desc?: string
+  foto?: string
+  /** [v2] Plato del menú infantil. Se pinta con chip «Niños» para que se
+   *  distinga sin sacarlo del menú — en la web original es una opción más
+   *  dentro del mismo menú, no una carta aparte. */
+  soloNinos?: boolean
+}
 
 /** Un tramo de la tabla de precios de una sub-variante (Saona). Coincide 1:1
  *  con las filas del esquema viejo (Saona web: «6 pax — US$ 1.100 /grupo»,
@@ -316,6 +324,27 @@ export const FICHAS: Record<string, FichaTour> = {
       { nombre: 'Lasaña vegetariana', foto: 'plato-lasagna-vegetariana' },
       { nombre: 'Lasaña con pechuga de pollo', foto: 'plato-lasagna-pollo' },
       { nombre: 'Cóctel de mariscos', foto: 'plato-coctel-mariscos' },
+      // [v2 2026-07-27] KID'S MEAL — la corrección del slide 1 («falta agregar
+      // el menú de niños»), que el cliente puso PRIMERA en su PowerPoint.
+      //
+      // NO es un menú aparte: en la web original es una tarjeta más dentro del
+      // mismo «Hispaniola Menu», al lado de Seafood/Meat/Surf & Turf. Por eso
+      // entra aquí como un plato con `soloNinos` en vez de como un tercer
+      // PaqueteMenu — bastante más barato de lo que el plan estimaba.
+      //
+      // La FOTO es real, descargada de su web (images/food/kids_meal_new.jpg).
+      // Su HTML tiene TODAS las descripciones de plato comentadas, así que la
+      // web no dice qué lleva — la descripción de abajo se LEE DE LA FOTO, y
+      // coincide con lo que Samuel recordaba en la reunión (11:00: «una
+      // hamburguesa con otras cosas»).
+      // ⚠️ Describir comida a partir de una foto es una lectura, no un dato
+      // declarado: la redacción está pendiente de que Fernando la confirme.
+      {
+        nombre: "Kid's Meal",
+        desc: 'Hamburguesa, tiras de pollo, salchicha y papas fritas',
+        foto: 'plato-kids-meal',
+        soloNinos: true,
+      },
     ],
     // v3 (2026-07-17, web del cliente): 18 fotos reales de la excursión
     // familiar (la web tenía `images/excursions/educational/{4,5,7,8,10,11,

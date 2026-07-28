@@ -134,9 +134,19 @@ export function TourPage() {
                 <DescripcionTour parrafos={ficha.descripcionLarga} corta={tour.descripcionCorta} />
               </div>
 
+              {/* [v2 2026-07-27] EL MENÚ SUBE (slide 11: «hay que subirla y
+                  ponerla justo ahí», con la flecha desde el bloque de menús
+                  hasta encima del itinerario).
+                  El cliente tiene razón y merece decírselo: el menú es el
+                  diferenciador que ningún competidor tiene —cocina flotante,
+                  plato a elección— y estaba tercero, después de dos bloques
+                  (itinerario e incluye) que cualquier OTA también enseña.
+                  Subirlo es una mejora de conversión, no un capricho.
+                  ⚠️ El orden de anclas-ficha.tsx tiene que seguir a este o el
+                  nav de anclas se desincroniza. */}
+              {tour.booking === 'completo' ? <MenuTour tour={tour} ficha={ficha} /> : null}
               <Itinerario ficha={ficha} />
               <IncluyeTour ficha={ficha} />
-              {tour.booking === 'completo' ? <MenuTour tour={tour} ficha={ficha} /> : null}
               {/* v3 (2026-07-17, pedido de Samuel): tabla de precios por bote
                   para charter-privado (4 botes con sus tramos de pax).
                   Solo se pinta si la ficha tiene subVariantes. */}
