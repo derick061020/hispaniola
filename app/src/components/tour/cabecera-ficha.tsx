@@ -1,4 +1,4 @@
-import { Award, BadgeCheck, Check, ShieldCheck } from 'lucide-react'
+import { BadgeCheck, Check, ShieldCheck } from 'lucide-react'
 import * as StatusBadge from '@/components/alignui/status-badge'
 import { Estrellas } from '@/components/ui/estrellas'
 import { InsigniaTooltip } from '@/components/ui/insignia-tooltip'
@@ -49,8 +49,25 @@ export function CabeceraFicha({ tour, ficha }: Props) {
           translúcido, borde y el laurel más grande. Sin pasarse — hay
           diagnóstico documentado de «hero cargado» en el cerebro, así que
           crece esto y NO se añade nada más a su lado. */}
-      <p className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-3.5 py-1.5 text-sm font-semibold tracking-[0.06em] text-white backdrop-blur-sm">
-        <Award className="size-5 shrink-0" aria-hidden="true" />
+      {/* [v2 2026-07-28, pedido de Samuel] El laurel genérico de lucide se
+          sustituye por EL SELLO REAL de TripAdvisor (Travellers' Choice «Best
+          of the Best»). Un icono dibujado dice «premio»; el sello dice QUIÉN lo
+          da — el búho y el amarillo se reconocen sin leer, que es justo lo que
+          se le pide a un elemento que vive medio segundo en la vista.
+          Va FLUSH a la izquierda de la píldora (pl-1.5 contra px-3.5): un
+          círculo con el mismo aire a los cuatro lados se lee como icono; pegado
+          al borde se lee como sello. Por eso el padding es asimétrico.
+          `size-10` y no `size-5`: a 20px el sello es una mancha amarilla — se
+          pierden el búho y el laurel, que son lo único que lo identifica. */}
+      <p className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 py-1.5 pl-1.5 pr-4 text-sm font-semibold tracking-[0.06em] text-white backdrop-blur-sm">
+        <img
+          src="/premios/premio-tripadvisor-bob-2023.webp"
+          alt=""
+          aria-hidden="true"
+          width={40}
+          height={40}
+          className="size-10 shrink-0"
+        />
         <span>
           <span className="font-bold">#1 en TripAdvisor</span>
           <span className="opacity-80"> · 7 años seguidos</span>
