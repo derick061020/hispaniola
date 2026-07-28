@@ -159,6 +159,13 @@ export type FichaTour = {
    *  transversales del charter (lista simple, no buffet ni Light/Premium).
    *  Charter es el único caso actual. */
   menuCharter?: MenuCharterTour
+  /** [v2 2026-07-27] Las 4 cosas concretas que se ganan al pasar a Premium.
+   *  Un solo array consumido por el COMPARADOR (comparador-premium.tsx) y por
+   *  la caja de upsell del widget, a propósito: si hubiera dos listas
+   *  acabarían diciendo cosas distintas.
+   *  Son ventajas REALES sacadas de `incluye`/`menuPremium` de esta misma
+   *  ficha — no se inventa ninguna. */
+  ventajasPremium?: string[]
   /** [v2 2026-07-27] Extras opcionales que el widget vende como UPSELL.
    *  Portados del tarifario real (TARIFARIO-WEB-ORIGINAL.md §4-C). El texto
    *  del álbum de fotos cambia por producto a propósito: en charter ya
@@ -259,6 +266,17 @@ export const FICHAS: Record<string, FichaTour> = {
       },
     ],
     tambienTeGusta: ['snorkel-lovers', 'charter-privado'],
+    // [v2 2026-07-27] Las 4 ventajas del comparador (slide 17) y de la caja de
+    // upsell del widget (slide 5). Salen de menuPremium/incluye de esta misma
+    // ficha: langosta y Angus están en los platos Premium, la variedad de 7 vs
+    // 2 es aritmética de los propios arrays, y las fotos incluidas están en la
+    // web original. Nada inventado.
+    ventajasPremium: [
+      'Langosta, Angus certificado y Surf & Turf en el plato',
+      '7 platos a elegir en vez de 2',
+      'Opciones vegetarianas y cóctel de mariscos',
+      'Las fotos del tour, incluidas',
+    ],
     // [v2] Upsells del semi-privado. El álbum es el único que la web original
     // documenta aquí literalmente («the full album via Dropbox for just $20
     // per group»). Aquí SÍ se puede decir «álbum completo»: lo gratis son

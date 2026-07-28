@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Minus, Plus, Users, Baby, Tag, ArrowDown, BadgeCheck, Heart, Share2 } from 'lucide-react'
+import { Minus, Plus, Users, Baby, Tag, ArrowDown, BadgeCheck, Heart, Share2, Check } from 'lucide-react'
 import * as FancyButton from '@/components/alignui/fancy-button'
 import * as CompactButton from '@/components/alignui/compact-button'
 import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
@@ -70,7 +70,18 @@ import { AddOnsWidget } from '@/components/tour/add-ons-widget'
 // FancyButton trae su propio relieve (shadow-fancy-buttons-primary) y los dos
 // lenguajes de sombra a la vez se pelean.
 
-type Props = { tour: Tour; ficha: FichaTour; variante?: string | null; onVarianteChange?: (id: string) => void }
+type Props = {
+  tour: Tour
+  ficha: FichaTour
+  variante?: string | null
+  onVarianteChange?: (id: string) => void
+  /** [v2 2026-07-27] El paquete elegido se SUBE a la página para que la banda
+   *  «estás en la versión Premium» (slide 6), que vive en la columna
+   *  izquierda, pueda reaccionar. Mismo movimiento que ya se hizo con
+   *  `variante` (el bote del charter) el 2026-07-17 y por la misma razón —
+   *  hay precedente, es el patrón de la casa. */
+  onPaqueteChange?: (p: 'light' | 'premium') => void
+}
 
 // Tope del contador de personas de ESTE booking. v3 (2026-07-17, Saona): con
 // subVariantes (Saona: speedboat hasta 25, catamarán hasta 70) el tope
@@ -179,7 +190,13 @@ function leerDeseos(): string[] {
   }
 }
 
-export function WidgetReserva({ tour, ficha, variante: varianteProp, onVarianteChange }: Props) {
+export function WidgetReserva({
+  tour,
+  ficha,
+  variante: varianteProp,
+  onVarianteChange,
+  onPaqueteChange,
+}: Props) {
   const [fecha, setFecha] = useState<string | null>(null)
   const [horario, setHorario] = useState(0)
   // v3 (2026-07-17, Snorkel Lovers): tarifa dual Adulto/Niño. Cuando el tour
@@ -285,6 +302,17 @@ export function WidgetReserva({ tour, ficha, variante: varianteProp, onVarianteC
     if (v !== 'fecha' && v !== 'premium') return
     setFecha(sumarDias(hoyISO(), 1))
     if (v === 'premium') setPaquete('premium')
+  })
+  // [dev-mode] [v2 2026-07-27] ?dev-paquete=light fuerza el paquete a Light.
+  // Hace falta un flag PROPIO porque desde el 07-27 el widget abre en Premium:
+  // el estado Light —con el «+US$ 15» en el selector y la caja de upsell— ya
+  // no se alcanza sin interactuar, así que sin esto no habría forma de
+  // congelarlo para Figma. Avisa a la página con onPaqueteChange para que la
+  // banda «estás en Premium» de la columna izquierda se apague también.
+  useDevFlag('dev-paquete', (v) => {
+    if (v !== 'light' && v !== 'premium') return
+    setPaquete(v)
+    onPaqueteChange?.(v)
   })
   // [dev-mode] v3 (2026-07-17, Saona): el sub-variante picker se cambia a
   // Catamarán para mostrar el frame de la opción con la tabla de tramos
@@ -561,7 +589,20 @@ export function WidgetReserva({ tour, ficha, variante: varianteProp, onVarianteC
         />
       ) : tienePaquetes && precioBase !== null && upgrade !== null ? (
         <div>
-          <div className="relative grid grid-cols-2 gap-1 rounded-full bg-linea p-1">
+          {/* [v2 2026-07-27] EL SELECTOR CAMBIA DE PIEL EN PREMIUM (slide 4:
+              «el Premium que tenga colores como negros, de lujo»).
+              ⚠️ Y SOLO EL SELECTOR. Samuel preguntó al cliente en la reunión
+              del 07-24 si lo oscuro era «solamente el selector o toda la
+              página» y la respuesta acotó el alcance a la columna derecha:
+              «de toda la página, lo de la derecha… [toda] es demasiado»
+              (25:06). Una ficha entera en negro pelearía con el hero de fotos
+              reales — por eso el modo premium vive aquí, en el comparador y en
+              el bloque de menú, y en ningún sitio más. */}
+          <div
+            className={`relative grid grid-cols-2 gap-1 rounded-full p-1 transition-colors duration-200 motion-reduce:transition-none ${
+              paquete === 'premium' ? 'bg-premium-fondo' : 'bg-linea'
+            }`}
+          >
             {/* v3 (2026-07-17, fix Samuel): el thumb estaba MAL
                 posicionado. El w-[calc(50%-0.375rem)] (50% - 6px) sí
                 es correcto (ancho de columna: 100% - 2*4px - 4px =
@@ -572,7 +613,9 @@ export function WidgetReserva({ tour, ficha, variante: varianteProp, onVarianteC
                 width del thumb (= 1 columna), + 4px = el gap. */}
             <span
               aria-hidden="true"
-              className="pointer-events-none absolute inset-y-1 left-1 w-[calc(50%-0.375rem)] rounded-full bg-papel shadow-sm transition-transform duration-200 ease-out motion-reduce:transition-none"
+              className={`pointer-events-none absolute inset-y-1 left-1 w-[calc(50%-0.375rem)] rounded-full shadow-sm transition-transform duration-200 ease-out motion-reduce:transition-none ${
+                paquete === 'premium' ? 'bg-premium-oro' : 'bg-papel'
+              }`}
               style={{ transform: paquete === 'premium' ? 'translateX(calc(100% + 0.25rem))' : 'translateX(0)' }}
             />
             {/* [v2 2026-07-27] MECÁNICA DE DOS ESTADOS (reunión 07-24,
@@ -594,14 +637,31 @@ export function WidgetReserva({ tour, ficha, variante: varianteProp, onVarianteC
                 <button
                   key={p.id}
                   type="button"
-                  onClick={() => setPaquete(p.id)}
+                  onClick={() => {
+                    setPaquete(p.id)
+                    onPaqueteChange?.(p.id)
+                  }}
                   aria-pressed={activo}
+                  // En piel premium, el botón activo va sobre el thumb dorado
+                  // (texto casi negro) y el inactivo sobre el fondo oscuro
+                  // (texto apagado cálido). Sin esto, el navy del tema claro
+                  // quedaba ilegible sobre el oro.
                   className={`relative z-10 flex items-center justify-center gap-1.5 rounded-full px-3 py-2 text-sm font-semibold transition-colors ${
-                    activo ? 'text-navy' : 'text-navy-sub/55 hover:text-navy-sub'
+                    paquete === 'premium'
+                      ? activo
+                        ? 'text-premium-fondo'
+                        : 'text-premium-texto-suave hover:text-premium-texto'
+                      : activo
+                        ? 'text-navy'
+                        : 'text-navy-sub/55 hover:text-navy-sub'
                   }`}
                 >
                   {p.nombre}
-                  <span className={`font-normal ${activo ? 'text-navy-soft' : ''}`}>
+                  <span
+                    className={`font-normal ${
+                      paquete === 'premium' ? '' : activo ? 'text-navy-soft' : ''
+                    }`}
+                  >
                     {muestraSalto ? `+${formatoDinero(upgrade)}` : formatoDinero(p.precio)}
                   </span>
                 </button>
@@ -851,6 +911,45 @@ export function WidgetReserva({ tour, ficha, variante: varianteProp, onVarianteC
           </>
         )}
       </div>
+
+      {/* [v2 2026-07-27] CAJA DE UPSELL A PREMIUM (slide 5: «agregar algo así
+          como un upsell para que el usuario escoja la versión premium»).
+          Miguel insistió en la reunión (17:45): «siempre está el bloque que te
+          viene con premium sumas cuatro cosas por 15 dólares, que tiene que
+          estar destacado».
+          Se pinta SOLO con Light elegido y desaparece al pasar a Premium,
+          donde la sustituye la banda de la columna izquierda — uno aparece
+          cuando el otro se va, nunca los dos. Las 4 ventajas salen del MISMO
+          array que consume el comparador, para que no puedan desincronizarse. */}
+      {tienePaquetes && paquete === 'light' && ficha.ventajasPremium?.length ? (
+        <div className="rounded-card bg-premium-fondo p-4">
+          <p className="text-sm font-semibold text-premium-oro">
+            Con Premium sumas 4 cosas por {formatoDinero(upgrade ?? 0)}
+          </p>
+          <ul className="mt-2.5 flex flex-col gap-1.5">
+            {ficha.ventajasPremium.map((v) => (
+              <li key={v} className="flex items-start gap-2 text-xs text-premium-texto">
+                <Check
+                  className="mt-0.5 size-3.5 shrink-0 text-premium-oro"
+                  strokeWidth={3}
+                  aria-hidden="true"
+                />
+                {v}
+              </li>
+            ))}
+          </ul>
+          <button
+            type="button"
+            onClick={() => {
+              setPaquete('premium')
+              onPaqueteChange?.('premium')
+            }}
+            className="mt-3 w-full rounded-full bg-premium-oro px-4 py-2 text-xs font-bold text-premium-fondo transition hover:brightness-110"
+          >
+            Cambiar a Premium
+          </button>
+        </div>
+      ) : null}
 
       {/* [v2 2026-07-27] Aviso de SALTO DE TRAMO. Los tarifarios reales del
           charter y de Saona funcionan por sustitución: al cruzar un tramo, la

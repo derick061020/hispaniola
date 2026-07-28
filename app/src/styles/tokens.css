@@ -62,6 +62,39 @@
   --color-menta-texto: #0c7a5e; /* precio dentro del panel */
   --color-linea: #dfe6ea; /* bordes hairline */
   --color-linea-fuerte: #c3ced4;
+
+  /* ── MODO PREMIUM (correcciones v2, 2026-07-27) ─────────────────────────
+     La familia oscura/oro con la que se vende el paquete Premium. Sale del
+     pedido del cliente en el slide 4 del PDF v2: «el Premium que tenga
+     colores como negros, como de lujo… debe notarse sobre todo en las fotos
+     del menú, que es donde está la diferencia».
+
+     ⚠️ ES UN MODO DE PRODUCTO, NO UNA PALETA DE MARCA. Vive SOLO donde se
+     vende Premium: el widget de reserva cuando está en Premium, el comparador
+     Light vs Premium y el bloque de menú Premium. No se cuela en el resto del
+     sitio, así que no compite con «B — Charter Premium» ni con la regla del
+     aqua a cuentagotas.
+
+     El ALCANCE lo acotó el propio cliente en la reunión del 07-24. Samuel le
+     preguntó si lo oscuro era «solamente el selector o toda la página» y la
+     respuesta fue la columna derecha: «de toda la página, lo de la derecha…
+     [toda] es demasiado» (25:06). Por eso NO hay tokens de fondo de página
+     premium: una ficha entera en negro pelearía con el hero de fotos reales.
+
+     Para el traspaso a Figma esto es un SET DE VARIABLES APARTE (un modo),
+     no una redefinición de las existentes — que es justo lo que permite
+     mapearlo a un theme del kit sin tocar los tokens base.
+
+     Contraste verificado sobre --color-premium-fondo: el texto (#f4efe4) da
+     ~14:1 y el oro (#c9a227) ~6.4:1, los dos por encima de AA. El oro NO se
+     usa para texto largo, solo para cifras, bordes y acentos cortos. */
+  --color-premium-fondo: #0f1216; /* casi negro, con un punto de azul para que no lea a gris */
+  --color-premium-superficie: #171b21; /* cards y celdas DENTRO del bloque oscuro */
+  --color-premium-borde: rgb(201 162 39 / 22%); /* hairline de oro apagado — separa sin dibujar una reja */
+  --color-premium-texto: #f4efe4; /* blanco cálido; el blanco puro sobre negro vibra */
+  --color-premium-texto-suave: #a9a49a; /* meta y descripciones dentro del bloque */
+  --color-premium-oro: #c9a227; /* el acento: cifras, badges, iconos. Nunca párrafos */
+  --color-premium-oro-suave: rgb(201 162 39 / 12%); /* relleno de chip/badge sobre el fondo oscuro */
   /* v3-F16: estrellas de calificación (insignia-confianza.tsx) — antes vivía
      como amber-300 suelto de Tailwind (sin token) en la fila de rating del
      hero. Mismo valor, ahora tokenizado. */

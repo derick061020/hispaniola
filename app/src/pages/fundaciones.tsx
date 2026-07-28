@@ -24,6 +24,18 @@ const swatches: { nombre: string; token: string; hex: string; textoClaro?: boole
   { nombre: 'Coral', token: 'coral', hex: '#EF5B44', textoClaro: true },
   { nombre: 'Menta', token: 'menta', hex: '#E7F5EF' },
   { nombre: 'Línea', token: 'linea', hex: '#DFE6EA' },
+  // [v2 2026-07-27] MODO PREMIUM — la familia oscura/oro con la que se vende
+  // el paquete Premium (correcciones v2, plan 01 §2). Va aquí porque un token
+  // que no aparece en esta página es un token que nadie sabe que existe, y
+  // porque en el traspaso a Figma este set es un MODO aparte, no una
+  // redefinición de los de arriba.
+  // ⚠️ Su alcance está acotado a propósito: widget en Premium, comparador
+  // Light/Premium y bloque de menú Premium. No es paleta de marca.
+  { nombre: 'Premium fondo', token: 'premium-fondo', hex: '#0F1216', textoClaro: true },
+  { nombre: 'Premium superficie', token: 'premium-superficie', hex: '#171B21', textoClaro: true },
+  { nombre: 'Premium oro', token: 'premium-oro', hex: '#C9A227' },
+  { nombre: 'Premium texto', token: 'premium-texto', hex: '#F4EFE4' },
+  { nombre: 'Premium texto suave', token: 'premium-texto-suave', hex: '#A9A49A' },
 ]
 
 export function FundacionesPage() {

@@ -17,6 +17,8 @@ import { DescripcionTour } from '@/components/tour/descripcion-tour'
 import { DatosTour } from '@/components/tour/datos-tour'
 import { GaleriaMosaico } from '@/components/internas/galeria-mosaico'
 import { ReelsSociales } from '@/components/ui/reels-sociales'
+import { ComparadorPremium } from '@/components/tour/comparador-premium'
+import { BandaPremium } from '@/components/tour/banda-premium'
 import { TambienTeGusta } from '@/components/internas/tambien-te-gusta'
 import { TOURS } from '@/data/home'
 import { FICHAS } from '@/data/tours'
@@ -65,6 +67,11 @@ export function TourPage() {
   // correspondiente en la tabla — coherencia entre el selector y la
   // referencia visual.
   const [variante, setVariante] = useState<string | null>(ficha.subVariantes?.[0]?.id ?? null)
+  // [v2 2026-07-27] Mismo patrón que `variante`, y por la misma razón: la
+  // banda «estás en Premium» (§9) vive en la columna IZQUIERDA y tiene que
+  // reaccionar a un selector que está en la derecha. Arranca en 'premium'
+  // porque el widget abre así (ver el guardarraíl de widget-reserva.tsx).
+  const [paquete, setPaquete] = useState<'light' | 'premium'>('premium')
 
   return (
     // pb-[calc(4rem+env(safe-area-inset-bottom))] (auditoría móvil 2026-07-17):
@@ -129,6 +136,15 @@ export function TourPage() {
                   para el porqué del cambio de sujeto. */}
               <DatosTour tour={tour} ficha={ficha} />
 
+              {/* [v2 2026-07-27] Banda «estás en Premium» (slide 6), en el
+                  hueco exacto donde el cliente puso la flecha: entre la ficha
+                  técnica y la descripción. Solo con el paquete en Premium —
+                  es la contraparte de la caja de upsell del widget, así que
+                  el visitante nunca ve las dos a la vez. */}
+              {paquete === 'premium' && ficha.menuLight.length > 0 ? (
+                <BandaPremium ficha={ficha} />
+              ) : null}
+
               <div className={BLOQUE_FICHA}>
                 <h2 className="font-display text-h3 font-semibold text-navy">{promesa}</h2>
                 <DescripcionTour parrafos={ficha.descripcionLarga} corta={tour.descripcionCorta} />
@@ -144,6 +160,11 @@ export function TourPage() {
                   Subirlo es una mejora de conversión, no un capricho.
                   ⚠️ El orden de anclas-ficha.tsx tiene que seguir a este o el
                   nav de anclas se desincroniza. */}
+              {/* [v2 2026-07-27] El comparador va JUSTO ANTES del menú, que es
+                  donde el cliente puso la flecha (slide 16). Prepara la lectura
+                  del menú en vez de competir con él — que fue lo que motivó
+                  quitar la comparativa anterior, fundida dentro del bloque. */}
+              {tour.booking === 'completo' ? <ComparadorPremium tour={tour} ficha={ficha} /> : null}
               {tour.booking === 'completo' ? <MenuTour tour={tour} ficha={ficha} /> : null}
               <Itinerario ficha={ficha} />
               <IncluyeTour ficha={ficha} />
@@ -194,7 +215,13 @@ export function TourPage() {
                 se apilan header > anclas > widget, y los tres tienen que
                 derivar del mismo token o se desincronizan). */}
             <div className="lg:sticky lg:top-sticky-top">
-              <WidgetReserva tour={tour} ficha={ficha} variante={variante} onVarianteChange={setVariante} />
+              <WidgetReserva
+                tour={tour}
+                ficha={ficha}
+                variante={variante}
+                onVarianteChange={setVariante}
+                onPaqueteChange={setPaquete}
+              />
             </div>
           </div>
         </div>

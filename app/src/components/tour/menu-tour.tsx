@@ -41,9 +41,14 @@ import type { FichaTour, PlatoBuffet, PlatoMenu } from '@/data/tours'
 // quede desproporcionada al ensancharse.
 const GRID_PLATOS = 'grid-cols-2 sm:grid-cols-2 lg:grid-cols-3'
 
-function PlatoCard({ plato }: { plato: PlatoMenu }) {
+function PlatoCard({ plato, piel = 'claro' }: { plato: PlatoMenu; piel?: 'claro' | 'premium' }) {
+  const oscuro = piel === 'premium'
   return (
-    <figure className="relative overflow-hidden rounded-card bg-papel ring-1 ring-linea">
+    <figure
+      className={`relative overflow-hidden rounded-card ring-1 ${
+        oscuro ? 'bg-premium-superficie ring-premium-borde' : 'bg-papel ring-linea'
+      }`}
+    >
       {plato.foto ? (
         <img
           src={`/fotos/${plato.foto}.webp`}
@@ -53,7 +58,15 @@ function PlatoCard({ plato }: { plato: PlatoMenu }) {
           className="h-36 w-full object-cover"
         />
       ) : (
-        <div className="grid h-36 w-full place-items-center bg-aqua-tint text-aqua-dark">
+        // [v2] El fallback también cambia de piel: sobre el bloque oscuro, el
+        // aqua-tint claro se leía como un agujero blanco justo en los platos
+        // estrella del Premium (Surf & Turf y Vegetariano, que siguen sin foto
+        // en alta).
+        <div
+          className={`grid h-36 w-full place-items-center ${
+            oscuro ? 'bg-premium-fondo text-premium-oro' : 'bg-aqua-tint text-aqua-dark'
+          }`}
+        >
           <UtensilsCrossed className="size-6" aria-hidden="true" />
         </div>
       )}
@@ -66,8 +79,18 @@ function PlatoCard({ plato }: { plato: PlatoMenu }) {
         </span>
       ) : null}
       <figcaption className="p-3">
-        <p className="font-display text-sm font-semibold text-navy">{plato.nombre}</p>
-        {plato.desc ? <p className="mt-0.5 text-xs text-navy-soft">{plato.desc}</p> : null}
+        <p
+          className={`font-display text-sm font-semibold ${
+            oscuro ? 'text-premium-texto' : 'text-navy'
+          }`}
+        >
+          {plato.nombre}
+        </p>
+        {plato.desc ? (
+          <p className={`mt-0.5 text-xs ${oscuro ? 'text-premium-texto-suave' : 'text-navy-soft'}`}>
+            {plato.desc}
+          </p>
+        ) : null}
       </figcaption>
     </figure>
   )
@@ -81,24 +104,95 @@ function PlatoCard({ plato }: { plato: PlatoMenu }) {
 // Samuel pidió el 2026-07-17: «quita la comparativa, y deja que cada
 // menú diga su precio (Light = US$ 99, Premium = +US$ 15)» — fija el
 // anti bait-and-switch sin necesitar la tabla comparativa de Fase B.
+/** [v2 2026-07-27] Texto de las celdas fantasma del menú Light — las casillas
+ *  en línea discontinua que enseñan lo que ese paquete NO trae (slide 19).
+ *
+ *  Se DERIVAN de los propios arrays: cuántos platos de más tiene el Premium y
+ *  cuáles son los dos primeros que se pierde. Nada hardcodeado, así que si
+ *  cambian los menús el texto sigue siendo verdad. */
+function fantasmasLight(ficha: FichaTour): string[] {
+  const diferencia = ficha.menuPremium.length - ficha.menuLight.length
+  if (diferencia <= 0) return []
+  const estrellas = ficha.menuPremium
+    .slice(0, 2)
+    .map((p) => p.nombre)
+    .join(', ')
+  const celdas = [`${estrellas} y ${diferencia - 2} platos más, en el Premium`]
+  const hayVeg = ficha.menuPremium.some((p) => /vegetarian/i.test(p.nombre))
+  if (hayVeg) celdas.push('Opciones vegetarianas, en el Premium')
+  return celdas
+}
+
+// [v2 2026-07-27] `piel` decide claro u oscuro (slide 4: «el Premium que tenga
+// colores como negros, como de lujo… debe notarse SOBRE TODO en las fotos del
+// menú, que es donde está la diferencia», y slides 18/19 con las dos maquetas).
+// El bloque Premium va en modo oscuro/oro y el Light se queda claro — el
+// contraste entre los dos ES el mensaje.
 function PaqueteMenu({
   nombre,
   precio,
   platos,
+  piel = 'claro',
+  fantasmas,
+  badge,
 }: {
   nombre: string
   precio?: string
   platos: PlatoMenu[]
+  piel?: 'claro' | 'premium'
+  /** Celdas vacías que enseñan lo que NO trae este paquete. */
+  fantasmas?: string[]
+  badge?: string
 }) {
+  const oscuro = piel === 'premium'
   return (
-    <div className="rounded-card-grande bg-fondo-ficha p-4 sm:p-5">
-      <div className="mb-4 flex items-baseline justify-between gap-3 border-b border-linea pb-3">
-        <h3 className="font-display text-h3 font-semibold text-navy">Menú {nombre}</h3>
-        {precio ? <span className="shrink-0 font-display text-lg font-semibold text-navy">{precio}</span> : null}
+    <div
+      className={`rounded-card-grande p-4 sm:p-5 ${
+        oscuro ? 'bg-premium-fondo' : 'bg-fondo-ficha'
+      }`}
+    >
+      <div
+        className={`mb-4 flex items-baseline justify-between gap-3 border-b pb-3 ${
+          oscuro ? 'border-premium-borde' : 'border-linea'
+        }`}
+      >
+        <h3
+          className={`flex items-center gap-2.5 font-display text-h3 font-semibold ${
+            oscuro ? 'text-premium-texto' : 'text-navy'
+          }`}
+        >
+          Menú {nombre}
+          {badge ? (
+            <span className="rounded-full bg-premium-oro px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide text-premium-fondo">
+              {badge}
+            </span>
+          ) : null}
+        </h3>
+        {precio ? (
+          <span
+            className={`shrink-0 font-display text-lg font-semibold ${
+              oscuro ? 'text-premium-oro' : 'text-navy'
+            }`}
+          >
+            {precio}
+          </span>
+        ) : null}
       </div>
       <div className={`grid gap-3 ${GRID_PLATOS}`}>
         {platos.map((p) => (
-          <PlatoCard key={p.nombre} plato={p} />
+          <PlatoCard key={p.nombre} plato={p} piel={piel} />
+        ))}
+        {/* CELDAS FANTASMA (slide 19). Es la mejor idea de todo el PowerPoint
+            del cliente: en el menú Light, celdas en línea discontinua que
+            dicen lo que te estás perdiendo. Enseña el upsell sin mentir y sin
+            ocultar nada — y se GENERA del propio dato, no se escribe a mano. */}
+        {fantasmas?.map((f) => (
+          <div
+            key={f}
+            className="flex items-center justify-center rounded-card border border-dashed border-linea-fuerte p-4 text-center text-xs font-medium text-navy-soft"
+          >
+            {f}
+          </div>
         ))}
       </div>
     </div>
@@ -233,13 +327,11 @@ export function MenuTour({ tour, ficha }: { tour: Tour; ficha: FichaTour }) {
         // (sin la coletilla "Premium" — no hay diferenciador al que
         // contraponerse).
         <div className="mt-4 flex flex-col gap-4">
-          {ficha.menuLight.length > 0 ? (
-            <PaqueteMenu
-              nombre="Light"
-              precio={tour.precioLight !== null ? formatoDinero(tour.precioLight) : undefined}
-              platos={ficha.menuLight}
-            />
-          ) : null}
+          {/* [v2 2026-07-27] PREMIUM PRIMERO. El cliente quiere que el salto a
+              Premium se note, y el orden es parte de eso: el bloque oscuro
+              abre la sección y el Light queda debajo como la alternativa
+              sobria. El Light NO se castiga —sigue siendo el precio ancla del
+              sitio— pero deja de ser lo primero que se lee. */}
           <PaqueteMenu
             // v3 (2026-07-17, pedido de Samuel): el nombre del menú único de
             // snorkel-lovers pasa a ser "Hispaniola" (sin coletilla "Tu menú"
@@ -255,7 +347,24 @@ export function MenuTour({ tour, ficha }: { tour: Tour; ficha: FichaTour }) {
                   : undefined
             }
             platos={ficha.menuPremium}
+            // Solo va oscuro cuando HAY comparación que hacer. En Snorkel
+            // Lovers, que tiene menú único, un bloque negro no diría nada —
+            // no hay Light contra el que contrastar.
+            piel={ficha.menuLight.length > 0 ? 'premium' : 'claro'}
+            badge={ficha.menuLight.length > 0 ? 'El más elegido' : undefined}
           />
+          {ficha.menuLight.length > 0 ? (
+            <PaqueteMenu
+              nombre="Light"
+              precio={tour.precioLight !== null ? formatoDinero(tour.precioLight) : undefined}
+              platos={ficha.menuLight}
+              // Las celdas fantasma se GENERAN del dato: tantas como platos de
+              // diferencia haya entre los dos menús, con un tope de 2 para que
+              // no llenen la rejilla de huecos. Si mañana cambia el número de
+              // platos, esto se ajusta solo.
+              fantasmas={fantasmasLight(ficha)}
+            />
+          ) : null}
         </div>
       )}
 
