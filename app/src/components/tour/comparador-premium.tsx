@@ -34,7 +34,10 @@ export function ComparadorPremium({ tour, ficha }: { tour: Tour; ficha: FichaTou
   return (
     <section
       id="ancla-comparador"
-      className="overflow-hidden rounded-card bg-premium-fondo p-6 sm:p-10"
+      // [v2 2026-07-28] `premium-panel` en vez de `bg-premium-fondo`: el negro
+      // liso no se lee como material caro, se lee como un hueco. Ver el bloque
+      // «Superficies premium» en componentes.css.
+      className="overflow-hidden rounded-card premium-panel p-6 sm:p-10"
     >
       <p className="text-eyebrow font-semibold uppercase tracking-[0.14em] text-premium-oro">
         Light o Premium
@@ -47,7 +50,7 @@ export function ComparadorPremium({ tour, ficha }: { tour: Tour; ficha: FichaTou
       </p>
 
       {/* La píldora del delta: el argumento entero cabe en una frase. */}
-      <p className="mt-5 inline-flex rounded-full bg-premium-oro-suave px-4 py-1.5 text-sm font-semibold text-premium-oro">
+      <p className="premium-nota mt-5 inline-flex rounded-full px-4 py-1.5 text-sm font-semibold text-premium-oro">
         Toda la diferencia son {formatoDinero(upgrade)} por persona
       </p>
 
@@ -55,15 +58,17 @@ export function ComparadorPremium({ tour, ficha }: { tour: Tour; ficha: FichaTou
         {/* PREMIUM primero y destacado: es lo que el cliente quiere que domine
             la vista. Que domine la VISTA no es lo mismo que dominar el precio
             — el ancla del sitio sigue siendo el Light. */}
-        <div className="rounded-card border border-premium-borde bg-premium-superficie p-6">
+        <div className="premium-card-destacada rounded-card p-6">
           <div className="flex items-baseline justify-between gap-3">
             <h3 className="font-display text-xl font-semibold text-premium-texto">Premium</h3>
-            <span className="rounded-full bg-premium-oro px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide text-premium-fondo">
+            {/* Mismo metal que el thumb del selector: es LA MISMA pieza de oro
+                del sistema, no un badge dorado cualquiera. */}
+            <span className="premium-metal rounded-full px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide text-premium-fondo">
               La más elegida
             </span>
           </div>
-          <p className="mt-1 font-display text-2xl font-semibold text-premium-oro">
-            {formatoDinero(precioLight + upgrade)}
+          <p className="mt-1 font-display text-2xl font-semibold">
+            <span className="premium-cifra">{formatoDinero(precioLight + upgrade)}</span>
             <span className="ml-1 text-sm font-normal text-premium-texto-suave">por persona</span>
           </p>
           <ul className="mt-5 flex flex-col gap-3">
@@ -84,7 +89,7 @@ export function ComparadorPremium({ tour, ficha }: { tour: Tour; ficha: FichaTou
             «malo» de la comparación — y además es el precio que ancla todo el
             sitio. Las mismas 4 líneas tachadas bajo «no incluye» dicen lo que
             te pierdes sin llamar mala a la opción barata. */}
-        <div className="rounded-card border border-premium-borde/60 p-6">
+        <div className="premium-card-sobria rounded-card p-6">
           <div className="flex items-baseline justify-between gap-3">
             <h3 className="font-display text-xl font-semibold text-premium-texto">Light</h3>
           </div>
@@ -99,9 +104,13 @@ export function ComparadorPremium({ tour, ficha }: { tour: Tour; ficha: FichaTou
             {ventajas.map((v) => (
               <li
                 key={v}
-                className="flex items-start gap-2.5 text-sm text-premium-texto-suave line-through decoration-premium-texto-suave/40"
+                // [v2 2026-07-28] SIN `line-through`. El tachado cruzaba frases que
+                // ocupan dos líneas y el resultado parecía un error de la página, no
+                // una lista de exclusiones. La cabecera «No incluye» y la ✕ de cada
+                // fila ya dicen exactamente lo mismo, y lo dicen limpio.
+                className="flex items-start gap-2.5 text-sm text-premium-texto-suave"
               >
-                <X className="mt-0.5 size-4 shrink-0 no-underline" aria-hidden="true" />
+                <X className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
                 {v}
               </li>
             ))}

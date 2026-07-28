@@ -2713,6 +2713,7 @@
      parece un fondo bonito.
    · El halo exterior es de oro y no negro: una sombra negra sobre fondo negro
      no se ve, pero un halo cálido hace que el metal parezca emitir algo. */
+.premium-metal,
 .premium-thumb {
   background: linear-gradient(
     155deg,
@@ -2720,6 +2721,19 @@
     var(--color-premium-oro) 48%,
     var(--color-premium-oro-hondo) 100%
   );
+}
+
+/* Metal SIN halo, para piezas pequeñas (el badge «la más elegida»). El halo
+   del thumb mide 10px de difuminado: en una pastilla de 20px de alto no se
+   lee como brillo, se lee como una mancha sucia alrededor. Los filos sí se
+   quedan — son los que hacen que siga siendo una pieza y no un relleno. */
+.premium-metal {
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 45%),
+    inset 0 -1px 0 rgb(0 0 0 / 28%);
+}
+
+.premium-thumb {
   box-shadow:
     inset 0 1px 0 rgb(255 255 255 / 45%),
     inset 0 -1px 0 rgb(0 0 0 / 28%),
@@ -2836,4 +2850,99 @@
   .muro-equipo-pista {
     animation: none;
   }
+}
+
+/* ── Superficies premium: panel, cards y cifra ─────────────────────────────
+   Samuel, 2026-07-28: «el comparador se ve horrible con ese fondo así negro,
+   tiene que verse premium elegante [...] esa estética es la que debe tener el
+   widget cuando esté en premium».
+
+   Segunda entrega del lenguaje premium, sobre las 3 reglas que fijó el
+   selector Light/Premium (ver el bloque ESTÉTICA PREMIUM más arriba). Todo
+   sale de los tokens --color-premium-* vía color-mix: no hay un solo hex
+   suelto, así que si la paleta premium se retoca, estas superficies la siguen.
+
+   EL DIAGNÓSTICO de lo que fallaba, que es lo que dicta cada regla de abajo:
+     · El panel era `bg-premium-fondo` a secas: un rectángulo de negro liso.
+       Sin un gradiente de luz, el ojo no lee «material oscuro caro», lee
+       «hueco». Es literalmente el «solo fondo negro y ya» que Samuel señaló.
+     · Las dos cards estaban casi al mismo tono que el panel y entre sí, así
+       que Premium no dominaba: la jerarquía la llevaba sola una etiqueta.
+       Ahora Premium SOBRESALE y Light se HUNDE — la misma regla 2 del
+       selector, aplicada a superficies grandes.
+     · Los bordes eran gris translúcido: la reja de admin de la regla 3. */
+
+/* El panel. El radial cálido arriba a la izquierda es la pieza clave: simula
+   una fuente de luz fuera de cuadro cayendo sobre la superficie. Es lo que
+   convierte el negro plano en algo que parece tener volumen. Va MUY bajo de
+   opacidad (14%) — a más, se lee como una mancha marrón. */
+.premium-panel {
+  background:
+    radial-gradient(
+      115% 85% at 6% 0%,
+      color-mix(in srgb, var(--color-premium-oro) 14%, transparent) 0%,
+      transparent 58%
+    ),
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, #fff 5%, var(--color-premium-fondo)) 0%,
+      var(--color-premium-fondo) 42%,
+      color-mix(in srgb, #000 45%, var(--color-premium-fondo)) 100%
+    );
+  box-shadow: inset 0 0 0 1px var(--color-premium-borde);
+}
+
+/* La card que gana. SOBRESALE: filo de luz arriba, hairline de oro y sombra
+   proyectada. La sombra es lo que la despega del panel — sin ella, dos
+   superficies oscuras a distinto tono se leen como un parche, no como una
+   pieza encima. */
+.premium-card-destacada {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, #fff 4%, var(--color-premium-superficie)) 0%,
+    var(--color-premium-superficie) 100%
+  );
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 8%),
+    inset 0 0 0 1px color-mix(in srgb, var(--color-premium-oro) 32%, transparent),
+    0 12px 32px -14px rgb(0 0 0 / 85%);
+}
+
+/* La card sobria. Se HUNDE en el panel. Light no es «la mala» —es el ancla de
+   precio de todo el sitio— así que se distingue por PROFUNDIDAD, no por
+   castigo: mismo tipo de letra, mismo tamaño, solo que un plano por detrás. */
+.premium-card-sobria {
+  background: color-mix(in srgb, #000 38%, var(--color-premium-fondo));
+  box-shadow:
+    inset 0 1px 3px rgb(0 0 0 / 45%),
+    inset 0 0 0 1px rgb(255 255 255 / 5%);
+}
+
+/* La cifra en oro de verdad: degradado recortado sobre el texto. Un número
+   grande es la superficie de oro más visible del bloque, y en plano era
+   justo donde más cantaba que el oro era un relleno y no un metal.
+   ⚠️ Solo envuelve al NÚMERO. Si abarcara también el «por persona», ese texto
+   heredaría `color: transparent` y desaparecería. */
+.premium-cifra {
+  background: linear-gradient(
+    160deg,
+    var(--color-premium-oro-luz) 0%,
+    var(--color-premium-oro) 55%,
+    var(--color-premium-oro-hondo) 100%
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+/* La píldora del delta. Antes era un relleno de oro al 12% que sobre negro da
+   un oliva sucio — el color que más delata una paleta sin trabajar. Ahora es
+   VIDRIO: casi sin relleno y definida por su hairline de oro. */
+.premium-nota {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--color-premium-oro) 13%, transparent),
+    color-mix(in srgb, var(--color-premium-oro) 5%, transparent)
+  );
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-premium-oro) 34%, transparent);
 }
