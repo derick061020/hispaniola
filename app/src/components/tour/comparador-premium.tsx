@@ -52,7 +52,7 @@ export function ComparadorPremium({ tour, ficha }: { tour: Tour; ficha: FichaTou
       </p>
 
       {/* La píldora del delta: el argumento entero cabe en una frase. */}
-      <p className="premium-nota-clara mt-5 inline-flex rounded-full px-4 py-1.5 text-sm font-semibold text-premium-oro-hondo">
+      <p className="premium-nota-clara mt-5 inline-flex rounded-full px-4 py-1.5 text-sm font-semibold text-premium-oro-oscuro">
         Toda la diferencia son {formatoDinero(upgrade)} por persona
       </p>
 

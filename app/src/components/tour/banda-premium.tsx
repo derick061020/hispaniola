@@ -19,12 +19,27 @@ export function BandaPremium({ ficha }: { ficha: FichaTour }) {
   if (!ventajas || ventajas.length === 0) return null
 
   return (
-    <div className="flex flex-wrap items-center gap-x-3 gap-y-2 rounded-card bg-premium-fondo px-4 py-3">
-      <p className="flex items-center gap-2 text-sm font-semibold text-premium-oro">
+    // [v2 2026-07-28, pedido de Samuel: «dale fondo dorado como el de langosta
+    // de charter privado y texto negro»] Deja de ser una banda NEGRA con letra
+    // de oro y pasa a ser una LÁMINA DE ORO con letra casi negra — literalmente
+    // el mismo degradado y el mismo anillo que la franja de add-on de
+    // carta-charter.tsx, no un dorado parecido.
+    //
+    // Y gana con el cambio: en negro era la tercera superficie oscura de la
+    // página (widget premium, cards del menú y esto), así que se perdía entre
+    // ellas justo cuando su trabajo es avisar de un estado. En oro pleno sobre
+    // una página clara no se pierde, y además hereda el idioma que el sitio ya
+    // usa para «esto es un extra premium».
+    //
+    // El texto va en --color-premium-fondo (casi negro) y no en navy: sobre oro
+    // el navy tira a morado, y es el mismo par de contraste que la franja de
+    // langosta lleva usando desde el 07-27.
+    <div className="flex flex-wrap items-center gap-x-3 gap-y-2 rounded-card bg-gradient-to-br from-premium-oro-oscuro via-premium-oro-claro to-premium-oro px-4 py-3 ring-1 ring-premium-oro-oscuro/40">
+      <p className="flex items-center gap-2 text-sm font-semibold text-premium-fondo">
         <Sparkles className="size-4 shrink-0" aria-hidden="true" />
         Estás viendo la versión Premium
       </p>
-      <p className="text-sm text-premium-texto-suave">
+      <p className="text-sm text-premium-fondo/75">
         Incluye {ventajas[0].toLowerCase()}.
       </p>
     </div>

@@ -2717,9 +2717,9 @@
 .premium-thumb {
   background: linear-gradient(
     155deg,
-    var(--color-premium-oro-luz) 0%,
+    var(--color-premium-oro-claro) 0%,
     var(--color-premium-oro) 48%,
-    var(--color-premium-oro-hondo) 100%
+    var(--color-premium-oro-oscuro) 100%
   );
 }
 
@@ -2926,9 +2926,9 @@
 .premium-cifra {
   background: linear-gradient(
     160deg,
-    var(--color-premium-oro-luz) 0%,
+    var(--color-premium-oro-claro) 0%,
     var(--color-premium-oro) 55%,
-    var(--color-premium-oro-hondo) 100%
+    var(--color-premium-oro-oscuro) 100%
   );
   background-clip: text;
   -webkit-background-clip: text;
@@ -2986,10 +2986,139 @@
 
 /* La píldora del delta, versión para fondo CLARO. El oro de marca (#c9a227)
    sobre blanco da 2,3:1 de contraste — ilegible en texto pequeño. Por eso el
-   relleno es un lavado de oro y el texto usa --color-premium-oro-hondo, que
+   relleno es un lavado de oro y el texto usa --color-premium-oro-oscuro, que
    sobre ese lavado pasa de 5:1. El hairline sigue siendo de oro pleno: ahí no
    hay texto que leer, solo un filo que ver. */
 .premium-nota-clara {
   background: color-mix(in srgb, var(--color-premium-oro) 10%, #fff);
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-premium-oro) 40%, transparent);
+}
+
+/* ── Widget de reserva en modo PREMIUM ─────────────────────────────────────
+   Samuel, 2026-07-28: «al widget de reservar, cuando esté seleccionado
+   premium, que sea tema oscuro, con terminaciones doradas y botones dorados».
+
+   ⚠️ CÓMO ESTÁ HECHO, porque no es obvio y es la razón de que quepa en 30
+   líneas en vez de en 40 `className` condicionales repartidos por un archivo
+   de 1.200: NO se reescribe ni un solo estilo del widget. Se REDEFINEN LOS
+   TOKENS dentro de este ámbito, y todas las utilidades que ya usaban esos
+   tokens siguen a la nueva paleta solas.
+
+   Funciona porque Tailwind v4 compila `text-navy` a `color: var(--color-navy)`
+   —mantiene la indirección, no inlinea el valor— así que basta con declarar
+   otras variables en un ancestro. Es exactamente el pago de la regla del
+   proyecto «todo pasa por tokens»: el modo oscuro sale gratis porque nadie
+   escribió un hex suelto en un componente.
+
+   Ventaja de mantenimiento: cualquier control que se añada MAÑANA al widget se
+   tematiza solo, siempre que use tokens. Si alguien mete un `bg-[#fff]`, se
+   verá roto aquí — y ese es justo el aviso que queremos.
+
+   Los popovers de fecha y pasajeros NO heredan esto: viven en portales de
+   Radix, fuera del árbol del widget. Es lo correcto — son superficies
+   flotantes sobre la página, no parte de la card. */
+.widget-premium {
+  /* Superficies: papel deja de ser blanco y pasa a ser la card oscura. */
+  --color-papel: color-mix(in srgb, #fff 4%, var(--color-premium-superficie));
+  --color-papel-hueso: var(--color-premium-fondo);
+  --color-fondo-ficha: color-mix(in srgb, #000 30%, var(--color-premium-fondo));
+
+  /* Texto: el navy del tema claro sería ilegible sobre negro. */
+  --color-navy: var(--color-premium-texto);
+  --color-navy-sub: var(--color-premium-texto-suave);
+  --color-navy-soft: color-mix(in srgb, var(--color-premium-texto-suave) 78%, transparent);
+
+  /* TERMINACIONES DORADAS: las hairlines del widget pasan de gris a oro. Es
+     la regla 3 del sistema — una reja gris sobre negro parece un panel de
+     admin. Afecta de una vez al marco (.widget-marco usa --color-linea), a los
+     separadores y a los bordes de los campos. */
+  --color-linea: color-mix(in srgb, var(--color-premium-oro) 26%, transparent);
+  /* ⚠️ `linea-fuerte` NO va en oro, aunque el nombre diga «línea»: el
+     calendario la usa como COLOR DE TEXTO para los días pasados
+     (`text-linea-fuerte`). En oro, las fechas no disponibles se pintaban con
+     el color del acento premium — leído: «estas son las buenas». Justo al
+     revés de lo que tienen que comunicar. Se queda en gris cálido apagado. */
+  --color-linea-fuerte: color-mix(in srgb, var(--color-premium-texto-suave) 45%, transparent);
+
+  /* Los chips de urgencia se mezclan con `white` literal en su token base, así
+     que sobre negro seguían siendo dos losas rosa claro. Mismo lenguaje
+     —coral es «esto es la reserva»— pero en la lengua del modo oscuro: lavado
+     de coral sobre el fondo profundo y texto en coral aclarado, que es el que
+     llega al contraste por este lado (el coral-dark de la versión clara sobre
+     negro se hunde). */
+  --color-urgencia-fondo: color-mix(in srgb, var(--color-coral) 16%, var(--color-premium-fondo));
+  --color-urgencia-texto: color-mix(in srgb, var(--color-coral) 70%, #fff);
+
+  /* El aqua de marca sobre negro se apaga y pierde el papel de acento: en el
+     modo premium el acento ES el oro. Se re-mapea para que iconos y realces
+     no queden como manchas verdosas apagadas. */
+  --color-aqua: var(--color-premium-oro);
+  --color-aqua-dark: var(--color-premium-oro-claro);
+  --color-aqua-tint: color-mix(in srgb, var(--color-premium-oro) 14%, transparent);
+
+  /* El panel verde de «ahorras hasta 15%» sobre negro cantaba como un cartel
+     de otra web. Mismo mensaje, en la lengua del modo oscuro. */
+  --color-menta: color-mix(in srgb, var(--color-premium-oro) 10%, transparent);
+  --color-menta-texto: var(--color-premium-oro-claro);
+
+  /* ── Y LOS TOKENS DE ALIGNUI ────────────────────────────────────────────
+     Los campos de fecha y pasajeros, los steppers y el CTA son piezas del
+     sistema AlignUI, que tiene su PROPIA escala de color (--color-bg-white-0,
+     --color-text-strong-950…). Sin re-mapearla también, quedaban como losas
+     blancas flotando en un widget oscuro — medido, cinco elementos a
+     rgb(255,255,255) pleno.
+
+     Se re-mapea aquí y NO se tocan los archivos del vendor: la regla del
+     proyecto es que las piezas de `components/alignui/` no se editan a mano,
+     se personalizan desde fuera. Un ámbito que redefine variables es
+     exactamente eso — el vendor sigue leyendo los mismos nombres. */
+  --color-bg-white-0: color-mix(in srgb, #fff 6%, var(--color-premium-superficie));
+  --color-bg-weak-50: color-mix(in srgb, #fff 10%, var(--color-premium-superficie));
+  --color-bg-soft-200: color-mix(in srgb, #fff 14%, var(--color-premium-superficie));
+  --color-bg-sub-300: color-mix(in srgb, #fff 18%, var(--color-premium-superficie));
+  --color-bg-surface-800: var(--color-premium-fondo);
+  --color-bg-strong-950: var(--color-premium-oro);
+
+  --color-text-strong-950: var(--color-premium-texto);
+  --color-text-sub-600: var(--color-premium-texto-suave);
+  --color-text-soft-400: color-mix(in srgb, var(--color-premium-texto-suave) 75%, transparent);
+  --color-text-disabled-300: color-mix(in srgb, var(--color-premium-texto-suave) 50%, transparent);
+  /* Sobre el oro, el texto va casi negro: es el par de contraste del sistema. */
+  --color-text-white-0: var(--color-premium-fondo);
+
+  --color-stroke-soft-200: color-mix(in srgb, var(--color-premium-oro) 26%, transparent);
+  --color-stroke-sub-300: color-mix(in srgb, var(--color-premium-oro) 38%, transparent);
+  --color-stroke-strong-950: var(--color-premium-oro);
+
+  /* BOTONES DORADOS (pedido literal de Samuel). El primario del sistema pasa
+     de coral a oro, con su escala de hover/activo. */
+  --color-primary-base: var(--color-premium-oro);
+  --color-primary-dark: var(--color-premium-oro-oscuro);
+  --color-primary-darker: var(--color-premium-oro-oscuro);
+  --color-primary-alpha-10: color-mix(in srgb, var(--color-premium-oro) 10%, transparent);
+  --color-primary-alpha-16: color-mix(in srgb, var(--color-premium-oro) 16%, transparent);
+  --color-primary-alpha-24: color-mix(in srgb, var(--color-premium-oro) 24%, transparent);
+}
+
+/* El fondo de la card. No basta con --color-papel porque queremos la MISMA
+   luz que el resto de superficies premium (radial cálido arriba), no un
+   relleno liso — que es lo que Samuel lleva señalando toda la tarde. */
+.widget-premium {
+  background:
+    radial-gradient(
+      100% 55% at 12% 0%,
+      color-mix(in srgb, var(--color-premium-oro) 12%, transparent) 0%,
+      transparent 55%
+    ),
+    linear-gradient(180deg, var(--color-premium-superficie) 0%, var(--color-premium-fondo) 100%);
+}
+
+/* El CTA en oro necesita texto OSCURO: el FancyButton del sistema pinta su
+   rótulo con --color-static-white, que es blanco fijo y no una variable de
+   tema (por eso se llama «static»), así que sobre oro daba 1,9:1 — ilegible.
+   Se corrige solo dentro del ámbito premium y solo para el botón primario.
+   Los degradados internos del FancyButton (before:/after:) se quedan: son los
+   que le dan el canto, y encima de un relleno de oro funcionan igual. */
+.widget-premium .bg-primary-base {
+  color: var(--color-premium-fondo);
 }

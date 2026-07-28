@@ -124,7 +124,16 @@ const MAX_PERSONAS_DEFAULT = 6
 // mismo componente en Figma), así que volver a él también deshace una
 // divergencia entre dos widgets que deberían ser hermanos.
 
-function Caja({ children }: { children: React.ReactNode }) {
+function Caja({
+  children,
+  premium = false,
+}: {
+  children: React.ReactNode
+  /** [v2 2026-07-28] Tema oscuro/oro del widget. Va como PROP y no leyendo el
+   *  estado: `Caja` es un envoltorio de presentación sin acceso al estado del
+   *  widget, y darle uno solo para el color lo convertiría en otra cosa. */
+  premium?: boolean
+}) {
   // Mismo lenguaje «objeto suave» que la TourCard de la home: la decisión de
   // compra vive en una caja propia, no suelta sobre el fondo — pero con SU
   // PROPIO padding (no BLOQUE_FICHA, 2026-07-17, pedido de Samuel: "reduce el
@@ -160,7 +169,14 @@ function Caja({ children }: { children: React.ReactNode }) {
       // a 20 y perdía su padding — detectado por Samuel al elegir fecha.
       // Con los hijos sin encoger, el contenido conserva su alto y el
       // desbordamiento se resuelve donde toca: en el scroll.
-      className="flex scroll-mt-sticky-top flex-col gap-4 rounded-card-grande bg-papel p-4 widget-marco [&>*]:shrink-0 sm:p-5 lg:max-h-[calc(100svh-var(--spacing-sticky-top)-1.5rem)] lg:overflow-y-auto lg:overscroll-contain scroll-sutil"
+      // [v2 2026-07-28, pedido de Samuel] En Premium el widget entero pasa a
+      // tema oscuro con terminaciones doradas. `widget-premium` no aplica
+      // estilos: REDEFINE LOS TOKENS de color en este ámbito, y todo lo de
+      // dentro —que ya usaba tokens— sigue a la nueva paleta solo. Ver el
+      // bloque «Widget de reserva en modo PREMIUM» en componentes.css.
+      className={`flex scroll-mt-sticky-top flex-col gap-4 rounded-card-grande bg-papel p-4 widget-marco [&>*]:shrink-0 sm:p-5 lg:max-h-[calc(100svh-var(--spacing-sticky-top)-1.5rem)] lg:overflow-y-auto lg:overscroll-contain scroll-sutil ${
+        premium ? 'widget-premium' : ''
+      }`}
     >
       {children}
     </div>
@@ -566,7 +582,7 @@ export function WidgetReserva({
       : 'desde'
 
   return (
-    <Caja>
+    <Caja premium={paquete === 'premium' && tienePaquetes}>
       {/* Chips de aceleración, lo primero del widget (Samuel, 2026-07-22).
           Van ARRIBA DEL TODO, antes incluso del rating: son el motivo por el
           que alguien deja de leer y mira el precio.
@@ -798,9 +814,16 @@ export function WidgetReserva({
                     onClick={() => setHorario(i)}
                     aria-pressed={elegido}
                     aria-label={`Salida ${h.hora}${h.regreso ? `, regreso ${h.regreso}` : ''}`}
+                    // `text-papel` y NO `text-white`: el blanco de Tailwind es un
+                    // valor fijo, no un token, así que en el tema oscuro se
+                    // quedaba blanco sobre el crema de `bg-navy` remapeado — la
+                    // hora elegida se volvía invisible. `--color-papel` y
+                    // `--color-navy` se voltean JUNTOS en `.widget-premium`, así
+                    // que el par se mantiene legible en los dos temas sin una
+                    // sola condición.
                     className={`rounded-full px-3.5 py-2 text-sm tabular-nums transition-colors ${
                       elegido
-                        ? 'bg-navy font-semibold text-white shadow-sm'
+                        ? 'bg-navy font-semibold text-papel shadow-sm'
                         : 'bg-papel-hueso text-navy-sub hover:bg-papel-hueso/70 hover:text-navy'
                     }`}
                   >

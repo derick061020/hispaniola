@@ -94,15 +94,6 @@
   --color-premium-texto: #f4efe4; /* blanco cálido; el blanco puro sobre negro vibra */
   --color-premium-texto-suave: #a9a49a; /* meta y descripciones dentro del bloque */
   --color-premium-oro: #c9a227; /* el acento: cifras, badges, iconos. Nunca párrafos */
-  /* [v2 2026-07-28] LOS DOS EXTREMOS DEL ORO. Existen para una sola cosa:
-     que el oro pueda pintarse como METAL y no como una mancha plana.
-     El oro real nunca es de un solo tono — tiene un filo claro donde le da la
-     luz y se hunde hacia ámbar en la sombra. Un relleno liso de --color-premium-oro
-     es exactamente lo que hacía que el selector Light/Premium se leyera barato:
-     mostaza plana sobre negro plano. Estos dos tonos son las paradas del
-     degradado; el medio sigue siendo --color-premium-oro. */
-  --color-premium-oro-luz: #f0d488; /* el filo donde pega la luz */
-  --color-premium-oro-hondo: #8f6c14; /* la caída en sombra, ámbar quemado */
   --color-premium-oro-suave: rgb(201 162 39 / 12%); /* relleno de chip/badge sobre el fondo oscuro */
 
   /* [v2 2026-07-28] PIEL DORADA — el banner de la langosta del charter
@@ -118,6 +109,12 @@
      champán, que es lo que da la lectura de LÁMINA de metal en vez de relleno
      plano. Sobre el degradado el texto va en --color-premium-fondo (tinta
      negra sobre pan de oro), no en el blanco cálido del bloque oscuro. */
+  /* [v2 2026-07-28] ESTE PAR ES EL ÚNICO. Al montar el metal del selector
+     Light/Premium se añadieron `--color-premium-oro-luz` y `-hondo` sin ver
+     que estos dos ya existían y hacían lo mismo (#f0d488 vs #f0d98c,
+     #8f6c14 vs #8c6d16 — indistinguibles). Se retiraron: dos nombres para
+     el mismo color es lo que pudre un sistema de tokens, y aquí además
+     acabarían siendo DOS variables de Figma que nadie sabría cuál usar. */
   --color-premium-oro-oscuro: #8c6d16; /* el borde hundido del degradado */
   --color-premium-oro-claro: #f0d98c; /* champán — la luz que cruza la lámina */
 

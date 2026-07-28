@@ -178,7 +178,7 @@ function PaqueteMenu({
             // gris claro— porque es el único sitio de la cabecera donde el
             // acento sigue aportando: marca el «+US$ 15» frente al total Light.
             className={`shrink-0 font-display text-lg font-semibold ${
-              oscuro ? 'text-premium-oro-hondo' : 'text-navy'
+              oscuro ? 'text-premium-oro-oscuro' : 'text-navy'
             }`}
           >
             {precio}
