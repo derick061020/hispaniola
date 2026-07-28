@@ -129,7 +129,23 @@ function Caja({ children }: { children: React.ReactNode }) {
   return (
     <div
       id="ficha-widget"
-      className="flex scroll-mt-sticky-top flex-col gap-4 rounded-card-grande bg-papel p-4 ring-1 ring-linea sm:p-5"
+      // [v2 2026-07-27, 2ª vuelta] EL SCROLL VIVE AQUÍ, no en el envoltorio
+      // sticky de la página. Cuando estaba fuera pasaban dos cosas malas:
+      //  · el `ring` de esta caja se dibuja FUERA de su borde, y el envoltorio
+      //    con overflow lo recortaba a los lados — el borde se veía a trozos.
+      //  · el ring rodeaba los ~670px REALES del contenido, así que al
+      //    scrollear los bordes de arriba y abajo se iban de la vista y la
+      //    caja parecía abierta por los extremos.
+      // Con el scroll en la propia caja, su marco es el que se queda quieto y
+      // el contenido corre por dentro.
+      //
+      // Y el marco pasa de `ring` a SOMBRA INTERNA (idea de Samuel): una
+      // sombra `inset` se pinta dentro del borde, así que no depende de que
+      // nadie la recorte y no puede volver a perderse.
+      //
+      // `svh` y no `vh`/`dvh`: aprendizaje del proyecto — `vh` en móvil mide el
+      // viewport grande (barra de URL oculta) y `dvh` cambia al hacer scroll.
+      className="flex scroll-mt-sticky-top flex-col gap-4 rounded-card-grande bg-papel p-4 widget-marco sm:p-5 lg:max-h-[calc(100svh-var(--spacing-sticky-top)-1.5rem)] lg:overflow-y-auto lg:overscroll-contain scroll-sutil"
     >
       {children}
     </div>

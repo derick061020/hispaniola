@@ -289,7 +289,11 @@ export function TourPage() {
 
                 overscroll-contain: al llegar al final del widget, la rueda NO
                 sigue arrastrando la página de detrás. */}
-            <div className="lg:sticky lg:top-sticky-top lg:max-h-[calc(100svh-var(--spacing-sticky-top)-1.5rem)] lg:overflow-y-auto lg:overscroll-contain">
+            {/* El tope de altura y el scroll YA NO viven aquí: se mudaron a la
+                caja del propio widget (ver el comentario en widget-reserva.tsx).
+                Con el overflow en este envoltorio, el `ring` de la caja —que se
+                dibuja por fuera de su borde— quedaba recortado a los lados. */}
+            <div className="lg:sticky lg:top-sticky-top">
               <WidgetReserva
                 tour={tour}
                 ficha={ficha}

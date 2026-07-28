@@ -97,8 +97,48 @@ export function SliderComida({
         El menú
       </span>
 
+      {/* [v2 2026-07-27] DOTS dentro de la propia imagen, abajo (pedido de
+          Samuel). Cumplen dos funciones que las flechas no: dicen CUÁNTAS
+          fotos hay y en cuál vas — sin ellos, una celda que cambia sola no se
+          distingue de una que parpadea.
+          El activo se ENSANCHA en vez de solo cambiar de color: el ancho se
+          lee de un vistazo incluso a 6px y sin depender del contraste, que
+          sobre fotos de comida cambia en cada plato.
+          `pointer-events-none` en el contenedor y `auto` en cada dot: la capa
+          no debe tapar el botón que abre el lightbox, pero los dots sí se
+          pulsan. */}
+      {/* Velo de pie. SIN esto los dots son invisibles: van en blanco y las
+          fotos de comida son en su mayoría platos claros sobre mantel claro —
+          verificado en pantalla, sobre la langosta no se veía ninguno. Mismo
+          recurso que `.reel-card__velo` usa para que su título lea sobre
+          cualquier fotograma. */}
+      {fotos.length > 1 ? (
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-navy/55 to-transparent"
+        />
+      ) : null}
+
+      {fotos.length > 1 ? (
+        <div className="pointer-events-none absolute inset-x-0 bottom-2 flex items-center justify-center gap-1">
+          {fotos.map((f, i) => (
+            <button
+              key={f}
+              type="button"
+              onClick={() => setIndice(i)}
+              aria-label={`Ver la foto ${i + 1} de ${fotos.length}`}
+              aria-current={i === indice}
+              className={`pointer-events-auto h-1.5 rounded-full transition-all duration-300 motion-reduce:transition-none ${
+                i === indice ? 'w-4 bg-white' : 'w-1.5 bg-white/55 hover:bg-white/80'
+              }`}
+            />
+          ))}
+        </div>
+      ) : null}
+
       {/* Flechas solo al hover (y siempre visibles con teclado, via focus).
-          En táctil no hay hover: ahí el avance automático es la navegación. */}
+          En táctil no hay hover: ahí el avance automático y los dots son la
+          navegación. */}
       {fotos.length > 1 ? (
         <>
           <button

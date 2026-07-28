@@ -2422,3 +2422,60 @@
     animation: none;
   }
 }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Scrollbar sutil para contenedores que SÍ deben poder scrollearse
+   (correcciones v2, 2026-07-27 — pedido de Samuel para el widget de reserva:
+   «que el scrollbar no modifique el ancho, y que sea bien sutil y delgado, no
+   quiero que estorbe»).
+
+   ⚠️ NO confundir con `scrollbar-width: none` que se usa arriba en los
+   marquees (.ticker-wrapper--estatico, .reviews-muro-fila): allí la barra se
+   OCULTA porque el contenido se arrastra, no se scrollea. Aquí la barra tiene
+   que existir —es la única pista de que hay más contenido debajo— pero sin
+   robar protagonismo dentro de la caja donde se decide la compra.
+
+   `scrollbar-gutter: stable` es lo que resuelve el «no modifique el ancho»:
+   reserva el carril SIEMPRE, aparezca o no la barra. Sin esto, el contenido
+   del widget se estrecharía unos píxeles en cuanto el contenido crece lo justo
+   para desbordar (al elegir fecha, al abrir los add-ons) y el layout daría un
+   salto lateral justo mientras se está usando.
+
+   El pulgar va translúcido sobre navy y solo se oscurece al pasar el ratón:
+   presente cuando se busca, invisible cuando no. */
+.scroll-sutil {
+  scrollbar-gutter: stable;
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: color-mix(in srgb, var(--color-navy) 18%, transparent) transparent;
+}
+
+.scroll-sutil::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scroll-sutil::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scroll-sutil::-webkit-scrollbar-thumb {
+  background-color: color-mix(in srgb, var(--color-navy) 18%, transparent);
+  border-radius: 999px;
+}
+
+.scroll-sutil::-webkit-scrollbar-thumb:hover {
+  background-color: color-mix(in srgb, var(--color-navy) 32%, transparent);
+}
+
+/* Marco de la caja del widget de reserva (correcciones v2, 2026-07-27).
+   SOMBRA INTERNA en vez de `ring`, idea de Samuel al detectar que el borde se
+   veía a trozos: un `ring` de Tailwind se pinta POR FUERA del borde, así que
+   cualquier ancestro con overflow lo recorta — y además, cuando la caja pasó a
+   ser ella misma el contenedor de scroll, un borde exterior habría seguido
+   dependiendo de que nadie lo recortase. Una sombra `inset` se dibuja DENTRO,
+   así que no puede perderse.
+   Va en CSS y no como `shadow-[...]` de Tailwind porque la utilidad arbitraria
+   no llegaba a aplicarse (se resolvía a sombras transparentes) — verificado
+   leyendo el boxShadow computado en el navegador. */
+.widget-marco {
+  box-shadow: inset 0 0 0 1px var(--color-linea);
+}

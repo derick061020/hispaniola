@@ -14,13 +14,19 @@ export function DescripcionTour({ parrafos, corta }: { parrafos?: string[]; cort
   const [abierto, setAbierto] = useState(false)
 
   if (!parrafos || parrafos.length === 0) {
-    return <p className="mt-2 max-w-2xl text-lead text-navy-sub">{corta}</p>
+    return <p className="mt-2 text-lead text-navy-sub">{corta}</p>
   }
 
   const [primero, ...resto] = parrafos
 
+  // [v2 2026-07-27] Fuera el `max-w-2xl` (pedido de Samuel: «en esa caja
+  // estamos dando un espacio blanco pronunciado a la derecha, que el texto
+  // abarque toda su caja»). No era padding: era un tope de 672px dentro de una
+  // card bastante más ancha, así que sobraba una franja a la derecha.
+  // El ancho de línea lo sigue acotando la card (BLOQUE_FICHA) y, sobre todo,
+  // la columna de la ficha, que ya convive con el widget al lado.
   return (
-    <div className="mt-2 max-w-2xl">
+    <div className="mt-2">
       <p className="text-lead text-navy-sub">{primero}</p>
 
       {resto.length > 0 ? (

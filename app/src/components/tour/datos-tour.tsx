@@ -46,7 +46,10 @@ export function DatosTour({ tour, ficha }: { tour: Tour; ficha: FichaTour }) {
     ...(tour.booking === 'completo'
       ? [{ icono: CarFront, etiqueta: 'Recogida', valor: 'Se ofrece recogida' }]
       : []),
-    { icono: Smartphone, etiqueta: 'Entrada', valor: 'Para dispositivos móviles' },
+    // [v2 2026-07-27] «Para dispositivos móviles» → «Para móviles» (pedido de
+    // Samuel: ahorrar espacio y palabras). Dice exactamente lo mismo y deja de
+    // ser el único valor de la fila que ocupa dos líneas.
+    { icono: Smartphone, etiqueta: 'Entrada', valor: 'Para móviles' },
     { icono: Languages, etiqueta: 'Idiomas', valor: 'Español e inglés' },
   ]
 
