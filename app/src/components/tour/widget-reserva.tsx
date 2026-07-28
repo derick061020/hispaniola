@@ -145,7 +145,15 @@ function Caja({ children }: { children: React.ReactNode }) {
       //
       // `svh` y no `vh`/`dvh`: aprendizaje del proyecto — `vh` en móvil mide el
       // viewport grande (barra de URL oculta) y `dvh` cambia al hacer scroll.
-      className="flex scroll-mt-sticky-top flex-col gap-4 rounded-card-grande bg-papel p-4 widget-marco sm:p-5 lg:max-h-[calc(100svh-var(--spacing-sticky-top)-1.5rem)] lg:overflow-y-auto lg:overscroll-contain scroll-sutil"
+      // `[&>*]:shrink-0` NO es cosmético — sin él el widget se rompe. Esta caja
+      // es `flex flex-col` y desde que tiene `max-h`, flexbox COMPRIME a los
+      // hijos (todos con flex-shrink: 1 por defecto) para intentar que quepan,
+      // ANTES de rendirse y dejar que aparezca el scroll. Con ~912px de
+      // contenido en 531 disponibles, el CTA «Continuar» se aplastaba de 40px
+      // a 20 y perdía su padding — detectado por Samuel al elegir fecha.
+      // Con los hijos sin encoger, el contenido conserva su alto y el
+      // desbordamiento se resuelve donde toca: en el scroll.
+      className="flex scroll-mt-sticky-top flex-col gap-4 rounded-card-grande bg-papel p-4 widget-marco [&>*]:shrink-0 sm:p-5 lg:max-h-[calc(100svh-var(--spacing-sticky-top)-1.5rem)] lg:overflow-y-auto lg:overscroll-contain scroll-sutil"
     >
       {children}
     </div>

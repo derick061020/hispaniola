@@ -189,7 +189,14 @@ export function EventoPage() {
                 porque desde esta tanda la columna lleva DOS piezas apiladas —
                 la calculadora de reserva online y el formulario de cotización.
                 Sin tope, el botón de enviar quedaría fuera de alcance. */}
-            <div className="scroll-sutil flex flex-col gap-4 lg:sticky lg:top-sticky-top lg:max-h-[calc(100svh-var(--spacing-sticky-top)-1.5rem)] lg:overflow-y-auto lg:overscroll-contain">
+            {/* `[&>*]:shrink-0` por la misma razón que en la ficha de tour (ver
+                widget-reserva.tsx): con `flex-col` + `max-h`, flexbox comprime
+                a los hijos antes de dejar que aparezca el scroll, y los CTA se
+                aplastan perdiendo su padding. Aquí todavía no se notaba —las
+                dos cards resisten por su contenido— pero el fallo es el mismo y
+                aparecería en cuanto crezcan (más paquetes, formulario más
+                largo). Se blinda ahora, no cuando se rompa. */}
+            <div className="scroll-sutil flex flex-col gap-4 [&>*]:shrink-0 lg:sticky lg:top-sticky-top lg:max-h-[calc(100svh-var(--spacing-sticky-top)-1.5rem)] lg:overflow-y-auto lg:overscroll-contain">
               {/* [v2 2026-07-27, plan 03 §1 — slides 14 y 15] «Agregar reserva
                   online y DEBAJO el formulario de cotización». El orden es
                   literal del cliente y además es el correcto: quien quiere un
