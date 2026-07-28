@@ -95,6 +95,14 @@
   --color-premium-texto-suave: #a9a49a; /* meta y descripciones dentro del bloque */
   --color-premium-oro: #c9a227; /* el acento: cifras, badges, iconos. Nunca párrafos */
   --color-premium-oro-suave: rgb(201 162 39 / 12%); /* relleno de chip/badge sobre el fondo oscuro */
+  /* [v2 2026-07-28] Oro del SELLO de TripAdvisor. NO es --color-premium-oro:
+     ese es nuestro acento de marca (#c9a227, apagado, para el bloque oscuro);
+     este es el amarillo EXACTO del PNG de TripAdvisor, muestreado del borde
+     del disco. Tiene que coincidir al pixel porque los picos que rodean el
+     sello se dibujan en SVG y deben leerse como parte de la misma pieza de
+     metal — un tono aproximado delataria el pegote al instante.
+     Si algun dia cambia el asset del sello, hay que volver a muestrearlo. */
+  --color-sello-oro: #f2b104;
 
   /* [v2 2026-07-28] PIEL DORADA — el banner de la langosta del charter
      (tour/carta-charter.tsx). Samuel: «hay que hacer más premium ese banner,

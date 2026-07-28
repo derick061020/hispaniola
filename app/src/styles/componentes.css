@@ -2541,71 +2541,120 @@
   box-shadow: inset 0 0 0 1px var(--color-linea);
 }
 
-/* ── Destello del sello de TripAdvisor ─────────────────────────────────────
-   Samuel, 2026-07-28: «que al hacer hover tenga un efecto como que le pasa una
-   luz reflectante, como si fuera un objeto metálico brillante, como un premio».
+/* ── Sello de TripAdvisor: picos giratorios + destello ─────────────────────
+   Samuel, 2026-07-28: «agregarle estos picos que estén girando infinitamente
+   [...] que pareciera que los picos fueran parte del dorado de la imagen [...]
+   y también el efecto de luz lo afecte para que se vea bien integrado».
 
-   Es una banda de luz diagonal que BARRE el sello de lado a lado, que es como
-   se comporta un reflejo especular sobre metal cuando la pieza gira: no se
-   enciende entera de golpe, la luz la recorre.
+   Estas dos clases se aplican DENTRO del <svg> de ui/sello-tripadvisor.tsx.
+   Van en CSS y no en utilidades de Tailwind porque necesitan @keyframes y
+   porque `transform-box` no tiene utilidad equivalente — mismo criterio que
+   .widget-marco.
 
-   Vive en CSS y no en clases de utilidad por dos razones: el barrido necesita
-   un pseudo-elemento (no hay nodo que animar, y añadir un <span> vacío solo
-   para esto ensuciaría el componente) y necesita @keyframes, que en Tailwind
-   habría que declarar igualmente aquí. Es el mismo criterio que .widget-marco.
-
-   El recorte es un CÍRCULO (border-radius: 50%) porque el sello lo es: con un
-   recorte rectangular la banda asomaría por las cuatro esquinas transparentes
-   del PNG y se vería un cuadrado fantasma alrededor de la moneda.
-
-   La animación se dispara con `animation` y no con `transition` a propósito:
-   así hace UNA pasada completa por cada entrada del ratón y se queda quieta.
-   Con transition, el reflejo se quedaría congelado a mitad de camino mientras
-   el puntero siguiera encima, que es justo lo que no hace la luz real. */
-.sello-brillo {
-  position: relative;
-  overflow: hidden;
-  border-radius: 50%;
+   ⚠️ `transform-box: view-box` NO ES OPCIONAL EN SVG. Por defecto los
+   elementos SVG usan `transform-box: content-box`, y entonces un
+   `transform-origin: 50% 50%` se resuelve contra la caja del PROPIO elemento,
+   no contra el lienzo: la corona de picos giraría alrededor de su propio
+   centro geométrico desplazado y describiría una órbita en vez de rotar sobre
+   sí misma. Con `view-box` el origen es el centro del viewBox, que es donde
+   está el sello. */
+.sello-picos {
+  transform-box: view-box;
+  transform-origin: 50% 50%;
+  /* 24s por vuelta: a esta velocidad el giro se PERCIBE si te fijas y no
+     distrae si no. El sello vive en el hero, encima del H1 — algo girando
+     rápido ahí al lado le robaría la lectura al titular, que es lo último que
+     queremos en el elemento cuyo trabajo es dar contexto ANTES del título. */
+  animation: sello-giro 24s linear infinite;
 }
 
-.sello-brillo::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  /* La banda va inclinada (105deg) y estrecha: un reflejo ancho parece un
-     velo blanco encima y apaga el amarillo del sello en vez de recorrerlo. */
-  background: linear-gradient(
-    105deg,
-    transparent 38%,
-    rgb(255 255 255 / 0.65) 50%,
-    transparent 62%
-  );
-  /* Fuera de la caja mientras no haya hover — sin esto se ve una franja
-     blanca permanente cruzando el sello. */
-  transform: translateX(-140%);
-  /* El barrido es decoración: nunca debe robarle el puntero al sello ni al
-     texto que lo acompaña. */
-  pointer-events: none;
+@keyframes sello-giro {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
-.group:hover .sello-brillo::after {
-  animation: sello-destello 0.75s ease-out;
+/* El destello: una banda de luz que BARRE la pieza de lado a lado, que es
+   como se comporta un reflejo especular sobre metal cuando gira. No se
+   enciende entera de golpe: la luz la recorre.
+
+   La banda arranca fuera de cuadro y no se ve hasta que hay hover. Se dispara
+   con `animation` y no con `transition` a propósito: así hace UNA pasada
+   completa por cada entrada del ratón y se queda quieta. Con transition, el
+   reflejo se congelaría a mitad de camino mientras el puntero siguiera encima,
+   que es justo lo que no hace la luz real. */
+.sello-destello {
+  transform-box: view-box;
+  transform: translateX(-110%);
 }
 
-@keyframes sello-destello {
+/* Duración y recorrido están AJUSTADOS ENTRE SÍ, no elegidos por separado.
+   La banda mide ~30 unidades de las 100 del lienzo, así que solo se ve
+   mientras su centro está sobre la pieza: con el recorrido de ±110 eso es el
+   59% del trayecto, o sea ~0,5s de los 0,9s. Medido con la versión anterior
+   (±140 en 0,75s con ease-out), el destello cruzaba el sello en unos 150 ms y
+   se perdía de vista antes de registrarse — un premio que brilla y no llegas
+   a verlo brillar no cumple su función.
+   `linear` y no `ease-out`: con ease-out el trayecto se consume casi entero al
+   principio, justo cuando la banda todavía está fuera de cuadro, y luego llega
+   frenando. La luz reflejada barre a velocidad constante. */
+.group:hover .sello-destello {
+  animation: sello-brillo 0.9s linear;
+}
+
+@keyframes sello-brillo {
   from {
-    transform: translateX(-140%);
+    transform: translateX(-110%);
   }
   to {
-    transform: translateX(140%);
+    transform: translateX(110%);
   }
 }
 
-/* Un reflejo que cruza la pantalla es movimiento, y de los que más molestan a
-   quien tiene sensibilidad vestibular: se queda quieto. El sello sigue siendo
-   perfectamente legible sin él — el destello no aporta información. */
+/* Un giro perpetuo y un reflejo que cruza la pieza son movimiento continuo, de
+   los que peor sientan a quien tiene sensibilidad vestibular. Los dos se
+   detienen: el sello se lee igual de bien quieto — ni el giro ni el destello
+   aportan información, solo materia. */
 @media (prefers-reduced-motion: reduce) {
-  .group:hover .sello-brillo::after {
+  .sello-picos {
+    animation: none;
+  }
+
+  .group:hover .sello-destello {
     animation: none;
   }
 }
+
+/* ---------- Carta de platos del charter (tour/carta-charter.tsx) ----------
+   2026-07-28, Samuel: «la sección de menú a medida me parece sumamente poco
+   atractiva… es importante para que las personas se enamoren y compren». La
+   lista con checks pasa a ser una CARTA: rejilla asimétrica de fotos reales
+   con el plato estrella en grande.
+
+   Solo el alto de fila vive aquí: `grid-auto-rows` no tiene utilidad de
+   Tailwind que lea un token de spacing, y el valor cambia en lg — que es
+   justo lo que una clase con media query resuelve y un `style` inline no.
+   Todo lo demás (columnas, spans, gap, radios, color) va en el componente
+   con utilidades, para que en Figma se lea la composición y no un CSS oculto. */
+.carta-platos {
+  grid-auto-rows: var(--spacing-carta-fila-movil);
+}
+
+@media (width >= 64rem) {
+  .carta-platos {
+    grid-auto-rows: var(--spacing-carta-fila);
+  }
+}
+
+/* Las fotos de plato de la carta del charter. Los bodegones del cliente están
+   tirados sobre fondo blanco con luz plana, y dentro de una card con velo
+   encima la comida se apaga: se lee gris azulada, no apetecible. Un punto de
+   saturación y otro de contraste devuelven el color del plato sin tocar los
+   archivos ni pasar por un editor — y desaparecen solos el día que lleguen las
+   fotos nuevas en alta (slide 4), que ya vendrán tratadas.
+   Va en CSS y no en utilidades porque `filter` con dos funciones encadenadas
+   en Tailwind exige valores arbitrarios, que en este proyecto están vetados. */
+.carta-foto {
+  filter: saturate(1.14) contrast(1.06);
+}
+
