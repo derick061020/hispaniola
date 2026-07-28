@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { ChevronLeft, ChevronRight, Play } from 'lucide-react'
 import { Etiqueta } from '@/components/ui/etiqueta'
 import { VideoLightbox } from '@/components/tour/video-lightbox'
+import { useOrigenExpansion } from '@/lib/use-expansion-flip'
 import { REELS, REELS_HASHTAG, type Reel } from '@/data/home'
 
 // «Míranos en acción» — carrusel de reels de Instagram/TikTok (correcciones
@@ -51,7 +52,7 @@ import { REELS, REELS_HASHTAG, type Reel } from '@/data/home'
 // Scroll horizontal con snap, no marquee automático: aquí el visitante ELIGE
 // qué mirar (a diferencia del ticker del hero, que es ambiente). Un carrusel
 // de video que se mueve solo pelea con el usuario justo cuando quiere leer.
-function CardReel({ reel, onAbrir }: { reel: Reel; onAbrir: (r: Reel) => void }) {
+function CardReel({ reel, onAbrir }: { reel: Reel; onAbrir: (r: Reel, el: HTMLElement) => void }) {
 
   // Sin video real, la card no es pulsable: un botón que no hace nada es peor
   // que una imagen. El play se queda igualmente porque describe el FORMATO
@@ -63,7 +64,13 @@ function CardReel({ reel, onAbrir }: { reel: Reel; onAbrir: (r: Reel) => void })
     <Envoltorio
       className="reel-card group"
       {...(reel.video
-        ? { type: 'button' as const, onClick: () => onAbrir(reel), 'aria-label': `Ver el reel: ${reel.titulo}` }
+        ? {
+        type: 'button' as const,
+        // [v2 2026-07-28] Entrega su propio nodo para que el visor EXPANDA
+        // desde esta card en vez de aparecer en el centro.
+        onClick: (e: React.MouseEvent<HTMLElement>) => onAbrir(reel, e.currentTarget),
+        'aria-label': `Ver el reel: ${reel.titulo}`,
+      }
         : {})}
     >
       {reel.video ? (
@@ -148,6 +155,7 @@ export function ReelsSociales({
   const [alFinal, setAlFinal] = useState(false)
   const [hayScroll, setHayScroll] = useState(false)
   const [reelAbierto, setReelAbierto] = useState<Reel | null>(null)
+  const expansion = useOrigenExpansion()
 
   const esBloque = variante === 'bloque'
 
@@ -261,7 +269,14 @@ export function ReelsSociales({
         }`}
       >
         {REELS.map((r) => (
-          <CardReel key={r.id} reel={r} onAbrir={setReelAbierto} />
+          <CardReel
+            key={r.id}
+            reel={r}
+            onAbrir={(reel, el) => {
+              expansion.abrirDesde(el)
+              setReelAbierto(reel)
+            }}
+          />
         ))}
       </div>
 
@@ -283,6 +298,7 @@ export function ReelsSociales({
           src={reelAbierto.video}
           poster={`/fotos/${reelAbierto.foto}.webp`}
           etiqueta={reelAbierto.titulo}
+          origen={expansion.origen}
           onCerrar={() => setReelAbierto(null)}
         />
       ) : null}

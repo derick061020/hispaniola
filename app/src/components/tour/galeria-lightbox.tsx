@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { ChevronLeft, ChevronRight, X } from 'lucide-react'
 import * as CompactButton from '@/components/alignui/compact-button'
 import * as Modal from '@/components/alignui/modal'
+import { useExpansionFlip, type RectOrigen } from '@/lib/use-expansion-flip'
 
 // Lightbox de la galería de la ficha (wireframe A1: "Ver 33 fotos →").
 //
@@ -19,15 +20,21 @@ export function GaleriaLightbox({
   indiceInicial,
   etiqueta,
   onCerrar,
+  origen = null,
 }: {
   fotos: string[]
   indiceInicial: number
   /** describe el conjunto para lectores de pantalla (el nombre del tour) */
   etiqueta: string
   onCerrar: () => void
+  /** [v2 2026-07-28] Rectángulo de la celda que se pulsó, para que la foto
+   *  parezca DESPEGAR de ahí en vez de aparecer en el centro. `null` (o si el
+   *  usuario tiene reduced-motion) = fundido normal. Ver lib/use-expansion-flip.ts. */
+  origen?: RectOrigen | null
 }) {
   const [indice, setIndice] = useState(indiceInicial)
   const n = fotos.length
+  const refExpansion = useExpansionFlip(origen)
 
   const ir = useCallback((i: number) => setIndice(((i % n) + n) % n), [n])
 
@@ -55,9 +62,15 @@ export function GaleriaLightbox({
     <Modal.Root open onOpenChange={(abierto) => (abierto ? undefined : onCerrar())}>
       <Modal.Content
         showClose={false}
-        // El overlay del sistema es --color-overlay (navy 70%) con blur; una
-        // galería quiere el fondo casi opaco y sin blur (la foto ES el foco).
-        overlayClassName="bg-navy/95 p-0 backdrop-blur-none"
+        // [v2 2026-07-28, pedido de Samuel] El overlay pasa de casi opaco y
+        // sin blur (navy/95) a MÁS TRANSPARENTE Y CON DESENFOQUE. Deroga el
+        // criterio anterior («la foto ES el foco, el fondo estorba»): con la
+        // expansión FLIP el fondo ya no compite, porque se ve de dónde salió la
+        // foto, y dejar entrever la página detrás mantiene el sitio de contexto.
+        // `backdrop-blur-md` de Tailwind, NO CSS a mano: la cadena de build
+        // auto-prefija sola y escribir `-webkit-backdrop-filter` a mano fue
+        // justo el bug de producción del commit 29cebf4.
+        overlayClassName="bg-navy/55 p-0 backdrop-blur-md"
         // De card centrada de 400px a lienzo fullscreen: la pila de conflictos
         // la resuelve tailwind-merge (cnExt del vendor).
         className="flex h-dvh w-screen max-w-none flex-col rounded-none bg-transparent shadow-none focus:outline-none"
@@ -106,7 +119,12 @@ export function GaleriaLightbox({
               en las flechas no protege de eso, porque el que no encoge es quien
               crece. Con `min-w-0 flex-1` la foto solo puede ocupar lo que sobra. */}
           <div className="flex h-full min-w-0 flex-1 items-center justify-center">
+            {/* `ref` + `origen` = expansión FLIP desde la celda pulsada. La
+                transformada se aplica a la PROPIA imagen y no al contenedor
+                flex: el contenedor decide el sitio disponible y transformarlo
+                falsearía el cálculo de `max-w-full`. */}
             <img
+              ref={refExpansion}
               src={`/fotos/${fotos[indice]}.webp`}
               alt={`${etiqueta} — foto ${indice + 1} de ${n}`}
               onClick={(e) => e.stopPropagation()}

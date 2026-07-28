@@ -1,6 +1,7 @@
 import { useState, type CSSProperties } from 'react'
 import { Play, Volume2 } from 'lucide-react'
 import { GaleriaLightbox } from '@/components/tour/galeria-lightbox'
+import { useOrigenExpansion } from '@/lib/use-expansion-flip'
 import { SliderComida } from '@/components/internas/slider-comida'
 import { VideoLightbox } from '@/components/tour/video-lightbox'
 import { useDevFlag } from '@/dev/use-dev-flag'
@@ -72,6 +73,11 @@ export function GaleriaMosaico({
 }) {
   const [lightbox, setLightbox] = useState<number | null>(null)
   const [verVideo, setVerVideo] = useState(false)
+  // [v2 2026-07-28] Origen de la expansión: el rectángulo de la celda o del
+  // video que se pulsó, para que el visor DESPEGUE de ahí en vez de aparecer
+  // en el centro. Ver lib/use-expansion-flip.ts.
+  const foto = useOrigenExpansion()
+  const video360 = useOrigenExpansion()
 
   // [dev-mode] ?dev-galeria=abierta — ver src/dev/dev-registry.ts
   useDevFlag('dev-galeria', (v) => setLightbox(v === 'abierta' ? 0 : null))
@@ -97,7 +103,10 @@ export function GaleriaMosaico({
           <SliderComida
             fotos={fotosComida!}
             etiqueta={etiqueta}
-            onAbrir={() => setLightbox(0)}
+            onAbrir={(el) => {
+              foto.abrirDesde(el)
+              setLightbox(0)
+            }}
           />
         </div>
       )
@@ -107,7 +116,10 @@ export function GaleriaMosaico({
       <button
         key={fotos[indice]}
         type="button"
-        onClick={() => setLightbox(indice)}
+        onClick={(e) => {
+          foto.abrirDesde(e.currentTarget)
+          setLightbox(indice)
+        }}
         className={`group relative overflow-hidden bg-papel-hueso ${span}`}
       >
         <img
@@ -154,7 +166,10 @@ export function GaleriaMosaico({
         {video !== null ? (
           <button
             type="button"
-            onClick={() => setVerVideo(true)}
+            onClick={(e) => {
+              video360.abrirDesde(e.currentTarget)
+              setVerVideo(true)
+            }}
             aria-label={`Ver el video de ${etiqueta}`}
             className="group relative aspect-[9/16] h-galeria-video-alto-movil w-auto shrink-0 self-center overflow-hidden rounded-card-grande bg-papel-hueso sm:h-full sm:self-auto"
           >
@@ -203,7 +218,13 @@ export function GaleriaMosaico({
       </div>
 
       {lightbox !== null ? (
-        <GaleriaLightbox fotos={fotos} indiceInicial={lightbox} etiqueta={etiqueta} onCerrar={() => setLightbox(null)} />
+        <GaleriaLightbox
+          fotos={fotos}
+          indiceInicial={lightbox}
+          etiqueta={etiqueta}
+          origen={foto.origen}
+          onCerrar={() => setLightbox(null)}
+        />
       ) : null}
 
       {verVideo && video !== null ? (
@@ -211,6 +232,7 @@ export function GaleriaMosaico({
           src={video}
           poster={`/fotos/${fotos[0]}.webp`}
           etiqueta={etiqueta}
+          origen={video360.origen}
           onCerrar={() => setVerVideo(false)}
         />
       ) : null}

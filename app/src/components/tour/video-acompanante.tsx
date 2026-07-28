@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { X, Maximize2 } from 'lucide-react'
 import { VideoLightbox } from '@/components/tour/video-lightbox'
 import { useDevFlag } from '@/dev/use-dev-flag'
+import { useOrigenExpansion } from '@/lib/use-expansion-flip'
 
 // Video que acompaña el scroll de la ficha (correcciones v2, plan 01 §11 —
 // slide 10: «esto que vaya bajando según el cliente hace scroll»).
@@ -44,6 +45,7 @@ export function VideoAcompanante({
   const [visible, setVisible] = useState(false)
   const [cerrado, setCerrado] = useState(false)
   const [expandido, setExpandido] = useState(false)
+  const expansion = useOrigenExpansion()
   const centinela = useRef<HTMLDivElement>(null)
 
   // Aparece cuando el mosaico (donde vive el video "de verdad") ha salido de
@@ -98,7 +100,11 @@ export function VideoAcompanante({
 
           <button
             type="button"
-            onClick={() => setExpandido(true)}
+            onClick={(e) => {
+              // Expande DESDE el mini player, no desde el centro.
+              expansion.abrirDesde(e.currentTarget.parentElement as HTMLElement)
+              setExpandido(true)
+            }}
             aria-label={`Ver el video de ${etiqueta} en grande`}
             className="absolute inset-0 grid place-items-center bg-navy/0 transition-colors group-hover:bg-navy/35"
           >
@@ -127,6 +133,7 @@ export function VideoAcompanante({
           src={src}
           poster={poster}
           etiqueta={etiqueta}
+          origen={expansion.origen}
           onCerrar={() => setExpandido(false)}
         />
       ) : null}

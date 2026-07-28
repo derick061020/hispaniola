@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react'
 import { X } from 'lucide-react'
 import * as CompactButton from '@/components/alignui/compact-button'
 import * as Modal from '@/components/alignui/modal'
+import { useExpansionFlip, type RectOrigen } from '@/lib/use-expansion-flip'
 
 // Reproductor a pantalla completa del video del mosaico (Samuel, 2026-07-22:
 // «el video del grid, que al darle click se abra y se reproduzca»).
@@ -27,6 +28,7 @@ export function VideoLightbox({
   poster,
   etiqueta,
   onCerrar,
+  origen = null,
 }: {
   src: string
   /** Foto de portada — el mismo `poster` de la celda del mosaico. */
@@ -34,8 +36,12 @@ export function VideoLightbox({
   /** Describe el video para lectores de pantalla (el nombre del tour). */
   etiqueta: string
   onCerrar: () => void
+  /** [v2 2026-07-28] Rectángulo del elemento pulsado, para que el video parezca
+   *  DESPEGAR de ahí. `null` = fundido normal. Ver lib/use-expansion-flip.ts. */
+  origen?: RectOrigen | null
 }) {
   const video = useRef<HTMLVideoElement>(null)
+  const refExpansion = useExpansionFlip(origen)
 
   // Devolver el foco al disparador al cerrar — misma trampa (y mismo
   // arreglo) que en GaleriaLightbox: el Root se desmonta por render
@@ -58,7 +64,11 @@ export function VideoLightbox({
     <Modal.Root open onOpenChange={(abierto) => (abierto ? undefined : onCerrar())}>
       <Modal.Content
         showClose={false}
-        overlayClassName="bg-navy/95 p-0 backdrop-blur-none"
+        // [v2 2026-07-28] Más transparente y con desenfoque (pedido de Samuel).
+        // `backdrop-blur-md` de Tailwind, NO CSS a mano: la cadena de build
+        // auto-prefija y escribir `-webkit-backdrop-filter` a mano fue el bug
+        // de producción del commit 29cebf4.
+        overlayClassName="bg-navy/55 p-0 backdrop-blur-md"
         className="flex h-dvh w-screen max-w-none flex-col rounded-none bg-transparent shadow-none focus:outline-none"
         aria-describedby={undefined}
         // Clic en el FONDO cierra; el video para la propagación para que
@@ -82,7 +92,10 @@ export function VideoLightbox({
 
         <div className="flex flex-1 items-center justify-center px-2 pb-6 sm:px-5">
           <video
-            ref={video}
+            ref={(el) => {
+              video.current = el
+              refExpansion(el)
+            }}
             src={src}
             poster={poster}
             controls

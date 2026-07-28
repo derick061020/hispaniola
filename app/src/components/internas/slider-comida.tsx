@@ -29,8 +29,9 @@ export function SliderComida({
 }: {
   fotos: string[]
   etiqueta: string
-  /** Abre el lightbox, como cualquier otra celda del mosaico. */
-  onAbrir?: () => void
+  /** Abre el lightbox, como cualquier otra celda del mosaico. Entrega su
+   *  propio nodo para que el visor pueda EXPANDIRSE desde esta celda. */
+  onAbrir?: (el: HTMLElement) => void
 }) {
   const [indice, setIndice] = useState(0)
   const [pausado, setPausado] = useState(false)
@@ -86,7 +87,7 @@ export function SliderComida({
           esta no se comporte distinta del resto del mosaico. */}
       <button
         type="button"
-        onClick={onAbrir}
+        onClick={(e) => onAbrir?.(e.currentTarget.parentElement as HTMLElement)}
         aria-label={`Ver las fotos de ${etiqueta}`}
         className="absolute inset-0 size-full"
       />
