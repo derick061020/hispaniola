@@ -269,7 +269,27 @@ export function TourPage() {
                 derivado del alto MEDIDO del header (Trampa №5: en esta página
                 se apilan header > anclas > widget, y los tres tienen que
                 derivar del mismo token o se desincronizan). */}
-            <div className="lg:sticky lg:top-sticky-top">
+            {/* [v2 2026-07-27] TOPE DE ALTURA + SCROLL PROPIO.
+                El widget ha crecido esta tanda (chips de urgencia, add-ons,
+                aviso de salto de tramo, tramos de edad) y, siendo sticky, si
+                pasa de la altura de la ventana su parte de abajo —donde está
+                el CTA— queda INALCANZABLE: sticky no se puede scrollear más
+                allá del viewport. Con un tope al ras de la pantalla y scroll
+                interno, el CTA siempre se puede alcanzar.
+
+                `svh` y NO `vh`/`dvh` — aprendizaje ya documentado del
+                proyecto: `vh` en móvil es el viewport GRANDE (con la barra de
+                URL escondida) y el widget mediría más que la pantalla real;
+                `dvh` cambia mientras se hace scroll y haría bailar el tope.
+                `svh` es la medida chica garantizada, sin saltos.
+
+                Solo desde lg: en móvil el widget va en flujo normal, no es
+                sticky, y limitarle el alto no arreglaría nada — allí el CTA lo
+                cubre BarraMovilFicha.
+
+                overscroll-contain: al llegar al final del widget, la rueda NO
+                sigue arrastrando la página de detrás. */}
+            <div className="lg:sticky lg:top-sticky-top lg:max-h-[calc(100svh-var(--spacing-sticky-top)-1.5rem)] lg:overflow-y-auto lg:overscroll-contain">
               <WidgetReserva
                 tour={tour}
                 ficha={ficha}

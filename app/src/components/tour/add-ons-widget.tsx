@@ -63,6 +63,45 @@ export function AddOnsWidget({
         const importe = precioAddOn(a, personas)
         const enConfirmacion = confirmando === a.id
 
+        // [v2 2026-07-27, 2ª vuelta] La confirmación SUSTITUYE el contenido de
+        // la tarjeta en vez de añadirse debajo. Antes crecía hacia abajo y el
+        // widget —que es sticky y ya va justo de alto— empujaba el CTA fuera
+        // de pantalla justo en el momento de decidir. Ocupando el mismo hueco,
+        // el alto del widget no cambia al abrirse.
+        if (enConfirmacion) {
+          return (
+            <div key={a.id} className="rounded-xl border border-aqua bg-aqua/5 p-3">
+              <p className="flex items-start gap-2 text-sm font-semibold text-navy">
+                <Sparkles size={16} className="mt-0.5 shrink-0 text-aqua" aria-hidden="true" />
+                ¿Seguro? Estas fotos no se repiten.
+              </p>
+              <p className="mt-1 text-xs leading-relaxed text-navy-sub">
+                El álbum completo en máxima calidad —todas, sin recortar— por{' '}
+                {formatoDinero(a.precio)} para todo el grupo.
+              </p>
+              <div className="mt-3 flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setConfirmando(null)}
+                  className="rounded-full bg-navy px-4 py-2 text-xs font-semibold text-white transition hover:brightness-110"
+                >
+                  Quedármelo
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    onCambiar(elegidos.filter((i) => i !== a.id))
+                    setConfirmando(null)
+                  }}
+                  className="rounded-full px-4 py-2 text-xs font-medium text-navy-sub underline transition hover:text-navy"
+                >
+                  No, gracias
+                </button>
+              </div>
+            </div>
+          )
+        }
+
         return (
           <div
             key={a.id}
@@ -114,41 +153,6 @@ export function AddOnsWidget({
                 ) : null}
               </span>
             </button>
-
-            {/* Confirmación al desmarcar. Apela al recuerdo sin castigar: un
-                tono punitivo choca con el posicionamiento «Charter Premium» y
-                acaba en reseña. */}
-            {enConfirmacion ? (
-              <div className="border-t border-aqua/30 px-3 py-3">
-                <p className="flex items-start gap-2 text-sm font-semibold text-navy">
-                  <Sparkles size={16} className="mt-0.5 shrink-0 text-aqua" aria-hidden="true" />
-                  ¿Seguro? Estas fotos no se repiten.
-                </p>
-                <p className="mt-1 text-xs leading-relaxed text-navy-sub">
-                  Las mejores quedan en nuestro Facebook, gratis. El álbum completo en máxima
-                  calidad —todas, sin recortar— son {formatoDinero(a.precio)} para todo el grupo.
-                </p>
-                <div className="mt-3 flex gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setConfirmando(null)}
-                    className="rounded-full bg-navy px-4 py-2 text-xs font-semibold text-white transition hover:brightness-110"
-                  >
-                    Quedármelo
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      onCambiar(elegidos.filter((i) => i !== a.id))
-                      setConfirmando(null)
-                    }}
-                    className="rounded-full px-4 py-2 text-xs font-medium text-navy-sub underline transition hover:text-navy"
-                  >
-                    No, gracias
-                  </button>
-                </div>
-              </div>
-            ) : null}
           </div>
         )
       })}

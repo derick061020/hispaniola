@@ -286,7 +286,7 @@ export const FICHAS: Record<string, FichaTour> = {
         id: 'album-fotos',
         etiqueta: 'El álbum completo, en máxima calidad',
         descripcion:
-          'Las mejores fotos del día quedan gratis en nuestro Facebook. El álbum entero, en resolución original y sin recortar, te lo llevas por US$ 20 para todo el grupo.',
+          'El álbum entero del día, en resolución original y sin recortar, por US$ 20 para todo el grupo.',
         base: 'grupo',
         precio: 20,
         porDefecto: true,
@@ -454,7 +454,7 @@ export const FICHAS: Record<string, FichaTour> = {
         id: 'album-fotos',
         etiqueta: 'El álbum completo, en máxima calidad',
         descripcion:
-          'Las mejores fotos del día quedan gratis en nuestro Facebook. El álbum entero, en resolución original y sin recortar, te lo llevas por US$ 20 para todo el grupo.',
+          'El álbum entero del día, en resolución original y sin recortar, por US$ 20 para todo el grupo.',
         base: 'grupo',
         precio: 20,
         porDefecto: true,
@@ -676,7 +676,7 @@ export const FICHAS: Record<string, FichaTour> = {
         id: 'album-fotos',
         etiqueta: 'Tus fotos en máxima calidad',
         descripcion:
-          'Todas las fotos del día se suben gratis a nuestro Facebook. Los archivos originales, sin comprimir y en máxima resolución, por US$ 20 para todo el grupo.',
+          'Los archivos originales, sin comprimir y en máxima resolución, por US$ 20 para todo el grupo.',
         base: 'grupo',
         precio: 20,
         porDefecto: true,
@@ -877,7 +877,7 @@ export const FICHAS: Record<string, FichaTour> = {
         id: 'album-fotos',
         etiqueta: 'El álbum completo, en máxima calidad',
         descripcion:
-          'Las mejores fotos del día quedan gratis en nuestro Facebook. El álbum entero, en resolución original y sin recortar, te lo llevas por US$ 20 para todo el grupo.',
+          'El álbum entero del día, en resolución original y sin recortar, por US$ 20 para todo el grupo.',
         base: 'grupo',
         precio: 20,
         porDefecto: true,

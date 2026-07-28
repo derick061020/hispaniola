@@ -184,7 +184,12 @@ export function EventoPage() {
             {/* Sticky bajo el header. Mismo offset que la ficha de
                 tour (`--spacing-sticky-top`), derivado del alto del
                 header sólido + anclas. */}
-            <div className="flex flex-col gap-4 lg:sticky lg:top-sticky-top">
+            {/* [v2 2026-07-27] Mismo tope de altura + scroll que la ficha de
+                tour (ver el comentario largo allí): aquí el riesgo es mayor,
+                porque desde esta tanda la columna lleva DOS piezas apiladas —
+                la calculadora de reserva online y el formulario de cotización.
+                Sin tope, el botón de enviar quedaría fuera de alcance. */}
+            <div className="flex flex-col gap-4 lg:sticky lg:top-sticky-top lg:max-h-[calc(100svh-var(--spacing-sticky-top)-1.5rem)] lg:overflow-y-auto lg:overscroll-contain">
               {/* [v2 2026-07-27, plan 03 §1 — slides 14 y 15] «Agregar reserva
                   online y DEBAJO el formulario de cotización». El orden es
                   literal del cliente y además es el correcto: quien quiere un
