@@ -43,6 +43,15 @@ export function VideoLightbox({
   const video = useRef<HTMLVideoElement>(null)
   const refExpansion = useExpansionFlip(origen)
 
+  // Proporción del ENCUADRE, tomada de la celda que se pulsó. Ver el comentario
+  // largo junto al <video>: es lo que hace que expandir sea un zoom y no un
+  // cambio de formato. Se descartan medidas degeneradas (una celda de alto 0
+  // daría una división por cero y una caja imposible).
+  const aspecto =
+    origen && origen.width > 0 && origen.height > 0
+      ? `${origen.width} / ${origen.height}`
+      : null
+
   // Devolver el foco al disparador al cerrar — misma trampa (y mismo
   // arreglo) que en GaleriaLightbox: el Root se desmonta por render
   // condicional del padre, así que Radix no llega a restaurarlo y el foco
@@ -109,29 +118,47 @@ export function VideoLightbox({
             controls
             playsInline
             preload="metadata"
-            // ⚠️ La proporción de la caja se fija AL CARGAR LOS METADATOS, con
-            // las dimensiones reales del archivo. Sin esto, un <video> con
-            // `poster` adopta la proporción DEL PÓSTER: aquí el póster es la
-            // foto de portada del tour (apaisada) y el visor pintaba la caja a
-            // ratio 2.69 con contenido 1.78 — medido — así que el fotograma
-            // salía con franjas y «enorme en horizontal», que es justo lo que
-            // reportó Samuel. Con el ratio real, la caja se ajusta al archivo
-            // sea vertical (los reels que vienen) o apaisado (el placeholder).
+            // ⚠️ LA PROPORCIÓN LA MANDA LA CELDA DE ORIGEN, NO EL ARCHIVO.
+            //
+            // Primero se probó al revés —fijar el ratio real del archivo al
+            // cargar los metadatos— y era peor: la celda del mosaico es una
+            // COLUMNA 9:16 (formato reel, decisión de layout del 07-22), pero
+            // el placeholder que hay hoy es 1600×900. Medido: se pulsaba una
+            // tira vertical de 198×352 y se abría un video apaisado de 896×504.
+            // Pulsar algo vertical y que se abra algo horizontal es justo el
+            // «se sigue viendo raro» que reportó Samuel — y ninguna transición,
+            // por suave que sea, arregla un cambio de formato a mitad de gesto.
+            //
+            // Con la proporción de la celda, el visor enseña EL MISMO ENCUADRE
+            // que la miniatura, solo que grande: la expansión se lee como un
+            // zoom y no como un salto a otro contenido. `object-cover` recorta
+            // igual que recortaba la celda.
+            //
+            // Cuando llegue el reel 9:16 de verdad esto NO RECORTA NADA: cover
+            // y contain coinciden cuando las proporciones coinciden. O sea que
+            // el placeholder se ve bien hoy y el archivo final se verá entero
+            // mañana, sin tocar este archivo.
+            //
+            // Sin `origen` (deep-link del Dev Mode, que abre sin celda) se cae
+            // al ratio real del archivo, que es lo único que se sabe entonces.
+            style={aspecto ? { aspectRatio: aspecto } : undefined}
             onLoadedMetadata={(e) => {
               const v = e.currentTarget
-              if (v.videoWidth > 0 && v.videoHeight > 0) {
+              if (!aspecto && v.videoWidth > 0 && v.videoHeight > 0) {
                 v.style.aspectRatio = `${v.videoWidth} / ${v.videoHeight}`
               }
             }}
             aria-label={`Video de ${etiqueta}`}
             onClick={(e) => e.stopPropagation()}
-            // `object-contain` NO es decorativo: sin él la caja del <video> se
-            // estiraba a la del contenedor flex y el fotograma salía deformado
-            // — medido, el elemento quedaba en ratio 2.69 con contenido 1.78.
-            // Con `h-auto`/`w-auto` la caja sigue la proporción real del
-            // archivo, y el tope de ancho evita que un video apaisado se coma
-            // el viewport de borde a borde (a uno vertical lo gobierna max-h).
-            className="h-auto max-h-full w-auto max-w-[min(100%,56rem)] rounded-card object-contain"
+            // `object-cover` (no `contain`): la caja ya tiene la proporción
+            // del encuadre de la celda, así que el fotograma la RELLENA
+            // recortando lo que sobra — exactamente lo que hacía la miniatura.
+            // Con `contain` volverían las franjas negras y el video se vería
+            // pequeño en medio de una caja vertical.
+            // `h-auto`/`w-auto` dejan que la caja la derive el aspect-ratio, y
+            // el tope de ancho evita que un encuadre apaisado se coma el
+            // viewport de borde a borde (a uno vertical lo gobierna max-h).
+            className="h-auto max-h-full w-auto max-w-[min(100%,56rem)] rounded-card object-cover"
           />
         </div>
       </Modal.Content>

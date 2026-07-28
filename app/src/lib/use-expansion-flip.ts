@@ -81,7 +81,7 @@ export function useExpansionFlip(origen: RectOrigen | null) {
         // Verificado grabando el `transform` fotograma a fotograma, salía
         // `matrix(1, 0, 0, 1, -5.3, 3.3)` — sin escala y sin recorrido.
         if (el.dataset.flipHecho === '1') return
-        gsap.set(el, { clearProps: 'transform' })
+        gsap.set(el, { clearProps: 'transform,clipPath' })
         const destino = el.getBoundingClientRect()
         // Sin tamaño no se puede calcular la transformada; se espera al load.
         if (destino.width === 0 || destino.height === 0) return
@@ -104,19 +104,52 @@ export function useExpansionFlip(origen: RectOrigen | null) {
         const dx = origen.left + origen.width / 2 - (destino.left + destino.width / 2)
         const dy = origen.top + origen.height / 2 - (destino.top + destino.height / 2)
 
+        // RECORTE ANIMADO — la mitad que faltaba, y la que hacía que la
+        // expansión se viera «rara» cuando origen y destino no comparten
+        // proporción.
+        //
+        // La escala `max` hace que el elemento CUBRA la caja de origen, pero
+        // cubrir significa que lo que sobra ASOMA por fuera de ella. Medido con
+        // el video: celda de 198×352 (9:16) y archivo de 1600×900 (16:9) → la
+        // escala sale 0.698 y el video arranca midiendo 625×352 encima de una
+        // celda de 198px de ancho. Desde el primer fotograma sobresalía más del
+        // triple por los lados: no parecía que la celda se abriera, parecía que
+        // aparecía otro elemento distinto y luego se acomodaba.
+        //
+        // En la celda ese sobrante NO se ve, porque la miniatura lo recorta con
+        // `object-cover`. Así que la animación replica ese recorte: arranca
+        // ocultando exactamente lo mismo que ocultaba la celda y lo va abriendo
+        // hasta enseñar el fotograma entero. Eso es lo que convierte el efecto
+        // en «la celda crece» en vez de «algo aparece encima».
+        //
+        // Los insets van en coordenadas LOCALES del elemento (clip-path se
+        // aplica antes que transform), de ahí el /escala.
+        const recorteX = Math.max(0, (destino.width - origen.width / escala) / 2)
+        const recorteY = Math.max(0, (destino.height - origen.height / escala) / 2)
+        // El radio se lee del propio elemento para que el recorte tenga las
+        // mismas esquinas redondeadas que la caja; si no, durante el vuelo se
+        // verían esquinas en pico sobre una celda redondeada.
+        const radio = parseFloat(getComputedStyle(el).borderTopLeftRadius) || 0
+        const clipInicial = `inset(${recorteY}px ${recorteX}px round ${radio}px)`
+        const clipFinal = `inset(0px 0px round ${radio}px)`
+
         gsap.fromTo(
           el,
-          { x: dx, y: dy, scale: escala, opacity: 0.65 },
+          { x: dx, y: dy, scale: escala, opacity: 0.65, clipPath: clipInicial },
           {
             x: 0,
             y: 0,
             scale: 1,
             opacity: 1,
+            clipPath: clipFinal,
             duration: DURACION_ENTRADA,
             ease: EASE_ENTRADA,
-            // Se limpia la transformada al terminar: dejarla puesta convierte
-            // al nodo en containing block de sus descendientes `fixed`.
-            onComplete: () => gsap.set(el, { clearProps: 'transform' }),
+            // Se limpia al terminar: una transformada convierte al nodo en
+            // containing block de sus descendientes `fixed`, y un `clip-path`
+            // residual —aunque sea `inset(0)`— recorta lo que asome (los
+            // controles nativos del video se pintan dentro de la caja, pero
+            // no hay razón para dejar puesto un recorte que ya no recorta).
+            onComplete: () => gsap.set(el, { clearProps: 'transform,clipPath' }),
           },
         )
       }
