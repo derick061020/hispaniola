@@ -729,9 +729,26 @@ export function WidgetReserva({
         const horariosActivos =
           subActiva?.horarios && subActiva.horarios.length > 0 ? subActiva.horarios : ficha.horarios
         return (
+          // [v2 2026-07-28] HORARIO REDISEÑADO (pedido de Samuel: «dejar solo
+          // el texto de salida… pero no me convence cómo se escoge»).
+          //
+          // Antes: rejilla de 2 tarjetas de TRES líneas cada una (Salida ↓
+          // Regreso), ~86px + label. Ahora: una fila de PÍLDORAS con solo la
+          // hora de salida, y UNA línea debajo que confirma el resto.
+          //
+          // El razonamiento, que es el patrón de Viator/GetYourGuide/Civitatis:
+          //  · La hora de salida es con lo que se DECIDE; la de regreso es una
+          //    consecuencia. Poniendo las dos en cada opción, elegir entre N
+          //    horarios obliga a leer 2N datos — y la mitad no ayudan a decidir.
+          //  · El regreso no se pierde: se muda a la línea de confirmación,
+          //    donde sí importa (ya has elegido, ahora quieres saber a qué hora
+          //    vuelves). Ahí se le suma la duración, que es la pregunta real de
+          //    quien organiza el día.
+          //  · Escala. Con 2 horarios la rejilla de tarjetas aguanta; con 4-5
+          //    —y el charter ya tiene botes con horarios propios— crecería
+          //    fuera de la pantalla. Una fila de píldoras que envuelve, no.
           <div className="duration-200 animate-in fade-in slide-in-from-top-1">
-            <p className="mb-1.5 text-xs font-medium text-navy-sub">Horario</p>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="flex flex-wrap gap-2">
               {horariosActivos.map((h, i) => {
                 const elegido = horario === i
                 return (
@@ -741,30 +758,27 @@ export function WidgetReserva({
                     onClick={() => setHorario(i)}
                     aria-pressed={elegido}
                     aria-label={`Salida ${h.hora}${h.regreso ? `, regreso ${h.regreso}` : ''}`}
-                    className={`flex flex-col items-center gap-0.5 rounded-btn px-2 py-2 text-sm transition-colors ${
+                    className={`rounded-full px-3.5 py-2 text-sm tabular-nums transition-colors ${
                       elegido
                         ? 'bg-navy font-semibold text-white shadow-sm'
-                        : 'bg-papel-hueso text-navy-soft hover:bg-papel-hueso/80 hover:text-navy'
+                        : 'bg-papel-hueso text-navy-sub hover:bg-papel-hueso/70 hover:text-navy'
                     }`}
                   >
-                    <span className="text-xs">
-                      Salida: <span className="font-semibold">{h.hora}</span>
-                    </span>
-                    {h.regreso ? (
-                      <>
-                        <ArrowDown
-                          className={`size-3 ${elegido ? 'text-white/70' : 'text-navy-soft/70'}`}
-                          aria-hidden="true"
-                        />
-                        <span className="text-xs">
-                          Regreso: <span className="font-semibold">{h.regreso}</span>
-                        </span>
-                      </>
-                    ) : null}
+                    {h.hora}
                   </button>
                 )
               })}
             </div>
+            {/* La confirmación de lo elegido, en una sola línea. Solo si hay
+                regreso publicado — no se inventa una hora de vuelta. */}
+            {horariosActivos[horario]?.regreso ? (
+              <p className="mt-2 flex items-center gap-1.5 text-xs text-navy-soft">
+                <ArrowDown className="size-3 shrink-0 -rotate-90" aria-hidden="true" />
+                Regresas a las{' '}
+                <span className="font-semibold text-navy">{horariosActivos[horario].regreso}</span>
+                <span className="text-navy-soft/70">&middot; {ficha.duracion}</span>
+              </p>
+            ) : null}
           </div>
         )
       })() : null}
@@ -1151,15 +1165,22 @@ export function WidgetReserva({
           maqueta la pone justo aquí y acierta: es el último argumento antes
           de decidir. Es una reseña REAL del pool del sitio (QUOTES), no un
           texto escrito para vender — por eso lleva su plataforma y su firma. */}
+      {/* [v2 2026-07-28] La FIRMA sube a la misma línea del sello, alineada a
+          la derecha (pedido de Samuel, para ahorrar alto). Se pierde una línea
+          entera sin perder información: quién lo dice y dónde está verificado
+          son el mismo dato de credibilidad, así que leerlos juntos incluso
+          funciona mejor que separados por la cita. */}
       <figure className="rounded-card bg-papel-hueso p-3">
-        <figcaption className="flex items-center gap-1.5 text-xs font-medium text-menta-texto">
-          <BadgeCheck className="size-3.5 shrink-0" aria-hidden="true" />
-          Reseña verificada en {resenaWidget.plataforma}
+        <figcaption className="flex items-baseline justify-between gap-2 text-xs font-medium text-menta-texto">
+          <span className="flex min-w-0 items-center gap-1.5">
+            <BadgeCheck className="size-3.5 shrink-0" aria-hidden="true" />
+            <span className="truncate">Reseña verificada en {resenaWidget.plataforma}</span>
+          </span>
+          <span className="shrink-0 font-semibold text-navy">{resenaWidget.autor}</span>
         </figcaption>
         <blockquote className="mt-1.5 text-xs italic text-navy-sub">
           «{resenaWidget.texto}»
         </blockquote>
-        <p className="mt-1.5 text-xs font-semibold text-navy">— {resenaWidget.autor}</p>
       </figure>
 
       {/* Lista de deseos + compartir (correcciones v1, slide 4). Guardar vive
