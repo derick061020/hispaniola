@@ -1,4 +1,7 @@
+import { useRef } from 'react'
 import { Footer } from '@/components/home/footer'
+import { IntroNosotros } from '@/components/nosotros/intro-nosotros'
+import { useAperturaIntro } from '@/components/nosotros/use-apertura-intro'
 import { HeroInterna } from '@/components/internas/hero-interna'
 import { GridEquipo } from '@/components/equipo/grid-equipo'
 import { Meta } from '@/components/seo/meta'
@@ -16,6 +19,9 @@ import { EQUIPO_PAGINA, TOTAL_EQUIPO, DEPARTAMENTOS } from '@/data/equipo'
 // cabecera de data/equipo.ts. El aviso también se pinta EN PANTALLA (GridEquipo)
 // mientras dure — no basta con un comentario en el código.
 export function TripulacionPage() {
+  const contenidoRef = useRef<HTMLDivElement>(null)
+  useAperturaIntro(contenidoRef, { activo: true })
+
   return (
     <div>
       <Meta
@@ -51,8 +57,17 @@ export function TripulacionPage() {
         </div>
       </HeroInterna>
 
-      <div className="mx-auto max-w-contenido px-5 py-12 sm:px-10 lg:py-16">
-        <GridEquipo />
+      <div ref={contenidoRef} className="mx-auto max-w-contenido px-5 py-12 sm:px-10 lg:py-16">
+        <div className="flex flex-col gap-16 lg:gap-24">
+          {/* [v2 2026-07-27] «Quiénes somos» se REUBICA aquí desde /nosotros,
+              que desaparece. Es la bienvenida de marca («la familia
+              Hispaniola») y encaja con la página de personas mejor que con
+              Flota o Instalaciones. Sin esto se habría perdido con la página.
+              ⚠️ Colocación provisional, como la de «Nuestra historia» en
+              /flota — pendiente de que Samuel confirme el reparto. */}
+          <IntroNosotros />
+          <GridEquipo />
+        </div>
       </div>
 
       <Footer />

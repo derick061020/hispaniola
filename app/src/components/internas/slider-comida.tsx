@@ -55,8 +55,14 @@ export function SliderComida({
   }
 
   return (
+    // size-full NO es decorativo: las fotos van `absolute inset-0` (se funden
+    // entre sí en vez de deslizarse), así que sin altura propia este div
+    // colapsa a 0 y la celda se ve BLANCA. Pasó exactamente eso en la primera
+    // versión — el slider existía, con sus 9 fotos y sus flechas, pero medía
+    // cero. La celda del mosaico ya trae su alto de la rejilla; aquí solo hay
+    // que ocuparla.
     <div
-      className="group relative overflow-hidden bg-papel-hueso"
+      className="group relative size-full overflow-hidden bg-papel-hueso"
       onMouseEnter={() => setPausado(true)}
       onMouseLeave={() => setPausado(false)}
     >

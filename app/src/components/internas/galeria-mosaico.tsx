@@ -93,7 +93,7 @@ export function GaleriaMosaico({
   const celda = (indice: number, span: string) => {
     if (indice === 0 && hayComida) {
       return (
-        <div key="slider-comida" className={span}>
+        <div key="slider-comida" className={`${span} h-full overflow-hidden`}>
           <SliderComida
             fotos={fotosComida!}
             etiqueta={etiqueta}

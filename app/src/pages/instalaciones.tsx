@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { Footer } from '@/components/home/footer'
 import { HeroInterna } from '@/components/internas/hero-interna'
+import { ExperienciaABordo } from '@/components/nosotros/experiencia-abordo'
 import { Meta } from '@/components/seo/meta'
 import { INSTALACIONES, ZONAS } from '@/data/instalaciones'
 
@@ -96,6 +97,16 @@ export function InstalacionesPage() {
               </div>
             </article>
           ))}
+        </div>
+
+        {/* [v2 2026-07-27] «Un día de mar, cuidado al detalle» se REUBICA aquí
+            desde /nosotros, que desaparece. Encaja: esta página cuenta lo que
+            hay EN TIERRA detrás de la experiencia, y esta franja cuenta cómo se
+            traduce eso a bordo — el complejo y el día de mar son las dos
+            mitades del mismo argumento. Sin esto se habría perdido con la
+            página. ⚠️ Colocación provisional, pendiente del reparto final. */}
+        <div className="mt-20">
+          <ExperienciaABordo />
         </div>
 
         <div className="mt-20 rounded-2xl bg-navy px-6 py-12 text-center">

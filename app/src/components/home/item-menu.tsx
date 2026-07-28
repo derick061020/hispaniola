@@ -1,6 +1,19 @@
 import type { ComponentType } from 'react'
 import { Link } from 'react-router-dom'
-import { CircleHelp, Compass, Fish, MessageCircle, Newspaper, TicketCheck, User, Users } from 'lucide-react'
+import {
+  Building2,
+  CircleHelp,
+  Compass,
+  Fish,
+  MessageCircle,
+  Newspaper,
+  Leaf,
+  Ship,
+  Sprout,
+  TicketCheck,
+  User,
+  Users,
+} from 'lucide-react'
 import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
 import type { ItemNav } from '@/data/home'
 
@@ -22,7 +35,27 @@ const ICONOS: Record<string, ComponentType<{ className?: string }>> = {
   // `Icono` queda undefined y `<Icono />` revienta React → pantalla
   // en blanco al abrir el dropdown.
   'mi-reserva': User,
+  // [v2 2026-07-27] Los 4 destinos nuevos del menú v2. Y sí: al añadirlos al
+  // nav se me olvidó añadirlos AQUÍ, y los dropdowns de «Nosotros» y
+  // «Sostenibilidad» reventaron en blanco — exactamente el escenario que
+  // advertía el comentario de arriba, por tercera vez en este archivo.
+  // Por eso ahora hay un fallback (ver ICONO_FALLBACK): que falte un icono
+  // debe degradar, no tumbar el menú.
+  instalaciones: Building2,
+  flota: Ship,
+  sostenibilidad: Leaf,
+  fundacion: Sprout,
 }
+
+// [v2 2026-07-27] Red de seguridad. Este archivo ya ha tumbado el menú DOS
+// veces por la misma causa (el ítem «Blog» en las correcciones v1, y los 4
+// destinos del menú v2 hoy): se añade una entrada a NAV_* y se olvida el
+// icono, `Icono` queda undefined y React revienta al abrir el dropdown.
+//
+// Un comentario de aviso no bastó — la solución es que el fallo sea
+// imposible. Con esto, un id sin icono se pinta con la brújula genérica y el
+// menú sigue funcionando; el que falte se nota en pantalla, no en un crash.
+const ICONO_FALLBACK = Compass
 
 // Ítem del notch dinámico (PLAN-v3.md §12.1) — icono + título + descripción,
 // para los dropdowns "simples" (Nosotros/Ayuda): antes eran solo una lista de
@@ -42,7 +75,7 @@ const ICONOS: Record<string, ComponentType<{ className?: string }>> = {
 // lg:block`), quedando chip + título — misma decisión que ya tomó Samuel
 // para el móvil, aplicada a la franja donde el ancho tampoco da.
 export function ItemMenu({ item }: { item: ItemNav }) {
-  const Icono = ICONOS[item.id]
+  const Icono = ICONOS[item.id] ?? ICONO_FALLBACK
   const clases = 'group flex gap-3 rounded-lg p-3 transition-colors hover:bg-papel-hueso'
   const contenido = (
     <>
