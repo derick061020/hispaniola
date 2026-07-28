@@ -83,7 +83,9 @@ export function AddOnsWidget({
                 <button
                   type="button"
                   onClick={() => setConfirmando(null)}
-                  className="rounded-full bg-navy px-4 py-2 text-xs font-semibold text-white transition hover:brightness-110"
+                  // `text-papel` y no `text-white`: ver calendario-widget.tsx —
+                  // el blanco fijo desaparece sobre el navy remapeado a crema.
+                  className="rounded-full bg-navy px-4 py-2 text-xs font-semibold text-papel transition hover:brightness-110"
                 >
                   Quedármelo
                 </button>

@@ -113,9 +113,16 @@ function GridMensual({ fecha, onSeleccionar }: { fecha: string | null; onSelecci
               onClick={() => onSeleccionar(c.iso)}
               aria-pressed={elegido}
               aria-label={`${diaSemanaLargo(c.iso)}${agotado ? ' — sin plazas' : ''}`}
-              className={`aspect-square rounded-lg text-sm transition-colors ${
+              // `dia-cal` no pinta nada por sí sola: es el asidero para que el
+              // tema oscuro del widget pueda subir el contraste de los días
+              // DISPONIBLES sin tocar el tema claro (componentes.css).
+              // Y el día elegido pasa de `text-white` a `text-papel`: el blanco
+              // de Tailwind es fijo, no un token, así que sobre el `bg-navy`
+              // remapeado a crema se volvía invisible. `papel` y `navy` se
+              // voltean juntos y el par aguanta en los dos temas.
+              className={`dia-cal aspect-square rounded-lg text-sm transition-colors ${
                 elegido
-                  ? 'bg-navy font-semibold text-white'
+                  ? 'bg-navy font-semibold text-papel'
                   : deshabilitado
                     ? 'cursor-not-allowed text-linea-fuerte line-through'
                     : 'text-navy-sub hover:bg-papel-hueso hover:text-menta-texto'

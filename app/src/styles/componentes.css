@@ -3122,3 +3122,57 @@
 .widget-premium .bg-primary-base {
   color: var(--color-premium-fondo);
 }
+
+/* ── Ajustes del widget premium sobre piezas que no saben del tema ─────────
+   Samuel, 2026-07-28: «en la versión negra, en el calendario los días que sí
+   están disponibles casi no lo parecen; ponlos como blanco puro el texto y un
+   background sutil clarito. Y el botón de aplicar en seleccionar niños/adultos
+   parece inactivo, y también el de "seguro, estas fotos no se repiten"».
+
+   Estas reglas viven aquí y no en los componentes a propósito: el calendario,
+   el popover de pasajeros y la caja de add-ons NO reciben la bandera de
+   premium — son piezas reutilizables que no tienen por qué saber en qué tema
+   las están pintando. Igual que con el re-mapeo de tokens, quien decide el
+   aspecto es el ÁMBITO, no el hijo. */
+
+/* LOS BOTONES SÓLIDOS PASAN A ORO.
+   El diagnóstico no era de contraste —«Aplicar» ya medía 13:1— sino de
+   JERARQUÍA: `bg-navy` se convierte en crema al remapear los tokens, y un
+   botón pálido dentro de una interfaz oscura se lee como deshabilitado. En el
+   tema claro la acción primaria es el navy sólido; en el oscuro es el oro, que
+   es además lo que ya hace el CTA «Continuar». Se les da el mismo metal.
+   Se targetea la utilidad `.bg-navy` porque es el denominador común de los
+   cuatro botones (Aplicar, Quedármelo, día elegido del calendario y píldora de
+   horario) sin tener que pasarles una prop a cuatro componentes distintos. */
+.widget-premium button.bg-navy,
+.widget-premium a.bg-navy {
+  background: linear-gradient(
+    155deg,
+    var(--color-premium-oro-claro) 0%,
+    var(--color-premium-oro) 48%,
+    var(--color-premium-oro-oscuro) 100%
+  );
+  color: var(--color-premium-fondo);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 45%),
+    inset 0 -1px 0 rgb(0 0 0 / 28%);
+}
+
+/* LOS DÍAS DISPONIBLES DEL CALENDARIO, EN BLANCO PURO.
+   Venían en `text-navy-sub`, que en este ámbito es el crema apagado del texto
+   secundario: medido, rgb(169,164,154) para los disponibles contra ese mismo
+   crema al 45% para los NO disponibles. Dos grises casi iguales para dos
+   estados opuestos — de ahí que «casi no parezcan disponibles».
+   Blanco puro (y no el crema del tema) porque aquí el trabajo del color es
+   separar lo pulsable de lo que no, y el blanco es el único valor que no
+   comparte familia con el apagado. Más un fondo mínimo: da superficie que
+   pulsar sin dibujar 30 botones. */
+.widget-premium .dia-cal:not(:disabled):not([aria-pressed='true']) {
+  color: #fff;
+  background-color: color-mix(in srgb, #fff 7%, transparent);
+}
+
+.widget-premium .dia-cal:not(:disabled):not([aria-pressed='true']):hover {
+  background-color: color-mix(in srgb, var(--color-premium-oro) 22%, transparent);
+  color: var(--color-premium-oro-claro);
+}
