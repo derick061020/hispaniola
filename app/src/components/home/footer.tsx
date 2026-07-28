@@ -93,14 +93,32 @@ export function Footer() {
         <div>
           <h5 className="text-sm font-semibold uppercase tracking-wide text-white/50">Empresa</h5>
           <ul className="mt-3 flex flex-col gap-2 text-sm text-white/80">
+            {/* [v2 2026-07-27] `/nosotros` se partió en tres páginas; el footer
+                tiene que repetir la arquitectura del menú nuevo, no seguir
+                apuntando a una ruta que ahora solo redirige. */}
             <li>
-              <Link to="/nosotros" className="hover:text-white">
-                Nosotros
+              <Link to="/tripulacion" className="hover:text-white">
+                Tripulación
+              </Link>
+            </li>
+            <li>
+              <Link to="/instalaciones" className="hover:text-white">
+                Instalaciones
+              </Link>
+            </li>
+            <li>
+              <Link to="/flota" className="hover:text-white">
+                Flota
               </Link>
             </li>
             <li>
               <Link to="/sostenibilidad" className="hover:text-white">
                 Sostenibilidad
+              </Link>
+            </li>
+            <li>
+              <Link to="/fundacion" className="hover:text-white">
+                La Fundación
               </Link>
             </li>
             <li>

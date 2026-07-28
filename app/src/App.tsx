@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import { HomePage } from '@/pages/home'
 import { TourPage } from '@/pages/tour'
 import { ReservarPage } from '@/pages/reservar'
@@ -7,7 +7,10 @@ import { MiReservaPage } from '@/pages/mi-reserva'
 import { EventoPage } from '@/pages/evento'
 import { GraciasEventoPage } from '@/pages/gracias-evento'
 import { SostenibilidadPage } from '@/pages/sostenibilidad'
-import { NosotrosPage } from '@/pages/nosotros'
+import { FlotaPage } from '@/pages/flota'
+import { TripulacionPage } from '@/pages/tripulacion'
+import { InstalacionesPage } from '@/pages/instalaciones'
+import { FundacionPage } from '@/pages/fundacion'
 import { GuiasPage } from '@/pages/guias'
 import { FaqPage } from '@/pages/faq'
 import { BlogPage } from '@/pages/blog'
@@ -44,7 +47,19 @@ function App() {
         <Route path="/eventos/:slug" element={<EventoPage />} />
         <Route path="/eventos/:slug/gracias" element={<GraciasEventoPage />} />
         <Route path="/sostenibilidad" element={<SostenibilidadPage />} />
-        <Route path="/nosotros" element={<NosotrosPage />} />
+        {/* [v2 2026-07-27] Las 3 páginas en que se parte «Nosotros», según el
+            menú nuevo que el cliente dictó en la reunión del 07-24. */}
+        <Route path="/tripulacion" element={<TripulacionPage />} />
+        <Route path="/instalaciones" element={<InstalacionesPage />} />
+        <Route path="/flota" element={<FlotaPage />} />
+        {/* ⚠️ SINGULAR. Es la fundación del cliente. NO confundir con
+            `/fundaciones` (plural, abajo), que es la página interna de tokens. */}
+        <Route path="/fundacion" element={<FundacionPage />} />
+        {/* `/nosotros` DESAPARECE como página (reunión 07-24, 29:02: «no va a
+            haber una página única de nosotros, sino estas tres cosas»). Pero es
+            una URL indexada y enlazada desde fuera: redirige, NO devuelve 404.
+            `replace` para no dejar basura en el historial del navegador. */}
+        <Route path="/nosotros" element={<Navigate to="/tripulacion" replace />} />
         <Route path="/guias" element={<GuiasPage />} />
         <Route path="/faq" element={<FaqPage />} />
         {/* Blog (correcciones v1 del cliente, planes/06-blog.md). El artículo
@@ -60,6 +75,13 @@ function App() {
         <Route path="/reserva-directa" element={<ReservaDirectaPage />} />
         <Route path="/contacto" element={<ContactoPage />} />
         <Route path="/legal/:slug" element={<LegalPage />} />
+        {/* ⚠️⚠️ OJO: `/fundaciones` (PLURAL) NO es la fundación del cliente —
+            es la página INTERNA de tokens del proyecto, la que documenta la
+            paleta para el traspaso a Figma. La página de la Bávaro Reefs
+            Foundation vive en `/fundacion` (SINGULAR), arriba en este mismo
+            archivo. Se diferencian en UNA letra: decisión de Samuel del
+            2026-07-26 para no perder la herramienta de tokens. Si vas a tocar
+            una, comprueba cuál. */}
         <Route path="/fundaciones" element={<FundacionesPage />} />
         <Route path="*" element={<NoEncontradoPage />} />
       </Routes>

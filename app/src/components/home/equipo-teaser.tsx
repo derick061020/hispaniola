@@ -206,7 +206,7 @@ export function EquipoTeaser({
   texto = 'Gerencia española afincada en Punta Cana desde 2012. Conocemos el Caribe de cerca — y esa cercanía es justo lo que nos permite ofrecerte tours de calidad sin pasar por un portal.',
   cierre,
   enmarcada = true,
-  hrefHistoria = '/nosotros',
+  hrefHistoria = '/tripulacion',
 }: {
   miembros?: MiembroEquipo[]
   etiqueta?: string
@@ -274,7 +274,7 @@ export function EquipoTeaser({
         {cierre === undefined ? (
           <div className="mt-20 flex justify-center">
             <Link
-              to="/nosotros"
+              to="/tripulacion"
               className="group inline-flex items-center gap-1.5 text-lead font-semibold text-coral transition-colors hover:text-coral-dark"
             >
               Conoce también a la tripulación a bordo

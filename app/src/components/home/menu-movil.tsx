@@ -2,16 +2,21 @@ import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Link } from 'react-router-dom'
 import { X } from 'lucide-react'
-import { TOURS, OCASIONES, NAV_NOSOTROS, NAV_AYUDA, bookingCta, formatoDinero } from '@/data/home'
+import { TOURS, OCASIONES, NAV_NOSOTROS, NAV_SOSTENIBILIDAD, NAV_AYUDA, bookingCta, formatoDinero } from '@/data/home'
 import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
 import { Boton } from '@/components/ui/boton'
 
-type Seccion = 'tours' | 'eventos' | 'nosotros' | 'ayuda'
+type Seccion = 'tours' | 'eventos' | 'nosotros' | 'sostenibilidad' | 'ayuda'
 
+// [v2 2026-07-27] Mismo orden que el nav de escritorio (nav-tabs.tsx), dictado
+// por el cliente en la reunión del 07-24: Nosotros · Tours · Eventos ·
+// Sostenibilidad · Ayuda. Si aquí y allí divergen, el sitio se lee distinto
+// según el dispositivo.
 const secciones: { id: Seccion; label: string }[] = [
+  { id: 'nosotros', label: 'Nosotros' },
   { id: 'tours', label: 'Tours' },
   { id: 'eventos', label: 'Eventos' },
-  { id: 'nosotros', label: 'Nosotros' },
+  { id: 'sostenibilidad', label: 'Sostenibilidad' },
   { id: 'ayuda', label: 'Ayuda' },
 ]
 
@@ -200,6 +205,30 @@ export function MenuMovil({
                       {/* Igual que ItemMenu del dropdown de escritorio: `to`
                           decide página real vs. placeholder del prototipo. */}
                       {NAV_NOSOTROS.map((item) =>
+                        item.to ? (
+                          <Link
+                            key={item.id}
+                            to={item.to}
+                            className="rounded-lg px-3 py-2 text-sm font-medium text-navy hover:bg-papel-hueso"
+                          >
+                            {item.nombre}
+                          </Link>
+                        ) : (
+                          <EnlacePrototipo
+                            key={item.id}
+                            className="rounded-lg px-3 py-2 text-sm font-medium text-navy hover:bg-papel-hueso"
+                          >
+                            {item.nombre}
+                          </EnlacePrototipo>
+                        ),
+                      )}
+                    </div>
+                  ) : null}
+                  {/* [v2 2026-07-27] Sostenibilidad, tab nuevo del menú v2.
+                      Mismo tratamiento que Nosotros y Ayuda. */}
+                  {s.id === 'sostenibilidad' ? (
+                    <div className="flex flex-col gap-1.5">
+                      {NAV_SOSTENIBILIDAD.map((item) =>
                         item.to ? (
                           <Link
                             key={item.id}

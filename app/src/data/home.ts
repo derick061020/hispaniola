@@ -320,29 +320,57 @@ export type ItemNav = {
 // subtab") — este ítem es ahora su ÚNICA entrada en la navegación principal
 // (desktop y móvil). El icono se mapea por `id` en item-menu.tsx (presentación,
 // no contenido — así este archivo no importa React).
+// [v2 2026-07-27] REESCRITO por las correcciones v2 (plan 02 §1). El cliente
+// dictó el menú nuevo en la reunión del 07-24 (26:43): «Inicio, Nosotros,
+// Tours, Eventos, Sostenibilidad y Ayuda. Debajo de Nosotros: tripulación,
+// instalaciones, flota. Debajo de sostenibilidad: fundación. Y luego preguntas
+// frecuentes, guías, contacto y el blog».
+//
+// Cambios respecto a la v1:
+//  - «Nosotros» pasa a agrupar las TRES páginas nuevas. `/nosotros` como
+//    página única DESAPARECE (confirmado en la reunión, 29:02) y redirige a
+//    /tripulacion — ver App.tsx.
+//  - «El arrecife» sale de aquí: Sostenibilidad sube a tab propio.
+//  - «Blog» sale de aquí y baja a Ayuda.
 export const NAV_NOSOTROS: ItemNav[] = [
   {
     id: 'tripulacion',
-    nombre: 'La tripulación y la flota',
-    descripcion: 'Capitán, bióloga marina, chef a bordo y guía de snorkel. Dos catamaranes y la cocina flotante.',
-    to: '/nosotros',
+    nombre: 'Tripulación',
+    descripcion: 'Las personas detrás de cada tour: capitanes, guías, cocina, biología marina y oficina.',
+    to: '/tripulacion',
   },
   {
-    id: 'arrecife',
-    nombre: 'El arrecife que reconstruimos',
-    descripcion: 'Mira la página de Sostenibilidad para toda la historia.',
+    id: 'instalaciones',
+    nombre: 'Instalaciones',
+    descripcion: 'Un complejo, no solo un muelle: museo marino, laboratorio de biología, cocinas y tienda.',
+    to: '/instalaciones',
+  },
+  {
+    id: 'flota',
+    nombre: 'Flota',
+    descripcion: 'Nuestras embarcaciones, con galería y ficha técnica de cada una.',
+    to: '/flota',
+  },
+]
+
+// [v2 2026-07-27] Sostenibilidad sube a tab propio del nav principal, con un
+// único sub-ítem: la Fundación (reunión 07-24, 26:50).
+//
+// ⚠️ La ruta es `/fundacion` en SINGULAR. `/fundaciones` (plural) YA EXISTE y
+// es otra cosa: la página interna de tokens del proyecto. Se diferencian en
+// una letra — ver los avisos cruzados en App.tsx y en las dos páginas.
+export const NAV_SOSTENIBILIDAD: ItemNav[] = [
+  {
+    id: 'sostenibilidad',
+    nombre: 'Nuestra ventaja competitiva',
+    descripcion: 'Arrecifes, tortugas y comunidad: lo que tu reserva sostiene, con cifras.',
     to: '/sostenibilidad',
   },
-  // Blog (correcciones v1 del cliente, 2026-07-20 — planes/06-blog.md). Entra
-  // en «Nosotros» y no en «Ayuda»: es contenido de marca (historias y guías
-  // de quienes navegan la costa), no soporte al cliente. Deja el dropdown de
-  // Nosotros en 3 ítems, que es el número que su grid de 2 columnas ya
-  // manejaba en Ayuda.
   {
-    id: 'blog',
-    nombre: 'Blog',
-    descripcion: 'Guías honestas, historias del mar y consejos reales para tu viaje.',
-    to: '/blog',
+    id: 'fundacion',
+    nombre: 'La Fundación',
+    descripcion: 'Fundación Ecológica Arrecifes de Bávaro: el tercer vivero de coral del país.',
+    to: '/fundacion',
   },
 ]
 
@@ -383,6 +411,16 @@ export const NAV_AYUDA: ItemNav[] = [
     nombre: 'Gestionar mi reserva',
     descripcion: 'Edita tu menú, recogida o datos con tu código HSP-XXXX-NNNN.',
     to: '/mi-reserva',
+  },
+  // [v2 2026-07-27] Blog baja aquí desde «Nosotros» (reunión 07-24, 27:00:
+  // «...contacto y el blog también»). Deja Ayuda en 5 ítems — su grid de 2
+  // columnas queda con una celda libre, que es el mismo criterio que Samuel
+  // ya aplicó antes: no se inventa un destino para cuadrar la rejilla.
+  {
+    id: 'blog',
+    nombre: 'Blog',
+    descripcion: 'Guías honestas, historias del mar y consejos reales para tu viaje.',
+    to: '/blog',
   },
 ]
 

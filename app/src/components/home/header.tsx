@@ -8,7 +8,10 @@ import { TabsConPaneles } from './nav-tabs'
 import { useMenuDropdown } from '@/lib/use-menu-dropdown'
 import { useDevFlag } from '@/dev/use-dev-flag'
 
-export type MenuId = 'tours' | 'eventos' | 'nosotros' | 'ayuda'
+// [v2 2026-07-27] 'sostenibilidad' entra como tab propio del nav principal
+// (correcciones v2, plan 02 §1 — el cliente dictó el menú en la reunión del
+// 07-24). Con esto el nav pasa de 5 a 6 entradas.
+export type MenuId = 'tours' | 'eventos' | 'nosotros' | 'sostenibilidad' | 'ayuda'
 
 // v3: el header vive DENTRO del box del hero (app/PLAN-v3.md §4), así que
 // necesita una variante transparente sobre el video. 'solida' (default) es

@@ -4,6 +4,7 @@ import gsap from 'gsap'
 import { MegaTours } from './mega-tours'
 import { MegaEventos } from './mega-eventos'
 import { DropdownNosotros } from './dropdown-nosotros'
+import { DropdownSostenibilidad } from './dropdown-sostenibilidad'
 import { DropdownAyuda } from './dropdown-ayuda'
 import type { MenuId } from './header'
 
@@ -291,6 +292,8 @@ export function TabsConPaneles({
       <MegaEventos />
     ) : idMostrado === 'nosotros' ? (
       <DropdownNosotros />
+    ) : idMostrado === 'sostenibilidad' ? (
+      <DropdownSostenibilidad />
     ) : idMostrado === 'ayuda' ? (
       <DropdownAyuda />
     ) : null
@@ -300,9 +303,14 @@ export function TabsConPaneles({
       <Link to="/" className={claseInicio}>
         Inicio
       </Link>
+      {/* [v2 2026-07-27] Orden nuevo dictado por el cliente (reunión 07-24,
+          26:43): Inicio · Nosotros · Tours · Eventos · Sostenibilidad · Ayuda.
+          «Nosotros» pasa DELANTE de Tours y Sostenibilidad entra como tab
+          propio — el nav pasa de 5 a 6 entradas. */}
+      {botonTab('nosotros', 'Nosotros ▾')}
       {botonTab('tours', 'Tours ▾')}
       {botonTab('eventos', 'Eventos ▾')}
-      {botonTab('nosotros', 'Nosotros ▾')}
+      {botonTab('sostenibilidad', 'Sostenibilidad ▾')}
       {botonTab('ayuda', 'Ayuda ▾')}
       {panelMontado ? (
         <div ref={panelRef} className={clasePanel} style={{ transformOrigin: 'top center' }}>
