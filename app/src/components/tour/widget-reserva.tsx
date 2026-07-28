@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Minus, Plus, Users, Baby, PersonStanding, Tag, ArrowDown, BadgeCheck, Heart, Share2, Check } from 'lucide-react'
+import { Minus, Plus, Users, Tag, ArrowDown, BadgeCheck, Heart, Share2, Check } from 'lucide-react'
 import * as FancyButton from '@/components/alignui/fancy-button'
 import * as CompactButton from '@/components/alignui/compact-button'
 import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
@@ -15,7 +15,7 @@ import { WHATSAPP_URL, calcularTotalTour, type FichaTour } from '@/data/tours'
 import { ALBUM_UPSELL, totalAddOns, saltoDeTramo } from '@/lib/tarifas'
 import { AddOnsWidget } from '@/components/tour/add-ons-widget'
 import { PistaInfo } from '@/components/ui/pista-info'
-import { PasajerosPopover, resumirPasajeros } from '@/components/tour/pasajeros-popover'
+import { PasajerosPopover, FilaPasajero } from '@/components/tour/pasajeros-popover'
 
 // «El widget ES la página» (wireframe A2): sticky en desktop, con el precio en
 // el primer viewport — en la web actual ese precio está a 6 pantallas de
@@ -472,8 +472,6 @@ export function WidgetReserva({
     addOns.filter((a) => a.porDefecto && ALBUM_UPSELL.porDefecto).map((a) => a.id),
   )
   const paxParaAddOns = esDual ? totalPersonas : personas
-  // [v2] Resumen de la línea plegada del selector de pasajeros.
-  const resumenPasajeros = resumirPasajeros(adultos, ninos, bebes)
   const importeAddOns = totalAddOns(addOns, addOnsElegidos, paxParaAddOns)
   const total = totalTour === null ? null : totalTour + importeAddOns
   // Ancla del widget: el "desde" que se ve en la cabecera. Con
@@ -791,14 +789,28 @@ export function WidgetReserva({
           //
           // Solo aquí: los tours sin tramos de edad tienen un único stepper y
           // meterlo en un popover añadiría un clic sin ahorrar nada.
-          <PasajerosPopover resumen={resumenPasajeros} total={totalPersonas} max={maxPersonas}>
-            <div role="group" aria-label="Pasajeros" className="flex flex-col gap-2">
-              <div className="flex h-10 items-center justify-between rounded-10 border border-stroke-soft-200 bg-bg-white-0 pl-3 pr-1.5">
-                <span className="flex items-center gap-2 text-paragraph-sm text-text-strong-950">
-                  <Users className="size-5 shrink-0 text-text-sub-600" aria-hidden="true" />
-                  <span className="text-navy-sub">Adultos</span>
-                </span>
-                <div className="flex items-center gap-2">
+          <PasajerosPopover total={totalPersonas} max={maxPersonas}>
+            {/* [v2 2026-07-28] Filas SIN borde, con el rango de edad en el
+                propio título y el mínimo/máximo debajo — patrón de Viator, que
+                Samuel pasó como referencia. Antes eran tres cajas con borde
+                dentro de otra caja con borde.
+                ⚠️ Los rangos de edad los fijó Samuel el 07-28: adultos 13-99,
+                niños 4-7, bebés 0-3. El tope de 7 sigue sin confirmar por
+                escrito con Fernando (salió de la reunión, donde el cliente no
+                recordaba el rango) — y ahora es copy visible. */}
+            <div role="group" aria-label="Pasajeros" className="divide-y divide-linea">
+              <FilaPasajero
+                titulo="Adultos"
+                edades="13-99"
+                minimo={1}
+                maximo={maxPersonas}
+                pista={
+                  <PistaInfo
+                    etiqueta="Qué cuenta como adulto"
+                    texto="A partir de 13 años se paga tarifa completa. Al menos un adulto tiene que acompañar a los menores."
+                  />
+                }
+              >
                   <span
                     key={adultos}
                     aria-live="polite"
@@ -806,56 +818,42 @@ export function WidgetReserva({
                   >
                     {adultos}
                   </span>
-                  {/* size-11 (44px) en className, NO en el prop `size` del vendor
-                      (auditoría móvil 2026-07-17): el tamaño "large" propio del
-                      componente es size-6 (24px) — por debajo del mínimo táctil
-                      recomendado (~44px), y este stepper se toca varias veces
-                      seguidas para subir el conteo. tv() mergea `className` con
-                      tailwind-merge, así que sobrescribe el size-6 del vendor sin
-                      tocar compact-button.tsx (regla del proyecto: los vendor no
-                      se editan a mano). Mismo cambio en los otros 5 steppers de
-                      este widget + los 2 de widget-evento.tsx. */}
-                  <div className="flex items-center gap-1">
-                    <CompactButton.Root
-                      type="button"
-                      variant="stroke"
-                      fullRadius
-                      aria-label="Quitar un adulto"
-                      disabled={adultos <= 1}
-                      onClick={() => setAdultos((a) => Math.max(1, a - 1))}
-                      className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
-                    >
-                      <CompactButton.Icon as={Minus} />
-                    </CompactButton.Root>
-                    <CompactButton.Root
-                      type="button"
-                      variant="stroke"
-                      fullRadius
-                      aria-label="Añadir un adulto"
-                      disabled={adultos + ninos >= maxPersonas}
-                      onClick={() => setAdultos((a) => Math.min(maxPersonas - ninos, a + 1))}
-                      className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
-                    >
-                      <CompactButton.Icon as={Plus} />
-                    </CompactButton.Root>
-                  </div>
-                </div>
-              </div>
-              <div className="flex h-10 items-center justify-between rounded-10 border border-stroke-soft-200 bg-bg-white-0 pl-3 pr-1.5">
-                {/* [v2 2026-07-27] El icono de «Niños» YA NO es el bebé
-                    (pedido de Samuel): con bebés y niños como tramos
-                    separados, el mismo icono en los dos no distinguía nada.
-                    PersonStanding para el niño que ya camina, Baby para el
-                    tramo de 1-3. */}
-                <span className="flex items-center gap-2 text-paragraph-sm text-text-strong-950">
-                  <PersonStanding className="size-5 shrink-0 text-text-sub-600" aria-hidden="true" />
-                  <span className="text-navy-sub">Niños</span>
+                  <CompactButton.Root
+                    type="button"
+                    variant="stroke"
+                    fullRadius
+                    aria-label="Quitar un adulto"
+                    disabled={adultos <= 1}
+                    onClick={() => setAdultos((a) => Math.max(1, a - 1))}
+                    className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
+                  >
+                    <CompactButton.Icon as={Minus} />
+                  </CompactButton.Root>
+                  <CompactButton.Root
+                    type="button"
+                    variant="stroke"
+                    fullRadius
+                    aria-label="Añadir un adulto"
+                    disabled={adultos + ninos >= maxPersonas}
+                    onClick={() => setAdultos((a) => Math.min(maxPersonas - ninos, a + 1))}
+                    className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
+                  >
+                    <CompactButton.Icon as={Plus} />
+                  </CompactButton.Root>
+              </FilaPasajero>
+
+              <FilaPasajero
+                titulo="Niños"
+                edades="4-7"
+                minimo={0}
+                maximo={maxPersonas - 1}
+                pista={
                   <PistaInfo
                     etiqueta="Qué edad cuenta como niño"
-                    texto="Niños de 4 a 7 años, con tarifa reducida. De 1 a 3 años no pagan: añádelos abajo, en Bebés."
+                    texto="De 4 a 7 años pagan tarifa reducida. Los menores de 4 no pagan: añádelos como bebés."
                   />
-                </span>
-                <div className="flex items-center gap-2">
+                }
+              >
                   <span
                     key={ninos}
                     aria-live="polite"
@@ -863,64 +861,45 @@ export function WidgetReserva({
                   >
                     {ninos}
                   </span>
-                  <div className="flex items-center gap-1">
-                    <CompactButton.Root
-                      type="button"
-                      variant="stroke"
-                      fullRadius
-                      aria-label="Quitar un niño"
-                      disabled={ninos <= 0}
-                      onClick={() => setNinos((n) => Math.max(0, n - 1))}
-                      className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
-                    >
-                      <CompactButton.Icon as={Minus} />
-                    </CompactButton.Root>
-                    <CompactButton.Root
-                      type="button"
-                      variant="stroke"
-                      fullRadius
-                      aria-label="Añadir un niño"
-                      disabled={adultos + ninos >= maxPersonas}
-                      onClick={() => setNinos((n) => Math.min(maxPersonas - adultos, n + 1))}
-                      className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
-                    >
-                      <CompactButton.Icon as={Plus} />
-                    </CompactButton.Root>
-                  </div>
-                </div>
-              </div>
+                  <CompactButton.Root
+                    type="button"
+                    variant="stroke"
+                    fullRadius
+                    aria-label="Quitar un niño"
+                    disabled={ninos <= 0}
+                    onClick={() => setNinos((n) => Math.max(0, n - 1))}
+                    className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
+                  >
+                    <CompactButton.Icon as={Minus} />
+                  </CompactButton.Root>
+                  <CompactButton.Root
+                    type="button"
+                    variant="stroke"
+                    fullRadius
+                    aria-label="Añadir un niño"
+                    disabled={adultos + ninos >= maxPersonas}
+                    onClick={() => setNinos((n) => Math.min(maxPersonas - adultos, n + 1))}
+                    className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
+                  >
+                    <CompactButton.Icon as={Plus} />
+                  </CompactButton.Root>
+              </FilaPasajero>
 
-              {/* [v2 2026-07-27, plan 01 §6] TERCER TRAMO: bebés de 1 a 3 años.
-                  El cliente lo aclaró en la reunión del 07-24 (01:58): «los
-                  niños de uno a tres años no pagan».
-
-                  ⚠️ Dos decisiones que conviene no deshacer sin preguntar:
-                  1. NO SUMAN al aforo. Es literal de Samuel el 07-27 («los
-                     bebés no suman»), así que no se restan de `maxPersonas`.
-                     Operativamente eso significa que un barco de 30 plazas
-                     puede acabar con 30 + bebés a bordo — si el cliente
-                     quiere que ocupen plaza, es cambiar el `disabled` y las
-                     dos restas de arriba, no rehacer nada.
-                  2. Solo se pinta en los tours con selector de edad, que
-                     según la decisión del 07-27 es SOLO Snorkel Lovers. El
-                     semi-privado no admite niños; charter, Saona y eventos
-                     van por tramos y ahí «una plaza es una plaza, sin edad».
-
-                  ⚠️ El tope de 3 años está sin confirmar por escrito: en la
-                  reunión Miguel no recordaba el rango y aceptó por cortesía el
-                  «¿será 7?» que propuso Samuel para el tramo siguiente. */}
-              <div className="flex h-10 items-center justify-between rounded-10 border border-stroke-soft-200 bg-bg-white-0 pl-3 pr-1.5">
-                <span className="flex items-center gap-2 text-paragraph-sm text-text-strong-950">
-                  <Baby className="size-5 shrink-0 text-text-sub-600" aria-hidden="true" />
-                  <span className="text-navy-sub">
-                    Bebés <span className="text-navy-soft">gratis</span>
-                  </span>
+              {/* Los bebés NO restan del aforo (decisión de Samuel del 07-27:
+                  «los bebés no suman»), por eso su máximo no depende de
+                  `maxPersonas` ni deshabilita el «+». */}
+              <FilaPasajero
+                titulo="Bebés"
+                edades="0-3"
+                minimo={0}
+                maximo={maxPersonas}
+                pista={
                   <PistaInfo
                     etiqueta="Qué edad cuenta como bebé"
-                    texto="Bebés de 1 a 3 años, sin coste. A partir de los 4 años pagan tarifa de niño."
+                    texto="Hasta los 3 años viajan sin coste y no ocupan plaza. A partir de los 4 pagan tarifa de niño."
                   />
-                </span>
-                <div className="flex items-center gap-2">
+                }
+              >
                   <span
                     key={bebes}
                     aria-live="polite"
@@ -928,31 +907,29 @@ export function WidgetReserva({
                   >
                     {bebes}
                   </span>
-                  <div className="flex items-center gap-1">
-                    <CompactButton.Root
-                      type="button"
-                      variant="stroke"
-                      fullRadius
-                      aria-label="Quitar un bebé"
-                      disabled={bebes <= 0}
-                      onClick={() => setBebes((b) => Math.max(0, b - 1))}
-                      className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
-                    >
-                      <CompactButton.Icon as={Minus} />
-                    </CompactButton.Root>
-                    <CompactButton.Root
-                      type="button"
-                      variant="stroke"
-                      fullRadius
-                      aria-label="Añadir un bebé"
-                      onClick={() => setBebes((b) => b + 1)}
-                      className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
-                    >
-                      <CompactButton.Icon as={Plus} />
-                    </CompactButton.Root>
-                  </div>
-                </div>
-              </div>
+                  <CompactButton.Root
+                    type="button"
+                    variant="stroke"
+                    fullRadius
+                    aria-label="Quitar un bebé"
+                    disabled={bebes <= 0}
+                    onClick={() => setBebes((b) => Math.max(0, b - 1))}
+                    className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
+                  >
+                    <CompactButton.Icon as={Minus} />
+                  </CompactButton.Root>
+                  <CompactButton.Root
+                    type="button"
+                    variant="stroke"
+                    fullRadius
+                    aria-label="Añadir un bebé"
+                    disabled={false}
+                    onClick={() => setBebes((b) => b + 1)}
+                    className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
+                  >
+                    <CompactButton.Icon as={Plus} />
+                  </CompactButton.Root>
+              </FilaPasajero>
             </div>
           </PasajerosPopover>
         ) : (

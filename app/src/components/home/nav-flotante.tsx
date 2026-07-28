@@ -261,6 +261,30 @@ export function NavFlotante() {
     setTieneHero(!!document.getElementById('hero'))
   }, [pathname])
 
+  // [v2 2026-07-28] RESET AL CAMBIAR DE RUTA. Bug real reportado por Samuel:
+  // yendo de una ficha (con scroll bajado) a la home se veían DOS logos y DOS
+  // botones «Reservar» — los del hero de la página nueva y, encima, los
+  // fundidos del nav fijo.
+  //
+  // Causa: `IntersectionObserver` entrega su PRIMER callback de forma
+  // ASÍNCRONA. Al navegar, el observer se vuelve a crear sobre el nuevo
+  // `#logo-hero`, pero hasta que dispara pasan uno o más frames — y durante
+  // ese hueco sobreviven `logoVisible: false` y `fusionMontada: true` de la
+  // página anterior, que es justo lo que pinta el par fundido.
+  //
+  // El reset es optimista y seguro: `ScrollAlNavegar` deja la página nueva
+  // arriba del todo, así que «el logo del hero está visible» es cierto en
+  // cuanto se navega. Si por lo que fuera no lo estuviera, el observer lo
+  // corrige en el mismo frame siguiente.
+  //
+  // useLayoutEffect y no useEffect: corre ANTES del pintado, así que el
+  // usuario no llega a ver ni un fotograma con los dos pares.
+  useLayoutEffect(() => {
+    if (forzadoRef.current) return
+    setLogoVisible(true)
+    setFusionMontada(false)
+  }, [pathname])
+
   useEffect(() => {
     if (forzadoRef.current) return
     const logoEl = document.getElementById('logo-hero')
