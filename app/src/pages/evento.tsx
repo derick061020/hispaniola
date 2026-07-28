@@ -109,6 +109,14 @@ export function EventoPage() {
               <GaleriaMosaico
                 fotos={evento.galeria}
                 etiqueta={evento.nombre}
+                // [v2 2026-07-27, plan 01 §10] El slider de comida en la
+                // primera celda va también aquí: el cliente dijo «en TODOS los
+                // servicios» (reunión 07-24, 19:27), y las 3 landings de evento
+                // son servicios. Las fotos salen de los paquetes de este
+                // evento, no de una lista aparte.
+                fotosComida={(evento.paquetes?.items ?? [])
+                  .map((p) => p.foto)
+                  .filter((f): f is string => f !== null)}
               />
 
               {/* Descripción larga — 2 párrafos en una card BLOQUE_FICHA

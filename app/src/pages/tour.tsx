@@ -19,6 +19,8 @@ import { GaleriaMosaico } from '@/components/internas/galeria-mosaico'
 import { ReelsSociales } from '@/components/ui/reels-sociales'
 import { ComparadorPremium } from '@/components/tour/comparador-premium'
 import { BandaPremium } from '@/components/tour/banda-premium'
+import { fotosComidaDe } from '@/data/tours'
+import { VideoAcompanante } from '@/components/tour/video-acompanante'
 import { TambienTeGusta } from '@/components/internas/tambien-te-gusta'
 import { TOURS } from '@/data/home'
 import { FICHAS } from '@/data/tours'
@@ -128,7 +130,28 @@ export function TourPage() {
                 fotos={[tour.foto, ...ficha.galeriaCompleta]}
                 etiqueta={tour.nombre}
                 video={ficha.videoGaleria}
+                // [v2 2026-07-27] Las fotos de plato de ESTE tour alimentan el
+                // slider de la primera celda (§10). Se derivan de los menús
+                // que la ficha ya declara — no hay una lista aparte que pueda
+                // quedarse desincronizada del menú que se pinta abajo.
+                fotosComida={fotosComidaDe(ficha)}
               />
+
+              {/* [v2 2026-07-27, plan 01 §11] El video que ACOMPAÑA el scroll,
+                  fijo abajo a la izquierda y expandible al clic. Se monta justo
+                  después del mosaico porque su centinela mide desde aquí: solo
+                  aparece cuando el video "de verdad" del mosaico ya salió de
+                  pantalla, para no enseñar el mismo video dos veces.
+                  ⚠️ [placeholder-v2] Reutiliza el video del mosaico. El
+                  definitivo es «la persona responsable explicando el tour»
+                  (reunión 07-24, 20:51) y hay que grabarlo, uno por tour. */}
+              {ficha.videoGaleria !== null ? (
+                <VideoAcompanante
+                  src={ficha.videoGaleria}
+                  poster={`/fotos/${tour.foto}.webp`}
+                  etiqueta={tour.nombre}
+                />
+              ) : null}
 
               {/* Ficha técnica del tour, debajo del mosaico (Samuel
                   2026-07-22, ref. los «trip facts» de Viator). Sustituye a

@@ -1,6 +1,7 @@
 import { useState, type CSSProperties } from 'react'
 import { Play, Volume2 } from 'lucide-react'
 import { GaleriaLightbox } from '@/components/tour/galeria-lightbox'
+import { SliderComida } from '@/components/internas/slider-comida'
 import { VideoLightbox } from '@/components/tour/video-lightbox'
 import { useDevFlag } from '@/dev/use-dev-flag'
 
@@ -47,16 +48,27 @@ import { useDevFlag } from '@/dev/use-dev-flag'
 //   · En móvil la fila se rompe y el video va encima, centrado y a alto
 //     acotado (--spacing-galeria-video-alto-movil): a ancho completo un 9:16
 //     mediría ~690px de alto y empujaría la ficha entera fuera de pantalla.
+//
+// [v2 2026-07-27] La PRIMERA celda de la rejilla puede ser un SLIDER DE COMIDA
+// (plan 01 §10, slide 7 — el cliente rodeó esa celda y escribió «mini galería
+// de fotos del menú»). No es una tira a ancho completo: es la misma celda, con
+// el mismo tamaño y estética, pero pasando en bucle todos los platos del menú
+// de ese tour/evento, con flechas al hover. Ver slider-comida.tsx.
 export function GaleriaMosaico({
   fotos,
   etiqueta,
   video = null,
+  fotosComida,
 }: {
   fotos: string[]
   /** describe el conjunto para lectores de pantalla (el nombre del tour/evento) */
   etiqueta: string
   /** Ruta del video (en /video). null = mosaico solo de fotos, como siempre. */
   video?: string | null
+  /** [v2] Fotos de plato del menú de ESTE tour/evento. Con 2 o más, la
+   *  primera celda pasa a ser el slider. Sin ellas, el mosaico es el de
+   *  siempre — las landings sin menú no cambian. */
+  fotosComida?: string[]
 }) {
   const [lightbox, setLightbox] = useState<number | null>(null)
   const [verVideo, setVerVideo] = useState(false)
@@ -72,7 +84,24 @@ export function GaleriaMosaico({
   const visibles = amplio ? 7 : Math.min(4, fotos.length)
   const restantes = fotos.length - visibles
 
+  // [v2] Con fotos de menú, la celda 0 se sustituye por el slider. El resto de
+  // índices NO se desplazan: el slider abre el lightbox en la 0 igual que
+  // haría la foto que reemplaza, así que la numeración del lightbox sigue
+  // cuadrando con `fotos`.
+  const hayComida = (fotosComida?.length ?? 0) >= 2
+
   const celda = (indice: number, span: string) => {
+    if (indice === 0 && hayComida) {
+      return (
+        <div key="slider-comida" className={span}>
+          <SliderComida
+            fotos={fotosComida!}
+            etiqueta={etiqueta}
+            onAbrir={() => setLightbox(0)}
+          />
+        </div>
+      )
+    }
     const esUltima = indice === visibles - 1
     return (
       <button

@@ -891,6 +891,25 @@ export const FICHAS: Record<string, FichaTour> = {
  *  reserva-directa) viven en prototipo/ y van por EnlacePrototipo. */
 export const WHATSAPP_URL = 'https://wa.me/18293052804'
 
+/** [v2 2026-07-27] Todas las fotos de plato de una ficha, para el slider de la
+ *  primera celda del mosaico (plan 01 §10 — «mini galería de fotos del menú»).
+ *
+ *  Se DERIVAN de los menús que la ficha ya declara (Light + Premium, o el menú
+ *  del charter) en vez de mantener una lista aparte: si mañana cambia un plato,
+ *  el slider y el bloque de menú siguen contando lo mismo. Se deduplica porque
+ *  un plato puede repetirse entre paquetes.
+ *
+ *  Saona devuelve [] a propósito: su menú es BUFFET y no tiene platos con foto
+ *  (`PlatoBuffet` ni siquiera tiene el campo). Sin fotos, el mosaico se pinta
+ *  como siempre. */
+export function fotosComidaDe(ficha: FichaTour): string[] {
+  const platos = [...ficha.menuPremium, ...ficha.menuLight, ...(ficha.menuCharter?.platos ?? [])]
+  const fotos = platos
+    .map((p) => ('foto' in p ? p.foto : undefined))
+    .filter((f): f is string => typeof f === 'string')
+  return Array.from(new Set(fotos))
+}
+
 /** Resuelve el precio total del tour. Funciona para los 3 modelos:
  *  - SubVariantes (Saona, v3 2026-07-17): busca el tramo que contiene
  *    `personas` en la tabla de la sub-variante; tramo 'grupo' es el total,
