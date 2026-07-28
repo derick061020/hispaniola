@@ -157,7 +157,7 @@ export function GaleriaLightbox({
             fondo oscuro canta demasiado. */}
         {n > 1 ? (
           <div
-            className="scroll-sutil flex shrink-0 justify-start gap-2 overflow-x-auto px-4 pb-5 sm:justify-center"
+            className="scroll-sutil flex shrink-0 justify-start gap-2 overflow-x-auto px-4 py-1 pb-5 sm:justify-center"
             onClick={(e) => e.stopPropagation()}
           >
             {fotos.map((f, i) => (
@@ -167,10 +167,17 @@ export function GaleriaLightbox({
                 onClick={() => ir(i)}
                 aria-label={`Ver la foto ${i + 1} de ${n}`}
                 aria-current={i === indice}
-                className={`h-14 w-20 shrink-0 overflow-hidden rounded-lg transition ${
+                // BORDE, no `ring`. Un ring de Tailwind se pinta POR FUERA de
+                // la caja, y esta tira es un contenedor con `overflow-x-auto`
+                // que lo recortaba por arriba y por abajo — se veía el marco
+                // de la miniatura activa cortado. Un `border` vive DENTRO
+                // (box-sizing: border-box), así que no hay nada que recortar.
+                // Va en las dos: transparente en las inactivas, para que al
+                // cambiar de foto la miniatura no cambie de tamaño.
+                className={`h-14 w-20 shrink-0 overflow-hidden rounded-lg border-2 transition ${
                   i === indice
-                    ? 'opacity-100 ring-2 ring-white'
-                    : 'opacity-45 hover:opacity-80'
+                    ? 'border-white opacity-100'
+                    : 'border-transparent opacity-45 hover:opacity-80'
                 }`}
               >
                 <img
