@@ -53,9 +53,38 @@ export type PaqueteEvento = {
   /** extra de precio, ej: "US$ 99.00 per extra person" — texto libre
    *  bajo los items. null = no aplica. */
   extraPrecio?: string
+  /** [v2 2026-07-27] Los mismos precios que `precio`/`extraPrecio`, pero como
+   *  NÚMEROS, para poder calcular. Los de texto se quedan porque son el
+   *  formato exacto de la web del cliente y se pintan tal cual en la card.
+   *  null = paquete sin precio publicado (no reservable online).
+   *
+   *  ⚠️ MODELO MARGINAL: base fija hasta `incluyeHasta` personas, y a partir
+   *  de ahí `porPersonaExtra` por cabeza. Es el ÚNICO producto que funciona
+   *  así — los tours usan sustitución de tramo (ver lib/tarifas.ts). */
+  precioBase?: number | null
+  incluyeHasta?: number
+  porPersonaExtra?: number | null
   /** badge de destacar: null = ninguno, "premium" = "Most complete" o
    *  similar. La card se pinta con un acento si está presente. */
   destacado?: 'premium' | null
+}
+
+/** [v2 2026-07-27] Total de un paquete de evento — MODELO MARGINAL:
+ *  base fija hasta `incluyeHasta` + tanto por cada persona a partir de ahí.
+ *
+ *  Ej. real (Hispaniola Premium): 12 personas = US$ 1.188; 13 = 1.188 + 99.
+ *
+ *  ⚠️ NO es el mismo motor que los tours. Charter y Saona usan SUSTITUCIÓN de
+ *  tramo (el tramo que contiene al total se aplica entero) — está en
+ *  lib/tarifas.ts. Son dos modelos y el sitio necesita los dos; mezclarlos
+ *  cobra mal. Ver correcciones-v2-cliente/TARIFARIO-WEB-ORIGINAL.md.
+ *
+ *  Devuelve null si el paquete no tiene precio publicado. */
+export function totalPaqueteEvento(p: PaqueteEvento, personas: number): number | null {
+  if (p.precioBase === null || p.precioBase === undefined) return null
+  const incluidas = p.incluyeHasta ?? 12
+  const extras = Math.max(0, personas - incluidas)
+  return p.precioBase + extras * (p.porPersonaExtra ?? 0)
 }
 
 export type StatEvento = { valor: string; label: string }
@@ -232,6 +261,9 @@ const PARTY_BOAT: FichaEvento = {
         id: 'premium',
         nombre: 'Hispaniola Premium Package',
         precio: 'US$ 1,188.00',
+    precioBase: 1188,
+    incluyeHasta: 12,
+    porPersonaExtra: 99,
         capacidad: '1-12 personas',
         meta: '4 horas a bordo',
         foto: 'paquete-premium',
@@ -252,6 +284,9 @@ const PARTY_BOAT: FichaEvento = {
         id: 'package-i',
         nombre: 'Package #I',
         precio: 'US$ 660.00',
+    precioBase: 660,
+    incluyeHasta: 12,
+    porPersonaExtra: 55,
         capacidad: '1-12 personas',
         meta: '3 horas a bordo · 2 paradas',
         foto: 'paquete-i',
@@ -267,6 +302,9 @@ const PARTY_BOAT: FichaEvento = {
         id: 'package-ii',
         nombre: 'Package #II',
         precio: 'US$ 780.00',
+    precioBase: 780,
+    incluyeHasta: 12,
+    porPersonaExtra: 65,
         capacidad: '1-12 personas',
         meta: '3 horas a bordo · 2 paradas',
         foto: 'paquete-ii',
@@ -283,6 +321,9 @@ const PARTY_BOAT: FichaEvento = {
         id: 'package-iii',
         nombre: 'Package #III',
         precio: 'US$ 900.00',
+    precioBase: 900,
+    incluyeHasta: 12,
+    porPersonaExtra: 75,
         capacidad: '1-12 personas',
         meta: '3 horas a bordo · 2 paradas',
         foto: 'paquete-iii',

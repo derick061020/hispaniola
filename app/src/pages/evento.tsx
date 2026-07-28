@@ -4,6 +4,7 @@ import { Footer } from '@/components/home/footer'
 import { HeroInterna } from '@/components/internas/hero-interna'
 import { CabeceraEvento } from '@/components/evento/cabecera-evento'
 import { WidgetEvento } from '@/components/evento/widget-evento'
+import { CalculadoraEvento } from '@/components/evento/calculadora-evento'
 import { QueOfrecemos } from '@/components/evento/que-ofrecemos'
 import { IncluyeEvento } from '@/components/evento/incluye-evento'
 import { PaquetesEvento } from '@/components/evento/paquetes-evento'
@@ -183,7 +184,15 @@ export function EventoPage() {
             {/* Sticky bajo el header. Mismo offset que la ficha de
                 tour (`--spacing-sticky-top`), derivado del alto del
                 header sólido + anclas. */}
-            <div className="lg:sticky lg:top-sticky-top">
+            <div className="flex flex-col gap-4 lg:sticky lg:top-sticky-top">
+              {/* [v2 2026-07-27, plan 03 §1 — slides 14 y 15] «Agregar reserva
+                  online y DEBAJO el formulario de cotización». El orden es
+                  literal del cliente y además es el correcto: quien quiere un
+                  party boat estándar de 20 personas no debería rellenar el
+                  mismo formulario que quien organiza una boda de 120 con menú a
+                  medida. Con la calculadora arriba, el caso simple se resuelve
+                  solo y el formulario queda para lo que de verdad se cotiza. */}
+              {evento.paquetes ? <CalculadoraEvento paquetes={evento.paquetes.items} /> : null}
               <WidgetEvento evento={evento} />
             </div>
           </div>

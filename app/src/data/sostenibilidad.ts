@@ -50,8 +50,18 @@ export const VIDEOS_SOSTENIBILIDAD: VideoSost[] = [
 ]
 
 export const SOSTENIBILIDAD = {
-  eyebrow: 'Sostenibilidad',
-  titulo: 'La sostenibilidad en el centro de nuestra misión',
+  // [v2 2026-07-27, plan 08 §1] REENCUADRE, no página nueva. El slide 57 dice
+  // «nueva pagina de ventajas competitivas», pero Samuel se lo preguntó al
+  // cliente en la reunión del 07-24 («¿qué diferencia hay con el anterior?») y
+  // la respuesta fue: «básicamente [lo mismo]» (34:17). Así que NO hay ruta
+  // nueva — se reencuadra esta.
+  //
+  // Curiosamente el repo ya sabía esto: data/sostenibilidad.ts documenta que
+  // la página fusiona sustainability.php Y competitive-advantage.php, y el
+  // bloque de videos ya llevaba `videosEyebrow: 'Nuestra ventaja competitiva'`.
+  // La idea estaba enterrada en una sección; ahora encuadra la página.
+  eyebrow: 'Nuestra ventaja competitiva',
+  titulo: 'Tu reserva sostiene a nuestra gente y al mar',
   // Hero corto a propósito (rediseño 2026-07-17, pedido de Samuel: "el texto
   // de la descripción del hero está muy largo") — la declaración completa
   // (Bávaro Reefs Foundation, "empoderar a nuestra gente", RD) no se pierde:
