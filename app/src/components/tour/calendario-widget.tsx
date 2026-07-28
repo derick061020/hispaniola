@@ -176,9 +176,14 @@ export function CalendarioWidget({
 
   return (
     <div ref={wrapRef} className="relative">
-      <span className="mb-1 block text-xs font-medium text-navy-sub" id="widget-label-fecha">
-        Fecha
-      </span>
+      {/* [v2 2026-07-27] SIN label visible (pedido de Samuel, para bajar el
+          alto del widget). Es seguro porque el campo ya se explica solo: icono
+          de calendario + placeholder «Elige una fecha», que es exactamente lo
+          que hace Viator.
+          ⚠️ Pero el label NO desaparece del todo: pasa a `aria-label` en el
+          botón. Sin él, un lector de pantalla anunciaría «Elige una fecha,
+          botón» sin decir de qué campo se trata — y aquí el ahorro de alto no
+          justifica perder eso. */}
       {/* La fecha es la ENTRADA primaria del flujo (2ª vuelta 2026-07-17,
           pedido de Samuel: "no parece importante"). Dos señales de jerarquía
           sobre el resto de campos: (1) el icono va en aqua-dark —el acento de
@@ -188,7 +193,7 @@ export function CalendarioWidget({
       <button
         type="button"
         onClick={() => setAbierto((a) => !a)}
-        aria-labelledby="widget-label-fecha"
+        aria-label="Fecha del tour"
         aria-expanded={abierto}
         className={`flex h-10 w-full items-center gap-2 rounded-10 border bg-bg-white-0 px-3 text-left text-paragraph-sm text-text-strong-950 transition ${
           fecha ? 'border-stroke-soft-200' : 'border-aqua/40 ring-1 ring-aqua/20'

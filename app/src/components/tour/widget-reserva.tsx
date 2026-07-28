@@ -15,6 +15,7 @@ import { WHATSAPP_URL, calcularTotalTour, type FichaTour } from '@/data/tours'
 import { ALBUM_UPSELL, totalAddOns, saltoDeTramo } from '@/lib/tarifas'
 import { AddOnsWidget } from '@/components/tour/add-ons-widget'
 import { PistaInfo } from '@/components/ui/pista-info'
+import { PasajerosPopover, resumirPasajeros } from '@/components/tour/pasajeros-popover'
 
 // «El widget ES la página» (wireframe A2): sticky en desktop, con el precio en
 // el primer viewport — en la web actual ese precio está a 6 pantallas de
@@ -471,6 +472,8 @@ export function WidgetReserva({
     addOns.filter((a) => a.porDefecto && ALBUM_UPSELL.porDefecto).map((a) => a.id),
   )
   const paxParaAddOns = esDual ? totalPersonas : personas
+  // [v2] Resumen de la línea plegada del selector de pasajeros.
+  const resumenPasajeros = resumirPasajeros(adultos, ninos, bebes)
   const importeAddOns = totalAddOns(addOns, addOnsElegidos, paxParaAddOns)
   const total = totalTour === null ? null : totalTour + importeAddOns
   // Ancla del widget: el "desde" que se ve en la cabecera. Con
@@ -780,15 +783,16 @@ export function WidgetReserva({
           2º se deshabilita cuando adultos+ninos=maxPersonas. */}
       <div>
         {esDual ? (
-          // DUAL: Adultos + Niños
-          <>
-            <div className="mb-1 flex items-baseline justify-between">
-              <span className="text-xs font-medium text-navy-sub">Pasajeros</span>
-              <span className="text-xs text-navy-soft tabular-nums">
-                {totalPersonas} / {maxPersonas}
-              </span>
-            </div>
-            <div role="group" aria-labelledby="widget-label-personas" className="flex flex-col gap-2">
+          // [v2 2026-07-27] DUAL, ahora PLEGADO EN UN POPOVER (pedido de
+          // Samuel, con la referencia de Viator). Los tres steppers —adultos,
+          // niños, bebés— ocupaban ~190px de alto SIEMPRE, aunque la mayoría de
+          // reservas no lleven menores. Ahora el widget muestra una sola línea
+          // («2 pasajeros») y el detalle se despliega al tocarla.
+          //
+          // Solo aquí: los tours sin tramos de edad tienen un único stepper y
+          // meterlo en un popover añadiría un clic sin ahorrar nada.
+          <PasajerosPopover resumen={resumenPasajeros} total={totalPersonas} max={maxPersonas}>
+            <div role="group" aria-label="Pasajeros" className="flex flex-col gap-2">
               <div className="flex h-10 items-center justify-between rounded-10 border border-stroke-soft-200 bg-bg-white-0 pl-3 pr-1.5">
                 <span className="flex items-center gap-2 text-paragraph-sm text-text-strong-950">
                   <Users className="size-5 shrink-0 text-text-sub-600" aria-hidden="true" />
@@ -950,13 +954,13 @@ export function WidgetReserva({
                 </div>
               </div>
             </div>
-          </>
+          </PasajerosPopover>
         ) : (
           // CLÁSICO: 1 input «Personas» (semi-privado, charter, Saona)
           <>
-            <span className="mb-1 block text-xs font-medium text-navy-sub" id="widget-label-personas">
-              Personas
-            </span>
+            {/* [v2 2026-07-27] Sin label visible, mismo criterio que el campo de
+                fecha: el icono y el propio valor («2 personas») lo dicen. El
+                nombre accesible se conserva en `aria-label` más abajo. */}
             {/* v3 (2026-07-17, Saona): si la sub-variante activa tiene un mínimo
                 superior al state actual, mostramos el aviso justo debajo del
                 stepper (no encima) — es info contextual, no título. El state
@@ -975,7 +979,7 @@ export function WidgetReserva({
             })()}
             <div
               role="group"
-              aria-labelledby="widget-label-personas"
+              aria-label="Número de personas"
               className="flex h-10 items-center justify-between rounded-10 border border-stroke-soft-200 bg-bg-white-0 pl-3 pr-1.5"
             >
               <span className="flex items-center gap-2 text-paragraph-sm text-text-strong-950">

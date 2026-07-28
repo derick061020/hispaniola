@@ -135,14 +135,18 @@ export function AddOnsWidget({
                     {a.descripcion}
                   </span>
                 ) : null}
-                {/* El precio por grupo se DICE como tal: «US$ 20 para todo el
-                    grupo» en una reserva de 20 personas es US$ 1 por cabeza, y
-                    ese argumento solo funciona si se enseña. */}
-                <span className="mt-1 block text-[11px] font-medium uppercase tracking-wide text-aqua">
-                  {a.base === 'grupo'
-                    ? 'Precio único para todo el grupo'
-                    : `${formatoDinero(a.precio)} por persona × ${personas}`}
-                </span>
+                {/* [v2 2026-07-27, 2ª vuelta] El badge «Precio único para todo
+                    el grupo» SE RETIRA (pedido de Samuel, para bajar alto): la
+                    propia descripción ya termina con «…para todo el grupo», así
+                    que era la misma frase dos veces en tres líneas.
+                    En los add-ons POR PERSONA sí se queda: ahí no es una
+                    repetición, es la cuenta (US$ 30 × 4) que explica de dónde
+                    sale el importe de la derecha. */}
+                {a.base === 'persona' ? (
+                  <span className="mt-1 block text-[11px] font-medium uppercase tracking-wide text-aqua">
+                    {formatoDinero(a.precio)} por persona × {personas}
+                  </span>
+                ) : null}
                 {/* Nota honesta del cliente (ej. la langosta de marzo a junio).
                     Se muestra SIEMPRE, no solo al marcarlo: enterarse después
                     de pagar es exactamente la queja que evita. */}
