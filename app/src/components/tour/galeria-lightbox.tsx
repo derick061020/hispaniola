@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { ChevronLeft, ChevronRight, X } from 'lucide-react'
 import * as CompactButton from '@/components/alignui/compact-button'
 import * as Modal from '@/components/alignui/modal'
@@ -35,6 +35,7 @@ export function GaleriaLightbox({
   const [indice, setIndice] = useState(indiceInicial)
   const n = fotos.length
   const refExpansion = useExpansionFlip(origen)
+  const tiraRef = useRef<HTMLDivElement>(null)
 
   const ir = useCallback((i: number) => setIndice(((i % n) + n) % n), [n])
 
@@ -47,6 +48,36 @@ export function GaleriaLightbox({
     const disparador = document.activeElement as HTMLElement | null
     return () => disparador?.focus()
   }, [])
+
+  // [v2 2026-07-28, pedido de Samuel] La miniatura activa se mantiene SIEMPRE
+  // centrada: la tira se desplaza sola al cambiar de foto.
+  //
+  // Se calcula el scroll a mano en vez de usar `scrollIntoView({inline:
+  // 'center'})` porque ese método hace scroll de TODOS los ancestros
+  // scrolleables, y esta tira vive dentro de un diálogo a pantalla completa —
+  // acabaría moviendo también la página de detrás. Ajustando `scrollLeft` del
+  // propio contenedor, el desplazamiento se queda donde tiene que quedarse.
+  useEffect(() => {
+    const suave = !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const centrar = (behavior: ScrollBehavior) => {
+      const tira = tiraRef.current
+      if (!tira) return
+      const activa = tira.children[indice] as HTMLElement | undefined
+      if (!activa) return
+      tira.scrollTo({
+        left: activa.offsetLeft - tira.clientWidth / 2 + activa.offsetWidth / 2,
+        behavior,
+      })
+    }
+    // En el MONTAJE la tira todavía no está asentada (las miniaturas cargan
+    // en diferido y el FLIP de la foto grande está corriendo), así que la
+    // primera medida sale corta — medido: la foto 1 quedaba 40px descentrada.
+    // Por eso se repite en el frame siguiente, ya con el layout hecho. El
+    // primer centrado va sin animación: al abrir no hay nada que «seguir».
+    centrar(suave ? 'smooth' : 'auto')
+    const id = requestAnimationFrame(() => centrar('auto'))
+    return () => cancelAnimationFrame(id)
+  }, [indice])
 
   // ← → pasan foto. Escape NO va aquí: lo maneja Radix (onOpenChange).
   useEffect(() => {
@@ -97,7 +128,7 @@ export function GaleriaLightbox({
           </Modal.Close>
         </div>
 
-        <div className="flex flex-1 items-center justify-center gap-2 overflow-hidden px-2 pb-6 sm:px-5">
+        <div className="flex min-h-0 flex-1 items-center justify-center gap-2 overflow-hidden px-2 pb-6 sm:px-5">
           {n > 1 ? (
             <button
               type="button"
@@ -157,7 +188,14 @@ export function GaleriaLightbox({
             fondo oscuro canta demasiado. */}
         {n > 1 ? (
           <div
-            className="scroll-sutil flex shrink-0 justify-start gap-2 overflow-x-auto px-4 py-1 pb-5 sm:justify-center"
+            ref={tiraRef}
+            // `px-[50%]`: sin ese relleno, la PRIMERA y la ÚLTIMA miniatura no
+            // pueden llegar al centro — el scroll se topa con el extremo antes.
+            // Con medio ancho de contenedor a cada lado, cualquiera de las N
+            // puede quedar centrada.
+            // Sin `justify-center` ni en sm: centrar por flex pelea con el
+            // scroll programado cuando el contenido cabe entero.
+            className="scroll-sutil flex shrink-0 gap-2 overflow-x-auto px-[50%] py-1 pb-5"
             onClick={(e) => e.stopPropagation()}
           >
             {fotos.map((f, i) => (

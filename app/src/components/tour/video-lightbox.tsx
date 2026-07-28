@@ -90,7 +90,15 @@ export function VideoLightbox({
           </Modal.Close>
         </div>
 
-        <div className="flex flex-1 items-center justify-center px-2 pb-6 sm:px-5">
+        {/* ⚠️ `min-h-0` NO es opcional: es la trampa clásica de flexbox. Un
+            flex item trae `min-height: auto`, así que NO puede encogerse por
+            debajo de su contenido — y un video 9:16 con 896px de ancho pide
+            1593px de alto, con lo que este contenedor CRECÍA hasta 1617px y
+            `max-h-full` del video se resolvía contra esa altura inflada en vez
+            de contra la ventana. Medido: el video se salía de un viewport de
+            900px. Con `min-h-0` el contenedor sí se acota y el video se ajusta.
+            Verificado simulando un archivo 9:16 real. */}
+        <div className="flex min-h-0 flex-1 items-center justify-center px-2 pb-6 sm:px-5">
           <video
             ref={(el) => {
               video.current = el
