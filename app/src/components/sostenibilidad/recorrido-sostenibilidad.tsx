@@ -118,13 +118,46 @@ export function RecorridoSostenibilidad({ activo }: { activo: boolean }) {
               // todavía se está animando y la curva quedaría despegada de las
               // tarjetas. Aquí la entrada YA la pone el recorrido: el barco que
               // llega y la foto del paso que se destapa.
-              className={`relative scroll-mt-header-alto py-10 lg:col-span-5 lg:py-0 ${POSICION[i]}`}
+              // scroll-mt-sticky-top (antes header-alto): desde el 2026-07-28
+              // el chrome que hay que despejar al saltar a un ancla es la
+              // fila de chips (ui/nav-anclas-chips.tsx), cuyo alto ES
+              // --spacing-anclas-alto. Ese token tiene que ser el mismo en
+              // TODAS las secciones ancladas de la página: el scroll-spy
+              // deriva de él su línea de disparo (use-anclas-activa.ts).
+              className={`relative scroll-mt-sticky-top py-10 lg:col-span-5 lg:py-0 ${POSICION[i]}`}
             >
               <p className="sost-numero" aria-hidden="true">
                 {String(i + 1).padStart(2, '0')}
               </p>
               <h3 className="sost-item-titulo font-display text-h3 font-semibold text-navy">{p.titulo}</h3>
               <p className="mt-3 text-lead text-navy-sub">{p.texto}</p>
+
+              {/* [v2 2026-07-28, slide 60] «Hitos ambientales reales»: los 3
+                  logros de conservación, con nombre propio. Su maqueta los
+                  pinta como 3 cards con ring dentro de una banda verde; aquí
+                  van como hairlines dentro del paso que ya los cuenta — ni
+                  cajas ni sección nueva, que sería contar dos veces lo mismo.
+                  Tipografía por debajo del párrafo del pilar (text-sm): son
+                  el detalle del paso, no un segundo titular compitiendo.
+                  Solo el pilar de conservación los trae (ver PilarSost).
+                  Sin hairlines desde el 2026-07-28 (Samuel: «al cliente no le
+                  gusta tanta línea»), pero TAMPOCO sueltos —en cuanto se
+                  quitaron se veían flotando—: los agrupa una superficie
+                  --color-papel-hueso, plana y sin borde. Es la única caja en
+                  todo el paso (el pilar es texto sobre papel con su numeral
+                  fantasma, no una card), así que no anida nada. Mismo recurso
+                  que la banda de impacto y que el teaser de la fundación: un
+                  solo device para todos los grupos de esta página. */}
+              {p.hitos ? (
+                <ul className="mt-6 flex flex-col gap-5 rounded-card bg-papel-hueso p-5">
+                  {p.hitos.map((h) => (
+                    <li key={h.titulo}>
+                      <p className="text-sm font-semibold text-navy">{h.titulo}</p>
+                      <p className="mt-1 text-sm text-navy-soft">{h.texto}</p>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
 
               {/* Foto de apoyo del paso. En MÓVIL va en el flujo, debajo del
                   texto y siempre visible (no hay recorrido que la dispare). En

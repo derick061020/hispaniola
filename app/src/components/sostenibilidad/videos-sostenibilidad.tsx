@@ -32,7 +32,8 @@ export function VideosSostenibilidad() {
   })
 
   return (
-    <section>
+    // id/scroll-mt: destino del chip «En video» (slide 58).
+    <section id="ancla-videos" className="scroll-mt-sticky-top">
       <Etiqueta className="sost-reveal">{SOSTENIBILIDAD.videosEyebrow}</Etiqueta>
       <h2 className="sost-reveal mt-2 font-display text-h2 font-semibold text-navy">{SOSTENIBILIDAD.videosTitulo}</h2>
       <p className="sost-reveal mt-3 max-w-2xl text-lead text-navy-sub">{SOSTENIBILIDAD.videosTexto}</p>

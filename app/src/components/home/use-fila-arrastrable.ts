@@ -28,9 +28,21 @@ type Opciones = {
   /** false con prefers-reduced-motion: ahí la fila pasa a scroll nativo
    *  (overflow-x: auto) y un arrastre propio pelearía con él. */
   activo: boolean
+  /** Custom property donde se escribe el offset. Por defecto la del muro de
+   *  reseñas, que es de donde salió el hook.
+   *  [v2 2026-07-28] El muro de tripulación (equipo/muro-tripulacion.tsx)
+   *  usa la misma mecánica con sus propias clases y su propia variable — ver
+   *  el bloque .muro-equipo-* de componentes.css para por qué no comparten
+   *  clases. El hook sí se comparte: la mecánica es idéntica y duplicarlo
+   *  sería tener dos sitios donde arreglar el mismo módulo. */
+  variable?: string
 }
 
-export function useFilaArrastrable({ copias, activo }: Opciones) {
+export function useFilaArrastrable({
+  copias,
+  activo,
+  variable = '--reviews-arrastre',
+}: Opciones) {
   const arrastreRef = useRef<HTMLDivElement>(null)
   const [arrastrando, setArrastrando] = useState(false)
   /** clientX donde empezó el gesto. null = no hay gesto en curso. */
@@ -65,7 +77,7 @@ export function useFilaArrastrable({ copias, activo }: Opciones) {
     // con un solo `% anchoCopia` los valores positivos se quedarían fuera
     // del rango.
     offsetRef.current = ((bruto % anchoCopia) - anchoCopia) % anchoCopia
-    arrastreRef.current?.style.setProperty('--reviews-arrastre', `${offsetRef.current}px`)
+    arrastreRef.current?.style.setProperty(variable, `${offsetRef.current}px`)
   }
 
   function alSoltar() {

@@ -1,35 +1,51 @@
 import { useRef, useState } from 'react'
 import { Footer } from '@/components/home/footer'
 import { HeroInterna } from '@/components/internas/hero-interna'
+import { NavAnclasChips } from '@/components/ui/nav-anclas-chips'
 import { CabeceraSostenibilidad } from '@/components/sostenibilidad/cabecera-sostenibilidad'
 import { IntroSostenibilidad } from '@/components/sostenibilidad/intro-sostenibilidad'
 import { RecorridoSostenibilidad } from '@/components/sostenibilidad/recorrido-sostenibilidad'
 import { ImpactoSostenibilidad } from '@/components/sostenibilidad/impacto-sostenibilidad'
 import { VideosSostenibilidad } from '@/components/sostenibilidad/videos-sostenibilidad'
+import { FundacionTeaser } from '@/components/sostenibilidad/fundacion-teaser'
 import { CierreSostenibilidad } from '@/components/sostenibilidad/cierre-sostenibilidad'
 import { Meta } from '@/components/seo/meta'
-import { SOSTENIBILIDAD } from '@/data/sostenibilidad'
+import { ANCLAS_VENTAJA, SOSTENIBILIDAD } from '@/data/sostenibilidad'
 import { useDevFlag } from '@/dev/use-dev-flag'
 import { useSostenibilidadReveal } from '@/components/sostenibilidad/use-sostenibilidad-reveal'
 
-// Página Sostenibilidad (/sostenibilidad) — combina las 2 páginas reales de la
-// web actual: sustainability.php (intro + 3 pilares + cierre) y
+// Página VENTAJA COMPETITIVA (/ventaja-competitiva) — combina las 2 páginas
+// reales de la web actual: sustainability.php (intro + 3 pilares + cierre) y
 // competitive-advantage.php (la frase + los 7 videos), tal como preveía la
 // arquitectura (arquitectura-nueva.md: Competitive Advantage se absorbe aquí).
 //
+// ⚠️ LA RUTA ERA `/sostenibilidad` HASTA EL 2026-07-28. El cliente titula su
+// slide 57 «nueva pagina de ventajas competitivas» y Samuel le preguntó en la
+// reunión del 07-24 qué la diferenciaba de sostenibilidad: «básicamente [lo
+// mismo]» (34:17). O sea, NO es una página nueva — es ESTA, reencuadrada: lo
+// que era una página que informa pasa a ser la que VENDE el argumento que el
+// propio cliente considera su ventaja («tu reserva sostiene a nuestra gente y
+// al mar», 34:23). El slug sigue al encuadre; `/sostenibilidad` queda como
+// 301 (App.tsx y netlify.toml) porque es URL indexada y enlazada desde fuera.
+//
+// Los COMPONENTES y los DATOS se quedan en `sostenibilidad/` a propósito: el
+// dominio del contenido sigue siendo la sostenibilidad (el menú del cliente
+// mantiene ese tab, slide 20), lo que cambió es cómo se vende. Renombrar 8
+// componentes y una constante que consumen blog/guías/flota no compra nada.
+//
 // Orden del contenido (3ª vuelta, 2026-07-22): misión + video → EL RECORRIDO
-// de los 3 pilares (zigzag con la curva, la estela y el catamarán) → banda de
-// impacto (las 6 cifras) → los 7 videos → cierre. La banda de impacto va justo
-// DESPUÉS del recorrido a propósito: los pilares cuentan QUÉ se hace y las
-// cifras rematan CUÁNTO — separarlas con los videos en medio rompía el remate.
+// de los 3 pilares (zigzag con la curva y el catamarán) → banda de impacto
+// (las 6 cifras) → los 7 videos → teaser de la fundación → cierre. La banda de
+// impacto va justo DESPUÉS del recorrido a propósito: los pilares cuentan QUÉ
+// se hace y las cifras rematan CUÁNTO — separarlas con los videos en medio
+// rompía el remate. Ese orden es también el de los chips de anclas.
 //
 // PLAN-INTERNAS-V2.md (2026-07-17, Samuel): adopta el HERO COMPARTIDO con la
 // home, la ficha de tour y las landings de evento (internas/hero-interna.tsx)
 // — mismo box redondeado + Header `sobreVideo` dentro, con las fotos reales
-// del arrecife en fundido en vez de una imagen fija al lado. Es página de
-// MARCA (informa), no de conversión: sin widget ni cotización. "Reservar" del
+// del arrecife en fundido en vez de una imagen fija al lado. "Reservar" del
 // header no tiene ancla propia aquí → lleva al grid de tours de la home.
-export function SostenibilidadPage() {
+export function VentajaCompetitivaPage() {
   const contenidoRef = useRef<HTMLDivElement>(null)
 
   // [dev-mode] ?dev-sost=estatico congela el reveal de scroll en su estado
@@ -47,11 +63,17 @@ export function SostenibilidadPage() {
       <Meta
         titulo={SOSTENIBILIDAD.titulo}
         descripcion="Restauración de arrecifes de coral, apoyo a comunidades locales y operación responsable — la Bávaro Reefs Foundation detrás de cada tour."
-        ruta="/sostenibilidad"
+        ruta="/ventaja-competitiva"
       />
       <HeroInterna ctaHref="/#tours">
         <CabeceraSostenibilidad />
       </HeroInterna>
+
+      {/* Los 7 chips del slide 58. FUERA del contenedor de contenido: la barra
+          sangra a todo el ancho (igual que la de la ficha de tour) y no debe
+          heredar el reveal de GSAP del bloque de abajo — un índice que aparece
+          con fade al scrollear llega tarde a su único trabajo. */}
+      <NavAnclasChips anclas={ANCLAS_VENTAJA} />
 
       <div ref={contenidoRef} className="mx-auto max-w-contenido px-5 py-12 sm:px-10 lg:py-16">
         <div className="flex flex-col gap-16 lg:gap-24">
@@ -59,6 +81,7 @@ export function SostenibilidadPage() {
           <RecorridoSostenibilidad activo={!estatico} /> {/* [dev-mode] gate */}
           <ImpactoSostenibilidad />
           <VideosSostenibilidad />
+          <FundacionTeaser />
           <CierreSostenibilidad />
         </div>
       </div>

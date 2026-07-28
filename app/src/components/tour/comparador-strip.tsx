@@ -3,7 +3,7 @@ import * as Button from '@/components/alignui/button'
 
 // Comparador anti-OTA (fix 1.6 de analisis/revision-wireframes.md).
 //
-// Por qué está AQUÍ y no solo en la página /reserva-directa: quien duda entre
+// Por qué está AQUÍ y no solo en la página /por-que-reservar: quien duda entre
 // reservar aquí o en Viator está mirando ESTE precio en ESTE momento. La
 // página-argumento hay que ir a buscarla; esta franja le sale al paso. Viator
 // vende el mismo tour al mismo precio con Pay-Later y cupones — es el
@@ -22,10 +22,11 @@ export function ComparadorStrip() {
         , menú a elección y WhatsApp directo.
       </p>
       {/* Etapa A: Button neutral/stroke del sistema (xsmall) — la pastilla
-          blanca de antes, dicha en el idioma AlignUI. /reserva-directa ya es
-          página real (2026-07-17). */}
+          blanca de antes, dicha en el idioma AlignUI. [v2 2026-07-28] Apunta
+          a /por-que-reservar: /reserva-directa se retiró y ahora el destino
+          es la página completa de argumento (slides 50-56 del cliente). */}
       <Button.Root variant="neutral" mode="stroke" size="xsmall" className="shrink-0" asChild>
-        <Link to="/reserva-directa">Ver comparación →</Link>
+        <Link to="/por-que-reservar">Por qué reservar con nosotros →</Link>
       </Button.Root>
     </div>
   )

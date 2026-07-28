@@ -10,6 +10,7 @@ import { IncluyeEvento } from '@/components/evento/incluye-evento'
 import { PaquetesEvento } from '@/components/evento/paquetes-evento'
 import { OtrasOcasiones } from '@/components/evento/otras-ocasiones'
 import { GaleriaMosaico } from '@/components/internas/galeria-mosaico'
+import { VideoAcompanante } from '@/components/tour/video-acompanante'
 import * as Accordion from '@/components/alignui/accordion'
 import { TituloSeccion } from '@/components/tour/titulo-seccion'
 import { BLOQUE_FICHA } from '@/components/tour/bloque-ficha'
@@ -110,6 +111,13 @@ export function EventoPage() {
               <GaleriaMosaico
                 fotos={evento.galeria}
                 etiqueta={evento.nombre}
+                // [v2 2026-07-28, pedido de Samuel: «en los eventos también
+                // debe estar el video vertical al lado del grid de imágenes»]
+                // La columna 9:16 a la izquierda del mosaico deja de ser
+                // exclusiva de la ficha de tour. No hay componente nuevo: es
+                // la misma GaleriaMosaico, que ya aceptaba `video` — lo único
+                // que faltaba era el dato (`videoGaleria` en data/eventos.ts).
+                video={evento.videoGaleria}
                 // [v2 2026-07-27, plan 01 §10] El slider de comida en la
                 // primera celda va también aquí: el cliente dijo «en TODOS los
                 // servicios» (reunión 07-24, 19:27), y las 3 landings de evento
@@ -119,6 +127,24 @@ export function EventoPage() {
                   .map((p) => p.foto)
                   .filter((f): f is string => f !== null)}
               />
+
+              {/* [v2 2026-07-28, pedido de Samuel: «al estar el video vertical
+                  al lado del grid también debe aparecer sticky/fijo abajo a la
+                  izquierda como en los tours»] Mismo componente y mismo sitio
+                  que en la ficha (tour/video-acompanante.tsx): se monta justo
+                  después del mosaico porque su centinela mide desde aquí —
+                  solo aparece cuando el video del mosaico ya salió de pantalla,
+                  para no enseñar el mismo video dos veces. Va a la IZQUIERDA
+                  porque la derecha es del widget, y no se pinta en móvil.
+                  Se hereda también la salida pactada con el cliente: se puede
+                  CERRAR y no vuelve en esa sesión. */}
+              {evento.videoGaleria !== null ? (
+                <VideoAcompanante
+                  src={evento.videoGaleria}
+                  poster={`/fotos/${evento.foto}.webp`}
+                  etiqueta={evento.nombre}
+                />
+              ) : null}
 
               {/* Descripción larga — 2 párrafos en una card BLOQUE_FICHA
                   (misma receta que la ficha de tour, sin el H2 de
@@ -196,7 +222,14 @@ export function EventoPage() {
                 dos cards resisten por su contenido— pero el fallo es el mismo y
                 aparecería en cuanto crezcan (más paquetes, formulario más
                 largo). Se blinda ahora, no cuando se rompa. */}
-            <div className="scroll-sutil flex flex-col gap-4 [&>*]:shrink-0 lg:sticky lg:top-sticky-top lg:max-h-[calc(100svh-var(--spacing-sticky-top)-1.5rem)] lg:overflow-y-auto lg:overscroll-contain">
+            {/* [v2 2026-07-28] El ancla #evento-widget se muda AQUÍ desde la
+                Caja de widget-evento.tsx: el «Reservar» del header tiene que
+                caer en lo primero de la columna —la reserva online— y no en el
+                formulario de cotización, que ahora además llega plegado. */}
+            <div
+              id="evento-widget"
+              className="scroll-sutil flex scroll-mt-sticky-top flex-col gap-4 [&>*]:shrink-0 lg:sticky lg:top-sticky-top lg:max-h-[calc(100svh-var(--spacing-sticky-top)-1.5rem)] lg:overflow-y-auto lg:overscroll-contain"
+            >
               {/* [v2 2026-07-27, plan 03 §1 — slides 14 y 15] «Agregar reserva
                   online y DEBAJO el formulario de cotización». El orden es
                   literal del cliente y además es el correcto: quien quiere un
@@ -205,7 +238,11 @@ export function EventoPage() {
                   medida. Con la calculadora arriba, el caso simple se resuelve
                   solo y el formulario queda para lo que de verdad se cotiza. */}
               {evento.paquetes ? <CalculadoraEvento paquetes={evento.paquetes.items} /> : null}
-              <WidgetEvento evento={evento} />
+              {/* [v2 2026-07-28] El formulario se PLIEGA solo cuando encima
+                  tiene la reserva online — si no hay calculadora (bodas,
+                  empresas), el formulario ES el widget y sería absurdo
+                  esconderlo. Ver el porqué en widget-evento.tsx. */}
+              <WidgetEvento evento={evento} colapsable={Boolean(evento.paquetes)} />
             </div>
           </div>
         </div>

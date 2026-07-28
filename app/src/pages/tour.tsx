@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Navigate, useParams, Link } from 'react-router-dom'
+import { Navigate, useParams } from 'react-router-dom'
 import { Footer } from '@/components/home/footer'
 import { HeroInterna } from '@/components/internas/hero-interna'
 import { CabeceraFicha } from '@/components/tour/cabecera-ficha'
@@ -21,8 +21,7 @@ import { ComparadorPremium } from '@/components/tour/comparador-premium'
 import { BandaPremium } from '@/components/tour/banda-premium'
 import { fotosComidaDe } from '@/data/tours'
 import { VideoAcompanante } from '@/components/tour/video-acompanante'
-import { DescuentosTour } from '@/components/tour/descuentos-tour'
-import { TituloSeccion } from '@/components/tour/titulo-seccion'
+import { AntesDeReservar } from '@/components/tour/antes-de-reservar'
 import { TambienTeGusta } from '@/components/internas/tambien-te-gusta'
 import { TOURS } from '@/data/home'
 import { FICHAS } from '@/data/tours'
@@ -48,8 +47,38 @@ export function TourPage() {
   const tour = TOURS.find((t) => t.slug === slug)
   const ficha = slug ? FICHAS[slug] : undefined
 
+  // v3 (2026-07-17, charter): la sub-variante (bote) vive en `tour.tsx` y
+  // se pasa ABAJO a `WidgetReserva` y a `TablaPreciosCharter` — antes vivía
+  // dentro del widget y la tabla de la izquierda nunca sabía cuál estaba
+  // activo (la pasábamos con `activa={null}`, así que el highlight
+  // "Seleccionado" nunca se pintaba). Con el state arriba, el cambio de
+  // bote en el widget pinta simultáneamente la franja aqua de la fila
+  // correspondiente en la tabla — coherencia entre el selector y la
+  // referencia visual.
+  const [variante, setVariante] = useState<string | null>(ficha?.subVariantes?.[0]?.id ?? null)
+  // [v2 2026-07-27] Mismo patrón que `variante`, y por la misma razón: la
+  // banda «estás en Premium» (§9) vive en la columna IZQUIERDA y tiene que
+  // reaccionar a un selector que está en la derecha. Arranca en 'premium'
+  // porque el widget abre así (ver el guardarraíl de widget-reserva.tsx).
+  const [paquete, setPaquete] = useState<'light' | 'premium'>('premium')
+  // [v2 2026-07-28] Tercer estado que sube del widget, mismo patrón y misma
+  // razón que los dos de arriba: la tabla de precios vive en la columna
+  // IZQUIERDA y llevaba desde julio con un texto que prometía reaccionar al
+  // número de personas del widget sin poder hacerlo. Ver `onPersonasChange`
+  // en widget-reserva.tsx.
+  const [personas, setPersonas] = useState<number | null>(null)
+
   // Slug desconocido → a la home. Un 404 diseñado es otra pantalla (y otro
   // plan): fingir una aquí sería inventarse una página que nadie ha aprobado.
+  //
+  // [v2 2026-07-28] La guarda BAJA de la línea 52 a aquí, DESPUÉS de los tres
+  // useState. Estaba por encima, y eso es una violación real de las reglas de
+  // hooks: al navegar de un slug válido a uno inválido el componente cambiaba
+  // de número de hooks y React revienta. No es teórico — el megamenú enlaza
+  // entre fichas. Salía en oxlint desde antes; con el tercer estado de hoy
+  // eran ya tres avisos sobre el mismo fallo, así que se arregla en vez de
+  // acumular. `ficha?.` en el inicializador de `variante` es lo único que hizo
+  // falta: ahora corre antes de saber si la ficha existe.
   if (!tour || !ficha) return <Navigate to="/" replace />
 
   // El H2 sale de renderFicha() del prototipo: la promesa se ajusta al
@@ -61,21 +90,6 @@ export function TourPage() {
       : ficha.audiencia === 'Solo adultos'
         ? 'Un día de mar en grupo pequeño'
         : 'Un día de mar'
-
-  // v3 (2026-07-17, charter): la sub-variante (bote) vive en `tour.tsx` y
-  // se pasa ABAJO a `WidgetReserva` y a `TablaPreciosCharter` — antes vivía
-  // dentro del widget y la tabla de la izquierda nunca sabía cuál estaba
-  // activo (la pasábamos con `activa={null}`, así que el highlight
-  // "Seleccionado" nunca se pintaba). Con el state arriba, el cambio de
-  // bote en el widget pinta simultáneamente la franja aqua de la fila
-  // correspondiente en la tabla — coherencia entre el selector y la
-  // referencia visual.
-  const [variante, setVariante] = useState<string | null>(ficha.subVariantes?.[0]?.id ?? null)
-  // [v2 2026-07-27] Mismo patrón que `variante`, y por la misma razón: la
-  // banda «estás en Premium» (§9) vive en la columna IZQUIERDA y tiene que
-  // reaccionar a un selector que está en la derecha. Arranca en 'premium'
-  // porque el widget abre así (ver el guardarraíl de widget-reserva.tsx).
-  const [paquete, setPaquete] = useState<'light' | 'premium'>('premium')
 
   return (
     // pb-[calc(4rem+env(safe-area-inset-bottom))] (auditoría móvil 2026-07-17):
@@ -191,43 +205,29 @@ export function TourPage() {
                   quitar la comparativa anterior, fundida dentro del bloque. */}
               {tour.booking === 'completo' ? <ComparadorPremium tour={tour} ficha={ficha} /> : null}
               {tour.booking === 'completo' ? <MenuTour tour={tour} ficha={ficha} /> : null}
+
+              {/* [v2 2026-07-28, plan 01 §7] «Antes de reservar»: UN bloque con
+                  todo lo del slide 2 —duración elegible, lo que ahorras, cómo
+                  se cocina y los paquetes para grupos—. Sustituye a cuatro
+                  parches que vivían repartidos por la página (pedido de Samuel:
+                  «todo en un mismo bloque»); ver la cabecera de
+                  antes-de-reservar.tsx para el reparto anterior.
+                  VA JUSTO DEBAJO DEL MENÚ (Samuel, 2026-07-28). Antes colgaba de
+                  la tabla de precios, con el argumento de que el visitante
+                  acababa de ver una cifra; pegado al menú funciona mejor y por
+                  una razón más fuerte: la carta es donde el charter se vende
+                  (fotos de los platos, langosta), y ese es el momento de decir
+                  cómo se cocina y cuánto se puede bajar el precio — no veinte
+                  centímetros más abajo, después de dos bloques de logística. */}
+              {tour.booking === 'completo' ? <AntesDeReservar tour={tour} ficha={ficha} /> : null}
+
               <Itinerario ficha={ficha} />
               <IncluyeTour ficha={ficha} />
               {/* v3 (2026-07-17, pedido de Samuel): tabla de precios por bote
                   para charter-privado (4 botes con sus tramos de pax).
                   Solo se pinta si la ficha tiene subVariantes. */}
               {tour.booking === 'completo' && ficha.subVariantes && ficha.subVariantes.length > 0 ? (
-                <TablaPreciosCharter ficha={ficha} activa={variante} />
-              ) : null}
-
-              {/* [v2 2026-07-27, plan 01 §7] Los 3 descuentos, justo debajo de
-                  la tabla de precios: es donde el visitante acaba de ver una
-                  cifra y donde importa saber que puede bajar.
-                  Arregla de paso una deuda: el chip del widget promete «hasta
-                  15%» desde la Fase B y hasta hoy no se explicaba en ninguna
-                  parte de dónde salía ese número. */}
-              {tour.booking === 'completo' ? <DescuentosTour /> : null}
-
-              {/* [v2 2026-07-27, plan 01 §7/§8] «Descubre nuestros paquetes
-                  privados para grupos». En la web original este botón de la
-                  ficha de charter lleva a la pestaña de eventos y
-                  celebraciones — lo confirmó el cliente en la reunión (12:24).
-                  Por eso los 4 paquetes de comida (1.188 / 660 / 780 / 900) NO
-                  se duplican aquí: viven en Eventos y esto solo enlaza. */}
-              {slug === 'charter-privado' ? (
-                <section className={BLOQUE_FICHA}>
-                  <TituloSeccion>¿Vienen en grupo grande?</TituloSeccion>
-                  <p className="mt-2 max-w-2xl text-navy-sub">
-                    Para celebraciones, bodas y eventos de empresa tenemos paquetes cerrados con
-                    menú, barra libre y el barco entero para ustedes.
-                  </p>
-                  <Link
-                    to="/eventos/party-boat"
-                    className="mt-5 inline-flex rounded-full bg-coral px-6 py-3 text-sm font-semibold text-white transition hover:brightness-110"
-                  >
-                    Ver los paquetes para grupos
-                  </Link>
-                </section>
+                <TablaPreciosCharter ficha={ficha} activa={variante} personas={personas} />
               ) : null}
               {/* Fila de videos (correcciones v1 del cliente, 2026-07-20 —
                   planes/02-producto.md slide 6: la maqueta pone aquí, entre
@@ -300,6 +300,7 @@ export function TourPage() {
                 variante={variante}
                 onVarianteChange={setVariante}
                 onPaqueteChange={setPaquete}
+                onPersonasChange={setPersonas}
               />
             </div>
           </div>

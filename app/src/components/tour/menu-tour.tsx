@@ -1,6 +1,7 @@
 import { Check, UtensilsCrossed, Plus } from 'lucide-react'
 import { TituloSeccion } from '@/components/tour/titulo-seccion'
 import { BLOQUE_FICHA } from '@/components/tour/bloque-ficha'
+import { CartaCharter } from '@/components/tour/carta-charter'
 import { formatoDinero, type Tour } from '@/data/home'
 import type { FichaTour, PlatoBuffet, PlatoMenu } from '@/data/tours'
 
@@ -238,51 +239,17 @@ function MenuBuffet({ platos, addOn }: { platos: PlatoBuffet[]; addOn?: { nombre
   )
 }
 
-// Bloque CHARTER (v3 2026-07-17, charter-privado): los 7 platos a elegir +
-// 1 add-on de langosta premium, transversal a los 4 botes. Mismo idioma
-// visual que MenuBuffet (lista con check + card de add-on) pero con los
-// 7 platos en grid de 2 columnas en vez de lista vertical — son 7 ítems,
-// la lista vertical se alarga demasiado.
-function MenuCharter({
-  platos,
-  addOn,
-}: {
-  platos: { nombre: string; desc?: string }[]
-  addOn?: { nombre: string; precio: number; descripcion?: string }
-}) {
-  return (
-    <div className="rounded-card-grande bg-fondo-ficha p-4 sm:p-5">
-      <h3 className="mb-4 border-b border-linea pb-3 font-display text-h3 font-semibold text-navy">
-        El menú a medida
-      </h3>
-      <ul className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
-        {platos.map((p) => (
-          <li key={p.nombre} className="flex items-start gap-2.5 text-sm text-navy">
-            <Check className="mt-0.5 size-4 shrink-0 text-menta-texto" aria-hidden="true" />
-            <span>
-              <span className="font-semibold">{p.nombre}</span>
-              {p.desc ? <span className="text-navy-soft"> · {p.desc}</span> : null}
-            </span>
-          </li>
-        ))}
-      </ul>
-      {addOn ? (
-        <div className="mt-4 flex items-center gap-3 rounded-card border border-linea bg-papel p-3">
-          <span className="grid size-9 shrink-0 place-items-center rounded-full bg-aqua-tint text-aqua-dark">
-            <Plus className="size-4" aria-hidden="true" />
-          </span>
-          <div className="flex-1">
-            <p className="text-sm font-semibold text-navy">
-              {addOn.nombre} · {formatoDinero(addOn.precio)}{' '}
-              <span className="text-xs font-normal text-navy-soft">por persona</span>
-            </p>
-            {addOn.descripcion ? <p className="mt-0.5 text-xs text-navy-soft">{addOn.descripcion}</p> : null}
-          </div>
-        </div>
-      ) : null}
-    </div>
-  )
-}
+// [v2 2026-07-28] El bloque CHARTER ya no vive aquí: era una lista de checks
+// en dos columnas —el mismo tratamiento que «Qué incluye»— para el producto
+// más caro del catálogo, mientras el semi-privado enseñaba LOS MISMOS platos
+// con foto. Samuel: «me parece sumamente poco atractiva… es importante para
+// que las personas se enamoren y compren». Ahora es una CARTA con fotos
+// reales y retícula asimétrica: tour/carta-charter.tsx.
+//
+// Las notas de cocina (condimentos · parrilla en la cocina flotante ·
+// restricciones dietéticas sin contaminación cruzada) también pasaron por
+// aquí y se mudaron a «Antes de reservar» (antes-de-reservar.tsx), donde el
+// slide 2 del cliente vive entero y en un solo bloque.
 
 export function MenuTour({ tour, ficha }: { tour: Tour; ficha: FichaTour }) {
   // v3 (2026-07-17, Saona): si la ficha tiene menuBuffet, pintamos formato
@@ -311,12 +278,15 @@ export function MenuTour({ tour, ficha }: { tour: Tour; ficha: FichaTour }) {
           <MenuBuffet platos={ficha.menuBuffet!.platos} addOn={ficha.menuBuffet!.addOn} />
         </div>
       ) : ficha.menuCharter ? (
-        // v3 (2026-07-17, charter completo): pinta los 7 platos
-        // transversales + 1 add-on de langosta premium. El menú es el
-        // mismo en los 4 botes — lo que cambia es la BARCO (selector en
-        // el widget, tabla de precios por pax).
+        // v3 (2026-07-17, charter completo): los 7 platos transversales + 1
+        // add-on de langosta premium. El menú es el mismo en los 4 botes — lo
+        // que cambia es el BARCO (selector en el widget, tabla de precios por
+        // pax). [v2 2026-07-28] Ya no es una lista con checks envuelta en una
+        // caja gris con su propio h3: la carta ocupa el bloque entero, y el
+        // título de la sección (arriba) es el único que hay. Ese h3 repetía
+        // «El menú a medida» dos veces con 40px de diferencia.
         <div className="mt-4">
-          <MenuCharter platos={ficha.menuCharter.platos} addOn={ficha.menuCharter.addOn} />
+          <CartaCharter menu={ficha.menuCharter} etiqueta={tour.nombre} />
         </div>
       ) : (
         // v3 (2026-07-17, pedido de Samuel): se QUITA el comparador de

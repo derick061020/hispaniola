@@ -207,7 +207,9 @@ import type { MenuId } from './header'
 // mientras se lee es la de SECCIONES, y compartir la franja de arriba con el
 // menú de sitio le quitaba a la que importa tanto sitio como prioridad.
 //
-// La resolución es `esFicha`: el panel se pinta igual sobre el hero —mismo
+// La resolución es `cedeElTope` (se llamaba `esFicha` hasta el 2026-07-28,
+// cuando /ventaja-competitiva estrenó su propia fila de anclas y pasó a ser
+// el segundo caso): el panel se pinta igual sobre el hero —mismo
 // sitio, mismos tabs, misma página que cualquier otra— pero en flujo, no
 // fijo: se va con el hero y le devuelve el tope del viewport a AnclasFicha,
 // que vuelve a `top-0`. La fusión logo + Reservar tampoco se monta aquí: su
@@ -386,8 +388,17 @@ export function NavFlotante() {
   // arriba. Todo lo que depende de «ya scrolleamos más allá del hero»
   // (posición fija, vidrio, fusión logo + Reservar) se apaga de una vez
   // aquí, en una sola señal, en vez de repetir la condición en cada sitio.
-  const esFicha = pathname.startsWith('/tours/')
-  const fijo = !logoVisible && !esFicha
+  //
+  // [v2 2026-07-28] Se llamaba `esFicha` y ahora se llama `cedeElTope`: la
+  // ficha dejó de ser el único caso. /ventaja-competitiva estrena su propia
+  // fila de anclas sticky (ui/nav-anclas-chips.tsx, slide 58 del cliente) y
+  // le aplica el MISMO criterio que Samuel fijó para la ficha el 2026-07-22
+  // («aquí me importa mucho más el menú interno de las secciones y debe
+  // estar totalmente arriba»): en una página larga que se lee de arriba
+  // abajo, la barra que se usa es la de SECCIONES, así que el menú de sitio
+  // se va con el hero en vez de pelear por la misma franja.
+  const cedeElTope = pathname.startsWith('/tours/') || pathname === '/ventaja-competitiva'
+  const fijo = !logoVisible && !cedeElTope
 
   return (
     // nav-flotante-envoltorio (componentes.css): top por defecto despeja el
@@ -400,7 +411,7 @@ export function NavFlotante() {
     // abajo... que no estorbe").
     <div
       className={`nav-flotante-envoltorio pointer-events-none inset-x-0 z-50 hidden justify-center md:flex ${
-        esFicha ? 'nav-flotante-envoltorio--en-flujo absolute' : 'fixed'
+        cedeElTope ? 'nav-flotante-envoltorio--en-flujo absolute' : 'fixed'
       } ${fijo ? 'nav-flotante-envoltorio--fijo' : ''}`}
     >
       <div ref={navRef} className="pointer-events-auto">
@@ -415,7 +426,7 @@ export function NavFlotante() {
         <nav
           className={`nav-pildora flex items-center gap-1 px-2 py-2 ${fijo ? 'nav-pildora--vidrio' : ''} ${fijo && sobreOscuro ? 'nav-pildora--vidrio-oscuro' : ''}`}
         >
-          {fusionMontada && !esFicha ? (
+          {fusionMontada && !cedeElTope ? (
             <Link
               ref={logoRef}
               to="/"
@@ -433,7 +444,7 @@ export function NavFlotante() {
             </Link>
           ) : null}
           <TabsConPaneles menuAbierto={menuAbierto} toggle={toggle} variante="flotante" sobreOscuro={sobreOscuro} />
-          {fusionMontada && !esFicha ? (
+          {fusionMontada && !cedeElTope ? (
             <Boton
               ref={botonRef}
               to="/#tours"

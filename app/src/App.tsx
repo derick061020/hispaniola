@@ -6,9 +6,10 @@ import { GraciasPage } from '@/pages/gracias'
 import { MiReservaPage } from '@/pages/mi-reserva'
 import { EventoPage } from '@/pages/evento'
 import { GraciasEventoPage } from '@/pages/gracias-evento'
-import { SostenibilidadPage } from '@/pages/sostenibilidad'
+import { VentajaCompetitivaPage } from '@/pages/ventaja-competitiva'
 import { FlotaPage } from '@/pages/flota'
 import { TripulacionPage } from '@/pages/tripulacion'
+import { TripulacionBarcoPage } from '@/pages/tripulacion-barco'
 import { InstalacionesPage } from '@/pages/instalaciones'
 import { FundacionPage } from '@/pages/fundacion'
 import { GuiasPage } from '@/pages/guias'
@@ -17,7 +18,7 @@ import { BlogPage } from '@/pages/blog'
 import { ArticuloPage } from '@/pages/articulo'
 import { AgentesPage } from '@/pages/agentes'
 import { TrabajaConNosotrosPage } from '@/pages/trabaja-con-nosotros'
-import { ReservaDirectaPage } from '@/pages/reserva-directa'
+import { PorQueReservarPage } from '@/pages/por-que-reservar'
 import { ContactoPage } from '@/pages/contacto'
 import { LegalPage } from '@/pages/legal'
 import { FundacionesPage } from '@/pages/fundaciones'
@@ -46,10 +47,23 @@ function App() {
         <Route path="/mi-reserva" element={<MiReservaPage />} />
         <Route path="/eventos/:slug" element={<EventoPage />} />
         <Route path="/eventos/:slug/gracias" element={<GraciasEventoPage />} />
-        <Route path="/sostenibilidad" element={<SostenibilidadPage />} />
+        {/* [v2 2026-07-28] `/sostenibilidad` → `/ventaja-competitiva`: el
+            cliente encuadra esta página como su VENTAJA COMPETITIVA (slides
+            57-64) y el slug sigue al encuadre. La vieja es URL indexada y
+            enlazada desde fuera, así que redirige, NO devuelve 404 — y en
+            producción con un 301 REAL (netlify.toml), que este <Navigate> no
+            puede dar: aquí solo cubre la navegación dentro de la SPA. */}
+        <Route path="/ventaja-competitiva" element={<VentajaCompetitivaPage />} />
+        <Route path="/sostenibilidad" element={<Navigate to="/ventaja-competitiva" replace />} />
         {/* [v2 2026-07-27] Las 3 páginas en que se parte «Nosotros», según el
             menú nuevo que el cliente dictó en la reunión del 07-24. */}
         <Route path="/tripulacion" element={<TripulacionPage />} />
+        {/* ⚠️ TEMPORAL — variante de /tripulacion para comparar dos ideas de
+            diseño (el muro de caras contra el plano del barco), pedida por
+            Samuel el 2026-07-28. No está en el menú ni en el sitemap: se llega
+            desde el Dev Mode. SE BORRA en cuanto se decida cuál gana; ver la
+            cabecera de pages/tripulacion-barco.tsx. */}
+        <Route path="/tripulacion-barco" element={<TripulacionBarcoPage />} />
         <Route path="/instalaciones" element={<InstalacionesPage />} />
         <Route path="/flota" element={<FlotaPage />} />
         {/* ⚠️ SINGULAR. Es la fundación del cliente. NO confundir con
@@ -72,7 +86,14 @@ function App() {
             enlaces del footer ("Como proveedor…", "…creador…", "…afiliado")
             traen aquí con `?perfil=`, no a tres rutas gemelas. */}
         <Route path="/trabaja-con-nosotros" element={<TrabajaConNosotrosPage />} />
-        <Route path="/reserva-directa" element={<ReservaDirectaPage />} />
+        {/* [v2 2026-07-28, plan 07 — slides 50-56] La página que el cliente
+            pide detrás de su insignia amarilla «¿POR QUÉ RESERVAR CON
+            NOSOTROS?». Reemplaza a `/reserva-directa` (retirada entera). */}
+        <Route path="/por-que-reservar" element={<PorQueReservarPage />} />
+        {/* La URL vieja NO devuelve 404: estaba enlazada desde el footer y
+            desde «Ver comparación →» de la ficha, y se ha compartido por
+            WhatsApp. `replace` para no dejar basura en el historial. */}
+        <Route path="/reserva-directa" element={<Navigate to="/por-que-reservar" replace />} />
         <Route path="/contacto" element={<ContactoPage />} />
         <Route path="/legal/:slug" element={<LegalPage />} />
         {/* ⚠️⚠️ OJO: `/fundaciones` (PLURAL) NO es la fundación del cliente —

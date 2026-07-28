@@ -135,6 +135,29 @@ type Props = {
    * cierre a la sección, que es el hashtag.
    */
   conHashtag?: boolean
+  /**
+   * Qué carril se pinta. Por defecto los REELS de la home/ficha.
+   * [v2 2026-07-28] /instalaciones pasa los suyos (los verticales de las 6
+   * zonas del complejo, slide 45): mismo carril arrastrable, mismas cards y
+   * mismo visor, otros datos. Era lo que el plan 06 §1 daba por hecho —
+   * «se reutiliza con otros datos y ya está»— y resultó que el componente
+   * leía REELS directamente del módulo, así que no se podía.
+   */
+  reels?: Reel[]
+  /**
+   * Cómo se compone la cabecera en la variante `seccion`.
+   * `centro` (home): eyebrow/título/lead centrados y las flechas debajo, también
+   * centradas — es una franja de marca y abre igual que el resto de secciones
+   * de la home.
+   * `izquierda` ([v2 2026-07-28, pedido de Samuel para /instalaciones): «que el
+   * título y descripción estén alineados a la izquierda y que haya 2 columnas, y
+   * que en la columna derecha estén las flechas en vez de que estén abajo, así
+   * hacemos mejor integrado todo». Es exactamente la composición que la variante
+   * `bloque` ya usaba en la ficha de tour (texto a la izquierda, flechas a la
+   * derecha, misma fila) — aquí se hace disponible también a ancho de sección,
+   * conservando el tamaño de título de sección. Sin flechas duplicadas abajo.
+   */
+  alineacion?: 'centro' | 'izquierda'
 }
 
 export function ReelsSociales({
@@ -149,6 +172,8 @@ export function ReelsSociales({
   // [v2] El hashtag también sugería feed en vivo → apagado por defecto. La
   // ficha ya lo pasaba en false; ahora ese es el comportamiento normal.
   conHashtag = false,
+  reels = REELS,
+  alineacion = 'centro',
 }: Props) {
   const pista = useRef<HTMLDivElement>(null)
   const [alInicio, setAlInicio] = useState(true)
@@ -158,6 +183,11 @@ export function ReelsSociales({
   const expansion = useOrigenExpansion()
 
   const esBloque = variante === 'bloque'
+  // Quién manda en la composición de la cabecera: `bloque` va SIEMPRE a la
+  // izquierda (es un bloque más de la columna de la ficha) y `seccion` lo
+  // decide `alineacion`. Se resuelve en una sola variable para que la fila del
+  // título y las flechas de abajo no puedan contradecirse.
+  const centrado = !esBloque && alineacion === 'centro'
 
   // Estado de las flechas. El margen de 2px absorbe los redondeos
   // sub-píxel del scroll (a 1440px, scrollLeft acaba en 1673.6 contra un
@@ -231,7 +261,13 @@ export function ReelsSociales({
       <h2 className={`mt-3 font-display font-semibold text-navy ${esBloque ? 'text-h3' : 'text-h2'}`}>
         {titulo}
       </h2>
-      <p className={`mt-2 max-w-2xl text-navy-sub ${esBloque ? '' : 'mx-auto text-lead'}`}>{lead}</p>
+      <p
+        className={`mt-2 max-w-2xl text-navy-sub ${esBloque ? '' : 'text-lead'} ${
+          centrado ? 'mx-auto' : ''
+        }`}
+      >
+        {lead}
+      </p>
     </>
   )
 
@@ -240,19 +276,20 @@ export function ReelsSociales({
       {/* La cabecera se compone distinto en cada variante, y no es capricho:
           en la HOME va CENTRADA (Samuel, 2026-07-22) porque es una sección a
           ancho completo y el resto de secciones de la home abren igual —
-          eyebrow, título y lead centrados. En la FICHA sigue alineada a la
-          izquierda y compartiendo fila con las flechas: allí es un bloque más
-          de una columna de bloques, todos alineados a la izquierda, y
-          centrarlo lo sacaría del ritmo de la página.
+          eyebrow, título y lead centrados. En la FICHA —y en /instalaciones,
+          que pide la misma composición ([v2 2026-07-28], ver `alineacion`)—
+          va alineada a la izquierda y comparte fila con las flechas: allí es
+          un bloque más de una columna de bloques, todos alineados a la
+          izquierda, y centrarlo lo sacaría del ritmo de la página.
           `items-end` en la fila de la ficha alinea por la línea base del lead,
           no por el centro de un bloque de 3 líneas contra un botón de 40px. */}
-      {esBloque ? (
+      {centrado ? (
+        <div className="text-center">{cabecera}</div>
+      ) : (
         <div className="flex items-end justify-between gap-6">
           <div>{cabecera}</div>
           {hayScroll ? flechas : null}
         </div>
-      ) : (
-        <div className="text-center">{cabecera}</div>
       )}
 
       {/* El sangrado (salir del contenedor y devolver el padding por dentro)
@@ -268,7 +305,7 @@ export function ReelsSociales({
           esBloque ? 'reel-pista--en-bloque' : 'reel-pista--en-seccion'
         }`}
       >
-        {REELS.map((r) => (
+        {reels.map((r) => (
           <CardReel
             key={r.id}
             reel={r}
@@ -284,7 +321,7 @@ export function ReelsSociales({
           título: con la cabecera centrada, colgarlas a la derecha dejaba el
           bloque descompensado. Y solo aparecen si sobra contenido — ver
           `hayScroll`. */}
-      {!esBloque && hayScroll ? <div className="mt-6 flex justify-center">{flechas}</div> : null}
+      {centrado && hayScroll ? <div className="mt-6 flex justify-center">{flechas}</div> : null}
 
       {conHashtag ? (
         <p className="mt-8 text-center text-sm text-navy-sub">

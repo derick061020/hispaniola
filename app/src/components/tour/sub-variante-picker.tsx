@@ -1,20 +1,36 @@
+import { Ship } from 'lucide-react'
+import { formatoDinero } from '@/data/home'
+import { aforoDe, precioDesde } from '@/lib/tarifas'
 import type { SubVarianteTour } from '@/data/tours'
 
 // Selector de sub-variantes del widget (v3 2026-07-17).
 // Reutilizable para Saona (3 botes: speedboat/fishing/catamarán) y para
-// Charter (4 botes: Maite/GrandMa/Santa Maria/Forever Teresa). N viene
-// del array `subVariantes` que se pinta — el grid y el thumb se calculan
-// dinámicamente.
+// Charter (5 tarifarios: Maite, GrandMa, Santa Maria y el Forever Teresa en
+// sus dos duraciones).
 //
-// Layout: 1 segmented control (mismo idioma que el toggle Light/Premium
-// de Fase B — thumb blanco sobre pista gris, mismo translateX animado)
-// + 1 card de preview con la foto, duración y capacidad del bote activo.
+// [v2 2026-07-28] DE SEGMENTED CONTROL A LISTA VERTICAL. Samuel: «se ve muy
+// apretado por los nombres, que son largos».
 //
-// Por qué la card de preview (v3 2026-07-17, charter): con 4 botes
-// distintos, el nombre solo ("Forever Teresa") no basta para que el
-// usuario entienda qué está eligiendo — la foto + la duración + la
-// capacidad cierran la decisión. Sin la card, el selector parece un
-// toggle de Light/Premium en vez de un selector de BOTE.
+// El diagnóstico exacto: un segmented control reparte el ancho a partes
+// iguales y el widget mide 384 px. Con 5 opciones tocaban ~72 px por pestaña
+// para rótulos como «Forever Teresa · 4h» — se partían en tres líneas, la
+// pastilla crecía a 90 px de alto y los nombres quedaban ilegibles. Ese patrón
+// sirve para 2 o 3 etiquetas cortas (Light/Premium), no para nombres propios.
+//
+// La lista vertical le da a cada barco una línea entera, y de paso cabe lo que
+// antes no cabía:
+//  · La FOTO de los cinco a la vez, en miniatura. Antes solo se veía la del
+//    bote activo, en una card de preview debajo — para comparar barcos había
+//    que ir pinchando uno por uno.
+//  · El «desde US$ X» de cada uno, que es el dato que de verdad decide y que
+//    hasta ahora solo aparecía en la tabla de precios, a media página de
+//    distancia. Se DERIVA de la tabla de tramos del propio bote
+//    (`precioDesde`), nunca se escribe a mano.
+// La card de preview desaparece: era el parche que compensaba que el selector
+// no dijera nada, y ahora lo dice todo él.
+//
+// La altura sale casi igual que antes (5 filas ≈ lo que ocupaban la pastilla
+// de 3 líneas + su meta + la card de preview), así que el CTA no baja.
 
 export function SubVariantePicker({
   subVariantes,
@@ -25,83 +41,85 @@ export function SubVariantePicker({
   activa: string
   onChange: (id: string) => void
 }) {
-  const idx = Math.max(0, subVariantes.findIndex((s) => s.id === activa))
-  const N = subVariantes.length
-  // v3 (2026-07-17, fix Samuel): la fórmula correcta del thumb.
-  // Contenedor: padding p-1 (4px) cada lado + gap-1 (4px) entre N
-  // columnas. Cada columna mide:
-  //   colWidth = (100% - 8px - (N-1)*4px) / N
-  // El thumb tiene EXACTAMENTE ese ancho. Su translateX para saltar
-  // idx columnas es `idx × (100% + 4px)` — donde el 100% es 1 width
-  // del thumb (= 1 columna) y el 4px es el gap entre columnas. NO
-  // usar `100%/N` dentro del translateX: eso sería 1/N del thumb, no
-  // 1 columna. La fórmula `idx × (100% + 4px)` está verificada a mano
-  // para N=2/3/4.
-  const subActiva = subVariantes[idx]
-
   return (
-    <div>
-      <div
-        role="tablist"
-        className="relative grid gap-1 rounded-full bg-linea p-1"
-        style={{ gridTemplateColumns: `repeat(${N}, minmax(0, 1fr))` }}
-      >
-        <span
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-y-1 left-1 rounded-full bg-papel shadow-sm transition-transform duration-200 ease-out motion-reduce:transition-none"
-          style={{
-            // v3 (2026-07-17, fix Samuel): el thumb mide exactamente el
-            // ancho de una columna = 100% - 8px - (N-1)*4px, dividido N.
-            // Su translateX para saltar idx columnas es `idx × (100% + 4px)`:
-            // 100% = 1 width del thumb (= 1 columna), 4px = el gap.
-            width: `calc((100% - 8px - ${(N - 1) * 4}px) / ${N})`,
-            transform:
-              idx > 0 ? `translateX(calc(${idx} * (100% + 4px)))` : 'translateX(0)',
-          }}
-        />
-        {subVariantes.map((s) => {
-          const activo = s.id === activa
-          return (
-            <button
-              key={s.id}
-              type="button"
-              role="tab"
-              aria-selected={activo}
-              onClick={() => onChange(s.id)}
-              className={`relative z-10 flex items-center justify-center rounded-full px-0.5 py-2 text-center text-xs font-semibold leading-tight transition-colors sm:px-1 sm:text-sm ${
-                activo ? 'text-navy' : 'text-navy-sub/55 hover:text-navy-sub'
-              }`}
-            >
-              {s.nombre}
-            </button>
-          )
-        })}
-      </div>
-      {subActiva ? (
-        <p className="mt-2 text-center text-xs text-navy-soft">
-          {subActiva.capacidad}
-          {subActiva.duracion ? <> · {subActiva.duracion}</> : null}
-        </p>
-      ) : null}
+    // radiogroup y no tablist: esto elige un valor de una reserva, no cambia
+    // de panel. Antes era `tablist` porque parecía un toggle; en lista, la
+    // semántica correcta también es la que mejor navega con teclado.
+    <div role="radiogroup" aria-label="Elige tu barco" className="flex flex-col gap-1.5">
+      {subVariantes.map((s) => {
+        const activo = s.id === activa
+        const desde = s.tabla.length > 0 ? precioDesde(s.tabla) : null
+        return (
+          <button
+            key={s.id}
+            type="button"
+            role="radio"
+            aria-checked={activo}
+            onClick={() => onChange(s.id)}
+            className={`flex items-center gap-3 rounded-card p-2 text-left transition-colors ${
+              activo
+                ? 'bg-aqua-tint ring-2 ring-aqua-dark'
+                : 'bg-papel-hueso ring-1 ring-linea hover:bg-aqua-tint/50'
+            }`}
+          >
+            {/* Saona no trae `foto` en sus sub-variantes (se diferencian por
+                nombre y capacidad): en su lugar va el icono, para que las
+                filas rimen igual y no se descuadre la rejilla. */}
+            {s.foto ? (
+              <img
+                src={`/fotos/${s.foto}.webp`}
+                alt=""
+                aria-hidden="true"
+                loading="lazy"
+                className="size-11 shrink-0 rounded-lg object-cover"
+              />
+            ) : (
+              <span
+                aria-hidden="true"
+                className="grid size-11 shrink-0 place-items-center rounded-lg bg-aqua-tint text-aqua-dark"
+              >
+                <Ship className="size-5" />
+              </span>
+            )}
 
-      {/* Card de preview del bote activo (v3 2026-07-17, charter). Solo se
-          pinta si la sub-variante tiene foto. Saona no tiene `foto` en
-          sus sub-variantes (la diferenciación es por nombre + descripción
-          de capacidad), así que Saona se queda con solo la línea de
-          meta. */}
-      {subActiva?.foto ? (
-        <figure className="mt-3 overflow-hidden rounded-card bg-papel ring-1 ring-linea">
-          <img
-            src={`/fotos/${subActiva.foto}.webp`}
-            alt={subActiva.nombre}
-            loading="lazy"
-            className="aspect-[16/9] w-full object-cover"
-          />
-          <figcaption className="px-3 py-2 text-xs text-navy-sub">
-            {subActiva.descripcion}
-          </figcaption>
-        </figure>
-      ) : null}
+            <span className="min-w-0 flex-1">
+              <span
+                className={`block truncate font-display text-sm font-semibold ${
+                  activo ? 'text-navy' : 'text-navy-sub'
+                }`}
+              >
+                {s.nombre}
+              </span>
+              {/* El aforo se DERIVA de la tabla de tramos en vez de usar
+                  `capacidad`: ese campo lleva paréntesis largos («Hasta 45
+                  personas (plated hasta 20, skewers desde 21)») que en 384 px
+                  se cortaban a mitad de frase y no decían nada. El matiz sigue
+                  publicado donde hay sitio para leerlo — la tabla de precios.
+                  truncate igualmente, como red de seguridad: la fila mide lo
+                  que mide y ningún texto puede volver a partir la caja. */}
+              <span className="block truncate text-xs text-navy-soft">
+                {s.duracion ? <>{s.duracion} · </> : null}
+                hasta {aforoDe(s.tabla)} pax
+              </span>
+            </span>
+
+            {desde !== null ? (
+              <span className="shrink-0 text-right">
+                <span className="block text-eyebrow uppercase tracking-wide text-navy-soft">
+                  desde
+                </span>
+                <span
+                  className={`block font-display text-sm font-semibold ${
+                    activo ? 'text-aqua-dark' : 'text-navy-sub'
+                  }`}
+                >
+                  {formatoDinero(desde)}
+                </span>
+              </span>
+            ) : null}
+          </button>
+        )
+      })}
     </div>
   )
 }

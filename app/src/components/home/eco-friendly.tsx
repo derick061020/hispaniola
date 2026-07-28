@@ -50,6 +50,15 @@ import { useEcoFriendlyReveal } from '@/components/home/use-eco-friendly-reveal'
 
 // Sello eco: círculo con anillo + hoja + gota. Todo con currentColor y los
 // tokens de la paleta (cero hex sueltos, regla de CLAUDE.md).
+//
+// [v2 2026-07-28] SIGUE SIN EXPORTAR, y ahora se sabe por qué. Se probó a
+// reutilizarlo en el banner de cero plástico de /flota y Samuel lo descartó:
+// «el icono a la derecha queda raro, no se ve integrado». El sello funciona
+// en ESTE cintillo —fondo claro, franja de menta, nada detrás compitiendo—
+// pero encima de una foto se lee como una pegatina, porque es un disco plano
+// sobre una imagen con profundidad. Aquel banner lleva ahora el recorte real
+// del catamarán. Si algún día hace falta el sello fuera de aquí, que sea con
+// ese antecedente delante.
 function SelloEco({ className = '' }: { className?: string }) {
   return (
     <svg

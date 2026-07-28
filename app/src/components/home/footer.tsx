@@ -118,7 +118,7 @@ export function Footer() {
               </Link>
             </li>
             <li>
-              <Link to="/sostenibilidad" className="hover:text-white">
+              <Link to="/ventaja-competitiva" className="hover:text-white">
                 Sostenibilidad
               </Link>
             </li>
@@ -190,8 +190,10 @@ export function Footer() {
               </Link>
             </li>
             <li>
-              <Link to="/reserva-directa" className="font-semibold hover:text-white">
-                ¿Por qué reservar directo?
+              {/* [v2 2026-07-28] /reserva-directa → /por-que-reservar: la
+                  página se rehízo entera con los slides 50-56 del cliente. */}
+              <Link to="/por-que-reservar" className="font-semibold hover:text-white">
+                ¿Por qué reservar con nosotros?
               </Link>
             </li>
             <li>

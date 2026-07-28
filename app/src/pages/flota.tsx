@@ -1,14 +1,17 @@
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { Footer } from '@/components/home/footer'
 import { HeroInterna } from '@/components/internas/hero-interna'
-import { FlotaGrid } from '@/components/nosotros/flota-grid'
-import { NuestraHistoria } from '@/components/nosotros/nuestra-historia'
-import { ArrecifeTeaser } from '@/components/nosotros/arrecife-teaser'
+import { CabeceraInterna } from '@/components/internas/cabecera-interna'
+import { FamiliaHispaniola } from '@/components/flota/familia-hispaniola'
+import { FlotaGrid } from '@/components/flota/flota-grid'
+import { BannerCeroPlastico } from '@/components/flota/banner-cero-plastico'
+import { CocinaYParadas } from '@/components/flota/cocina-y-paradas'
 import { useTimelineHistoria } from '@/components/nosotros/use-timeline-historia'
 import { useCascadaNosotros } from '@/components/nosotros/use-cascada-nosotros'
+import { useDevFlag } from '@/dev/use-dev-flag'
 import { Meta } from '@/components/seo/meta'
 
-// Página Flota (/flota) — correcciones v2, plan 04. 2026-07-27.
+// Página Flota (/flota) — correcciones v2, plan 04.
 //
 // La flota deja de ser una sección de /nosotros y pasa a página propia, porque
 // el menú nuevo la pone como destino («Nosotros → Tripulación · Instalaciones ·
@@ -19,50 +22,72 @@ import { Meta } from '@/components/seo/meta'
 // estas tres cosas». `/nosotros` redirige aquí desde App.tsx — la ruta vieja no
 // devuelve 404 porque está indexada.
 //
-// El grid se reutiliza TAL CUAL (`FlotaGrid` no sabía nada de /nosotros: solo
-// consume FLOTA de data/nosotros.ts), así que montar la página es gratis. Lo
-// que cuesta son los assets: el cliente quiere 12 embarcaciones con galería,
-// 360° y ficha técnica, y hoy hay 6 con una foto cada una.
+// ── ITERACIÓN v2 (2026-07-28) ────────────────────────────────────────────
+//
+// La primera versión de esta página era el grid heredado + la línea de tiempo
+// + el banner de arrecife: de las 10 slides que el PDF dedica a /flota solo
+// estaba aplicado el «sale a página propia». Samuel pidió aplicar el resto.
+// El ORDEN de arriba abajo lo dictó él («la presentación de la familia […]
+// agregar aquí el tema del dueño y el recorrido de años, luego las cards de
+// los botes […] luego el resto de card y el banner»):
+//
+//   1. FamiliaHispaniola   — presentación + dueño + recorrido de años (slides
+//                            26-27). Reemplaza a `NuestraHistoria`, cuyo panel
+//                            de la cita se absorbe aquí (ver ese componente).
+//   2. FlotaGrid           — las cards nuevas: vídeo por defecto, mini-galería,
+//                            360º y ficha técnica en modal (slide 28).
+//   3. CocinaYParadas      — la cocina flotante y las 3 paradas (slides 32-34).
+//   4. BannerCeroPlastico  — el banner de cierre, reenfocado (slide 30).
+//                            Sustituye a `ArrecifeTeaser`: el CTA sigue
+//                            llevando a Sostenibilidad, así que el enlace
+//                            interno no se pierde, solo deja de ser el titular.
+//
+// ⚠️ LA COCINA SE MONTÓ EN OSCURO Y A SANGRE, Y SE REHIZO (2026-07-28). Seguía
+// la maqueta del slide 33, que va en tema oscuro, y por eso vivía FUERA de
+// este contenedor. Samuel lo descartó al verlo en la página («el cambio es
+// demasiado brusco»): en la slide ese bloque está solo, pero aquí llega
+// después de la presentación y de 6 cards sobre papel, y una banda casi negra
+// en medio se lee como otra web. Vuelve a ser una sección normal dentro del
+// contenedor común — ver el comentario largo de cocina-y-paradas.tsx.
+//
+// Con ella dentro, el ORDEN cambia: la cocina pasa a ir ANTES del banner. Ya
+// no hay motivo para dejar el banner en medio (era el respiro claro antes de
+// la banda oscura), y un banner con CTA es un cierre mejor que un remate.
 export function FlotaPage() {
   const contenidoRef = useRef<HTMLDivElement>(null)
-  useTimelineHistoria(contenidoRef, { activo: true })
-  useCascadaNosotros(contenidoRef, { activo: true })
+
+  // [dev-mode] ?dev-flota=estatico congela los efectos de scroll en su estado
+  // FINAL (línea de tiempo trazada, cards ya asentadas) → frame limpio para
+  // Figma. Coincide con lo que ve quien tiene prefers-reduced-motion. Antes
+  // este flag era `?dev-nosotros=estatico`, heredado de la página de la que
+  // salió esta; se renombra porque /nosotros ya no existe y el nombre viejo
+  // mandaba a leer una página retirada. Ver dev-registry.ts.
+  const [estatico, setEstatico] = useState(false)
+  useDevFlag('dev-flota', (v) => setEstatico(v === 'estatico')) // [dev-mode]
+  useTimelineHistoria(contenidoRef, { activo: !estatico }) // [dev-mode] gate
+  useCascadaNosotros(contenidoRef, { activo: !estatico }) // [dev-mode] gate
 
   return (
     <div>
       <Meta
         titulo="Nuestra flota"
-        descripcion="Las embarcaciones de Hispaniola Aquatic Adventures: catamaranes de vela y motor, lanchas y el catamarán de eventos, con su ficha técnica."
+        descripcion="Las embarcaciones de Hispaniola Aquatic Adventures: catamaranes de vela y motor, lanchas y el catamarán de eventos, con vídeo, galería y ficha técnica completa de cada una."
         ruta="/flota"
       />
       <HeroInterna ctaHref="/#tours">
-        <div className="max-w-3xl">
-          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-aqua">
-            Nuestra flota
-          </p>
-          <h1 className="mt-3 font-display text-4xl font-semibold text-white sm:text-5xl">
-            Los barcos que hacen el día
-          </h1>
-          <p className="mt-4 text-lg text-white/85">
-            Catamaranes de vela y de motor, lanchas rápidas y nuestro catamarán de eventos. Todos
-            propios, todos con cocina flotante a bordo.
-          </p>
-        </div>
+        <CabeceraInterna
+          eyebrow="Nuestra flota"
+          titulo="Los barcos que hacen el día"
+          lead="Catamaranes de vela y de motor, lanchas rápidas y nuestro catamarán de eventos. Todos propios, todos con cocina flotante a bordo."
+        />
       </HeroInterna>
 
       <div ref={contenidoRef} className="mx-auto max-w-contenido px-5 py-12 sm:px-10 lg:py-16">
         <div className="flex flex-col gap-16 lg:gap-24">
+          <FamiliaHispaniola />
           <FlotaGrid />
-          {/* «Nuestra historia» (la línea de tiempo 2012→hoy con la cita del
-              fundador) vivía en /nosotros, que desaparece. Se reubica AQUÍ
-              porque su narrativa es literalmente la de esta página — «de un
-              barco a una flota» — y porque en la reunión del 07-24 (28:46) el
-              cliente habló de la historia justo mientras revisaba la flota.
-              ⚠️ Colocación PROVISIONAL: queda pendiente que Samuel decida si
-              su sitio definitivo es este o Tripulación (plan 02 §1). Lo que no
-              podía pasar es que el contenido se perdiera con la página. */}
-          <NuestraHistoria />
-          <ArrecifeTeaser />
+          <CocinaYParadas />
+          <BannerCeroPlastico />
         </div>
       </div>
 

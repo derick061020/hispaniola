@@ -1,9 +1,12 @@
-import { Link } from 'react-router-dom'
 import { Footer } from '@/components/home/footer'
+import { BandaInstalaciones } from '@/components/instalaciones/banda-instalaciones'
+import { ZonasInstalaciones } from '@/components/instalaciones/zonas-instalaciones'
+import { CabeceraInterna } from '@/components/internas/cabecera-interna'
 import { HeroInterna } from '@/components/internas/hero-interna'
 import { ExperienciaABordo } from '@/components/nosotros/experiencia-abordo'
 import { Meta } from '@/components/seo/meta'
-import { INSTALACIONES, ZONAS } from '@/data/instalaciones'
+import { ReelsSociales } from '@/components/ui/reels-sociales'
+import { INSTALACIONES, VERTICALES_INSTALACIONES } from '@/data/instalaciones'
 
 // Página Instalaciones (/instalaciones) — correcciones v2, plan 06.
 //
@@ -12,17 +15,33 @@ import { INSTALACIONES, ZONAS } from '@/data/instalaciones'
 // laboratorio propio es verificable.
 //
 // ✅ El copy de las 6 zonas es REAL (lo escribió el cliente).
-// ⚠️ Las fotos son PLACEHOLDER repetidas del repo — no hay ni una foto de las
-//    instalaciones en tierra. Ver data/instalaciones.ts.
-// ⚠️ El 360° NO se falsea: sin material, no se pinta el botón. Un «Ver en 360°»
+// ⚠️ La media es de relleno, del propio repo — ver data/instalaciones.ts.
+// ⚠️ El 360° NO se falsea: sin material, no se pinta la celda. Un «Ver en 360°»
 //    que abre una foto normal promete algo que no cumple.
 //
-// El zigzag alternando lado reutiliza el patrón que el proyecto ya resolvió en
-// `sostenibilidad/recorrido-sostenibilidad.tsx` — no se inventa otro layout.
+// [v2 2026-07-28, pedido de Samuel] LA PÁGINA SE REESTRUCTURA PARA SEGUIR LAS
+// SLIDES 44-49, que era lo que más se alejaba de la maqueta de todas las
+// páginas de esta tanda. Antes: hero → aviso de «fotos de ejemplo» → 6 zonas
+// con UNA foto 4:3 cada una → cierre. Ahora:
 //
-// Una sola banda de CTA (la del cierre), no las tres que dibujaba la maqueta:
-// tres CTA idénticos en una página de 6 secciones es demasiado y los tres
-// decían lo mismo con distinto color de fondo.
+//   1. FUERA EL AVISO DE «FOTOS DE EJEMPLO» (y los alt que decían
+//      «Placeholder — pendiente de la foto real»). Samuel: «eso se ve horrible
+//      y amateur, se sobreentiende que es de ejemplo». Lo que la maqueta debe
+//      enseñar es la página, no sus andamios; el estado real de los assets se
+//      comunica por fuera, en el plan y en la lista de material pendiente.
+//   2. CARRIL DE VERTICALES bajo el hero (slide 45, «Míralo en video ·
+//      vertical»), con ReelsSociales — el carrusel arrastrable que el
+//      proyecto ya tenía, ahora alimentado con los verticales de las zonas.
+//   3. MINI-BENTO POR ZONA (slides 46-49): el pedido central. Ver
+//      components/instalaciones/bento-zona.tsx.
+//   4. CHIPS de zona (slide 46) y BANDA DE CTA INTERCALADA (slide 48). Ver
+//      components/instalaciones/zonas-instalaciones.tsx.
+//
+// El hero NO se pasa al degradado verde plano de la maqueta: todas las
+// internas comparten HeroInterna (box redondeado + media real + header
+// sobreVideo dentro), que es una decisión de PLAN-INTERNAS-V2.md para las 15
+// páginas. De las maquetas se toma la ESTRUCTURA, no la estética — mismo
+// criterio que en la v1.
 export function InstalacionesPage() {
   return (
     <div>
@@ -32,72 +51,29 @@ export function InstalacionesPage() {
         ruta="/instalaciones"
       />
       <HeroInterna ctaHref="/#tours">
-        <div className="max-w-3xl">
-          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-aqua">
-            {INSTALACIONES.eyebrow}
-          </p>
-          <h1 className="mt-3 font-display text-4xl font-semibold text-white sm:text-5xl">
-            {INSTALACIONES.titulo}
-          </h1>
-          <p className="mt-4 text-lg text-white/85">{INSTALACIONES.lead}</p>
-        </div>
+        <CabeceraInterna
+          eyebrow={INSTALACIONES.eyebrow}
+          titulo={INSTALACIONES.titulo}
+          lead={INSTALACIONES.lead}
+        />
       </HeroInterna>
 
-      <div className="mx-auto max-w-contenido px-5 py-12 sm:px-10 lg:py-16">
-        <div className="max-w-2xl">
-          <h2 className="font-display text-3xl font-semibold text-navy">
-            {INSTALACIONES.seccionTitulo}
-          </h2>
-          <p className="mt-3 text-lg text-navy/70">{INSTALACIONES.seccionLead}</p>
-        </div>
+      {/* Slide 45. Es una sección a ancho completo con su propio padding, así
+          que va FUERA del contenedor de contenido de abajo — igual que en la
+          home, donde el carril sangra hasta el canto de la pantalla en móvil. */}
+      <ReelsSociales
+        eyebrow={INSTALACIONES.videoEyebrow}
+        titulo={INSTALACIONES.videoTitulo}
+        lead={INSTALACIONES.videoLead}
+        reels={VERTICALES_INSTALACIONES}
+        // [v2 2026-07-28, 2ª vuelta] Cabecera a la izquierda y flechas en la
+        // columna de la derecha, en la misma fila que el título (Samuel: «así
+        // hacemos mejor integrado todo»). Ver `alineacion` en reels-sociales.
+        alineacion="izquierda"
+      />
 
-        <p className="mt-6 rounded-lg border border-coral/30 bg-coral/5 px-4 py-3 text-sm text-navy">
-          <strong>Fotos de ejemplo.</strong> Las imágenes de estas zonas son marcadores de posición
-          hasta que lleguen las fotos reales del complejo.
-        </p>
-
-        <div className="mt-12 flex flex-col gap-16 lg:gap-24">
-          {ZONAS.map((z, i) => (
-            <article
-              key={z.id}
-              className={`flex flex-col gap-8 lg:items-center ${
-                i % 2 === 0 ? 'lg:flex-row' : 'lg:flex-row-reverse'
-              }`}
-            >
-              <div className="lg:w-1/2">
-                <div className="aspect-[4/3] overflow-hidden rounded-2xl">
-                  <img
-                    src={`/fotos/${z.foto}.webp`}
-                    alt={z.fotoAlt}
-                    className="h-full w-full object-cover"
-                    loading="lazy"
-                  />
-                </div>
-              </div>
-              <div className="lg:w-1/2">
-                <h3 className="font-display text-2xl font-semibold text-navy">{z.nombre}</h3>
-                <p className="mt-3 text-navy/70">{z.descripcion}</p>
-                <ul className="mt-5 flex flex-col gap-2 border-t border-linea pt-5">
-                  {z.bullets.map((b) => (
-                    <li key={b} className="text-sm text-navy/80">
-                      {b}
-                    </li>
-                  ))}
-                </ul>
-                {/* El botón de 360° solo existe si hay material. Sin `tour360`
-                    no se pinta nada — ausencia silenciosa, no un botón muerto. */}
-                {z.tour360 ? (
-                  <a
-                    href={z.tour360}
-                    className="mt-5 inline-flex text-sm font-semibold text-aqua underline"
-                  >
-                    Ver en 360°
-                  </a>
-                ) : null}
-              </div>
-            </article>
-          ))}
-        </div>
+      <div className="mx-auto max-w-contenido px-5 pb-12 sm:px-10 lg:pb-16">
+        <ZonasInstalaciones />
 
         {/* [v2 2026-07-27] «Un día de mar, cuidado al detalle» se REUBICA aquí
             desde /nosotros, que desaparece. Encaja: esta página cuenta lo que
@@ -109,17 +85,15 @@ export function InstalacionesPage() {
           <ExperienciaABordo />
         </div>
 
-        <div className="mt-20 rounded-2xl bg-navy px-6 py-12 text-center">
-          <h2 className="font-display text-3xl font-semibold text-white">
-            {INSTALACIONES.cierreTitulo}
-          </h2>
-          <p className="mx-auto mt-3 max-w-xl text-white/80">{INSTALACIONES.cierreTexto}</p>
-          <Link
-            to="/#tours"
-            className="mt-6 inline-flex rounded-full bg-coral px-6 py-3 text-sm font-semibold text-white transition hover:brightness-110"
-          >
-            {INSTALACIONES.cierreCta}
-          </Link>
+        <div className="mt-20">
+          <BandaInstalaciones
+            variante="cierre"
+            foto={INSTALACIONES.cierreFoto}
+            eyebrow={INSTALACIONES.cierreEyebrow}
+            titulo={INSTALACIONES.cierreTitulo}
+            texto={INSTALACIONES.cierreTexto}
+            cta={INSTALACIONES.cierreCta}
+          />
         </div>
       </div>
 

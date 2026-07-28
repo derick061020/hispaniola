@@ -36,6 +36,12 @@ export type PaqueteEvento = {
    *  pre-seleccionar un paquete en el form (Figma frame). */
   id: string
   nombre: string
+  /** [v2 2026-07-28] Etiqueta corta para el segmented del widget de reserva
+   *  online (evento/calculadora-evento.tsx): ahí cada pestaña mide ~85px y
+   *  «Hispaniola Premium Package» no cabe ni a 12px. El nombre completo se
+   *  sigue leyendo entero en la card de preview justo debajo y en el bloque
+   *  de paquetes de la página, así que la abreviatura nunca aparece sola. */
+  nombreCorto: string
   /** ej: "US$ 660.00" — "Starting at" según la web del cliente */
   precio: string
   /** ej: "1-12 Person" o "1-120 personas" */
@@ -136,6 +142,15 @@ export type FichaEvento = {
   /** TODAS las fotos de la galería en /fotos (sin extensión). La `foto`
    *  va primera en el mosaico + lightbox. */
   galeria: string[]
+  /** [v2 2026-07-28, pedido de Samuel: «en los eventos también debe estar el
+   *  video vertical al lado del grid de imágenes»] Ruta del video en /video.
+   *  Mismo campo y mismo papel que `videoGaleria` en FichaTour: la columna
+   *  9:16 a la izquierda del mosaico (internas/galeria-mosaico.tsx). null =
+   *  mosaico solo de fotos.
+   *  ⚠️ [placeholder-v2] Los 3 apuntan al video de marca hasta que el cliente
+   *  grabe uno por ocasión (una boda no se vende con el mismo clip que un
+   *  party boat) — misma deuda que ya arrastran los 4 tours. */
+  videoGaleria: string | null
   /** faq del acordeón */
   faq: PreguntaEvento[]
   /** meta que se muestra en la página de gracias ("Pronto nos pondremos
@@ -260,6 +275,7 @@ const PARTY_BOAT: FichaEvento = {
       {
         id: 'premium',
         nombre: 'Hispaniola Premium Package',
+        nombreCorto: 'Premium',
         precio: 'US$ 1,188.00',
     precioBase: 1188,
     incluyeHasta: 12,
@@ -283,6 +299,7 @@ const PARTY_BOAT: FichaEvento = {
       {
         id: 'package-i',
         nombre: 'Package #I',
+        nombreCorto: '#I',
         precio: 'US$ 660.00',
     precioBase: 660,
     incluyeHasta: 12,
@@ -301,6 +318,7 @@ const PARTY_BOAT: FichaEvento = {
       {
         id: 'package-ii',
         nombre: 'Package #II',
+        nombreCorto: '#II',
         precio: 'US$ 780.00',
     precioBase: 780,
     incluyeHasta: 12,
@@ -320,6 +338,7 @@ const PARTY_BOAT: FichaEvento = {
       {
         id: 'package-iii',
         nombre: 'Package #III',
+        nombreCorto: '#III',
         precio: 'US$ 900.00',
     precioBase: 900,
     incluyeHasta: 12,
@@ -358,6 +377,7 @@ const PARTY_BOAT: FichaEvento = {
     'events-7',
     'events-8',
   ],
+  videoGaleria: '/video/hero.mp4',
   // FAQ de la ficha de party boat de la web del cliente. La web NO
   // traía una FAQ propia — se OMITE, no se inventa. El widget pide
   // los detalles por formulario, que es más honesto que inventar
@@ -471,6 +491,7 @@ const BODAS: FichaEvento = {
     'weddings-12',
     'weddings-13',
   ],
+  videoGaleria: '/video/hero.mp4',
   // FAQ de bodas — las 3 preguntas de la web del cliente + 1
   // pregunta sobre el Dress code (la más común, sale de la práctica
   // de coordinar con novios).
@@ -578,6 +599,7 @@ const EMPRESAS: FichaEvento = {
   fotoAlt: 'La cubierta del catamarán con varios grupos comiendo en sus mesas',
   // 4 fotos de la galería original del cliente.
   galeria: ['mice-3', 'mice-1', 'mice-2', 'mice-4'],
+  videoGaleria: '/video/hero.mp4',
   // FAQ corporativa — 4 preguntas operativas, las que un DMC
   // (destination management company) o un head de eventos hace
   // primero. Copiadas del data/eventos.ts versión anterior.

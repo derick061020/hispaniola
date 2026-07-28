@@ -1,5 +1,6 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
 import type { Tour } from '@/data/home'
+import { useAnclasActiva, irAlAncla } from '@/components/ui/use-anclas-activa'
 import { useDevFlag } from '@/dev/use-dev-flag' // [dev-mode]
 
 // Nav de anclas de la ficha (wireframe A2). La ficha es larga y el visitante
@@ -67,58 +68,19 @@ export function AnclasFicha({ tour }: { tour: Tour }) {
     { id: 'ancla-faq', label: 'FAQ' },
   ]
 
-  const [activa, setActiva] = useState(anclas[0]?.id)
+  // El scroll-spy vive en ui/use-anclas-activa.ts desde el 2026-07-28 — lo
+  // comparte con la fila de chips de /ventaja-competitiva. El comportamiento
+  // no cambia (misma línea de disparo, mismo rAF); solo dejó de estar
+  // duplicado.
+  const [activa, setActiva] = useAnclasActiva(anclas.map((a) => a.id))
   const [indicator, setIndicator] = useState({ left: 0, top: 0, width: 0 })
   const [mounted, setMounted] = useState(false)
   const navRef = useRef<HTMLDivElement>(null)
-  const idsKey = anclas.map((a) => a.id).join()
 
   // [dev-mode] ?dev-anclas=<id> fuerza la activa al id pasado (p. ej.
   // `ancla-faq` para capturar la pestaña FAQ como activa en Figma) — el
   // scroll real del visitante la sobreescribe en cuanto se mueva.
   useDevFlag('dev-anclas', (v) => setActiva(v))
-
-  useEffect(() => {
-    const secciones = anclas
-      .map((a) => document.getElementById(a.id))
-      .filter((el): el is HTMLElement => el !== null)
-    if (secciones.length === 0) return
-
-    // Punto de aterrizaje de una sección al saltar a su ancla (su
-    // scroll-margin-top, igual para todas) + 2px de holgura para el redondeo
-    // sub-píxel. La sección recién clicada queda con su tope justo en esta
-    // línea, así que cuenta como «cruzada» y se activa ella, no la anterior.
-    const linea = parseFloat(getComputedStyle(secciones[0]).scrollMarginTop) + 2
-
-    let raf = 0
-    const recalcular = () => {
-      raf = 0
-      let actual = secciones[0].id
-      for (const sec of secciones) {
-        if (sec.getBoundingClientRect().top <= linea) actual = sec.id
-      }
-      // Al fondo de la página, la última sección gana aunque su tope no haya
-      // cruzado la línea (secciones cortas del pie no se alcanzarían nunca).
-      if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2) {
-        actual = secciones[secciones.length - 1].id
-      }
-      setActiva(actual)
-    }
-    const onScroll = () => {
-      if (!raf) raf = requestAnimationFrame(recalcular)
-    }
-
-    recalcular()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    window.addEventListener('resize', onScroll)
-    return () => {
-      window.removeEventListener('scroll', onScroll)
-      window.removeEventListener('resize', onScroll)
-      if (raf) cancelAnimationFrame(raf)
-    }
-    // idsKey cambia con el modo de booking (aparece/desaparece «Menú»).
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [idsKey])
 
   // Mide la posición del TEXTO de la activa y la guarda como estado del
   // indicador. useLayoutEffect: se ejecuta antes del paint → la primera vez
@@ -151,19 +113,6 @@ export function AnclasFicha({ tour }: { tour: Tour }) {
     return () => ro.disconnect()
   }, [activa, anclas.length])
 
-  // El salto va suave, pero con `scrollIntoView` y NO con
-  // `html { scroll-behavior: smooth }`: ese es global y cambiaría también los
-  // anclas de la home (#tours del hero y del header), que esta fase no toca.
-  // `scroll-margin-top` (scroll-mt-sticky-top en cada sección) lo respeta
-  // igual, así que el título no queda debajo del chrome sticky.
-  const irA = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
-    const destino = document.getElementById(id)
-    if (!destino) return
-    e.preventDefault()
-    const suave = !window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    destino.scrollIntoView({ behavior: suave ? 'smooth' : 'auto' })
-  }
-
   return (
     <nav
       aria-label="Secciones de esta página"
@@ -180,7 +129,7 @@ export function AnclasFicha({ tour }: { tour: Tour }) {
               key={a.id}
               data-ancla={a.id}
               href={`#${a.id}`}
-              onClick={(e) => irA(e, a.id)}
+              onClick={(e) => irAlAncla(e, a.id)}
               aria-current={esActiva ? 'true' : undefined}
               className={`rounded-lg px-3 py-3.5 text-sm font-medium transition-colors ${
                 esActiva

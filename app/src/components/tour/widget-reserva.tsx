@@ -12,7 +12,7 @@ import { useDevFlag } from '@/dev/use-dev-flag'
 import { hoyISO, sumarDias } from '@/lib/fechas'
 import { formatoDinero, QUOTES, type Tour } from '@/data/home'
 import { WHATSAPP_URL, calcularTotalTour, type FichaTour } from '@/data/tours'
-import { ALBUM_UPSELL, totalAddOns, saltoDeTramo } from '@/lib/tarifas'
+import { ALBUM_UPSELL, DESCUENTO_MAXIMO, totalAddOns, saltoDeTramo } from '@/lib/tarifas'
 import { AddOnsWidget } from '@/components/tour/add-ons-widget'
 import { PistaInfo } from '@/components/ui/pista-info'
 import { PasajerosPopover, FilaPasajero } from '@/components/tour/pasajeros-popover'
@@ -83,6 +83,12 @@ type Props = {
    *  `variante` (el bote del charter) el 2026-07-17 y por la misma razón —
    *  hay precedente, es el patrón de la casa. */
   onPaqueteChange?: (p: 'light' | 'premium') => void
+  /** [v2 2026-07-28] El nº de personas SUBE a la página, por el mismo motivo
+   *  que `variante` y `paquete`: la tabla de precios de la columna izquierda
+   *  llevaba desde el 07-17 prometiendo por escrito que «muestra el tramo que
+   *  aplica según las personas que elijas en el widget» — y no lo hacía. Era
+   *  una promesa falsa en pantalla, no solo una función que faltaba. */
+  onPersonasChange?: (n: number) => void
 }
 
 // Tope del contador de personas de ESTE booking. v3 (2026-07-17, Saona): con
@@ -222,6 +228,7 @@ export function WidgetReserva({
   variante: varianteProp,
   onVarianteChange,
   onPaqueteChange,
+  onPersonasChange,
 }: Props) {
   const [fecha, setFecha] = useState<string | null>(null)
   const [horario, setHorario] = useState(0)
@@ -310,6 +317,22 @@ export function WidgetReserva({
     if (onVarianteChange) onVarianteChange(id)
     setVarianteLocal(id)
   }
+  // [v2 2026-07-28] Publica el nº de personas hacia arriba (ver `onPersonasChange`
+  // en Props). Va por efecto y no colgado de cada `setPersonas` porque el valor
+  // sale de DOS modelos distintos —stepper simple y adultos+niños del dual—, y
+  // colgarlo de los handlers obligaba a acordarse en cinco sitios. Con el
+  // efecto, la página siempre ve el mismo número que el widget usa para
+  // calcular, incluido el primer render.
+  // ⚠️ Va AQUÍ ARRIBA, y no junto a `paxActuales` (que es donde pedía el
+  // cuerpo), porque más abajo hay dos `return` tempranos —booking 'cotizacion'
+  // y 'consulta'— y un hook después de ellos cambia el número de hooks entre
+  // renders. La expresión se repite en vez de leer `totalPersonas` porque esa
+  // constante se declara 15 líneas más abajo; es la MISMA fórmula, y si algún
+  // día deja de serlo, `paxActuales` y esto tienen que moverse juntos.
+  useEffect(() => {
+    onPersonasChange?.(esDual ? adultos + ninos : personas)
+  }, [esDual, adultos, ninos, personas, onPersonasChange])
+
   // Tope del stepper de personas:
   //  - esDual (Snorkel Lovers): el max del tour (30).
   //  - subVariantes (Saona): el tramo más alto (70 en catamarán).
@@ -1089,10 +1112,16 @@ export function WidgetReserva({
       {/* «Ahorra hasta 15%» (decisión de precio, Fase B): el precio mostrado es
           el de LISTA (el que todos pagan); los descuentos —recurrente +
           anticipación + efectivo— se comunican aquí, junto al CTA, sin anclar
-          el precio en ellos. */}
+          el precio en ellos.
+          [v2 2026-07-28] El número deja de estar escrito a mano y sale de
+          DESCUENTO_MAXIMO, el mismo array que pinta el bloque «Cómo pagar
+          menos» y que aplica el descuento al cobrar. Este chip lleva desde la
+          Fase B prometiendo un 15% que ninguna otra parte del sitio explicaba;
+          ahora que la explicación existe, lo peligroso sería que las dos
+          cifras pudieran separarse. */}
       <div className="flex items-center justify-center gap-1.5 rounded-btn bg-menta px-3 py-1.5 text-center text-xs font-medium text-menta-texto">
         <Tag className="size-3.5 shrink-0" aria-hidden="true" />
-        Reservando directo ahorras hasta 15%
+        Reservando directo ahorras hasta {DESCUENTO_MAXIMO}%
       </div>
 
       {/* Sin fecha, el CTA está DESHABILITADO de verdad (no un botón gris que

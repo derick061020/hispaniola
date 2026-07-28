@@ -56,15 +56,24 @@ import { useDevFlag } from '@/dev/use-dev-flag'
 // en su propia fila justo debajo del título/lead/meta, alineado a la
 // derecha. Solo el artículo lo usa hoy (CompartirArticulo sobreOscuro); el
 // resto de internas no pasa esta prop y el hero se ve igual que siempre.
+// `anchoCompleto` (2026-07-28, /por-que-reservar): el contenido del hero deja
+// de ir acotado a max-w-4xl y ocupa el max-w-contenido entero. Nace de un
+// pedido de Samuel —el CTA de esa página va «a la derecha, en una columna
+// derecha»— que con la caja de 4xl dejaba el botón flotando a media pantalla
+// en vez de en el borde derecho del hero. Es opt-in: sin la prop, el hero
+// mide exactamente lo que medía en el resto de internas, donde el título de
+// una ficha SÍ quiere una columna estrecha para no leerse a 1400px de ancho.
 export function HeroInterna({
   ctaHref = '#tours',
   imagen,
   pie,
+  anchoCompleto = false,
   children,
 }: {
   ctaHref?: string
   imagen?: { src: string; alt: string }
   pie?: ReactNode
+  anchoCompleto?: boolean
   children: ReactNode
 }) {
   const videoRef = useRef<HTMLVideoElement>(null)
@@ -153,7 +162,7 @@ export function HeroInterna({
 
           <div className="flex flex-1 flex-col justify-end pb-6 pt-8 sm:pb-8">
             <div className="mx-auto w-full max-w-contenido px-5 sm:px-10">
-              <div className="max-w-4xl">{children}</div>
+              <div className={anchoCompleto ? '' : 'max-w-4xl'}>{children}</div>
               {pie ? <div className="mt-4 flex justify-end sm:mt-6">{pie}</div> : null}
             </div>
           </div>

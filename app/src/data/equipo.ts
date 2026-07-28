@@ -171,13 +171,49 @@ export function contarPorDepartamento(id: DepartamentoId): number {
 export const EQUIPO_PAGINA = {
   eyebrow: 'Nuestro equipo',
   titulo: 'Las personas detrás de cada tour',
-  // ⚠️ El lead de la maqueta del cliente decía «Gerencia española afincada en
-  // Punta Cana desde 2012». Eso NO está en ninguna parte de la web original ni
-  // se confirmó en la reunión — es una afirmación sobre la empresa, así que no
-  // se publica hasta que el cliente la confirme. Este lead dice solo lo que sí
-  // sabemos.
+  // El lead de la maqueta del cliente decía «Gerencia española afincada en
+  // Punta Cana desde 2012 y un gran equipo dominicano que vive el mar
+  // contigo». El dato RD + España SÍ se publica ahora (ver `datos`, pedido de
+  // Samuel 2026-07-28), pero como dato de la franja, no como frase del hero:
+  // aquí sigue el lead que dice solo lo que describe la página.
   lead: 'Un equipo repartido en seis departamentos que hacen posible tu día perfecto: desde quien te responde cuando escribes hasta quien cocina frente a ti en el mar.',
+  // Franja compacta bajo el hero (slide 37 del PDF v2 — los cuatro datos y su
+  // redacción son del cliente). Los dos primeros valores se DERIVAN del array,
+  // como todos los contadores de esta página; los dos últimos son texto fijo.
+  //
+  // El «≈» del total NO es adorno: el cliente dijo «cerca de 70» de viva voz y
+  // su maqueta listaba 37. Mientras la plantilla real no llegue, el número es
+  // una aproximación y se enseña como tal.
+  datos: [
+    { id: 'personas', valor: `≈ ${TOTAL_EQUIPO}`, etiqueta: 'personas en el equipo' },
+    { id: 'departamentos', valor: `${DEPARTAMENTOS.length} departamentos`, etiqueta: 'de oficina al mar' },
+    { id: 'desde', valor: 'Desde 2012', etiqueta: 'creciendo juntos' },
+    // ⚠️ Este es el único dato de la franja que afirma algo sobre la EMPRESA y
+    // no sobre esta página. No estaba en la web original — sale de la maqueta
+    // del cliente (slide 37) y se publica por pedido explícito de Samuel
+    // (2026-07-28: «que el equipo es de RD y España»). Si el cliente lo
+    // desmiente, es lo primero que cae.
+    { id: 'origen', valor: 'RD + España', etiqueta: 'equipo local y gerencia' },
+  ],
+  // Muro de retratos ([v2 2026-07-28) — equipo/muro-tripulacion.tsx. El
+  // titular NO vive aquí: es «Somos {TOTAL_EQUIPO}», y ese número se deriva
+  // del array como todos los de esta página.
+  muroEyebrow: 'La foto de familia',
+  muroLead:
+    'De la oficina al mar, de la cocina al arrecife. Esta es toda la gente que hace posible tu día.',
+  cierreEyebrow: 'Trabaja con nosotros',
   cierreTitulo: '¿Quieres remar con nosotros?',
+  // Foto de fondo del banner de cierre (equipo/cierre-equipo.tsx). Mar abierto
+  // y vela: es la toma más UNIFORME de las disponibles, y en un banner con el
+  // texto centrado eso es lo que decide. Se probaron 6 candidatas; las de
+  // grupo (hero-catamaran-1, galeria-semi-privado-6) traen un cielo muy claro
+  // justo en la banda donde cae el eyebrow —la parte del degradado que solo
+  // tapa un 35%— y ahí el texto se despega. Y footer-oceano queda descartada
+  // por vecindad: es el fondo del Footer, tres centímetros más abajo.
+  //
+  // La comparte con el cierre de /por-que-reservar, y está bien que así sea:
+  // es el mismo componente cerrando dos páginas, no un descuido.
+  cierreFoto: 'hero-catamaran-2',
   cierreTexto:
     'Siempre buscamos gente que ame el mar y el trato de verdad con las personas. Si es lo tuyo, cuéntanos quién eres.',
   // El botón de la maqueta decía «Ver vacantes», pero /trabaja-con-nosotros no

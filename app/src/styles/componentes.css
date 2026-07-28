@@ -1199,6 +1199,61 @@
 }
 
 /* ============================================================
+   /por-que-reservar — papeles sobre la mesa (2026-07-28).
+
+   La página se rehízo con OBJETOS en lugar de cards (Samuel, al ver la
+   primera versión: «horrible, genérico e IA slop» — cuatro secciones con el
+   mismo esqueleto de eyebrow + H2 + rejilla de cards con ring y bullets).
+
+   El OBJETO no se inventa aquí: es .boleto, que ya existe para la
+   comparación de la home (papel, perforación troquelada de verdad con
+   mask-image, sello estampado, código de barras). Esta página lo reusa tal
+   cual —misma clase, mismos tokens, mismo componente de Figma— y solo añade
+   las dos piezas que le faltaban: el HUECO donde los otros tours no tienen
+   nada que enseñar, y el MARCO de las fotos clavadas en la hoja.
+   ============================================================ */
+
+/* El hueco de «otros tours». No es una foto que falte por descuido: no
+   tenemos —ni vamos a inventar— fotos de la competencia, y decirlo con un
+   rayado vacío es más honesto Y más elocuente que rellenar con stock. El
+   rayado se hace con el color de línea del sistema, así que envejece con la
+   paleta y no trae un gris suelto. */
+.pqr-hueco {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    var(--color-linea) 0 1px,
+    transparent 1px 9px
+  );
+  background-color: var(--color-papel-hueso);
+}
+
+/* Foto «clavada» en la hoja de las 19 razones: passe-partout blanco fino +
+   la sombra de dos capas (contacto + ambiente) que ya usa el proyecto para
+   las fotos reales, y un giro propio por foto (--rot, del JSX).
+   Se endereza al pasar el ratón, igual que .boleto: mismo gesto, misma
+   familia. */
+.pqr-foto {
+  rotate: var(--rot, 0deg);
+  padding: var(--spacing-foto-real-marco);
+  background: var(--color-papel);
+  border-radius: var(--radius-foto);
+  box-shadow: var(--shadow-foto-real);
+  transition: rotate 300ms ease-out;
+}
+
+@media (hover: hover) {
+  .pqr-foto:hover {
+    rotate: 0deg;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pqr-foto {
+    transition: none;
+  }
+}
+
+/* ============================================================
    Banner de "Reserva directa" (v3, pedido de Samuel 2026-07-15) — la escena
    de los boletos vive DENTRO de un banner con foto de playa de fondo. El
    banner arranca a SANGRE (100vw, más alto, esquinas rectas) y al scrollear
@@ -2465,6 +2520,12 @@
 .scroll-sutil::-webkit-scrollbar-thumb:hover {
   background-color: color-mix(in srgb, var(--color-navy) 32%, transparent);
 }
+
+/* [v2 2026-07-28] Aquí vivió `.scroll-sutil-premium`, un modificador con el
+   pulgar en oro para la tira horizontal de la banda oscura de /flota. Se
+   retira el mismo día: esa banda volvió al tema claro (Samuel: «quita todo ese
+   tema oscuro») y la tira desapareció con ella. Una clase que ya no usa nadie
+   es una regla que alguien mantendrá sin saber para qué. */
 
 /* Marco de la caja del widget de reserva (correcciones v2, 2026-07-27).
    SOMBRA INTERNA en vez de `ring`, idea de Samuel al detectar que el borde se

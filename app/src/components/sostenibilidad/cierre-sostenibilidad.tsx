@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Boton } from '@/components/ui/boton'
 import { SOSTENIBILIDAD } from '@/data/sostenibilidad'
 
 // Cierre — la 5ª sección de sustainability.php ("Leaving a Positive Footprint").
@@ -33,22 +33,15 @@ export function CierreSostenibilidad() {
             vende en vez de solo informar, necesita su propio remate, y
             «Reserva y deja tu huella» no es el mismo mensaje que el genérico
             del footer.
-            El segundo botón lleva a /fundacion — la página nueva donde vive
-            todo lo institucional (fundadores, 2016, los 5 proyectos), para no
-            duplicar ese contenido aquí. */}
-        <div className="mt-7 flex flex-wrap gap-3">
-          <Link
-            to="/#tours"
-            className="inline-flex rounded-full bg-coral px-6 py-3 text-sm font-semibold text-white transition hover:brightness-110"
-          >
+            [v2 2026-07-28] El segundo botón («Conoce la Fundación») SE
+            RETIRA: la sección de justo encima es ahora el teaser de la
+            fundación (sostenibilidad/fundacion-teaser.tsx) y ya lleva ese
+            mismo CTA. Dos enlaces al mismo sitio a dos dedos de distancia
+            restan fuerza al remate, que es el único trabajo de este bloque. */}
+        <div className="mt-7">
+          <Boton to="/#tours" tamaño="lg">
             Reserva y deja tu huella
-          </Link>
-          <Link
-            to="/fundacion"
-            className="inline-flex rounded-full border border-white/40 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
-          >
-            Conoce la Fundación
-          </Link>
+          </Boton>
         </div>
       </div>
     </section>

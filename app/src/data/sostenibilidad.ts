@@ -25,10 +25,39 @@ export type PilarSost = {
   id: string
   titulo: string
   texto: string
+  /**
+   * Sub-hitos con nombre propio dentro del paso (slide 60 del cliente). Solo
+   * el pilar de conservación los tiene: su párrafo enumeraba tres logros en
+   * prosa corrida y la maqueta los separa, con razón — «áreas marinas
+   * protegidas», «tortugas verdes» y «restauración de coral» son tres cosas
+   * distintas y verificables, no una lista dentro de una frase.
+   */
+  hitos?: { titulo: string; texto: string }[]
   /** foto de apoyo del paso en el recorrido (nombre en /public/fotos, sin extensión) */
   foto: string
   fotoAlt: string
 }
+
+/**
+ * Los 7 chips de secciones de /ventaja-competitiva (slide 58 del cliente,
+ * plan 08 §2). En el ORDEN REAL de la página, no en el de la maqueta — ver
+ * ui/nav-anclas-chips.tsx para el porqué.
+ *
+ * ⚠️ Los `id` sin `to` tienen que existir como `id` de una sección de esta
+ * página; los que llevan `to` apuntan a secciones de /fundacion (pages/
+ * fundacion.tsx). Si se renombra un id allí o aquí, esta lista se queda
+ * apuntando al vacío — el chip no rompe nada (el scroll-spy ignora los ids
+ * que no existen), pero deja de llevar a ninguna parte.
+ */
+export const ANCLAS_VENTAJA = [
+  { id: 'conservacion', label: 'Conservación' },
+  { id: 'comunidades', label: 'Comunidad' },
+  { id: 'ancla-impacto', label: 'Impacto por huésped' },
+  { id: 'ancla-videos', label: 'En video' },
+  { id: 'ancla-fundacion', label: 'La fundación' },
+  { id: 'fundacion-proyectos', label: 'Proyectos', to: '/fundacion#proyectos' },
+  { id: 'fundacion-membresias', label: 'Membresías', to: '/fundacion#membresias' },
+]
 
 export type VideoSost = {
   /** id de YouTube — también el nombre del póster en /video/sostenibilidad */
@@ -87,7 +116,25 @@ export const SOSTENIBILIDAD = {
     {
       id: 'conservacion',
       titulo: 'Conservación y áreas protegidas',
-      texto: 'Con aportes económicos directos y colaboración activa, apoyamos a la Bávaro Reefs Foundation en hitos ambientales reales: la creación y ampliación de áreas marinas protegidas, la recuperación y el monitoreo de la tortuga verde en la República Dominicana, y la restauración de coral en Coral Garden, hoy uno de los sitios de restauración de arrecife más efectivos del país.',
+      // [v2 2026-07-28, slide 60] El párrafo enumeraba los 3 logros en prosa
+      // corrida; ahora los presenta y cada uno se cuenta aparte, en `hitos`.
+      // Es la estructura de su maqueta y es mejor: son tres cosas distintas
+      // y verificables, no una coma dentro de una frase larga.
+      texto: 'Con aportes económicos directos y colaboración activa, apoyamos a la Bávaro Reefs Foundation en hitos ambientales reales que protegen el mar para las futuras generaciones.',
+      hitos: [
+        {
+          titulo: 'Áreas marinas protegidas',
+          texto: 'Creación y expansión de áreas protegidas, salvaguardando hábitats vitales para las futuras generaciones.',
+        },
+        {
+          titulo: 'Recuperación de tortugas verdes',
+          texto: 'Avances significativos en la recuperación y el monitoreo de sus poblaciones en la República Dominicana.',
+        },
+        {
+          titulo: 'Restauración de coral',
+          texto: 'Iniciativas exitosas en Coral Garden, hoy una de las áreas de restauración de arrecifes más efectivas del país.',
+        },
+      ],
       // La foto MÁS literal de todo el proyecto para este pilar: una estructura
       // de vivero de coral con su placa de Hispaniola, lista para sembrar.
       foto: 'galeria-snorkel-lovers-15',
@@ -145,14 +192,24 @@ export const SOSTENIBILIDAD = {
   // Los 2 aportes por huésped VIVÍAN dentro del pilar "operación" (como
   // `stats`); suben aquí porque son la BISAGRA de la banda: explican de dónde
   // salen las 4 cifras de arriba. Dejarlos en los dos sitios los duplicaba.
-  aportesTitulo: 'De cada reserva',
+  // [v2 2026-07-28, slide 61] «Por cada huésped» sube al rótulo de la fila y
+  // sale de las dos etiquetas, donde se repetía. Además es más EXACTO que el
+  // «De cada reserva» que tenía: los importes son por huésped, no por
+  // reserva — una reserva de seis paga seis veces.
+  aportesTitulo: 'Por cada huésped',
   aportes: [
-    { valor: 'US$ 3.50', label: 'por huésped, a nuestro equipo operativo' },
-    { valor: 'US$ 2.00', label: 'por huésped, a las iniciativas de la fundación' },
+    { valor: 'US$ 3.50', label: 'a nuestro equipo operativo' },
+    { valor: 'US$ 2.00', label: 'a las iniciativas de la fundación' },
   ] satisfies StatSost[],
 
-  videosEyebrow: 'Nuestra ventaja competitiva',
-  videosTitulo: 'Lo que nos diferencia, en video',
+  // [v2 2026-07-28, slide 59] Eyebrow y titular se INTERCAMBIAN de papel. El
+  // eyebrow decía «Nuestra ventaja competitiva», que desde el reencuadre (§1)
+  // es el eyebrow del HERO — repetirlo a media página lo gastaba. El cliente
+  // ya trae la solución en su maqueta: el rótulo pasa a ser «Lo que nos
+  // diferencia, en video» (lo que era el titular) y el titular, su
+  // «Míralo con tus propios ojos», que además invita en vez de describir.
+  videosEyebrow: 'Lo que nos diferencia, en video',
+  videosTitulo: 'Míralo con tus propios ojos',
   videosTexto: 'Una serie de videos cortos que muestran los factores clave que nos distinguen de otras empresas que ofrecen servicios similares en la zona.',
 
   cierreTitulo: 'Dejar una huella positiva',

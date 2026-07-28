@@ -95,6 +95,23 @@
   --color-premium-texto-suave: #a9a49a; /* meta y descripciones dentro del bloque */
   --color-premium-oro: #c9a227; /* el acento: cifras, badges, iconos. Nunca párrafos */
   --color-premium-oro-suave: rgb(201 162 39 / 12%); /* relleno de chip/badge sobre el fondo oscuro */
+
+  /* [v2 2026-07-28] PIEL DORADA — el banner de la langosta del charter
+     (tour/carta-charter.tsx). Samuel: «hay que hacer más premium ese banner,
+     se ve solo negro y ya queda raro, tal vez hacerlo dorado, no negro».
+     Tenía razón: --color-premium-fondo es la piel del BLOQUE Premium entero
+     (una superficie grande donde el oro entra con cuentagotas). Aplicada a una
+     franja de 80px sin fotos ni cifras que la sostengan, ese casi-negro se
+     queda en un rectángulo apagado — el oro que debería lucir es solo un
+     hairline al 22%.
+     Estos tres NO redefinen --color-premium-oro (#c9a227 sigue siendo el
+     acento sobre oscuro): son los extremos del degradado, el oro hundido y el
+     champán, que es lo que da la lectura de LÁMINA de metal en vez de relleno
+     plano. Sobre el degradado el texto va en --color-premium-fondo (tinta
+     negra sobre pan de oro), no en el blanco cálido del bloque oscuro. */
+  --color-premium-oro-oscuro: #8c6d16; /* el borde hundido del degradado */
+  --color-premium-oro-claro: #f0d98c; /* champán — la luz que cruza la lámina */
+
   /* v3-F16: estrellas de calificación (insignia-confianza.tsx) — antes vivía
      como amber-300 suelto de Tailwind (sin token) en la fila de rating del
      hero. Mismo valor, ahora tokenizado. */
@@ -516,6 +533,28 @@
   --spacing-reviews-desvanecido: 5rem; /* ancho del fundido lateral de cada
     fila — las cards no se cortan a cuchillo contra el borde del panel,
     se disuelven (mask-image). */
+
+  /* Muro de tripulación (/tripulacion, [v2 2026-07-28) — las ~70 personas
+     pasando en dos filas cruzadas, antes de la rejilla ordenada por
+     departamento. Es el MISMO mecanismo que el muro de reseñas (dos capas,
+     marquee en CSS + arrastre en JS, 3 copias, fundido lateral) con sus
+     propias medidas: aquí la "card" es un retrato pequeño, no una reseña que
+     hay que poder leer, así que el desfile puede ser más rápido y más denso.
+     Las duraciones son distintas entre filas a propósito: con la misma, las
+     dos cambian de cara a la vez y el muro se lee como una sola lámina
+     deslizándose en vez de respirar. */
+  --muro-equipo-fila-duracion-1: 62s;
+  --muro-equipo-fila-duracion-2: 74s;
+  --spacing-muro-equipo-card-ancho: 8.5rem; /* 136px — retrato pequeño: el
+    muro tiene que dar sensación de CANTIDAD, y a este ancho caben ~10 caras
+    por pantalla. Más grande y son 4 personas desfilando, que es otra cosa. */
+  --spacing-muro-equipo-card-gap: 0.75rem; /* 12px — margin-right en la card,
+    NO gap de la pista (ver --spacing-reviews-card-gap: con la pista repetida,
+    un `gap` del flex desincroniza el arranque de la copia y el loop salta). */
+  --spacing-muro-equipo-fila: 0.75rem; /* separación entre las dos filas */
+  --spacing-muro-equipo-desvanecido: 8rem; /* fundido lateral, más ancho que
+    el de reseñas: la banda va a sangre contra el borde de la ventana y el
+    corte se ve mucho más que dentro de un panel. */
 
   /* Cinta de premios (dentro de la sección de stats). Los 7 badges son MUY
      heterogéneos (bloque navy del LTG, cuadrado amarillo de WeddingWire,
@@ -1027,6 +1066,30 @@
   --boleto-rotacion-frente: 0.8deg; /* el directo, casi a plomo */
   --boleto-sello-rotacion: -8deg; /* sello "Reserva directa" del boleto directo */
 
+  /* ── /por-que-reservar: papeles sobre la mesa (2026-07-28) ───────────────
+     La página se rehízo con OBJETOS en vez de cards (Samuel: la versión de
+     cards «genérica, IA slop»). Reusa la anatomía de .boleto (papel,
+     perforación troquelada, sello, código de barras) para tres piezas: el
+     RECIBO de «lo que pagarías suelto», las DOS HOJAS enfrentadas del duelo
+     y la HOJA de las 19 razones.
+     Los ángulos son propios y NO reusan --boleto-rotacion-*: aquellos
+     describen la escena de DOS boletos apilados de why-direct (uno detrás
+     torcido, otro delante casi a plomo), y aquí son papeles sueltos sobre
+     una mesa. Mismo lenguaje, distinta escena — si un día se recoloca aquel
+     stack, esta página no tiene por qué moverse con él.
+     Todos por debajo de 1,5°: más y el papel deja de estar «apoyado» para
+     parecer que se cae, y el texto en diagonal cansa de leer. */
+  --pqr-papel-rot-recibo: -0.9deg;
+  --pqr-papel-rot-nuestra: -0.7deg; /* la hoja de Hispaniola, en el duelo */
+  --pqr-papel-rot-otros: 0.7deg; /* la de los otros tours, mirando a la contraria */
+  --pqr-papel-rot-hoja: 0.35deg; /* la hoja grande de las 19 razones: casi a plomo, pesa más */
+  /* Las 3 fotos «reales» clavadas en los márgenes de esa hoja. Ángulos
+     DISTINTOS entre sí y sin patrón (no 3/-3/3): tres fotos con la misma
+     inclinación se leen como una plantilla, no como fotos dejadas ahí. */
+  --pqr-foto-rot-1: -3.5deg;
+  --pqr-foto-rot-2: 2.5deg;
+  --pqr-foto-rot-3: -1.5deg;
+
   /* ---------- Banner de "Reserva directa" (v3, pedido de Samuel 2026-07-15) ---
      La escena de los boletos vive DENTRO de un banner con foto de fondo de
      playa. El banner arranca a SANGRE (100vw, más alto, esquinas rectas) y al
@@ -1113,6 +1176,25 @@
      este valor — copia el alto de la fila (h-full), así video y rejilla
      comparten línea de base superior e inferior. */
   --spacing-galeria-video-alto-movil: 22rem; /* 352px → 198px de ancho */
+  /* Alto de FILA de la carta de platos del charter (tour/carta-charter.tsx,
+     2026-07-28 — «hazla más linda, es importante para que se enamoren y
+     compren»). Es un alto de fila, no de card: la rejilla es asimétrica y el
+     plato estrella ocupa 2×2, así que su tamaño se DERIVA de este valor (dos
+     filas + el gap) en vez de tener uno propio que hubiera que recuadrar a
+     mano cada vez que cambie la retícula.
+     Dos valores porque la retícula cambia de forma: en móvil son 2 columnas
+     dentro de una columna estrecha (filas más bajas o el bloque se va de
+     pantalla); desde lg son 3 columnas y la fila puede respirar. Se aplica en
+     .carta-platos (componentes.css) — grid-auto-rows no tiene utilidad de
+     Tailwind que lea un token de spacing. */
+  /* 152px. Subió de 7.5rem (120px) tras verlo en un 390: con dos columnas la
+     celda mide ~170px de ancho, así que los rótulos de dos palabras («Surf &
+     Turf», «A la parrilla, en brocheta») se parten en dos líneas y con 120px
+     de alto el texto se comía la foto entera. */
+  --spacing-carta-fila-movil: 9.5rem;
+  --spacing-carta-fila: 10.5rem; /* 168px — lg: en adelante. Con 3 columnas la
+     celda mide ~270×168, cerca de 16:10: el encuadre en el que caben un plato
+     y su rótulo sin que la comida quede en una franja. */
 
   /* ---------- Internas v2 (PLAN-INTERNAS-V2.md) ----------
      Hero compartido de la ficha de tour y la landing de evento: mismo
@@ -1602,6 +1684,28 @@
   --nosotros-cascada-x: 1.25rem; /* 20px — desfase lateral POR COLUMNA (solo la flota; las paradas van a 0) */
   --nosotros-cascada-duracion: 0.7s;
   --nosotros-cascada-stagger: 0.1; /* s — entre card y card */
+
+  /* ---------- /instalaciones — mini-bento de cada zona (correcciones v2,
+     2026-07-28, pedido de Samuel: «no es solo un recurso, sino que es como un
+     mini bento de imágenes y videos») ---------- Slides 46-49: cada zona trae
+     un VERTICAL grande a un lado y dos celdas apiladas al otro, todo a la
+     misma altura de fila.
+
+     El ALTO DE LA FILA es el único número del bento; lo demás se deriva de él,
+     que es lo que hace que las tres celdas queden a ras por arriba y por abajo
+     sin cuadrar medidas a mano:
+       · el ancho del vertical lo pone su aspect-ratio 9:16 contra este alto
+         (416 × 9/16 = 234px), igual que en internas/galeria-mosaico.tsx;
+       · las dos celdas apiladas se reparten lo que sobra de la fila.
+     Por eso NO hay token de ancho: fijarlo a mano rompería el formato vertical
+     en cuanto cambiara el alto.
+
+     Móvil baja a 17rem (→ 96px de ancho de vertical) porque a 416px el bento
+     se comería la pantalla entera de un iPhone y el texto de la zona quedaría
+     siempre fuera de cuadro. */
+  --spacing-bento-zona-alto: 26rem; /* 416px — lg: en adelante */
+  --spacing-bento-zona-alto-movil: 17rem; /* 272px */
+  --spacing-bento-hueco: 0.5rem; /* 8px — mismo aire fino que las celdas del mosaico de la ficha */
 }
 
 body {
