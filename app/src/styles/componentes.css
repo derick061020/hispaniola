@@ -2479,3 +2479,72 @@
 .widget-marco {
   box-shadow: inset 0 0 0 1px var(--color-linea);
 }
+
+/* ── Destello del sello de TripAdvisor ─────────────────────────────────────
+   Samuel, 2026-07-28: «que al hacer hover tenga un efecto como que le pasa una
+   luz reflectante, como si fuera un objeto metálico brillante, como un premio».
+
+   Es una banda de luz diagonal que BARRE el sello de lado a lado, que es como
+   se comporta un reflejo especular sobre metal cuando la pieza gira: no se
+   enciende entera de golpe, la luz la recorre.
+
+   Vive en CSS y no en clases de utilidad por dos razones: el barrido necesita
+   un pseudo-elemento (no hay nodo que animar, y añadir un <span> vacío solo
+   para esto ensuciaría el componente) y necesita @keyframes, que en Tailwind
+   habría que declarar igualmente aquí. Es el mismo criterio que .widget-marco.
+
+   El recorte es un CÍRCULO (border-radius: 50%) porque el sello lo es: con un
+   recorte rectangular la banda asomaría por las cuatro esquinas transparentes
+   del PNG y se vería un cuadrado fantasma alrededor de la moneda.
+
+   La animación se dispara con `animation` y no con `transition` a propósito:
+   así hace UNA pasada completa por cada entrada del ratón y se queda quieta.
+   Con transition, el reflejo se quedaría congelado a mitad de camino mientras
+   el puntero siguiera encima, que es justo lo que no hace la luz real. */
+.sello-brillo {
+  position: relative;
+  overflow: hidden;
+  border-radius: 50%;
+}
+
+.sello-brillo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  /* La banda va inclinada (105deg) y estrecha: un reflejo ancho parece un
+     velo blanco encima y apaga el amarillo del sello en vez de recorrerlo. */
+  background: linear-gradient(
+    105deg,
+    transparent 38%,
+    rgb(255 255 255 / 0.65) 50%,
+    transparent 62%
+  );
+  /* Fuera de la caja mientras no haya hover — sin esto se ve una franja
+     blanca permanente cruzando el sello. */
+  transform: translateX(-140%);
+  /* El barrido es decoración: nunca debe robarle el puntero al sello ni al
+     texto que lo acompaña. */
+  pointer-events: none;
+}
+
+.group:hover .sello-brillo::after {
+  animation: sello-destello 0.75s ease-out;
+}
+
+@keyframes sello-destello {
+  from {
+    transform: translateX(-140%);
+  }
+  to {
+    transform: translateX(140%);
+  }
+}
+
+/* Un reflejo que cruza la pantalla es movimiento, y de los que más molestan a
+   quien tiene sensibilidad vestibular: se queda quieto. El sello sigue siendo
+   perfectamente legible sin él — el destello no aporta información. */
+@media (prefers-reduced-motion: reduce) {
+  .group:hover .sello-brillo::after {
+    animation: none;
+  }
+}

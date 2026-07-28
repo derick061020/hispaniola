@@ -1,4 +1,5 @@
 import { BadgeCheck, Check, ShieldCheck } from 'lucide-react'
+import { SelloTripAdvisor } from '@/components/ui/sello-tripadvisor'
 import * as StatusBadge from '@/components/alignui/status-badge'
 import { Estrellas } from '@/components/ui/estrellas'
 import { InsigniaTooltip } from '@/components/ui/insignia-tooltip'
@@ -30,49 +31,23 @@ type Props = { tour: Tour; ficha: FichaTour }
 export function CabeceraFicha({ tour, ficha }: Props) {
   return (
     <div>
-      {/* El premio ENCABEZA la ficha (Samuel, 2026-07-22: «lo de #1 en
-          TripAdvisor ponlo arriba del título, no al final del hero, y ponle
-          en blanco»). Antes cerraba la fila de chips, que es el peor sitio
-          posible para el argumento más fuerte del producto: el visitante ya
-          había pasado por encima de otros 4 chips cuando llegaba a él.
-          Arriba del H1 funciona como el eyebrow de una portada — se lee
-          ANTES que el nombre del tour, y le da contexto.
-          En blanco liso, no en StatusBadge: como badge era una píldora más
-          en una fila de píldoras; suelto sobre la foto se lee como el sello
-          que es. Es el ÚNICO eyebrow del sitio que no usa <Etiqueta> (aqua
-          claro) — aquí el blanco es el pedido explícito. */}
-      {/* [v2 2026-07-27] MÁS PESO (slide 8: «destacar mucho más ese mensaje, es
-          un logro que hay que destacar»). Ojo: es 2ª vuelta sobre algo ya
-          entregado — Samuel ya lo subió aquí el 07-22; el cliente pide MÁS de
-          lo que ya se hizo, no algo nuevo.
-          Pasa de texto pequeño suelto a insignia con caja propia: fondo
-          translúcido, borde y el laurel más grande. Sin pasarse — hay
-          diagnóstico documentado de «hero cargado» en el cerebro, así que
-          crece esto y NO se añade nada más a su lado. */}
-      {/* [v2 2026-07-28, pedido de Samuel] El laurel genérico de lucide se
-          sustituye por EL SELLO REAL de TripAdvisor (Travellers' Choice «Best
-          of the Best»). Un icono dibujado dice «premio»; el sello dice QUIÉN lo
-          da — el búho y el amarillo se reconocen sin leer, que es justo lo que
-          se le pide a un elemento que vive medio segundo en la vista.
-          Va FLUSH a la izquierda de la píldora (pl-1.5 contra px-3.5): un
-          círculo con el mismo aire a los cuatro lados se lee como icono; pegado
-          al borde se lee como sello. Por eso el padding es asimétrico.
-          `size-10` y no `size-5`: a 20px el sello es una mancha amarilla — se
-          pierden el búho y el laurel, que son lo único que lo identifica. */}
-      <p className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 py-1.5 pl-1.5 pr-4 text-sm font-semibold tracking-[0.06em] text-white backdrop-blur-sm">
-        <img
-          src="/premios/premio-tripadvisor-bob-2023.webp"
-          alt=""
-          aria-hidden="true"
-          width={40}
-          height={40}
-          className="size-10 shrink-0"
-        />
-        <span>
-          <span className="font-bold">#1 en TripAdvisor</span>
-          <span className="opacity-80"> · 7 años seguidos</span>
-        </span>
-      </p>
+      {/* EL PREMIO ENCABEZA LA FICHA. Historia de la decisión, porque son
+          tres vueltas sobre el mismo elemento:
+            · 2026-07-22 (Samuel) — «lo de #1 en TripAdvisor ponlo arriba del
+              título, no al final del hero, y ponle en blanco». Antes cerraba
+              la fila de chips, el peor sitio posible para el argumento más
+              fuerte del producto: el visitante ya había pasado por encima de
+              otros 4 chips cuando llegaba a él. Arriba del H1 funciona como
+              el eyebrow de una portada — se lee ANTES que el nombre del tour.
+            · 2026-07-27 (cliente, slide 8) — «destacar mucho más ese mensaje,
+              es un logro que hay que destacar». Pasó a insignia con caja
+              propia (fondo translúcido y borde).
+            · 2026-07-28 (Samuel) — esa caja se retira y el protagonista pasa a
+              ser el SELLO REAL de TripAdvisor. Ver ui/sello-tripadvisor.tsx.
+          Lo que NO ha cambiado en las tres vueltas: aquí crece esto y no se
+          añade nada más a su lado — hay diagnóstico documentado de «hero
+          cargado» en el cerebro. */}
+      <SelloTripAdvisor />
 
       {/* --text-h2 (32px), no un tamaño nuevo: en Figma es el mismo text style
           que el título de sección. El H1 de la ficha manda por jerarquía
