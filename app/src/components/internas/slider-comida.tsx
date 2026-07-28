@@ -95,7 +95,7 @@ export function SliderComida({
       {/* Etiqueta permanente: sin ella, una celda que cambia sola se lee como
           un fallo de carga en vez de como una galería. */}
       <span className="pointer-events-none absolute left-2 top-2 rounded-full bg-navy/80 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-white">
-        El menú
+        Menú
       </span>
 
       {/* [v2 2026-07-27] DOTS dentro de la propia imagen, abajo (pedido de
