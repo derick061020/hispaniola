@@ -88,19 +88,29 @@ export function useExpansionFlip(origen: RectOrigen | null) {
         el.dataset.flipHecho = '1'
 
         // INVERT: la transformada que lleva el destino encima del origen.
-        const escalaX = origen.width / destino.width
-        const escalaY = origen.height / destino.height
+        // ESCALA UNIFORME, no una por eje. Escalar X e Y por separado encaja
+        // el destino en la caja del origen al píxel, pero DEFORMA cuando las
+        // proporciones no coinciden — y aquí casi nunca coinciden: la celda
+        // del mosaico es apaisada, el visor muestra la foto entera; el mini
+        // player es 9:16 y el video puede ser 16:9. Samuel lo describió como
+        // «al expandir se pone enorme en horizontal y se ve raro»: eso era el
+        // estirón de un fotograma vertical hacia una caja apaisada.
+        //
+        // Se usa el MAYOR de los dos factores a propósito: así el elemento
+        // arranca CUBRIENDO la caja de origen (como hacía el `object-cover`
+        // de la miniatura) en vez de quedarse dentro con aire alrededor. La
+        // lectura es «esto ya estaba ahí, recortado, y ahora se abre».
+        const escala = Math.max(origen.width / destino.width, origen.height / destino.height)
         const dx = origen.left + origen.width / 2 - (destino.left + destino.width / 2)
         const dy = origen.top + origen.height / 2 - (destino.top + destino.height / 2)
 
         gsap.fromTo(
           el,
-          { x: dx, y: dy, scaleX: escalaX, scaleY: escalaY, opacity: 0.65 },
+          { x: dx, y: dy, scale: escala, opacity: 0.65 },
           {
             x: 0,
             y: 0,
-            scaleX: 1,
-            scaleY: 1,
+            scale: 1,
             opacity: 1,
             duration: DURACION_ENTRADA,
             ease: EASE_ENTRADA,

@@ -72,6 +72,11 @@ export function GaleriaMosaico({
   fotosComida?: string[]
 }) {
   const [lightbox, setLightbox] = useState<number | null>(null)
+  // [v2 2026-07-28] QUÉ conjunto muestra el lightbox. Bug que reportó Samuel:
+  // al pulsar el slider de comida se abría la galería GENERAL del tour, así
+  // que no aparecían los platos ni se podían pasar — el visor prometía una
+  // cosa (venías de las fotos del menú) y daba otra.
+  const [conjunto, setConjunto] = useState<'galeria' | 'comida'>('galeria')
   const [verVideo, setVerVideo] = useState(false)
   // [v2 2026-07-28] Origen de la expansión: el rectángulo de la celda o del
   // video que se pulsó, para que el visor DESPEGUE de ahí en vez de aparecer
@@ -103,9 +108,13 @@ export function GaleriaMosaico({
           <SliderComida
             fotos={fotosComida!}
             etiqueta={etiqueta}
-            onAbrir={(el) => {
+            onAbrir={(el, indiceComida) => {
               foto.abrirDesde(el)
-              setLightbox(0)
+              setConjunto('comida')
+              // Abre EN EL PLATO que se estaba viendo, no en el primero: el
+              // slider va rotando solo, así que empezar en el 0 sería saltar
+              // a una foto distinta de la que el visitante acaba de pulsar.
+              setLightbox(indiceComida)
             }}
           />
         </div>
@@ -118,6 +127,7 @@ export function GaleriaMosaico({
         type="button"
         onClick={(e) => {
           foto.abrirDesde(e.currentTarget)
+          setConjunto('galeria')
           setLightbox(indice)
         }}
         className={`group relative overflow-hidden bg-papel-hueso ${span}`}
@@ -219,9 +229,9 @@ export function GaleriaMosaico({
 
       {lightbox !== null ? (
         <GaleriaLightbox
-          fotos={fotos}
+          fotos={conjunto === 'comida' ? fotosComida! : fotos}
           indiceInicial={lightbox}
-          etiqueta={etiqueta}
+          etiqueta={conjunto === 'comida' ? `el menú de ${etiqueta}` : etiqueta}
           origen={foto.origen}
           onCerrar={() => setLightbox(null)}
         />

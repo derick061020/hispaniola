@@ -68,7 +68,7 @@ export function VideoLightbox({
         // `backdrop-blur-md` de Tailwind, NO CSS a mano: la cadena de build
         // auto-prefija y escribir `-webkit-backdrop-filter` a mano fue el bug
         // de producción del commit 29cebf4.
-        overlayClassName="bg-navy/55 p-0 backdrop-blur-md"
+        overlayClassName="bg-black/55 p-0 backdrop-blur-md"
         className="flex h-dvh w-screen max-w-none flex-col rounded-none bg-transparent shadow-none focus:outline-none"
         aria-describedby={undefined}
         // Clic en el FONDO cierra; el video para la propagación para que
@@ -101,9 +101,29 @@ export function VideoLightbox({
             controls
             playsInline
             preload="metadata"
+            // ⚠️ La proporción de la caja se fija AL CARGAR LOS METADATOS, con
+            // las dimensiones reales del archivo. Sin esto, un <video> con
+            // `poster` adopta la proporción DEL PÓSTER: aquí el póster es la
+            // foto de portada del tour (apaisada) y el visor pintaba la caja a
+            // ratio 2.69 con contenido 1.78 — medido — así que el fotograma
+            // salía con franjas y «enorme en horizontal», que es justo lo que
+            // reportó Samuel. Con el ratio real, la caja se ajusta al archivo
+            // sea vertical (los reels que vienen) o apaisado (el placeholder).
+            onLoadedMetadata={(e) => {
+              const v = e.currentTarget
+              if (v.videoWidth > 0 && v.videoHeight > 0) {
+                v.style.aspectRatio = `${v.videoWidth} / ${v.videoHeight}`
+              }
+            }}
             aria-label={`Video de ${etiqueta}`}
             onClick={(e) => e.stopPropagation()}
-            className="max-h-full max-w-full rounded-card"
+            // `object-contain` NO es decorativo: sin él la caja del <video> se
+            // estiraba a la del contenedor flex y el fotograma salía deformado
+            // — medido, el elemento quedaba en ratio 2.69 con contenido 1.78.
+            // Con `h-auto`/`w-auto` la caja sigue la proporción real del
+            // archivo, y el tope de ancho evita que un video apaisado se coma
+            // el viewport de borde a borde (a uno vertical lo gobierna max-h).
+            className="h-auto max-h-full w-auto max-w-[min(100%,56rem)] rounded-card object-contain"
           />
         </div>
       </Modal.Content>

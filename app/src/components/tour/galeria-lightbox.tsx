@@ -70,7 +70,7 @@ export function GaleriaLightbox({
         // `backdrop-blur-md` de Tailwind, NO CSS a mano: la cadena de build
         // auto-prefija sola y escribir `-webkit-backdrop-filter` a mano fue
         // justo el bug de producción del commit 29cebf4.
-        overlayClassName="bg-navy/55 p-0 backdrop-blur-md"
+        overlayClassName="bg-black/55 p-0 backdrop-blur-md"
         // De card centrada de 400px a lienzo fullscreen: la pila de conflictos
         // la resuelve tailwind-merge (cnExt del vendor).
         className="flex h-dvh w-screen max-w-none flex-col rounded-none bg-transparent shadow-none focus:outline-none"
@@ -146,6 +146,44 @@ export function GaleriaLightbox({
             </button>
           ) : null}
         </div>
+
+        {/* [v2 2026-07-28] TIRA DE MINIATURAS (pedido de Samuel). Las flechas
+            sirven para avanzar de una en una, pero no dicen QUÉ hay ni dejan
+            saltar: con 9 platos, llegar al último son 8 clics a ciegas.
+            La activa se marca con anillo blanco y opacidad plena; el resto
+            quedan atenuadas para que la actual se distinga de un vistazo.
+            `scroll-sutil` reutiliza el scrollbar fino del widget — la tira
+            desborda en cuanto hay muchas fotos y la barra por defecto sobre
+            fondo oscuro canta demasiado. */}
+        {n > 1 ? (
+          <div
+            className="scroll-sutil flex shrink-0 justify-start gap-2 overflow-x-auto px-4 pb-5 sm:justify-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {fotos.map((f, i) => (
+              <button
+                key={f}
+                type="button"
+                onClick={() => ir(i)}
+                aria-label={`Ver la foto ${i + 1} de ${n}`}
+                aria-current={i === indice}
+                className={`h-14 w-20 shrink-0 overflow-hidden rounded-lg transition ${
+                  i === indice
+                    ? 'opacity-100 ring-2 ring-white'
+                    : 'opacity-45 hover:opacity-80'
+                }`}
+              >
+                <img
+                  src={`/fotos/${f}.webp`}
+                  alt=""
+                  aria-hidden="true"
+                  loading="lazy"
+                  className="size-full object-cover"
+                />
+              </button>
+            ))}
+          </div>
+        ) : null}
       </Modal.Content>
     </Modal.Root>
   )
