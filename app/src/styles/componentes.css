@@ -2658,3 +2658,182 @@
   filter: saturate(1.14) contrast(1.06);
 }
 
+/* ═══ ESTÉTICA PREMIUM ══════════════════════════════════════════════════════
+   Samuel, 2026-07-28: «en cualquier cosa premium no puede ser solo fondo negro
+   y ya [...] la caja de Light/Premium se ve horrible, me parece muy IA slop
+   genérica, así que vamos a trabajar esa caja primero para definir un estilo de
+   premium y luego lo aplicamos al resto».
+
+   Estas clases son ese estilo. Se estrenan en el selector Light/Premium y de
+   ahí saldrán al resto del modo premium (banner «estás viendo la versión
+   Premium», widget de detalles, comparador).
+
+   EL DIAGNÓSTICO, porque define las reglas: lo que fallaba no era la paleta —
+   negro y oro es correcto— sino que estaban aplicados como RELLENOS PLANOS. Un
+   rectángulo negro liso con un rectángulo mostaza liso encima no evoca lujo;
+   evoca una plantilla. Lo que hace que un material se lea como caro es que
+   RESPONDA A LA LUZ: el oro tiene un filo claro arriba y se hunde a ámbar
+   abajo, y las superficies tienen relieve — lo hundido se distingue de lo que
+   sobresale.
+
+   De ahí las tres reglas del modo premium en este proyecto:
+     1. El oro va SIEMPRE en degradado, nunca en plano.
+     2. Lo interactivo SOBRESALE (filo de luz arriba, sombra abajo); su soporte
+        se HUNDE (sombra interior). Así el ojo sabe qué se puede tocar sin que
+        haya que dibujar un borde.
+     3. Los separadores son hairlines de oro a muy baja opacidad, no líneas
+        grises. Una reja gris sobre negro es lo que hace que algo parezca un
+        formulario de admin.
+   ────────────────────────────────────────────────────────────────────────── */
+
+/* La PISTA: la superficie sobre la que descansa lo demás. Va hundida.
+   El `inset` oscuro de arriba es lo que la mete hacia dentro (la luz de una
+   escena viene de arriba, así que una superficie hundida se sombrea en su
+   borde superior). El hairline de oro la separa del blanco del widget sin
+   dibujar una caja gris. */
+.premium-pista {
+  /* El degradado es MUY corto a propósito (dos tonos casi iguales): no se ve
+     como degradado, se ve como una superficie que recibe luz. Un negro
+     absolutamente plano es lo que Samuel señaló como «solo fondo negro y ya» —
+     el ojo lo lee como un agujero, no como un material.
+     Va oscuro ARRIBA y claro abajo, que es al revés que un fondo normal: es lo
+     que hace una superficie hundida, donde el labio de arriba proyecta sombra
+     sobre el fondo del hueco. */
+  background: linear-gradient(180deg, #0b0e12 0%, var(--color-premium-fondo) 55%, #171c23 100%);
+  box-shadow:
+    inset 0 1px 3px rgb(0 0 0 / 55%),
+    inset 0 0 0 1px var(--color-premium-borde);
+}
+
+/* El THUMB: la pieza de metal que sobresale.
+   · El degradado va a 155° y no a 180° para que la luz entre en diagonal —
+     un degradado vertical se lee como fondo, uno en diagonal como reflejo.
+   · El filo blanco de arriba y el negro de abajo son 1px cada uno: es lo que
+     convierte un relleno en una PIEZA con canto. Sin ellos el degradado solo
+     parece un fondo bonito.
+   · El halo exterior es de oro y no negro: una sombra negra sobre fondo negro
+     no se ve, pero un halo cálido hace que el metal parezca emitir algo. */
+.premium-thumb {
+  background: linear-gradient(
+    155deg,
+    var(--color-premium-oro-luz) 0%,
+    var(--color-premium-oro) 48%,
+    var(--color-premium-oro-hondo) 100%
+  );
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 45%),
+    inset 0 -1px 0 rgb(0 0 0 / 28%),
+    0 2px 10px rgb(201 162 39 / 28%);
+}
+
+/* ============================================================
+   Muro de tripulación (/tripulacion, [v2 2026-07-28, pedido de Samuel:
+   «me gustaría darle algo chulo» a una sección que por naturaleza es
+   monótona) — las ~70 personas pasando en DOS filas cruzadas, a sangre,
+   entre la franja de datos y la rejilla ordenada por departamento.
+
+   Es «la foto de familia»: el dato «somos 70» dejando de ser un número
+   para verse. Va ANTES de la rejilla y no en su lugar — la rejilla sigue
+   siendo la parte útil (buscar a alguien, filtrar por departamento) y
+   esto es el momento de arriba, que no hay que poder usar para nada.
+
+   ES EL MISMO MECANISMO QUE .reviews-muro-* Y NO UNO NUEVO: dos capas
+   (arrastre en JS / marquee en CSS), 3 copias por pista, fundido lateral,
+   pausa al hover, una sola copia con prefers-reduced-motion. El porqué de
+   cada una de esas decisiones está documentado arriba, en el bloque del
+   muro de reseñas — aquí no se repite, se hereda. Lo único propio son las
+   medidas (retrato pequeño en vez de card de reseña) y que solo hay 2
+   filas.
+
+   POR QUÉ NO SE REUSAN LAS CLASES DE RESEÑAS TAL CUAL: comparten
+   mecánica, no medidas ni contenido. Con las mismas clases, tocar el
+   ancho de una card de reseña movería el muro de tripulación sin que
+   nadie lo pidiera. En Figma son dos componentes con el mismo
+   comportamiento, igual que el ticker del hero y el marquee de opiniones.
+   ============================================================ */
+
+.muro-equipo-fila {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    black var(--spacing-muro-equipo-desvanecido),
+    black calc(100% - var(--spacing-muro-equipo-desvanecido)),
+    transparent
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black var(--spacing-muro-equipo-desvanecido),
+    black calc(100% - var(--spacing-muro-equipo-desvanecido)),
+    transparent
+  );
+}
+
+.muro-equipo-arrastre {
+  width: max-content;
+  /* --muro-equipo-arrastre lo escribe el hook en el style del nodo, no vía
+     estado de React: son ~60 escrituras por segundo. Mismo reparto «JS mide,
+     CSS pinta» que el muro de reseñas y el dock del ticker. */
+  translate: var(--muro-equipo-arrastre, 0px) 0;
+}
+
+.muro-equipo-pista {
+  display: flex;
+  width: max-content;
+  animation: muro-equipo-desfile var(--muro-equipo-duracion) linear infinite;
+  will-change: transform;
+}
+
+/* La 2ª fila va al revés: `reverse` sobre las MISMAS keyframes, así el punto
+   de salto invisible es el mismo y una sola animación viaja a Figma. */
+.muro-equipo-pista--derecha {
+  animation-direction: reverse;
+}
+
+/* Una clase por fila y no un `var(--…-${i})` armado en el TSX: Tailwind v4
+   solo emite las variables de @theme que VE escritas, y un nombre construido
+   en runtime no lo ve nadie — la fila saldría con animation-duration: 0s
+   (quieta). Es el bug que ya se pagó en el muro de reseñas. */
+.muro-equipo-pista--fila-1 {
+  --muro-equipo-duracion: var(--muro-equipo-fila-duracion-1);
+}
+.muro-equipo-pista--fila-2 {
+  --muro-equipo-duracion: var(--muro-equipo-fila-duracion-2);
+}
+
+.muro-equipo-fila:hover .muro-equipo-pista,
+.muro-equipo-pista--pausada {
+  animation-play-state: paused;
+}
+
+.muro-equipo-card {
+  width: var(--spacing-muro-equipo-card-ancho);
+  margin-right: var(--spacing-muro-equipo-card-gap);
+  flex-shrink: 0;
+}
+
+@keyframes muro-equipo-desfile {
+  to {
+    /* 1/3 de la pista = 1 copia exacta; al llegar, la copia 2 está donde
+       arrancó la 1 y el salto de vuelta a 0 no se ve. */
+    translate: -33.3333% 0;
+  }
+}
+
+/* WCAG 2.2.2 — con prefers-reduced-motion nada se mueve solo: una sola copia
+   por fila, recorrible a mano (sigue el arrastre, y además el scroll nativo). */
+@media (prefers-reduced-motion: reduce) {
+  .muro-equipo-fila {
+    overflow-x: auto;
+    scrollbar-width: none; /* Firefox */
+  }
+
+  .muro-equipo-fila::-webkit-scrollbar {
+    display: none;
+  }
+
+  .muro-equipo-pista {
+    animation: none;
+  }
+}

@@ -94,15 +94,16 @@
   --color-premium-texto: #f4efe4; /* blanco cálido; el blanco puro sobre negro vibra */
   --color-premium-texto-suave: #a9a49a; /* meta y descripciones dentro del bloque */
   --color-premium-oro: #c9a227; /* el acento: cifras, badges, iconos. Nunca párrafos */
+  /* [v2 2026-07-28] LOS DOS EXTREMOS DEL ORO. Existen para una sola cosa:
+     que el oro pueda pintarse como METAL y no como una mancha plana.
+     El oro real nunca es de un solo tono — tiene un filo claro donde le da la
+     luz y se hunde hacia ámbar en la sombra. Un relleno liso de --color-premium-oro
+     es exactamente lo que hacía que el selector Light/Premium se leyera barato:
+     mostaza plana sobre negro plano. Estos dos tonos son las paradas del
+     degradado; el medio sigue siendo --color-premium-oro. */
+  --color-premium-oro-luz: #f0d488; /* el filo donde pega la luz */
+  --color-premium-oro-hondo: #8f6c14; /* la caída en sombra, ámbar quemado */
   --color-premium-oro-suave: rgb(201 162 39 / 12%); /* relleno de chip/badge sobre el fondo oscuro */
-  /* [v2 2026-07-28] Oro del SELLO de TripAdvisor. NO es --color-premium-oro:
-     ese es nuestro acento de marca (#c9a227, apagado, para el bloque oscuro);
-     este es el amarillo EXACTO del PNG de TripAdvisor, muestreado del borde
-     del disco. Tiene que coincidir al pixel porque los picos que rodean el
-     sello se dibujan en SVG y deben leerse como parte de la misma pieza de
-     metal — un tono aproximado delataria el pegote al instante.
-     Si algun dia cambia el asset del sello, hay que volver a muestrearlo. */
-  --color-sello-oro: #f2b104;
 
   /* [v2 2026-07-28] PIEL DORADA — el banner de la langosta del charter
      (tour/carta-charter.tsx). Samuel: «hay que hacer más premium ese banner,
@@ -120,6 +121,14 @@
   --color-premium-oro-oscuro: #8c6d16; /* el borde hundido del degradado */
   --color-premium-oro-claro: #f0d98c; /* champán — la luz que cruza la lámina */
 
+  /* [v2 2026-07-28] Oro del SELLO de TripAdvisor. NO es --color-premium-oro:
+     ese es nuestro acento de marca (#c9a227, apagado, para el bloque oscuro);
+     este es el amarillo EXACTO del PNG de TripAdvisor, muestreado del borde
+     del disco. Tiene que coincidir al pixel porque los picos que rodean el
+     sello se dibujan en SVG y deben leerse como parte de la misma pieza de
+     metal — un tono aproximado delataria el pegote al instante.
+     Si algun dia cambia el asset del sello, hay que volver a muestrearlo. */
+  --color-sello-oro: #f2b104;
   /* v3-F16: estrellas de calificación (insignia-confianza.tsx) — antes vivía
      como amber-300 suelto de Tailwind (sin token) en la fila de rating del
      hero. Mismo valor, ahora tokenizado. */
