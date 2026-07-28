@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Minus, Plus, Users, Baby, Tag, ArrowDown, BadgeCheck, Heart, Share2, Check } from 'lucide-react'
+import { Minus, Plus, Users, Baby, PersonStanding, Tag, ArrowDown, BadgeCheck, Heart, Share2, Check } from 'lucide-react'
 import * as FancyButton from '@/components/alignui/fancy-button'
 import * as CompactButton from '@/components/alignui/compact-button'
 import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
@@ -14,6 +14,7 @@ import { formatoDinero, QUOTES, type Tour } from '@/data/home'
 import { WHATSAPP_URL, calcularTotalTour, type FichaTour } from '@/data/tours'
 import { ALBUM_UPSELL, totalAddOns, saltoDeTramo } from '@/lib/tarifas'
 import { AddOnsWidget } from '@/components/tour/add-ons-widget'
+import { PistaInfo } from '@/components/ui/pista-info'
 
 // «El widget ES la página» (wireframe A2): sticky en desktop, con el precio en
 // el primer viewport — en la web actual ese precio está a 6 pantallas de
@@ -813,9 +814,18 @@ export function WidgetReserva({
                 </div>
               </div>
               <div className="flex h-10 items-center justify-between rounded-10 border border-stroke-soft-200 bg-bg-white-0 pl-3 pr-1.5">
+                {/* [v2 2026-07-27] El icono de «Niños» YA NO es el bebé
+                    (pedido de Samuel): con bebés y niños como tramos
+                    separados, el mismo icono en los dos no distinguía nada.
+                    PersonStanding para el niño que ya camina, Baby para el
+                    tramo de 1-3. */}
                 <span className="flex items-center gap-2 text-paragraph-sm text-text-strong-950">
-                  <Baby className="size-5 shrink-0 text-text-sub-600" aria-hidden="true" />
+                  <PersonStanding className="size-5 shrink-0 text-text-sub-600" aria-hidden="true" />
                   <span className="text-navy-sub">Niños</span>
+                  <PistaInfo
+                    etiqueta="Qué edad cuenta como niño"
+                    texto="Niños de 4 a 7 años, con tarifa reducida. De 1 a 3 años no pagan: añádelos abajo, en Bebés."
+                  />
                 </span>
                 <div className="flex items-center gap-2">
                   <span
@@ -875,8 +885,12 @@ export function WidgetReserva({
                 <span className="flex items-center gap-2 text-paragraph-sm text-text-strong-950">
                   <Baby className="size-5 shrink-0 text-text-sub-600" aria-hidden="true" />
                   <span className="text-navy-sub">
-                    Bebés <span className="text-navy-soft">1-3 · gratis</span>
+                    Bebés <span className="text-navy-soft">gratis</span>
                   </span>
+                  <PistaInfo
+                    etiqueta="Qué edad cuenta como bebé"
+                    texto="Bebés de 1 a 3 años, sin coste. A partir de los 4 años pagan tarifa de niño."
+                  />
                 </span>
                 <div className="flex items-center gap-2">
                   <span
