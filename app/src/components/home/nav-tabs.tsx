@@ -72,10 +72,17 @@ const MEGA_ITEM_RETRASO = 0.03 // el panel arranca solo una fracción antes que 
 // Los dos arrancan a la vez (posición 0 de la timeline): son la misma
 // interacción, no una secuencia.
 const MEGA_CAMBIO_ESCALA = 0.97 // cuánto se contrae — apenas, es un guiño
-const MEGA_CAMBIO_DURACION = 0.28 // el empuje
+const MEGA_CAMBIO_DURACION = 0.34 // el empuje (2026-07-27, 2ª vuelta: +20% sobre los 0.28 iniciales, pedido de Samuel)
 const MEGA_CAMBIO_EASE = 'power3.out' // sale rápido y frena, sensación de deslizamiento
-const MEGA_CAMBIO_RESORTE_DURACION = 0.36 // el rebote dura algo más que el empuje: remata
-const MEGA_CAMBIO_RESORTE_EASE = 'back.out(3)' // overshoot claro — es el "resorte"
+const MEGA_CAMBIO_RESORTE_DURACION = 0.43 // el rebote dura algo más que el empuje: remata (+20%, misma vuelta)
+// back.out(4) sobrepasa el destino ~38% del recorrido. Ojo con la cuenta real,
+// que es lo que decide si el rebote SE VE: el recorrido aquí es 0.97 → 1.00,
+// o sea 0.03, así que el pico queda en ~1.011 — el panel crece un 1,1% por
+// encima de su tamaño antes de asentarse. Con back.out(3) eran 0.75%.
+// Si algún día se quiere MÁS rebote, la palanca que más rinde no es subir el
+// número del ease sino BAJAR MEGA_CAMBIO_ESCALA: el overshoot es proporcional
+// al recorrido, así que contraerse más amplía las dos cosas a la vez.
+const MEGA_CAMBIO_RESORTE_EASE = 'back.out(4)'
 const MEGA_CAMBIO_DESPLAZAMIENTO = 100 // % del ancho: empuje completo, un desplazamiento parcial se lee como "tembleque", no como empujar
 
 // Orden VISUAL de los tabs, que es el que decide la dirección del empuje.
