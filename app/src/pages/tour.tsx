@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Navigate, useParams } from 'react-router-dom'
+import { Navigate, useParams, Link } from 'react-router-dom'
 import { Footer } from '@/components/home/footer'
 import { HeroInterna } from '@/components/internas/hero-interna'
 import { CabeceraFicha } from '@/components/tour/cabecera-ficha'
@@ -21,6 +21,8 @@ import { ComparadorPremium } from '@/components/tour/comparador-premium'
 import { BandaPremium } from '@/components/tour/banda-premium'
 import { fotosComidaDe } from '@/data/tours'
 import { VideoAcompanante } from '@/components/tour/video-acompanante'
+import { DescuentosTour } from '@/components/tour/descuentos-tour'
+import { TituloSeccion } from '@/components/tour/titulo-seccion'
 import { TambienTeGusta } from '@/components/internas/tambien-te-gusta'
 import { TOURS } from '@/data/home'
 import { FICHAS } from '@/data/tours'
@@ -196,6 +198,36 @@ export function TourPage() {
                   Solo se pinta si la ficha tiene subVariantes. */}
               {tour.booking === 'completo' && ficha.subVariantes && ficha.subVariantes.length > 0 ? (
                 <TablaPreciosCharter ficha={ficha} activa={variante} />
+              ) : null}
+
+              {/* [v2 2026-07-27, plan 01 §7] Los 3 descuentos, justo debajo de
+                  la tabla de precios: es donde el visitante acaba de ver una
+                  cifra y donde importa saber que puede bajar.
+                  Arregla de paso una deuda: el chip del widget promete «hasta
+                  15%» desde la Fase B y hasta hoy no se explicaba en ninguna
+                  parte de dónde salía ese número. */}
+              {tour.booking === 'completo' ? <DescuentosTour /> : null}
+
+              {/* [v2 2026-07-27, plan 01 §7/§8] «Descubre nuestros paquetes
+                  privados para grupos». En la web original este botón de la
+                  ficha de charter lleva a la pestaña de eventos y
+                  celebraciones — lo confirmó el cliente en la reunión (12:24).
+                  Por eso los 4 paquetes de comida (1.188 / 660 / 780 / 900) NO
+                  se duplican aquí: viven en Eventos y esto solo enlaza. */}
+              {slug === 'charter-privado' ? (
+                <section className={BLOQUE_FICHA}>
+                  <TituloSeccion>¿Vienen en grupo grande?</TituloSeccion>
+                  <p className="mt-2 max-w-2xl text-navy-sub">
+                    Para celebraciones, bodas y eventos de empresa tenemos paquetes cerrados con
+                    menú, barra libre y el barco entero para ustedes.
+                  </p>
+                  <Link
+                    to="/eventos/party-boat"
+                    className="mt-5 inline-flex rounded-full bg-coral px-6 py-3 text-sm font-semibold text-white transition hover:brightness-110"
+                  >
+                    Ver los paquetes para grupos
+                  </Link>
+                </section>
               ) : null}
               {/* Fila de videos (correcciones v1 del cliente, 2026-07-20 —
                   planes/02-producto.md slide 6: la maqueta pone aquí, entre

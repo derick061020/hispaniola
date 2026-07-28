@@ -208,6 +208,9 @@ export function WidgetReserva({
   const esDual = tour.precioNino !== null && tour.precioNino !== undefined
   const [adultos, setAdultos] = useState(2)
   const [ninos, setNinos] = useState(0)
+  // [v2 2026-07-27] Tercer tramo de edad: bebés 1-3, gratis. Viaja al funnel
+  // para que la tripulación sepa cuántos van a bordo, aunque no paguen.
+  const [bebes, setBebes] = useState(0)
   const [personas, setPersonas] = useState(2)
   // [v2 2026-07-27] ABRE EN PREMIUM. Cambio pedido explícitamente por el
   // cliente (slide 4 del PDF v2: «poner aquí por defecto el premium») y
@@ -848,6 +851,66 @@ export function WidgetReserva({
                   </div>
                 </div>
               </div>
+
+              {/* [v2 2026-07-27, plan 01 §6] TERCER TRAMO: bebés de 1 a 3 años.
+                  El cliente lo aclaró en la reunión del 07-24 (01:58): «los
+                  niños de uno a tres años no pagan».
+
+                  ⚠️ Dos decisiones que conviene no deshacer sin preguntar:
+                  1. NO SUMAN al aforo. Es literal de Samuel el 07-27 («los
+                     bebés no suman»), así que no se restan de `maxPersonas`.
+                     Operativamente eso significa que un barco de 30 plazas
+                     puede acabar con 30 + bebés a bordo — si el cliente
+                     quiere que ocupen plaza, es cambiar el `disabled` y las
+                     dos restas de arriba, no rehacer nada.
+                  2. Solo se pinta en los tours con selector de edad, que
+                     según la decisión del 07-27 es SOLO Snorkel Lovers. El
+                     semi-privado no admite niños; charter, Saona y eventos
+                     van por tramos y ahí «una plaza es una plaza, sin edad».
+
+                  ⚠️ El tope de 3 años está sin confirmar por escrito: en la
+                  reunión Miguel no recordaba el rango y aceptó por cortesía el
+                  «¿será 7?» que propuso Samuel para el tramo siguiente. */}
+              <div className="flex h-10 items-center justify-between rounded-10 border border-stroke-soft-200 bg-bg-white-0 pl-3 pr-1.5">
+                <span className="flex items-center gap-2 text-paragraph-sm text-text-strong-950">
+                  <Baby className="size-5 shrink-0 text-text-sub-600" aria-hidden="true" />
+                  <span className="text-navy-sub">
+                    Bebés <span className="text-navy-soft">1-3 · gratis</span>
+                  </span>
+                </span>
+                <div className="flex items-center gap-2">
+                  <span
+                    key={bebes}
+                    aria-live="polite"
+                    className="stepper-tick min-w-[1.5rem] text-center font-semibold tabular-nums text-navy"
+                  >
+                    {bebes}
+                  </span>
+                  <div className="flex items-center gap-1">
+                    <CompactButton.Root
+                      type="button"
+                      variant="stroke"
+                      fullRadius
+                      aria-label="Quitar un bebé"
+                      disabled={bebes <= 0}
+                      onClick={() => setBebes((b) => Math.max(0, b - 1))}
+                      className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
+                    >
+                      <CompactButton.Icon as={Minus} />
+                    </CompactButton.Root>
+                    <CompactButton.Root
+                      type="button"
+                      variant="stroke"
+                      fullRadius
+                      aria-label="Añadir un bebé"
+                      onClick={() => setBebes((b) => b + 1)}
+                      className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
+                    >
+                      <CompactButton.Icon as={Plus} />
+                    </CompactButton.Root>
+                  </div>
+                </div>
+              </div>
             </div>
           </>
         ) : (
@@ -1027,7 +1090,16 @@ export function WidgetReserva({
               // niños por separado, Y la suma como `personas` (compatibilidad
               // con el funnel cuando se construya, que hoy lee `personas`).
               ...(esDual
-                ? { adultos: String(adultos), ninos: String(ninos), personas: String(totalPersonas) }
+                ? {
+                    adultos: String(adultos),
+                    ninos: String(ninos),
+                    // [v2] Los bebés viajan al funnel aunque no paguen: la
+                    // tripulación necesita saber cuántos van a bordo
+                    // (chalecos, sillas). Solo se añade si hay alguno, para no
+                    // ensuciar la URL del caso normal.
+                    ...(bebes > 0 ? { bebes: String(bebes) } : {}),
+                    personas: String(totalPersonas),
+                  }
                 : { personas: String(personas) }),
             }).toString()}`}
           >

@@ -389,6 +389,24 @@ export const devSections: DevSection[] = [
             note: '[v2 2026-07-27, plan 01 §5 — slide 1] «Falta agregar el menú de niños», la corrección que el cliente puso PRIMERA en su PowerPoint.\n\nNO es un menú aparte: en la web original el Kid\'s Meal es una tarjeta más dentro del mismo «Hispaniola Menu», al lado de Seafood/Meat/Surf & Turf. Por eso entra como un plato con `soloNinos` y un chip «Niños», en vez de como un tercer PaqueteMenu — bastante más barato de lo que el plan estimaba.\n\nLa FOTO es real, descargada de su web. Su HTML tiene TODAS las descripciones de plato comentadas, así que la web no dice qué lleva: la descripción («hamburguesa, tiras de pollo, salchicha y papas fritas») se LEE DE LA FOTO y coincide con lo que Samuel recordaba de la reunión (11:00). ⚠️ Describir comida a partir de una foto es una lectura, no un dato declarado — la redacción está pendiente de que Fernando la confirme.\n\nDato que corrige lo que se dedujo en la reunión: NO existe «niño premium a US$ 80». Snorkel Lovers no tiene Light/Premium — es Adults US$ 114 · Kids US$ 65 y punto.',
           },
           {
+            label: '[v2] Tramos de edad (bebés gratis)',
+            kind: 'variante',
+            to: '/tours/snorkel-lovers',
+            note: '[v2 2026-07-27, plan 01 §6] Tercer stepper: bebés de 1 a 3 años, GRATIS. El cliente lo aclaró en la reunión del 07-24 (01:58): «los niños de uno a tres años no pagan».\n\n⚠️ SOLO AQUÍ. La decisión de Samuel del 07-27 acotó el selector de edad a Snorkel Lovers: el semi-privado no admite niños (confirmado por el cliente, 03:09), y charter, Saona y eventos van por tramos donde «una plaza es una plaza, sin edad» — ahí solo se pregunta cuántas personas.\n\n⚠️ Los bebés NO SUMAN al aforo, literal de Samuel («los bebés no suman»), así que no se restan de maxPersonas. Operativamente eso permite 30 plazas + bebés a bordo; si el cliente quiere que ocupen plaza es cambiar el `disabled` y las dos restas, no rehacer nada. Sí viajan al funnel (?bebes=N) porque la tripulación necesita saber cuántos van, aunque no paguen.\n\n⚠️ El tope de edad sigue SIN confirmar por escrito: en la reunión Miguel no recordaba el rango y aceptó por cortesía el «¿será 7?» que propuso Samuel para el tramo de niños.\n\nDato que corrige lo que se dedujo en la reunión: NO existe «niño premium a US$ 80» — la web publica Adults US$ 114 · Kids US$ 65 y nada más.',
+          },
+          {
+            label: '[v2] Descuentos 5+5+5',
+            kind: 'variante',
+            to: '/tours/semi-privado#ancla-descuentos',
+            note: '[v2 2026-07-27, plan 01 §7 — slide 2] Los tres descuentos que el cliente publica en su web: 5% clientes que repiten · 5% reservando con 30 días · 5% pagando en efectivo. Samuel confirmó el 07-27 que ACUMULAN y suman 15% PLANO (no encadenados: ×0,85, no ×0,95³).\n\n⚠️ Esto es un ARREGLO DE HONESTIDAD, no solo un añadido. El chip del widget lleva desde la Fase B prometiendo «reservando directo ahorras hasta 15%» y hasta hoy no se explicaba en NINGUNA parte del sitio de dónde salía ese número. Este bloque es esa explicación.\n\nEl «cliente que repite» se MUESTRA pero no se auto-aplica, y se dice en pantalla: el sitio no tiene cuentas ni login, así que no puede verificar que alguien haya comprado antes, y una casilla libre de «ya he venido» la marcaría todo el mundo. Lo aplica el equipo al confirmar.\n\nLos porcentajes salen de DESCUENTOS en lib/tarifas.ts — el mismo array que usa el cálculo, para que el bloque no pueda decir un número distinto del que se cobra.',
+          },
+          {
+            label: '[v2] Paquetes para grupos (charter → eventos)',
+            kind: 'variante',
+            to: '/tours/charter-privado',
+            note: '[v2 2026-07-27, plan 01 §7/§8 — slide 2 y 13] En la web original, el botón «Descubre nuestros paquetes privados para grupos» de la ficha de charter lleva a la pestaña de EVENTOS y celebraciones — lo confirmó el cliente en la reunión (12:24) y Samuel lo verificó en vivo.\n\nPor eso los 4 paquetes de comida (Hispaniola Premium US$ 1.188 · #I 660 · #II 780 · #III 900) NO se duplican en la ficha de charter: viven en Eventos y aquí solo hay un enlace. Eso deroga la recomendación anterior del plan, que proponía compartir el componente entre las dos.\n\nCorrección de dato que salió al extraer la web: esos paquetes son para 1-12 personas, no 1-10 como decía el slide 13.',
+          },
+          {
             label: '[v2] Slider de comida en el mosaico',
             kind: 'variante',
             to: '/tours/semi-privado',
