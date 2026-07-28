@@ -267,6 +267,16 @@ export function WidgetReserva({
   // larga del encabezado del archivo.
   const [paquete, setPaquete] = useState<'light' | 'premium'>('premium')
 
+  // [v2 2026-07-28] Tours PREMIUM DE BASE — Samuel: «Isla Saona y Charter
+  // Privado, que el widget sea tema oscuro, porque esos 2 servicios son
+  // premium de base». Su widget abre y se queda en piel oscura pase lo que
+  // pase con `paquete`, que en esos dos ni siquiera se usa: se venden por
+  // sub-variante (bote/tarifario), sin toggle Light/Premium. Ahí la piel
+  // oscura deja de significar «has subido a Premium» y pasa a describir el
+  // producto. El flag es de la FICHA, no del estado — ver
+  // `widgetPremiumDeBase` en data/tours.ts.
+  const premiumDeBase = ficha.widgetPremiumDeBase === true
+
   // Lista de deseos + compartir (correcciones v1, planes/02-producto.md
   // slide 4). Estado inicial perezoso: leer localStorage en el render de
   // arranque, no en un efecto, evita el parpadeo de «no guardado → guardado».
@@ -445,7 +455,11 @@ export function WidgetReserva({
 
   if (tour.booking === 'cotizacion') {
     return (
-      <Caja>
+      // `premiumDeBase` también en estas dos ramas: hoy los dos tours que lo
+      // llevan son booking 'completo' y no pasan por aquí, pero la piel es de
+      // la FICHA — si mañana uno vuelve a cotización, no tiene por qué dejar
+      // de ser premium por el camino.
+      <Caja premium={premiumDeBase}>
         <Precio precio={tour.precioLight} unidad="desde" />
         <p className="text-sm text-navy-sub">
           Este tour se cotiza a tu medida según nº de personas y menú — hasta {tour.maxPax} personas.
@@ -464,7 +478,7 @@ export function WidgetReserva({
 
   if (tour.booking === 'consulta') {
     return (
-      <Caja>
+      <Caja premium={premiumDeBase}>
         <Precio precio={tour.precioLight} unidad="desde" />
         {/* El copy no se maquilla: es la verdad del producto (dato pendiente
             del cliente, ver PLAN-v3.md §9). Un precio inventado aquí sería el
@@ -531,6 +545,12 @@ export function WidgetReserva({
   // 2 platos de Light, y el toggle se pinta normal.
   const tienePaquetes =
     precioBase !== null && upgrade !== null && ficha.menuLight.length > 0
+  // Un solo booleano para la piel oscura, y se calcula una vez: lo consumen la
+  // `Caja` (que redefine los tokens) y las piezas que se PORTALIZAN fuera de
+  // ese ámbito y por tanto no se enteran del cambio de tema — hoy los tooltips
+  // de los tramos de edad. Dos lecturas del mismo dato en sitios distintos se
+  // desincronizan; una sola no.
+  const pielOscura = premiumDeBase || (paquete === 'premium' && tienePaquetes)
   const tieneSubVariantes = ficha.subVariantes !== undefined && ficha.subVariantes.length > 0
   // Tramo ACTIVO de la variante ACTIVA con las pax actuales. Es la fuente
   // de verdad del precio unitario que se muestra en la cabecera del
@@ -582,7 +602,7 @@ export function WidgetReserva({
       : 'desde'
 
   return (
-    <Caja premium={paquete === 'premium' && tienePaquetes}>
+    <Caja premium={pielOscura}>
       {/* Chips de aceleración, lo primero del widget (Samuel, 2026-07-22).
           Van ARRIBA DEL TODO, antes incluso del rating: son el motivo por el
           que alguien deja de leer y mira el precio.
@@ -883,6 +903,7 @@ export function WidgetReserva({
                 maximo={maxPersonas}
                 pista={
                   <PistaInfo
+                    sobreOscuro={pielOscura}
                     etiqueta="Qué cuenta como adulto"
                     texto="A partir de 13 años se paga tarifa completa. Al menos un adulto tiene que acompañar a los menores."
                   />
@@ -926,6 +947,7 @@ export function WidgetReserva({
                 maximo={maxPersonas - 1}
                 pista={
                   <PistaInfo
+                    sobreOscuro={pielOscura}
                     etiqueta="Qué edad cuenta como niño"
                     texto="De 4 a 7 años pagan tarifa reducida. Los menores de 4 no pagan: añádelos como bebés."
                   />
@@ -972,6 +994,7 @@ export function WidgetReserva({
                 maximo={maxPersonas}
                 pista={
                   <PistaInfo
+                    sobreOscuro={pielOscura}
                     etiqueta="Qué edad cuenta como bebé"
                     texto="Hasta los 3 años viajan sin coste y no ocupan plaza. A partir de los 4 pagan tarifa de niño."
                   />
@@ -1103,7 +1126,15 @@ export function WidgetReserva({
               setPaquete('premium')
               onPaqueteChange?.('premium')
             }}
-            className="mt-3 w-full rounded-full bg-premium-oro px-4 py-2 text-xs font-bold text-premium-fondo transition hover:brightness-110"
+            // [v2 2026-07-28, pedido de Samuel: «que parezca dorado 3D como el
+            // selector cuando está en estado premium, mismo estilo»] Deja de ser
+            // un relleno de oro plano y pasa a ser LA MISMA PIEZA que el thumb
+            // del selector: `.premium-thumb` — degradado en diagonal, filo de luz
+            // arriba, sombra abajo y halo cálido. Es literalmente la misma clase,
+            // no un dorado parecido, y eso importa: este botón lleva justo al
+            // estado donde esa pieza vive, así que reconocerla es parte del
+            // mensaje.
+            className="premium-thumb mt-3 w-full rounded-full px-4 py-2 text-xs font-bold text-premium-fondo transition hover:brightness-110"
           >
             Cambiar a Premium
           </button>

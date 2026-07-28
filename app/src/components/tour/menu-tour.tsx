@@ -53,9 +53,22 @@ function PlatoCard({ plato, piel = 'claro' }: { plato: PlatoMenu; piel?: 'claro'
     // bloque entero en negro, lo oscuro deja de significar «premium».
     // `ring` solo en la piel clara: `.premium-card` ya dibuja su filo con un
     // inset, y superponer los dos daba un doble borde a contraluz.
+    // [v2 2026-07-28, pedido de Samuel] Cuatro cambios sobre la card de plato:
+    //  · `p-2` — la foto deja de ir a sangre. Con la imagen pegada a los cuatro
+    //    lados, la card no se leía como una card sino como una foto con una
+    //    tira de texto debajo; el aire es lo que la convierte en objeto.
+    //  · La foto lleva AHORA SU PROPIO radio en las 4 esquinas. Antes las de
+    //    abajo eran rectas y solo las de arriba parecían redondeadas, porque el
+    //    redondeo lo ponía el `overflow-hidden` del contenedor. Ese recorte ya
+    //    no hace falta y se retira: nada sobresale.
+    //  · Sombra en las dos pieles. La clara la pone `shadow-card` (el token del
+    //    sistema); la premium ya la trae dentro de `.premium-card`.
+    //  · Borde dorado en la premium.
     <figure
-      className={`relative overflow-hidden rounded-card ${
-        oscuro ? 'premium-card' : 'bg-papel ring-1 ring-linea'
+      className={`relative rounded-card p-2 ${
+        oscuro
+          ? 'premium-card border border-premium-oro/55'
+          : 'bg-papel shadow-card ring-1 ring-linea'
       }`}
     >
       {plato.foto ? (
@@ -64,7 +77,7 @@ function PlatoCard({ plato, piel = 'claro' }: { plato: PlatoMenu; piel?: 'claro'
           alt=""
           aria-hidden="true"
           loading="lazy"
-          className="h-36 w-full object-cover"
+          className="h-36 w-full rounded-lg object-cover"
         />
       ) : (
         // [v2] El fallback también cambia de piel: sobre el bloque oscuro, el
@@ -72,7 +85,7 @@ function PlatoCard({ plato, piel = 'claro' }: { plato: PlatoMenu; piel?: 'claro'
         // estrella del Premium (Surf & Turf y Vegetariano, que siguen sin foto
         // en alta).
         <div
-          className={`grid h-36 w-full place-items-center ${
+          className={`grid h-36 w-full place-items-center rounded-lg ${
             oscuro ? 'bg-premium-fondo text-premium-oro' : 'bg-aqua-tint text-aqua-dark'
           }`}
         >
@@ -83,11 +96,11 @@ function PlatoCard({ plato, piel = 'claro' }: { plato: PlatoMenu; piel?: 'claro'
           como una tarjeta más), no en una carta aparte. El chip es lo que lo
           distingue sin sacarlo de su sitio. */}
       {plato.soloNinos ? (
-        <span className="absolute left-2 top-2 rounded-full bg-navy px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-white">
+        <span className="absolute left-3.5 top-3.5 rounded-full bg-navy px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-white">
           Niños
         </span>
       ) : null}
-      <figcaption className="p-3">
+      <figcaption className="px-1.5 pb-1 pt-2.5">
         <p
           className={`font-display text-sm font-semibold ${
             oscuro ? 'text-premium-texto' : 'text-navy'
