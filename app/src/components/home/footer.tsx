@@ -59,7 +59,13 @@ export function Footer() {
         <Boton to="/#tours">Ver disponibilidad</Boton>
       </div>
 
-      <div className="relative z-10 mx-auto mt-14 grid max-w-contenido grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
+      {/* [v2 2026-07-28] De 4 a 5 columnas al sacar «Trabaja con nosotros» de
+          dentro de «Empresa». No es `grid-cols-5` a secas: la 1ª columna lleva
+          logo, dirección y rating, así que con cinco partes iguales se
+          estrecharía y el texto se rompería en más líneas. `1.4fr` para la
+          marca y cuatro columnas iguales para las listas mantiene el reparto
+          que ya tenía y deja las cuatro arrancando a la misma altura. */}
+      <div className="relative z-10 mx-auto mt-14 grid max-w-contenido grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-[1.4fr_repeat(4,1fr)]">
         <div>
           {/* sobreOscuro, no una clase de color: Logo renderiza un <img> (el
               PNG del cliente), así que un className de texto no cambia sus
@@ -139,18 +145,28 @@ export function Footer() {
             </li>
           </ul>
 
-          {/* ── Trabaja con nosotros (correcciones v1 del cliente,
-              2026-07-22) ── Sub-bloque de «Empresa», no una 5ª columna: son
-              enlaces de PARTNERS, hermanos de «Agentes de viaje» que ya vive
-              justo encima, y una columna propia para tres links rompería el
-              ritmo de 4 que sostiene el resto del footer. Los tres van a la
-              MISMA página con distinto `?perfil=` — la etiqueta de cada uno
-              sale tal cual de PERFILES_TRABAJO (data/trabaja.ts), que es la
-              lista que pidió el cliente. */}
-          <h5 className="mt-7 text-sm font-semibold uppercase tracking-wide text-white/50">
+        </div>
+
+        {/* ── Trabaja con nosotros ── [v2 2026-07-28] AHORA ES COLUMNA PROPIA.
+            Nació (correcciones v1, 2026-07-22) como sub-bloque colgado de
+            «Empresa», con este argumento: son enlaces de partners, hermanos de
+            «Agentes de viaje», y una columna para tres links rompería el ritmo
+            de 4 del footer.
+            Ese argumento CADUCÓ esta misma tanda: «Empresa» pasó de 4 enlaces a
+            8 al partirse `/nosotros` en tres páginas y sumarse la Fundación,
+            así que este bloque quedaba colgando muy por debajo del pie de las
+            otras columnas y se leía como un descuelgue, no como un sub-bloque
+            (lo señaló Samuel: «se ve raro y mal que solo esa esté debajo»).
+            Como columna hermana, las cuatro listas vuelven a arrancar a la
+            misma altura. */}
+        <div>
+          <h5 className="text-sm font-semibold uppercase tracking-wide text-white/50">
             Trabaja con nosotros
           </h5>
           <ul className="mt-3 flex flex-col gap-2 text-sm text-white/80">
+            {/* Los tres van a la MISMA página con distinto `?perfil=`; la
+                etiqueta sale tal cual de PERFILES_TRABAJO (data/trabaja.ts),
+                que es la lista que pidió el cliente. */}
             {PERFILES_TRABAJO.map((p) => (
               <li key={p.id}>
                 <Link to={`/trabaja-con-nosotros?perfil=${p.id}`} className="hover:text-white">
