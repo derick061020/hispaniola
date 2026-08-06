@@ -278,6 +278,21 @@ export type FichaTour = {
    *  el comparador, ni la banda «estás en Premium» de la página (esos siguen
    *  colgando de `menuLight`/`upgradePremium`, que en estos dos no existen). */
   widgetPremiumDeBase?: true
+  /** [v3 2026-08-06, PowerPoint slide 77 + reunion 07-31 23:12-26:41] Banda
+   *  que avisa de que lo que se esta viendo es la MODALIDAD premium del
+   *  producto, con puente a donde viven las opciones de entrada.
+   *
+   *  El cliente: «en esta seccion ofrecemos nuestros Charter privado en
+   *  modalidad Premium que es el mas vendido» + un boton a eventos/party boat.
+   *
+   *  ⚠️ Su texto para ese boton era «Consultar modalidades mas economicas», y
+   *  esa promesa HOY ES FALSA: el charter mas barato (Maite, US$ 625) sale por
+   *  debajo del party boat mas barato (US$ 660). Lo detecto Samuel en la misma
+   *  reunion («me parece mas caro incluso») y Miguel respondio que van a
+   *  reestructurar precios y sumar barcos. Asi que la seccion se monta, pero el
+   *  CTA NO promete precio hasta que eso pase — enseña la otra modalidad y ya.
+   *  En cuanto los precios cuadren, es cambiar esta linea. */
+  bandaModalidad?: { titulo: string; texto: string; cta: { texto: string; a: string } }
   /** [v2 2026-07-27] Extras opcionales que el widget vende como UPSELL.
    *  Portados del tarifario real (TARIFARIO-WEB-ORIGINAL.md §4-C). El texto
    *  del álbum de fotos cambia por producto a propósito: en charter ya
@@ -765,6 +780,12 @@ export const FICHAS: Record<string, FichaTour> = {
     // en el tipo. Alquilar el barco entero para tu grupo no tiene versión
     // Light: aquí la piel premium no anuncia un upgrade, describe el producto.
     widgetPremiumDeBase: true,
+    bandaModalidad: {
+      titulo: 'This is our Private Charter in Premium mode',
+      texto: 'Our best seller: the whole catamaran for your group, with the Floating Kitchen on board.',
+      // Sin promesa de precio — ver el comentario del campo en el tipo.
+      cta: { texto: 'See our Party Boat options', a: '/eventos/party-boat' },
+    },
     tituloLargo: 'Private Charter — the whole catamaran for your group',
     // [v3 2026-08-06, WEBSITE-TOURS pag. 17] Titulo APROBADO del bloque de
     // descripcion.

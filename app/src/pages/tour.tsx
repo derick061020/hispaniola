@@ -194,7 +194,12 @@ export function TourPage() {
                   técnica y la descripción. Solo con el paquete en Premium —
                   es la contraparte de la caja de upsell del widget, así que
                   el visitante nunca ve las dos a la vez. */}
-              {paquete === 'premium' && ficha.menuLight.length > 0 ? (
+              {/* [v3 2026-08-06, slide 77] La condicion gana una segunda rama:
+                  las fichas con `bandaModalidad` (hoy el charter) la pintan
+                  SIEMPRE, porque ahi no anuncia un estado que el visitante
+                  pueda cambiar con un toggle —no hay Light del charter— sino
+                  el nivel de producto que esta viendo. */}
+              {ficha.bandaModalidad || (paquete === 'premium' && ficha.menuLight.length > 0) ? (
                 <BandaPremium ficha={ficha} />
               ) : null}
 
