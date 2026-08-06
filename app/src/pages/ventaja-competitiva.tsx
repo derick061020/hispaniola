@@ -94,6 +94,46 @@ export function VentajaCompetitivaPage() {
       <div ref={contenidoRef} className="mx-auto max-w-contenido px-5 py-12 sm:px-10 lg:py-16">
         <div className="flex flex-col gap-16 lg:gap-24">
           <IntroSostenibilidad />
+
+          {/* [v3 2026-08-06, WEBSITE-SOSTENIBILIDAD pags. 1-2] LA HISTORIA DE
+              LAS TORTUGAS Y LA LETANIA. El copy aprobado trae dos piezas que
+              no cabian en el bloque de mision y que no pueden ir en parrafo
+              corrido:
+                · La historia es EL argumento diferencial del cliente —
+                  documentaron colisiones con tortugas verdes y con eso
+                  impulsaron un area marina protegida que hoy gestionan con el
+                  Ministerio de Medio Ambiente—. Es lo que Miguel resumio como
+                  «por aqui nadie hace nada de eso». Va sobre fondo propio,
+                  con la foto del arrecife, para que se lea como el hecho que
+                  es y no como un parrafo mas.
+                · La letania son cinco frases que empiezan igual («You're
+                  helping…»). Escritas seguidas se pierden; en lista, cada una
+                  es un golpe. */}
+          <section className="grid gap-6 rounded-card-grande bg-fondo-ficha p-6 lg:grid-cols-2 lg:items-center lg:gap-10 lg:p-8">
+            <p className="text-lead text-navy-sub">{SOSTENIBILIDAD.historia}</p>
+            <img
+              src="/fotos/arrecife-fondo-cenital.webp"
+              alt="El área marina protegida vista desde el aire"
+              loading="lazy"
+              className="h-56 w-full rounded-card object-cover lg:h-72"
+            />
+          </section>
+
+          <section className="text-center">
+            <p className="font-display text-h3 font-semibold text-navy">
+              {SOSTENIBILIDAD.letaniaIntro}
+            </p>
+            <ul className="mx-auto mt-6 flex max-w-2xl flex-col gap-3">
+              {SOSTENIBILIDAD.letania.map((linea) => (
+                <li key={linea} className="text-lead text-navy-sub">
+                  {linea}
+                </li>
+              ))}
+            </ul>
+            <p className="mx-auto mt-6 max-w-2xl font-display text-lg font-medium text-navy">
+              {SOSTENIBILIDAD.letaniaCierre}
+            </p>
+          </section>
           <RecorridoSostenibilidad activo={!estatico} /> {/* [dev-mode] gate */}
           <ImpactoSostenibilidad />
           <AporteSostenibilidad />
@@ -104,7 +144,11 @@ export function VentajaCompetitivaPage() {
         </div>
       </div>
 
-      <Footer />
+      {/* [v3 2026-08-06, WEBSITE-SOSTENIBILIDAD pag. 13] «YOUR CARIBBEAN
+          STORY STARTS HERE» — el cliente pide OTRO texto para la misma banda
+          de cierre que la home. Por eso el footer lo acepta por prop desde F2:
+          esta es la pagina que lo estrena. */}
+      <Footer cta="Your Caribbean story starts here" />
     </div>
   )
 }

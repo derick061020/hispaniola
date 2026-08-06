@@ -116,8 +116,35 @@ export const SOSTENIBILIDAD = {
   // 2026-07-22 ese bloque vive en IntroSostenibilidad, a dos columnas con un
   // video al lado (y por eso baja de tamaño: --text-sost-mision).
   sub: 'No es un añadido: es la base de cómo operamos, en el mar y en tierra.',
-  misionEyebrow: 'Nuestra misión',
-  mision: 'En Hispaniola Aquatic Adventures protegemos los ecosistemas de los que dependemos, empoderamos a nuestra gente y dejamos una huella positiva en cada lugar donde operamos — a través de la Bávaro Reefs Foundation, la organización sin fines de lucro que sostiene esta misión en la República Dominicana.',
+  // [v3 2026-08-06, WEBSITE-SOSTENIBILIDAD pags. 1-2] La mision APROBADA.
+  // Sustituye a una declaracion de principios de tres lineas por LA HISTORIA
+  // que la sostiene: documentaron colisiones de barcos con tortugas verdes en
+  // peligro y con eso impulsaron la proteccion de uno de los ecosistemas
+  // costeros mas importantes del pais, hoy gestionado con el Ministerio de
+  // Medio Ambiente y con guardaparques propios.
+  //
+  // Es EL argumento diferencial del cliente y es exactamente lo que Miguel
+  // dijo en la reunion del 07-31: «es la unica empresa que se apoya en la
+  // parte sostenible, por aqui nadie hace nada de eso». Por eso no va en un
+  // parrafo corrido: la historia se separa (`historia`) y la letania de cinco
+  // lineas (`letania`) es un momento editorial propio.
+  misionEyebrow: 'Our mission',
+  misionTitulo: 'Every journey you take helps protect the Caribbean you came to discover.',
+  mision:
+    'At Hispaniola Aquatic Adventures, we believe tourism should leave places better than it found them. Every guest who joins us helps restore coral reefs, protect marine wildlife, support local communities and fund long-term conservation through the Bávaro Reefs Foundation.',
+  misionPuente: 'But our commitment goes far beyond reef restoration.',
+  historia:
+    "Over the past few years, our team has led one of the Dominican Republic's most impactful marine conservation initiatives. After documenting repeated boat collisions with endangered green sea turtles, we helped drive the protection of one of the country's most important coastal ecosystems. Today, that protected marine area is actively managed through a collaboration between our Foundation and the Ministry of Environment, with dedicated park rangers working every day to safeguard its future.",
+  letaniaIntro: "When you sail with us, you're not simply booking a tour.",
+  letania: [
+    "You're helping restore coral reefs.",
+    "You're protecting endangered wildlife.",
+    "You're supporting environmental education.",
+    "You're creating opportunities for local families.",
+    "And you're proving that tourism can become one of nature's greatest allies.",
+  ],
+  letaniaCierre:
+    "Because the greatest souvenir isn't what you take home. It's knowing you helped preserve the Caribbean for everyone who comes after you.",
   // PLAN-INTERNAS-V2.md: fotos del hero-interna (fundido, no foto fija) — las
   // mismas 3 del arrecife/vivero de coral que ya usa la home en Experiencia,
   // reales y ya curadas, no nuevas.
@@ -228,21 +255,28 @@ export const SOSTENIBILIDAD = {
   // El detalle del equipo NO repite el del pilar «Operación responsable»: allí
   // se cuenta la política (salario justo, formación, seguridad), aquí a qué
   // partida va el dinero, con el vocabulario del propio cliente.
-  aporteEyebrow: 'Operaciones responsables',
-  aporteTitulo: 'A dónde va tu aporte',
-  aporteLead: 'La sostenibilidad empieza desde adentro. Por eso, por cada huésped que sube a bordo, una parte de la reserva ya está destinada — de forma fija, no de lo que sobre.',
+  // [v3 2026-08-06, WEBSITE-SOSTENIBILIDAD pags. 5 y 12] Copy APROBADO.
+  // ⚡ EL APORTE AL EQUIPO SUBE: US$ 3.50 -> US$ 4.50. El 3.50 se porto de su
+  // web vieja; el copy nuevo dice 4.50 en dos sitios distintos del mismo
+  // documento, asi que manda el aprobado. El de conservacion no cambia (2.00).
+  aporteEyebrow: 'Responsible operations',
+  aporteTitulo: 'Where Your Contribution Creates Impact',
+  aporteLead:
+    "Every contribution is fixed per guest—not based on what's left over. Sustainability starts from within, so part of every booking is already assigned before you step on board.",
   aportes: [
     {
-      valor: 'US$ 3.50',
-      unidad: 'por huésped',
-      destino: 'A nuestro equipo operativo',
-      detalle: 'Compensación justa, capacitación, seguridad y prácticas responsables.',
+      valor: 'US$ 4.50',
+      unidad: 'per guest',
+      destino: 'Investing in Our People',
+      detalle:
+        'Fair compensation, continuous training, performance incentives, workplace safety and the operational teams that make every experience seamless—from reservation to return.',
     },
     {
       valor: 'US$ 2.00',
-      unidad: 'por huésped',
-      destino: 'A las iniciativas de la fundación',
-      detalle: 'Restauración de coral, monitoreo de tortugas verdes y trabajo con la comunidad.',
+      unidad: 'per guest',
+      destino: 'Protecting the Caribbean',
+      detalle:
+        'Coral restoration, green sea turtle monitoring and the conservation projects led by the Bávaro Reefs Foundation—because lasting sustainability begins long before we set sail.',
     },
   ] satisfies AporteSost[],
 
@@ -283,7 +317,7 @@ export const SOSTENIBILIDAD = {
   cierreTitulo: 'Arrecifes más sanos, comunidades más fuertes',
   cierreTexto: 'Cada empresa deja una huella donde opera. La nuestra queremos que sea positiva: de la conservación marina al trabajo comunitario, la operación ética y el desarrollo de nuestro equipo. Reservar con nosotros es sumar a un futuro más sostenible para la República Dominicana.',
   cierrePuntos: [
-    'US$ 3.50 por huésped a nuestro equipo operativo',
+    'US$ 4.50 invested in our operational and guest experience teams',
     'US$ 2.00 por huésped a las iniciativas de la fundación',
     'Tercer vivero de coral más importante del país',
   ],

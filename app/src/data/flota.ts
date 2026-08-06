@@ -639,7 +639,9 @@ const SOSTENIBILIDAD_COMUN: FilaSpec[] = [
   },
   {
     label: 'Aportación por huésped',
-    valor: 'US$ 3,50 + US$ 2,00 por persona a la Bávaro Reefs Foundation',
+    // [v3 2026-08-06] 4,50 y no 3,50: lo fija el copy aprobado de
+    // sostenibilidad, que da el dato dos veces.
+    valor: 'US$ 4,50 + US$ 2,00 por persona a la Bávaro Reefs Foundation',
     origen: 'verificado',
     nota: 'Va del precio del tour al vivero de coral y a los proyectos con la comunidad. Detalle en Sostenibilidad.',
   },

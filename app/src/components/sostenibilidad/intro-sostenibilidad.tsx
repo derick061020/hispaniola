@@ -65,8 +65,14 @@ export function IntroSostenibilidad() {
             lo ignora a partir del límite y, donde lo aplica, deja la medida
             irregular. pretty solo evita el huérfano final, que es el defecto
             real de un párrafo en columna. */}
+        {/* [v3 2026-08-06] El titular de la mision, que antes no existia: el
+            bloque abria directamente con el parrafo. */}
         <p className="sost-reveal mt-4 text-pretty font-display text-sost-mision-movil font-medium text-navy sm:text-sost-mision">
-          {SOSTENIBILIDAD.mision}
+          {SOSTENIBILIDAD.misionTitulo}
+        </p>
+        <p className="sost-reveal mt-4 text-lead text-navy-sub">{SOSTENIBILIDAD.mision}</p>
+        <p className="sost-reveal mt-3 font-display text-lg font-semibold text-navy">
+          {SOSTENIBILIDAD.misionPuente}
         </p>
       </div>
 

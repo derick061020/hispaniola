@@ -102,6 +102,9 @@ const CARDS = [
     numeral: String(i + 1).padStart(2, '0'),
     clave: frente.clave,
     titulo: frente.titulo,
+    // [v3 2026-08-06] El claim del cliente: la linea corta que explica POR QUE
+    // importa cada proyecto. Antes las cards iban de titulo a parrafo.
+    claim: frente.claim,
     texto: frente.texto,
     foto: frente.foto,
     fotoAlt: frente.fotoAlt,
@@ -165,6 +168,14 @@ export function FrentesFundacion() {
                   >
                     {tarjeta.titulo}
                   </h3>
+                  {'claim' in tarjeta && tarjeta.claim ? (
+                    <p
+                      data-frente-anim
+                      className="mt-2 font-display text-lg font-semibold text-aqua-dark"
+                    >
+                      {tarjeta.claim}
+                    </p>
+                  ) : null}
                   <p data-frente-anim className="mt-4 text-lead text-navy-sub">
                     {tarjeta.texto}
                   </p>

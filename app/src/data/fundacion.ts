@@ -138,10 +138,14 @@ export const FUNDACION = {
     },
   ],
 
-  proyectosEyebrow: 'Proyectos sostenibles',
-  proyectosTitulo: 'En qué trabaja la fundación',
-  proyectosLead:
-    'Impulsamos acciones que conectan a la comunidad con la conservación: educación, voluntariado y experiencias reales que transforman conciencia en impacto.',
+  // [v3 2026-08-06, WEBSITE-SOSTENIBILIDAD pag. 9] Cabecera APROBADA. La
+  // frase que abre es la tesis entera de la fundacion y no estaba: «no se mide
+  // por cuantos corales plantamos, sino por los ecosistemas que devolvemos a
+  // la vida».
+  proyectosEyebrow: 'Our projects',
+  proyectosTitulo:
+    "Real conservation isn't measured by the number of corals we plant. It's measured by the ecosystems we help bring back to life.",
+  proyectosLead: 'Healthy reefs need more than coral. They need an entire ecosystem to thrive.',
 
   // El proyecto insignia. Sigue siendo el bloque navy de siempre, pero ahora
   // con las dos fotos que lo prueban: sin ellas, «arrecifes artificiales» es
@@ -185,48 +189,77 @@ export const FUNDACION = {
   // pinta nada: está para que, cuando el cliente mande material real de esos
   // dos programas, se vea de un vistazo cuáles hay que sustituir — y para que
   // nadie escriba un pie que dé por hecho lo que la foto no enseña.
+  // [v3 2026-08-06, WEBSITE-SOSTENIBILIDAD pags. 9-10 + PowerPoint slide 81]
+  // LOS SEIS PROYECTOS con el copy APROBADO. Eran cinco: el cliente añade uno
+  // NUEVO —«06 Marine Protected Area Management»— que es justo el que faltaba
+  // para cerrar la historia de las tortugas de /ventaja-competitiva: el area
+  // protegida existe, y ademas la gestionan ellos con el Ministerio.
+  //
+  // Cada proyecto gana ademas su CLAIM (la linea corta bajo el titulo, «A
+  // healthy reef needs abundant marine life»), que es lo que el cliente usa
+  // para explicar por que importa cada uno.
+  //
+  // ⚠️ Las fotos NO se tocan: las cinco que habia estaban elegidas una a una y
+  // dos llevan `contexto: true` porque enseñan el AREA y no el programa. El
+  // proyecto nuevo hereda la foto del arrecife cenital, que es el area
+  // protegida de la que habla — y queda marcado igual.
   frentes: [
     {
       clave: 'Coral',
-      titulo: 'Restaurar la cobertura viva de coral',
+      titulo: 'Coral Reef Restoration',
+      claim: 'Restoring the foundation of marine life.',
       texto:
-        'Rescate de fragmentos de oportunidad, trasplante desde viveros y siembra por fragmentación in-situ en puntos importantes.',
+        'We rescue coral fragments, grow them in our nurseries and laboratories, and transplant them using advanced restoration techniques to rebuild healthy reefs.',
       foto: 'galeria-snorkel-lovers-6',
       fotoAlt: 'Estructuras del vivero de coral bajo el agua, con una buceadora revisándolas',
     },
     {
-      clave: 'Especies',
-      titulo: 'Aumentar especies clave',
+      clave: 'Biodiversity',
+      titulo: 'Restoring Marine Biodiversity',
+      claim: 'A healthy reef needs abundant marine life.',
       texto:
-        'Recuperar poblaciones ecológicamente importantes: peces loro, langostas, capitanes, pargos y otras.',
+        'Our restoration strategy goes beyond corals by increasing fish populations, protecting key species and rebuilding the ecological balance that allows reefs to flourish naturally.',
       foto: 'galeria-snorkel-lovers-5',
       fotoAlt: 'Peces nadando sobre un coral cerebro en el arrecife de Bávaro',
     },
     {
-      clave: 'Limpieza',
-      titulo: 'Saneamiento del área',
+      clave: 'Clean-ups',
+      titulo: 'Cleaner Oceans',
+      claim: 'Healthy ecosystems begin with clean waters.',
       texto:
-        'Programa de limpieza de Bávaro/Punta Cana con jornadas de recolección de residuos sólidos.',
+        'Regular coastal and underwater clean-up campaigns remove marine debris, improve habitat quality and protect the ecosystems that support marine life.',
       foto: 'galeria-semi-privado-3',
       fotoAlt: 'Un grupo numeroso en la orilla de la playa de Bávaro',
       contexto: true,
     },
     {
-      clave: 'Pesca',
-      titulo: 'Alternativas para pescadores',
+      clave: 'Fishermen',
+      titulo: 'Working with Local Fishermen',
+      claim: 'Conservation succeeds when communities succeed.',
       texto:
-        'Métodos de pesca sustentables que resuelven conflictos comunitarios y los integran a la conservación.',
+        'We work alongside local fishermen, promoting sustainable practices and creating opportunities that align livelihoods with long-term marine conservation.',
       foto: 'galeria-semi-privado-4',
       fotoAlt: 'Banco de peces sargento sobre el arrecife, junto a una nadadora',
       contexto: true,
     },
     {
-      clave: 'Educación',
-      titulo: 'Fomentar el ecoturismo',
+      clave: 'Education',
+      titulo: 'Environmental Education & Ecotourism',
+      claim: 'Protecting what people learn to value.',
       texto:
-        'Actividades y campañas de educación ambiental con clientes, centros educativos y comerciantes de la zona.',
+        'Every visitor, student and local resident becomes part of our mission through educational experiences that inspire long-term stewardship of the Caribbean.',
       foto: 'galeria-snorkel-lovers-10',
       fotoAlt: 'Un guía de Hispaniola explicando el vivero de coral a un grupo de niños',
+    },
+    {
+      clave: 'Protected area',
+      titulo: 'Marine Protected Area Management',
+      claim: 'Turning protection into action.',
+      texto:
+        'Working alongside the Ministry of Environment, we help manage the protected marine area where we operate through monitoring, scientific data collection and on-the-water conservation efforts.',
+      foto: 'arrecife-fondo-cenital',
+      fotoAlt: 'El área marina protegida vista desde el aire',
+      contexto: true,
     },
   ],
 
