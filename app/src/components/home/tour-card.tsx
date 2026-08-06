@@ -63,7 +63,7 @@ export function TourCard({ tour, autoAvance = true }: { tour: Tour; autoAvance?:
           <h3 className="font-display text-h3 font-semibold text-navy">{tour.nombre}</h3>
           {tour.precioLight !== null && (
             <p className="shrink-0 text-right leading-none">
-              <span className="mb-0.5 block text-xs text-navy-soft">desde</span>
+              <span className="mb-0.5 block text-xs text-navy-soft">from</span>
               <span className="font-display text-precio font-semibold text-navy">{formatoDinero(tour.precioLight)}</span>
             </p>
           )}
@@ -83,7 +83,7 @@ export function TourCard({ tour, autoAvance = true }: { tour: Tour; autoAvance?:
           {tour.maxPax && (
             <span className="flex items-center gap-1.5">
               <Users className="size-4" aria-hidden="true" />
-              máx. {tour.maxPax}
+              max. {tour.maxPax}
             </span>
           )}
         </div>

@@ -334,7 +334,7 @@ export function PruebaSocial() {
           <div className="relative flex min-w-0 flex-1 items-center gap-1 py-2.5 pl-3.5 pr-1.5">
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-semibold text-navy">{tour.nombre}</p>
-              <p className="mt-0.5 text-xs text-navy-soft">Reservado hace {ejemplo.minutos} min</p>
+              <p className="mt-0.5 text-xs text-navy-soft">Booked {ejemplo.minutos} min ago</p>
             </div>
             <button
               type="button"

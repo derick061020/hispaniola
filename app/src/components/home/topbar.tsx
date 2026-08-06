@@ -47,13 +47,13 @@ export function Topbar() {
       <div className="mx-auto flex max-w-contenido items-center justify-between px-5 py-1.5 text-xs text-navy-soft sm:px-10">
         <a href={WHATSAPP_URL} target="_blank" rel="noopener" className="flex items-center gap-1.5 hover:text-navy">
           <MessageCircle className="size-3.5" aria-hidden="true" />
-          ¿Preguntas? WhatsApp {whatsapp?.dato}
+          Questions? WhatsApp {whatsapp?.dato}
         </a>
 
         <div className="flex items-center gap-4">
           <a href={telefono?.href} className="flex items-center gap-1.5 hover:text-navy">
             <Phone className="size-3.5" aria-hidden="true" />
-            Reservas: {telefono?.dato}
+            Bookings: {telefono?.dato}
           </a>
 
           <SelectorIdioma />

@@ -62,7 +62,7 @@ export function Footer({ cta = 'Ready for an unforgettable day?' }: { cta?: stri
 
       <div className="relative z-10 mx-auto flex max-w-contenido flex-col items-center gap-4 text-center">
         <h2 className="font-display text-h2 font-semibold text-white">{cta}</h2>
-        <Boton to="/#tours">Ver disponibilidad</Boton>
+        <Boton to="/#tours">See availability</Boton>
       </div>
 
       {/* [v2 2026-07-28] De 4 a 5 columnas al sacar «Trabaja con nosotros» de
@@ -81,9 +81,9 @@ export function Footer({ cta = 'Ready for an unforgettable day?' }: { cta?: stri
           <p className="mt-3 text-sm text-white/70">
             C. P.º del Sol, Punta Cana 23500, RD.
             <br />
-            Eco-friendly · Sin plástico · Desde 2012.
+            Eco-friendly · Zero plastic · Since 2010.
           </p>
-          <p className="mt-3 text-xs text-white/50">★ 4.9 · 1.782 reseñas · #1 TripAdvisor 7 años</p>
+          <p className="mt-3 text-xs text-white/50">★ 4.9 · 1,782 reviews · #1 on TripAdvisor for 7 years</p>
         </div>
 
         <div>
@@ -97,45 +97,45 @@ export function Footer({ cta = 'Ready for an unforgettable day?' }: { cta?: stri
               </li>
             ))}
             <li>
-              <EnlacePrototipo className="hover:text-white">Eventos</EnlacePrototipo>
+              <EnlacePrototipo className="hover:text-white">Events</EnlacePrototipo>
             </li>
           </ul>
         </div>
 
         <div>
-          <h5 className="text-sm font-semibold uppercase tracking-wide text-white/50">Empresa</h5>
+          <h5 className="text-sm font-semibold uppercase tracking-wide text-white/50">Company</h5>
           <ul className="mt-3 flex flex-col gap-2 text-sm text-white/80">
             {/* [v2 2026-07-27] `/nosotros` se partió en tres páginas; el footer
                 tiene que repetir la arquitectura del menú nuevo, no seguir
                 apuntando a una ruta que ahora solo redirige. */}
             <li>
               <Link to="/crew" className="hover:text-white">
-                Tripulación
+                Crew
               </Link>
             </li>
             <li>
               <Link to="/facilities" className="hover:text-white">
-                Instalaciones
+                Facilities
               </Link>
             </li>
             <li>
               <Link to="/fleet" className="hover:text-white">
-                Flota
+                Fleet
               </Link>
             </li>
             <li>
               <Link to="/competitive-advantage" className="hover:text-white">
-                Sostenibilidad
+                Sustainability
               </Link>
             </li>
             <li>
               <Link to="/foundation" className="hover:text-white">
-                La Fundación
+                The Foundation
               </Link>
             </li>
             <li>
               <Link to="/guides" className="hover:text-white">
-                Guías Punta Cana
+                Punta Cana guides
               </Link>
             </li>
             <li>
@@ -146,7 +146,7 @@ export function Footer({ cta = 'Ready for an unforgettable day?' }: { cta?: stri
             </li>
             <li>
               <Link to="/travel-agents" className="font-semibold hover:text-white">
-                Agentes de viaje
+                Travel agents
               </Link>
             </li>
           </ul>
@@ -184,7 +184,7 @@ export function Footer({ cta = 'Ready for an unforgettable day?' }: { cta?: stri
         </div>
 
         <div>
-          <h5 className="text-sm font-semibold uppercase tracking-wide text-white/50">Reservas y ayuda</h5>
+          <h5 className="text-sm font-semibold uppercase tracking-wide text-white/50">Bookings & help</h5>
           <ul className="mt-3 flex flex-col gap-2 text-sm text-white/80">
             <li>
               {/* `/#tours` y no `#tours`: el footer también vive en la ficha,
@@ -242,10 +242,10 @@ export function Footer({ cta = 'Ready for an unforgettable day?' }: { cta?: stri
           el agua que costó generar). */}
       <div className="relative z-10 mx-auto mt-12 grid max-w-contenido gap-6 border-t border-white/10 pt-8 lg:grid-cols-[auto_1fr_auto] lg:items-start">
         <div>
-          <p className="text-sm font-semibold text-white">Cómo nos valoran</p>
+          <p className="text-sm font-semibold text-white">How guests rate us</p>
           <p className="mt-1 text-sm text-white/70">
             <span className="font-semibold text-white">★ {RESENAS_AGREGADO.rating}</span> ·{' '}
-            {RESENAS_AGREGADO.total.toLocaleString('es-ES')} reseñas · #1 TripAdvisor 7 años
+            {RESENAS_AGREGADO.total.toLocaleString('es-ES')} reviews · #1 on TripAdvisor for 7 years
           </p>
           <ul className="mt-3 flex flex-wrap items-center gap-2">
             {REDES.map((red) => {
@@ -272,7 +272,7 @@ export function Footer({ cta = 'Ready for an unforgettable day?' }: { cta?: stri
         </div>
 
         <div className="lg:px-8">
-          <p className="text-sm font-semibold text-white">Métodos de pago</p>
+          <p className="text-sm font-semibold text-white">Payment methods</p>
           {/* 2026-07-22 (pedido de Samuel): cajitas de tamaño fijo con el logo
               dentro, no chips de texto que se ensanchaban con el nombre. El
               detalle de por qué así y de dónde salen los logos, en
@@ -297,12 +297,12 @@ export function Footer({ cta = 'Ready for an unforgettable day?' }: { cta?: stri
 
         <div className="flex flex-col gap-3">
           <div>
-            <p className="mb-2 text-sm font-semibold text-white">Idioma</p>
+            <p className="mb-2 text-sm font-semibold text-white">Language</p>
             <SelectorIdioma />
           </div>
           <div>
             <label htmlFor="footer-moneda" className="mb-2 block text-sm font-semibold text-white">
-              Moneda
+              Currency
             </label>
             {/* Visual, como el idioma: el sitio publica en USD y no hay
                 conversión real todavía (ver MONEDAS en data/home.ts). */}

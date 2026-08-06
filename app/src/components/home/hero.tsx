@@ -266,15 +266,15 @@ export function Hero() {
                     {/* relative: ventana y olas están posicionadas y pintarían
                         encima del texto si éste no lo estuviera también. */}
                     <span className="relative inline-flex items-center gap-2">
-                      Ver disponibilidad
+                      See availability
                       <ArrowRight className="size-5" aria-hidden="true" />
                     </span>
                   </Boton>
 
                   <div className="flex flex-col items-center gap-1.5 text-xs text-white/70 sm:flex-row sm:gap-3">
-                    <span>Cancelación gratis hasta 7 días antes</span>
+                    <span>Free cancellation up to 7 days before</span>
                     <span className="hidden h-3 w-px bg-white/20 sm:block" aria-hidden="true" />
-                    <span>Confirma con solo 25% de depósito</span>
+                    <span>Confirm with just a 25% deposit</span>
                   </div>
 
                   {/* v3-F16/F17 (pedido de Samuel, 2026-07-14): las 3 insignias
@@ -294,9 +294,9 @@ export function Hero() {
                       real (4.9, con relleno fraccionario en la 5ª estrella)
                       es la de reseñas. */}
                   <div className="mt-2 flex flex-wrap items-start justify-center gap-x-8 gap-y-4">
-                    <InsigniaConfianza calificacion={4.9} titulo="4.9" subtitulo="1.782 reseñas" />
-                    <InsigniaConfianza calificacion={5} titulo="#1 en TripAdvisor" subtitulo="7 años consecutivos" />
-                    <InsigniaConfianza calificacion={5} titulo="Premios Viator" subtitulo="2022 · 2023 · 2024" />
+                    <InsigniaConfianza calificacion={4.9} titulo="4.9" subtitulo="1,782 reviews" />
+                    <InsigniaConfianza calificacion={5} titulo="#1 on TripAdvisor" subtitulo="7 years running" />
+                    <InsigniaConfianza calificacion={5} titulo="Viator Awards" subtitulo="2022 · 2023 · 2024" />
                   </div>
                 </div>
               </div>
@@ -339,7 +339,7 @@ export function Hero() {
           gesto de swipe-to-home. */}
       <div className="fixed inset-x-0 bottom-0 z-30 border-t border-linea bg-papel px-3 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-card md:hidden">
         <Boton href="#tours" className="w-full">
-          Ver disponibilidad
+          See availability
         </Boton>
       </div>
     </>

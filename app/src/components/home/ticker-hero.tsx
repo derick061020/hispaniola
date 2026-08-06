@@ -109,7 +109,7 @@ function TickerCard({ item, oculto = false }: { item: TickerItem; oculto?: boole
 // distingue un tour de otro y además es la promesa de marca (la cinta de stats
 // dice "≤35% de la capacidad del barco").
 function MetaTour({ item }: { item: TickerTour }) {
-  const secundarios = [item.duracion, item.maxPax !== null ? `máx. ${item.maxPax}` : null].filter(
+  const secundarios = [item.duracion, item.maxPax !== null ? `max. ${item.maxPax}` : null].filter(
     (dato): dato is string => dato !== null,
   )
   // first-letter:uppercase — Isla Saona no tiene precio y arranca la línea con
@@ -119,7 +119,7 @@ function MetaTour({ item }: { item: TickerTour }) {
     <p className="mt-0.5 truncate text-xs text-navy-soft first-letter:uppercase">
       {item.precioDesde !== null ? (
         <>
-          Desde <span className="font-semibold text-navy">{formatoDinero(item.precioDesde)}</span> ·{' '}
+          From <span className="font-semibold text-navy">{formatoDinero(item.precioDesde)}</span> ·{' '}
         </>
       ) : null}
       {secundarios.join(' · ')}
@@ -136,7 +136,7 @@ function MetaTour({ item }: { item: TickerTour }) {
 function ChipOcasion() {
   return (
     <span className="mt-1 inline-flex rounded-chip bg-aqua-tint px-2 py-0.5 text-xs font-medium text-aqua-dark">
-      Evento privado
+      Private event
     </span>
   )
 }

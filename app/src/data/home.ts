@@ -105,7 +105,7 @@ export const TOURS: Tour[] = [
     // [v2 2026-07-28, plan 01 §7 — slide 2] «3-4 h» → «3 o 4 h», por el mismo
     // motivo que `duracion` en data/tours.ts: la duración se elige con el
     // barco, no es un rango aproximado.
-    duracionCorta: '3 o 4 h',
+    duracionCorta: '3 or 4 h',
     rating: 4.9,
     resenas: 1782,
     // [v3 2026-08-06] 85, no 120: el copy aprobado (WEBSITE-TOURS pag. 17)
@@ -218,24 +218,24 @@ export type Ocasion = {
 export const OCASIONES: Ocasion[] = [
   {
     tipo: 'eventos',
-    nombre: 'Eventos y party boat',
-    meta: 'Cumpleaños, aniversarios, despedidas y reuniones. Barco entero.',
+    nombre: 'Events & party boat',
+    meta: 'Birthdays, anniversaries, bachelor parties and reunions. The whole boat.',
     esLanding: true,
     foto: 'galeria-charter-privado-2',
     slug: 'party-boat',
   },
   {
     tipo: 'boda',
-    nombre: 'Bodas y pre-boda',
-    meta: 'Ceremonia, welcome party o despedida del grupo.',
+    nombre: 'Weddings & pre-wedding',
+    meta: 'Ceremony, welcome party or a send-off for the group.',
     esLanding: true,
     foto: 'galeria-charter-privado-5',
     slug: 'weddings',
   },
   {
     tipo: 'mice',
-    nombre: 'Corporativo / MICE',
-    meta: 'Incentivos, team building, cierres de convención.',
+    nombre: 'Corporate / MICE',
+    meta: 'Incentives, team building, convention closings.',
     esLanding: true,
     foto: 'galeria-charter-privado-3',
     slug: 'corporate',
@@ -353,14 +353,14 @@ export type ItemNav = {
 export const NAV_NOSOTROS: ItemNav[] = [
   {
     id: 'tripulacion',
-    nombre: 'Tripulación',
-    descripcion: 'Las personas detrás de cada tour: capitanes, guías, cocina, biología marina y oficina.',
+    nombre: 'Crew',
+    descripcion: 'The passionate people behind every unforgettable Caribbean experience.',
     to: '/crew',
   },
   {
     id: 'instalaciones',
-    nombre: 'Instalaciones',
-    descripcion: 'Un complejo, no solo un muelle: museo marino, laboratorio de biología, cocinas y tienda.',
+    nombre: 'Facilities',
+    descripcion: 'More than a marina—our headquarters include a marine museum, biology lab, floating kitchens, workshops, and guest facilities.',
     to: '/facilities',
   },
   {
@@ -375,8 +375,8 @@ export const NAV_NOSOTROS: ItemNav[] = [
   },
   {
     id: 'flota',
-    nombre: 'Flota',
-    descripcion: 'Nuestras embarcaciones, con galería y ficha técnica de cada una.',
+    nombre: 'Fleet',
+    descripcion: 'Discover our modern catamarans for shared tours, private charters, and every group size.',
     to: '/fleet',
   },
 ]
@@ -390,14 +390,14 @@ export const NAV_NOSOTROS: ItemNav[] = [
 export const NAV_SOSTENIBILIDAD: ItemNav[] = [
   {
     id: 'sostenibilidad',
-    nombre: 'Nuestra ventaja competitiva',
-    descripcion: 'Arrecifes, tortugas y comunidad: lo que tu reserva sostiene, con cifras.',
+    nombre: 'Our competitive advantage',
+    descripcion: 'Reefs, turtles and community: what your booking sustains, in numbers.',
     to: '/competitive-advantage',
   },
   {
     id: 'fundacion',
-    nombre: 'La Fundación',
-    descripcion: 'Fundación Ecológica Arrecifes de Bávaro: el tercer vivero de coral del país.',
+    nombre: 'The Foundation',
+    descripcion: 'Bávaro Reefs Foundation: one of the leading coral restoration projects in the country.',
     to: '/foundation',
   },
 ]
@@ -418,26 +418,26 @@ export const NAV_SOSTENIBILIDAD: ItemNav[] = [
 export const NAV_AYUDA: ItemNav[] = [
   {
     id: 'faq',
-    nombre: 'Preguntas frecuentes',
-    descripcion: '14 preguntas: reservas y pagos, qué llevar, comida, clima, niños.',
+    nombre: 'FAQ',
+    descripcion: '14 questions: bookings and payments, what to bring, food, weather, children.',
     to: '/faq',
   },
   {
     id: 'guias',
-    nombre: 'Guías de Punta Cana',
-    descripcion: '5 artículos: cómo elegir tour, qué llevar, mejor época para navegar.',
+    nombre: 'Punta Cana guides',
+    descripcion: '5 articles: how to choose a tour, what to bring, the best time to sail.',
     to: '/guides',
   },
   {
     id: 'contacto',
-    nombre: 'Contacto',
-    descripcion: 'WhatsApp, teléfono y formulario. Respondemos en minutos, de 8:00 a 20:00.',
+    nombre: 'Contact',
+    descripcion: 'WhatsApp, phone and form. We answer in minutes, from 8:00 to 20:00.',
     to: '/contact',
   },
   {
     id: 'mi-reserva',
-    nombre: 'Gestionar mi reserva',
-    descripcion: 'Edita tu menú, recogida o datos con tu código HSP-XXXX-NNNN.',
+    nombre: 'Manage my booking',
+    descripcion: 'Edit your menu, pickup or details with your HSP-XXXX-NNNN code.',
     to: '/my-booking',
   },
   // [v2 2026-07-27] Blog baja aquí desde «Nosotros» (reunión 07-24, 27:00:
@@ -447,7 +447,7 @@ export const NAV_AYUDA: ItemNav[] = [
   {
     id: 'blog',
     nombre: 'Blog',
-    descripcion: 'Guías honestas, historias del mar y consejos reales para tu viaje.',
+    descripcion: 'Honest guides, stories from the sea and real advice for your trip.',
     to: '/blog',
   },
 ]

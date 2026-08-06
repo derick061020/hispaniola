@@ -116,7 +116,7 @@ export function Duelo() {
           Ninguna de estas seis cosas es un extra. Todas vienen dentro del mismo precio.
         </p>
         <Boton to="/#tours" className="shrink-0">
-          Ver disponibilidad
+          See availability
         </Boton>
       </div>
     </section>

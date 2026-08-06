@@ -13,11 +13,11 @@ type Seccion = 'tours' | 'eventos' | 'nosotros' | 'sostenibilidad' | 'ayuda'
 // Sostenibilidad · Ayuda. Si aquí y allí divergen, el sitio se lee distinto
 // según el dispositivo.
 const secciones: { id: Seccion; label: string }[] = [
-  { id: 'nosotros', label: 'Nosotros' },
+  { id: 'nosotros', label: 'About us' },
   { id: 'tours', label: 'Tours' },
-  { id: 'eventos', label: 'Eventos' },
-  { id: 'sostenibilidad', label: 'Sostenibilidad' },
-  { id: 'ayuda', label: 'Ayuda' },
+  { id: 'eventos', label: 'Events' },
+  { id: 'sostenibilidad', label: 'Sustainability' },
+  { id: 'ayuda', label: 'Help' },
 ]
 
 // Menú móvil (PLAN-v3.md §13) — "objeto que se despliega", no una pantalla
@@ -142,7 +142,7 @@ export function MenuMovil({
             onClick={onCerrar}
             className="block border-b border-linea py-3 font-display text-base font-semibold text-navy"
           >
-            Inicio
+            Home
           </Link>
           {secciones.map((s) => (
             <div key={s.id} className="border-b border-linea py-1">

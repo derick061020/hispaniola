@@ -107,7 +107,7 @@ export const GUIAS_CIERRE = {
   titulo: 'Más guías en camino',
   texto:
     'Seguimos respondiendo lo que de verdad importa antes de reservar: mejor época para viajar, qué llevar, ir con niños y más.',
-  cta: { texto: 'Ver disponibilidad', to: '/#tours' },
+  cta: { texto: 'See availability', to: '/#tours' },
 }
 
 export const GUIAS_HERO = {

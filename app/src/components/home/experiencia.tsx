@@ -159,7 +159,7 @@ export function Experiencia() {
             href="#tours"
             className="exp-linea group mt-8 inline-flex items-center gap-1.5 text-lead font-semibold text-coral transition-colors hover:text-coral-dark"
           >
-            Ver disponibilidad
+            See availability
             <span aria-hidden className="transition-transform duration-200 motion-safe:group-hover:translate-x-1">
               →
             </span>

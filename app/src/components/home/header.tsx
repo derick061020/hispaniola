@@ -104,7 +104,7 @@ export function Header({
               compacta cuando este boton sale de vista junto con el logo (ver
               nav-flotante.tsx). 'solida' no cambia: sigue visible desde sm. */}
           <span className="hidden sm:inline-flex">
-            <Boton href={ctaHref}>Reservar</Boton>
+            <Boton href={ctaHref}>Book now</Boton>
           </span>
           <button
             type="button"
