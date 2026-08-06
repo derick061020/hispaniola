@@ -83,6 +83,21 @@ export type AddOn = {
   /** Nota honesta del cliente que hay que mostrar junto al add-on
    *  (ej. la langosta no está disponible de marzo a junio). */
   nota?: string
+  /** [v3 2026-08-06] IDs de `subVariantes` a las que aplica este add-on. Sin
+   *  el campo, el add-on vale para toda la ficha (el caso de siempre).
+   *
+   *  Nace con la langosta del charter: el copy aprobado la ofrece como
+   *  «optional upgrade» SOLO en los charters de 4 horas, porque son los que
+   *  navegan con la cocina flotante — los de 3 horas llevan el Taste of
+   *  Hispaniola (brochetas). Ofrecerla en un barco de 3h sería vender algo
+   *  que no se puede servir.
+   *
+   *  El widget filtra por aquí antes de pintar y antes de sumar, así que si
+   *  alguien marca la langosta y luego cambia a un barco de 3h, el add-on
+   *  desaparece del panel Y del total: `totalAddOns` solo cobra lo que sigue
+   *  en la lista filtrada, y un id huérfano en la selección no encuentra
+   *  pareja. */
+  soloSubVariantes?: string[]
 }
 
 export function precioAddOn(addOn: AddOn, personas: number): number {
@@ -134,19 +149,19 @@ export type Descuento = {
 export const DESCUENTOS: Descuento[] = [
   {
     id: 'recurrente',
-    etiqueta: 'Clientes que repiten',
+    etiqueta: 'Returning guests',
     porcentaje: 5,
     autoAplicable: false,
   },
   {
     id: 'anticipacion',
-    etiqueta: 'Reservando con 30 días o más',
+    etiqueta: 'Booking 30+ days ahead',
     porcentaje: 5,
     autoAplicable: true,
   },
   {
     id: 'efectivo',
-    etiqueta: 'Pagando en efectivo',
+    etiqueta: 'Paying in cash',
     porcentaje: 5,
     autoAplicable: true,
   },

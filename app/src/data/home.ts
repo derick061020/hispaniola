@@ -108,9 +108,13 @@ export const TOURS: Tour[] = [
     duracionCorta: '3 o 4 h',
     rating: 4.9,
     resenas: 1782,
-    maxPax: 120,
+    // [v3 2026-08-06] 85, no 120: el copy aprobado (WEBSITE-TOURS pag. 17)
+    // fija el aforo del Forever Teresa, que es el barco grande del charter y
+    // el que marca el maximo de la ficha. Alimenta la card del grid y el
+    // ticker («max. 85»).
+    maxPax: 85,
     // v3 (2026-07-17, charter completo): ancla "desde" — el precio público
-    // más bajo de la tabla es US$ 75/pax (Forever Teresa 30-120 pax). El
+    // más bajo de la tabla es US$ 75/pax (Forever Teresa 30-85 pax). El
     // widget pinta 4 sub-variantes (Maite, GrandMa, Santa Maria, Forever
     // Teresa) y el cálculo real se hace con la tabla de cada bote según
     // pax. booking pasa de 'cotizacion' a 'completo' (4 botes, no se

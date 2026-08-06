@@ -520,7 +520,14 @@ export function WidgetReserva({
   // muestran como línea aparte en el desglose, nunca fundidos en el precio
   // base — así el visitante siempre ve qué parte del total es el tour y qué
   // parte eligió añadir.
-  const addOns = ficha.addOns ?? []
+  // [v3 2026-08-06] Los add-ons pueden estar atados a sub-variantes concretas
+  // (`soloSubVariantes`): la langosta del charter solo existe en los barcos de
+  // 4 h, que son los que navegan con la cocina flotante. Se filtra AQUÍ, en el
+  // único sitio donde se declara la lista, para que el panel, el desglose y el
+  // total no puedan discrepar entre ellos.
+  const addOns = (ficha.addOns ?? []).filter(
+    (a) => !a.soloSubVariantes || (variante !== null && a.soloSubVariantes.includes(variante)),
+  )
   const [addOnsElegidos, setAddOnsElegidos] = useState<string[]>(() =>
     addOns.filter((a) => a.porDefecto && ALBUM_UPSELL.porDefecto).map((a) => a.id),
   )

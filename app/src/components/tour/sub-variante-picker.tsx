@@ -65,7 +65,10 @@ export function SubVariantePicker({
         // Teresa se llaman «· 3h» y «· 4h» justo para distinguirse— no se
         // repite: decirla dos veces en la misma línea era lo que empujaba la
         // meta fuera del ancho y la dejaba en un «3h…» que parecía un error.
-        const duracion = s.duracion?.replace(/ horas?/, 'h') ?? null
+        // [v3] Acepta las dos lenguas: las sub-variantes pasan a ingles ficha a
+        // ficha y sin esto «4 hours» dejaria de abreviarse a «4h», que es lo
+        // que hace que la meta quepa en la fila.
+        const duracion = s.duracion?.replace(/ (horas?|hours?)/, 'h') ?? null
         // Con un nombre largo no hay ancho para las tres cosas (nombre, meta y
         // precio) en una línea de 384 px, y la meta acababa recortada en un
         // «12…» que parece un fallo. Cuando pasa, se retira ENTERA: el aforo

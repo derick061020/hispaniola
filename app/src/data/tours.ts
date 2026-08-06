@@ -9,7 +9,16 @@
 
 import type { AddOn } from '@/lib/tarifas'
 
-export type PasoItinerario = { hora: string; titulo: string; texto: string }
+export type PasoItinerario = {
+  hora: string
+  titulo: string
+  texto: string
+  /** [v3 2026-08-06, WEBSITE-TOURS pág. 20] Condición de la parada, cuando no
+   *  la hacen todas las variantes del tour: «Only on 4-hour charters». Va
+   *  como chip, no dentro del texto, porque es una EXCEPCIÓN y tiene que
+   *  leerse antes que la descripción, no al final de ella. */
+  nota?: string
+}
 
 /** Horario publicado del tour. SIN `quedan N` a propósito: el aforo restante
  *  depende de que el motor (xpotours) lo exponga por API — decisión pendiente
@@ -716,18 +725,28 @@ export const FICHAS: Record<string, FichaTour> = {
     // en el tipo. Alquilar el barco entero para tu grupo no tiene versión
     // Light: aquí la piel premium no anuncia un upgrade, describe el producto.
     widgetPremiumDeBase: true,
-    tituloLargo: 'Charter Privado — el barco entero para tu grupo',
+    tituloLargo: 'Private Charter — the whole catamaran for your group',
+    // [v3 2026-08-06, WEBSITE-TOURS pag. 17] Titulo APROBADO del bloque de
+    // descripcion.
+    promesa: 'Your Private Caribbean Experience',
     audiencia: 'Tu grupo',
-    // [v2 2026-07-28, plan 01 §7 — slide 2] «3-4 horas» → «3 o 4 horas». La
-    // banda que el cliente señaló dice «Cruceros privados de 3 y 4 horas», y
-    // es un hecho distinto del que se estaba publicando: un guion se lee como
-    // «entre 3 y 4, según el día» (una imprecisión), cuando la realidad es que
-    // se ELIGE — GrandMa 3 h, Maite y Santa Maria 4 h, Forever Teresa las dos.
-    duracion: '3 o 4 horas',
+    duracion: '3 or 4 hours',
+    // [v3 2026-08-06, WEBSITE-TOURS pags. 17-18] Los parrafos APROBADOS,
+    // literales, incluida la lista de barcos con sus capacidades.
+    //
+    // ⚡ DECISION DE SAMUEL (2026-08-06): «los 5 documentos WEBSITE estan
+    // totalmente aprobados; si lo dice ahi, ese es el que nos quedamos». Eso
+    // resuelve el conflicto de capacidades que el plan dejaba abierto: las
+    // cifras de aqui MANDAN sobre el tarifario portado de la web vieja, y por
+    // eso los tramos de `subVariantes` se recortan a ellas (Maite 20 -> 15,
+    // Forever Teresa 120 -> 85). Ver el comentario de cada barco.
     descripcionLarga: [
-      'El Charter Privado es el barco entero para tu grupo — familia, amigos, empresa o celebración. Eliges uno de nuestros 4 botes según el tamaño del grupo y el plan: Maite (4h, hasta 20 pax), GrandMa (3h, hasta 20 pax), Santa Maria (4h, hasta 20 pax, o más con skewers) o Forever Teresa (3h o 4h, hasta 120 pax).',
-      'La ruta es la misma que los otros tours: navegación desde Bávaro hasta Cabeza de Toro, snorkel en el vivero de coral del proyecto top-3 de RD, parada en la playa desierta con coco-loco y comida a bordo de la cocina flotante. Lo que cambia es el barco (capacidad y tarifa según pax) y el menú, que coordinamos contigo: 7 platos a elegir (seafood, meat, surf & turf, vegetarian, chicken/beef/shrimp skewers) y langosta premium como add-on opcional al check-out.',
-      'Para grupos grandes (más de 20 pax), Forever Teresa es la opción: hasta 120 personas con un servicio tipo buffet en cubierta. La coordinación se hace con una persona dedicada, de principio a fin — sin sobresaltos.',
+      "Whether you're celebrating with family, friends or colleagues, our Private Catamaran Charters give you the freedom to enjoy Punta Cana your way.",
+      "Departing from our private marina in Bávaro, you'll cruise along Punta Cana's spectacular coastline toward Cabeza de Toro, where you'll discover our exclusive Marine Park. Snorkel among the Underwater Museum, coral restoration gardens and artificial reefs before relaxing in the famous crystal-clear Natural Pool.",
+      'Our 4-hour charters include our signature Floating Kitchen, where every meal is freshly prepared on board. Guests can choose from seven gourmet menu options, including seafood, certified Angus beef, Surf & Turf, vegetarian dishes and more. Fresh lobster is available as an optional upgrade.',
+      'For 3-hour charters, we serve our popular Taste of Hispaniola Menu, featuring freshly prepared grilled skewers with your choice of chicken, beef or shrimp, accompanied by sides and our open bar.',
+      "Every private charter is tailored to your group. Whether you're planning a birthday, family gathering, corporate event or celebration, our team will help you choose the perfect catamaran, route and menu for an unforgettable day at sea.",
+      'Not sure which catamaran is right for your group? Our sales team will be happy to help you choose the perfect option.',
     ],
     // v3 (2026-07-17, charter completo): el charter tiene 4 botes con
     // precios distintos según pax. Cada bote tiene 2 horarios (Maite,
@@ -754,9 +773,11 @@ export const FICHAS: Record<string, FichaTour> = {
       {
         id: 'maite',
         nombre: 'Maite',
-        descripcion: 'Crucero íntimo 4h · hasta 20 pax',
-        capacidad: '8-20 personas',
-        duracion: '4 horas',
+        descripcion: 'Intimate cruise · 4h · up to 15 guests',
+        // ⚡ 15, no 20 (WEBSITE-TOURS pag. 17). El 20 venia del tarifario de
+        // su propia web y era el techo del tramo por persona.
+        capacidad: 'Up to 15 guests',
+        duracion: '4 hours',
         foto: 'flota-maite',
         horarios: [
           { hora: '9:00 AM', regreso: '1:00 PM' },
@@ -784,15 +805,21 @@ export const FICHAS: Record<string, FichaTour> = {
         // tramos por persona la comida ya va incluida en la tarifa por cabeza.
         tabla: [
           { desde: 1, hasta: 8, precio: 625, tipo: 'grupo', extra: 'Comida opcional: + US$ 25 por persona' },
-          { desde: 9, hasta: 20, precio: 99, tipo: 'persona' },
+          // ⚡ El tramo se recorta a 15: con el aforo aprobado, las plazas
+          // 16-20 que vendia esta tabla no existen.
+          { desde: 9, hasta: 15, precio: 99, tipo: 'persona' },
         ],
       },
       {
         id: 'grandma',
         nombre: 'GrandMa',
-        descripcion: 'Crucero ágil 3h · hasta 20 pax',
-        capacidad: 'Hasta 50 personas',
-        duracion: '3 horas',
+        // ⚠️ Decia «hasta 20 pax» y era un ERROR NUESTRO, no del cliente: el
+        // 20 del tarifario es el corte del MENU («plated hasta 20 pax; skewers
+        // de 21 en adelante»), no el aforo del barco. Su propia `capacidad` y
+        // su tabla ya decian 50, y el copy aprobado tambien.
+        descripcion: 'Agile cruise · 3h · up to 50 guests',
+        capacidad: 'Up to 50 guests',
+        duracion: '3 hours',
         foto: 'flota-grandma',
         horarios: [
           { hora: '9:00 AM', regreso: '11:55 AM' },
@@ -810,9 +837,11 @@ export const FICHAS: Record<string, FichaTour> = {
       {
         id: 'santa-maria',
         nombre: 'Santa Maria',
-        descripcion: 'Crucero premium 4h · hasta 20 pax',
-        capacidad: 'Hasta 45 personas (plated hasta 20, skewers desde 21)',
-        duracion: '4 horas',
+        // ⚠️ Mismo error que GrandMa: el 20 era el corte del menu emplatado,
+        // no el aforo. Copy aprobado y tarifario coinciden en 45.
+        descripcion: 'Premium cruise · 4h · up to 45 guests',
+        capacidad: 'Up to 45 guests (plated up to 20, skewers from 21)',
+        duracion: '4 hours',
         foto: 'flota-santa-maria',
         horarios: [
           { hora: '9:00 AM', regreso: '12:55 PM' },
@@ -836,8 +865,9 @@ export const FICHAS: Record<string, FichaTour> = {
         // remite a la opción de al lado solo confunden — parecían dos barcos
         // distintos, uno de ellos con asterisco.
         nombre: 'Forever Teresa · 3h',
-        descripcion: 'Catamarán grande 3h · hasta 120 pax',
-        capacidad: '1-120 personas (precios por tramo)',
+        // ⚡ 85, no 120 (WEBSITE-TOURS pag. 17). Mismo caso que Maite.
+        descripcion: 'Large catamaran · 3h · up to 85 guests',
+        capacidad: 'Up to 85 guests (tiered pricing)',
         duracion: '3 horas',
         foto: 'flota-forever-teresa',
         horarios: [
@@ -851,7 +881,7 @@ export const FICHAS: Record<string, FichaTour> = {
           { desde: 1, hasta: 18, precio: 1600, tipo: 'grupo' },
           { desde: 19, hasta: 25, precio: 85, tipo: 'persona' },
           { desde: 26, hasta: 29, precio: 2225, tipo: 'grupo' },
-          { desde: 30, hasta: 120, precio: 75, tipo: 'persona' },
+          { desde: 30, hasta: 85, precio: 75, tipo: 'persona' }, // ⚡ techo 85, no 120
         ],
       },
       {
@@ -861,8 +891,8 @@ export const FICHAS: Record<string, FichaTour> = {
         // barco. Antes el repo solo tenía la de 3h.
         id: 'forever-teresa-4h',
         nombre: 'Forever Teresa · 4h',
-        descripcion: 'Catamarán grande 4h · hasta 120 pax',
-        capacidad: '1-120 personas (precios por tramo)',
+        descripcion: 'Large catamaran · 4h · up to 85 guests',
+        capacidad: 'Up to 85 guests (tiered pricing)',
         duracion: '4 horas',
         foto: 'flota-forever-teresa',
         horarios: [
@@ -873,7 +903,7 @@ export const FICHAS: Record<string, FichaTour> = {
           { desde: 1, hasta: 18, precio: 1600, tipo: 'grupo', extra: 'Comida opcional: + US$ 25 por persona' },
           { desde: 19, hasta: 25, precio: 110, tipo: 'persona' },
           { desde: 26, hasta: 28, precio: 2775, tipo: 'grupo', extra: 'Comida opcional: + US$ 25 por persona' },
-          { desde: 29, hasta: 120, precio: 99, tipo: 'persona' },
+          { desde: 29, hasta: 85, precio: 99, tipo: 'persona' }, // ⚡ techo 85, no 120
         ],
       },
     ],
@@ -931,22 +961,35 @@ export const FICHAS: Record<string, FichaTour> = {
       // «usted»: «lo que le permite visitarla»), pero NO se adorna nada — cada
       // frase corresponde a una afirmación que el cliente ya publica.
       cocina: [
+        // [v3 2026-08-06, WEBSITE-TOURS pags. 18-19] Los 5 claims APROBADOS,
+        // literales. Sustituyen a los 3 que habia (condimentos, parrilla,
+        // dietas), que eran nuestro resumen de la ficha real. El diferencial
+        // mas fuerte —los platos con restricciones se asan POR SEPARADO— no se
+        // pierde: el cliente lo mantiene en «Dietary Friendly».
         {
-          id: 'condimentos',
-          titulo: 'Condimentos hechos desde cero',
-          texto: 'Seleccionados a mano y elaborados por nosotros, no mezclas de bote.',
+          id: 'ingredientes',
+          titulo: 'Premium Ingredients',
+          texto: 'Certified Angus beef, fresh lobster and premium seafood selected daily.',
         },
         {
-          id: 'parrilla',
-          titulo: 'A la parrilla, en la cocina flotante',
-          texto:
-            'Tu plato se asa a bordo mientras navegas — y puedes acercarte a la cocina a verlo.',
+          id: 'show-cooking',
+          titulo: 'Live Show Cooking',
+          texto: 'Watch our chefs prepare your meal in the Floating Kitchen.',
+        },
+        {
+          id: 'desde-cero',
+          titulo: 'Made from Scratch',
+          texto: 'Homemade sauces, seasonings and marinades. Never industrial mixes.',
+        },
+        {
+          id: 'al-momento',
+          titulo: 'Cooked to Order',
+          texto: 'Every meal is grilled fresh on board, never reheated.',
         },
         {
           id: 'dietas',
-          titulo: 'Restricciones dietéticas, sin contaminación cruzada',
-          texto:
-            'Nos adaptamos a cualquier restricción y esos platos se asan por separado del resto.',
+          titulo: 'Dietary Friendly',
+          texto: 'Vegetarian, vegan and allergy-friendly meals prepared separately.',
         },
       ],
     },
@@ -961,13 +1004,44 @@ export const FICHAS: Record<string, FichaTour> = {
     ],
     videoGaleria: '/video/hero.mp4',
     quoteDestacada: 'Coordinaron todo a nuestra medida, el barco entero para la familia.',
+    // [v3 2026-08-06, WEBSITE-TOURS pag. 20: «QUITAR HORAS Y PONER DEBAJO DE
+    // PLAYA DESIERTA SOLO EN TOUR DE 4 HORAS»] Las horas desaparecen — un
+    // charter privado zarpa cuando quiere el grupo, y publicarlas fijas
+    // contradecia el producto. `itinerario.tsx` ya soporta paradas sin hora:
+    // la columna se queda vacia y el rail sigue recto.
     itinerario: [
-      { hora: '8:05', titulo: 'Recogida en tu hotel', texto: 'Transporte con AC. La hora exacta según tu hotel y el horario del bote.' },
-      { hora: '9:00', titulo: 'Zarpamos desde Bávaro', texto: 'Check-in en el muelle y navegación por la costa hasta Cabeza de Toro.' },
-      { hora: '~9:45', titulo: 'Snorkel en el vivero de coral', texto: 'El proyecto top-3 de RD, guiado por nuestra bióloga marina.' },
-      { hora: '~11:00', titulo: 'Playa desierta + coco-loco', texto: 'Cóctel en coco real, para y fotos.' },
-      { hora: '~11:45', titulo: 'Piscina natural + comida a bordo', texto: 'Tu plato a medida, recién hecho en la cocina flotante.' },
-      { hora: '13:00', titulo: 'Regreso y traslado al hotel', texto: '' },
+      {
+        hora: '',
+        titulo: 'Hotel Pickup',
+        texto: 'Air-conditioned transportation. The exact time depends on your hotel and the boat you choose.',
+      },
+      {
+        hora: '',
+        titulo: 'Departure from Bávaro',
+        texto: "Check in at our private marina before cruising along Punta Cana's coastline toward Cabeza de Toro.",
+      },
+      {
+        hora: '',
+        titulo: 'Snorkeling at the Marine Park',
+        texto:
+          'Explore the Underwater Museum, coral restoration gardens and artificial reefs of our exclusive Marine Park.',
+      },
+      {
+        hora: '',
+        titulo: 'Secret Beach & Coco Loco',
+        texto: 'Relax on a secluded beach with a freshly prepared Coco Loco served inside a real coconut.',
+        nota: 'Only on 4-hour charters',
+      },
+      {
+        hora: '',
+        titulo: 'Natural Pool & Floating Kitchen',
+        texto: "Swim in Punta Cana's crystal-clear natural pool while your meal is grilled fresh on board.",
+      },
+      {
+        hora: '',
+        titulo: 'Return to the Marina & Hotel Transfer',
+        texto: 'Cruise back to our private marina before your transfer to your hotel.',
+      },
     ],
     incluye: [
       { titulo: 'Barco entero', texto: 'Sin desconocidos a bordo — el barco es solo para tu grupo.' },
@@ -991,7 +1065,14 @@ export const FICHAS: Record<string, FichaTour> = {
       'Efectivo (para el add-on de langosta o propinas)',
     ],
     faqTour: [
-      { p: '¿Cuántas personas caben en cada bote?', r: 'Maite 8-20 pax · GrandMa hasta 20 pax · Santa Maria hasta 20 pax (más con skewers) · Forever Teresa hasta 120 pax.' },
+      // [v3 2026-08-06] Capacidades segun el copy aprobado (WEBSITE-TOURS
+      // pag. 17). Antes decia «Maite 8-20 · GrandMa 20 · Santa Maria 20 ·
+      // Forever Teresa 120»: los dos primeros por el tarifario viejo, los dos
+      // del medio por confundir el corte del menu emplatado con el aforo.
+      {
+        p: 'How many guests fit on each catamaran?',
+        r: 'Maite up to 15 · GrandMa up to 50 · Santa Maria up to 45 · Forever Teresa up to 85.',
+      },
       { p: '¿Cuál es el mínimo de personas?', r: 'Maite parte de 1 pax (la tarifa de US$ 625 cubre hasta 8). Los demás no tienen mínimo formal — consulta por WhatsApp para grupos de menos de 6 pax.' },
       { p: '¿Puedo elegir el menú?', r: 'Sí — coordinamos los 7 platos contigo (seafood, meat, surf & turf, vegetarian, chicken/beef/shrimp skewers). Langosta premium como add-on opcional.' },
       { p: '¿Aceptan pagos corporativos?', r: 'Sí, ver la página de Empresas y MICE para facturación formal.' },
@@ -1003,6 +1084,29 @@ export const FICHAS: Record<string, FichaTour> = {
     // que aquí NO se puede vender «el álbum completo» — solo la máxima
     // calidad. Si no, contradice lo que ellos mismos prometen.
     addOns: [
+      // [v3 2026-08-06, WEBSITE-TOURS pág. 17: «Fresh lobster is available as
+      // an optional upgrade»] ⚡ DECISIÓN DE SAMUEL: el documento WEBSITE gana
+      // sobre la slide 73 del PowerPoint («la langosta solo va en Saona»),
+      // porque los 5 WEBSITE están totalmente aprobados. Y no se queda en
+      // texto: el cliente pidió expresamente que el upsell se pueda elegir en
+      // el widget.
+      //
+      // Solo en los barcos de 4 h — son los que navegan con la cocina
+      // flotante; los de 3 h llevan el Taste of Hispaniola (brochetas), así
+      // que ofrecerla ahí sería vender algo que no se puede servir.
+      //
+      // Precio y nota de veda: los mismos que la langosta de Saona (US$ 30 por
+      // persona, sustitución por camarón gigante de marzo a junio). Es el
+      // mismo producto de la misma cocina, no un precio inventado para aquí.
+      {
+        id: 'langosta',
+        etiqueta: 'Fresh lobster upgrade',
+        descripcion: 'Add fresh lobster to your dish, freshly grilled on board. US$ 30 per person.',
+        base: 'persona',
+        precio: 30,
+        soloSubVariantes: ['maite', 'santa-maria', 'forever-teresa-4h'],
+        nota: 'From March to June lobster may be unavailable; in that case it is replaced with jumbo shrimp.',
+      },
       {
         id: 'album-fotos',
         etiqueta: 'Tus fotos en máxima calidad',

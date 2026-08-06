@@ -42,6 +42,15 @@ export function Itinerario({ ficha }: { ficha: FichaTour }) {
               </span>
             ) : null}
             <h3 className="font-display text-base font-semibold text-navy">{paso.titulo}</h3>
+            {/* [v3] La condición va DELANTE del texto y como chip: «Only on
+                4-hour charters» es lo que decide si esta parada te aplica, así
+                que no puede leerse después de la descripción de una parada que
+                a lo mejor no vas a hacer. */}
+            {paso.nota ? (
+              <span className="mt-1 inline-flex rounded-chip bg-aqua-tint px-2 py-0.5 text-xs font-semibold text-aqua-dark">
+                {paso.nota}
+              </span>
+            ) : null}
             {paso.texto ? <p className="mt-1 text-sm text-navy-sub">{paso.texto}</p> : null}
           </li>
         ))}

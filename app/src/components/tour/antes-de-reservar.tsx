@@ -1,4 +1,4 @@
-import { Clock3, Flame, Leaf, Soup, Users, type LucideIcon } from 'lucide-react'
+import { Beef, ChefHat, Clock3, Flame, Leaf, Soup, Users, type LucideIcon } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { BLOQUE_FICHA } from '@/components/tour/bloque-ficha'
 import { TituloSeccion } from '@/components/tour/titulo-seccion'
@@ -35,9 +35,14 @@ import type { FichaTour } from '@/data/tours'
 // explicación de ese 15% tiene que existir en todas. En semi-privado y
 // snorkel-lovers este bloque es solo el panel de descuentos.
 
+// [v3 2026-08-06] Los claims de cocina pasan de 3 a los 5 APROBADOS
+// (WEBSITE-TOURS págs. 18–19), así que el mapa se rehace con sus ids nuevos.
+// El icono es presentación y vive aquí; el dato, en data/tours.ts.
 const ICONO_COCINA: Record<string, LucideIcon> = {
-  condimentos: Soup,
-  parrilla: Flame,
+  ingredientes: Beef,
+  'show-cooking': ChefHat,
+  'desde-cero': Soup,
+  'al-momento': Flame,
   dietas: Leaf,
 }
 
@@ -90,9 +95,9 @@ export function AntesDeReservar({ tour, ficha }: { tour: Tour; ficha: FichaTour 
           </span>
           <p className="text-sm text-navy-sub">
             <strong className="font-semibold text-navy">
-              Cruceros privados de {ficha.duracion}
+              Private charters of {ficha.duracion}
             </strong>{' '}
-            — la duración va con el barco que elijas.
+            — the duration comes with the catamaran you choose.
           </p>
         </div>
       ) : null}
@@ -117,16 +122,16 @@ export function AntesDeReservar({ tour, ficha }: { tour: Tour; ficha: FichaTour 
             de DESCUENTOS (lib/tarifas.ts) —el mismo array que aplica el
             descuento al cobrar— en vez de escribirse a mano. */}
         <div className="flex flex-col rounded-card-grande bg-menta p-5 sm:p-6">
-          <p className={`${ETIQUETA} text-menta-texto`}>Reservando directo</p>
+          <p className={`${ETIQUETA} text-menta-texto`}>Booking direct</p>
           <p className="mt-3 flex items-baseline gap-2">
             <span className="font-display text-[2.75rem] font-semibold leading-none text-menta-texto">
               {DESCUENTO_MAXIMO}%
             </span>
-            <span className="text-sm text-navy-sub">de descuento máximo</span>
+            <span className="text-sm text-navy-sub">maximum discount</span>
           </p>
           <p className="mt-2 text-sm text-navy-sub">
-            Los tres se <strong className="font-semibold text-navy">suman</strong>: si cumples los
-            tres, pagas un {DESCUENTO_MAXIMO}% menos sobre la tarifa de lista.
+            All three <strong className="font-semibold text-navy">stack</strong>: meet the three
+            and you pay {DESCUENTO_MAXIMO}% less than the list price.
           </p>
 
           <ul className="mt-5 flex flex-col gap-3 border-t border-menta-texto/15 pt-4">
@@ -145,7 +150,7 @@ export function AntesDeReservar({ tour, ficha }: { tour: Tour; ficha: FichaTour 
                       en vez de esconderse. */}
                   {!d.autoAplicable ? (
                     <span className="mt-0.5 block text-xs text-navy-soft">
-                      Lo aplicamos al confirmar — dinos que ya has navegado con nosotros.
+                      We apply it when confirming — just tell us you have sailed with us before.
                     </span>
                   ) : null}
                 </span>
@@ -162,7 +167,7 @@ export function AntesDeReservar({ tour, ficha }: { tour: Tour; ficha: FichaTour 
             y ningún competidor de Punta Cana la publica. */}
         {cocina.length > 0 ? (
           <div className="flex flex-col rounded-card-grande bg-fondo-ficha p-5 sm:p-6">
-            <p className={`${ETIQUETA} text-navy-soft`}>Cómo se cocina</p>
+            <p className={`${ETIQUETA} text-navy-soft`}>How we cook</p>
             <ul className="mt-4 flex flex-col gap-4">
               {cocina.map((c) => {
                 const Icono = ICONO_COCINA[c.id] ?? Soup
