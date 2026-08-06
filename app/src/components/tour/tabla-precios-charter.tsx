@@ -9,6 +9,7 @@ import { Visor360 } from '@/components/flota/visor-360'
 import {
   TarifarioOpcionA,
   TarifarioOpcionB,
+  TarifarioOpcionBMas,
   TarifarioOpcionC,
 } from '@/components/tour/tarifario-opciones'
 
@@ -194,6 +195,10 @@ export function TablaPreciosCharter({
           <TarifarioOpcionA s={maite} personas={personas} />
           <TarifarioOpcionB s={maite} personas={personas} />
           <TarifarioOpcionC s={maite} personas={personas} />
+          {/* [2026-08-06] La prueba que pidió Samuel sobre la recomendación:
+              la estructura de B con el injerto de C (el total del grupo en
+              grande + la frontera dicha en voz alta). */}
+          <TarifarioOpcionBMas s={maite} personas={personas} />
         </div>
       ) : null}
 

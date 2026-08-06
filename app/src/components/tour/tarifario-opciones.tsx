@@ -261,3 +261,130 @@ export function TarifarioOpcionC({ s, personas }: { s: SubVarianteTour; personas
     </div>
   )
 }
+
+// ── OPCIÓN B+ ──────────────────────────────────────────────────────────────
+// «B, con lo mejor de C dentro».
+//
+// Prueba pedida por Samuel (2026-08-06) sobre la recomendación: la estructura
+// de B —dos escenarios, no una tabla— pero robándole a C lo único que de
+// verdad la hacía fácil, que NO era la lista sino que el lector no tiene que
+// hacer ninguna cuenta.
+//
+// Dos cambios sobre B, los dos en el escenario que le aplica al visitante:
+//
+//  1. LA CIFRA GRANDE PASA A SER SU TOTAL. En B, el escenario por persona
+//     enseñaba «US$ 99» en grande — que es el dato que NO se paga. Aquí, si
+//     ese es su caso, en grande va «US$ 1.188» y el «US$ 99 por persona» baja
+//     a letra pequeña, donde le corresponde: es el cómo, no el cuánto.
+//
+//  2. LA FRONTERA SE DICE EN VOZ ALTA. Entre las dos cajas va una línea con
+//     el salto ya calculado —«8 personas: US$ 625 · 9 personas: US$ 891»—,
+//     que es el punto exacto donde el modelo se vuelve contraintuitivo: el
+//     precio SUBE al añadir una persona. C lo dejaba ver por accidente (dos
+//     filas pegadas); aquí se dice a propósito. Es la línea que evita la
+//     llamada de teléfono.
+//
+// Se calcula todo de la misma `tabla` y con `precioDeTramo()`, igual que las
+// otras tres.
+export function TarifarioOpcionBMas({
+  s,
+  personas,
+}: {
+  s: SubVarianteTour
+  personas?: number | null
+}) {
+  const tramoAplica = personas ? tramoDe(s.tabla, personas) : null
+
+  // El salto: el primer par de tramos consecutivos donde CAMBIA el tipo de
+  // tarifa. Es donde el total pega el brinco y donde se pierde la gente.
+  const salto = s.tabla
+    .map((t, i) => ({ antes: t, despues: s.tabla[i + 1] }))
+    .find((par) => par.despues && par.antes.tipo !== par.despues.tipo)
+
+  return (
+    <div className={CAJA}>
+      <CabeceraBarco s={s} etiqueta="Opción B+ · B con lo mejor de C" />
+
+      <div className="mt-5 grid gap-3 sm:grid-cols-2">
+        {s.tabla.map((t) => {
+          const aplica = t === tramoAplica
+          const hasta = t.hasta ?? aforoDe(s.tabla)
+          // Lo que se paga DE VERDAD en este escenario: el total del grupo del
+          // visitante si es el suyo, y si no el del tamaño más pequeño del
+          // tramo — que es el que explica el salto respecto al anterior.
+          const paxRef = aplica && personas ? personas : t.desde
+          const total = precioDeTramo(t, paxRef)
+          const esPorPersona = t.tipo === 'persona'
+
+          return (
+            <div
+              key={`${t.desde}-${hasta}`}
+              className={`rounded-card p-4 ${
+                aplica ? 'bg-papel ring-2 ring-aqua-dark' : 'bg-papel ring-1 ring-linea'
+              }`}
+            >
+              <div className="flex items-center gap-2">
+                <span
+                  aria-hidden="true"
+                  className="grid size-8 shrink-0 place-items-center rounded-full bg-aqua-tint text-aqua-dark"
+                >
+                  <Users className="size-4" />
+                </span>
+                <p className="font-display text-base font-semibold text-navy">
+                  {t.desde === 1 ? `Up to ${hasta} guests` : `From ${t.desde} to ${hasta} guests`}
+                </p>
+              </div>
+
+              {/* La cifra grande es SIEMPRE un total que se paga. Encima, de
+                  quién es ese total — para que no haya que deducirlo.
+                  ⚠️ En el escenario de GRUPO que no te aplica no se nombra a
+                  nadie: su precio no depende de cuántos seáis, y la primera
+                  versión ponía «1 guests pay US$ 625» —mal de número y, peor,
+                  sugiriendo que ese total es el de una persona sola cuando es
+                  el del barco entero—. */}
+              <p className="mt-3 text-xs uppercase tracking-wide text-navy-soft">
+                {aplica
+                  ? `Your ${paxRef} ${paxRef === 1 ? 'guest pays' : 'guests pay'}`
+                  : esPorPersona
+                    ? `${paxRef} ${paxRef === 1 ? 'guest pays' : 'guests pay'}`
+                    : 'Whatever your group size, you pay'}
+              </p>
+              <p className="font-display text-3xl font-semibold leading-none text-navy">
+                {formatoDinero(total)}
+              </p>
+              <p className="mt-1 text-sm text-navy-sub">
+                {esPorPersona
+                  ? `${formatoDinero(t.precio)} per guest, for every guest on board.`
+                  : 'For the whole boat — the same price whether you are 2 or the full group.'}
+              </p>
+
+              {aplica ? (
+                <p className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-aqua-dark px-2.5 py-1 text-xs font-semibold text-white">
+                  <Check className="size-3.5" aria-hidden="true" />
+                  This is your group
+                </p>
+              ) : null}
+            </div>
+          )
+        })}
+      </div>
+
+      {/* EL SALTO, dicho y calculado. Sin esta línea, quien va a ser 8 no
+          descubre hasta el final que el noveno invitado sube el total. */}
+      {salto?.despues ? (
+        <p className="mt-3 rounded-card bg-papel-hueso px-4 py-3 text-sm text-navy-sub">
+          <strong className="font-semibold text-navy">Where the price changes:</strong>{' '}
+          {salto.antes.hasta} guests pay{' '}
+          <strong className="font-semibold text-navy">
+            {formatoDinero(precioDeTramo(salto.antes, salto.antes.hasta ?? salto.antes.desde))}
+          </strong>{' '}
+          and {salto.despues.desde} guests pay{' '}
+          <strong className="font-semibold text-navy">
+            {formatoDinero(precioDeTramo(salto.despues, salto.despues.desde))}
+          </strong>
+          . From there on, everyone pays their own seat.
+        </p>
+      ) : null}
+    </div>
+  )
+}
