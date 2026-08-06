@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Check } from 'lucide-react'
 import { Navigate, useParams } from 'react-router-dom'
 import { Footer } from '@/components/home/footer'
 import { HeroInterna } from '@/components/internas/hero-interna'
@@ -198,6 +199,41 @@ export function EventoPage() {
                 </div>
               </div>
 
+              {/* [v3 2026-08-06, PowerPoint slide 80] La banda del barco
+                  insignia. Va ENTRE la descripcion y «que ofrecemos»: el
+                  argumento MICE del cliente es el barco, asi que se enseña
+                  antes que los formatos de evento que caben en el. Solo la
+                  trae corporativo. */}
+              {evento.barcoInsignia ? (
+                <section className={BLOQUE_FICHA}>
+                  <div className="grid gap-4 lg:grid-cols-[1.1fr_1fr] lg:items-center lg:gap-6">
+                    <img
+                      src={`/fotos/${evento.barcoInsignia.foto}.webp`}
+                      alt={evento.barcoInsignia.fotoAlt}
+                      loading="lazy"
+                      className="h-56 w-full rounded-card object-cover lg:h-72"
+                    />
+                    <div>
+                      <p className="text-eyebrow font-semibold uppercase tracking-[0.14em] text-aqua-dark">
+                        {evento.barcoInsignia.titulo}
+                      </p>
+                      <h2 className="mt-1 font-display text-h3 font-semibold text-navy">
+                        {evento.barcoInsignia.nombre}
+                      </h2>
+                      <p className="mt-2 text-navy-sub">{evento.barcoInsignia.texto}</p>
+                      <ul className="mt-4 flex flex-col gap-2">
+                        {evento.barcoInsignia.datos.map((dato) => (
+                          <li key={dato} className="flex items-start gap-2.5 text-sm text-navy">
+                            <Check className="mt-0.5 size-4 shrink-0 text-aqua-dark" aria-hidden="true" />
+                            {dato}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </section>
+              ) : null}
+
               <QueOfrecemos evento={evento} />
               <IncluyeEvento evento={evento} />
 
@@ -273,11 +309,30 @@ export function EventoPage() {
                   mismo formulario que quien organiza una boda de 120 con menú a
                   medida. Con la calculadora arriba, el caso simple se resuelve
                   solo y el formulario queda para lo que de verdad se cotiza. */}
+              {/* [v3 2026-08-06, WEBSITE-EVENTOS pag. 5 + PowerPoint slide 79]
+                  Los perks, DESTACADOS junto al widget. El cliente pidio
+                  expresamente que este mensaje no se quedara dentro de un
+                  parrafo: es la razon por la que unos novios eligen este barco
+                  y no otro, y va donde se decide. Solo bodas los trae. */}
+              {evento.perks?.length ? (
+                <div className="flex flex-col gap-2 rounded-card-grande bg-menta p-4 sm:p-5">
+                  {evento.perks.map((perk) => (
+                    <p key={perk.texto} className="flex items-start gap-2.5 text-sm text-navy">
+                      <span aria-hidden="true" className="text-base leading-tight">
+                        {perk.icono}
+                      </span>
+                      <span className="font-medium">{perk.texto}</span>
+                    </p>
+                  ))}
+                </div>
+              ) : null}
+
               {evento.paquetes ? (
                 <CalculadoraEvento
                   paquetes={evento.paquetes.items}
                   elegido={paquete}
                   onElegir={elegirPaquete}
+                  slug={evento.slug}
                 />
               ) : null}
               {/* [v2 2026-07-28] El formulario se PLIEGA solo cuando encima

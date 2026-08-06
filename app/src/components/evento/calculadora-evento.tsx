@@ -4,7 +4,12 @@ import * as CompactButton from '@/components/alignui/compact-button'
 import * as FancyButton from '@/components/alignui/fancy-button'
 import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
 import { formatoDinero } from '@/data/home'
-import { totalPaqueteEvento, type PaqueteEvento } from '@/data/eventos'
+import {
+  NOVIOS_GRATIS_DESDE,
+  personasQuePagan,
+  totalPaqueteEvento,
+  type PaqueteEvento,
+} from '@/data/eventos'
 
 // Reserva online de eventos (correcciones v2, plan 03 §1 — slides 14 y 15:
 // «agregar reserva online y debajo el formulario de cotización»).
@@ -36,8 +41,14 @@ export function CalculadoraEvento({
   paquetes,
   elegido,
   onElegir,
+  slug,
 }: {
   paquetes: PaqueteEvento[]
+  /** [v3 2026-08-06] La landing. Solo bodas aplica el perk de los novios
+   *  gratis (WEBSITE-EVENTOS pag. 5), y el precio lo decide `data/eventos.ts`
+   *  — aqui solo se pasa el dato para que el total del widget sea el mismo
+   *  que cobrara el funnel. */
+  slug?: 'party-boat' | 'weddings' | 'corporate'
   /** [v2 2026-07-28, 2ª vuelta] El paquete elegido SUBE a pages/evento.tsx:
    *  el bloque de paquetes de la columna izquierda marca el mismo que está
    *  activo aquí, y se puede elegir desde cualquiera de los dos. Mismo patrón
@@ -57,9 +68,14 @@ export function CalculadoraEvento({
     conPrecio.findIndex((p) => p.id === elegido),
   )
   const paquete = conPrecio[idx]
-  const total = totalPaqueteEvento(paquete, personas)
+  const total = totalPaqueteEvento(paquete, personas, slug)
   const incluidas = paquete.incluyeHasta ?? 12
-  const extras = Math.max(0, personas - incluidas)
+  const pagan = personasQuePagan(personas, slug)
+  const extras = Math.max(0, pagan - incluidas)
+  // [v3 2026-08-06, slide 79] ¿Se esta aplicando el regalo de los novios? Es
+  // lo que hay que DECIR en pantalla: sin la linea, el total baja al pasar de
+  // 13 a 14 invitados y parece un fallo de la calculadora.
+  const novios = slug === 'weddings' && personas >= NOVIOS_GRATIS_DESDE
 
   return (
     // `widget-marco` (sombra INSET de 1px) y no `ring-1 ring-linea`, por el
@@ -249,6 +265,18 @@ export function CalculadoraEvento({
               </span>
               <span className="tabular-nums">
                 {formatoDinero(extras * (paquete.porPersonaExtra ?? 0))}
+              </span>
+            </div>
+          ) : null}
+          {/* [v3 2026-08-06, slide 79] La linea que evita que el total parezca
+              un error: al pasar de 13 a 14 invitados el precio BAJA, porque
+              los dos ultimos son los novios y no pagan. Se dice como linea de
+              descuento del desglose, en el idioma de ahorro del sitio. */}
+          {novios ? (
+            <div className="flex justify-between font-medium text-menta-texto">
+              <span>Bride &amp; Groom sail free</span>
+              <span className="tabular-nums">
+                −{formatoDinero(2 * (paquete.porPersonaExtra ?? 0))}
               </span>
             </div>
           ) : null}

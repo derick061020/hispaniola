@@ -86,10 +86,37 @@ export type PaqueteEvento = {
  *  cobra mal. Ver correcciones-v2-cliente/TARIFARIO-WEB-ORIGINAL.md.
  *
  *  Devuelve null si el paquete no tiene precio publicado. */
-export function totalPaqueteEvento(p: PaqueteEvento, personas: number): number | null {
+/** [v3 2026-08-06, WEBSITE-EVENTOS pag. 5 + PowerPoint slide 79] A partir de
+ *  14 invitados, en BODAS los novios no pagan.
+ *
+ *  El copy aprobado: «Complimentary Bride & Groom with groups of 14 guests or
+ *  more». Y la reunion fijo como se lee en pantalla: el contador cuenta
+ *  INVITADOS TOTALES —«coges 12 y te dice 12 mas los dos novios»— y son los
+ *  dos ultimos los que salen gratis.
+ *
+ *  ⚠️ EL BORDE: con 13 invitados pagan los 13. El perk arranca en 14, tal como
+ *  lo escribe el cliente, y por eso la UI lo dice — un salto de precio hacia
+ *  ABAJO al pasar de 13 a 14 parece un error si no se explica (con 13 pagan
+ *  13; con 14, tambien 12). Confirmar el borde con el cliente (plan 06, duda 3).
+ *
+ *  Vive aqui y no en la calculadora porque el funnel, el resumen y el widget
+ *  tienen que cobrar lo mismo: una sola funcion, un solo precio. */
+export const NOVIOS_GRATIS_DESDE = 14
+
+export function personasQuePagan(personas: number, slug?: FichaEvento['slug']): number {
+  if (slug !== 'weddings' || personas < NOVIOS_GRATIS_DESDE) return personas
+  return personas - 2
+}
+
+export function totalPaqueteEvento(
+  p: PaqueteEvento,
+  personas: number,
+  slug?: FichaEvento['slug'],
+): number | null {
   if (p.precioBase === null || p.precioBase === undefined) return null
+  const pagan = personasQuePagan(personas, slug)
   const incluidas = p.incluyeHasta ?? 12
-  const extras = Math.max(0, personas - incluidas)
+  const extras = Math.max(0, pagan - incluidas)
   return p.precioBase + extras * (p.porPersonaExtra ?? 0)
 }
 
@@ -109,6 +136,25 @@ export type FichaEvento = {
   chips: string[]
   /** null = no tiene quote sobre la foto principal del mosaico */
   quotePrincipal?: string
+  /** [v3 2026-08-06, WEBSITE-EVENTOS pag. 5 + slide 79] Ventajas exclusivas
+   *  de esta landing, destacadas junto al widget. Hoy solo bodas: los novios
+   *  gratis desde 14 invitados y el brindis de champagne. El cliente los
+   *  escribe con emoji, y el emoji se conserva — es como los presenta y en
+   *  una banda pequeña funciona mejor que un icono de libreria. */
+  perks?: { icono: string; texto: string }[]
+  /** [v3 2026-08-06, PowerPoint slide 80] Banda de barco insignia: foto + 3
+   *  datos duros. Hoy solo corporativo, con el Karaya — el cliente pidio una
+   *  seccion propia para el («catamaran mas grande del Caribe, +200
+   *  personas, cocina a bordo») porque es su argumento MICE y estaba enterrado
+   *  en un parrafo. */
+  barcoInsignia?: {
+    nombre: string
+    titulo: string
+    texto: string
+    datos: string[]
+    foto: string
+    fotoAlt: string
+  }
   /** null = no tiene stats (solo empresas tiene) */
   stats?: StatEvento[]
   /** descripcionLarga en párrafos (mismo shape que FichaTour) */
@@ -215,8 +261,8 @@ const PAQUETES_COMIDA: PaqueteEvento[] = [
     precioBase: 1188,
     incluyeHasta: 12,
     porPersonaExtra: 99,
-    capacidad: '1-12 personas',
-    meta: '4 horas a bordo',
+    capacidad: '1-12 guests',
+    meta: '4 hours on board',
     foto: 'paquete-premium',
     fotoAlt: 'Hispaniola Premium Package — langosta, brochetas y fries en plato blanco',
     items: [
@@ -228,60 +274,71 @@ const PAQUETES_COMIDA: PaqueteEvento[] = [
       { titulo: 'French Fries', texto: '' },
       { titulo: 'Lobster', texto: '' },
     ],
-    extraPrecio: 'US$ 99.00 por persona extra',
+    extraPrecio: 'US$ 99.00 per extra guest',
     destacado: 'premium',
   },
   {
     id: 'package-i',
-    nombre: 'Package #I',
-    nombreCorto: '#I',
+    // [v3 2026-08-06, PowerPoint slide 82: «cambiar estos asteriscos»]
+    // Los «#I/#II/#III» se van. En la reunion quedo claro que NO tienen nombre
+    // real («un circuito o algo asi, esteticamente mas bonito»), asi que los
+    // nombres se DERIVAN del contenido de cada paquete y no se inventan
+    // atributos: Classic es el base (hot dog, 3 h), Signature el intermedio
+    // (suma brochetas de pollo y res) y Grand el mayor de los tres de 3 h
+    // (suma camaron, tempura y fish sticks). Premium se queda como esta: ya
+    // es el ancla y el unico de 4 horas.
+    // ⚠️ PENDIENTE DE OK DEL CLIENTE (plan 06 §4, duda 2). Hasta que conteste
+    // son etiquetas de marketing, no datos — si dice que no, se cambian aqui
+    // y no hay que tocar nada mas.
+    nombre: 'Classic Package',
+    nombreCorto: 'Classic',
     precio: 'US$ 660.00',
     precioBase: 660,
     incluyeHasta: 12,
     porPersonaExtra: 55,
-    capacidad: '1-12 personas',
-    meta: '3 horas a bordo · 2 paradas',
+    capacidad: '1-12 guests',
+    meta: '3 hours on board · 2 stops',
     foto: 'paquete-i',
-    fotoAlt: 'Package #I del party boat',
+    fotoAlt: 'Classic Package del party boat',
     items: [{ titulo: 'Hot Dog', texto: '1p/p' }],
     // Las "Vegetarian Substitutions" del cliente son reemplazos, no items
     // extra — el plato de cada comensal es O el hot dog O el vegetariano.
     // Por ahora el form los lleva como items; si quieres separarlos, dime
     // y abro un sub-campo.
-    extraPrecio: 'US$ 55.00 por persona extra',
+    extraPrecio: 'US$ 55.00 per extra guest',
   },
   {
     id: 'package-ii',
-    nombre: 'Package #II',
-    nombreCorto: '#II',
+    nombre: 'Signature Package',
+    nombreCorto: 'Signature',
     precio: 'US$ 780.00',
     precioBase: 780,
     incluyeHasta: 12,
     porPersonaExtra: 65,
-    capacidad: '1-12 personas',
-    meta: '3 horas a bordo · 2 paradas',
+    capacidad: '1-12 guests',
+    meta: '3 hours on board · 2 stops',
     foto: 'paquete-ii',
-    fotoAlt: 'Package #II del party boat',
+    fotoAlt: 'Signature Package del party boat',
     items: [
       { titulo: 'Hot Dog', texto: '1p/p' },
       { titulo: 'Chicken Skewer', texto: '1p/p' },
       { titulo: 'Beef Skewer', texto: '1p/p' },
       { titulo: 'French Fries', texto: '' },
     ],
-    extraPrecio: 'US$ 65.00 por persona extra',
+    extraPrecio: 'US$ 65.00 per extra guest',
   },
   {
     id: 'package-iii',
-    nombre: 'Package #III',
-    nombreCorto: '#III',
+    nombre: 'Grand Package',
+    nombreCorto: 'Grand',
     precio: 'US$ 900.00',
     precioBase: 900,
     incluyeHasta: 12,
     porPersonaExtra: 75,
-    capacidad: '1-12 personas',
-    meta: '3 horas a bordo · 2 paradas',
+    capacidad: '1-12 guests',
+    meta: '3 hours on board · 2 stops',
     foto: 'paquete-iii',
-    fotoAlt: 'Package #III del party boat',
+    fotoAlt: 'Grand Package del party boat',
     items: [
       { titulo: 'Chicken Skewer', texto: '1p/p' },
       { titulo: 'Beef Skewer', texto: '1p/p' },
@@ -290,7 +347,7 @@ const PAQUETES_COMIDA: PaqueteEvento[] = [
       { titulo: 'Fish Sticks', texto: '' },
       { titulo: 'French Fries', texto: '' },
     ],
-    extraPrecio: 'US$ 75.00 por persona extra',
+    extraPrecio: 'US$ 75.00 per extra guest',
   },
 ]
 
@@ -313,20 +370,26 @@ const NOTA_PAQUETES =
 
 const PARTY_BOAT: FichaEvento = {
   slug: 'party-boat',
-  nombre: 'Eventos y party boat',
-  eyebrow: 'Eventos privados a bordo',
-  titulo: 'Tu evento en el Caribe, a bordo',
-  sub: 'Catamarán privado en Punta Cana — Bávaro · 10 a 120 personas · comida hecha a bordo y barra libre.',
-  // Mismo lenguaje que los chips de ficha: meta del producto (no
-  // reassurance, eso lo lleva la home). 3 chips: capacidad, duración
-  // típica, "ruta a tu medida" (porque el party boat no tiene ruta fija).
-  chips: ['10 a 120 personas', 'Ruta a tu medida', 'WiFi a bordo'],
-  // Traducido del original en inglés de la web del cliente (auditoría
-  // responsive 2026-07-17: la sección quedaba en inglés sobre una web con
-  // default ES). Mismos hechos y promesas, sin añadir ni quitar nada.
+  nombre: 'Events & Party Boats',
+  // [v3 2026-08-06, WEBSITE-EVENTOS pags. 1-2] Titulo, subtitulo y parrafos
+  // APROBADOS, literales. El cliente da un titulo de dos pisos —«Private
+  // Events & Party Boats» / «Celebrate Life's Best Moments at Sea»— asi que el
+  // primero va de eyebrow y el segundo de H1: es como lo escribio, y el
+  // eyebrow ya existia en esta plantilla.
+  eyebrow: 'Private Events & Party Boats',
+  titulo: "Celebrate Life's Best Moments at Sea",
+  sub: 'Some celebrations deserve more than an ordinary venue. They deserve an unforgettable day on the Caribbean Sea.',
+  chips: ['10 to 120 guests', 'Your own route', 'Wi-Fi on board'],
+  // Los 5 parrafos APROBADOS sustituyen a los 2 que habia (traduccion nuestra
+  // del ingles de su web vieja). No es el mismo texto en otro idioma: el nuevo
+  // enumera las ocasiones una a una, describe el dia entero y cierra con un
+  // compromiso de servicio.
   descripcionLarga: [
-    '¿Celebras una ocasión especial? Sea cual sea tu evento, tenemos el party boat perfecto para ti. Lo más bonito no tiene que ver con el dinero, sino con los recuerdos y los momentos — si no los celebras, se te pueden pasar de largo. Si quieres celebrar algo especial, sea lo que sea, en Hispaniola nos aseguramos de que se cumplan todos tus deseos.',
-    'Nuestro equipo, con años de experiencia, se compromete a cubrir tus necesidades para que crees recuerdos que duren toda la vida. Tenemos catamaranes de distintos tamaños para cualquier grupo. No dudes en preguntarnos cómo convertimos un evento en un recuerdo para siempre.',
+    "Whether you're planning a birthday, wedding, anniversary, family reunion, corporate event, bachelor or bachelorette party, graduation, or simply gathering your favorite people together, we'll help you create memories that will last a lifetime.",
+    'At Hispaniola Aquatic Adventures, every private charter is designed around you. Our fleet of catamarans can accommodate groups of all sizes, and our experienced team will take care of every detail so you can relax and enjoy the celebration.',
+    'Spend the day cruising the beautiful coastline of Punta Cana, snorkeling, visiting a secluded beach and the famous natural pool, enjoying freshly prepared food, premium drinks, great music, and plenty of time to celebrate with your family and friends.',
+    "From the moment you contact us until the last guest steps off the boat, we're committed to making your event effortless, personal, and truly unforgettable.",
+    "No matter the occasion, we'll make sure your celebration is one to remember.",
   ],
   // 9 tipos verbatim de la web del cliente + "Otro" para los casos que
   // no encajan. El widget pinta este array como <option>s.
@@ -390,12 +453,10 @@ const PARTY_BOAT: FichaEvento = {
   // landings del cliente publican los mismos 4 a los mismos precios).
   // Lo propio de esta landing es el titulo y el intro.
   paquetes: {
-    titulo: 'Paquetes de comida',
-    // El intro dice para QUÉ son en esta ocasión; lo que tienen en común y
-    // en qué se diferencian lo dice la línea de instrucción del propio
-    // bloque (paquetes-evento.tsx), que es la misma para las dos landings.
-    // Antes se decía dos veces seguidas.
-    intro: 'El party boat se reserva con uno de estos 4 paquetes de comida.',
+    titulo: 'Party boat packages',
+    // [v3 2026-08-06, WEBSITE-EVENTOS pag. 2] Intro APROBADA, literal.
+    intro:
+      'Choose from one of our four all-inclusive party boat packages. Each package includes the full onboard experience listed in What’s Included above. The only differences are the menu, tour duration, and price. All meals are freshly prepared and served buffet style on board, giving your guests the freedom to enjoy a delicious meal while taking in the beautiful surroundings. Simply choose the package that best fits your celebration, and your total price will be calculated automatically based on the size of your group.',
     items: PAQUETES_COMIDA,
     nota: NOTA_PAQUETES,
   },
@@ -448,21 +509,29 @@ const PARTY_BOAT: FichaEvento = {
 
 const BODAS: FichaEvento = {
   slug: 'weddings',
-  nombre: 'Bodas',
-  eyebrow: 'Bodas, pre-boda y post-boda',
-  titulo: 'Vuestra boda, en el mar',
-  sub: 'Bodas y pre-post wedding celebrations en catamarán privado · Punta Cana – Bavaro.',
-  chips: ['Hasta 120 invitados', 'Hasta 6 horas', 'Coordinadora dedicada'],
+  nombre: 'Weddings',
+  // [v3 2026-08-06, WEBSITE-EVENTOS pags. 5-7] Copy APROBADO.
+  eyebrow: 'Pre/post wedding celebrations',
+  titulo: 'Wedding Celebrations at Sea',
+  sub: 'Private catamaran weddings and pre/post wedding celebrations · Punta Cana – Bávaro.',
+  chips: ['Up to 120 guests', 'Up to 6 hours', 'Dedicated coordinator'],
   // Slogan de la web del cliente. Va como quote sobre la foto del
   // mosaico — mismo lenguaje de quote destacada que la ficha de tour.
   quotePrincipal:
     '“May your Anchor be tight, your cork be loose, your rum be spiced, and your compass be true.”',
-  // Traducido del original en inglés de la web del cliente (auditoría
-  // responsive 2026-07-17: la sección quedaba en inglés sobre una web con
-  // default ES). Mismos hechos y promesas, sin añadir ni quitar nada.
   descripcionLarga: [
-    '¡Honra tu amor a bordo de nuestro catamarán! Una forma perfecta de celebrar antes o después de tu boda: agradece a tus invitados bailando, brindando, haciendo esnórquel entre peces de colores y comiendo un delicioso marisco mientras navegan la hermosa costa de Bávaro – Punta Cana.',
-    'En Hispaniola Aquatic Adventures nos dedicamos a la satisfacción de todos nuestros clientes. Sabemos lo importante que es una boda y creemos que la forma perfecta de celebrarla es perder de vista la orilla. Recomendamos nuestro tour de 4 horas para la mejor experiencia posible — más tiempo para disfrutar de la compañía del otro y más comida. Nuestro paquete de mariscos de 4 horas es la opción #1 de nuestros clientes para celebraciones de boda: una hora extra de recuerdos inolvidables y marisco recién hecho a la parrilla. ¡El valor de tu dinero, garantizado!',
+    'Your wedding may last one day, but the memories should last a lifetime. Treat your family and friends to an unforgettable celebration aboard a private catamaran, where stunning Caribbean views, exceptional food, refreshing drinks, and great music come together for an experience unlike any other.',
+    "Whether you're celebrating before or after the big day, a private charter is the perfect way to thank your guests for sharing such an important milestone with you. Relax, celebrate, and spend quality time with the people you love while we take care of every detail.",
+    'For the ultimate experience, we highly recommend our 4-hour Private Charter, giving you more time to enjoy freshly prepared buffet-style dining, swim in the famous natural pool, snorkel, dance, and celebrate together.',
+    'Celebrate your love. Thank your guests. Create memories that will last forever.',
+  ],
+  // [v3 2026-08-06, WEBSITE-EVENTOS pag. 5 + PowerPoint slide 79] Los dos
+  // perks APROBADOS. El cliente los escribe con sus emojis y pide (slide 79)
+  // que el mensaje vaya DESTACADO junto al widget, no perdido en un parrafo:
+  // es la razon por la que un novio elige este barco y no otro.
+  perks: [
+    { icono: '🥂', texto: 'Complimentary Bride & Groom with groups of 14 guests or more' },
+    { icono: '🍾', texto: 'Complimentary Champagne Toast for all wedding groups' },
   ],
   // En bodas, el tipo es SIEMPRE "Boda" — la landing misma lo
   // predefinine. El widget no pregunta tipo: lo muestra como un chip de
@@ -528,9 +597,12 @@ const BODAS: FichaEvento = {
   // pages/evento.tsx — las dos piezas se pintan solas cuando el evento
   // tiene `paquetes`.
   paquetes: {
-    titulo: 'Paquetes de comida',
+    titulo: 'Wedding Packages',
+    // [v3 2026-08-06, WEBSITE-EVENTOS pag. 7] Intro APROBADA, literal —
+    // incluye la regla de los novios gratis y el brindis, repetidos aqui a
+    // proposito por el cliente (ya estan arriba en los perks).
     intro:
-      'La comida de la boda sale de estos 4 paquetes — el mismo tarifario que el resto de eventos a bordo, con el brindis de champagne incluido.',
+      'Choose from one of our four all-inclusive wedding packages, each designed to give you and your guests an unforgettable celebration at sea. Every package includes the complete onboard experience listed in What’s Included above. The only differences are the menu, tour duration, and price, so you can select the option that best suits your wedding celebration and budget. As a special thank you for celebrating with us, the Bride & Groom sail complimentary with groups of 14 guests or more, and every wedding package includes a complimentary champagne toast to celebrate your special day. Simply choose your preferred package, and your total price will be calculated automatically based on the number of guests in your group.',
     items: PAQUETES_COMIDA,
     nota: NOTA_PAQUETES,
   },
@@ -618,18 +690,53 @@ const BODAS: FichaEvento = {
 
 const EMPRESAS: FichaEvento = {
   slug: 'corporate',
-  nombre: 'Empresas y MICE',
-  eyebrow: 'MICE · Grupos corporativos',
-  titulo: 'Eventos corporativos a bordo',
-  sub: 'Meetings · Incentives · Conferences · Exhibitions · Punta Cana – Bavaro.',
-  chips: ['Hasta 120 pax por barco', 'Multi-barco', 'Factura fiscal'],
+  nombre: 'Corporate & MICE',
+  eyebrow: 'MICE · Corporate groups',
+  titulo: 'Corporate Events & MICE',
+  sub: 'Meetings · Incentives · Conferences · Exhibitions · Punta Cana – Bávaro.',
+  chips: ['Up to 300 guests on Karaya', 'Multi-boat', 'Tax invoice'],
+  // [v3 2026-08-06, PowerPoint slide 80] «Agregar seccion con este barco:
+  // catamaran mas grande del Caribe, +200 personas, cocina a bordo».
+  // El superlativo va tal cual porque el cliente lo escribe DOS veces (la
+  // slide y el copy aprobado de la pag. 3), pero es un claim fuerte y sin
+  // fuente: anotado para la entrega.
+  // Las cifras salen del copy APROBADO (1.000 m², 300 huespedes), que gana
+  // sobre el «+200» de la slide — «up to 300» lo contiene — y sobre el «400»
+  // de su web vieja.
+  // ⚠️ [placeholder-v3] La foto es la del Karaya que ya vive en la flota. Las
+  // buenas estan en el material de Trafic Experience segun la reunion:
+  // pedidas (indice de planes, peticion 5).
+  barcoInsignia: {
+    nombre: 'Karaya Punta Cana by Hispaniola',
+    titulo: 'Our flagship MICE venue',
+    texto:
+      'The largest event catamaran in the Caribbean, and the setting for conferences, gala dinners, award ceremonies and cocktail receptions on the water.',
+    datos: ['Nearly 1,000 m² of event space', 'Up to 300 guests', 'Full kitchen on board'],
+    foto: 'flota-karaya',
+    fotoAlt: 'Karaya, el catamarán de eventos de dos niveles, navegando',
+  },
   // MICE no tiene quote de review de 5★ (es institucional, no consumer).
   // Traducido del original en inglés de la web del cliente (auditoría
   // responsive 2026-07-17: la sección quedaba en inglés sobre una web con
   // default ES). Mismos hechos y promesas, sin añadir ni quitar nada.
+  // [v3 2026-08-06, WEBSITE-EVENTOS pags. 3-4] Los 4 parrafos APROBADOS.
+  //
+  // ⚡ AQUI SE RESUELVE MEDIA PETICION 5 DEL INDICE. El plan daba por «posible
+  // ruido de transcripcion» que Miguel llamara «Eclipse» al barco de la slide
+  // 80 — y no lo era: la descripcion que habia AQUI, portada de su web vieja,
+  // decia literalmente «Eclipse by Hispaniola es tu sede MICE de referencia:
+  // el barco mas grande de Punta Cana (~1.000 m²)… capacidad maxima para 400
+  // personas». Eclipse es el nombre ANTIGUO del mismo barco y el copy aprobado
+  // lo renombra a «Karaya Punta Cana by Hispaniola».
+  // Quedan tres cifras del mismo barco en tres sitios: 400 (web vieja), 300
+  // (copy aprobado) y «hasta 350» en la ficha de flota (data/nosotros.ts).
+  // Manda el copy aprobado: 300. Las otras dos se unifican en F5, que es donde
+  // se toca la flota.
   descripcionLarga: [
-    'El segmento MICE lleva años siendo una parte muy importante de la industria de viajes y turismo.',
-    'Sea cual sea el tipo de evento que tengas en mente, te ayudamos a organizarlo perfecto. Hispaniola cuenta con una flota amplia y tendrá el barco y el estilo de evento ideal para cada ocasión. Eclipse by Hispaniola es tu sede MICE de referencia: el barco más grande de Punta Cana (~1.000 m²), un catamarán de dos niveles con capacidad máxima para 400 personas. Montamos desde catering, buffets y cócteles hasta bandas en vivo, actividades y mucho más, directamente sobre el agua. Deja que nuestro equipo te ayude a organizar el mejor evento corporativo.',
+    'From executive retreats and incentive trips to conferences, product launches, team building events, and company celebrations, Hispaniola Aquatic Adventures transforms ordinary corporate gatherings into unforgettable experiences on the Caribbean Sea.',
+    "Our flagship MICE venue, Karaya Punta Cana by Hispaniola, is one of Punta Cana's premier event boats. With nearly 1,000 m² of event space and a capacity of up to 300 guests, it's the perfect setting for conferences, networking events, award ceremonies, gala dinners, cocktail receptions, live entertainment, and private celebrations.",
+    'From freshly prepared buffet-style dining and premium open bars to live music, DJs, entertainment, branding opportunities, and seamless event coordination, we provide everything you need to create a truly memorable experience.',
+    'When business meets paradise, extraordinary events happen. Let us help you create one your guests will never forget.',
   ],
   tiposEvento: [
     'Incentivo',
