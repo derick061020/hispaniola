@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import { Plus, UtensilsCrossed } from 'lucide-react'
+import { Plus, Users, UtensilsCrossed } from 'lucide-react'
 import { GaleriaLightbox } from '@/components/tour/galeria-lightbox'
 import { useOrigenExpansion } from '@/lib/use-expansion-flip'
 import { formatoDinero } from '@/data/home'
-import type { MenuCharterTour } from '@/data/tours'
+import type { CartaCharter as CartaCharterDatos } from '@/data/tours'
 
 // LA CARTA DEL CHARTER — «El menú a medida».
 //
@@ -124,13 +124,16 @@ function PlatoCarta({
   )
 }
 
-export function CartaCharter({ menu, etiqueta }: { menu: MenuCharterTour; etiqueta: string }) {
+export function CartaCharter({ carta, etiqueta }: { carta: CartaCharterDatos; etiqueta: string }) {
   const [lightbox, setLightbox] = useState<number | null>(null)
   const origen = useOrigenExpansion()
 
-  // Los 4 platos con foto propia, y aparte el grupo de brochetas — que es UNA
+  // Los platos con foto propia, y aparte el grupo de brochetas — que es UNA
   // celda aunque sean tres platos. El `!p.brocheta` del primer filtro es lo que
   // evita que la foto provisional del grupo se cuele además como plato suelto.
+  // [v3] Recibe UNA carta (4 h o 3 h), no el menú entero: desde las slides
+  // 73-74 el charter tiene dos y la pestaña activa decide cuál se pinta.
+  const menu = carta
   const conFoto = menu.platos.filter((p) => p.foto && !p.brocheta)
   const brochetas = menu.platos.filter((p) => p.brocheta)
   const fotoBrochetas = brochetas.find((b) => b.foto)?.foto
@@ -161,9 +164,14 @@ export function CartaCharter({ menu, etiqueta }: { menu: MenuCharterTour; etique
             plato para que la retícula no tenga una celda de otra especie. */}
         {brochetas.length > 0 && fotoBrochetas ? (
           <PlatoCarta
-            plato={{ nombre: 'A la parrilla, en brocheta', foto: fotoBrochetas }}
-            titulo="A la parrilla, en brocheta"
-            pie={brochetas.map((b) => b.nombre.replace(/^Brocheta de /, '')).join(' · ')}
+            // [v3] El rotulo del grupo depende de la carta: en la de 4 h las
+            // brochetas ya no estan (se mudaron a la de 3 h), y en el Taste of
+            // Hispaniola SON la carta, asi que el titulo es el suyo.
+            plato={{ nombre: 'Grilled skewers', foto: fotoBrochetas }}
+            titulo="Grilled skewers"
+            pie={brochetas
+              .map((b) => b.nombre.replace(/^Brocheta de /, '').replace(/ skewer$/i, ''))
+              .join(' · ')}
             onAbrir={(el) => {
               origen.abrirDesde(el)
               setLightbox(conFoto.length)
@@ -180,6 +188,10 @@ export function CartaCharter({ menu, etiqueta }: { menu: MenuCharterTour; etique
             390 se salía por abajo de su propia card (la retícula tiene alto
             fijo). Con las dos, el texto se corta limpio pase lo que pase con
             el ancho — nunca se derrama sobre el banner de la langosta. */}
+        {/* [v3] Solo en la carta de 4 h: es la que se elige plato a plato.
+            En el Taste of Hispaniola no hay nada que coordinar antes de
+            zarpar, y la celda dejaria de ser mecanica para ser relleno. */}
+        {carta.id === '4h' ? (
         <div className="flex flex-col justify-between overflow-hidden rounded-card bg-aqua-tint p-3 sm:p-4">
           <span
             aria-hidden="true"
@@ -189,17 +201,28 @@ export function CartaCharter({ menu, etiqueta }: { menu: MenuCharterTour; etique
           </span>
           <span className="mt-3">
             <span className="block font-display text-sm font-semibold text-navy sm:text-base">
-              Uno por persona
+              One per guest
             </span>
             {/* SIN `block` junto a `line-clamp-3`: el clamp necesita
                 `display:-webkit-box` y el `block` de Tailwind se lo pisaba —
                 el recorte no se aplicaba y el párrafo se salía igual. */}
             <span className="mt-0.5 line-clamp-3 text-xs text-aqua-dark">
-              Se coordinan antes de zarpar y se cocinan a bordo.
+              Chosen before departure and cooked on board.
             </span>
           </span>
         </div>
+        ) : null}
       </div>
+
+      {/* [v3, slide 73] La regla de las 21 personas: el mismo menu, otro
+          servicio. Va aqui, pegada a la carta que afecta, y no en el lead de
+          la seccion — es una condicion de la carta, no del producto. */}
+      {carta.nota ? (
+        <p className="mt-2.5 rounded-card bg-papel-hueso px-4 py-3 text-sm text-navy-sub">
+          <Users className="mr-2 inline size-4 -translate-y-px text-aqua-dark" aria-hidden="true" />
+          {carta.nota}
+        </p>
+      ) : null}
 
       {/* EL UPSELL, EN LÁMINA DE ORO. Antes era una card gris idéntica a la
           del buffet de Saona (el único extra de pago del menú se leía como una
@@ -250,7 +273,7 @@ export function CartaCharter({ menu, etiqueta }: { menu: MenuCharterTour; etique
             </span>
             <div className="min-w-0">
               <p className="font-display text-base font-semibold text-premium-fondo">
-                Súbele langosta premium
+                Add premium lobster
               </p>
               {menu.addOn.descripcion ? (
                 <p className="mt-0.5 text-sm text-premium-fondo/70">{menu.addOn.descripcion}</p>

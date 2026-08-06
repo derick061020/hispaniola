@@ -1,9 +1,10 @@
+import { useEffect, useState } from 'react'
 import { Check, UtensilsCrossed, Plus } from 'lucide-react'
 import { TituloSeccion } from '@/components/tour/titulo-seccion'
 import { BLOQUE_FICHA } from '@/components/tour/bloque-ficha'
 import { CartaCharter } from '@/components/tour/carta-charter'
 import { formatoDinero, type Tour } from '@/data/home'
-import type { FichaTour, PlatoBuffet, PlatoMenu } from '@/data/tours'
+import type { CartaCharter as CartaCharterDatos, FichaTour, PlatoBuffet, PlatoMenu } from '@/data/tours'
 
 // «Tu menú, a tu elección» (wireframe A4) — el diferenciador estrella: fotos
 // reales de los platos, un activo que ningún competidor tiene. Solo en
@@ -270,7 +271,100 @@ function MenuBuffet({ platos, addOn }: { platos: PlatoBuffet[]; addOn?: { nombre
 // aquí y se mudaron a «Antes de reservar» (antes-de-reservar.tsx), donde el
 // slide 2 del cliente vive entero y en un solo bloque.
 
-export function MenuTour({ tour, ficha }: { tour: Tour; ficha: FichaTour }) {
+// [v3 2026-08-06, PowerPoint slides 73-74 + reunion 07-31] LAS DOS CARTAS DEL
+// CHARTER. El cliente parte el menu por DURACION del barco: los de 4 h navegan
+// con la cocina flotante (carta de platos, uno por persona) y los de 3 h con el
+// Taste of Hispaniola (brochetas). Es el cambio mas gordo de su PowerPoint.
+//
+// La pestana activa se SINCRONIZA con el barco elegido en el widget, que es el
+// dato que de verdad decide lo que vas a comer: si eliges GrandMa (3 h), la
+// carta que se abre es la suya. Pero las dos siguen siendo navegables a mano —
+// quien todavia no ha elegido barco tiene que poder comparar, y la maqueta del
+// cliente las dibuja como dos bloques.
+//
+// `useEffect` y no un `key` remontando: al cambiar de barco queremos MOVER la
+// pestana, no destruir el estado del lightbox de la carta.
+function CartasCharter({
+  menu,
+  ficha,
+  variante,
+  etiqueta,
+}: {
+  menu: NonNullable<FichaTour['menuCharter']>
+  ficha: FichaTour
+  variante?: string | null
+  etiqueta: string
+}) {
+  // La duracion del barco elegido -> el id de carta que le toca.
+  const duracionBarco = ficha.subVariantes?.find((sv) => sv.id === variante)?.duracion
+  const idSegunBarco: CartaCharterDatos['id'] | null = duracionBarco?.startsWith('3') ? '3h' : duracionBarco ? '4h' : null
+
+  const [activa, setActiva] = useState<CartaCharterDatos['id']>(idSegunBarco ?? menu.cartas[0].id)
+  useEffect(() => {
+    if (idSegunBarco) setActiva(idSegunBarco)
+  }, [idSegunBarco])
+
+  const carta = menu.cartas.find((c) => c.id === activa) ?? menu.cartas[0]
+
+  return (
+    <div>
+      {/* Pestanas. Tablist de verdad (roles + aria-selected) porque son dos
+          vistas del mismo bloque, no dos enlaces. */}
+      <div role="tablist" aria-label="Menús del charter" className="flex flex-wrap gap-2">
+        {menu.cartas.map((c) => {
+          const sel = c.id === carta.id
+          return (
+            <button
+              key={c.id}
+              type="button"
+              role="tab"
+              aria-selected={sel}
+              onClick={() => setActiva(c.id)}
+              className={`inline-flex items-center gap-2 rounded-chip px-4 py-2 text-sm font-semibold transition-colors ${
+                sel
+                  ? 'bg-navy text-white'
+                  : 'bg-papel-hueso text-navy-sub ring-1 ring-linea hover:text-navy'
+              }`}
+            >
+              {c.pestana}
+              {c.badge ? (
+                <span
+                  className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide ${
+                    sel ? 'bg-white/20 text-white' : 'bg-aqua-tint text-aqua-dark'
+                  }`}
+                >
+                  {c.badge}
+                </span>
+              ) : null}
+            </button>
+          )
+        })}
+      </div>
+
+      <div className="mt-4">
+        <p className="font-display text-h3 font-semibold text-navy">{carta.titulo}</p>
+        {carta.texto ? <p className="mt-2 max-w-2xl text-sm text-navy-sub">{carta.texto}</p> : null}
+        <div className="mt-4">
+          <CartaCharter carta={carta} etiqueta={etiqueta} />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export function MenuTour({
+  tour,
+  ficha,
+  variante,
+}: {
+  tour: Tour
+  ficha: FichaTour
+  /** [v3 2026-08-06] El barco elegido en el widget. Decide que carta del
+   *  charter se abre por defecto (slides 73-74): los barcos de 4 h abren la
+   *  carta de platos y los de 3 h el Taste of Hispaniola. Vive en tour.tsx
+   *  porque el widget y esta seccion tienen que mirar el MISMO barco. */
+  variante?: string | null
+}) {
   // v3 (2026-07-17, Saona): si la ficha tiene menuBuffet, pintamos formato
   // buffet + add-on en vez del comparador Light/Premium clásico. Saona no
   // se vende por menú, se vende por BOTE (subVariantes en el widget) — el
@@ -280,6 +374,15 @@ export function MenuTour({ tour, ficha }: { tour: Tour; ficha: FichaTour }) {
   // pintamos el menú transversal (7 platos + 1 add-on). Misma idea que el
   // buffet de Saona — formato distinto al Light/Premium clásico.
   const esCharter = ficha.menuCharter !== undefined
+  // ¿Alguna de las cartas/menus de esta ficha sirve langosta? Decide la nota de
+  // veda del pie. Se DERIVA de los datos en vez de escribirse por ficha.
+  const hayLangosta =
+    [...ficha.menuPremium, ...ficha.menuLight].some((p) => /langosta|lobster/i.test(`${p.nombre} ${p.desc ?? ''}`)) ||
+    (ficha.menuCharter?.cartas.some(
+      (c) => c.addOn || c.platos.some((p) => /langosta|lobster/i.test(`${p.nombre} ${p.desc ?? ''}`)),
+    ) ??
+      false) ||
+    (ficha.menuBuffet?.platos.some((p) => /langosta|lobster/i.test(p.nombre)) ?? false)
 
   return (
     <section id="ancla-menu" className={`${BLOQUE_FICHA} scroll-mt-sticky-top`}>
@@ -290,13 +393,13 @@ export function MenuTour({ tour, ficha }: { tour: Tour; ficha: FichaTour }) {
           no dos en data. Los otros dos formatos (buffet de Saona, menú a
           medida del charter) siguen en español hasta su commit de F3. */}
       <TituloSeccion>
-        {esBuffet ? 'El menú del día' : esCharter ? 'El menú a medida' : 'Your table comes with an ocean view'}
+        {esBuffet ? 'El menú del día' : esCharter ? 'Your menu, your way' : 'Your table comes with an ocean view'}
       </TituloSeccion>
       <p className="mt-3 max-w-2xl text-sm text-navy-sub">
         {esBuffet
           ? 'Buffet típico dominicano servido en la propia isla, con parada en la piscina natural antes y después.'
           : esCharter
-            ? 'Cada persona elige su plato al reservar, recién hecho a bordo — no buffet recalentado.'
+            ? 'What we cook depends on how long you sail: 4-hour charters sail with the Floating Kitchen, 3-hour charters with our Taste of Hispaniola Menu.'
             : 'Select your favorite dish when you book. Our chefs prepare every meal fresh on board, turning lunch into one of the highlights of your day.'}
       </p>
 
@@ -305,15 +408,13 @@ export function MenuTour({ tour, ficha }: { tour: Tour; ficha: FichaTour }) {
           <MenuBuffet platos={ficha.menuBuffet!.platos} addOn={ficha.menuBuffet!.addOn} />
         </div>
       ) : ficha.menuCharter ? (
-        // v3 (2026-07-17, charter completo): los 7 platos transversales + 1
-        // add-on de langosta premium. El menú es el mismo en los 4 botes — lo
-        // que cambia es el BARCO (selector en el widget, tabla de precios por
-        // pax). [v2 2026-07-28] Ya no es una lista con checks envuelta en una
-        // caja gris con su propio h3: la carta ocupa el bloque entero, y el
-        // título de la sección (arriba) es el único que hay. Ese h3 repetía
-        // «El menú a medida» dos veces con 40px de diferencia.
+        // [v3 2026-08-06, slides 73-74] Dos cartas, no una. La activa la
+        // decide el BARCO elegido en el widget —es el dato que de verdad
+        // manda—, pero las dos son navegables a mano: el visitante que aun no
+        // ha elegido barco tiene que poder ver las dos, y la maqueta del
+        // cliente las presenta como bloques separados.
         <div className="mt-4">
-          <CartaCharter menu={ficha.menuCharter} etiqueta={tour.nombre} />
+          <CartasCharter menu={ficha.menuCharter} ficha={ficha} variante={variante} etiqueta={tour.nombre} />
         </div>
       ) : (
         // v3 (2026-07-17, pedido de Samuel): se QUITA el comparador de
@@ -365,9 +466,15 @@ export function MenuTour({ tour, ficha }: { tour: Tour; ficha: FichaTour }) {
         </div>
       )}
 
-      <p className="mt-3 text-xs text-navy-soft">
-        * Langosta se sustituye por langostino salvaje de marzo a junio (veda).
-      </p>
+      {/* [v3 2026-08-06] La nota de veda solo donde hay langosta que sustituir.
+          Con el menu del charter partido en dos (slides 73-74), esta linea
+          aparecia tambien bajo el Taste of Hispaniola, que es de brochetas —
+          una advertencia sobre un plato que esa carta no sirve. */}
+      {hayLangosta ? (
+        <p className="mt-3 text-xs text-navy-soft">
+          * Lobster is replaced with wild jumbo shrimp from March to June (closed season).
+        </p>
+      ) : null}
     </section>
   )
 }

@@ -101,23 +101,42 @@ export type MenuBuffetTour = {
  *  7 platos + un card de add-on. El menú NO cambia al cambiar de bote
  *  — es transversal a los 4 botes (Maite, GrandMa, Santa Maria, Forever
  *  Teresa). Charter es el único caso actual. */
-export type MenuCharterTour = {
-  /** [v2 2026-07-28] `foto` y `brocheta` son nuevos: la carta del charter dejó
-   *  de ser una lista con checks y pasa a ser una rejilla de fotos reales
-   *  (tour/carta-charter.tsx). Las 4 fotos son las MISMAS que ya usa el menú
-   *  del semi-privado —mismo operador, misma cocina flotante, mismos platos con
-   *  la misma descripción—, así que no se está ilustrando un plato con la foto
-   *  de otro. Las 3 brochetas no tienen foto en la web del cliente: se agrupan
-   *  en una celda propia en vez de fingir una imagen que no existe. */
+/** [v3 2026-08-06, PowerPoint slides 73-74 + reunion 07-31 19:21-22:15] Una
+ *  de las dos cartas del charter. Hasta la v3 habia UNA sola con los 7 platos
+ *  mezclados; el cliente las separa por DURACION del barco, que es lo que de
+ *  verdad decide que se puede cocinar a bordo. */
+export type CartaCharter = {
+  /** Duracion a la que pertenece. La pestana activa se elige con ella a
+   *  partir del barco seleccionado en el widget. */
+  id: '4h' | '3h'
+  pestana: string
+  titulo: string
+  texto?: string
+  /** Regla de aforo que cambia el SERVICIO sin cambiar de carta (el «de 21
+   *  personas en adelante, buffet de pinchos» del menu de 4 h). Va como aviso,
+   *  no como segunda carta: la del buffet no existe todavia por escrito y no
+   *  se inventan platos. */
+  nota?: string
+  /** Sello sobre el titulo. Hoy solo el «New» del Taste of Hispaniola, que es
+   *  como lo presenta el cliente en su maqueta. */
+  badge?: string
   platos: { nombre: string; desc?: string; foto?: string; brocheta?: boolean }[]
   addOn?: { nombre: string; precio: number; descripcion?: string }
-  /** [v2 2026-07-28, plan 01 §7 — slide 2] Cómo se cocina a bordo, portado de
-   *  la ficha real del charter («falta eso en charter privado»). Es la única
-   *  de las 4 piezas del slide que no estaba en ninguna parte del sitio nuevo,
-   *  y contiene el diferencial más fuerte que nadie más publica: la comida se
-   *  asa POR SEPARADO para evitar la contaminación cruzada.
+}
+
+export type MenuCharterTour = {
+  /** [v3] Las dos cartas (4 h y 3 h). `foto` y `brocheta` en los platos son de
+   *  la v2: la carta del charter dejo de ser una lista con checks y paso a ser
+   *  una rejilla de fotos reales (tour/carta-charter.tsx). Las fotos son las
+   *  MISMAS que ya usa el menu Premium del semi-privado —mismo operador, misma
+   *  cocina flotante, mismos platos con la misma descripcion—, asi que no se
+   *  esta ilustrando un plato con la foto de otro. */
+  cartas: CartaCharter[]
+  /** [v2 2026-07-28, plan 01 §7 — slide 2] Como se cocina a bordo, portado de
+   *  la ficha real del charter. [v3 2026-08-06] Son los 5 claims APROBADOS
+   *  (WEBSITE-TOURS pags. 18-19).
    *  `id` en vez de icono: este archivo no importa React ni lucide — el icono
-   *  se mapea en menu-tour.tsx (presentación, no contenido). */
+   *  se mapea en antes-de-reservar.tsx (presentacion, no contenido). */
   cocina?: { id: string; titulo: string; texto: string }[]
 }
 
@@ -303,6 +322,24 @@ const RECOMENDACIONES_V3 = [
   'Cash in US dollars is the easiest way to pay for tips and any on-board add-on. [placeholder-v3]',
 ]
 
+// [v3 2026-08-06] Los 7 platos del menu Premium de la casa. Estaban escritos
+// dos veces (semi-privado y snorkel) y ahora los pide tambien la carta de 4 h
+// del charter: es LA MISMA cocina flotante sirviendo lo mismo, asi que se
+// escriben una vez. Snorkel le anade encima su Kid's Meal.
+// [v3 2026-08-06] Nombres en ingles. No es una traduccion nueva: son los que
+// usa el copy aprobado del charter para describir esta misma carta («seafood,
+// certified Angus beef, Surf & Turf, vegetarian dishes»). Los 7 los sirven las
+// tres fichas, asi que se traducen una vez.
+const MENU_PREMIUM_CASA: PlatoMenu[] = [
+  { nombre: 'Seafood', desc: 'Lobster, octopus, shrimp', foto: 'plato-mariscos' },
+  { nombre: 'Meat', desc: 'Certified Angus beef', foto: 'plato-carne' },
+  { nombre: 'Surf & Turf', desc: 'Lobster + Angus beef', foto: 'plato-surf-turf' },
+  { nombre: 'Vegetarian', desc: 'Zucchini ceviche', foto: 'plato-vegetariano' },
+  { nombre: 'Vegetarian lasagna', foto: 'plato-lasagna-vegetariana' },
+  { nombre: 'Chicken lasagna', foto: 'plato-lasagna-pollo' },
+  { nombre: 'Seafood cocktail', foto: 'plato-coctel-mariscos' },
+]
+
 export const FICHAS: Record<string, FichaTour> = {
   'semi-private-premium': {
     tituloLargo: 'Semi-Private Premium — adults-only catamaran',
@@ -362,18 +399,10 @@ export const FICHAS: Record<string, FichaTour> = {
     // parrilla. Premium: 7 platos — los 4 con foto real (plato-*) + 3 de solo
     // texto (lasañas y cóctel, sin asset en /fotos).
     menuLight: [
-      { nombre: 'Pechuga de pollo a la parrilla', desc: 'Con papas y vegetales', foto: 'plato-chicken-bodegon' },
-      { nombre: 'Filete de pescado a la parrilla', desc: 'Con papas y vegetales', foto: 'plato-fish-bodegon' },
+      { nombre: 'Grilled chicken breast', desc: 'With potatoes and vegetables', foto: 'plato-chicken-bodegon' },
+      { nombre: 'Grilled fish fillet', desc: 'With potatoes and vegetables', foto: 'plato-fish-bodegon' },
     ],
-    menuPremium: [
-      { nombre: 'Mariscos', desc: 'Langosta, pulpo, camarón', foto: 'plato-mariscos' },
-      { nombre: 'Carne', desc: 'Angus certificado', foto: 'plato-carne' },
-      { nombre: 'Surf & Turf', desc: 'Langosta + Angus', foto: 'plato-surf-turf' },
-      { nombre: 'Vegetariano', desc: 'Ceviche de zucchini', foto: 'plato-vegetariano' },
-      { nombre: 'Lasaña vegetariana', foto: 'plato-lasagna-vegetariana' },
-      { nombre: 'Lasaña con pechuga de pollo', foto: 'plato-lasagna-pollo' },
-      { nombre: 'Cóctel de mariscos', foto: 'plato-coctel-mariscos' },
-    ],
+    menuPremium: MENU_PREMIUM_CASA,
     galeriaCompleta: [
       'galeria-semi-privado-1',
       'galeria-semi-privado-2',
@@ -555,17 +584,11 @@ export const FICHAS: Record<string, FichaTour> = {
     // el usuario entrara con ?paquete=light. Desde el 07-28 ya no es un
     // parche: es la mitad Light del comparador, otra vez.
     menuLight: [
-      { nombre: 'Pechuga de pollo a la parrilla', desc: 'Con papas y vegetales', foto: 'plato-chicken-bodegon' },
-      { nombre: 'Filete de pescado a la parrilla', desc: 'Con papas y vegetales', foto: 'plato-fish-bodegon' },
+      { nombre: 'Grilled chicken breast', desc: 'With potatoes and vegetables', foto: 'plato-chicken-bodegon' },
+      { nombre: 'Grilled fish fillet', desc: 'With potatoes and vegetables', foto: 'plato-fish-bodegon' },
     ],
     menuPremium: [
-      { nombre: 'Mariscos', desc: 'Langosta, pulpo, camarón', foto: 'plato-mariscos' },
-      { nombre: 'Carne', desc: 'Angus certificado', foto: 'plato-carne' },
-      { nombre: 'Surf & Turf', desc: 'Langosta + Angus', foto: 'plato-surf-turf' },
-      { nombre: 'Vegetariano', desc: 'Ceviche de zucchini', foto: 'plato-vegetariano' },
-      { nombre: 'Lasaña vegetariana', foto: 'plato-lasagna-vegetariana' },
-      { nombre: 'Lasaña con pechuga de pollo', foto: 'plato-lasagna-pollo' },
-      { nombre: 'Cóctel de mariscos', foto: 'plato-coctel-mariscos' },
+      ...MENU_PREMIUM_CASA,
       // [v2 2026-07-27] KID'S MEAL — la corrección del slide 1 («falta agregar
       // el menú de niños»), que el cliente puso PRIMERA en su PowerPoint.
       //
@@ -583,7 +606,7 @@ export const FICHAS: Record<string, FichaTour> = {
       // declarado: la redacción está pendiente de que Fernando la confirme.
       {
         nombre: "Kid's Meal",
-        desc: 'Hamburguesa, tiras de pollo, salchicha y papas fritas',
+        desc: 'Burger, chicken strips, sausage and fries',
         foto: 'plato-kids-meal',
         soloNinos: true,
       },
@@ -918,48 +941,67 @@ export const FICHAS: Record<string, FichaTour> = {
     // add-on (lobster premium). Se pinta en MenuTour como un caso
     // nuevo (menuCharter) porque es transversal a las sub-variantes.
     menuCharter: {
-      // [v2 2026-07-28] Dos cambios sobre lo que había:
-      //  · Los nombres pasan al ESPAÑOL. Estaban en inglés («Seafood», «Meat»,
-      //    «Chicken Skewers») porque se portaron crudos del JSON-LD del
-      //    cliente, pero son los MISMOS platos que el menú del semi-privado ya
-      //    publica traducidos («Mariscos», «Carne», «Vegetariano») y con la
-      //    misma descripción. No es una traducción nueva: es usar la que el
-      //    repo ya tenía, en un sitio donde se había colado el original.
-      //  · Se les ata su FOTO real (las 4 que existen). Misma cocina y mismo
-      //    plato que en el semi-privado, así que la foto es del plato que
-      //    dice ser — no es una foto de relleno.
-      platos: [
-        { nombre: 'Surf & Turf', desc: 'Langosta + Angus certificado', foto: 'plato-surf-turf' },
-        { nombre: 'Mariscos', desc: 'Langosta, pulpo, camarón', foto: 'plato-mariscos' },
-        { nombre: 'Carne', desc: 'Angus certificado', foto: 'plato-carne' },
-        { nombre: 'Vegetariano', desc: 'Ceviche de zucchini', foto: 'plato-vegetariano' },
-        // ⚠️ [placeholder-v2] La foto de la celda de brochetas. Samuel la pidió
-        // el 07-28 («dale una foto de menú provisional, usa una de stock de
-        // parrilla»), pero NO es de stock: es `plato-chicken-bodegon`, el
-        // bodegón real de la pechuga a la parrilla que la web del cliente ya
-        // publica en el menú del semi-privado. Real, misma cocina, mismo
-        // encuadre y misma calidad que los otros cuatro platos de la carta —
-        // una foto de banco habría cantado al lado de estos bodegones sobre
-        // blanco, y este proyecto no ilustra con stock.
-        // Sigue siendo PROVISIONAL en un sentido: es pollo a la parrilla, no
-        // una brocheta. Se sustituye en cuanto el cliente haga el shooting de
-        // platos que ya tiene previsto (slide 4).
-        { nombre: 'Brocheta de pollo', brocheta: true, foto: 'plato-chicken-bodegon' },
-        { nombre: 'Brocheta de res', brocheta: true },
-        { nombre: 'Brocheta de camarón', brocheta: true },
+      // [v3 2026-08-06, slides 73-74 + reunion 07-31 19:21-22:15] EL CAMBIO
+      // MAS GORDO DEL POWERPOINT: el menu deja de ser uno solo y se parte por
+      // DURACION del barco, que es lo que decide que se puede cocinar a bordo.
+      // La regla completa la dio Miguel en la reunion y el copy aprobado la
+      // confirma (WEBSITE-TOURS pag. 17):
+      //   · 4 horas -> carta de platos, uno por persona. De 21 personas en
+      //     adelante el MISMO menu se sirve como buffet de pinchos.
+      //   · 3 horas -> Taste of Hispaniola Menu (brochetas), para cualquier
+      //     numero de personas.
+      // ⚠️ La maqueta de la slide 74 rotulaba el menu de 3 h como «Mas de 21
+      // personas», pero la reunion y el copy aprobado dicen que en los de 3
+      // horas es ese para TODOS («en los de tres horas es este», dijo Samuel
+      // recapitulando). Se ignora esa linea como residuo de la conversacion.
+      cartas: [
+        {
+          id: '4h',
+          pestana: '4-hour menu',
+          titulo: 'Choose your dish',
+          texto:
+            'Guests can choose from seven gourmet menu options, freshly prepared on board in our signature Floating Kitchen.',
+          // La regla de las 21 personas va como AVISO, no como una tercera
+          // carta: la del buffet de pinchos no existe por escrito todavia y
+          // este proyecto no inventa platos. Cuando llegue, es una carta mas.
+          nota: 'For groups of 21 or more, the same menu is served as a skewer buffet.',
+          // Son los 7 platos Premium de la casa — los mismos que el copy
+          // aprobado describe («seafood, certified Angus beef, Surf & Turf,
+          // vegetarian dishes and more») y los mismos que ya sirven el
+          // semi-privado y Snorkel Lovers. Antes esta carta tenia 4 platos + 3
+          // brochetas: las brochetas se MUDAN al menu de 3 h, que es donde el
+          // cliente las pone, y sin ellas la carta se quedaba en 4 — no en los
+          // «seven» que promete su propio texto.
+          platos: MENU_PREMIUM_CASA,
+          addOn: {
+            nombre: 'Lobster premium',
+            precio: 30,
+            descripcion: 'Add fresh lobster to your dish, US$ 30 per person.',
+          },
+        },
+        {
+          id: '3h',
+          pestana: '3-hour menu',
+          titulo: 'Taste of Hispaniola Menu',
+          // Nombre canonico del menu de 3 h, de WEBSITE-TOURS pag. 17. El
+          // sello «New» es como lo presenta el cliente en su maqueta.
+          badge: 'New',
+          texto:
+            'Freshly prepared grilled skewers with your choice of chicken, beef or shrimp, accompanied by sides and our open bar.',
+          // ⚠️ [placeholder-v3] Las 3 brochetas comparten la foto de la
+          // pechuga a la parrilla (plato-chicken-bodegon): es real, de esta
+          // misma cocina, pero es pollo a la parrilla y no una brocheta.
+          // Miguel se comprometio en la reunion a pasar la foto del menu
+          // completo, la de la porcion por persona y dos de como se sirve
+          // (indice de planes, peticion 1); con ellas este bloque crece a la
+          // maqueta que dibujo en la slide 74 (una grande + dos pequenas).
+          platos: [
+            { nombre: 'Chicken skewer', foto: 'plato-chicken-bodegon', brocheta: true },
+            { nombre: 'Beef skewer', brocheta: true },
+            { nombre: 'Shrimp skewer', brocheta: true },
+          ],
+        },
       ],
-      addOn: {
-        nombre: 'Lobster premium',
-        precio: 30,
-        // [v2 2026-07-28] Se le quita el «US$ 30 por persona» del final: en la
-        // carta nueva el precio se pinta al lado, en grande, y la frase lo
-        // repetía a 20 px de distancia.
-        descripcion: 'Se añade al hacer el check-out, para quien la quiera',
-      },
-      // [v2 2026-07-28, plan 01 §7 — slide 2] Los tres hechos de cocina de la
-      // ficha original del charter. Se traducen a tuteo (la web original usa
-      // «usted»: «lo que le permite visitarla»), pero NO se adorna nada — cada
-      // frase corresponde a una afirmación que el cliente ya publica.
       cocina: [
         // [v3 2026-08-06, WEBSITE-TOURS pags. 18-19] Los 5 claims APROBADOS,
         // literales. Sustituyen a los 3 que habia (condimentos, parrilla,
@@ -1343,7 +1385,11 @@ export const WHATSAPP_URL = 'https://wa.me/18293052804'
  *  (`PlatoBuffet` ni siquiera tiene el campo). Sin fotos, el mosaico se pinta
  *  como siempre. */
 export function fotosComidaDe(ficha: FichaTour): string[] {
-  const platos = [...ficha.menuPremium, ...ficha.menuLight, ...(ficha.menuCharter?.platos ?? [])]
+  const platos = [
+    ...ficha.menuPremium,
+    ...ficha.menuLight,
+    ...(ficha.menuCharter?.cartas.flatMap((c) => c.platos) ?? []),
+  ]
   const fotos = platos
     .map((p) => ('foto' in p ? p.foto : undefined))
     .filter((f): f is string => typeof f === 'string')
