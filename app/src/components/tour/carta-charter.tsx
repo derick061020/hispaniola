@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Plus, Users, UtensilsCrossed } from 'lucide-react'
+import { Image as ImageIcon, Plus, Users, UtensilsCrossed } from 'lucide-react'
 import { GaleriaLightbox } from '@/components/tour/galeria-lightbox'
 import { useOrigenExpansion } from '@/lib/use-expansion-flip'
 import { formatoDinero } from '@/data/home'
@@ -124,6 +124,81 @@ function PlatoCarta({
   )
 }
 
+// [v3 2026-08-06, maqueta de la slide 74] EL BENTO DEL BUFFET DE PINCHOS.
+//
+// El cliente dibujo esta carta distinta al resto y tiene razon: en un buffet no
+// se elige plato, asi que una rejilla de siete cards iguales no dice nada. Lo
+// que hay que enseñar es la MESA (foto grande del menu completo), la RACION
+// («cantidad por persona», que es la duda real de quien contrata para 30) y el
+// SERVICIO (sus dos recuadros de «como se sirve»). De ahi el reparto desigual:
+// una celda grande a la izquierda y tres menores a su lado.
+//
+// ⚠️ NINGUNA de las fotos existe todavia. Miguel se comprometio en la reunion
+// del 07-31 a pasarlas (indice de planes, peticion 1). Hasta entonces cada
+// celda se pinta como un HUECO EVIDENTE —marco discontinuo, icono de imagen y
+// el pie de lo que ira ahi— en vez de rellenarse con la foto de otro plato:
+// una foto prestada aqui contaria una racion que no es la que sirven.
+function BentoBuffet({ celdas }: { celdas: NonNullable<CartaCharterDatos['bento']> }) {
+  return (
+    <div className="grid grid-cols-2 gap-2.5 lg:grid-cols-4">
+      {celdas.map((c) => (
+        <figure
+          key={c.id}
+          className={`relative flex min-h-40 flex-col justify-end gap-2 overflow-hidden rounded-card border p-4 lg:min-h-48 ${
+            // Con foto: marco solido y velo para que el pie se lea encima.
+            // Sin foto: marco DISCONTINUO — el hueco tiene que verse como
+            // hueco, no como una card gris que alguien pueda dar por buena.
+            c.foto ? 'border-linea' : 'border-dashed border-linea-fuerte bg-papel-hueso'
+          } ${
+            c.tamano === 'grande'
+              ? 'col-span-2 row-span-2 lg:min-h-[25rem]'
+              : c.tamano === 'ancho'
+                ? 'col-span-2'
+                : ''
+          }`}
+        >
+          {c.foto ? (
+            <>
+              <img
+                src={`/fotos/${c.foto}.webp`}
+                alt=""
+                aria-hidden="true"
+                loading="lazy"
+                className="absolute inset-0 size-full object-cover"
+              />
+              <span
+                aria-hidden="true"
+                className="absolute inset-0 bg-gradient-to-t from-navy/85 via-navy/15 to-transparent"
+              />
+            </>
+          ) : (
+            <span
+              aria-hidden="true"
+              className="mb-auto grid size-10 place-items-center rounded-full bg-papel text-navy-soft ring-1 ring-linea"
+            >
+              <ImageIcon className="size-5" />
+            </span>
+          )}
+          <figcaption className="relative">
+            <span
+              className={`block font-display text-sm font-semibold sm:text-base ${
+                c.foto ? 'text-white' : 'text-navy'
+              }`}
+            >
+              {c.titulo}
+            </span>
+            {c.texto ? (
+              <span className={`mt-0.5 block text-xs ${c.foto ? 'text-white/75' : 'text-navy-soft'}`}>
+                {c.texto}
+              </span>
+            ) : null}
+          </figcaption>
+        </figure>
+      ))}
+    </div>
+  )
+}
+
 export function CartaCharter({ carta, etiqueta }: { carta: CartaCharterDatos; etiqueta: string }) {
   const [lightbox, setLightbox] = useState<number | null>(null)
   const origen = useOrigenExpansion()
@@ -142,6 +217,19 @@ export function CartaCharter({ carta, etiqueta }: { carta: CartaCharterDatos; et
   // de brochetas al final. Se construye de la misma lista que la rejilla, así
   // que no puede desincronizarse de los índices que se le pasan.
   const fotos = [...conFoto.map((p) => p.foto!), ...(fotoBrochetas ? [fotoBrochetas] : [])]
+
+  // [v3] Las cartas de bento (el buffet de pinchos) no tienen platos que
+  // listar: su contenido son las fotos del servicio, no una eleccion.
+  if (carta.bento) {
+    return (
+      <>
+        <BentoBuffet celdas={carta.bento} />
+        {carta.nota ? (
+          <p className="mt-2.5 rounded-card bg-papel-hueso px-4 py-3 text-sm text-navy-sub">{carta.nota}</p>
+        ) : null}
+      </>
+    )
+  }
 
   return (
     <>
@@ -298,6 +386,17 @@ export function CartaCharter({ carta, etiqueta }: { carta: CartaCharterDatos; et
           origen={origen.origen}
           onCerrar={() => setLightbox(null)}
         />
+      ) : null}
+
+      {/* [v3 2026-08-06] La nota de veda vive PEGADA al banner de la langosta,
+          que es lo unico que sustituye. Antes colgaba al pie de la seccion
+          entera y, con el menu partido en tres cartas, aparecia tambien bajo
+          el buffet de pinchos — una advertencia sobre un plato que esa carta
+          no sirve. */}
+      {menu.addOn ? (
+        <p className="mt-3 text-xs text-navy-soft">
+          * Lobster is replaced with wild jumbo shrimp from March to June (closed season).
+        </p>
       ) : null}
     </>
   )

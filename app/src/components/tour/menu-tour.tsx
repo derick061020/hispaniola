@@ -176,12 +176,18 @@ function PaqueteMenu({
     // del mismo color. Quien viste de premium ahora es cada card.
     <div className="rounded-card-grande bg-fondo-ficha p-4 sm:p-5">
       <div className="mb-4 flex items-baseline justify-between gap-3 border-b border-linea pb-3">
-        <h3 className="flex items-center gap-2.5 font-display text-h3 font-semibold text-navy">
-          Menú {nombre}
+        <h3 className="flex min-w-0 items-center gap-2.5 font-display text-h3 font-semibold text-navy">
+          <span className="truncate">{nombre} menu</span>
           {/* Mismo metal que el badge del comparador y el thumb del selector:
-              una sola pieza de oro en todo el sistema. */}
+              una sola pieza de oro en todo el sistema.
+              [v3 2026-08-06, pedido de Samuel] `whitespace-nowrap` + `shrink-0`:
+              el badge es un flex item y, al estrecharse la cabecera, encogia y
+              partia su propio texto en dos lineas («EL MAS / ELEGIDO»), que en
+              una pildora de 20px de alto se lee como un fallo. Ahora la pildora
+              no se deja encoger y quien cede es el titulo, que para eso lleva
+              `truncate`. */}
           {badge ? (
-            <span className="premium-metal rounded-full px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide text-premium-fondo">
+            <span className="premium-metal shrink-0 whitespace-nowrap rounded-full px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide text-premium-fondo">
               {badge}
             </span>
           ) : null}
@@ -288,21 +294,33 @@ function CartasCharter({
   menu,
   ficha,
   variante,
+  personas,
   etiqueta,
 }: {
   menu: NonNullable<FichaTour['menuCharter']>
   ficha: FichaTour
   variante?: string | null
+  personas?: number | null
   etiqueta: string
 }) {
-  // La duracion del barco elegido -> el id de carta que le toca.
+  // Que carta le toca a este visitante. Dos datos del widget mandan, y en este
+  // orden: el AFORO gana a la duracion, porque de 21 personas en adelante el
+  // buffet de pinchos aplica navegues 3 o 4 horas. Solo despues decide el
+  // barco. Si no ha tocado nada el widget, la primera carta.
   const duracionBarco = ficha.subVariantes?.find((sv) => sv.id === variante)?.duracion
-  const idSegunBarco: CartaCharterDatos['id'] | null = duracionBarco?.startsWith('3') ? '3h' : duracionBarco ? '4h' : null
+  const idSegunWidget: CartaCharterDatos['id'] | null =
+    personas != null && personas >= 21
+      ? '21+'
+      : duracionBarco?.startsWith('3')
+        ? '3h'
+        : duracionBarco
+          ? '4h'
+          : null
 
-  const [activa, setActiva] = useState<CartaCharterDatos['id']>(idSegunBarco ?? menu.cartas[0].id)
+  const [activa, setActiva] = useState<CartaCharterDatos['id']>(idSegunWidget ?? menu.cartas[0].id)
   useEffect(() => {
-    if (idSegunBarco) setActiva(idSegunBarco)
-  }, [idSegunBarco])
+    if (idSegunWidget) setActiva(idSegunWidget)
+  }, [idSegunWidget])
 
   const carta = menu.cartas.find((c) => c.id === activa) ?? menu.cartas[0]
 
@@ -320,7 +338,7 @@ function CartasCharter({
               role="tab"
               aria-selected={sel}
               onClick={() => setActiva(c.id)}
-              className={`inline-flex items-center gap-2 rounded-chip px-4 py-2 text-sm font-semibold transition-colors ${
+              className={`inline-flex items-center gap-2 whitespace-nowrap rounded-chip px-4 py-2 text-sm font-semibold transition-colors ${
                 sel
                   ? 'bg-navy text-white'
                   : 'bg-papel-hueso text-navy-sub ring-1 ring-linea hover:text-navy'
@@ -329,7 +347,7 @@ function CartasCharter({
               {c.pestana}
               {c.badge ? (
                 <span
-                  className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide ${
+                  className={`shrink-0 whitespace-nowrap rounded-full px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide ${
                     sel ? 'bg-white/20 text-white' : 'bg-aqua-tint text-aqua-dark'
                   }`}
                 >
@@ -342,7 +360,19 @@ function CartasCharter({
       </div>
 
       <div className="mt-4">
-        <p className="font-display text-h3 font-semibold text-navy">{carta.titulo}</p>
+        <p className="flex flex-wrap items-baseline gap-x-3 gap-y-1 font-display text-h3 font-semibold text-navy">
+          {carta.titulo}
+          {/* [v3, slide 73: «(Hasta 20 Personas)» junto al titulo] El aforo va
+              PEGADO al titulo de la carta porque es parte de su nombre: no es
+              lo mismo «el menu de 4 horas» que «el menu de 4 horas hasta 20
+              personas», y confundirlos es justo lo que el cliente vino a
+              corregir. */}
+          {carta.aforo ? (
+            <span className="whitespace-nowrap rounded-chip bg-aqua-tint px-2.5 py-0.5 text-xs font-semibold text-aqua-dark">
+              {carta.aforo}
+            </span>
+          ) : null}
+        </p>
         {carta.texto ? <p className="mt-2 max-w-2xl text-sm text-navy-sub">{carta.texto}</p> : null}
         <div className="mt-4">
           <CartaCharter carta={carta} etiqueta={etiqueta} />
@@ -356,6 +386,7 @@ export function MenuTour({
   tour,
   ficha,
   variante,
+  personas,
 }: {
   tour: Tour
   ficha: FichaTour
@@ -364,6 +395,9 @@ export function MenuTour({
    *  carta de platos y los de 3 h el Taste of Hispaniola. Vive en tour.tsx
    *  porque el widget y esta seccion tienen que mirar el MISMO barco. */
   variante?: string | null
+  /** [v3 2026-08-06] Las personas del widget. De 21 en adelante la carta pasa
+   *  a ser el buffet de pinchos, sea cual sea el barco. */
+  personas?: number | null
 }) {
   // v3 (2026-07-17, Saona): si la ficha tiene menuBuffet, pintamos formato
   // buffet + add-on en vez del comparador Light/Premium clásico. Saona no
@@ -414,7 +448,13 @@ export function MenuTour({
         // ha elegido barco tiene que poder ver las dos, y la maqueta del
         // cliente las presenta como bloques separados.
         <div className="mt-4">
-          <CartasCharter menu={ficha.menuCharter} ficha={ficha} variante={variante} etiqueta={tour.nombre} />
+          <CartasCharter
+            menu={ficha.menuCharter}
+            ficha={ficha}
+            variante={variante}
+            personas={personas}
+            etiqueta={tour.nombre}
+          />
         </div>
       ) : (
         // v3 (2026-07-17, pedido de Samuel): se QUITA el comparador de
@@ -449,7 +489,7 @@ export function MenuTour({
             // Lovers, que tiene menú único, un bloque negro no diría nada —
             // no hay Light contra el que contrastar.
             piel={ficha.menuLight.length > 0 ? 'premium' : 'claro'}
-            badge={ficha.menuLight.length > 0 ? 'El más elegido' : undefined}
+            badge={ficha.menuLight.length > 0 ? 'Most chosen' : undefined}
           />
           {ficha.menuLight.length > 0 ? (
             <PaqueteMenu
@@ -470,7 +510,7 @@ export function MenuTour({
           Con el menu del charter partido en dos (slides 73-74), esta linea
           aparecia tambien bajo el Taste of Hispaniola, que es de brochetas —
           una advertencia sobre un plato que esa carta no sirve. */}
-      {hayLangosta ? (
+      {hayLangosta && !esCharter ? (
         <p className="mt-3 text-xs text-navy-soft">
           * Lobster is replaced with wild jumbo shrimp from March to June (closed season).
         </p>

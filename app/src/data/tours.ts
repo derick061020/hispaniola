@@ -106,9 +106,12 @@ export type MenuBuffetTour = {
  *  mezclados; el cliente las separa por DURACION del barco, que es lo que de
  *  verdad decide que se puede cocinar a bordo. */
 export type CartaCharter = {
-  /** Duracion a la que pertenece. La pestana activa se elige con ella a
-   *  partir del barco seleccionado en el widget. */
-  id: '4h' | '3h'
+  /** A que caso pertenece esta carta. '4h' y '3h' son duraciones de barco y
+   *  la pestana activa se elige con el barco del widget; '21+' es una regla de
+   *  AFORO que se cruza con las dos (de 21 personas en adelante el menu pasa a
+   *  buffet de pinchos, navegues 3 o 4 horas), asi que esa se elige con el
+   *  contador de personas. */
+  id: '4h' | '3h' | '21+'
   pestana: string
   titulo: string
   texto?: string
@@ -117,11 +120,25 @@ export type CartaCharter = {
    *  no como segunda carta: la del buffet no existe todavia por escrito y no
    *  se inventan platos. */
   nota?: string
-  /** Sello sobre el titulo. Hoy solo el «New» del Taste of Hispaniola, que es
-   *  como lo presenta el cliente en su maqueta. */
+  /** Sello sobre el titulo. El «New» con el que el cliente presenta los menus
+   *  de brocheta en su maqueta. */
   badge?: string
+  /** A cuantas personas aplica esta carta. Nace con la regla del tarifario que
+   *  el cliente confirma en la slide 73: emplatado hasta 20, buffet de pinchos
+   *  de 21 en adelante. */
+  aforo?: string
   platos: { nombre: string; desc?: string; foto?: string; brocheta?: boolean }[]
   addOn?: { nombre: string; precio: number; descripcion?: string }
+  /** [v3 2026-08-06, maqueta de la slide 74] Carta que NO se presenta como
+   *  rejilla de platos sino como BENTO de fotos: una grande del menu completo
+   *  y, al lado, la porcion por persona y dos de como se sirve. Es el formato
+   *  que dibujo el cliente para el buffet de pinchos, y tiene sentido: en un
+   *  buffet no eliges plato, asi que lo que hay que enseñar es la mesa, la
+   *  racion y el servicio — no siete cards iguales.
+   *  ⚠️ `foto` ausente = hueco marcado [placeholder-v3]: Miguel se comprometio
+   *  a pasarlas (indice de planes, peticion 1) y hasta entonces la celda se
+   *  pinta como tal, no se rellena con una foto de otro plato. */
+  bento?: { id: string; titulo: string; texto?: string; foto?: string; tamano?: 'grande' | 'ancho' }[]
 }
 
 export type MenuCharterTour = {
@@ -964,7 +981,8 @@ export const FICHAS: Record<string, FichaTour> = {
           // La regla de las 21 personas va como AVISO, no como una tercera
           // carta: la del buffet de pinchos no existe por escrito todavia y
           // este proyecto no inventa platos. Cuando llegue, es una carta mas.
-          nota: 'For groups of 21 or more, the same menu is served as a skewer buffet.',
+          aforo: 'Up to 20 guests',
+          nota: 'From 21 guests the menu changes — see the skewer buffet.',
           // Son los 7 platos Premium de la casa — los mismos que el copy
           // aprobado describe («seafood, certified Angus beef, Surf & Turf,
           // vegetarian dishes and more») y los mismos que ya sirven el
@@ -982,10 +1000,15 @@ export const FICHAS: Record<string, FichaTour> = {
         {
           id: '3h',
           pestana: '3-hour menu',
+          aforo: 'Up to 20 guests',
+          nota: 'From 21 guests the menu changes — see the skewer buffet.',
           titulo: 'Taste of Hispaniola Menu',
-          // Nombre canonico del menu de 3 h, de WEBSITE-TOURS pag. 17. El
-          // sello «New» es como lo presenta el cliente en su maqueta.
-          badge: 'New',
+          // Nombre canonico del menu de 3 h, de WEBSITE-TOURS pag. 17. SIN
+          // sello «New»: el cliente lo dibuja sobre la maqueta del menu de
+          // brochetas de 21+ (slide 74), y su propio copy llama a este «our
+          // POPULAR Taste of Hispaniola Menu» — que es justo lo contrario de
+          // nuevo. Dos «New» seguidos en la misma fila de pestanas ademas no
+          // destacan nada.
           texto:
             'Freshly prepared grilled skewers with your choice of chicken, beef or shrimp, accompanied by sides and our open bar.',
           // ⚠️ [placeholder-v3] Las 3 brochetas comparten la foto de la
@@ -999,6 +1022,45 @@ export const FICHAS: Record<string, FichaTour> = {
             { nombre: 'Chicken skewer', foto: 'plato-chicken-bodegon', brocheta: true },
             { nombre: 'Beef skewer', brocheta: true },
             { nombre: 'Shrimp skewer', brocheta: true },
+          ],
+        },
+        {
+          // [v3 2026-08-06, maqueta de la slide 74 + decision de Samuel] La
+          // maqueta del cliente se titula literalmente «Mas de 21 personas», y
+          // Samuel confirma la lectura: el buffet de pinchos NO es el menu de
+          // 3 h, es su propio menu y aplica a las DOS duraciones. Coincide con
+          // el tarifario, que repite la misma regla barco a barco («plated
+          // hasta 20 pax; skewers de 21 pax en adelante») tanto en los de 3 h
+          // como en los de 4 h.
+          id: '21+',
+          pestana: 'Groups of 21+',
+          aforo: 'From 21 guests',
+          titulo: 'Skewer buffet',
+          badge: 'New',
+          texto:
+            'From 21 guests, on both 3-hour and 4-hour charters, the menu is served as a skewer buffet: chicken, beef and shrimp, freshly grilled on board and served for the whole group.',
+          // Sin rejilla de platos: en un buffet no se elige plato por persona,
+          // asi que la carta no tiene nada que listar. Lo que hay que enseñar
+          // es la mesa, la racion y el servicio — el bento de abajo.
+          platos: [],
+          bento: [
+            {
+              id: 'menu-completo',
+              titulo: 'The full skewer buffet',
+              texto: 'Chicken, beef and shrimp, grilled to order on board.',
+              tamano: 'grande',
+            },
+            {
+              id: 'porcion',
+              titulo: 'Portion per guest',
+              texto: 'What each guest gets served.',
+              tamano: 'ancho',
+            },
+            // Dos tomas del MISMO asunto (el cliente dibujo dos recuadros de
+            // «¿como se sirve?»), numeradas para que no parezca una celda
+            // repetida por error.
+            { id: 'servicio-1', titulo: 'How it is served (1)' },
+            { id: 'servicio-2', titulo: 'How it is served (2)' },
           ],
         },
       ],

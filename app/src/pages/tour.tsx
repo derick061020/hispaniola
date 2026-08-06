@@ -210,7 +210,7 @@ export function TourPage() {
                   del menú en vez de competir con él — que fue lo que motivó
                   quitar la comparativa anterior, fundida dentro del bloque. */}
               {tour.booking === 'completo' ? <ComparadorPremium tour={tour} ficha={ficha} /> : null}
-              {tour.booking === 'completo' ? <MenuTour tour={tour} ficha={ficha} variante={variante} /> : null}
+              {tour.booking === 'completo' ? <MenuTour tour={tour} ficha={ficha} variante={variante} personas={personas} /> : null}
 
               {/* [v2 2026-07-28, plan 01 §7] «Antes de reservar»: UN bloque con
                   todo lo del slide 2 —duración elegible, lo que ahorras, cómo
