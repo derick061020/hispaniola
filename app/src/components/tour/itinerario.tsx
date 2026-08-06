@@ -12,7 +12,13 @@ import type { FichaTour } from '@/data/tours'
 export function Itinerario({ ficha }: { ficha: FichaTour }) {
   return (
     <section id="ancla-itinerario" className={`${BLOQUE_FICHA} scroll-mt-sticky-top`}>
-      <TituloSeccion>Itinerario — {ficha.duracion}</TituloSeccion>
+      {/* [v3 2026-08-06, WEBSITE-TOURS pág. 8] «Itinerary — 4 Hours» + la
+          nota de recogida. La nota nace con el itinerario de DOBLE SALIDA: en
+          cuanto una parada muestra dos horas hay que decir de qué son. */}
+      <TituloSeccion>Itinerary — {ficha.duracion}</TituloSeccion>
+      {ficha.itinerarioNota ? (
+        <p className="mt-2 max-w-2xl text-sm text-navy-sub">{ficha.itinerarioNota}</p>
+      ) : null}
 
       {/* El raíl es un border-left en la <ul>; cada hito pone su punto encima.
           Con `hora` vacía (charter y Saona coordinan a demanda) la fila no se

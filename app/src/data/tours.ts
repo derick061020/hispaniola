@@ -114,6 +114,23 @@ export type MenuCharterTour = {
 
 export type FichaTour = {
   tituloLargo: string
+  /** [v3 2026-08-06] Título del bloque de descripción, con el copy APROBADO
+   *  por el cliente (WEBSITE-TOURS: «The Ultimate Adults-Only Catamaran Tour
+   *  in Punta Cana», «Discover the Caribbean Beneath the Surface»…). Hasta la
+   *  v3 este H2 se DERIVABA de `audiencia` en pages/tour.tsx («Un día de mar
+   *  en grupo pequeño»); ahora que el cliente lo escribe por ficha, la
+   *  derivación se queda solo como fallback de las que aún no lo traen. */
+  promesa?: string
+  /** [v3 2026-08-06, WEBSITE-TOURS pág. 1 + slide 71] Los chips del hero de
+   *  ESTA ficha, con el copy aprobado. Cuando está, sustituye a la fila
+   *  genérica (cancelación · audiencia · distintivo · garantía) de
+   *  cabecera-ficha.tsx. El cliente solo los dio para el semi-privado y su
+   *  lista es CERRADA: tachó «Cancelación gratis» y no menciona el distintivo
+   *  ni la garantía del mejor precio, así que en esa ficha desaparecen.
+   *  ⚠️ Pendiente de Samuel: ¿los mismos 4 chips valen para las otras 3
+   *  fichas? (plan 04 §1). Mientras tanto, las que no lo traen conservan la
+   *  fila de siempre. */
+  chipsHero?: string[]
   audiencia: string
   /** La duración larga ('4 horas'); la corta ('4 h') vive en home.ts. */
   duracion: string
@@ -148,6 +165,11 @@ export type FichaTour = {
    *  de prototipo/app.js. Prueba social ANTES de scrollear (wireframe A1). */
   quoteDestacada: string
   itinerario: PasoItinerario[]
+  /** [v3 2026-08-06, WEBSITE-TOURS pág. 8] Línea bajo el título del
+   *  itinerario («Pickup time depends on your hotel location…»). Nace con el
+   *  itinerario de DOBLE SALIDA: en cuanto una parada muestra dos horas hay
+   *  que explicar de qué son, y la hora de recogida deja de ser un dato fijo. */
+  itinerarioNota?: string
   incluye: BeneficioIncluido[]
   /** «También incluye»: el resto de lo que trae el tour más allá de los 4
    *  titulares (WiFi, aperitivos, barra flotante…). Portado de la web. */
@@ -156,6 +178,16 @@ export type FichaTour = {
   /** Qué llevar (traje de baño, cámara, toalla, protector, efectivo). Portado
    *  de la web. [] si no aplica (Saona, sin datos). */
   queLlevar: string[]
+  /** [v3 2026-08-06, PowerPoint slide 72 + reunión 07-31 18:47] Lo que el
+   *  cliente llama «Recomendaciones adicionales»: consejos que NO son objetos
+   *  que meter en la mochila, así que no caben en `queLlevar` — van detrás de
+   *  un botón discreto en esa misma card.
+   *  ⚠️ [placeholder-v3] El texto real NO existe todavía: la reunión solo dio
+   *  dos ejemplos sueltos (crema para la piel, mejor llevar dólares). Lo de
+   *  aquí es esa transcripción, no una lista redactada por nosotros — y NO se
+   *  añaden recomendaciones médicas ni de seguridad inventadas. Pedida al
+   *  cliente (índice de planes, petición 2). */
+  recomendaciones?: string[]
   faqTour: PreguntaTour[]
   /** slugs de TOURS (data/home.ts) */
   tambienTeGusta: string[]
@@ -206,17 +238,57 @@ export type FichaTour = {
 
 export const FICHAS: Record<string, FichaTour> = {
   'semi-private-premium': {
-    tituloLargo: 'Semi-Privado Premium — catamarán solo adultos',
-    audiencia: 'Solo adultos',
-    duracion: '4 horas',
-    descripcionLarga: [
-      'Una excursión semi-privada solo para adultos: navegamos a no más del 35% de la capacidad del barco, para que el servicio sea personalizado y te sientas un VIP — no un número en un tour masivo.',
-      'Zarpamos desde Bávaro y navegamos por la costa hasta Cabo Engaño, donde empieza el mar Caribe. En el arrecife de Cabeza de Toro, nuestra bióloga marina te explica el proyecto de jardinería de coral —uno de los 3 más grandes de República Dominicana—, creado en 2016 por la Fundación Ecológica Los Arrecifes de Bávaro.',
-      'Después, una playa desierta con coco-loco (con o sin alcohol) y una piscina natural de aguas poco profundas con estructuras de arrecife artificial, ideal para principiantes. La comida se prepara al momento en nuestra cocina flotante — nada de buffet recalentado.',
+    tituloLargo: 'Semi-Private Premium — adults-only catamaran',
+    // [v3 2026-08-06, WEBSITE-TOURS pág. 2] Título APROBADO del bloque de
+    // descripción, literal. Convive con el H1 del hero, que sigue siendo el
+    // NOMBRE del producto (el que usan el ticker, el grid y el megamenú): uno
+    // dice qué compras, el otro por qué.
+    promesa: 'The Ultimate Adults-Only Catamaran Tour in Punta Cana',
+    // [v3 2026-08-06, WEBSITE-TOURS pág. 1 + slide 71] Los 4 chips aprobados
+    // (el cliente tachó «Cancelación gratis») + «Ages 15+», que es la regla
+    // concreta que pidió en la reunión («los niños de 15 en adelante»).
+    // ⚠️ TENSIÓN DE COPY, anotada en el plan 02: la ficha se sigue vendiendo
+    // como «Adults-Only» y 15+ no es adults-only en sentido estricto. Se
+    // mantienen los dos porque así lo maneja el sector —posicionamiento
+    // arriba, regla concreta en el chip— y está pedido por escrito al cliente
+    // (índice de planes, petición 6).
+    chipsHero: [
+      'Support Coral Restoration',
+      'Exclusive Underwater Museum',
+      'Limited Participants',
+      'Premium Lunch',
+      'Ages 15+',
     ],
+    audiencia: 'Solo adultos',
+    // «4 hours», no «4 horas»: este string se compone dentro del título del
+    // itinerario aprobado («Itinerary — 4 Hours») y de la ficha técnica. Las
+    // otras 3 fichas lo pasan a inglés en su propio commit de F3.
+    duracion: '4 hours',
+    // [v3 2026-08-06, WEBSITE-TOURS págs. 2–3] Los 5 párrafos APROBADOS,
+    // literales. Sustituyen a los 3 que había (portados de la web vieja).
+    // ⚠️ Dos datos cambian de valor canónico y hay que respetarlos al barrer
+    // el resto del sitio:
+    //   · «more than 50 coral restoration structures» — el claim «top-3 de
+    //     RD» desaparece de esta descripción. Sigue vivo en la home
+    //     (Experiencia) y en otros puntos: unificar en el barrido F7, no aquí.
+    //   · La fundación se llama «Los Arrecifes de Bávaro Ecological
+    //     Foundation» en este documento y «Bávaro Reefs Foundation» en otros
+    //     del mismo cliente. Se porta el nombre de ESTE doc y se pide elegir
+    //     uno (índice de planes, petición 9).
+    descripcionLarga: [
+      "Experience a premium small-group catamaran tour in Punta Cana, designed for travelers who value comfort, exceptional service and unforgettable experiences. With no more than 35% of the catamaran's capacity, you'll enjoy plenty of personal space, the best spots on board and attentive, personalized service throughout the day.",
+      "Departing from Bávaro, we cruise along the breathtaking coastline to the protected reef of Cabeza de Toro, one of the Caribbean's most remarkable marine conservation areas. Here you'll experience some of the best snorkeling in Punta Cana, exploring an exclusive Underwater Museum, artificial reefs that attract tropical marine life and more than 50 coral restoration structures developed by the Los Arrecifes de Bávaro Ecological Foundation.",
+      "This is far more than a snorkeling stop, it's an opportunity to discover a living coral restoration project while swimming through one of Punta Cana's healthiest reef ecosystems.",
+      'The adventure continues at a secluded beach where you can relax with a freshly prepared Coco Loco, followed by a visit to the famous Natural Pool of Punta Cana, featuring shallow, crystal-clear waters and artificial reefs that make snorkeling enjoyable for both beginners and experienced swimmers.',
+      'To complete the experience, our signature Floating Kitchen serves an unforgettable gourmet lunch prepared fresh on board. Enjoy certified Angus beef, fresh lobster, premium seafood and show cooking, replacing the typical buffet with restaurant-quality cuisine in the middle of the Caribbean Sea.',
+      "More than just another Punta Cana catamaran excursion, this is an experience where nature, marine conservation, gourmet dining and personalized service come together to create memories you'll never forget.",
+    ],
+    // [v3 2026-08-06, WEBSITE-TOURS pág. 8] Las horas del itinerario aprobado
+    // mandan: zarpe 9:15 / 13:15 y regreso 13:15 / 17:15 (antes 9:00→13:00 y
+    // 13:00→17:00). Son los mismos dos turnos de siempre, corridos 15 minutos.
     horarios: [
-      { hora: '9:00 AM', regreso: '1:00 PM' },
-      { hora: '1:00 PM', regreso: '5:00 PM' },
+      { hora: '9:15 AM', regreso: '1:15 PM' },
+      { hora: '1:15 PM', regreso: '5:15 PM' },
     ],
     upgradePremium: 15,
     // Menú POR PAQUETE, portado de la web aprobada. Light: 2 platos a la
@@ -246,46 +318,94 @@ export const FICHAS: Record<string, FichaTour> = {
     ],
     videoGaleria: '/video/hero.mp4',
     quoteDestacada: 'El coral fue lo mejor del viaje — la bióloga nos explicó todo.',
+    // [v3 2026-08-06, WEBSITE-TOURS pág. 8] Itinerario APROBADO, con DOBLE
+    // SALIDA: cada parada trae la hora del turno de mañana y la del de tarde
+    // («8:20 AM / 12:20 PM»), tal como lo escribió el cliente. Hasta ahora la
+    // ficha enseñaba una sola columna de horas y los dos turnos vivían solo en
+    // `horarios`, dentro del widget — quien no abría el calendario no sabía
+    // que había salida de tarde.
+    // ⚠️ Cambio de nombre transversal: el «vivero de coral» pasa a ser el
+    // MARINE PARK en todo el sitio (coincide con la página nueva del plan 05
+    // §6). Aquí ya entra; el resto de menciones, en su fase.
+    itinerarioNota: 'Pickup time depends on your hotel location. Exact time will be confirmed after your reservation.',
     itinerario: [
       {
-        hora: '8:05',
-        titulo: 'Recogida en tu hotel',
-        texto: 'Transporte con AC. La hora exacta según tu hotel — se confirma al reservar.',
-      },
-      {
-        hora: '9:00',
-        titulo: 'Zarpamos desde Bávaro',
-        texto: 'Check-in en instalaciones privadas y navegación por la costa hasta Cabo Engaño.',
-      },
-      {
-        hora: '~9:45',
-        titulo: 'Snorkel en el vivero de coral',
+        hora: '8:20 AM / 12:20 PM',
+        titulo: 'Hotel Pickup',
         texto:
-          'Arrecife de Cabeza de Toro: proyecto de restauración top-3 de RD, explicado por nuestra bióloga marina.',
+          "Air-conditioned transportation. Your exact pickup time will be confirmed according to your hotel's location.",
       },
-      { hora: '~11:00', titulo: 'Playa desierta + coco-loco', texto: 'Cóctel en coco real (con o sin alcohol).' },
       {
-        hora: '~11:45',
-        titulo: 'Piscina natural + comida a bordo',
-        texto: 'Agua a 1,2 m — apto para principiantes. Tu plato, recién hecho en la cocina flotante.',
+        hora: '9:15 AM / 1:15 PM',
+        titulo: 'Departure from Bávaro',
+        texto:
+          "Check in at our private marina before cruising along Punta Cana's spectacular coastline toward Cabo Engaño.",
       },
-      { hora: '13:00', titulo: 'Regreso y traslado al hotel', texto: '' },
+      {
+        hora: '10:00 AM / 2:00 PM',
+        titulo: 'Snorkeling at the Marine Park',
+        texto:
+          'Explore our exclusive Marine Park, home to the Underwater Museum, coral restoration gardens and artificial reefs that attract abundant tropical marine life.',
+      },
+      {
+        hora: '11:15 AM / 3:15 PM',
+        titulo: 'Secret Beach & Coco Loco',
+        texto:
+          'Relax on a secluded beach while enjoying a freshly prepared Coco Loco served inside a real coconut, with or without alcohol.',
+      },
+      {
+        hora: '12:00 PM / 4:00 PM',
+        titulo: 'Natural Pool & Floating Kitchen',
+        texto:
+          "Swim in Punta Cana's famous crystal-clear natural pool before enjoying your freshly prepared gourmet lunch from our signature Floating Kitchen. No buffets — every meal is cooked fresh on board.",
+      },
+      {
+        hora: '1:15 PM / 5:15 PM',
+        titulo: 'Return to the Marina & Hotel Transfer',
+        texto: 'Cruise back to our private marina before your comfortable transfer to your hotel.',
+      },
     ],
+    // [v3 2026-08-06, WEBSITE-TOURS págs. 9–10] Los 8 ítems APROBADOS de
+    // «What´s Included», literales. Sustituyen a los 4 + 4 que había (4
+    // titulares con texto + 4 sueltos en `incluyeExtra`): el cliente los da
+    // todos con título y descripción, así que `incluyeExtra` desaparece de
+    // esta ficha y los 8 pesan igual, que es como él los presenta.
+    // ⚠️ «Wi-Fi On Board» ya se prometía (estaba en incluyeExtra) — el dato no
+    // es nuevo, solo sube de categoría.
     incluye: [
-      { titulo: 'Snorkel en el vivero de coral', texto: 'Equipo sanitizado (todas las tallas) + guía en el arrecife de Cabeza de Toro.' },
-      { titulo: 'Transporte ida y vuelta', texto: 'Vehículo con AC, desde tu hotel.' },
-      { titulo: 'Comida + barra libre', texto: 'Cocina flotante; cerveza, ron añejo, vodka, jugos, refrescos y agua.' },
-      { titulo: 'Bióloga marina', texto: 'Te explica el proyecto de restauración del coral.' },
+      {
+        titulo: 'Exclusive Marine Park Access',
+        texto:
+          'Snorkel in our protected Marine Park featuring the Underwater Museum, coral restoration gardens and artificial reefs.',
+      },
+      {
+        titulo: 'Foundation Conservation Team',
+        texto:
+          'Learn about our coral restoration project from the team of the Los Arrecifes de Bávaro Ecological Foundation.',
+      },
+      { titulo: 'Floating Kitchen & Gourmet Lunch', texto: 'Freshly prepared on board. Never a reheated buffet.' },
+      {
+        titulo: 'Premium Open Bar',
+        texto: 'Beer, aged rum, vodka, tequila, juices, soft drinks and water throughout the tour.',
+      },
+      { titulo: 'Round-Trip Hotel Transportation', texto: 'Air-conditioned transportation from your hotel.' },
+      { titulo: 'Wi-Fi On Board', texto: 'Stay connected throughout your experience.' },
+      {
+        titulo: 'Floating Bar at the Natural Pool',
+        texto: "Enjoy drinks while relaxing in Punta Cana's crystal-clear natural pool.",
+      },
+      { titulo: 'Complimentary Tour Photos', texto: 'Go PRO photos uploaded after your tour to our Facebook page.' },
     ],
-    incluyeExtra: [
-      'WiFi a bordo',
-      'Aperitivos: croissants de fruta, pavo y queso',
-      'Barra flotante «Coyote» en la piscina natural',
-      'Fotos gratis subidas a Facebook',
-    ],
+    // Traducción NUESTRA (el cliente no da estos dos bloques): el «no
+    // incluido» y el qué llevar son datos reales portados del tarifario y de
+    // la web, solo cambian de idioma.
     noIncluido:
-      'No incluido: álbum de fotos HD (US$ 20/grupo vía Dropbox) · fotógrafo profesional (con aviso previo, costo extra) · suplemento de transporte desde Casa de Campo.',
-    queLlevar: ['Traje de baño', 'Toalla', 'Protector solar biodegradable', 'Cámara', 'Efectivo (si pagas el saldo a bordo)'],
+      'Not included: HD photo album (US$ 20/group via Dropbox) · professional photographer (on request, extra cost) · transportation surcharge from Casa de Campo.',
+    queLlevar: ['Swimsuit', 'Towel', 'Reef-safe sunscreen', 'Camera', 'Cash (if you pay the balance on board)'],
+    recomendaciones: [
+      'Bring reef-safe sunscreen and skin cream — the sun on the water is stronger than it feels. [placeholder-v3]',
+      'Cash in US dollars is the easiest way to pay for tips and any on-board add-on. [placeholder-v3]',
+    ],
     faqTour: [
       { p: '¿Y si llueve?', r: 'Reembolso total o cambio de fecha, sin costo.' },
       { p: '¿Hay baño a bordo?', r: 'Sí, todos nuestros barcos tienen baño.' },
@@ -301,11 +421,15 @@ export const FICHAS: Record<string, FichaTour> = {
     // ficha: langosta y Angus están en los platos Premium, la variedad de 7 vs
     // 2 es aritmética de los propios arrays, y las fotos incluidas están en la
     // web original. Nada inventado.
+    // [v3 2026-08-06] Traducción nuestra (el cliente no da esta lista): son
+    // las 4 ventajas reales sacadas de menuPremium/incluye de esta misma
+    // ficha, solo cambian de idioma. Las lee el comparador Y la caja de
+    // upsell del widget.
     ventajasPremium: [
-      'Langosta, Angus certificado y Surf & Turf en el plato',
-      '7 platos a elegir en vez de 2',
-      'Opciones vegetarianas y cóctel de mariscos',
-      'Las fotos del tour, incluidas',
+      'Lobster, certified Angus beef and Surf & Turf on your plate',
+      '7 dishes to choose from instead of 2',
+      'Vegetarian options and seafood cocktail',
+      'Your tour photos, included',
     ],
     // [v2] Upsells del semi-privado. El álbum es el único que la web original
     // documenta aquí literalmente («the full album via Dropbox for just $20

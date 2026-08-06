@@ -64,9 +64,18 @@ export function AntesDeReservar({ tour, ficha }: { tour: Tour; ficha: FichaTour 
 
   return (
     <section id="ancla-antes-de-reservar" className={`${BLOQUE_FICHA} scroll-mt-sticky-top`}>
-      <TituloSeccion>Antes de reservar</TituloSeccion>
+      {/* [v3 2026-08-06, WEBSITE-TOURS pág. 6] Título y bajada APROBADOS,
+          literales. Esta sección ES el «why direct» de la ficha: su panel
+          principal explica los descuentos que solo existen reservando aquí,
+          que es exactamente lo que dice el copy nuevo.
+          ⚠️ En la ficha del charter, bajo este título cuelga además el panel
+          de «cómo se cocina» — encaja peor con «Book Direct» que con el
+          «Antes de reservar» que había. Se revisa en el commit del charter
+          (F3.3), que reescribe ese bloque entero con los 5 claims de cocina
+          aprobados. */}
+      <TituloSeccion>Book Direct. Enjoy More.</TituloSeccion>
       <p className="mt-2 max-w-2xl text-navy-sub">
-        Lo que conviene saber del barco, de la cocina y del precio — junto y sin letra pequeña.
+        Unlock exclusive savings and benefits available only when you book directly with Hispaniola.
       </p>
 
       {/* FRANJA DE DURACIÓN. Va arriba del todo porque es lo primero que

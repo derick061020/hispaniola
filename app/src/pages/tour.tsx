@@ -84,12 +84,18 @@ export function TourPage() {
   // El H2 sale de renderFicha() del prototipo: la promesa se ajusta al
   // producto — no es la misma frase para un charter privado que para un
   // semi-privado de grupo pequeño.
+  // [v3 2026-08-06] Si la ficha trae `promesa`, gana: es el título que el
+  // cliente aprobó por escrito para SU producto («The Ultimate Adults-Only
+  // Catamaran Tour in Punta Cana»). La derivación de abajo se queda como
+  // fallback de las fichas que todavía no lo traen — y deja de ser el
+  // mecanismo principal, que era adivinar un titular a partir de `audiencia`.
   const promesa =
-    tour.booking === 'cotizacion'
+    ficha.promesa ??
+    (tour.booking === 'cotizacion'
       ? 'Un día de mar a tu medida'
       : ficha.audiencia === 'Solo adultos'
         ? 'Un día de mar en grupo pequeño'
-        : 'Un día de mar'
+        : 'Un día de mar')
 
   return (
     // pb-[calc(4rem+env(safe-area-inset-bottom))] (auditoría móvil 2026-07-17):

@@ -82,15 +82,37 @@ export function CabeceraFicha({ tour, ficha }: Props) {
             (rating, cancelación, las dos insignias) y el único metadato que
             sí filtra público desde el primer segundo: la audiencia — a quien
             viaja con niños le importa leer «Solo adultos» antes de nada. */}
-        {tour.booking !== 'consulta' ? (
-          <StatusBadge.Root status="completed" variant="light">
-            <StatusBadge.Icon as={Check} />
-            Cancelación gratis
-          </StatusBadge.Root>
-        ) : null}
-        <StatusBadge.Root status="disabled" variant="stroke">
-          {tour.audienciaChip}
-        </StatusBadge.Root>
+        {/* [v3 2026-08-06, WEBSITE-TOURS pág. 1 + slide 71] Cuando la ficha
+            trae `chipsHero`, esa lista APROBADA sustituye a la fila entera.
+            No es que se «añadan» a lo que había: el cliente tachó
+            «Cancelación gratis» y escribió una lista cerrada de 4 (+ el «Ages
+            15+» de la reunión), sin el distintivo de excelencia ni la
+            garantía del mejor precio. Los dos tooltips que Samuel redactó el
+            07-22 salen de esa ficha con él — están abajo, condicionados, y
+            siguen intactos en las 3 que aún no tienen lista propia.
+            Todos en `stroke`: son ARGUMENTOS del producto (qué te llevas), no
+            un estado positivo como era la cancelación, que sí pedía el par
+            menta. Uniformarlos evita que uno cante más que los otros cuando
+            el cliente los dio como una lista de iguales. */}
+        {ficha.chipsHero ? (
+          ficha.chipsHero.map((chip) => (
+            <StatusBadge.Root key={chip} status="disabled" variant="stroke">
+              {chip}
+            </StatusBadge.Root>
+          ))
+        ) : (
+          <>
+            {tour.booking !== 'consulta' ? (
+              <StatusBadge.Root status="completed" variant="light">
+                <StatusBadge.Icon as={Check} />
+                Cancelación gratis
+              </StatusBadge.Root>
+            ) : null}
+            <StatusBadge.Root status="disabled" variant="stroke">
+              {tour.audienciaChip}
+            </StatusBadge.Root>
+          </>
+        )}
 
         {/* Distintivo de excelencia + Garantía del mejor precio (Samuel,
             2026-07-22, con el texto del tooltip escrito por él). El #1 en
@@ -117,21 +139,25 @@ export function CabeceraFicha({ tour, ficha }: Props) {
             la tesis entera de la sección Reserva Directa de la home (los dos
             boletos al mismo precio, BENEFICIOS_DIRECTO en data/home.ts) y del
             «ahorras hasta 15%» del widget. No es una promesa nueva. */}
-        <InsigniaTooltip
-          icono={BadgeCheck}
-          titulo="Insignia de excelencia"
-          texto="Esta experiencia está muy bien valorada por los viajeros y cumple nuestros estándares de calidad más altos."
-        >
-          Distintivo de excelencia
-        </InsigniaTooltip>
+        {ficha.chipsHero ? null : (
+          <>
+            <InsigniaTooltip
+              icono={BadgeCheck}
+              titulo="Insignia de excelencia"
+              texto="Esta experiencia está muy bien valorada por los viajeros y cumple nuestros estándares de calidad más altos."
+            >
+              Distintivo de excelencia
+            </InsigniaTooltip>
 
-        <InsigniaTooltip
-          icono={ShieldCheck}
-          titulo="Garantía del mejor precio"
-          texto="Reservando aquí pagas lo mismo o menos que en cualquier portal — y encima eliges menú, confirmas con el 25% y hablas directo con el equipo del barco."
-        >
-          Garantía del mejor precio
-        </InsigniaTooltip>
+            <InsigniaTooltip
+              icono={ShieldCheck}
+              titulo="Garantía del mejor precio"
+              texto="Reservando aquí pagas lo mismo o menos que en cualquier portal — y encima eliges menú, confirmas con el 25% y hablas directo con el equipo del barco."
+            >
+              Garantía del mejor precio
+            </InsigniaTooltip>
+          </>
+        )}
       </div>
     </div>
   )

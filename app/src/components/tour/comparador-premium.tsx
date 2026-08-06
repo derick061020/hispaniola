@@ -41,20 +41,33 @@ export function ComparadorPremium({ tour, ficha }: { tour: Tour; ficha: FichaTou
       id="ancla-comparador"
       className="overflow-hidden rounded-card-grande bg-papel p-6 ring-1 ring-linea sm:p-8"
     >
+      {/* [v3 2026-08-06, WEBSITE-TOURS pág. 4] Título y bajada APROBADOS,
+          literales. El cliente da UNA frase donde nosotros teníamos dos
+          (título + bajada), y esa frase ya trae su propio corte —«One
+          unforgettable journey. One small upgrade.»—, así que se reparte por
+          ahí: el título se queda con las dos sentencias cortas (que es lo que
+          las hace sonar) y el párrafo con el resto, sin tocar una palabra.
+          ⚠️ El «$15» del copy aprobado coincide con `upgradePremium` de la
+          ficha, pero NO se escribe a mano: sale interpolado del dato, que es
+          lo que de verdad cobra el widget. Si mañana el upgrade sube a $18,
+          el texto aprobado no se queda mintiendo. */}
       <p className="text-eyebrow font-semibold uppercase tracking-[0.14em] text-aqua-dark">
-        Light o Premium
+        Light or Premium
       </p>
       <h2 className="mt-3 font-display text-h3 font-semibold text-navy">
-        La misma ruta, dos maneras de vivirla
+        One unforgettable journey. One small upgrade.
       </h2>
       <p className="mt-3 max-w-xl text-navy-sub">
-        Mismo barco, mismo itinerario, mismas paradas. Lo que cambia es lo que te sirven a bordo.
+        The same catamaran, the same route and the same incredible destinations. Upgrade to Premium
+        for just {formatoDinero(upgrade)} more and enjoy a freshly prepared gourmet lunch, seven
+        dishes to choose from and our signature Floating Kitchen experience.
       </p>
 
-      {/* La píldora del delta: el argumento entero cabe en una frase. */}
-      <p className="premium-nota-clara mt-5 inline-flex rounded-full px-4 py-1.5 text-sm font-semibold text-premium-oro-oscuro">
-        Toda la diferencia son {formatoDinero(upgrade)} por persona
-      </p>
+      {/* [v3] Aquí vivía la píldora del delta («Toda la diferencia son $15 por
+          persona»). Se retira: el copy aprobado ya dice «Upgrade to Premium
+          for just $15 more» dos líneas más arriba, y repetir la MISMA cifra
+          en dos frases seguidas no refuerza el argumento, lo abarata. La
+          píldora existía porque el título anterior no daba el número. */}
 
       <div className="mt-8 grid gap-4 lg:grid-cols-2">
         {/* PREMIUM primero y destacado: es lo que el cliente quiere que domine
@@ -66,12 +79,12 @@ export function ComparadorPremium({ tour, ficha }: { tour: Tour; ficha: FichaTou
             {/* Mismo metal que el thumb del selector: es LA MISMA pieza de oro
                 del sistema, no un badge dorado cualquiera. */}
             <span className="premium-metal rounded-full px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide text-premium-fondo">
-              La más elegida
+              Most chosen
             </span>
           </div>
           <p className="mt-1 font-display text-2xl font-semibold">
             <span className="premium-cifra">{formatoDinero(precioLight + upgrade)}</span>
-            <span className="ml-1 text-sm font-normal text-premium-texto-suave">por persona</span>
+            <span className="ml-1 text-sm font-normal text-premium-texto-suave">per person</span>
           </p>
           <ul className="mt-5 flex flex-col gap-3">
             {ventajas.map((v) => (
@@ -99,10 +112,10 @@ export function ComparadorPremium({ tour, ficha }: { tour: Tour; ficha: FichaTou
           </div>
           <p className="mt-1 font-display text-2xl font-semibold text-navy">
             {formatoDinero(precioLight)}
-            <span className="ml-1 text-sm font-normal text-navy-soft">por persona</span>
+            <span className="ml-1 text-sm font-normal text-navy-soft">per person</span>
           </p>
           <p className="mt-5 text-[11px] font-semibold uppercase tracking-wide text-navy-soft">
-            No incluye
+            Not included
           </p>
           <ul className="mt-3 flex flex-col gap-3">
             {ventajas.map((v) => (

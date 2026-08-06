@@ -61,10 +61,15 @@ export function AnclasFicha({ tour }: { tour: Tour }) {
   // slide 11). Este array TIENE que ir en el mismo orden que las secciones o
   // el resaltado de la pestaña activa al hacer scroll se desincroniza.
   const anclas = [
-    ...(tour.booking === 'completo' ? [{ id: 'ancla-menu', label: 'Menú' }] : []),
-    { id: 'ancla-itinerario', label: 'Itinerario' },
-    { id: 'ancla-incluye', label: 'Incluye' },
-    { id: 'ancla-opiniones', label: 'Opiniones' },
+    // [v3 2026-08-06] Las 5 etiquetas pasan a inglés con los títulos de
+    // sección que apuntan: los bloques compartidos por las 4 fichas ya llevan
+    // el copy aprobado («Itinerary», «What's Included»…), y una pestaña que
+    // dice «Incluye» sobre una sección que dice «What's Included» se lee como
+    // un fallo, no como una traducción a medias.
+    ...(tour.booking === 'completo' ? [{ id: 'ancla-menu', label: 'Menu' }] : []),
+    { id: 'ancla-itinerario', label: 'Itinerary' },
+    { id: 'ancla-incluye', label: 'Included' },
+    { id: 'ancla-opiniones', label: 'Reviews' },
     { id: 'ancla-faq', label: 'FAQ' },
   ]
 

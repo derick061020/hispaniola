@@ -283,13 +283,21 @@ export function MenuTour({ tour, ficha }: { tour: Tour; ficha: FichaTour }) {
 
   return (
     <section id="ancla-menu" className={`${BLOQUE_FICHA} scroll-mt-sticky-top`}>
+      {/* [v3 2026-08-06, WEBSITE-TOURS pág. 5] Título y bajada APROBADOS para
+          el menú por paquete («Your table comes with an ocean view»), que es
+          el caso del semi-privado y de Snorkel Lovers — el mismo copy aparece
+          en las dos fichas del documento, así que se escribe UNA vez aquí y
+          no dos en data. Los otros dos formatos (buffet de Saona, menú a
+          medida del charter) siguen en español hasta su commit de F3. */}
       <TituloSeccion>
-        {esBuffet ? 'El menú del día' : esCharter ? 'El menú a medida' : 'Tu menú, a tu elección'}
+        {esBuffet ? 'El menú del día' : esCharter ? 'El menú a medida' : 'Your table comes with an ocean view'}
       </TituloSeccion>
       <p className="mt-3 max-w-2xl text-sm text-navy-sub">
         {esBuffet
           ? 'Buffet típico dominicano servido en la propia isla, con parada en la piscina natural antes y después.'
-          : 'Cada persona elige su plato al reservar, recién hecho a bordo — no buffet recalentado.'}
+          : esCharter
+            ? 'Cada persona elige su plato al reservar, recién hecho a bordo — no buffet recalentado.'
+            : 'Select your favorite dish when you book. Our chefs prepare every meal fresh on board, turning lunch into one of the highlights of your day.'}
       </p>
 
       {esBuffet ? (
