@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { ArrowRight } from 'lucide-react'
 import { Etiqueta } from '@/components/ui/etiqueta'
 import { COCINA_Y_PARADAS } from '@/data/flota'
-import { COCINA_FLOTANTE, EXPERIENCIA_ABORDO } from '@/data/nosotros'
+import { COCINA_FLOTANTE } from '@/data/nosotros'
 
 // LA COCINA FLOTANTE Y LAS 3 PARADAS (slides 32-34).
 //
@@ -74,6 +74,14 @@ export function CocinaYParadas() {
               {COCINA_FLOTANTE.titulo}
             </h2>
             <p className="mt-5 max-w-xl text-lead text-navy-sub">{COCINA_FLOTANTE.texto}</p>
+            {/* [v3 2026-08-06] Los dos parrafos que el copy aprobado añade.
+                Van en cuerpo normal, no en lead: el primero es el gancho
+                sensorial y estos dos son el detalle y el remate. */}
+            {COCINA_FLOTANTE.textoExtra?.map((t) => (
+              <p key={t.slice(0, 30)} className="mt-3 max-w-xl text-navy-sub">
+                {t}
+              </p>
+            ))}
             <p className="mt-4 max-w-xl text-lead text-navy-sub">{COCINA_Y_PARADAS.detalle}</p>
 
             <Link
@@ -133,46 +141,13 @@ export function CocinaYParadas() {
 
       {/* ── LAS 3 PARADAS (slide 34) ───────────────────────────────────── */}
       <div>
-        <div className="max-w-2xl">
-          <Etiqueta>{COCINA_Y_PARADAS.paradasEyebrow}</Etiqueta>
-          <h2 className="mt-3 text-balance font-display text-h2 font-semibold text-navy">
-            {COCINA_Y_PARADAS.paradasTitulo}
-          </h2>
-          <p className="mt-4 text-lead text-navy-sub">{COCINA_Y_PARADAS.paradasSub}</p>
-        </div>
-
-        {/* El MOMENTO sustituye al numeral en círculo sobre la foto: «Primera
-            parada» dice lo mismo que un «01» y además dice cuándo, que es la
-            información que ese círculo estaba tirando. Copy del propio cliente
-            (slide 34). `<ol>` porque es una secuencia, no un surtido. */}
-        <ol className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-3">
-          {EXPERIENCIA_ABORDO.map((parada, i) => (
-            <li
-              key={parada.numero}
-              className="nosotros-cascada flex flex-col rounded-card-grande bg-papel p-4 ring-1 ring-linea"
-            >
-              <img
-                src={`/fotos/${parada.foto}.webp`}
-                alt={parada.fotoAlt}
-                loading="lazy"
-                className="aspect-[16/10] w-full rounded-card object-cover"
-              />
-              <div className="flex flex-1 flex-col gap-2 pt-4">
-                <Etiqueta>{COCINA_Y_PARADAS.momentos[i]}</Etiqueta>
-                <h3 className="font-display text-h3 font-semibold text-navy">{parada.titulo}</h3>
-                <p className="text-sm text-navy-sub">{parada.texto}</p>
-                {/* Crédito de la fundación — solo la parada del vivero lo
-                    tiene. `mt-auto` lo pega abajo para que las 3 cards rimen
-                    aunque las otras dos no lleven chip. */}
-                {parada.chip ? (
-                  <span className="mt-auto self-start rounded-chip bg-aqua-tint px-3 py-1.5 text-xs font-medium text-aqua-dark">
-                    {parada.chip}
-                  </span>
-                ) : null}
-              </div>
-            </li>
-          ))}
-        </ol>
+      {/* [v3 2026-08-06, PowerPoint slide 70] AQUI VIVIAN LAS 3 PARADAS («Un
+          dia de mar en 3 paradas»). El cliente las tacha de /flota: esta
+          pagina va de los BARCOS, y el recorrido ya se cuenta —con horas,
+          fotos y detalle— en el itinerario de cada ficha de tour, que es
+          donde decide quien esta comprando. Aqui repetirlo alargaba la
+          pagina sin decir nada nuevo.
+          EXPERIENCIA_ABORDO sigue en data/nosotros.ts: lo consume la home. */}
       </div>
     </section>
   )

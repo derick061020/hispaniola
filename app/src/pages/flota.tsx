@@ -4,7 +4,6 @@ import { HeroInterna } from '@/components/internas/hero-interna'
 import { CabeceraInterna } from '@/components/internas/cabecera-interna'
 import { FamiliaHispaniola } from '@/components/flota/familia-hispaniola'
 import { FlotaGrid } from '@/components/flota/flota-grid'
-import { BannerCeroPlastico } from '@/components/flota/banner-cero-plastico'
 import { CocinaYParadas } from '@/components/flota/cocina-y-paradas'
 import { useTimelineHistoria } from '@/components/nosotros/use-timeline-historia'
 import { useCascadaNosotros } from '@/components/nosotros/use-cascada-nosotros'
@@ -70,15 +69,18 @@ export function FlotaPage() {
   return (
     <div>
       <Meta
-        titulo="Nuestra flota"
+        titulo="Our fleet"
         descripcion="Las embarcaciones de Hispaniola Aquatic Adventures: catamaranes de vela y motor, lanchas y el catamarán de eventos, con vídeo, galería y ficha técnica completa de cada una."
         ruta="/fleet"
       />
       <HeroInterna ctaHref="/#tours">
+        {/* [v3 2026-08-06, WEBSITE - NOSOTROS pag. 3] Titular APROBADO. El
+            cliente escribe «QUITAR LA FRASE DEBAJO Y PONER…», asi que el lead
+            tambien es suyo, literal. */}
         <CabeceraInterna
-          eyebrow="Nuestra flota"
-          titulo="Los barcos que hacen el día"
-          lead="Catamaranes de vela y de motor, lanchas rápidas y nuestro catamarán de eventos. Todos propios, todos con cocina flotante a bordo."
+          eyebrow="Our fleet"
+          titulo="The fleet that brings every adventure to life"
+          lead="Every boat has a purpose. Each vessel in our fleet has been carefully selected and customized for the experience."
         />
       </HeroInterna>
 
@@ -87,7 +89,11 @@ export function FlotaPage() {
           <FamiliaHispaniola />
           <FlotaGrid />
           <CocinaYParadas />
-          <BannerCeroPlastico />
+          {/* [v3 2026-08-06, PowerPoint slide 70] El banner de cero plastico
+              sale de /flota junto con las 3 paradas: el cliente tacha las dos.
+              El mensaje no se pierde — vive en el cintillo eco de la home y en
+              /sostenibilidad, que es su sitio. El componente se conserva por
+              si vuelve a hacer falta. */}
         </div>
       </div>
 

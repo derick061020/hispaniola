@@ -7,6 +7,8 @@ import { GridEquipo } from '@/components/equipo/grid-equipo'
 import { MuroTripulacion } from '@/components/equipo/muro-tripulacion'
 import { Meta } from '@/components/seo/meta'
 import { EQUIPO_PAGINA } from '@/data/equipo'
+import { EQUIPO } from '@/data/nosotros'
+import { BLOQUE_FICHA } from '@/components/tour/bloque-ficha'
 
 // Página Tripulación / Equipo (/tripulacion) — correcciones v2, plan 05.
 //
@@ -44,6 +46,11 @@ import { EQUIPO_PAGINA } from '@/data/equipo'
 // cabecera de data/equipo.ts. El aviso también se pinta EN PANTALLA (GridEquipo)
 // mientras dure — no basta con un comentario en el código.
 export function TripulacionPage() {
+  // El CEO: la unica ficha con historia larga (WEBSITE - NOSOTROS pag. 2). Se
+  // busca por su CTA de historia, igual que hace /flota, para no atarlo a un
+  // id concreto.
+  const ceo = EQUIPO.find((m) => m.cta?.tipo === 'historia')
+
   return (
     <div>
       <Meta
@@ -70,6 +77,49 @@ export function TripulacionPage() {
       <div className="mx-auto max-w-contenido px-5 py-12 sm:px-10 lg:py-16">
         <div className="flex flex-col gap-10 lg:gap-12">
           <FranjaEquipo />
+
+          {/* [v3 2026-08-06, WEBSITE - NOSOTROS pag. 2] LA HISTORIA DEL CEO.
+              El cliente escribe un texto largo en primera persona y no tenia
+              sitio: la ficha de Omar solo daba para una frase. Va entre la
+              franja de datos y la rejilla de departamentos porque es lo que
+              los une — la empresa la monto el primer capitan, y los seis
+              departamentos son en lo que se convirtio.
+              Su segunda linea aprobada («ONE COMPANY, SIX DEPARTMENTS AND ONE
+              SHARED PASSION») encabeza la rejilla, que es lo que describe. */}
+          {ceo?.bio ? (
+            <section className={BLOQUE_FICHA}>
+              <div className="grid gap-6 sm:grid-cols-[auto_1fr] sm:items-start sm:gap-8">
+                {ceo.foto ? (
+                  <img
+                    src={`/fotos/${ceo.foto}.webp`}
+                    alt={`${ceo.nombre}, ${ceo.rol}`}
+                    loading="lazy"
+                    className="size-28 rounded-full object-cover sm:size-36"
+                  />
+                ) : null}
+                <div>
+                  <p className="font-display text-lg font-semibold text-navy">{ceo.nombre}</p>
+                  <p className="text-sm text-navy-soft">{ceo.rol}</p>
+                  <div className="mt-4 flex flex-col gap-3">
+                    {ceo.bio.map((p) => (
+                      <p key={p.slice(0, 30)} className="text-navy-sub">
+                        {p}
+                      </p>
+                    ))}
+                  </div>
+                  {ceo.quote ? (
+                    <blockquote className="mt-4 border-l-2 border-aqua-dark pl-4 font-display text-lg font-medium text-navy">
+                      «{ceo.quote}»
+                    </blockquote>
+                  ) : null}
+                </div>
+              </div>
+            </section>
+          ) : null}
+
+          <p className="text-center font-display text-h3 font-semibold text-navy">
+            One company, six departments and one shared passion
+          </p>
           <GridEquipo />
           {/* El cierre va fuera de GridEquipo (donde vivía): no depende del
               filtro ni del equipo, es el remate de la página. */}

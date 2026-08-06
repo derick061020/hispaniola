@@ -13,9 +13,8 @@ import {
 } from 'lucide-react'
 import { Etiqueta } from '@/components/ui/etiqueta'
 import { irAlAncla, useAnclasActiva } from '@/components/ui/use-anclas-activa'
-import { BandaInstalaciones } from '@/components/instalaciones/banda-instalaciones'
 import { BentoZona } from '@/components/instalaciones/bento-zona'
-import { BANDA_INSTALACIONES, INSTALACIONES, ZONAS, type IconoZona } from '@/data/instalaciones'
+import { INSTALACIONES, ZONAS, type IconoZona } from '@/data/instalaciones'
 
 // «Todo lo que hay detrás de tu experiencia» — las 6 zonas del complejo
 // (correcciones v2, slides 46-49).
@@ -167,6 +166,16 @@ export function ZonasInstalaciones() {
                     <h3 className="sost-item-titulo text-balance font-display text-h3 font-semibold text-navy">
                       {z.nombre}
                     </h3>
+                    {/* [v3 2026-08-06] El claim del cliente, entre el nombre
+                        de la zona y su parrafo. Es la linea que vende («Your
+                        Vacation Starts Before You Board»): sin ella, la zona
+                        se presenta con una etiqueta administrativa y un
+                        parrafo largo. */}
+                    {z.claim ? (
+                      <p className="mt-1 font-display text-lg font-semibold text-aqua-dark">
+                        {z.claim}
+                      </p>
+                    ) : null}
                     <p className="mt-3 text-navy-sub">{z.descripcion}</p>
                     <ul className="mt-6 flex flex-col gap-2.5 border-t border-linea pt-6">
                       {z.bullets.map((b) => (
@@ -179,6 +188,12 @@ export function ZonasInstalaciones() {
                         </li>
                       ))}
                     </ul>
+                    {/* La frase de cierre, cuando la zona la trae. Va DESPUES
+                        de los checks porque es el remate del argumento, no su
+                        entrada. */}
+                    {z.cierre ? (
+                      <p className="mt-4 font-medium text-navy">{z.cierre}</p>
+                    ) : null}
                     <Link
                       to="/#tours"
                       className="group mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-coral transition-colors hover:text-coral-dark"
@@ -193,16 +208,11 @@ export function ZonasInstalaciones() {
                 </div>
               </article>
 
-              {z.id === BANDA_INSTALACIONES.trasZona ? (
-                <BandaInstalaciones
-                  variante="intercalada"
-                  foto={BANDA_INSTALACIONES.foto}
-                  eyebrow={BANDA_INSTALACIONES.eyebrow}
-                  titulo={BANDA_INSTALACIONES.titulo}
-                  texto={BANDA_INSTALACIONES.texto}
-                  cta={BANDA_INSTALACIONES.cta}
-                />
-              ) : null}
+              {/* [v3 2026-08-06, WEBSITE - NOSOTROS pag. 15] Aqui se
+                  intercalaba la banda «La cocina, el mar y la ciencia, en un
+                  solo dia». El cliente la TACHA EN ROJO, asi que sale — con
+                  ella y con el museo (que se muda a /marine-park), la pagina
+                  pierde dos interrupciones y las 5 zonas se leen seguidas. */}
             </Fragment>
           )
         })}

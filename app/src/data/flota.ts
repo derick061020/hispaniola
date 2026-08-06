@@ -55,18 +55,26 @@ import { FLOTA, TIMELINE_FLOTA, type BarcoFlota } from './nosotros'
 // /tripulacion pierde su intro, o esta cambia de titular. No se toca
 // /tripulacion en esta iteración porque no estaba en el encargo.
 export const FAMILIA_FLOTA = {
-  eyebrow: 'Quiénes somos',
-  titulo: 'Bienvenido a la familia Hispaniola',
+  // [v3 2026-08-06, WEBSITE - NOSOTROS pag. 4] «QUITAR: BIENVENIDOS» y
+  // «QUITAR: GRUPOS PEQUEÑOS». Las dos piezas salen y su sitio lo ocupa el
+  // texto APROBADO, que dice otra cosa y mas fuerte: los barcos son PROPIOS y
+  // los mantiene su equipo, no se revenden salidas de terceros.
+  // ⚠️ El diferenciador de aforo no se pierde del sitio: sigue vivo en la home
+  // (stat «≤35% del aforo») y en la ficha del semi-privado, que es donde de
+  // verdad decide una compra.
+  eyebrow: 'Our fleet',
+  titulo: 'Every boat has a purpose',
   parrafos: [
-    'Te damos la bienvenida a ti y a los tuyos para disfrutar el calor caribeño y la brisa del mar a bordo de uno de nuestros catamaranes. Aquí no eres una reserva más — eres parte de la familia por un día.',
-    'Cada barco de esta página es nuestro. No somos una central de reservas que revende la salida de otro: el capitán, la tripulación, el chef y el mantenimiento son de casa, y por eso podemos responder de lo que pasa a bordo.',
+    "Each vessel in our fleet has been carefully selected and customized for the experience. Unlike many tour operators, we don't rely on third-party boats: every vessel is our own, professionally maintained by our in-house team and continuously upgraded to meet the highest standards.",
+    "Below, you'll find detailed specifications, onboard features, and technical fact sheets for each vessel, so you know exactly what to expect before you step aboard.",
   ],
-  // La caja de destacado del slide, verbatim del diferenciador real de
-  // about-hispaniola.php (los barcos caben 100+, se reserva menos).
+  // [v3] La caja «Grupos pequeños, espacio de verdad» se retira (tachada por
+  // el cliente). En su lugar, el dato que su propia timeline convierte en
+  // argumento: doce barcos construidos uno a uno desde 2010.
   destacado: {
-    titulo: 'Grupos pequeños, espacio de verdad',
+    titulo: 'Since 2010, a fleet of 12',
     texto:
-      'Nuestros barcos caben más de 100 personas, pero preferimos reservar solo una parte — para que cada huésped tenga su sitio y se sienta un VIP, no un número.',
+      'Our journey began in 2010 with a single boat and one clear vision: to create unforgettable experiences at sea. Every new vessel was made possible by the success of the one before it, allowing us to grow step by step without ever compromising quality.',
   },
   cta: { label: 'Conoce a la tripulación', to: '/crew' },
 
@@ -115,9 +123,9 @@ export const FAMILIA_FLOTA = {
 // mano — el mismo motivo que el KPI de arriba. No se corrige en el origen
 // porque allí `TIMELINE_FLOTA` se declara ANTES que `FLOTA` y leer la
 // longitud desde ahí reventaría en la zona muerta temporal del módulo.
-export const RECORRIDO_FLOTA = TIMELINE_FLOTA.map((hito) =>
-  hito.anio === 'Hoy' ? { ...hito, titulo: `Flota de ${FLOTA.length} embarcaciones propias` } : hito,
-)
+// [v3 2026-08-06] La timeline aprobada termina en 2024 y no lleva hito «Hoy»,
+// asi que ya no hay nada que derivar de FLOTA.length — se pasa tal cual.
+export const RECORRIDO_FLOTA = TIMELINE_FLOTA
 
 // ═════════════════════════════════════════════════════════════════════════
 // §2 — LA MEDIA DE CADA BARCO (slide 28)

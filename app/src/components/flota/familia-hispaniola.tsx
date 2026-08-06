@@ -233,7 +233,12 @@ export function FamiliaHispaniola() {
             className="timeline-riel-progreso absolute left-1.5 top-1.5 hidden h-px w-4/5 origin-left bg-coral sm:block"
           />
 
-          <ol className="grid gap-6 sm:grid-cols-5 sm:gap-x-0">
+          {/* [v3 2026-08-06] De 5 columnas a 3. La timeline aprobada trae NUEVE
+              hitos (antes 5) y a cinco por fila cada uno se quedaba en un
+              canal de ~110px con un parrafo dentro. Tres columnas dan tres
+              filas de tres, que ademas es como se lee una historia por
+              decadas. */}
+          <ol className="grid gap-6 sm:grid-cols-3 sm:gap-x-6">
             {RECORRIDO_FLOTA.map((hito, i) => (
               <li key={hito.anio} className="timeline-hito relative flex gap-4 sm:block">
                 <div className="flex flex-col items-center sm:block">
@@ -250,7 +255,15 @@ export function FamiliaHispaniola() {
                 </div>
                 <div className="pb-2 sm:mt-5 sm:pr-4">
                   <p className="font-display text-lead font-semibold text-coral">{hito.anio}</p>
-                  <p className="mt-1 text-sm text-navy-sub">{hito.titulo}</p>
+                  <p className="mt-1 font-display text-base font-semibold text-navy">
+                    {hito.titulo}
+                  </p>
+                  {/* [v3] El hito gana su parrafo: el cliente no da solo el
+                      titular de cada anio, da lo que paso — que barco llego y
+                      por que importo. */}
+                  {hito.texto ? (
+                    <p className="mt-1 text-sm text-navy-sub">{hito.texto}</p>
+                  ) : null}
                 </div>
               </li>
             ))}

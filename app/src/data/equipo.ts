@@ -45,45 +45,59 @@ export type Departamento = {
 // Los 6 departamentos y sus descripciones son CONTENIDO REAL del cliente
 // (slides 37-42 del PDF v2 + confirmados de viva voz en la reunión, 27:46).
 export const DEPARTAMENTOS: Departamento[] = [
+  // [v3 2026-08-06, WEBSITE - NOSOTROS pags. 2-3] Los 6 departamentos con el
+  // nombre y el parrafo APROBADOS. Mapean 1:1 con los 6 que ya habia —el
+  // cliente no cambia la estructura, cambia el texto— salvo dos renombres que
+  // dicen mejor lo que hacen: «Operaciones Playa» pasa a MARINE OPERATIONS
+  // (es la tripulacion del mar, no de la playa) y «Fundacion The Bavaro Reef»
+  // a BAVARO REEFS FOUNDATION, que es como el cliente la nombra en todos los
+  // documentos nuevos.
+  // ⚠️ Las cifras de plantilla NO se tocan: son suyas y suman 70, que es lo
+  // que el copy nuevo repite («more than 70 passionate professionals»).
+  {
+    id: 'marketing',
+    nombre: 'Sales & Marketing',
+    descripcion:
+      "Your adventure starts long before you step on board. We listen, offer personalized recommendations, answer every question, and help you choose the experience that's perfect for you.",
+    plantilla: 9,
+  },
   {
     id: 'oficina',
-    nombre: 'Operaciones Oficina',
-    descripcion: 'Coordinan tu reserva y te responden cuando escribes.',
+    nombre: 'Office Operations',
+    descripcion:
+      'From the moment you arrive, we welcome you to our facilities, guide you through check-in, introduce your adventure, and provide personalized support throughout your experience.',
     plantilla: 11,
   },
   {
     id: 'playa',
-    nombre: 'Operaciones Playa',
-    descripcion: 'La tripulación que te recibe, guía y cuida en cada salida.',
+    nombre: 'Marine Operations',
+    descripcion:
+      'More than a crew: from boarding to snorkeling and every unforgettable moment in between, our team is dedicated to your safety, comfort, and enjoyment—making you feel like part of our family.',
     plantilla: 21,
   },
   {
-    id: 'marketing',
-    nombre: 'Marketing & Ventas',
-    descripcion: 'Te ayudan a encontrar y armar tu experiencia perfecta.',
-    plantilla: 9,
-  },
-  {
-    id: 'administracion',
-    nombre: 'Equipo de Administración',
-    descripcion: 'Hacen que todo funcione detrás de cámaras.',
-    plantilla: 8,
-  },
-  {
     id: 'cocina',
-    nombre: 'Equipo de Cocina',
-    descripcion: 'El equipo de la cocina flotante, a bordo y en tierra.',
+    nombre: 'Kitchen Operations',
+    descripcion:
+      'From land to our floating kitchen and then your table on board, our professional chefs prepare fresh, high-quality dishes with passion and attention to every detail, making every meal part of the experience.',
     plantilla: 12,
   },
   {
     id: 'fundacion',
     // ⚠️ Matiz que conviene no pisar: la fundación es una entidad SIN FINES DE
     // LUCRO separada, así que su gente no son empleados de Hispaniola. El
-    // encabezado lo dice («el equipo de la fundación que respaldamos») en vez
-    // de listarlos como un departamento más de la plantilla.
-    nombre: 'Fundación The Bávaro Reef',
-    descripcion: 'Restauran el arrecife y cuidan el mar que navegamos.',
+    // encabezado lo dice en vez de listarlos como un departamento más.
+    nombre: 'Bávaro Reefs Foundation',
+    descripcion:
+      'Driven by a passion for the ocean, our multidisciplinary conservation team works every day to protect coral reefs, restore marine life, and preserve the Caribbean for future generations.',
     plantilla: 9,
+  },
+  {
+    id: 'administracion',
+    nombre: 'Administration',
+    descripcion:
+      'Our management and administrative team oversees every aspect of the business, ensuring smooth operations, financial responsibility, and full compliance with Dominican regulations.',
+    plantilla: 8,
   },
 ]
 
@@ -169,14 +183,18 @@ export function contarPorDepartamento(id: DepartamentoId): number {
 }
 
 export const EQUIPO_PAGINA = {
-  eyebrow: 'Nuestro equipo',
-  titulo: 'Las personas detrás de cada tour',
+  // [v3 2026-08-06, WEBSITE - NOSOTROS pags. 1-2] Copy APROBADO. El cliente
+  // escribe el titular en dos pisos («THE PEOPLE BEHIND THE SCENES» / «MORE
+  // THAN A CREW, A TEAM DEDICATED TO YOU»): el primero es el H1 y el segundo
+  // la bajada, que es como los presenta.
+  eyebrow: 'Our team',
+  titulo: 'The people behind the scenes',
   // El lead de la maqueta del cliente decía «Gerencia española afincada en
   // Punta Cana desde 2012 y un gran equipo dominicano que vive el mar
   // contigo». El dato RD + España SÍ se publica ahora (ver `datos`, pedido de
   // Samuel 2026-07-28), pero como dato de la franja, no como frase del hero:
   // aquí sigue el lead que dice solo lo que describe la página.
-  lead: 'Un equipo repartido en seis departamentos que hacen posible tu día perfecto: desde quien te responde cuando escribes hasta quien cocina frente a ti en el mar.',
+  lead: 'More than a crew, a team dedicated to you. More than 70 passionate professionals across six specialized departments work together every day to make your Caribbean adventure unforgettable.',
   // Franja compacta bajo el hero (slide 37 del PDF v2 — los cuatro datos y su
   // redacción son del cliente). Los dos primeros valores se DERIVAN del array,
   // como todos los contadores de esta página; los dos últimos son texto fijo.
@@ -187,7 +205,9 @@ export const EQUIPO_PAGINA = {
   datos: [
     { id: 'personas', valor: `≈ ${TOTAL_EQUIPO}`, etiqueta: 'personas en el equipo' },
     { id: 'departamentos', valor: `${DEPARTAMENTOS.length} departamentos`, etiqueta: 'de oficina al mar' },
-    { id: 'desde', valor: 'Desde 2012', etiqueta: 'creciendo juntos' },
+    // [v3 2026-08-06] «Desde 2012» -> 2010: la timeline aprobada de /flota
+    // fecha el primer barco en 2010 y el copy de la home dice «since 2010».
+    { id: 'desde', valor: 'Since 2010', etiqueta: 'growing together' },
     // ⚠️ Este es el único dato de la franja que afirma algo sobre la EMPRESA y
     // no sobre esta página. No estaba en la web original — sale de la maqueta
     // del cliente (slide 37) y se publica por pedido explícito de Samuel

@@ -66,8 +66,15 @@ export type ZonaInstalacion = {
   chip: string
   icono: IconoZona
   nombre: string
+  /** [v3 2026-08-06] El claim corto que el cliente pone bajo cada numero
+   *  («Your Vacation Starts Before You Board»). Antes no existia: sus zonas
+   *  tenian nombre y parrafo, y el claim es lo que las vende. */
+  claim?: string
   /** Copy REAL del cliente. */
   descripcion: string
+  /** [v3 2026-08-06] Frase de cierre tras los checks, en tres de las cinco
+   *  zonas («Real conservation. Real scientists. Real impact.»). */
+  cierre?: string
   /** Copy REAL del cliente. */
   bullets: string[]
   /** Celda grande del bento. */
@@ -79,18 +86,20 @@ export type ZonaInstalacion = {
 }
 
 export const INSTALACIONES = {
-  eyebrow: 'Nuestras instalaciones',
-  titulo: 'Conócenos por dentro',
-  lead: 'Mucho más que una empresa de excursiones: un complejo completo en Punta Cana. Cocinas propias, laboratorio de biología marina, museo al aire libre, tienda y oficinas.',
+  // [v3 2026-08-06, WEBSITE - NOSOTROS pags. 10-11] Copy APROBADO, literal.
+  // El cliente remata el titular con ⭐⭐⭐: es su marca de enfasis en el
+  // documento, no parte del texto — el enfasis lo pone la tipografia.
+  eyebrow: 'Our facilities',
+  titulo: 'More Than a Marina. The Heart of Hispaniola.',
+  lead: 'Before you step aboard, there is a complete operations center designed to deliver exceptional experiences. From our private guest facilities and professional kitchens to our marine biology laboratory, coral museum, administrative offices, and logistics center, every detail is managed under one roof.',
 
   // Carril de verticales del slide 45 («Míralo en video · vertical»). Se
   // alimenta de las propias ZONAS (ver la derivación al final del archivo):
   // el carril y el bento enseñan EL MISMO video de cada zona, así que no hay
   // dos listas que mantener sincronizadas.
-  videoEyebrow: 'En video',
-  videoTitulo: 'Míralo por dentro',
-  videoLead:
-    'Un recorrido corto por cada zona del complejo, en vertical — como se ve desde el móvil.',
+  videoEyebrow: 'Tap to explore',
+  videoTitulo: 'One tap. One minute.',
+  videoLead: 'A complete look behind the scenes of Hispaniola Aquatic Adventures.',
 
   seccionEyebrow: 'Un complejo, no solo un muelle',
   seccionTitulo: 'Todo lo que hay detrás de tu experiencia',
@@ -125,16 +134,10 @@ export const INSTALACIONES = {
 // la maqueta busca) sin que la página se convierta en una escalera de botones.
 // El copy es el de la banda verde, que es la única de las tres que dice algo
 // propio de ESTA página en vez del genérico de reservar.
-export const BANDA_INSTALACIONES = {
-  /** Se intercala DESPUÉS de esta zona (a mitad de las 6). */
-  trasZona: 'biologia',
-  eyebrow: 'Todo en el mismo sitio',
-  titulo: 'La cocina, el mar y la ciencia, en un solo día',
-  texto: 'Ven a conocer el complejo en persona. Tu experiencia empieza aquí.',
-  cta: 'Ver disponibilidad',
-  /** Cenital de agua turquesa — el mar del que habla el titular. */
-  foto: 'arrecife-fondo-cenital',
-} as const
+// [v3 2026-08-06, WEBSITE - NOSOTROS pag. 15] LA BANDA CTA «La cocina, el mar
+// y la ciencia, en un solo dia» SE RETIRA: el cliente la tacha en rojo. Con
+// ella se va tambien su intercalado a mitad de las zonas. El componente que la
+// pintaba sigue existiendo y se usa en otras paginas; aqui deja de invocarse.
 
 // ⚠️ [placeholder-v2] LOS VIDEOS DEL REPO, alternados entre las 6 zonas para
 // que no se repita el mismo en dos zonas seguidas. Es el mismo trato que ya se
@@ -154,15 +157,16 @@ const V_CATAMARAN = { video: '/video/hero.mp4', poster: 'hero-video-poster' }
 export const ZONAS: ZonaInstalacion[] = [
   {
     id: 'recibimiento',
-    chip: 'Recibimiento',
+    chip: 'Welcome',
     icono: 'recibimiento',
-    nombre: 'Zona de recibimiento y presentación del tour',
+    nombre: 'Guest Welcome Center',
+    claim: 'Your Vacation Starts Before You Board',
     descripcion:
-      'Te damos la bienvenida, hacemos el check-in y te explicamos el día antes de zarpar. Subes a bordo sabiendo exactamente qué te espera.',
+      "From the moment you arrive, you'll feel the difference. Relax in our private waiting areas, enjoy clean restrooms, and meet our team as we guide you through the day's adventure with maps, safety information, and local tips. By the time you step aboard, you'll know exactly what awaits you.",
     bullets: [
-      'Bienvenida y check-in cómodo',
-      'Explicación del tour antes de salir',
-      'Zona de espera y baños',
+      'Private guest lounge',
+      'Comfortable waiting areas & restrooms',
+      'Tour briefing before departure',
     ],
     vertical: { ...V_CATAMARAN, titulo: 'Así te recibimos' },
     fotos: [
@@ -179,42 +183,27 @@ export const ZONAS: ZonaInstalacion[] = [
       },
     ],
   },
-  {
-    id: 'museo',
-    chip: 'Museo',
-    icono: 'museo',
-    nombre: 'Museo exterior marino',
-    descripcion:
-      'Un museo al aire libre donde conocerás el ecosistema del arrecife y el trabajo de restauración de coral. Le da sentido a todo lo que verás bajo el agua.',
-    bullets: [
-      'Al aire libre, abierto a visitantes',
-      'El ecosistema marino, explicado',
-      'El proyecto de restauración de coral',
-    ],
-    vertical: { ...V_OCEANO, titulo: 'El museo marino' },
-    fotos: [
-      {
-        src: 'galeria-snorkel-lovers-6',
-        alt: 'Estructuras del vivero de coral bajo el agua, con una buceadora revisándolas',
-      },
-      {
-        src: 'galeria-snorkel-lovers-10',
-        alt: 'Un guía de Hispaniola explicando el vivero de coral a un grupo de niños',
-      },
-    ],
-  },
+  // [v3 2026-08-06, WEBSITE - NOSOTROS pag. 15] AQUI VIVIA «Museo exterior
+  // marino». El cliente lo tacha de esta pagina y le da una PROPIA
+  // (/marine-park, plan 05 §6): el museo es lo que se visita bajo el agua y
+  // esta pagina es el complejo en tierra. Su contenido no se pierde, se muda
+  // entero — incluidas sus dos fotos, que ahora ilustran alli el bloque «01
+  // Underwater Museum». Lo que se queda aqui es el laboratorio, que es otra
+  // cosa: el sitio donde se cultiva el coral.
   {
     id: 'biologia',
-    chip: 'Departamento',
+    chip: 'Science',
     icono: 'biologia',
-    nombre: 'Departamento de biología',
+    nombre: 'Marine Biology Center',
+    claim: 'Where Science Meets Conservation',
     descripcion:
-      'Nuestro laboratorio propio, donde los biólogos marinos cultivan coral y estudian el arrecife para la Fundación The Bávaro Reef. No es marketing: es trabajo real.',
+      "This isn't a display—it's a working marine biology center. Visit our coral laboratory, explore our open-air underwater museum, and discover how our team restores coral reefs and protects Punta Cana's marine life. Before entering the sea, you'll understand exactly what you're about to explore.",
     bullets: [
-      'Laboratorio de cultivo de coral',
-      'Biólogos marinos en plantilla',
-      'Base de la Fundación The Bávaro Reef',
+      'Live coral nursery',
+      'Marine biologists on site',
+      'Interactive coral museum',
     ],
+    cierre: 'Real conservation. Real scientists. Real impact.',
     vertical: { ...V_CATAMARAN, titulo: 'Dentro del laboratorio' },
     fotos: [
       {
@@ -229,15 +218,16 @@ export const ZONAS: ZonaInstalacion[] = [
   },
   {
     id: 'cocinas',
-    chip: 'Cocinas',
+    chip: 'Kitchen',
     icono: 'cocinas',
-    nombre: 'Cocinas',
+    nombre: 'Professional Culinary Center',
+    claim: 'Fresh Starts Here',
     descripcion:
-      'Nuestras cocinas en tierra, donde preparamos y controlamos la calidad de todo lo que sube a bordo. De aquí sale lo que el chef cocina frente a ti.',
+      'Every meal begins in our professional land-based kitchen, where fresh ingredients are carefully selected, stored, and prepared under strict quality standards before reaching our floating kitchen. From our cold storage to the grill on board, every dish follows one promise: fresh food, prepared the right way.',
     bullets: [
-      'Higiene y estándares certificados',
-      'Producto fresco cada día',
-      'Control de calidad antes de zarpar',
+      'Professional preparation kitchen',
+      'Large cold-storage facilities',
+      'Daily quality control',
     ],
     vertical: { ...V_OCEANO, titulo: 'La cocina en acción' },
     fotos: [
@@ -261,16 +251,18 @@ export const ZONAS: ZonaInstalacion[] = [
   },
   {
     id: 'tienda',
-    chip: 'Tienda',
+    chip: 'Store',
     icono: 'tienda',
-    nombre: 'Tienda de regalos',
+    nombre: 'Foundation Store',
+    claim: 'Take Home Something That Gives Back',
     descripcion:
-      'A la entrada del complejo, souvenirs, ropa y productos locales para que te lleves un pedacito de tu día en Hispaniola a casa.',
+      'More than a gift shop, every purchase directly supports The Bávaro Reef Foundation. Take home locally inspired products and meaningful souvenirs while helping protect the coral reefs and marine life that made your day unforgettable.',
     bullets: [
-      'Souvenirs y ropa de la marca',
-      'Productos locales dominicanos',
-      'A la entrada, fácil de visitar',
+      'Official Foundation merchandise',
+      'Local handcrafted products',
+      'Every purchase supports conservation',
     ],
+    cierre: 'Your souvenir helps protect the ocean you came to enjoy.',
     vertical: { ...V_CATAMARAN, titulo: 'Un paseo por la tienda' },
     fotos: [
       {
@@ -285,16 +277,18 @@ export const ZONAS: ZonaInstalacion[] = [
   },
   {
     id: 'oficinas',
-    chip: 'Oficinas',
+    chip: 'Operations',
     icono: 'oficinas',
-    nombre: 'Oficinas corporativas',
+    nombre: 'Operations Center',
+    claim: 'The Engine Behind Every Tour',
     descripcion:
-      'El centro de operaciones desde donde coordinamos reservas, logística y equipo. Aquí trabaja la gente que te responde cuando escribes.',
+      'Behind every unforgettable experience is a team making thousands of decisions every day. Reservations, guest support, logistics, operations, sales, and conservation all work together from our headquarters to ensure your day runs seamlessly from start to finish.',
     bullets: [
-      'Coordinación de reservas y atención',
-      'Logística y gestión del equipo',
-      'El corazón administrativo de Hispaniola',
+      'Guest services & reservations',
+      'Operations and logistics',
+      'Sales & Foundation offices',
     ],
+    cierre: 'What you experience as a perfect day is the result of hundreds of details working together behind the scenes.',
     vertical: { ...V_OCEANO, titulo: 'Un día en oficinas' },
     fotos: [
       {

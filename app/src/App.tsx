@@ -11,6 +11,7 @@ import { FlotaPage } from '@/pages/flota'
 import { TripulacionPage } from '@/pages/tripulacion'
 import { TripulacionBarcoPage } from '@/pages/tripulacion-barco'
 import { InstalacionesPage } from '@/pages/instalaciones'
+import { MarineParkPage } from '@/pages/marine-park'
 import { FundacionPage } from '@/pages/fundacion'
 import { GuiasPage } from '@/pages/guias'
 import { FaqPage } from '@/pages/faq'
@@ -170,6 +171,10 @@ function App() {
             cabecera de pages/tripulacion-barco.tsx. */}
         <Route path="/crew-boat" element={<TripulacionBarcoPage />} />
         <Route path="/facilities" element={<InstalacionesPage />} />
+        {/* [v3 2026-08-06, plan 05 §6] Pagina NUEVA: el parque marino.
+            Solo en ingles — nace despues de la decision de slugs EN, asi que
+            no tiene ruta vieja en español de la que redirigir. */}
+        <Route path="/marine-park" element={<MarineParkPage />} />
         <Route path="/fleet" element={<FlotaPage />} />
         {/* ⚠️ SINGULAR. Es la fundación del cliente. NO confundir con
             `/fundaciones` (plural, abajo), que es la página interna de tokens. */}

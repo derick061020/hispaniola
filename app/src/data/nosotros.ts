@@ -110,6 +110,9 @@ export type MiembroEquipo = {
   desde?: string
   /** undefined = sin frase (no se inventa una personal para un rol sin nombre). */
   quote?: string
+  /** [v3 2026-08-06] Historia larga, hoy solo del CEO (WEBSITE - NOSOTROS
+   *  pag. 2). La `quote` es la frase de cabecera; esto es el relato. */
+  bio?: string[]
   /** null = no tenemos retrato; se pintan iniciales. */
   foto: string | null
   /**
@@ -141,9 +144,24 @@ export const EQUIPO: MiembroEquipo[] = [
   {
     id: 'omar',
     nombre: 'Omar',
-    rol: 'Fundador y director',
-    desde: '2012',
-    quote: 'Empecé con un solo barco y un sueño: que cada persona se sienta en casa en el mar.',
+    rol: 'Founder & CEO',
+    // [v3 2026-08-06] 2010, no 2012: la timeline aprobada fecha el primer
+    // barco —y con el, la empresa— en 2010.
+    desde: '2010',
+    // [v3 2026-08-06, WEBSITE - NOSOTROS pag. 4] La frase APROBADA del CEO.
+    // La anterior tambien era suya (de su web de 2012); esta la escribe ahora.
+    quote:
+      'I never wanted to build the biggest tour company. I wanted to build the one people would never forget. Happiness is a way of travel, not a destination.',
+    // [v3 2026-08-06, WEBSITE - NOSOTROS pag. 2] La historia del CEO, tal
+    // como la escribe. Es lo que convierte la ficha en una persona: empezo de
+    // capitan, ha hecho casi todos los puestos, y nombra a Jose —su
+    // Operations Manager— contando que aprendio a nadar con el.
+    // ⚠️ Jose aparece con nombre y cargo porque es dato del cliente, de su
+    // propio documento. No se inventa nada alrededor.
+    bio: [
+      "I started this company as its very first captain. Over the years, I've worked in nearly every role—from leading tours at sea to building the team that now makes it all possible. Watching people grow alongside the company has been one of the greatest rewards. In fact, our Operations Manager, Jose, learned to swim with me years ago, and today he leads one of the most important departments in the company. He is my right wing man.",
+      'No matter how much we grow, I believe the best leaders never stop learning, never stop listening, and never stop getting their feet wet.',
+    ],
     foto: 'equipo-omar',
     cta: { label: 'Nuestra historia', tipo: 'historia' },
   },
@@ -196,14 +214,32 @@ export const EQUIPO: MiembroEquipo[] = [
 // separan los dos hechos (2012 = nace la empresa, 2013 = primer catamarán
 // propio) en vez de forzarlos en uno solo. CONFIRMAR con el cliente: si en
 // 2012 ya operaban con otro barco, falta ese dato.
-export type HitoFlota = { anio: string; titulo: string }
+export type HitoFlota = { anio: string; titulo: string; texto?: string }
 
 export const TIMELINE_FLOTA: HitoFlota[] = [
-  { anio: '2012', titulo: 'Nace Hispaniola Aquatic Adventures' },
-  { anio: '2013', titulo: 'Se construye el Santa María, el primero de la flota' },
-  { anio: '2015', titulo: 'Llega el Forever Teresa, el de mayor eslora' },
-  { anio: '2016', titulo: 'Se incorpora el Maite, el velero' },
-  { anio: 'Hoy', titulo: 'Flota de 6 catamaranes' },
+  // [v3 2026-08-06, WEBSITE - NOSOTROS pags. 5-7] LA TIMELINE COMPLETA, tal
+  // como la escribe el cliente. Sustituye a los 5 hitos que habia, que se
+  // dedujeron de about-hispaniola.php a falta de algo mejor.
+  //
+  // ⚡ ES ORO PARA ESTA PAGINA: nombra los DOCE barcos, y el repo solo conocia
+  // seis. Tambien cierra el «desde 2012 vs 2010» — el cliente fecha el primer
+  // barco en 2010, asi que el hito de 2012 que teniamos («nace Hispaniola»)
+  // desaparece: no es que la empresa naciera dos anios despues del primer
+  // barco, es que el 2012 salio de su propia web y el copy aprobado lo corrige.
+  //
+  // ⚠️ NO da fotos ni fichas de los 6 barcos nuevos (Teresa, Teresa 2, Parrot,
+  // Goyita, Grandpa, Follow Your Dreams). El grid sigue con los 6 que tienen
+  // material — un grid de 12 con la mitad en hueco seria peor que una timeline
+  // que los nombra. Duda para Samuel, anotada en el plan 05 §3.
+  { anio: '2010', titulo: 'The Dream Begins', texto: 'Arrival of Catamaran Teresa, the first vessel and the beginning of Hispaniola Aquatic Adventures.' },
+  { anio: '2013', titulo: 'The First Expansion', texto: 'Santa María joins the fleet, proving that every successful season could become the next investment.' },
+  { anio: '2015', titulo: 'Growing with Purpose', texto: "Forever Teresa arrives, followed by a second sailing catamaran and the company's first floating kitchen, elevating the onboard experience." },
+  { anio: '2016', titulo: 'Maite Joins the Fleet', texto: 'Catamaran Maite is built, expanding our capacity and allowing us to create new experiences for more guests.' },
+  { anio: '2017', titulo: 'Innovation at Sea', texto: 'Teresa 2 joins the fleet. Construction begins on Karaya, while Parrot joins the fleet and the original Teresa is transformed into a passenger boarding platform.' },
+  { anio: '2018', titulo: 'Improving Every Detail', texto: 'Goyita is added to make boarding faster, safer, and more comfortable for every guest.' },
+  { anio: '2020', titulo: 'Resilience', texto: 'Even during the pandemic, the fleet continues growing with the acquisition of Joker.' },
+  { anio: '2021', titulo: 'A New Flagship', texto: "After nearly five years of construction, Karaya is delivered, becoming the company's signature vessel." },
+  { anio: '2024', titulo: 'A New Generation', texto: 'Grandpa and Follow Your Dreams join the fleet, representing the next chapter of innovation and guest experience.' },
 ]
 
 export type MiembroTripulacion = { rol: string; nota: string }
@@ -380,14 +416,16 @@ export const NOSOTROS = {
   tripulacionTexto:
     'Multilingüe, altamente capacitada y pendiente de tu seguridad en cada paso — desde que subes a bordo hasta que vuelves a la orilla.',
 
-  flotaEyebrow: 'La flota',
+  flotaEyebrow: 'The fleet',
   // Titular de la maqueta (slide 5). El eyebrow se queda con «La flota»: es la
   // etiqueta de sección, el titular ahora cuenta algo.
-  flotaTitulo: 'Seis catamaranes, uno para cada plan',
+  // [v3 2026-08-06, WEBSITE - NOSOTROS pag. 7] Titulo y texto APROBADOS del
+  // grid de barcos.
+  flotaTitulo: 'More Than Boats. Your Home at Sea.',
   // Condensado de "Nuestra flota consta de... catamaranes modernos... Están
   // bien mantenidos y siempre limpios."
   flotaTexto:
-    'Catamaranes bien mantenidos y siempre impecables — cuidamos cada detalle para que tu tour se sienta especial, no en serie. Cada barco tiene su carácter y su plan ideal.',
+    "Every vessel in our fleet has its own personality, its own purpose, and thousands of unforgettable stories. We own, design, and maintain every boat ourselves, so every detail reflects the experience we want you to live. Explore each vessel through photos, 360° tours, videos, technical specifications, and onboard features before choosing the one that's perfect for you.",
 
   arrecifeTitulo: 'El arrecife que reconstruimos',
   arrecifeTexto:
@@ -407,12 +445,16 @@ export const NOSOTROS = {
 // el diferenciador de grupos pequeños ("nuestros catamaranes tienen
 // capacidad para más de 100 pasajeros, pero preferimos garantizar espacio
 // suficiente para que todos nuestros huéspedes se sientan importantes").
+// [v3 2026-08-06, WEBSITE - NOSOTROS pag. 4] «QUITAR: BIENVENIDOS» y «QUITAR:
+// GRUPOS PEQUEÑOS». Las dos frases que habia —la bienvenida a la familia y el
+// diferenciador de aforo— salen, y su sitio lo ocupa el texto APROBADO, que
+// dice otra cosa: que los barcos son PROPIOS y los mantiene su equipo.
 export const INTRO_NOSOTROS = {
-  eyebrow: 'Quiénes somos',
-  titulo: 'Bienvenido a la familia Hispaniola',
+  eyebrow: 'Our fleet',
+  titulo: 'Every boat has a purpose',
   parrafos: [
-    'Te damos la bienvenida a ti y a los tuyos para disfrutar el calor caribeño y la brisa del mar a bordo de uno de nuestros catamaranes.',
-    'Nuestros barcos tienen capacidad para más de 100 pasajeros — pero preferimos reservar solo una parte. Que cada huésped tenga espacio de verdad, no que quepan todos los que caben.',
+    "Unlike many tour operators, we don't rely on third-party boats. Every vessel in our fleet is our own, professionally maintained by our in-house team and continuously upgraded to meet the highest standards.",
+    "Below, you'll find detailed specifications, onboard features, and technical fact sheets for each vessel, so you know exactly what to expect before you step aboard.",
   ],
   foto: 'galeria-charter-privado-4',
   fotoAlt: 'Catamarán fondeado frente a una playa de palmeras',
@@ -480,13 +522,30 @@ export const EXPERIENCIA_ABORDO: ParadaExperiencia[] = [
 // un lado, panel de texto al otro, con badge sobre la foto y 3 pruebas en
 // lista. Los 3 `puntos` no añaden hechos nuevos: son el propio `texto`
 // troceado en lo que se puede verificar de un vistazo.
+// [v3 2026-08-06, WEBSITE - NOSOTROS pag. 8 + PowerPoint slide 69] La cocina
+// flotante con el copy APROBADO. El cliente la reescribe entera y en clave
+// SENSORIAL —la brisa, el olor, el sonido de la parrilla— donde antes habia
+// una afirmacion de exclusividad. Es ademas la seccion que la slide 69 pide
+// destacar («resaltar que es unica en Punta Cana»), y el copy nuevo lo hace
+// mejor que el viejo: no lo dice, lo describe.
 export const COCINA_FLOTANTE = {
-  badge: 'Único en Punta Cana',
-  eyebrow: 'Solo con Hispaniola',
-  titulo: 'La única cocina flotante de Punta Cana',
+  badge: 'Only in Punta Cana',
+  eyebrow: 'Only with Hispaniola',
+  titulo: 'More Than Lunch. A Memory You Can Taste.',
   texto:
-    'Hispaniola es la única empresa de excursiones de la República Dominicana con una cocina flotante de verdad: mariscos y carnes a la parrilla, recién hechos frente a ti, mientras navegas. Nada de comida recalentada — un chef cocinando a bordo.',
-  puntos: ['A la parrilla, recién hecho', 'Chef cocinando a bordo', 'Mariscos y carnes frescos'],
+    'Imagine the sea breeze on your face, the scent of fresh seafood and grilled meats filling the air. The aroma comes first. Then the sound of the grill. Moments later, your meal is served—freshly prepared just a few steps from your table, while you sail through the crystal-clear waters of Punta Cana.',
+  // [v3] El segundo y el tercer parrafo aprobados. Antes esta seccion tenia un
+  // solo bloque de texto; el copy nuevo trae tres, y el tercero es el que
+  // remata («lunch isn't just another stop»).
+  textoExtra: [
+    'Choose from seven freshly grilled dishes, including premium meats, fresh seafood, and local specialties, all prepared live by our chefs in a true show-cooking experience. No reheated food. No buffet trays. Just fresh ingredients, authentic Caribbean flavors, and meals cooked the moment you order them.',
+    "For us, lunch isn't just another stop on the tour—it's one of the moments our guests remember long after they return home.",
+  ],
+  puntos: [
+    'Cooked fresh, served fresh',
+    'Live show cooking',
+    'Where great food brings everyone together',
+  ],
   foto: 'cocina-flotante',
   fotoAlt: 'La tripulación preparando mariscos a la parrilla en la cocina flotante',
 }

@@ -364,6 +364,16 @@ export const NAV_NOSOTROS: ItemNav[] = [
     to: '/facilities',
   },
   {
+    // [v3 2026-08-06, WEBSITE - NOSOTROS pag. 1 + plan 05 §1] El megamenu pasa
+    // de 3 entradas a 4: el cliente da la descripcion de MARINE PARK junto a
+    // las otras tres, o sea que para el la pagina ya existe.
+    id: 'marine-park',
+    nombre: 'Marine Park',
+    descripcion:
+      'Explore our protected marine area featuring an underwater museum, coral restoration, artificial reefs, and marine conservation projects.',
+    to: '/marine-park',
+  },
+  {
     id: 'flota',
     nombre: 'Flota',
     descripcion: 'Nuestras embarcaciones, con galería y ficha técnica de cada una.',
