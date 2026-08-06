@@ -47,7 +47,12 @@ export function CabeceraFicha({ tour, ficha }: Props) {
           Lo que NO ha cambiado en las tres vueltas: aquí crece esto y no se
           añade nada más a su lado — hay diagnóstico documentado de «hero
           cargado» en el cerebro. */}
-      <SelloTripAdvisor />
+      {/* [v3] La columna estrecha se queda AQUI, envolviendo solo al sello y
+          al titulo: es texto para leer y a 1400px se leeria fatal. La fila de
+          chips de abajo queda fuera a proposito — son insignias, no prosa, y
+          necesitan el ancho para caber en una linea. */}
+      <div className="max-w-4xl">
+        <SelloTripAdvisor />
 
       {/* --text-h2 (32px), no un tamaño nuevo: en Figma es el mismo text style
           que el título de sección. El H1 de la ficha manda por jerarquía
@@ -56,7 +61,10 @@ export function CabeceraFicha({ tour, ficha }: Props) {
           heros de internas, 2026-07-22, pedido de Samuel — este archivo la
           traía vía Breadcrumb de AlignUI, .migaja-sobre-foto en
           componentes.css). */}
-      <h1 className="mt-3 text-balance font-display text-h2 font-semibold text-white">{ficha.tituloLargo}</h1>
+        <h1 className="mt-3 text-balance font-display text-h2 font-semibold text-white">
+          {ficha.tituloLargo}
+        </h1>
+      </div>
 
       <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2">
         <span className="flex items-center gap-2">

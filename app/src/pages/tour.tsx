@@ -115,7 +115,15 @@ export function TourPage() {
           no pertenecía ahí) — se muda a la columna de contenido, ver más
           abajo. El CTA sigue apuntando al widget de esta página — en la
           home apunta al grid de tours (#tours), que aquí no existe. */}
-      <HeroInterna ctaHref="#ficha-widget">
+      {/* [v3 2026-08-06, pedido de Samuel: «sigo viendo el Ages 15+ debajo en
+          otra linea»] `anchoCompleto`: la caja de max-w-4xl del hero existe
+          para que un TITULO no se lea a 1400px de ancho, y esa razon vale para
+          el H1 pero no para una fila de insignias — con 896px, los 5 chips
+          aprobados + el rating piden 964 y el ultimo caia solo a la segunda
+          linea. Asi que la restriccion se muda DENTRO de CabeceraFicha, donde
+          puede aplicarse solo al titulo. Las demas internas no se enteran: la
+          prop es opt-in y solo la pasan esta ficha y /por-que-reservar. */}
+      <HeroInterna ctaHref="#ficha-widget" anchoCompleto>
         <CabeceraFicha tour={tour} ficha={ficha} />
       </HeroInterna>
       <AnclasFicha tour={tour} />
