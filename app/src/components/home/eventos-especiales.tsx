@@ -60,7 +60,7 @@ function EventoBox({ evento }: { evento: EventoEspecial }) {
 
   if (evento.slug) {
     return (
-      <Link to={`/eventos/${evento.slug}`} className={clases}>
+      <Link to={`/events/${evento.slug}`} className={clases}>
         {contenido}
       </Link>
     )

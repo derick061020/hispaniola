@@ -3,14 +3,128 @@
   command = "npm run build"
   publish = "dist"
 
-# [v2 2026-07-28] La página de sostenibilidad pasa a `/ventaja-competitiva`
-# (encuadre del cliente, slides 57-64). `/sostenibilidad` es URL indexada y
-# enlazada desde fuera: 301 REAL en el servidor, no solo el <Navigate> del
-# router — un 200 al index.html haría que Google siguiera viendo la vieja como
-# página propia. Va ANTES del catch-all: Netlify aplica la primera que casa.
+# ── [v3 2026-08-06] EL SITIO PASA A INGLÉS: rutas ES → EN, 301 REALES ─────
+#
+# Los <Navigate> de App.tsx solo cubren la navegación DENTRO de la SPA. Quien
+# entra directo por una URL vieja (enlace compartido, resultado de Google,
+# material del cliente) necesita un 301 del servidor: un 200 al index.html
+# haría que Google siguiera tratando la vieja como página propia.
+#
+# Van ANTES del catch-all — Netlify aplica la primera regla que casa.
+# `force = true` para que el 301 gane también si existiera un archivo con esa
+# ruta en dist.
+#
+# Los `:slug` son placeholders de Netlify: se capturan y se reinyectan en el
+# destino. ⚠️ Netlify NO puede traducir el slug (bodas → weddings): eso lo
+# hace RedirigeConSlug en App.tsx. Esta capa deja al visitante en la ruta EN
+# con el slug viejo, y el router remata la traducción — dos saltos, pero el
+# primero ya es el 301 que Google necesita.
+
 [[redirects]]
   from = "/sostenibilidad"
-  to = "/ventaja-competitiva"
+  to = "/competitive-advantage"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/ventaja-competitiva"
+  to = "/competitive-advantage"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/nosotros"
+  to = "/crew"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tripulacion"
+  to = "/crew"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/instalaciones"
+  to = "/facilities"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/flota"
+  to = "/fleet"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/fundacion"
+  to = "/foundation"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/guias"
+  to = "/guides"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/agentes-de-viaje"
+  to = "/travel-agents"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/trabaja-con-nosotros"
+  to = "/careers"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/por-que-reservar"
+  to = "/why-book-direct"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/reserva-directa"
+  to = "/why-book-direct"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/contacto"
+  to = "/contact"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/mi-reserva"
+  to = "/my-booking"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/reservar/:slug"
+  to = "/book/:slug"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/reservar/:slug/gracias"
+  to = "/book/:slug/thank-you"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/eventos/:slug"
+  to = "/events/:slug"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/eventos/:slug/gracias"
+  to = "/events/:slug/thank-you"
   status = 301
   force = true
 

@@ -19,7 +19,7 @@ export function TrabajaConNosotrosPage() {
       <Meta
         titulo="Trabaja con nosotros"
         descripcion="Proveedores de actividades, creadores de contenido y afiliados: cuéntanos quién eres y hablamos. Respuesta por WhatsApp en menos de 24 h."
-        ruta="/trabaja-con-nosotros"
+        ruta="/careers"
       />
       <HeroInterna ctaHref="/#tours">
         <CabeceraTrabaja />

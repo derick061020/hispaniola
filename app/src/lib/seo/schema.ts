@@ -15,6 +15,9 @@ export function schemaOrganizacion() {
     name: 'Hispaniola Aquatic Adventures',
     url: SITIO(),
     image: `${SITIO()}/marca/logo.png`,
+    // [v3 2026-08-06] El sitio es en inglés (plan 01). Declararlo aquí evita
+    // que Google infiera el idioma solo del contenido.
+    inLanguage: 'en',
     telephone: '+1-829-305-2804',
     email: CONTACTO.email,
     address: {
@@ -112,7 +115,7 @@ export function schemaTour(tour: Tour, ficha?: FichaTour) {
           offers: [
             {
               '@type': 'Offer',
-              name: 'Adulto',
+              name: 'Adult',
               price: String(tour.precioLight),
               priceCurrency: 'USD',
               availability: 'https://schema.org/InStock',
@@ -120,7 +123,7 @@ export function schemaTour(tour: Tour, ficha?: FichaTour) {
             },
             {
               '@type': 'Offer',
-              name: 'Niño',
+              name: 'Child',
               price: String(tour.precioNino),
               priceCurrency: 'USD',
               availability: 'https://schema.org/InStock',

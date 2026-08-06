@@ -61,7 +61,7 @@ export function MiReservaPage() {
   // la URL siempre arranca en INGRESO — ni siquiera se monta la página
   // de detalle, que es la parte pesada.
   if (!codigo) {
-    return <PantallaIngreso onSubmit={(c) => navigate(`/mi-reserva?codigo=${encodeURIComponent(c)}`)} />
+    return <PantallaIngreso onSubmit={(c) => navigate(`/my-booking?codigo=${encodeURIComponent(c)}`)} />
   }
 
   return <DetalleReserva codigoIngresado={codigo} />
@@ -98,7 +98,7 @@ function PantallaIngreso({ onSubmit }: { onSubmit: (codigo: string) => void }) {
       <Meta
         titulo="Mi reserva"
         descripcion="Gestiona tu reserva: cambia el menú, la recogida o los datos, o paga el saldo. Introduce tu código HSP-XXXX-NNNN."
-        ruta="/mi-reserva"
+        ruta="/my-booking"
       />
       <header className="border-b border-linea">
         <div className="mx-auto grid max-w-3xl grid-cols-3 items-center px-5 py-3 sm:px-8">
@@ -249,7 +249,7 @@ function DetalleReserva({ codigoIngresado }: { codigoIngresado: string }) {
       <Meta
         titulo={`Mi reserva · ${reservaParaMostrar.codigo}`}
         descripcion={`Gestiona tu reserva ${reservaParaMostrar.codigo} de ${reservaParaMostrar.tour.nombre} para ${reservaParaMostrar.personas} personas el ${fechaLarga(reservaParaMostrar.fechaISO)}.`}
-        ruta={`/mi-reserva?codigo=${reservaParaMostrar.codigo}`}
+        ruta={`/my-booking?codigo=${reservaParaMostrar.codigo}`}
         indexable={false}
       />
 
@@ -266,7 +266,7 @@ function DetalleReserva({ codigoIngresado }: { codigoIngresado: string }) {
             <Logo compacto />
           </Link>
           <Link
-            to="/mi-reserva"
+            to="/my-booking"
             className="inline-flex items-center gap-1.5 justify-self-end rounded-btn border border-linea bg-papel px-3 py-1.5 text-sm font-medium text-navy transition-colors hover:bg-papel-hueso"
           >
             <KeyRound className="size-3.5" aria-hidden="true" />

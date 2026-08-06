@@ -61,7 +61,7 @@ export const TIPS_GUIAS: TipGuia[] = [
     fotoPie: 'Snorkel Lovers · arrecife de Cabeza de Toro',
     stat: { valor: '≈100%', texto: 'de nuestros recorridos ven tortugas · proyecto Top 3 de coral del país' },
     ctaPrimario: { texto: 'Ver el Snorkel Lovers', to: '/tours/snorkel-lovers' },
-    ctaEnlace: { texto: 'La fundación completa', to: '/fundacion' },
+    ctaEnlace: { texto: 'La fundación completa', to: '/foundation' },
   },
   {
     categoria: 'Navegación a vela',

@@ -42,7 +42,7 @@ export type Tour = {
 
 export const TOURS: Tour[] = [
   {
-    slug: 'semi-privado',
+    slug: 'semi-private-premium',
     nombre: 'Semi-Privado Premium',
     audienciaChip: 'Solo adultos',
     duracionCorta: '4 h',
@@ -92,7 +92,7 @@ export const TOURS: Tour[] = [
     destacados: ['Equipo de snorkel', 'Comida + bebidas', 'Guía de snorkel'],
   },
   {
-    slug: 'charter-privado',
+    slug: 'private-charter',
     nombre: 'Charter Privado',
     audienciaChip: 'Grupo privado',
     // [v2 2026-07-28, plan 01 §7 — slide 2] «3-4 h» → «3 o 4 h», por el mismo
@@ -124,13 +124,13 @@ export const TOURS: Tour[] = [
     destacados: ['Barco entero', 'Menú a medida', 'Coordinación dedicada'],
   },
   {
-    slug: 'isla-saona',
+    slug: 'saona-island',
     nombre: 'Isla Saona',
     // v3 (2026-07-17, petición de Samuel al reemerger como producto completo):
     // Saona deja de ser "pendiente de confirmar" y se publica con su contenido
     // real de la web del cliente. Pasa de booking 'consulta' a 'completo'
     // (3 sub-variantes: speedboat / fishing town / catamarán — ver
-    // FICHAS['isla-saona'].subVariantes en data/tours.ts). precioLight es la
+    // FICHAS['saona-island'].subVariantes en data/tours.ts). precioLight es la
     // ancla "desde" en el widget: el speedboat para 6 pax son US$ 1.100 grupo,
     // ~US$ 184 por persona. Es un ancla visual (no un precio por persona real,
     // porque Saona se vende por GRUPO — el widget lo recalcula por tramo al
@@ -192,7 +192,7 @@ export type Ocasion = {
 // tienen ahora landing propia (los 3 slugs en español son consistentes con el
 // resto del sitio, ver PLAN-EVENTOS.md). Anteriormente el genérico
 // «Eventos y party boat» iba al formulario del hub — ahora tiene su landing
-// `/eventos/party-boat` (clone de ficha de tour con widget de cotización),
+// `/events/party-boat` (clone de ficha de tour con widget de cotización),
 // que es lo que pidió Samuel el 2026-07-17.
 //
 // Bodas y MICE ya correspondían 1:1 al viejo y conservan su landing propia
@@ -217,7 +217,7 @@ export const OCASIONES: Ocasion[] = [
     meta: 'Ceremonia, welcome party o despedida del grupo.',
     esLanding: true,
     foto: 'galeria-charter-privado-5',
-    slug: 'bodas',
+    slug: 'weddings',
   },
   {
     tipo: 'mice',
@@ -225,7 +225,7 @@ export const OCASIONES: Ocasion[] = [
     meta: 'Incentivos, team building, cierres de convención.',
     esLanding: true,
     foto: 'galeria-charter-privado-3',
-    slug: 'empresas',
+    slug: 'corporate',
   },
 ]
 
@@ -256,11 +256,11 @@ export const EVENTOS_ESPECIALES: EventoEspecial[] = [
     foto: 'galeria-charter-privado-2',
   },
   {
-    id: 'bodas',
+    id: 'weddings',
     nombre: 'Bodas',
     meta: 'El día más importante de tu vida, tan perfecto como un catamarán lo puede hacer.',
     foto: 'galeria-charter-privado-5',
-    slug: 'bodas',
+    slug: 'weddings',
   },
   {
     id: 'aniversarios',
@@ -340,26 +340,26 @@ export const NAV_NOSOTROS: ItemNav[] = [
     id: 'tripulacion',
     nombre: 'Tripulación',
     descripcion: 'Las personas detrás de cada tour: capitanes, guías, cocina, biología marina y oficina.',
-    to: '/tripulacion',
+    to: '/crew',
   },
   {
     id: 'instalaciones',
     nombre: 'Instalaciones',
     descripcion: 'Un complejo, no solo un muelle: museo marino, laboratorio de biología, cocinas y tienda.',
-    to: '/instalaciones',
+    to: '/facilities',
   },
   {
     id: 'flota',
     nombre: 'Flota',
     descripcion: 'Nuestras embarcaciones, con galería y ficha técnica de cada una.',
-    to: '/flota',
+    to: '/fleet',
   },
 ]
 
 // [v2 2026-07-27] Sostenibilidad sube a tab propio del nav principal, con un
 // único sub-ítem: la Fundación (reunión 07-24, 26:50).
 //
-// ⚠️ La ruta es `/fundacion` en SINGULAR. `/fundaciones` (plural) YA EXISTE y
+// ⚠️ La ruta es `/foundation` en SINGULAR. `/fundaciones` (plural) YA EXISTE y
 // es otra cosa: la página interna de tokens del proyecto. Se diferencian en
 // una letra — ver los avisos cruzados en App.tsx y en las dos páginas.
 export const NAV_SOSTENIBILIDAD: ItemNav[] = [
@@ -367,13 +367,13 @@ export const NAV_SOSTENIBILIDAD: ItemNav[] = [
     id: 'sostenibilidad',
     nombre: 'Nuestra ventaja competitiva',
     descripcion: 'Arrecifes, tortugas y comunidad: lo que tu reserva sostiene, con cifras.',
-    to: '/ventaja-competitiva',
+    to: '/competitive-advantage',
   },
   {
     id: 'fundacion',
     nombre: 'La Fundación',
     descripcion: 'Fundación Ecológica Arrecifes de Bávaro: el tercer vivero de coral del país.',
-    to: '/fundacion',
+    to: '/foundation',
   },
 ]
 
@@ -401,19 +401,19 @@ export const NAV_AYUDA: ItemNav[] = [
     id: 'guias',
     nombre: 'Guías de Punta Cana',
     descripcion: '5 artículos: cómo elegir tour, qué llevar, mejor época para navegar.',
-    to: '/guias',
+    to: '/guides',
   },
   {
     id: 'contacto',
     nombre: 'Contacto',
     descripcion: 'WhatsApp, teléfono y formulario. Respondemos en minutos, de 8:00 a 20:00.',
-    to: '/contacto',
+    to: '/contact',
   },
   {
     id: 'mi-reserva',
     nombre: 'Gestionar mi reserva',
     descripcion: 'Edita tu menú, recogida o datos con tu código HSP-XXXX-NNNN.',
-    to: '/mi-reserva',
+    to: '/my-booking',
   },
   // [v2 2026-07-27] Blog baja aquí desde «Nosotros» (reunión 07-24, 27:00:
   // «...contacto y el blog también»). Deja Ayuda en 5 ítems — su grid de 2

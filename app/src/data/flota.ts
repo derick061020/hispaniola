@@ -68,7 +68,7 @@ export const FAMILIA_FLOTA = {
     texto:
       'Nuestros barcos caben más de 100 personas, pero preferimos reservar solo una parte — para que cada huésped tenga su sitio y se sienta un VIP, no un número.',
   },
-  cta: { label: 'Conoce a la tripulación', to: '/tripulacion' },
+  cta: { label: 'Conoce a la tripulación', to: '/crew' },
 
   // ── Media del lado derecho ──────────────────────────────────────────────
   // El slide pone una foto grande con el badge de TripAdvisor flotando arriba
@@ -906,7 +906,7 @@ export const CERO_PLASTICO = {
     { titulo: 'Pajitas vegetales', texto: 'Y ninguna bolsa de plástico en la cocina flotante.' },
   ],
   cta: 'Ver el resto de nuestro compromiso',
-  ctaHref: '/ventaja-competitiva',
+  ctaHref: '/competitive-advantage',
   // Foto de fondo: agua turquesa limpia vista desde el aire — la misma
   // familia de imagen que ya usa el banner de arrecife, porque el mensaje
   // («el mar que devolvemos como lo encontramos») es el que pide mar limpio,

@@ -205,7 +205,7 @@ export type FichaTour = {
 }
 
 export const FICHAS: Record<string, FichaTour> = {
-  'semi-privado': {
+  'semi-private-premium': {
     tituloLargo: 'Semi-Privado Premium — catamarán solo adultos',
     audiencia: 'Solo adultos',
     duracion: '4 horas',
@@ -295,7 +295,7 @@ export const FICHAS: Record<string, FichaTour> = {
         r: 'Solo si eliges pagar el depósito del 25% — el saldo restante, con 5% de descuento si es en efectivo.',
       },
     ],
-    tambienTeGusta: ['snorkel-lovers', 'charter-privado'],
+    tambienTeGusta: ['snorkel-lovers', 'private-charter'],
     // [v2 2026-07-27] Las 4 ventajas del comparador (slide 17) y de la caja de
     // upsell del widget (slide 5). Salen de menuPremium/incluye de esta misma
     // ficha: langosta y Angus están en los platos Premium, la variedad de 7 vs
@@ -504,7 +504,7 @@ export const FICHAS: Record<string, FichaTour> = {
         r: 'Solo si eliges pagar el depósito del 25% — el saldo restante, con 5% de descuento si es en efectivo.',
       },
     ],
-    tambienTeGusta: ['semi-privado', 'charter-privado'],
+    tambienTeGusta: ['semi-private-premium', 'private-charter'],
     // [v2] Snorkel Lovers. La web original NO ofrece aquí el álbum, pero
     // Samuel decidió el 07-27 extenderlo a los 6 productos: la política del
     // negocio es uniforme y son sus otras páginas las que no lo tienen escrito.
@@ -521,7 +521,7 @@ export const FICHAS: Record<string, FichaTour> = {
     ],
   },
 
-  'charter-privado': {
+  'private-charter': {
     // [2026-07-28] Widget en piel oscura SIEMPRE — ver `widgetPremiumDeBase`
     // en el tipo. Alquilar el barco entero para tu grupo no tiene versión
     // Light: aquí la piel premium no anuncia un upgrade, describe el producto.
@@ -807,7 +807,7 @@ export const FICHAS: Record<string, FichaTour> = {
       { p: '¿Aceptan pagos corporativos?', r: 'Sí, ver la página de Empresas y MICE para facturación formal.' },
       { p: '¿Y si llueve?', r: 'Reembolso total o cambio de fecha, sin costo.' },
     ],
-    tambienTeGusta: ['semi-privado', 'snorkel-lovers'],
+    tambienTeGusta: ['semi-private-premium', 'snorkel-lovers'],
     // [v2] Charter privado. OJO con el texto del álbum: la web original de
     // este tour promete que «TODAS las fotos» se suben gratis a Facebook, así
     // que aquí NO se puede vender «el álbum completo» — solo la máxima
@@ -825,7 +825,7 @@ export const FICHAS: Record<string, FichaTour> = {
     ],
   },
 
-  'isla-saona': {
+  'saona-island': {
     // [2026-07-28] Widget en piel oscura SIEMPRE — ver `widgetPremiumDeBase`
     // en el tipo. Saona se vende eligiendo bote (speedboat / fishing town /
     // catamarán), no eligiendo menú: no hay Light contra el que contrastar, y
@@ -1002,7 +1002,7 @@ export const FICHAS: Record<string, FichaTour> = {
         r: 'No hay edad mínima — llevamos chalecos de todas las tallas en speedboat y catamarán.',
       },
     ],
-    tambienTeGusta: ['semi-privado', 'charter-privado'],
+    tambienTeGusta: ['semi-private-premium', 'private-charter'],
     // [v2] Saona. La langosta SÍ está documentada en su web para los 3 botes
     // («Optional add-on during check-out: Lobster 30$US per person») y es el
     // único add-on por PERSONA: se marca una vez y multiplica por todo el

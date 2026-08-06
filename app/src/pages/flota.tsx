@@ -72,7 +72,7 @@ export function FlotaPage() {
       <Meta
         titulo="Nuestra flota"
         descripcion="Las embarcaciones de Hispaniola Aquatic Adventures: catamaranes de vela y motor, lanchas y el catamarán de eventos, con vídeo, galería y ficha técnica completa de cada una."
-        ruta="/flota"
+        ruta="/fleet"
       />
       <HeroInterna ctaHref="/#tours">
         <CabeceraInterna

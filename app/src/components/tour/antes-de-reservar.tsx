@@ -60,7 +60,7 @@ export function AntesDeReservar({ tour, ficha }: { tour: Tour; ficha: FichaTour 
   // web original ese botón vive en SU ficha y lleva a Eventos (confirmado por
   // el cliente en la reunión, 12:24). Se ata al slug, que es el dato que lo
   // hace verdad, y no a `booking`.
-  const conGrupos = tour.slug === 'charter-privado'
+  const conGrupos = tour.slug === 'private-charter'
 
   return (
     <section id="ancla-antes-de-reservar" className={`${BLOQUE_FICHA} scroll-mt-sticky-top`}>
@@ -203,7 +203,7 @@ export function AntesDeReservar({ tour, ficha }: { tour: Tour; ficha: FichaTour 
             </div>
           </div>
           <Link
-            to="/eventos/party-boat"
+            to="/events/party-boat"
             className="shrink-0 self-start rounded-full bg-coral px-6 py-3 text-center text-sm font-semibold text-white transition hover:brightness-110 sm:self-auto"
           >
             Ver los paquetes para grupos

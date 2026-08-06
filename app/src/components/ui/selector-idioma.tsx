@@ -38,15 +38,26 @@ import { useState } from 'react'
 // sigue en Pendientes de app/PLAN-LANZAMIENTO.md): alterna un estado local,
 // no cambia ningún copy.
 //
+// ── CORRECCIONES v3 (2026-08-06, plan 01 §2) ─────────────────────────────
+// El idioma principal del sitio pasa a INGLÉS y el español a secundario, así
+// que el toggle se INVIERTE: EN primero (izquierda) y activo por defecto, ES
+// segundo. Las banderas siguen la misma regla que antes —la del lado
+// izquierdo pega al borde izquierdo y la del derecho al derecho— para que el
+// par se lea simétrico, así que también se cruzan.
+//
+// Sigue siendo visual: al cablear el i18n real, `activo` pasará a leer/
+// escribir el idioma de verdad. El sitio en español queda congelado en el tag
+// `v3-pre-en` para usarlo como diccionario en ese momento.
+//
 // ⚠️ Los colores de las banderas son EXCEPCIÓN a "todo pasa por tokens"
 // (CLAUDE.md): son los colores reales, normados, de cada bandera — no
 // paleta de marca, así que no hay token que los represente sin mentir.
 // Mismo criterio que ya aplica a fotos/logo del cliente.
-type Idioma = 'ES' | 'EN'
+type Idioma = 'EN' | 'ES'
 
 function BanderaES({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 32 32" className={className} role="img" aria-label="Español — bandera de España">
+    <svg viewBox="0 0 32 32" className={className} role="img" aria-label="Spanish — flag of Spain">
       <defs>
         <clipPath id="selector-idioma-circulo-es">
           <circle cx="16" cy="16" r="16" />
@@ -64,7 +75,7 @@ function BanderaES({ className }: { className?: string }) {
 
 function BanderaUS({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 32 32" className={className} role="img" aria-label="English — bandera de Estados Unidos">
+    <svg viewBox="0 0 32 32" className={className} role="img" aria-label="English — flag of the United States">
       <defs>
         <clipPath id="selector-idioma-circulo-us">
           <circle cx="16" cy="16" r="16" />
@@ -88,47 +99,47 @@ function BanderaUS({ className }: { className?: string }) {
 }
 
 export function SelectorIdioma({ className = '' }: { className?: string }) {
-  const [activo, setActivo] = useState<Idioma>('ES')
+  const [activo, setActivo] = useState<Idioma>('EN')
   const [hover, setHover] = useState<Idioma | null>(null)
   const mostrado = hover ?? activo
 
   return (
     <div
       role="group"
-      aria-label="Idioma"
+      aria-label="Language"
       onMouseLeave={() => setHover(null)}
       className={`relative grid grid-cols-2 rounded-full bg-papel-hueso p-0.5 ring-1 ring-linea ${className}`}
     >
       <span
         aria-hidden="true"
         className="absolute inset-y-0.5 left-0.5 w-[calc(50%-0.125rem)] rounded-full bg-navy transition-transform duration-200 ease-out"
-        style={{ transform: mostrado === 'EN' ? 'translateX(100%)' : 'translateX(0)' }}
+        style={{ transform: mostrado === 'ES' ? 'translateX(100%)' : 'translateX(0)' }}
       />
-      <button
-        type="button"
-        onClick={() => setActivo('ES')}
-        onMouseEnter={() => setHover('ES')}
-        aria-pressed={activo === 'ES'}
-        title="Español"
-        className={`relative z-10 flex items-center justify-center gap-1 rounded-full py-0.5 pl-0.5 pr-2 text-[10px] font-semibold transition-colors ${
-          mostrado === 'ES' ? 'text-white' : 'text-navy-soft'
-        }`}
-      >
-        <BanderaES className="size-3.5 shrink-0 rounded-full" />
-        ES
-      </button>
       <button
         type="button"
         onClick={() => setActivo('EN')}
         onMouseEnter={() => setHover('EN')}
         aria-pressed={activo === 'EN'}
         title="English"
-        className={`relative z-10 flex items-center justify-center gap-1 rounded-full py-0.5 pl-2 pr-0.5 text-[10px] font-semibold transition-colors ${
+        className={`relative z-10 flex items-center justify-center gap-1 rounded-full py-0.5 pl-0.5 pr-2 text-[10px] font-semibold transition-colors ${
           mostrado === 'EN' ? 'text-white' : 'text-navy-soft'
         }`}
       >
-        EN
         <BanderaUS className="size-3.5 shrink-0 rounded-full" />
+        EN
+      </button>
+      <button
+        type="button"
+        onClick={() => setActivo('ES')}
+        onMouseEnter={() => setHover('ES')}
+        aria-pressed={activo === 'ES'}
+        title="Español"
+        className={`relative z-10 flex items-center justify-center gap-1 rounded-full py-0.5 pl-2 pr-0.5 text-[10px] font-semibold transition-colors ${
+          mostrado === 'ES' ? 'text-white' : 'text-navy-soft'
+        }`}
+      >
+        ES
+        <BanderaES className="size-3.5 shrink-0 rounded-full" />
       </button>
     </div>
   )

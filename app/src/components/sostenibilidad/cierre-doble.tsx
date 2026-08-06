@@ -71,7 +71,7 @@ export function CierreDoble({
           {/* mt-auto: empuja el pie al fondo para que los dos botones queden a
               la misma altura pase lo que pase con el largo de los textos. */}
           <div className="mt-auto pt-8">
-            <Boton to="/contacto" tamaño="lg" className="w-full">
+            <Boton to="/contact" tamaño="lg" className="w-full">
               {FUNDACION.membresiasCta}
             </Boton>
           </div>

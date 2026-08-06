@@ -382,7 +382,7 @@ export function NavFlotante() {
     }
   }, [fusionMontada, logoVisible])
 
-  if (!tieneHero || pathname.startsWith('/reservar/') || pathname === '/mi-reserva') return null
+  if (!tieneHero || pathname.startsWith('/book/') || pathname === '/my-booking') return null
 
   // La ficha de tour muestra el panel pero NO lo fija — ver el bloque de
   // arriba. Todo lo que depende de «ya scrolleamos más allá del hero»
@@ -397,7 +397,7 @@ export function NavFlotante() {
   // estar totalmente arriba»): en una página larga que se lee de arriba
   // abajo, la barra que se usa es la de SECCIONES, así que el menú de sitio
   // se va con el hero en vez de pelear por la misma franja.
-  const cedeElTope = pathname.startsWith('/tours/') || pathname === '/ventaja-competitiva'
+  const cedeElTope = pathname.startsWith('/tours/') || pathname === '/competitive-advantage'
   const fijo = !logoVisible && !cedeElTope
 
   return (

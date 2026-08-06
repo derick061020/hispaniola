@@ -102,7 +102,7 @@ export function EventoPage() {
 
   return (
     <div>
-      <Meta titulo={evento.titulo} descripcion={evento.sub} ruta={`/eventos/${slug}`} />
+      <Meta titulo={evento.titulo} descripcion={evento.sub} ruta={`/events/${slug}`} />
 
       {/* HeroInterna compartido con la home y la ficha de tour — mismo
           box redondeado, mismo video de marca, Header DENTRO del box

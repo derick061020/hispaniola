@@ -49,7 +49,7 @@ export function TripulacionPage() {
       <Meta
         titulo="Tripulación"
         descripcion="Las personas detrás de cada tour de Hispaniola Aquatic Adventures: capitanes, guías, cocina, biología marina, oficina y la fundación."
-        ruta="/tripulacion"
+        ruta="/crew"
       />
       <HeroInterna ctaHref="/#tours">
         <CabeceraInterna

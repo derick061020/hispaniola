@@ -103,32 +103,32 @@ export function Footer() {
                 tiene que repetir la arquitectura del menú nuevo, no seguir
                 apuntando a una ruta que ahora solo redirige. */}
             <li>
-              <Link to="/tripulacion" className="hover:text-white">
+              <Link to="/crew" className="hover:text-white">
                 Tripulación
               </Link>
             </li>
             <li>
-              <Link to="/instalaciones" className="hover:text-white">
+              <Link to="/facilities" className="hover:text-white">
                 Instalaciones
               </Link>
             </li>
             <li>
-              <Link to="/flota" className="hover:text-white">
+              <Link to="/fleet" className="hover:text-white">
                 Flota
               </Link>
             </li>
             <li>
-              <Link to="/ventaja-competitiva" className="hover:text-white">
+              <Link to="/competitive-advantage" className="hover:text-white">
                 Sostenibilidad
               </Link>
             </li>
             <li>
-              <Link to="/fundacion" className="hover:text-white">
+              <Link to="/foundation" className="hover:text-white">
                 La Fundación
               </Link>
             </li>
             <li>
-              <Link to="/guias" className="hover:text-white">
+              <Link to="/guides" className="hover:text-white">
                 Guías Punta Cana
               </Link>
             </li>
@@ -139,7 +139,7 @@ export function Footer() {
               </Link>
             </li>
             <li>
-              <Link to="/agentes-de-viaje" className="font-semibold hover:text-white">
+              <Link to="/travel-agents" className="font-semibold hover:text-white">
                 Agentes de viaje
               </Link>
             </li>
@@ -169,7 +169,7 @@ export function Footer() {
                 que es la lista que pidió el cliente. */}
             {PERFILES_TRABAJO.map((p) => (
               <li key={p.id}>
-                <Link to={`/trabaja-con-nosotros?perfil=${p.id}`} className="hover:text-white">
+                <Link to={`/careers?perfil=${p.id}`} className="hover:text-white">
                   {p.enlace}
                 </Link>
               </li>
@@ -192,7 +192,7 @@ export function Footer() {
             <li>
               {/* [v2 2026-07-28] /reserva-directa → /por-que-reservar: la
                   página se rehízo entera con los slides 50-56 del cliente. */}
-              <Link to="/por-que-reservar" className="font-semibold hover:text-white">
+              <Link to="/why-book-direct" className="font-semibold hover:text-white">
                 ¿Por qué reservar con nosotros?
               </Link>
             </li>
@@ -207,12 +207,12 @@ export function Footer() {
                   quería cambiar el menú o pagar el saldo tenía que
                   contactarnos por WhatsApp (fricción). Va entre FAQ y
                   Contacto: misma columna semántica (gestión + ayuda). */}
-              <Link to="/mi-reserva" className="font-semibold hover:text-white">
+              <Link to="/my-booking" className="font-semibold hover:text-white">
                 Gestionar mi reserva
               </Link>
             </li>
             <li>
-              <Link to="/contacto" className="hover:text-white">
+              <Link to="/contact" className="hover:text-white">
                 Contacto
               </Link>
             </li>
@@ -319,17 +319,17 @@ export function Footer() {
         <p>© {new Date().getFullYear()} Hispaniola Aquatic Adventures.</p>
         <ul className="flex flex-wrap items-center gap-x-4 gap-y-1">
           <li>
-            <Link to="/legal/politica-de-cancelacion" className="hover:text-white/70">
+            <Link to="/legal/cancellation-policy" className="hover:text-white/70">
               Política de cancelación
             </Link>
           </li>
           <li>
-            <Link to="/legal/privacidad" className="hover:text-white/70">
+            <Link to="/legal/privacy" className="hover:text-white/70">
               Privacidad
             </Link>
           </li>
           <li>
-            <Link to="/legal/terminos" className="hover:text-white/70">
+            <Link to="/legal/terms" className="hover:text-white/70">
               Términos
             </Link>
           </li>

@@ -84,7 +84,7 @@ export function GraciasPage() {
       <Meta
         titulo={`¡Nos vemos a bordo! · Reserva ${reserva.codigo}`}
         descripcion={`Tu reserva ${reserva.codigo} está confirmada. ${reserva.tour.nombre} para ${reserva.personas} personas el ${fechaLarga(reserva.fechaISO)}.`}
-        ruta={`/reservar/${reserva.slug}/gracias`}
+        ruta={`/book/${reserva.slug}/thank-you`}
         indexable={false}
       />
 
@@ -151,7 +151,7 @@ export function GraciasPage() {
 
         <p className="mt-3 text-center text-sm">
           <Link
-            to={`/mi-reserva?codigo=${reserva.codigo}`}
+            to={`/my-booking?codigo=${reserva.codigo}`}
             className="font-semibold text-aqua-dark hover:underline"
           >
             Gestionar mi reserva →
@@ -229,7 +229,7 @@ export function GraciasPage() {
             </div>
           </dl>
           <Link
-            to={`/mi-reserva?codigo=${reserva.codigo}`}
+            to={`/my-booking?codigo=${reserva.codigo}`}
             className="mt-4 inline-block text-sm font-semibold text-aqua-dark hover:underline"
           >
             Cambiar el menú o la recogida →

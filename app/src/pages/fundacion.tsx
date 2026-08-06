@@ -54,7 +54,7 @@ export function FundacionPage() {
       <Meta
         titulo="La Fundación"
         descripcion="Fundación Ecológica Arrecifes de Bávaro: restauración coralina y arrecifes artificiales desde 2016, en colaboración con el Ministerio de Medio Ambiente."
-        ruta="/fundacion"
+        ruta="/foundation"
       />
 
       {/* El hero deja el video de marca (el catamarán, que es de la EMPRESA)
@@ -69,7 +69,7 @@ export function FundacionPage() {
           debajo (CronologiaFundacion), que es de donde salieron. Y siguen
           visibles como los 3 features del teaser de /ventaja-competitiva. */}
       <HeroInterna
-        ctaHref="/ventaja-competitiva"
+        ctaHref="/competitive-advantage"
         imagen={{
           src: '/fotos/arrecife-fondo-cenital.webp',
           alt: 'Vista cenital del agua turquesa de Playa Bávaro',

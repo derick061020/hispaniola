@@ -241,8 +241,8 @@ function FilaContacto({ card }: { card: ContactoCard }) {
 function BloqueReserva() {
   const [codigo, setCodigo] = useState('')
   const destino = codigo.trim()
-    ? `/mi-reserva?codigo=${encodeURIComponent(codigo.trim().toUpperCase())}`
-    : '/mi-reserva'
+    ? `/my-booking?codigo=${encodeURIComponent(codigo.trim().toUpperCase())}`
+    : '/my-booking'
   return (
     <div className="mt-auto border-t border-linea p-6 sm:p-7">
       <div className="flex items-start gap-3">

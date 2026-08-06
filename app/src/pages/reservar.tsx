@@ -158,7 +158,7 @@ function FlujoReserva({
       fechaCreacionISO: new Date().toISOString(),
     }
     guardarReserva(reserva)
-    navigate(`/reservar/${tour.slug}/gracias?codigo=${codigo}`)
+    navigate(`/book/${tour.slug}/thank-you?codigo=${codigo}`)
   }
 
   const fechaTxt = fechaLegible(fechaISO)
@@ -177,7 +177,7 @@ function FlujoReserva({
       <Meta
         titulo={`Reservar — ${tour.nombre}`}
         descripcion={`Configura tu ${tour.nombre}: elige el menú de cada persona, la recogida y confirma con solo el 25% de depósito.`}
-        ruta={`/reservar/${tour.slug}`}
+        ruta={`/book/${tour.slug}`}
         indexable={false}
       />
 

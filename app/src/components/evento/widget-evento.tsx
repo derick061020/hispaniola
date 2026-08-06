@@ -18,7 +18,7 @@ import { WHATSAPP_URL, type FichaEvento } from '@/data/eventos'
 //     con el backend sigue siendo localStorage (sin Odoo/xpotours, ver
 //     PLAN-LANZAMIENTO.md Bloque 0.1/0.2).
 //  2) El CTA primario NO navega a un funnel — abre la página de gracias
-//     `/eventos/:slug/gracias?reserva=XXX` con el resumen del form, el
+//     `/events/:slug/thank-you?reserva=XXX` con el resumen del form, el
 //     CTA WhatsApp grande y el copy "Pronto nos pondremos en contacto".
 //
 // Chrome: misma Caja, mismo FancyButton coral, mismo lenguaje AlignUI que
@@ -294,7 +294,7 @@ export function WidgetEvento({ evento, colapsable = false }: Props) {
 
     // Navega a la página de gracias. El `replace: true` evita que el
     // back del navegador vuelva al form con datos sensibles ya enviados.
-    navigate(`/eventos/${evento.slug}/gracias?reserva=${cotizacion.codigo}`, { replace: true })
+    navigate(`/events/${evento.slug}/thank-you?reserva=${cotizacion.codigo}`, { replace: true })
   }
 
   // EL FORMULARIO, una sola vez. Se pinta o dentro de la Caja de la columna

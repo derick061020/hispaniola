@@ -58,7 +58,7 @@ export function Cierre() {
             de mantener. */}
         <p className="text-xs text-white/60">
           ¿Te interesa lo que hacemos por el arrecife?{' '}
-          <Link to="/ventaja-competitiva" className="font-semibold text-aqua-claro hover:text-white">
+          <Link to="/competitive-advantage" className="font-semibold text-aqua-claro hover:text-white">
             Nuestra sostenibilidad →
           </Link>
         </p>

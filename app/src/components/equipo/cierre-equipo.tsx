@@ -28,7 +28,7 @@ export function CierreEquipo() {
       titulo={EQUIPO_PAGINA.cierreTitulo}
       texto={EQUIPO_PAGINA.cierreTexto}
       cta={EQUIPO_PAGINA.cierreCta}
-      href="/trabaja-con-nosotros"
+      href="/careers"
     />
   )
 }

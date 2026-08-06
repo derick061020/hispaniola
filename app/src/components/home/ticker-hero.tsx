@@ -87,7 +87,7 @@ function TickerCard({ item, oculto = false }: { item: TickerItem; oculto?: boole
   if (item.slug) {
     return (
       <Link
-        to={`/eventos/${item.slug}`}
+        to={`/events/${item.slug}`}
         className={clases}
         aria-hidden={oculto || undefined}
         tabIndex={oculto ? -1 : undefined}

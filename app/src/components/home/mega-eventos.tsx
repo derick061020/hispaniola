@@ -53,7 +53,7 @@ export function MegaEventos() {
           // que TabsConPaneles (nav-tabs.tsx) anima con stagger al abrir.
           if (o.slug) {
             return (
-              <Link key={o.tipo} to={`/eventos/${o.slug}`} className="group block w-mega-card-ancho" data-mega-item>
+              <Link key={o.tipo} to={`/events/${o.slug}`} className="group block w-mega-card-ancho" data-mega-item>
                 {contenido}
               </Link>
             )

@@ -95,7 +95,7 @@ export function buscarReserva(codigo: string): Reserva | null {
 export function reservaDemo(): Reserva {
   return {
     codigo: 'HSP-0000-0001',
-    slug: 'semi-privado',
+    slug: 'semi-private-premium',
     tour: {
       nombre: 'Semi-Privado Premium',
       audienciaChip: 'Solo adultos',

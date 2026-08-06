@@ -54,7 +54,7 @@ export function FundacionTeaser() {
           </p>
 
           <div className="sost-reveal mt-8">
-            <Boton to="/fundacion">{FUNDACION.teaserCta}</Boton>
+            <Boton to="/foundation">{FUNDACION.teaserCta}</Boton>
           </div>
         </div>
 

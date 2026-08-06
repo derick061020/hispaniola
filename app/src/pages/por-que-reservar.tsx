@@ -53,7 +53,7 @@ export function PorQueReservarPage() {
       <Meta
         titulo="¿Por qué reservar con nosotros?"
         descripcion="Somos el propietario, no un intermediario. Lo que pagarías suelto por cada pieza del tour, la comparación con los demás y las 19 razones para reservar directo."
-        ruta="/por-que-reservar"
+        ruta="/why-book-direct"
       />
       {/* anchoCompleto: el CTA vive en una columna derecha (pedido de Samuel),
           y con la caja de max-w-4xl del hero compartido quedaba a media

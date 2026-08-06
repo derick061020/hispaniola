@@ -99,7 +99,7 @@ export type PreguntaEvento = { p: string; r: string }
 
 export type FichaEvento = {
   /** slug de la ruta: /eventos/:slug */
-  slug: 'party-boat' | 'bodas' | 'empresas'
+  slug: 'party-boat' | 'weddings' | 'corporate'
   /** último tramo de la migaja: Inicio / Eventos / {nombre} */
   nombre: string
   eyebrow: string
@@ -447,7 +447,7 @@ const PARTY_BOAT: FichaEvento = {
 // sin meter el bloque de reviews que ya tiene la home.
 
 const BODAS: FichaEvento = {
-  slug: 'bodas',
+  slug: 'weddings',
   nombre: 'Bodas',
   eyebrow: 'Bodas, pre-boda y post-boda',
   titulo: 'Vuestra boda, en el mar',
@@ -617,7 +617,7 @@ const BODAS: FichaEvento = {
 // se queda desplegado —es el widget entero— exactamente como hasta ahora.
 
 const EMPRESAS: FichaEvento = {
-  slug: 'empresas',
+  slug: 'corporate',
   nombre: 'Empresas y MICE',
   eyebrow: 'MICE · Grupos corporativos',
   titulo: 'Eventos corporativos a bordo',
@@ -713,8 +713,8 @@ const EMPRESAS: FichaEvento = {
 
 export const EVENTOS: Record<FichaEvento['slug'], FichaEvento> = {
   'party-boat': PARTY_BOAT,
-  bodas: BODAS,
-  empresas: EMPRESAS,
+  weddings: BODAS,
+  corporate: EMPRESAS,
 }
 
 /** Lista ordenada de las 3 landings — para el selector de "Otras

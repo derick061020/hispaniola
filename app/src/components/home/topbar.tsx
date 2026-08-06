@@ -34,8 +34,8 @@ export function Topbar() {
   // siendo el ancla de marca.
   if (
     pathname === '/fundaciones' ||
-    pathname.startsWith('/reservar') ||
-    pathname === '/mi-reserva'
+    pathname.startsWith('/book') ||
+    pathname === '/my-booking'
   )
     return null
 

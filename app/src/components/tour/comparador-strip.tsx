@@ -26,7 +26,7 @@ export function ComparadorStrip() {
           a /por-que-reservar: /reserva-directa se retiró y ahora el destino
           es la página completa de argumento (slides 50-56 del cliente). */}
       <Button.Root variant="neutral" mode="stroke" size="xsmall" className="shrink-0" asChild>
-        <Link to="/por-que-reservar">Por qué reservar con nosotros →</Link>
+        <Link to="/why-book-direct">Por qué reservar con nosotros →</Link>
       </Button.Root>
     </div>
   )

@@ -146,7 +146,7 @@ export function FichaTecnicaModal({ barco, onCerrar }: { barco: BarcoFlota; onCe
     })
   }
 
-  const destino = barco.cta === 'charter' ? '/tours/charter-privado' : '/eventos/bodas'
+  const destino = barco.cta === 'charter' ? '/tours/private-charter' : '/events/weddings'
   const etiquetaCta = barco.cta === 'charter' ? 'Ver tours con este barco' : 'Cotizar para tu evento'
 
   return (

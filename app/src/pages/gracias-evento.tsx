@@ -65,7 +65,7 @@ export function GraciasEventoPage() {
       <Meta
         titulo={`¡Recibimos tu solicitud! · ${codigo}`}
         descripcion={`Tu solicitud ${codigo} fue recibida. Te contactamos en menos de 24 h.`}
-        ruta={`/eventos/${slug}/gracias`}
+        ruta={`/events/${slug}/thank-you`}
         indexable={false}
       />
 
@@ -214,7 +214,7 @@ export function GraciasEventoPage() {
         {/* 7. LINK «Hacer otra consulta» — vuelve a la landing. */}
         <p className="mt-10 text-center">
           <Link
-            to={`/eventos/${slug}`}
+            to={`/events/${slug}`}
             className="font-semibold text-aqua-dark hover:underline"
           >
             ← Hacer otra consulta sobre {evento.nombre.toLowerCase()}

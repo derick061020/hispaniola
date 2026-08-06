@@ -31,8 +31,8 @@ export type DocumentoLegal = {
 const PLACEHOLDER = 'Pendiente de redacción con asesoría legal.'
 
 export const LEGAL: Record<string, DocumentoLegal> = {
-  'politica-de-cancelacion': {
-    slug: 'politica-de-cancelacion',
+  'cancellation-policy': {
+    slug: 'cancellation-policy',
     nombre: 'Política de cancelación',
     actualizado: '17 de julio de 2026',
     contenidoReal: true,
@@ -65,8 +65,8 @@ export const LEGAL: Record<string, DocumentoLegal> = {
       },
     ],
   },
-  privacidad: {
-    slug: 'privacidad',
+  privacy: {
+    slug: 'privacy',
     nombre: 'Política de privacidad',
     actualizado: '17 de julio de 2026',
     contenidoReal: false,
@@ -80,8 +80,8 @@ export const LEGAL: Record<string, DocumentoLegal> = {
       { titulo: 'Contacto', texto: PLACEHOLDER },
     ],
   },
-  terminos: {
-    slug: 'terminos',
+  terms: {
+    slug: 'terms',
     nombre: 'Términos y condiciones',
     actualizado: '17 de julio de 2026',
     contenidoReal: false,

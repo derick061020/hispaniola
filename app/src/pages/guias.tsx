@@ -46,7 +46,7 @@ export function GuiasPage() {
       <Meta
         titulo="Guías"
         descripcion="Tips reales sobre esnórquel y navegación en Punta Cana: cómo es el arrecife, cuánto se navega a vela, si el mar es seguro y qué mariscos sirvemos a bordo."
-        ruta="/guias"
+        ruta="/guides"
       />
       <HeroInterna ctaHref="/#tours">
         <CabeceraGuias />

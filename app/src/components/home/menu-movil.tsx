@@ -187,7 +187,7 @@ export function MenuMovil({
                         o.slug ? (
                           <Link
                             key={o.tipo}
-                            to={`/eventos/${o.slug}`}
+                            to={`/events/${o.slug}`}
                             className="rounded-lg px-3 py-2 hover:bg-papel-hueso"
                           >
                             <span className="text-sm font-medium text-navy">{o.nombre}</span>

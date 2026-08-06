@@ -14,7 +14,7 @@ export type CotizacionEvento = {
   /** id único: 'COT-EVENTO-XXXX-NNNN' */
   codigo: string
   /** slug de la landing que la generó */
-  slug: 'party-boat' | 'bodas' | 'empresas'
+  slug: 'party-boat' | 'weddings' | 'corporate'
   /** ISO 'YYYY-MM-DD' del momento del envío */
   fechaISO: string
   contacto: {

@@ -44,7 +44,7 @@ export function TripulacionBarcoPage() {
       <Meta
         titulo="Tripulación (variante: el barco como índice)"
         descripcion="Variante de comparación de la página de Tripulación: el equipo se filtra tocando el plano del barco en vez de los chips de departamento."
-        ruta="/tripulacion-barco"
+        ruta="/crew-boat"
       />
       <HeroInterna ctaHref="/#tours">
         <CabeceraInterna

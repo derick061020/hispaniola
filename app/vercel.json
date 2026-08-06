@@ -1,4 +1,24 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "redirects": [
+    { "source": "/sostenibilidad", "destination": "/competitive-advantage", "permanent": true },
+    { "source": "/ventaja-competitiva", "destination": "/competitive-advantage", "permanent": true },
+    { "source": "/nosotros", "destination": "/crew", "permanent": true },
+    { "source": "/tripulacion", "destination": "/crew", "permanent": true },
+    { "source": "/instalaciones", "destination": "/facilities", "permanent": true },
+    { "source": "/flota", "destination": "/fleet", "permanent": true },
+    { "source": "/fundacion", "destination": "/foundation", "permanent": true },
+    { "source": "/guias", "destination": "/guides", "permanent": true },
+    { "source": "/agentes-de-viaje", "destination": "/travel-agents", "permanent": true },
+    { "source": "/trabaja-con-nosotros", "destination": "/careers", "permanent": true },
+    { "source": "/por-que-reservar", "destination": "/why-book-direct", "permanent": true },
+    { "source": "/reserva-directa", "destination": "/why-book-direct", "permanent": true },
+    { "source": "/contacto", "destination": "/contact", "permanent": true },
+    { "source": "/mi-reserva", "destination": "/my-booking", "permanent": true },
+    { "source": "/reservar/:slug/gracias", "destination": "/book/:slug/thank-you", "permanent": true },
+    { "source": "/reservar/:slug", "destination": "/book/:slug", "permanent": true },
+    { "source": "/eventos/:slug/gracias", "destination": "/events/:slug/thank-you", "permanent": true },
+    { "source": "/eventos/:slug", "destination": "/events/:slug", "permanent": true }
+  ],
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
 }

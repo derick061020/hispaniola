@@ -1210,7 +1210,7 @@ export function WidgetReserva({
       ) : (
         <FancyButton.Root variant="primary" className="w-full" asChild>
           <Link
-            to={`/reservar/${tour.slug}?${new URLSearchParams({
+            to={`/book/${tour.slug}?${new URLSearchParams({
               // Saona (subVariantes) manda `variante` en vez de `paquete` (no
               // hay Light/Premium — el menú buffet es igual en las 3
               // sub-variantes; lo que cambia es el BOTE). El funnel aún no

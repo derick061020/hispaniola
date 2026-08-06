@@ -30,7 +30,7 @@ export function OtrasOcasiones({ slugActual }: { slugActual: string }) {
         {otras.map((e) => (
           <Link
             key={e.slug}
-            to={`/eventos/${e.slug}`}
+            to={`/events/${e.slug}`}
             className="group relative flex h-tambien-alto items-end overflow-hidden rounded-card-grande"
           >
             <div className="absolute inset-0 transition-transform duration-300 group-hover:scale-105">
