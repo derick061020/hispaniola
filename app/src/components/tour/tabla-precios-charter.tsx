@@ -1,10 +1,11 @@
 import { Fragment, useState } from 'react'
-import { ChevronDown, Users } from 'lucide-react'
+import { ChevronDown, Rotate3d, Users } from 'lucide-react'
 import type { FichaTour, SubVarianteTour, TramoPrecio } from '@/data/tours'
 import { formatoDinero } from '@/data/home'
 import { BLOQUE_FICHA } from '@/components/tour/bloque-ficha'
 import { TituloSeccion } from '@/components/tour/titulo-seccion'
 import { aforoDe, precioDeTramo, precioDesde, tramoDe } from '@/lib/tarifas'
+import { Visor360 } from '@/components/flota/visor-360'
 
 // Tabla de precios por barco (v3 2026-07-17, pedido de Samuel: «no agregaste
 // la información de cada barco a la izquierda, la tabla con la información de
@@ -212,6 +213,7 @@ function CardBarco({
   personas?: number | null
 }) {
   const [abierta, setAbierta] = useState(false)
+  const [visor360, setVisor360] = useState(false)
   const esActivo = s.id === activa
   const aforo = aforoDe(s.tabla)
   const desde = s.tabla.length > 0 ? precioDesde(s.tabla) : null
@@ -246,14 +248,38 @@ function CardBarco({
                   canal de 4 líneas y se salía de la card. */}
               <div className="flex flex-col gap-2 p-4 sm:flex-row sm:items-center sm:gap-4 sm:p-5">
                 <div className="flex min-w-0 flex-1 items-center gap-3">
+                  {/* [v3 2026-08-06, slide 78: «agregar foto ampliada y video
+                      360»] La foto crece y estrena su boton de 360º, encima y
+                      a la derecha — el mismo sitio y el mismo estilo que en la
+                      card de /flota, para que sea el MISMO gesto en las dos
+                      pantallas.
+                      ⚠️ El recorrido que abre es el vídeo de ejemplo que
+                      comparten los 6 barcos (data/flota.ts §2): Samuel pidió
+                      pintar el botón igualmente para maquetar, y el visor lo
+                      dice en pantalla con una etiqueta ENCIMA del reproductor
+                      —«Recorrido de ejemplo»—, no en una nota al pie. En
+                      cuanto lleguen los 360 reales se cambia el `src` y ya.
+                      Sin foto no hay boton: el visor necesita un poster y las
+                      variantes de Saona no traen imagen propia. */}
                   {s.foto ? (
-                    <img
-                      src={`/fotos/${s.foto}.webp`}
-                      alt=""
-                      aria-hidden="true"
-                      loading="lazy"
-                      className="h-20 w-28 shrink-0 rounded-card object-cover sm:h-24 sm:w-36"
-                    />
+                    <span className="relative shrink-0">
+                      <img
+                        src={`/fotos/${s.foto}.webp`}
+                        alt=""
+                        aria-hidden="true"
+                        loading="lazy"
+                        className="h-20 w-28 rounded-card object-cover sm:h-24 sm:w-36"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setVisor360(true)}
+                        className="absolute right-1.5 top-1.5 inline-flex items-center gap-1 rounded-chip bg-papel/90 px-2 py-1 text-[11px] font-semibold text-navy shadow-sm backdrop-blur-sm transition hover:bg-papel"
+                      >
+                        <Rotate3d className="size-3.5" aria-hidden="true" />
+                        360º
+                        <span className="sr-only"> — view {s.nombre} in 360 degrees</span>
+                      </button>
+                    </span>
                   ) : null}
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
@@ -497,6 +523,15 @@ function CardBarco({
             aria-hidden="true"
           />
         </button>
+      ) : null}
+
+      {visor360 && s.foto ? (
+        <Visor360
+          src="/video/hero.mp4"
+          poster={`/fotos/${s.foto}.webp`}
+          nombre={s.nombre}
+          onCerrar={() => setVisor360(false)}
+        />
       ) : null}
     </div>
   )
