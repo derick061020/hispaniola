@@ -373,7 +373,7 @@ export function CartaCharter({ carta, etiqueta }: { carta: CartaCharterDatos; et
               cruzada por una pinza. */}
           <p className="relative shrink-0 font-display text-lg font-semibold text-premium-fondo">
             {formatoDinero(menu.addOn.precio)}{' '}
-            <span className="text-xs font-normal text-premium-fondo/60">por persona</span>
+            <span className="text-xs font-normal text-premium-fondo/60">per person</span>
           </p>
         </div>
       ) : null}

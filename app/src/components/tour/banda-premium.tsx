@@ -1,5 +1,4 @@
 import { Sparkles } from 'lucide-react'
-import { Link } from 'react-router-dom'
 import type { FichaTour } from '@/data/tours'
 
 // Banda «estás en la versión Premium» (correcciones v2, plan 01 §9 — slide 6).
@@ -15,20 +14,9 @@ import type { FichaTour } from '@/data/tours'
 // Para que esto funcione, `paquete` tuvo que subir de estado interno del
 // widget a estado de la página — mismo movimiento que ya se hizo con
 // `variante` (el bote del charter) el 2026-07-17.
-// [v3 2026-08-06, slide 77] La banda gana un SEGUNDO uso. Hasta ahora solo
-// decia «estas viendo la version Premium» en las fichas con toggle
-// Light/Premium (semi-privado, snorkel). El charter no tiene toggle —no hay
-// version Light de alquilar el barco entero— pero el cliente quiere el mismo
-// aviso por otro motivo: lo que se enseña ahi ES la modalidad premium, y las
-// opciones de entrada viven en Eventos/Party Boat.
-//
-// Es la misma pieza y no dos parecidas: mismo material (lamina de oro), mismo
-// sitio en la pagina y el mismo trabajo —avisar del nivel de producto en el
-// que estas—. Lo que cambia es el texto y que esta puede llevar un enlace.
 export function BandaPremium({ ficha }: { ficha: FichaTour }) {
-  const modalidad = ficha.bandaModalidad
   const ventajas = ficha.ventajasPremium
-  if (!modalidad && (!ventajas || ventajas.length === 0)) return null
+  if (!ventajas || ventajas.length === 0) return null
 
   return (
     // [v2 2026-07-28, pedido de Samuel: «dale fondo dorado como el de langosta
@@ -49,22 +37,15 @@ export function BandaPremium({ ficha }: { ficha: FichaTour }) {
     <div className="flex flex-wrap items-center gap-x-3 gap-y-2 rounded-card bg-gradient-to-br from-premium-oro-oscuro via-premium-oro-claro to-premium-oro px-4 py-3 ring-1 ring-premium-oro-oscuro/40">
       <p className="flex items-center gap-2 text-sm font-semibold text-premium-fondo">
         <Sparkles className="size-4 shrink-0" aria-hidden="true" />
-        {modalidad ? modalidad.titulo : 'Estás viendo la versión Premium'}
+        You are viewing the Premium version
       </p>
       <p className="text-sm text-premium-fondo/75">
-        {modalidad ? modalidad.texto : `Incluye ${ventajas![0].toLowerCase()}.`}
+        {/* [v3 2026-08-06] Solo se minusculiza la PRIMERA letra, no la frase
+            entera: las ventajas pasaron a ingles en F3.1 y un `toLowerCase()`
+            completo dejaba «certified angus beef» y «surf & turf» — nombres
+            propios de producto rotos a media frase. */}
+        Includes {ventajas[0].charAt(0).toLowerCase() + ventajas[0].slice(1)}.
       </p>
-      {/* El puente a la otra modalidad. Va en la MISMA banda y como enlace
-          subrayado, no como boton: es una salida lateral, no la accion que la
-          pagina quiere que hagas — el CTA de esta ficha es reservar. */}
-      {modalidad ? (
-        <Link
-          to={modalidad.cta.a}
-          className="ml-auto text-sm font-semibold text-premium-fondo underline decoration-premium-fondo/40 underline-offset-4 transition-colors hover:decoration-premium-fondo"
-        >
-          {modalidad.cta.texto}
-        </Link>
-      ) : null}
     </div>
   )
 }

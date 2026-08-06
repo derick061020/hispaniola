@@ -19,6 +19,7 @@ import { GaleriaMosaico } from '@/components/internas/galeria-mosaico'
 import { ReelsSociales } from '@/components/ui/reels-sociales'
 import { ComparadorPremium } from '@/components/tour/comparador-premium'
 import { BandaPremium } from '@/components/tour/banda-premium'
+import { BandaModalidad } from '@/components/tour/banda-modalidad'
 import { fotosComidaDe } from '@/data/tours'
 import { VideoAcompanante } from '@/components/tour/video-acompanante'
 import { AntesDeReservar } from '@/components/tour/antes-de-reservar'
@@ -194,12 +195,7 @@ export function TourPage() {
                   técnica y la descripción. Solo con el paquete en Premium —
                   es la contraparte de la caja de upsell del widget, así que
                   el visitante nunca ve las dos a la vez. */}
-              {/* [v3 2026-08-06, slide 77] La condicion gana una segunda rama:
-                  las fichas con `bandaModalidad` (hoy el charter) la pintan
-                  SIEMPRE, porque ahi no anuncia un estado que el visitante
-                  pueda cambiar con un toggle —no hay Light del charter— sino
-                  el nivel de producto que esta viendo. */}
-              {ficha.bandaModalidad || (paquete === 'premium' && ficha.menuLight.length > 0) ? (
+              {paquete === 'premium' && ficha.menuLight.length > 0 ? (
                 <BandaPremium ficha={ficha} />
               ) : null}
 
@@ -223,7 +219,17 @@ export function TourPage() {
                   del menú en vez de competir con él — que fue lo que motivó
                   quitar la comparativa anterior, fundida dentro del bloque. */}
               {tour.booking === 'completo' ? <ComparadorPremium tour={tour} ficha={ficha} /> : null}
-              {tour.booking === 'completo' ? <MenuTour tour={tour} ficha={ficha} variante={variante} personas={personas} /> : null}
+              {tour.booking === 'completo' ? (
+                <MenuTour tour={tour} ficha={ficha} variante={variante} personas={personas} />
+              ) : null}
+
+              {/* [v3 2026-08-06, slide 77] DEBAJO DE LOS MENUS, sitio que fijo
+                  Samuel: el visitante ya ha visto lo que se sirve a bordo, o
+                  sea que ya tiene el nivel de producto en la cabeza. Ofrecerle
+                  la alternativa mas barata antes de eso seria regalar la
+                  venta. Es una pieza APARTE de la banda «estas en Premium» de
+                  arriba — ver el porque en banda-modalidad.tsx. */}
+              <BandaModalidad ficha={ficha} />
 
               {/* [v2 2026-07-28, plan 01 §7] «Antes de reservar»: UN bloque con
                   todo lo del slide 2 —duración elegible, lo que ahorras, cómo
