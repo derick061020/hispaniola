@@ -165,6 +165,11 @@ export type FichaTour = {
    *  de prototipo/app.js. Prueba social ANTES de scrollear (wireframe A1). */
   quoteDestacada: string
   itinerario: PasoItinerario[]
+  /** [v3 2026-08-06, WEBSITE-TOURS pág. 14] El itinerario deja de llamarse
+   *  igual en todas las fichas: el cliente titula el de Snorkel Lovers
+   *  «Marine Park Journey — 4 Hours». Sin este campo se usa «Itinerary», que
+   *  es como titula los demás. La duración se le añade siempre detrás. */
+  itinerarioTitulo?: string
   /** [v3 2026-08-06, WEBSITE-TOURS pág. 8] Línea bajo el título del
    *  itinerario («Pickup time depends on your hotel location…»). Nace con el
    *  itinerario de DOBLE SALIDA: en cuanto una parada muestra dos horas hay
@@ -235,6 +240,59 @@ export type FichaTour = {
    *  — prometer «el álbum completo» sería falso. */
   addOns?: AddOn[]
 }
+
+// [v3 2026-08-06, WEBSITE-TOURS págs. 9–10 y 16–17] Los 8 ítems APROBADOS de
+// «What´s Included». El cliente los repite IDÉNTICOS en el semi-privado y en
+// Snorkel Lovers —los dos hacen el mismo recorrido con el mismo barco—, así
+// que se escriben UNA vez. Si en el futuro divergen, se copia la constante en
+// la ficha que cambie; duplicarlos ahora solo garantizaría que se separen
+// solos en la próxima corrección.
+const INCLUYE_MARINE_PARK: BeneficioIncluido[] = [
+  {
+    titulo: 'Exclusive Marine Park Access',
+    texto:
+      'Snorkel in our protected Marine Park featuring the Underwater Museum, coral restoration gardens and artificial reefs.',
+  },
+  {
+    titulo: 'Foundation Conservation Team',
+    texto:
+      'Learn about our coral restoration project from the team of the Los Arrecifes de Bávaro Ecological Foundation.',
+  },
+  { titulo: 'Floating Kitchen & Gourmet Lunch', texto: 'Freshly prepared on board. Never a reheated buffet.' },
+  {
+    titulo: 'Premium Open Bar',
+    texto: 'Beer, aged rum, vodka, tequila, juices, soft drinks and water throughout the tour.',
+  },
+  { titulo: 'Round-Trip Hotel Transportation', texto: 'Air-conditioned transportation from your hotel.' },
+  { titulo: 'Wi-Fi On Board', texto: 'Stay connected throughout your experience.' },
+  {
+    titulo: 'Floating Bar at the Natural Pool',
+    texto: "Enjoy drinks while relaxing in Punta Cana's crystal-clear natural pool.",
+  },
+  { titulo: 'Complimentary Tour Photos', texto: 'Go PRO photos uploaded after your tour to our Facebook page.' },
+]
+
+// Traducción NUESTRA (el cliente no da estos dos bloques): son datos reales
+// portados del tarifario y de la web, solo cambian de idioma. Compartidos por
+// las dos fichas del Marine Park por el mismo motivo que los 8 ítems.
+const NO_INCLUIDO_MARINE_PARK =
+  'Not included: HD photo album (US$ 20/group via Dropbox) · professional photographer (on request, extra cost) · transportation surcharge from Casa de Campo.'
+
+const QUE_LLEVAR_MARINE_PARK = [
+  'Swimsuit',
+  'Towel',
+  'Reef-safe sunscreen',
+  'Camera',
+  'Cash (if you pay the balance on board)',
+]
+
+// [v3 2026-08-06, PowerPoint slide 72] ⚠️ [placeholder-v3]: transcripción de
+// los dos ejemplos que dio Miguel en la reunión del 07-31, no una lista
+// redactada. La definitiva está pedida (índice de planes, petición 2).
+const RECOMENDACIONES_V3 = [
+  'Bring reef-safe sunscreen and skin cream — the sun on the water is stronger than it feels. [placeholder-v3]',
+  'Cash in US dollars is the easiest way to pay for tips and any on-board add-on. [placeholder-v3]',
+]
 
 export const FICHAS: Record<string, FichaTour> = {
   'semi-private-premium': {
@@ -372,40 +430,10 @@ export const FICHAS: Record<string, FichaTour> = {
     // esta ficha y los 8 pesan igual, que es como él los presenta.
     // ⚠️ «Wi-Fi On Board» ya se prometía (estaba en incluyeExtra) — el dato no
     // es nuevo, solo sube de categoría.
-    incluye: [
-      {
-        titulo: 'Exclusive Marine Park Access',
-        texto:
-          'Snorkel in our protected Marine Park featuring the Underwater Museum, coral restoration gardens and artificial reefs.',
-      },
-      {
-        titulo: 'Foundation Conservation Team',
-        texto:
-          'Learn about our coral restoration project from the team of the Los Arrecifes de Bávaro Ecological Foundation.',
-      },
-      { titulo: 'Floating Kitchen & Gourmet Lunch', texto: 'Freshly prepared on board. Never a reheated buffet.' },
-      {
-        titulo: 'Premium Open Bar',
-        texto: 'Beer, aged rum, vodka, tequila, juices, soft drinks and water throughout the tour.',
-      },
-      { titulo: 'Round-Trip Hotel Transportation', texto: 'Air-conditioned transportation from your hotel.' },
-      { titulo: 'Wi-Fi On Board', texto: 'Stay connected throughout your experience.' },
-      {
-        titulo: 'Floating Bar at the Natural Pool',
-        texto: "Enjoy drinks while relaxing in Punta Cana's crystal-clear natural pool.",
-      },
-      { titulo: 'Complimentary Tour Photos', texto: 'Go PRO photos uploaded after your tour to our Facebook page.' },
-    ],
-    // Traducción NUESTRA (el cliente no da estos dos bloques): el «no
-    // incluido» y el qué llevar son datos reales portados del tarifario y de
-    // la web, solo cambian de idioma.
-    noIncluido:
-      'Not included: HD photo album (US$ 20/group via Dropbox) · professional photographer (on request, extra cost) · transportation surcharge from Casa de Campo.',
-    queLlevar: ['Swimsuit', 'Towel', 'Reef-safe sunscreen', 'Camera', 'Cash (if you pay the balance on board)'],
-    recomendaciones: [
-      'Bring reef-safe sunscreen and skin cream — the sun on the water is stronger than it feels. [placeholder-v3]',
-      'Cash in US dollars is the easiest way to pay for tips and any on-board add-on. [placeholder-v3]',
-    ],
+    incluye: INCLUYE_MARINE_PARK,
+    noIncluido: NO_INCLUIDO_MARINE_PARK,
+    queLlevar: QUE_LLEVAR_MARINE_PARK,
+    recomendaciones: RECOMENDACIONES_V3,
     faqTour: [
       { p: '¿Y si llueve?', r: 'Reembolso total o cambio de fecha, sin costo.' },
       { p: '¿Hay baño a bordo?', r: 'Sí, todos nuestros barcos tienen baño.' },
@@ -449,17 +477,40 @@ export const FICHAS: Record<string, FichaTour> = {
   },
 
   'snorkel-lovers': {
-    tituloLargo: 'Snorkel Lovers — catamarán para toda la familia',
+    tituloLargo: 'Snorkel Lovers — a catamaran for all ages',
+    // [v3 2026-08-06, WEBSITE-TOURS pág. 11] Título APROBADO del bloque de
+    // descripción.
+    promesa: 'Discover the Caribbean Beneath the Surface',
     audiencia: 'Familias',
-    duracion: '4 horas',
+    duracion: '4 hours',
+    // [v3 2026-08-06, WEBSITE-TOURS págs. 11–12] Los 7 párrafos APROBADOS,
+    // literales. No es una traducción de los 3 que había: es OTRO
+    // posicionamiento. Los viejos vendían «la versión familiar del
+    // semi-privado» (mismo recorrido, ritmo más tranquilo, chalecos
+    // infantiles); el copy nuevo vende una experiencia de CONSERVACIÓN con su
+    // propio recorrido —centro de interpretación antes de embarcar, siembra
+    // simbólica de coral a bordo, DOS puntos de snorkel— y ni menciona a los
+    // niños salvo en «all ages». El cambio es del cliente y va entero.
+    // ⚠️ Typo del documento corregido al portar (plan 03 §7): «Become part of
+    // it's future» → «its».
+    // ⚠️ «Marine Interpretation Center» aquí vs «Coral Interpretation Center»
+    // en la home (WEBSITE - INICIO pág. 4): el mismo cliente usa los dos
+    // nombres para el mismo sitio. Se porta el de este documento, que es el
+    // que lo describe en detalle, y se le pide elegir uno.
     descripcionLarga: [
-      'Snorkel Lovers es la versión para familias del Semi-Privado: el mismo catamarán, el mismo arrecife de Cabeza de Toro con el proyecto de restauración top-3 de República Dominicana, y la misma cocina flotante — pero con un ritmo pensado para que los niños disfruten sin apuro.',
-      'La bióloga marina adapta la explicación del vivero de coral al nivel de cada edad: los más pequeños descubren los peces de colores, los más grandes entienden el trabajo de restauración. En el agua, los chalecos infantiles son obligatorios y se ajustan a todas las tallas — incluso si nadie del grupo sabe nadar, el snorkel es en aguas poco profundas (1,2 m) y la piscina natural de estructuras de arrecife artificial.',
-      'El menú es el mismo de la casa, con o sin alcohol a elección: cerveza, ron añejo y vodka para los adultos, jugos y refrescos para los niños. La langosta del menú Premium se sustituye por langostino salvaje de marzo a junio (veda).',
+      "Snorkel Lovers is more than a catamaran tour, it's an immersive marine conservation experience designed for families, ocean lovers and curious explorers of all ages.",
+      "Departing from Bávaro, you'll sail to our exclusive Marine Park, where you'll snorkel among vibrant coral reefs, tropical fish, artificial reefs and the Underwater Museum, all within one of the Dominican Republic's leading coral restoration projects.",
+      "Before boarding, you'll visit our Marine Interpretation Center, where our Foundation team will introduce you to the reef ecosystem, explain how coral restoration works and show how these projects are helping protect Punta Cana's marine life for future generations.",
+      "On board, you'll take part in a symbolic coral planting activity, becoming part of the restoration effort and creating a meaningful connection with the ocean you'll soon explore.",
+      'The experience continues with two incredible snorkeling locations. First, the protected reef inside our Marine Park. Then, the crystal-clear Natural Pool, where our artificial reefs attract colorful marine life and provide an ideal second snorkeling experience for both beginners and experienced swimmers. Keep your eyes on the horizon as well — sea turtles are frequently spotted from the catamaran during the journey.',
+      'To complete the day, enjoy our signature Floating Kitchen, where every meal is freshly prepared on board using premium ingredients. Choose from our Premium Menu featuring certified Angus beef, fresh lobster, Surf & Turf and other gourmet options, while relaxing with our open bar in the heart of the Caribbean.',
+      "This isn't simply a snorkeling excursion. It's an opportunity to explore, learn, contribute and experience one of the most unique marine conservation projects in Punta Cana. Don't just discover the reef. Become part of its future.",
     ],
+    // Mismos dos turnos, corridos 15 min para casar con el itinerario
+    // aprobado (igual que el semi-privado).
     horarios: [
-      { hora: '9:00 AM', regreso: '1:00 PM' },
-      { hora: '1:00 PM', regreso: '5:00 PM' },
+      { hora: '9:15 AM', regreso: '1:15 PM' },
+      { hora: '1:15 PM', regreso: '5:15 PM' },
     ],
     // ── LIGHT / PREMIUM, DE VUELTA (2026-07-28, pedido de Samuel: «al tour
     // snorkel también ponle selector Premium/Light, igual que semi-privado,
@@ -541,11 +592,13 @@ export const FICHAS: Record<string, FichaTour> = {
     //
     // ⚠️ No se menciona «las fotos incluidas» (la 4ª de semi-privado): aquí
     // el álbum es un add-on de pago, no algo que traiga el Premium.
+    // [v3 2026-08-06] Traducción nuestra: mismas 4 ventajas, sacadas de los
+    // arrays de esta ficha, solo cambian de idioma.
     ventajasPremium: [
-      'Langosta, Angus certificado y Surf & Turf en el plato',
-      '8 platos a elegir en vez de 2',
-      'Opciones vegetarianas y cóctel de mariscos',
-      "Kid's Meal para los más pequeños",
+      'Lobster, certified Angus beef and Surf & Turf on your plate',
+      '8 dishes to choose from instead of 2',
+      'Vegetarian options and seafood cocktail',
+      "Kid's Meal for the little ones",
     ],
     // v3 (2026-07-17, web del cliente): 18 fotos reales de la excursión
     // familiar (la web tenía `images/excursions/educational/{4,5,7,8,10,11,
@@ -573,49 +626,62 @@ export const FICHAS: Record<string, FichaTour> = {
     ],
     videoGaleria: '/video/hero.mp4',
     quoteDestacada: 'Perfecto para ir con los niños, todos se sintieron seguros.',
+    itinerarioTitulo: 'Marine Park Journey',
+    itinerarioNota:
+      'Hotel pickup time depends on your location. Your exact pickup time will be confirmed after your reservation.',
+    // [v3 2026-08-06, WEBSITE-TOURS pags. 14-15] Itinerario APROBADO. NO es
+    // el del semi-privado traducido: es OTRO recorrido y el cliente lo
+    // detalla parada a parada.
+    //   - Aparece una parada nueva ANTES de embarcar: el Marine Interpretation
+    //     Center, con el equipo de la fundacion.
+    //   - Se invierte el orden del agua: primero la PISCINA NATURAL (con la
+    //     siembra simbolica de coral) y despues el snorkel en el Marine Park.
+    //   - DESAPARECE la playa desierta con coco-loco, que si sigue en el
+    //     semi-privado. El documento no la menciona para este tour.
+    // Es una redefinicion del producto en la web, no una traduccion, y por eso
+    // se porta tal cual y se deja dicho aqui.
     itinerario: [
       {
-        hora: '8:05',
-        titulo: 'Recogida en tu hotel',
-        texto: 'Transporte con AC. La hora exacta según tu hotel — se confirma al reservar.',
+        hora: '8:20 AM / 12:20 PM',
+        titulo: 'Hotel Pickup',
+        texto: 'Comfortable air-conditioned transportation from your hotel.',
       },
       {
-        hora: '9:00',
-        titulo: 'Zarpamos desde Bávaro',
-        texto: 'Check-in en instalaciones privadas y navegación por la costa hasta Cabo Engaño.',
+        hora: '9:15 AM / 1:15 PM',
+        titulo: 'Private Marina & Marine Interpretation Center',
+        texto:
+          "Check in at our private marina before visiting our Marine Interpretation Center, where you'll meet our Foundation Conservation Team and discover how we're restoring and protecting Punta Cana's coral reefs through one of the Dominican Republic's leading marine conservation projects.",
       },
       {
-        hora: '~9:45',
-        titulo: 'Snorkel educativo en el vivero',
-        texto: 'Guía adaptada para principiantes y niños, con chalecos para todas las tallas.',
+        hora: '10:00 AM / 2:00 PM',
+        titulo: 'Natural Pool & Symbolic Coral Planting',
+        texto:
+          'Take part in a symbolic coral planting activity, then enjoy your first snorkeling experience in the crystal-clear Natural Pool, surrounded by our artificial reefs designed to attract tropical marine life.',
       },
       {
-        hora: '~11:00',
-        titulo: 'Playa desierta + coco-loco',
-        texto: 'Cóctel en coco real (sin alcohol para los niños).',
+        hora: '10:45 AM / 2:45 PM',
+        titulo: 'Snorkeling at the Marine Park',
+        texto:
+          'Explore our protected Marine Park, home to the Underwater Museum, coral restoration gardens and thriving reef ecosystems. Keep an eye out for sea turtles, which are frequently spotted during this part of the journey.',
       },
       {
-        hora: '~11:45',
-        titulo: 'Piscina natural + comida a bordo',
-        texto: 'Agua poco profunda, ideal para primeras veces en el mar.',
+        hora: '11:45 AM / 3:45 PM',
+        titulo: 'Floating Kitchen & Gourmet Lunch',
+        texto:
+          'Return on board to enjoy a freshly prepared gourmet lunch from our signature Floating Kitchen, featuring premium ingredients and restaurant-quality cuisine in the middle of the Caribbean.',
       },
-      { hora: '13:00', titulo: 'Regreso y traslado al hotel', texto: '' },
+      {
+        hora: '1:15 PM / 5:15 PM',
+        titulo: 'Return to the Marina & Hotel Transfer',
+        texto: 'Cruise back to our private marina before your comfortable transfer to your hotel.',
+      },
     ],
-    incluye: [
-      { titulo: 'Equipo de snorkel', texto: 'Todas las tallas, incluidas infantiles.' },
-      { titulo: 'Transporte ida y vuelta', texto: 'Vehículo con AC, desde tu hotel.' },
-      { titulo: 'Comida + barra libre', texto: 'Cocina flotante; jugos y refrescos para todos, sin alcohol para menores.' },
-      { titulo: 'Guía de snorkel', texto: 'Explicación adaptada a todas las edades.' },
-    ],
-    incluyeExtra: [
-      'WiFi a bordo',
-      'Aperitivos: croissants de fruta, pavo y queso',
-      'Barra flotante «Coyote» en la piscina natural',
-      'Fotos gratis subidas a Facebook',
-    ],
-    noIncluido:
-      'No incluido: álbum de fotos HD (US$ 20/grupo vía Dropbox) · fotógrafo profesional (con aviso previo, costo extra) · suplemento de transporte desde Casa de Campo.',
-    queLlevar: ['Traje de baño', 'Toalla', 'Protector solar biodegradable', 'Cámara', 'Efectivo (si pagas el saldo a bordo)'],
+    // Los 8 items aprobados son IDENTICOS a los del semi-privado en el
+    // documento del cliente (pags. 16-17 = 9-10) -> constante compartida.
+    incluye: INCLUYE_MARINE_PARK,
+    noIncluido: NO_INCLUIDO_MARINE_PARK,
+    queLlevar: QUE_LLEVAR_MARINE_PARK,
+    recomendaciones: RECOMENDACIONES_V3,
     faqTour: [
       {
         p: '¿Desde qué edad pueden ir los niños?',

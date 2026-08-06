@@ -15,7 +15,9 @@ export function Itinerario({ ficha }: { ficha: FichaTour }) {
       {/* [v3 2026-08-06, WEBSITE-TOURS pág. 8] «Itinerary — 4 Hours» + la
           nota de recogida. La nota nace con el itinerario de DOBLE SALIDA: en
           cuanto una parada muestra dos horas hay que decir de qué son. */}
-      <TituloSeccion>Itinerary — {ficha.duracion}</TituloSeccion>
+      <TituloSeccion>
+        {ficha.itinerarioTitulo ?? 'Itinerary'} — {ficha.duracion}
+      </TituloSeccion>
       {ficha.itinerarioNota ? (
         <p className="mt-2 max-w-2xl text-sm text-navy-sub">{ficha.itinerarioNota}</p>
       ) : null}

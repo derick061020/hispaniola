@@ -63,7 +63,7 @@ export function CabeceraFicha({ tour, ficha }: Props) {
           <Estrellas calificacion={tour.rating} sobreOscuro />
           <span className="text-sm text-white/80">
             <strong className="font-semibold text-white">{tour.rating}</strong> ·{' '}
-            {tour.resenas.toLocaleString('en-US')} reseñas
+            {tour.resenas.toLocaleString('en-US')} reviews
           </span>
         </span>
 
@@ -102,10 +102,14 @@ export function CabeceraFicha({ tour, ficha }: Props) {
           ))
         ) : (
           <>
+            {/* [v3 2026-08-06] La fila genérica pasa a inglés: le sirve a las
+                3 fichas que aún no tienen `chipsHero`, y sus secciones ya
+                están en inglés (los bloques son compartidos). `audienciaChip`
+                ya venía traducido de la home. */}
             {tour.booking !== 'consulta' ? (
               <StatusBadge.Root status="completed" variant="light">
                 <StatusBadge.Icon as={Check} />
-                Cancelación gratis
+                Free cancellation
               </StatusBadge.Root>
             ) : null}
             <StatusBadge.Root status="disabled" variant="stroke">
@@ -141,20 +145,23 @@ export function CabeceraFicha({ tour, ficha }: Props) {
             «ahorras hasta 15%» del widget. No es una promesa nueva. */}
         {ficha.chipsHero ? null : (
           <>
+            {/* Los dos tooltips los escribió Samuel el 07-22 y su contenido
+                no cambia — solo de idioma. El argumento del segundo sigue
+                siendo el de la sección de reserva directa de la home. */}
             <InsigniaTooltip
               icono={BadgeCheck}
-              titulo="Insignia de excelencia"
-              texto="Esta experiencia está muy bien valorada por los viajeros y cumple nuestros estándares de calidad más altos."
+              titulo="Badge of excellence"
+              texto="This experience is highly rated by travelers and meets our highest quality standards."
             >
-              Distintivo de excelencia
+              Badge of excellence
             </InsigniaTooltip>
 
             <InsigniaTooltip
               icono={ShieldCheck}
-              titulo="Garantía del mejor precio"
-              texto="Reservando aquí pagas lo mismo o menos que en cualquier portal — y encima eliges menú, confirmas con el 25% y hablas directo con el equipo del barco."
+              titulo="Best price guarantee"
+              texto="Booking here you pay the same or less than on any portal — and you also choose your menu, confirm with 25% and talk directly to the boat's team."
             >
-              Garantía del mejor precio
+              Best price guarantee
             </InsigniaTooltip>
           </>
         )}
