@@ -1,6 +1,6 @@
-import { Fragment } from 'react'
-import { Users } from 'lucide-react'
-import type { FichaTour, TramoPrecio } from '@/data/tours'
+import { Fragment, useState } from 'react'
+import { ChevronDown, Users } from 'lucide-react'
+import type { FichaTour, SubVarianteTour, TramoPrecio } from '@/data/tours'
 import { formatoDinero } from '@/data/home'
 import { BLOQUE_FICHA } from '@/components/tour/bloque-ficha'
 import { TituloSeccion } from '@/components/tour/titulo-seccion'
@@ -60,9 +60,9 @@ import { aforoDe, precioDeTramo, precioDesde, tramoDe } from '@/lib/tarifas'
  *  Un tramo de una sola persona («7–7») se dice «7 personas»: Saona tiene
  *  cuatro escalones de uno en uno y repetir el número los hacía ilegibles. */
 function rangoTramo(t: TramoPrecio): string {
-  if (t.hasta === null) return `${t.desde}+ personas`
-  if (t.hasta === t.desde) return `${t.desde} personas`
-  return `${t.desde}–${t.hasta} personas`
+  if (t.hasta === null) return `${t.desde}+ guests`
+  if (t.hasta === t.desde) return `${t.desde} guests`
+  return `${t.desde}–${t.hasta} guests`
 }
 
 /** Qué hay detrás del «desde US$ X» de la cabecera. Sin esta línea el número
@@ -73,9 +73,9 @@ function explicaDesde(tabla: TramoPrecio[]): string | null {
   if (!tramo) return null
   return tramo.tipo === 'grupo'
     ? tramo.hasta === null
-      ? 'el barco entero'
-      : `el barco entero, hasta ${tramo.hasta} personas`
-    : `${tramo.desde} personas × ${formatoDinero(tramo.precio)}`
+      ? 'the whole boat'
+      : `the whole boat, up to ${tramo.hasta} guests`
+    : `${tramo.desde} guests × ${formatoDinero(tramo.precio)}`
 }
 
 /** Etiqueta de color del tipo de tarifa. El mismo par se pinta en la leyenda
@@ -96,7 +96,7 @@ function EtiquetaTipo({ tipo, className = '' }: { tipo: TramoPrecio['tipo']; cla
           enseña la leyenda de arriba una vez, y aquí se repite en cada tramo
           de cada barco — hasta 6 veces en Saona. Con el punto de color, dos
           palabras bastan para reconocerla. */}
-      {esGrupo ? 'precio cerrado' : 'por persona'}
+      {esGrupo ? 'flat rate' : 'per person'}
     </span>
   )
 }
@@ -125,7 +125,8 @@ export function TablaPreciosCharter({
           ninguna parte y cada fila tenía que explicarse sola con dos palabras
           en gris. */}
       <p className="mt-3 max-w-2xl text-sm text-navy-sub">
-        El precio depende del barco y de cuántos vayan. Cada barco tiene sus tramos:
+        The price depends on the boat and how many of you are sailing. Each boat has its own
+        tiers:
       </p>
       <ul className="mt-2 flex flex-col gap-1.5 text-sm text-navy-sub">
         <li className="flex items-start gap-2">
@@ -134,17 +135,17 @@ export function TablaPreciosCharter({
             className="mt-1.5 size-2 shrink-0 rounded-full bg-navy/55"
           />
           <span>
-            <strong className="font-semibold text-navy">Precio cerrado por el barco:</strong> se
-            paga lo mismo vaya el grupo lleno o a medias.
+            <strong className="font-semibold text-navy">Flat rate for the whole boat:</strong> you
+            pay the same whether the group is full or half empty.
           </span>
         </li>
         {hayPorPersona ? (
           <li className="flex items-start gap-2">
             <span aria-hidden="true" className="mt-1.5 size-2 shrink-0 rounded-full bg-aqua-dark" />
             <span>
-              <strong className="font-semibold text-navy">Por persona:</strong> se cobra por{' '}
-              <strong className="font-semibold text-navy">todas</strong> las personas, no solo por
-              las que pasan del tramo anterior.
+              <strong className="font-semibold text-navy">Per person:</strong> charged for{' '}
+              <strong className="font-semibold text-navy">every</strong> guest, not just the ones
+              above the previous tier.
             </span>
           </li>
         ) : null}
@@ -152,32 +153,88 @@ export function TablaPreciosCharter({
 
       {personas ? (
         <p className="mt-3 text-sm text-navy-sub">
-          Está resaltado el tramo que aplica a{' '}
+          Showing the tier for{' '}
           <strong className="font-semibold text-navy">
-            {personas === 1 ? '1 persona' : `${personas} personas`}
+            {personas === 1 ? '1 guest' : `${personas} guests`}
           </strong>{' '}
-          — cambia el número en el widget y la tabla te sigue.
+          — change the number in the booking widget and this follows you.
         </p>
       ) : null}
 
       <div className="mt-5 flex flex-col gap-4">
-        {ficha.subVariantes.map((s) => {
-          const esActivo = s.id === activa
-          const aforo = aforoDe(s.tabla)
-          const desde = s.tabla.length > 0 ? precioDesde(s.tabla) : null
-          const detalleDesde = s.tabla.length > 0 ? explicaDesde(s.tabla) : null
-          // El tramo que aplica SOLO se marca en el barco seleccionado: en los
-          // demás, resaltar una fila sugeriría que ese es «tu» precio en un
-          // barco que no has elegido.
-          const tramoAplica = esActivo && personas ? tramoDe(s.tabla, personas) : null
+        {ficha.subVariantes.map((s) => (
+          <CardBarco key={s.id} s={s} activa={activa} personas={personas} />
+        ))}
+      </div>
 
-          return (
-            <div
-              key={s.id}
-              className={`overflow-hidden rounded-card-grande transition-all ${
-                esActivo ? 'bg-aqua-tint/40 ring-2 ring-aqua-dark' : 'bg-fondo-ficha ring-1 ring-linea'
-              }`}
-            >
+      <p className="mt-4 text-xs text-navy-soft">
+        * Premium lobster is an optional add-on at checkout (US$ 30 per person). * Prices may vary
+        with season and availability — confirm with the team when you book.
+      </p>
+    </section>
+  )
+}
+
+// [v3 2026-08-06, PowerPoint slides 76 + 78 + reunión 07-31 22:15–23:12] LA
+// CARD DE UN BARCO, con el tarifario PLEGADO.
+//
+// El cliente sobre las dos tablas (Saona y charter): «agregar foto, mejorar
+// diseño en general», «agregar foto ampliada… potenciando más las imágenes».
+// En la reunión fue más directo: «no le gustó… es mucho texto», «las tablas
+// son raras». La salida la propuso Samuel y Miguel la aceptó: **enseñar solo
+// el tramo en el que estás** — «que no te muestre todo de una vez sino que te
+// vaya mostrando en lo que estás… de 1 a 6 tanto, de 7 en adelante tanto».
+//
+// Así que la tabla no desaparece, se PLIEGA:
+//   · En reposo se ve UN tramo: el que aplica al número de personas del widget
+//     si este es el barco elegido, y si no el de entrada (el del «desde»), que
+//     es el que sostiene la cifra de la cabecera.
+//   · «See all tiers» despliega la tabla entera, tal cual estaba — con sus
+//     barras comparables y su leyenda. Quien quiere la letra pequeña la tiene
+//     a un clic; quien no, ve un precio y una foto.
+//
+// Y la FOTO crece (de 80×56 a 144×96 en desktop): era una miniatura de fichero
+// al lado de una tabla, y el cliente pide justo lo contrario.
+//
+// ⚠️ SIN BOTÓN «Ver en 360º» aquí, aunque el slide 78 lo pida: los 360 del
+// sitio son material de ejemplo (ver el bloque «El 360º» en data/flota.ts) y
+// en /flota se pintan con una etiqueta ENCIMA del reproductor que lo deja
+// claro. Un botón de 360 en la zona de decisión de compra, abriendo un vídeo
+// que no es de ese barco, es otra cosa. Vuelve en cuanto lleguen los archivos
+// reales: el gancho es el mismo que ya usa flota/barco-card.tsx.
+function CardBarco({
+  s,
+  activa,
+  personas,
+}: {
+  s: SubVarianteTour
+  activa: string | null
+  personas?: number | null
+}) {
+  const [abierta, setAbierta] = useState(false)
+  const esActivo = s.id === activa
+  const aforo = aforoDe(s.tabla)
+  const desde = s.tabla.length > 0 ? precioDesde(s.tabla) : null
+  const detalleDesde = s.tabla.length > 0 ? explicaDesde(s.tabla) : null
+  // El tramo que aplica SOLO se marca en el barco seleccionado: en los
+  // demás, resaltar una fila sugeriría que ese es «tu» precio en un
+  // barco que no has elegido.
+  const tramoAplica = esActivo && personas ? tramoDe(s.tabla, personas) : null
+  // El que se ve plegado: el tuyo si lo hay, y si no el de entrada — el mismo
+  // que explica el «desde» de la cabecera, para que las dos cifras cuadren.
+  const tramoEntrada =
+    s.tabla.length > 0
+      ? s.tabla.reduce((a, b) => (precioDeTramo(b, b.desde) < precioDeTramo(a, a.desde) ? b : a))
+      : null
+  const tramoVisible = tramoAplica ?? tramoEntrada
+  const ocultos = Math.max(0, s.tabla.length - 1)
+
+  return (
+    <div
+      className={`overflow-hidden rounded-card-grande transition-all ${
+        esActivo ? 'bg-aqua-tint/40 ring-2 ring-aqua-dark' : 'bg-fondo-ficha ring-1 ring-linea'
+      }`}
+    >
               {/* CABECERA DEL BARCO: identidad a la izquierda, precio de
                   entrada a la derecha. El nombre a 18px y el «desde» a 20px —
                   esto es una tabla de PRECIOS y se recorre comparando cifras
@@ -195,7 +252,7 @@ export function TablaPreciosCharter({
                       alt=""
                       aria-hidden="true"
                       loading="lazy"
-                      className="h-14 w-20 shrink-0 rounded-card object-cover sm:h-16 sm:w-24"
+                      className="h-20 w-28 shrink-0 rounded-card object-cover sm:h-24 sm:w-36"
                     />
                   ) : null}
                   <div className="min-w-0 flex-1">
@@ -203,7 +260,7 @@ export function TablaPreciosCharter({
                       <h3 className="font-display text-lg font-semibold text-navy">{s.nombre}</h3>
                       {esActivo ? (
                         <span className="rounded-full bg-aqua-dark px-2 py-0.5 text-xs font-semibold text-white">
-                          Seleccionado
+                          Selected
                         </span>
                       ) : null}
                     </div>
@@ -219,7 +276,7 @@ export function TablaPreciosCharter({
                         apiladas gastaban tres líneas para tres datos cortos. */}
                     <span className="flex items-baseline gap-1.5 sm:block">
                       <span className="text-eyebrow uppercase tracking-wide text-navy-soft">
-                        desde
+                        from
                       </span>
                       <span className="block font-display text-xl font-semibold text-navy">
                         {formatoDinero(desde)}
@@ -248,7 +305,7 @@ export function TablaPreciosCharter({
                   que hace que las barras se puedan comparar de un barco a
                   otro y no solo dentro de uno. */}
               <table className="w-full table-fixed border-t border-linea text-sm">
-                <caption className="sr-only">Tarifas de {s.nombre} por número de personas</caption>
+                <caption className="sr-only">{s.nombre} rates by number of guests</caption>
                 {/* En móvil la columna de precio necesita más sitio: ahí caben
                     «US$ 110» + su unidad + la línea «14 pers. = US$ 1.386», y
                     con 40% se salían de la card (medido: 115px de texto en 97
@@ -259,12 +316,16 @@ export function TablaPreciosCharter({
                 </colgroup>
                 <thead className="sr-only">
                   <tr>
-                    <th scope="col">Personas y tipo de tarifa</th>
-                    <th scope="col">Precio</th>
+                    <th scope="col">Guests and rate type</th>
+                    <th scope="col">Price</th>
                   </tr>
                 </thead>
                 <tbody>
                   {s.tabla.map((tr, i) => {
+                    // Plegado: solo se pinta el tramo visible. La tabla no se
+                    // reconstruye al desplegar — son las mismas filas, con las
+                    // mismas barras sobre el mismo eje 1→aforo.
+                    if (!abierta && tr !== tramoVisible) return null
                     const aplica = tr === tramoAplica
                     // La etiqueta de tipo se imprime solo cuando CAMBIA
                     // respecto al tramo anterior. En Saona los cinco primeros
@@ -275,7 +336,7 @@ export function TablaPreciosCharter({
                     // tramo, se imprime en todos — que es cuando hace falta.
                     // El color de la barra sigue marcando el tipo fila a fila,
                     // y los lectores de pantalla lo reciben siempre (sr-only).
-                    const cambiaTipo = i === 0 || s.tabla[i - 1].tipo !== tr.tipo
+                    const cambiaTipo = !abierta || i === 0 || s.tabla[i - 1].tipo !== tr.tipo
                     // Porción del aforo que cubre este tramo. Todos los tramos
                     // del barco se dibujan sobre el mismo eje 1→aforo, así que
                     // las barras son comparables ENTRE SÍ dentro de la card.
@@ -301,7 +362,7 @@ export function TablaPreciosCharter({
                             {aplica ? (
                               <span className="inline-flex items-center gap-1 rounded-full bg-aqua-dark px-2 py-0.5 text-xs font-semibold text-white">
                                 <Users className="size-3" aria-hidden="true" />
-                                Tu grupo
+                                Your group
                               </span>
                             ) : null}
                           </span>
@@ -314,7 +375,7 @@ export function TablaPreciosCharter({
                             <EtiquetaTipo tipo={tr.tipo} className="mt-1" />
                           ) : (
                             <span className="sr-only">
-                              {tr.tipo === 'grupo' ? 'precio cerrado por el barco' : 'por persona'}
+                              {tr.tipo === 'grupo' ? 'flat rate for the whole boat' : 'per person'}
                             </span>
                           )}
 
@@ -349,8 +410,8 @@ export function TablaPreciosCharter({
                                 que apilado. Con sitio, va pegada a la cifra. */}
                             {esPorPersona ? (
                               <span className="block text-xs font-normal text-navy-soft sm:ml-0.5 sm:inline">
-                                <span className="sm:hidden">por persona</span>
-                                <span className="hidden sm:inline">/persona</span>
+                                <span className="sm:hidden">per person</span>
+                                <span className="hidden sm:inline">/guest</span>
                               </span>
                             ) : null}
                           </span>
@@ -364,11 +425,11 @@ export function TablaPreciosCharter({
                           {esPorPersona ? (
                             totalTuGrupo !== null ? (
                               <span className="mt-1 block text-xs font-semibold text-navy">
-                                {formatoDinero(totalTuGrupo)} en total
+                                {formatoDinero(totalTuGrupo)} total
                               </span>
                             ) : (
                               <span className="mt-1 block text-xs text-navy-soft">
-                                {tr.desde} pers. = {formatoDinero(precioDeTramo(tr, tr.desde))}
+                                {tr.desde} guests = {formatoDinero(precioDeTramo(tr, tr.desde))}
                               </span>
                             )
                           ) : null}
@@ -418,16 +479,25 @@ export function TablaPreciosCharter({
                       </Fragment>
                     )
                   })}
-                </tbody>
-              </table>
-            </div>
-          )
-        })}
-      </div>
+        </tbody>
+      </table>
 
-      <p className="mt-4 text-xs text-navy-soft">
-        * Langosta premium: add-on opcional al check-out (US$ 30 por persona). * Los precios pueden variar según temporada y disponibilidad — confirma con el equipo al reservar.
-      </p>
-    </section>
+      {/* El pie que pliega. Solo si hay algo que esconder — con un tramo unico
+          (ningun barco hoy, pero el dato manda) un boton que no abre nada. */}
+      {ocultos > 0 ? (
+        <button
+          type="button"
+          onClick={() => setAbierta((v) => !v)}
+          aria-expanded={abierta}
+          className="flex w-full items-center justify-center gap-1.5 border-t border-linea px-4 py-3 text-sm font-semibold text-aqua-dark transition-colors hover:bg-papel/60 sm:px-5"
+        >
+          {abierta ? 'Hide the full rate table' : `See all ${s.tabla.length} tiers`}
+          <ChevronDown
+            className={`size-4 transition-transform ${abierta ? 'rotate-180' : ''}`}
+            aria-hidden="true"
+          />
+        </button>
+      ) : null}
+    </div>
   )
 }

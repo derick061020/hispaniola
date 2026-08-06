@@ -869,7 +869,7 @@ export const FICHAS: Record<string, FichaTour> = {
         // solo lo lista en los tramos de GRUPO — falta confirmar si en los
         // tramos por persona la comida ya va incluida en la tarifa por cabeza.
         tabla: [
-          { desde: 1, hasta: 8, precio: 625, tipo: 'grupo', extra: 'Comida opcional: + US$ 25 por persona' },
+          { desde: 1, hasta: 8, precio: 625, tipo: 'grupo', extra: 'Optional meal: + US$ 25 per person' },
           // ⚡ El tramo se recorta a 15: con el aforo aprobado, las plazas
           // 16-20 que vendia esta tabla no existen.
           { desde: 9, hasta: 15, precio: 99, tipo: 'persona' },
@@ -917,7 +917,7 @@ export const FICHAS: Record<string, FichaTour> = {
         // propio precio de grupo real (1000): la web del cliente anuncia un
         // «desde» más caro que su tarifa. Otro motivo para no usar los «from».
         tabla: [
-          { desde: 1, hasta: 13, precio: 1000, tipo: 'grupo', extra: 'Comida opcional: + US$ 25 por persona' },
+          { desde: 1, hasta: 13, precio: 1000, tipo: 'grupo', extra: 'Optional meal: + US$ 25 per person' },
           { desde: 14, hasta: 45, precio: 99, tipo: 'persona' },
         ],
       },
@@ -933,7 +933,7 @@ export const FICHAS: Record<string, FichaTour> = {
         // ⚡ 85, no 120 (WEBSITE-TOURS pag. 17). Mismo caso que Maite.
         descripcion: 'Large catamaran · 3h · up to 85 guests',
         capacidad: 'Up to 85 guests (tiered pricing)',
-        duracion: '3 horas',
+        duracion: '3 hours',
         foto: 'flota-forever-teresa',
         horarios: [
           { hora: '9:00 AM', regreso: '12:00 PM' },
@@ -958,16 +958,16 @@ export const FICHAS: Record<string, FichaTour> = {
         nombre: 'Forever Teresa · 4h',
         descripcion: 'Large catamaran · 4h · up to 85 guests',
         capacidad: 'Up to 85 guests (tiered pricing)',
-        duracion: '4 horas',
+        duracion: '4 hours',
         foto: 'flota-forever-teresa',
         horarios: [
           { hora: '9:00 AM', regreso: '12:55 PM' },
           { hora: '2:00 PM', regreso: '6:00 PM' },
         ],
         tabla: [
-          { desde: 1, hasta: 18, precio: 1600, tipo: 'grupo', extra: 'Comida opcional: + US$ 25 por persona' },
+          { desde: 1, hasta: 18, precio: 1600, tipo: 'grupo', extra: 'Optional meal: + US$ 25 per person' },
           { desde: 19, hasta: 25, precio: 110, tipo: 'persona' },
-          { desde: 26, hasta: 28, precio: 2775, tipo: 'grupo', extra: 'Comida opcional: + US$ 25 por persona' },
+          { desde: 26, hasta: 28, precio: 2775, tipo: 'grupo', extra: 'Optional meal: + US$ 25 per person' },
           { desde: 29, hasta: 85, precio: 99, tipo: 'persona' }, // ⚡ techo 85, no 120
         ],
       },
