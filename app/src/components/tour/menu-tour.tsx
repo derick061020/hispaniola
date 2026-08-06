@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Check, UtensilsCrossed, Plus } from 'lucide-react'
+import { Check, Image as ImageIcon, UtensilsCrossed, Plus } from 'lucide-react'
 import { TituloSeccion } from '@/components/tour/titulo-seccion'
 import { BLOQUE_FICHA } from '@/components/tour/bloque-ficha'
 import { CartaCharter } from '@/components/tour/carta-charter'
@@ -230,37 +230,76 @@ function PaqueteMenu({
 // propia isla + el add-on opcional de langosta premium. Sin cards con foto
 // (la comida del buffet no se ha fotografiado) y sin comparador Light/Premium
 // (Saona no se vende por menú — se vende por BOTE).
+// [v3 2026-08-06, PowerPoint slide 75: «agregar foto, mejorar diseño en
+// general»] EL BUFFET DE SAONA deja de ser una lista de checks.
+//
+// El diagnostico es el mismo que Samuel hizo del charter el 07-28 y que el
+// cliente repite aqui: el buffet se enseñaba con el MISMO tratamiento que «Que
+// incluye» —vinetas en una caja gris— cuando es comida, que es justo lo que
+// hay que dar ganas de mirar. Ahora la foto manda y los platos van a su lado.
+//
+// ⚠️ LA FOTO NO EXISTE. No hay ni una del buffet real en la isla, y el repo
+// solo tiene bodegones de PLATO de la cocina flotante: ilustrar un buffet
+// dominicano servido en la playa con un Angus emplatado contaria otra comida.
+// Asi que el hueco se pinta como hueco (marco discontinuo + icono + pie), el
+// mismo trato que el bento del menu de 21+, y se pide la foto real (indice de
+// planes, peticion 1).
 function MenuBuffet({ platos, addOn }: { platos: PlatoBuffet[]; addOn?: { nombre: string; precio: number; descripcion?: string } }) {
   return (
-    <div className="rounded-card-grande bg-fondo-ficha p-4 sm:p-5">
-      <h3 className="mb-4 border-b border-linea pb-3 font-display text-h3 font-semibold text-navy">
-        Buffet en Isla Saona
-      </h3>
-      <ul className="flex flex-col gap-2.5">
-        {platos.map((p) => (
-          <li key={p.nombre} className="flex items-start gap-2.5 text-sm text-navy">
-            <Check className="mt-0.5 size-4 shrink-0 text-menta-texto" aria-hidden="true" />
-            <span>
-              <span className="font-semibold">{p.nombre}</span>
-              {p.desc ? <span className="text-navy-soft"> · {p.desc}</span> : null}
-            </span>
-          </li>
-        ))}
-      </ul>
-      {addOn ? (
-        <div className="mt-4 flex items-center gap-3 rounded-card border border-linea bg-papel p-3">
-          <span className="grid size-9 shrink-0 place-items-center rounded-full bg-aqua-tint text-aqua-dark">
-            <Plus className="size-4" aria-hidden="true" />
+    <div className="overflow-hidden rounded-card-grande bg-fondo-ficha">
+      <div className="grid gap-4 p-4 sm:p-5 lg:grid-cols-[1.1fr_1fr] lg:gap-6">
+        {/* LA FOTO, primera y grande. En movil va arriba (es lo que vende) y
+            en desktop a la izquierda, con los platos leyendose a su lado. */}
+        <figure className="relative flex min-h-56 flex-col justify-end rounded-card border border-dashed border-linea-fuerte bg-papel-hueso p-4 lg:min-h-72">
+          <span
+            aria-hidden="true"
+            className="mb-auto grid size-10 place-items-center rounded-full bg-papel text-navy-soft ring-1 ring-linea"
+          >
+            <ImageIcon className="size-5" />
           </span>
-          <div className="flex-1">
-            <p className="text-sm font-semibold text-navy">
-              {addOn.nombre} · {formatoDinero(addOn.precio)}{' '}
-              <span className="text-xs font-normal text-navy-soft">por persona</span>
-            </p>
-            {addOn.descripcion ? <p className="mt-0.5 text-xs text-navy-soft">{addOn.descripcion}</p> : null}
-          </div>
+          <figcaption>
+            <span className="block font-display text-sm font-semibold text-navy sm:text-base">
+              The buffet, served on the island
+            </span>
+            <span className="mt-0.5 block text-xs text-navy-soft">
+              Set up on Catuano beach, with the Natural Pool before and after.
+            </span>
+          </figcaption>
+        </figure>
+
+        <div className="flex flex-col">
+          <h3 className="border-b border-linea pb-3 font-display text-h3 font-semibold text-navy">
+            Traditional Dominican buffet
+          </h3>
+          <ul className="mt-4 flex flex-col gap-2.5">
+            {platos.map((p) => (
+              <li key={p.nombre} className="flex items-start gap-2.5 text-sm text-navy">
+                <Check className="mt-0.5 size-4 shrink-0 text-menta-texto" aria-hidden="true" />
+                <span>
+                  <span className="font-semibold">{p.nombre}</span>
+                  {p.desc ? <span className="text-navy-soft"> · {p.desc}</span> : null}
+                </span>
+              </li>
+            ))}
+          </ul>
+          {addOn ? (
+            <div className="mt-auto flex items-center gap-3 rounded-card border border-linea bg-papel p-3 lg:mt-6">
+              <span className="grid size-9 shrink-0 place-items-center rounded-full bg-aqua-tint text-aqua-dark">
+                <Plus className="size-4" aria-hidden="true" />
+              </span>
+              <div className="flex-1">
+                <p className="text-sm font-semibold text-navy">
+                  {addOn.nombre} · {formatoDinero(addOn.precio)}{' '}
+                  <span className="text-xs font-normal text-navy-soft">per person</span>
+                </p>
+                {addOn.descripcion ? (
+                  <p className="mt-0.5 text-xs text-navy-soft">{addOn.descripcion}</p>
+                ) : null}
+              </div>
+            </div>
+          ) : null}
         </div>
-      ) : null}
+      </div>
     </div>
   )
 }
@@ -427,11 +466,11 @@ export function MenuTour({
           no dos en data. Los otros dos formatos (buffet de Saona, menú a
           medida del charter) siguen en español hasta su commit de F3. */}
       <TituloSeccion>
-        {esBuffet ? 'El menú del día' : esCharter ? 'Your menu, your way' : 'Your table comes with an ocean view'}
+        {esBuffet ? 'The menu of the day' : esCharter ? 'Your menu, your way' : 'Your table comes with an ocean view'}
       </TituloSeccion>
       <p className="mt-3 max-w-2xl text-sm text-navy-sub">
         {esBuffet
-          ? 'Buffet típico dominicano servido en la propia isla, con parada en la piscina natural antes y después.'
+          ? 'A traditional Dominican buffet served on the island itself, with a stop at the Natural Pool before and after.'
           : esCharter
             ? 'What we cook depends on how long you sail: 4-hour charters sail with the Floating Kitchen, 3-hour charters with our Taste of Hispaniola Menu.'
             : 'Select your favorite dish when you book. Our chefs prepare every meal fresh on board, turning lunch into one of the highlights of your day.'}

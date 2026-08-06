@@ -129,7 +129,7 @@ export function OpinionesTour({ tour }: { tour: Tour }) {
 
   return (
     <section id="ancla-opiniones" className={`${BLOQUE_FICHA} scroll-mt-sticky-top`}>
-      <TituloSeccion>Opiniones</TituloSeccion>
+      <TituloSeccion>Reviews</TituloSeccion>
 
       <div className="mt-5 flex items-center gap-4">
         <p className="font-display text-h2 font-semibold text-navy">

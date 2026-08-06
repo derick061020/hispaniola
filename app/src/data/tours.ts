@@ -1250,13 +1250,27 @@ export const FICHAS: Record<string, FichaTour> = {
     // catamarán), no eligiendo menú: no hay Light contra el que contrastar, y
     // el día completo a la isla es el producto caro de la casa.
     widgetPremiumDeBase: true,
-    tituloLargo: 'Isla Saona — día completo, elige tu bote',
+    tituloLargo: 'Saona Island — full day, choose your boat',
+    // [v3 2026-08-06, WEBSITE-TOURS pag. 21] Titulo APROBADO del bloque de
+    // descripcion.
+    promesa: 'A Day in Paradise',
     audiencia: 'Día completo',
-    duracion: 'Día completo (8 horas)',
+    duracion: 'Full day (8 hours)',
+    // [v3 2026-08-06, WEBSITE-TOURS pags. 21-22] Los parrafos APROBADOS,
+    // literales, con la lista de variantes que trae el propio texto.
+    //
+    // ⚡ RENOMBRES que salen de aqui y hay que perseguir por todo el sitio:
+    //   · «Fishing Town»  -> «Speedboat Adventure»
+    //   · «Speedboat»     -> «Private Speedboat»
+    // Ojo: el copy sigue llamando «Fishing Town itinerary» al recorrido que
+    // pasa por Mano Juan — o sea que Fishing Town deja de ser el nombre del
+    // PRODUCTO y pasa a ser el del ITINERARIO. Se respeta tal cual.
     descripcionLarga: [
-      'Isla Saona es la excursión estrella del Caribe Dominicano: playas de arena blanca, aguas turquesas y una piscina natural donde te rodean estrellas gigantes. Zarpamos temprano desde Bayahibe y pasamos el día entero entre Catuano, Las Palmillas y (en la variante Fishing Town) el pueblo de pescadores de Mano Juan.',
-      'Eliges CÓMO llegar: en speedboat privado (la forma más rápida y exclusiva, hasta 9 personas), en catamarán (la experiencia clásica, hasta 70) o en lancha rápida con parada en el pueblo de pescadores de Mano Juan y Playa Toro. Las tres variantes incluyen el buffet típico en la isla y la piscina natural de Las Palmillas con estrellas gigantes.',
-      'El día cierra con regreso por la costa al atardecer. Es la única excursión full-day del catálogo — todo el resto son medios días.',
+      "Saona Island is one of the Dominican Republic's most iconic destinations, famous for its powder-white beaches, crystal-clear turquoise waters and breathtaking Natural Pool, where giant starfish can often be seen resting on the sandy bottom.",
+      "Departing from Bayahibe, you'll spend the day exploring the island's most beautiful locations, including Catuano, Las Palmillas and, on our Fishing Town itinerary, the charming fishing village of Mano Juan.",
+      'Choose the experience that best suits your group: Private Speedboat — the fastest and most exclusive option, for up to 9 guests. Catamaran — the classic Caribbean sailing experience. Speedboat Adventure — including stops at Mano Juan and Playa Toro.',
+      'All options include a traditional Dominican buffet served on the island and time to relax in the famous Natural Pool at Las Palmillas.',
+      'As the day comes to an end, enjoy a scenic cruise back along the Caribbean coastline before returning to your hotel.',
     ],
     horarios: [{ hora: '9:00 AM', regreso: '4:00 PM' }],
     // Sin Light/Premium (Saona se diferencia por BOTE, no por menú). El widget
@@ -1266,9 +1280,16 @@ export const FICHAS: Record<string, FichaTour> = {
     subVariantes: [
       {
         id: 'speedboat',
-        nombre: 'Speedboat',
+        // ⚡ [v3 2026-08-06, WEBSITE-TOURS pag. 21 + decision de Samuel: «los 5
+        // documentos WEBSITE estan totalmente aprobados»] Renombre y recorte:
+        // «Speedboat» -> «Private Speedboat», y el aforo baja de 25 a 9.
+        // Es el recorte mas grande de la tanda: la tabla vendia un tramo por
+        // persona de 11 a 25 que, con el aforo aprobado, no existe. Se corta
+        // en 9 — el ultimo tramo de grupo que el tarifario define (US$ 1.280).
+        // Las plazas 10 a 25 salen del widget.
+        nombre: 'Private Speedboat',
         descripcion: 'La forma más rápida y exclusiva',
-        capacidad: 'Hasta 10 personas (+US$ 130 por persona desde 11, hasta 25)',
+        capacidad: 'Up to 9 guests',
         tabla: [
           // [tarifa-v2] Corregido 2026-07-27 contra la web original. Tenía
           // TRES errores: (a) empezaba en `desde: 6`, así que 1-5 personas no
@@ -1279,13 +1300,23 @@ export const FICHAS: Record<string, FichaTour> = {
           { desde: 7, hasta: 7, precio: 1160, tipo: 'grupo' },
           { desde: 8, hasta: 8, precio: 1220, tipo: 'grupo' },
           { desde: 9, hasta: 9, precio: 1280, tipo: 'grupo' },
-          { desde: 10, hasta: 10, precio: 1340, tipo: 'grupo' },
-          { desde: 11, hasta: 25, precio: 130, tipo: 'persona' },
+          // Fuera los tramos de 10 y de 11-25: por encima de 9 personas este
+          // barco ya no se vende (aforo aprobado).
+        
         ],
       },
       {
         id: 'fishing',
-        nombre: 'Fishing Town',
+        // ⚡ [v3 2026-08-06, WEBSITE-TOURS pag. 22] «Fishing Town» ->
+        // «Speedboat Adventure». Ojo al matiz: el copy aprobado sigue llamando
+        // «Fishing Town itinerary» al RECORRIDO que pasa por Mano Juan — lo
+        // que cambia es el nombre del producto, no el del itinerario.
+        // El `id` se queda en 'fishing': es una clave interna que viaja en la
+        // URL del funnel y en reservas ya emitidas; renombrarla romperia
+        // enlaces sin ganar nada.
+        // ⚠️ Su aforo NO se toca: el copy aprobado solo da cifra para el
+        // Private Speedboat. Los tramos siguen como los publica el tarifario.
+        nombre: 'Speedboat Adventure',
         descripcion: 'Con parada en Mano Juan y Playa Toro',
         capacidad: 'Hasta 10 personas (+US$ 140 por persona desde 11, hasta 25)',
         tabla: [
@@ -1301,9 +1332,9 @@ export const FICHAS: Record<string, FichaTour> = {
       },
       {
         id: 'catamaran',
-        nombre: 'Catamarán',
-        descripcion: 'La experiencia clásica, hasta 70 personas',
-        capacidad: '1-70 personas',
+        nombre: 'Catamaran',
+        descripcion: 'The classic Caribbean sailing experience',
+        capacidad: 'Up to 70 guests',
         tabla: [
           {
             desde: 1,
@@ -1321,16 +1352,16 @@ export const FICHAS: Record<string, FichaTour> = {
     // Formato buffet: 5 platos en la isla + add-on langosta al check-out.
     menuBuffet: {
       platos: [
-        { nombre: 'Pasta salad', desc: 'Con tomate, pepino y vinagreta' },
-        { nombre: 'Spaghetti con langosta' },
-        { nombre: 'Pollo a la parrilla' },
-        { nombre: 'Chuletas de cerdo' },
-        { nombre: 'Frutas tropicales' },
+        { nombre: 'Pasta salad', desc: 'With tomato, cucumber and vinaigrette' },
+        { nombre: 'Lobster spaghetti' },
+        { nombre: 'Grilled chicken' },
+        { nombre: 'Pork chops' },
+        { nombre: 'Tropical fruit' },
       ],
       addOn: {
-        nombre: 'Langosta premium',
+        nombre: 'Premium lobster',
         precio: 30,
-        descripcion: 'Disponible al hacer check-out, US$ 30 por persona',
+        descripcion: 'Added at checkout, US$ 30 per person.',
       },
     },
     // Galería de 11 fotos reales de la web del cliente
@@ -1352,73 +1383,77 @@ export const FICHAS: Record<string, FichaTour> = {
       'galeria-isla-saona-11',
     ],
     videoGaleria: '/video/hero.mp4',
-    quoteDestacada: 'La piscina natural con las estrellas gigantes fue lo mejor — y el buffet en la playa, increíble.',
+    quoteDestacada: 'The Natural Pool with the giant starfish was the best part — and the buffet on the beach, incredible.',
+    // [v3 2026-08-06] Traduccion NUESTRA: el documento del cliente no trae
+    // itinerario de Saona, asi que se porta el que habia. Lo unico que cambia
+    // ademas del idioma es el nombre de la variante que pasa por Mano Juan,
+    // por el renombre aprobado.
     itinerario: [
       {
-        hora: '8:05',
-        titulo: 'Recogida en tu hotel',
-        texto: 'Transporte con AC desde Bávaro / Punta Cana. La hora exacta según tu hotel — se confirma al reservar.',
+        hora: '8:05 AM',
+        titulo: 'Hotel Pickup',
+        texto:
+          'Air-conditioned transportation from Bávaro / Punta Cana. Your exact time depends on your hotel and is confirmed after booking.',
       },
       {
-        hora: '9:00',
-        titulo: 'Zarpamos desde Bayahibe',
-        texto: 'Check-in en el muelle. Sale tu variante elegida: speedboat, lancha rápida o catamarán.',
+        hora: '9:00 AM',
+        titulo: 'Departure from Bayahibe',
+        texto: 'Check in at the pier. Your chosen boat sets off: speedboat or catamaran.',
       },
       {
-        hora: '~10:30',
-        titulo: 'Piscina natural de Las Palmillas',
-        texto: 'Aguas turquesas poco profundas donde nadas con estrellas gigantes. Snack en el agua.',
+        hora: '~10:30 AM',
+        titulo: 'Natural Pool at Las Palmillas',
+        texto: 'Shallow turquoise water where you swim among giant starfish. Snack served in the water.',
       },
       {
-        hora: '~12:00',
-        titulo: 'Almuerzo buffet en Catuano',
-        texto: 'En Isla Saona (playa de Catuano): pasta, spaghetti con langosta, pollo, chuletas y frutas.',
+        hora: '~12:00 PM',
+        titulo: 'Buffet lunch at Catuano',
+        texto:
+          'On Saona Island (Catuano beach): pasta, lobster spaghetti, grilled chicken, pork chops and tropical fruit.',
       },
       {
-        hora: '~14:00',
-        titulo: 'Tiempo en la playa',
-        texto: 'Relax bajo cocoteros, hamacas y camas balinesas. La variante Fishing Town añade Mano Juan y Playa Toro.',
+        hora: '~2:00 PM',
+        titulo: 'Beach time',
+        texto:
+          'Relax under the palm trees, in hammocks and Balinese beds. The Speedboat Adventure adds Mano Juan and Playa Toro.',
       },
       {
-        hora: '16:00',
-        titulo: 'Regreso y traslado al hotel',
-        texto: 'Navegación de vuelta por la costa, llegada al hotel al atardecer.',
+        hora: '4:00 PM',
+        titulo: 'Return & hotel transfer',
+        texto: 'Cruise back along the coast, arriving at your hotel at sunset.',
       },
     ],
     incluye: [
-      { titulo: 'Transporte ida y vuelta', texto: 'Recogida en tu hotel con AC, desde Bávaro / Punta Cana.' },
-      { titulo: 'Bote completo', texto: 'Speedboat, lancha rápida o catamarán, según la variante que elijas.' },
-      { titulo: 'Almuerzo buffet', texto: 'En la isla: pasta, spaghetti con langosta, pollo, chuletas y frutas.' },
-      { titulo: 'Piscina natural', texto: 'Parada en Las Palmillas con estrellas gigantes, snack en el agua.' },
+      { titulo: 'Round-Trip Transportation', texto: 'Air-conditioned pickup at your hotel, from Bávaro / Punta Cana.' },
+      { titulo: 'The whole boat', texto: 'Speedboat or catamaran, depending on the option you choose.' },
+      {
+        titulo: 'Buffet lunch',
+        texto: 'On the island: pasta, lobster spaghetti, grilled chicken, pork chops and tropical fruit.',
+      },
+      { titulo: 'Natural Pool', texto: 'Stop at Las Palmillas with giant starfish and a snack in the water.' },
     ],
-    incluyeExtra: [
-      'WiFi a bordo',
-      'Equipo de snorkel',
-      'Guía bilingüe durante toda la excursión',
-    ],
+    incluyeExtra: ['Wi-Fi on board', 'Snorkeling gear', 'Bilingual guide throughout the day'],
     noIncluido:
-      'No incluido: langosta premium (US$ 30 pax, add-on opcional al check-out) · fotógrafo profesional (con aviso previo, costo extra) · transporte desde Casa de Campo (suplemento).',
+      'Not included: premium lobster (US$ 30/person, optional add-on at checkout) · professional photographer (on request, extra cost) · transportation from Casa de Campo (surcharge).',
     queLlevar: [
-      'Traje de baño',
-      'Toalla',
-      'Protector solar biodegradable',
-      'Cámara',
-      'Efectivo (para el add-on de langosta o propinas)',
+      'Swimsuit',
+      'Towel',
+      'Reef-safe sunscreen',
+      'Camera',
+      'Cash (for the lobster add-on or tips)',
     ],
+    recomendaciones: RECOMENDACIONES_V3,
     faqTour: [
-      { p: '¿Cuánto dura el día completo?', r: '8 horas: salida 9:00 AM, regreso a tu hotel ~5:00 PM.' },
+      { p: 'How long is the full day?', r: '8 hours: departure at 9:00 AM, back at your hotel around 5:00 PM.' },
       {
-        p: '¿Cuál es la diferencia entre las 3 variantes?',
-        r: 'Speedboat es la más rápida y exclusiva (6-9 pax). Fishing Town añade parada en Mano Juan y Playa Toro. Catamarán es la opción clásica para grupos grandes (hasta 70 pax).',
+        p: 'What is the difference between the three options?',
+        r: 'The Private Speedboat is the fastest and most exclusive (up to 9 guests). The Speedboat Adventure adds stops at Mano Juan and Playa Toro. The Catamaran is the classic option for large groups (up to 70 guests).',
       },
-      { p: '¿Puedo añadir langosta premium?', r: 'Sí, al hacer check-out: US$ 30 por persona.' },
+      { p: 'Can I add premium lobster?', r: 'Yes, at checkout: US$ 30 per person.' },
+      { p: 'What if it rains?', r: 'Full refund or a date change, at no cost.' },
       {
-        p: '¿Y si llueve?',
-        r: 'Reembolso total o cambio de fecha, sin costo.',
-      },
-      {
-        p: '¿Desde qué edad pueden ir los niños?',
-        r: 'No hay edad mínima — llevamos chalecos de todas las tallas en speedboat y catamarán.',
+        p: 'Is there a minimum age for children?',
+        r: 'No minimum age — we carry life jackets in every size on both the speedboat and the catamaran.',
       },
     ],
     tambienTeGusta: ['semi-private-premium', 'private-charter'],

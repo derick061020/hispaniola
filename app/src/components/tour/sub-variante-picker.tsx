@@ -135,9 +135,9 @@ export function SubVariantePicker({
                 y no sobre cada trozo: así, cuando falta ancho, lo que se
                 recorta es la cola de la meta (el dato menos decisivo) y nunca
                 el nombre del barco. */}
-            <span className="min-w-0 flex-1 truncate">
+            <span className={`min-w-0 flex-1 ${cabeMeta ? 'truncate' : ''}`}>
               <span
-                className={`font-display text-sm font-semibold ${
+                className={`block font-display text-sm font-semibold ${cabeMeta ? 'inline' : 'truncate'} ${
                   activo ? 'text-navy' : 'text-navy-sub'
                 }`}
               >
@@ -148,7 +148,19 @@ export function SubVariantePicker({
                   personas (plated hasta 20, skewers desde 21)») que en 384 px
                   se cortaban a mitad de frase y no decían nada. El matiz sigue
                   publicado donde hay sitio para leerlo — la tabla de precios. */}
-              {cabeMeta ? <span className="ml-1.5 text-xs text-navy-soft">{meta}</span> : null}
+              {/* [v3 2026-08-06] Con nombre largo la meta ya no DESAPARECE:
+                  baja a una segunda linea. El umbral de 14 caracteres estaba
+                  calibrado para los nombres viejos de Saona («Speedboat»,
+                  «Fishing Town») y el copy aprobado los alarga a «Private
+                  Speedboat» y «Speedboat Adventure» — con la regla anterior,
+                  las dos filas perdian el aforo justo cuando mas importa: el
+                  Private Speedboat baja a 9 plazas y eso hay que verlo ANTES
+                  de subir el contador de personas. */}
+              <span
+                className={`text-xs text-navy-soft ${cabeMeta ? 'ml-1.5' : 'block truncate'}`}
+              >
+                {meta}
+              </span>
             </span>
 
             {desde !== null ? (

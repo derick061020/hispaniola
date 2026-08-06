@@ -119,7 +119,7 @@ export function TablaPreciosCharter({
 
   return (
     <section id="ancla-precios" className={`${BLOQUE_FICHA} scroll-mt-sticky-top`}>
-      <TituloSeccion>Tabla de precios por barco</TituloSeccion>
+      <TituloSeccion>Price list by boat</TituloSeccion>
 
       {/* CÓMO SE LEE ESTA TABLA, una vez y arriba. Antes esto no estaba en
           ninguna parte y cada fila tenía que explicarse sola con dos palabras

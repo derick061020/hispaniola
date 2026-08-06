@@ -274,9 +274,9 @@ export function TourPage() {
                 <ReelsSociales
                   variante="bloque"
                   conHashtag={false}
-                  eyebrow="En video"
-                  titulo="Así se ve un día con nosotros"
-                  lead="Reels de a bordo y de nuestros clientes — el tour antes del tour."
+                  eyebrow="On video"
+                  titulo="This is what a day with us looks like"
+                  lead="Clips from on board and from our guests — the tour before the tour."
                 />
               </div>
 
