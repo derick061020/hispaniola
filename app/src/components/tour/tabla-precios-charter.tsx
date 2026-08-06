@@ -6,6 +6,11 @@ import { BLOQUE_FICHA } from '@/components/tour/bloque-ficha'
 import { TituloSeccion } from '@/components/tour/titulo-seccion'
 import { aforoDe, precioDeTramo, precioDesde, tramoDe } from '@/lib/tarifas'
 import { Visor360 } from '@/components/flota/visor-360'
+import {
+  TarifarioOpcionA,
+  TarifarioOpcionB,
+  TarifarioOpcionC,
+} from '@/components/tour/tarifario-opciones'
 
 // Tabla de precios por barco (v3 2026-07-17, pedido de Samuel: «no agregaste
 // la información de cada barco a la izquierda, la tabla con la información de
@@ -115,6 +120,11 @@ export function TablaPreciosCharter({
 }) {
   if (!ficha.subVariantes || ficha.subVariantes.length === 0) return null
 
+  // La card que se duplica para comparar propuestas. `?? null` y no un índice:
+  // si mañana Maite cambia de id o de orden, el bloque de comparación
+  // desaparece solo en vez de enseñar el barco equivocado.
+  const maite = ficha.subVariantes.find((s) => s.id === 'maite') ?? null
+
   // ¿Algún barco cobra por persona? Si no, la mitad de la explicación sobra.
   const hayPorPersona = ficha.subVariantes.some((s) => s.tabla.some((t) => t.tipo === 'persona'))
 
@@ -167,6 +177,25 @@ export function TablaPreciosCharter({
           <CardBarco key={s.id} s={s} activa={activa} personas={personas} />
         ))}
       </div>
+
+      {/* ⚠️ BLOQUE TEMPORAL DE COMPARACION (2026-08-06, pedido de Samuel).
+          «El cliente es un señor mayor y al menos la version anterior lo
+          confundio muchisimo»: se piden 3 propuestas de diseño y estructura
+          para el tarifario, duplicando la card de Maite —y solo en el charter—
+          para poder verlas una debajo de otra sin perder las 5 actuales.
+          Cuando elija una, este bloque entero y tarifario-opciones.tsx
+          desaparecen y la ganadora sustituye a CardBarco. */}
+      {maite ? (
+        <div className="mt-8 flex flex-col gap-4 border-t border-linea pt-8">
+          <p className="text-sm text-navy-soft">
+            Tres propuestas para este mismo tarifario — la misma tarifa de Maite contada de tres
+            maneras. Elige una y se aplica a los cinco barcos.
+          </p>
+          <TarifarioOpcionA s={maite} personas={personas} />
+          <TarifarioOpcionB s={maite} personas={personas} />
+          <TarifarioOpcionC s={maite} personas={personas} />
+        </div>
+      ) : null}
 
       <p className="mt-4 text-xs text-navy-soft">
         * Premium lobster is an optional add-on at checkout (US$ 30 per person). * Prices may vary
