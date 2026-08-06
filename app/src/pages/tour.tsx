@@ -251,7 +251,12 @@ export function TourPage() {
                   para charter-privado (4 botes con sus tramos de pax).
                   Solo se pinta si la ficha tiene subVariantes. */}
               {tour.booking === 'completo' && ficha.subVariantes && ficha.subVariantes.length > 0 ? (
-                <TablaPreciosCharter ficha={ficha} activa={variante} personas={personas} />
+                <TablaPreciosCharter
+                  ficha={ficha}
+                  activa={variante}
+                  personas={personas}
+                  onElegir={setVariante}
+                />
               ) : null}
               {/* Fila de videos (correcciones v1 del cliente, 2026-07-20 —
                   planes/02-producto.md slide 6: la maqueta pone aquí, entre

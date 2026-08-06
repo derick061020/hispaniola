@@ -13,6 +13,7 @@ import {
   TarifarioOpcionC,
   TarifarioOpcionCMas,
 } from '@/components/tour/tarifario-opciones'
+import { PropuestaD, PropuestaE, PropuestaF } from '@/components/tour/tarifario-propuestas-2'
 
 // Tabla de precios por barco (v3 2026-07-17, pedido de Samuel: «no agregaste
 // la información de cada barco a la izquierda, la tabla con la información de
@@ -113,9 +114,15 @@ export function TablaPreciosCharter({
   ficha,
   activa,
   personas,
+  onElegir,
 }: {
   ficha: FichaTour
   activa: string | null
+  /** [2026-08-06] Selector de barco. Nace con las propuestas D y E del
+   *  tarifario, que dejan de ser informativas y pasan a poder ELEGIR el barco
+   *  —el widget y la tabla comparten el mismo estado en tour.tsx—. Opcional:
+   *  sin el prop, la tabla se comporta como siempre. */
+  onElegir?: (id: string) => void
   /** Personas elegidas en el widget. Resalta el tramo que aplica y muestra su
    *  total. `null` mientras el widget no haya reportado (SSR / primer paint). */
   personas?: number | null
@@ -201,6 +208,18 @@ export function TablaPreciosCharter({
               grande + la frontera dicha en voz alta). */}
           <TarifarioOpcionBMas s={maite} personas={personas} />
           <TarifarioOpcionCMas s={maite} personas={personas} />
+
+          {/* SEGUNDA TANDA (2026-08-06): tres propuestas pensadas desde cero,
+              cada una copiando un patron probado de otro sector — ver la
+              cabecera de tarifario-propuestas-2.tsx. */}
+          <PropuestaD s={maite} personas={personas} activa={activa} onElegir={onElegir} />
+          <PropuestaE
+            subVariantes={ficha.subVariantes}
+            personas={personas}
+            activa={activa}
+            onElegir={onElegir}
+          />
+          <PropuestaF s={maite} personas={personas} />
         </div>
       ) : null}
 
