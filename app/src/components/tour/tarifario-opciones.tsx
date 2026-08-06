@@ -1,4 +1,5 @@
-import { Check, Users } from 'lucide-react'
+import { useState } from 'react'
+import { Check, ChevronDown, Users } from 'lucide-react'
 import { formatoDinero } from '@/data/home'
 import { aforoDe, minimoDe, precioDeTramo, tramoDe } from '@/lib/tarifas'
 import type { SubVarianteTour } from '@/data/tours'
@@ -189,6 +190,26 @@ export function TarifarioOpcionB({ s, personas }: { s: SubVarianteTour; personas
   )
 }
 
+/** Los totales YA RESUELTOS, tamaño por tamaño. Se recorre el aforo entero
+ *  calculando con `precioDeTramo()` —el mismo motor que cobra— y se colapsan
+ *  los tamaños consecutivos que cuestan igual: eso es lo que convierte el
+ *  tramo de grupo en una sola fila («1–8 → US$ 625») sin tener que nombrarlo.
+ *  Lo comparten C y C+. */
+function filasCalculadas(s: SubVarianteTour): { desde: number; hasta: number; total: number }[] {
+  const min = minimoDe(s.tabla)
+  const max = aforoDe(s.tabla)
+  const filas: { desde: number; hasta: number; total: number }[] = []
+  for (let n = min; n <= max; n++) {
+    const tramo = tramoDe(s.tabla, n)
+    if (!tramo) continue
+    const total = precioDeTramo(tramo, n)
+    const ultima = filas[filas.length - 1]
+    if (ultima && ultima.total === total && ultima.hasta === n - 1) ultima.hasta = n
+    else filas.push({ desde: n, hasta: n, total })
+  }
+  return filas
+}
+
 // ── OPCIÓN C ───────────────────────────────────────────────────────────────
 // «La lista de la compra».
 //
@@ -206,20 +227,7 @@ export function TarifarioOpcionB({ s, personas }: { s: SubVarianteTour; personas
 // Teresa (85 plazas) serían decenas y habría que plegarla o pasar a intervalos
 // de 5 en 5. Si esta es la elegida, ese es el trabajo que queda.
 export function TarifarioOpcionC({ s, personas }: { s: SubVarianteTour; personas?: number | null }) {
-  const min = minimoDe(s.tabla)
-  const max = aforoDe(s.tabla)
-
-  // Se recorre el aforo entero calculando el total real de cada tamaño con el
-  // mismo motor que cobra, y se colapsan los consecutivos que cuestan igual.
-  const filas: { desde: number; hasta: number; total: number }[] = []
-  for (let n = min; n <= max; n++) {
-    const tramo = tramoDe(s.tabla, n)
-    if (!tramo) continue
-    const total = precioDeTramo(tramo, n)
-    const ultima = filas[filas.length - 1]
-    if (ultima && ultima.total === total && ultima.hasta === n - 1) ultima.hasta = n
-    else filas.push({ desde: n, hasta: n, total })
-  }
+  const filas = filasCalculadas(s)
 
   return (
     <div className={CAJA}>
@@ -384,6 +392,113 @@ export function TarifarioOpcionBMas({
           </strong>
           . From there on, everyone pays their own seat.
         </p>
+      ) : null}
+    </div>
+  )
+}
+
+// ── OPCIÓN C+ ──────────────────────────────────────────────────────────────
+// «La lista de C, pero solo tu fila y la siguiente».
+//
+// Pedido de Samuel (2026-08-06) sobre C: «solo se vea el grupo actual, el
+// siguiente, y un botón que diga ver todos los tramos, y ahí sí se ve la tabla
+// completa».
+//
+// Resuelve el único problema serio que tenía C, que era de escala: precalcular
+// el total de cada tamaño da 8 filas en Maite pero ~65 en el Forever Teresa
+// (85 plazas), y ahí la lista deja de ser clara y pasa a ser un muro. Con dos
+// filas visibles el tamaño de la card es el MISMO en los cinco barcos.
+//
+// Y de paso gana algo que C no tenía: la segunda fila no es relleno, es la
+// respuesta a la pregunta que se hace todo el que organiza un grupo — «¿y si
+// al final somos uno más?». Por eso lleva su rótulo («if your group grows»),
+// que es lo que la convierte en información en vez de en una fila de sobra.
+//
+// Cuando tu grupo cae en la ÚLTIMA fila no hay siguiente: se enseña la
+// anterior, para que la referencia exista igual y la card no encoja.
+export function TarifarioOpcionCMas({
+  s,
+  personas,
+}: {
+  s: SubVarianteTour
+  personas?: number | null
+}) {
+  const [abierta, setAbierta] = useState(false)
+  const filas = filasCalculadas(s)
+
+  // La fila del visitante. Sin número del widget todavía, la primera — que es
+  // la que sostiene el «desde» del resto de la ficha.
+  const iActual = Math.max(
+    0,
+    filas.findIndex((f) => personas != null && personas >= f.desde && personas <= f.hasta),
+  )
+  // La de referencia: la siguiente, y si estás en la última, la anterior.
+  const iVecina = iActual + 1 < filas.length ? iActual + 1 : iActual - 1
+  const visibles = abierta
+    ? filas.map((_, i) => i)
+    : [iActual, iVecina].filter((i) => i >= 0 && i < filas.length)
+
+  return (
+    <div className={CAJA}>
+      <CabeceraBarco s={s} etiqueta="Opción C+ · tu tramo y el siguiente" />
+
+      <p className="mt-4 text-sm text-navy-sub">
+        Your total, already calculated. No rates to read, no maths.
+      </p>
+
+      <ul className="mt-3 overflow-hidden rounded-card ring-1 ring-linea">
+        {visibles.map((i) => {
+          const f = filas[i]
+          const esTuyo = i === iActual && personas != null
+          const esVecina = !abierta && i === iVecina
+          return (
+            <li
+              key={`${f.desde}-${f.hasta}`}
+              className={`flex items-center justify-between gap-4 border-b border-linea px-4 py-3 text-sm last:border-b-0 ${
+                esTuyo ? 'bg-aqua-tint' : 'bg-papel'
+              }`}
+            >
+              <span className={`font-medium ${esTuyo ? 'text-navy' : 'text-navy-sub'}`}>
+                {f.desde === f.hasta ? `${f.desde} guests` : `${f.desde}–${f.hasta} guests`}
+                {esTuyo ? (
+                  <span className="ml-2 rounded-full bg-aqua-dark px-2 py-0.5 text-xs font-semibold text-white">
+                    your group
+                  </span>
+                ) : null}
+                {/* El rótulo que convierte la 2ª fila en información: responde
+                    a «¿y si al final somos uno más?», que es la pregunta real
+                    de quien organiza un grupo. */}
+                {esVecina && !esTuyo ? (
+                  <span className="ml-2 text-xs text-navy-soft">
+                    {i > iActual ? 'if your group grows' : 'if your group is smaller'}
+                  </span>
+                ) : null}
+              </span>
+              <span
+                className={`whitespace-nowrap font-display text-base font-semibold ${
+                  esTuyo ? 'text-aqua-dark' : 'text-navy'
+                }`}
+              >
+                {formatoDinero(f.total)}
+              </span>
+            </li>
+          )
+        })}
+      </ul>
+
+      {filas.length > visibles.length || abierta ? (
+        <button
+          type="button"
+          onClick={() => setAbierta((v) => !v)}
+          aria-expanded={abierta}
+          className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-aqua-dark transition-colors hover:text-aqua"
+        >
+          {abierta ? 'Hide the full list' : `See all ${filas.length} group sizes`}
+          <ChevronDown
+            className={`size-4 transition-transform ${abierta ? 'rotate-180' : ''}`}
+            aria-hidden="true"
+          />
+        </button>
       ) : null}
     </div>
   )

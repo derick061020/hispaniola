@@ -11,6 +11,7 @@ import {
   TarifarioOpcionB,
   TarifarioOpcionBMas,
   TarifarioOpcionC,
+  TarifarioOpcionCMas,
 } from '@/components/tour/tarifario-opciones'
 
 // Tabla de precios por barco (v3 2026-07-17, pedido de Samuel: «no agregaste
@@ -199,6 +200,7 @@ export function TablaPreciosCharter({
               la estructura de B con el injerto de C (el total del grupo en
               grande + la frontera dicha en voz alta). */}
           <TarifarioOpcionBMas s={maite} personas={personas} />
+          <TarifarioOpcionCMas s={maite} personas={personas} />
         </div>
       ) : null}
 
