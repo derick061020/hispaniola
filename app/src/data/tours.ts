@@ -285,14 +285,14 @@ export type FichaTour = {
    *  El cliente: «en esta seccion ofrecemos nuestros Charter privado en
    *  modalidad Premium que es el mas vendido» + un boton a eventos/party boat.
    *
-   *  ⚠️ Su texto para ese boton era «Consultar modalidades mas economicas», y
-   *  esa promesa HOY ES FALSA: el charter mas barato (Maite, US$ 625) sale por
-   *  debajo del party boat mas barato (US$ 660). Lo detecto Samuel en la misma
-   *  reunion («me parece mas caro incluso») y Miguel respondio que van a
-   *  reestructurar precios y sumar barcos. Asi que la seccion se monta, pero el
-   *  CTA NO promete precio hasta que eso pase — enseña la otra modalidad y ya.
-   *  En cuanto los precios cuadren, es cambiar esta linea. */
-  bandaModalidad?: { titulo: string; texto: string; cta: { texto: string; a: string } }
+   *  ⚠️ El CTA promete precio («more affordable options») y HOY ESO NO CUADRA:
+   *  el charter mas barato (Maite, US$ 625) sale por debajo del party boat mas
+   *  barato (US$ 660). Lo detecto Samuel en la misma reunion («me parece mas
+   *  caro incluso») y Miguel respondio que van a reestructurar precios y sumar
+   *  barcos. Se porta el texto del slide por decision de Samuel (2026-08-06);
+   *  la promesa se vuelve verdad en cuanto reestructuren, y si no, cambiarla
+   *  es esta linea. */
+  bandaModalidad?: { eyebrow: string; texto: string; cta: { texto: string; a: string } }
   /** [v2 2026-07-27] Extras opcionales que el widget vende como UPSELL.
    *  Portados del tarifario real (TARIFARIO-WEB-ORIGINAL.md §4-C). El texto
    *  del álbum de fotos cambia por producto a propósito: en charter ya
@@ -781,10 +781,14 @@ export const FICHAS: Record<string, FichaTour> = {
     // Light: aquí la piel premium no anuncia un upgrade, describe el producto.
     widgetPremiumDeBase: true,
     bandaModalidad: {
-      titulo: 'This is our Private Charter in Premium mode',
-      texto: 'Our best seller: the whole catamaran for your group, with the Floating Kitchen on board.',
-      // Sin promesa de precio — ver el comentario del campo en el tipo.
-      cta: { texto: 'See our Party Boat options', a: '/eventos/party-boat' },
+      // [v3 2026-08-06] Texto LITERAL del slide 77, traducido y sin adornar:
+      // «En ésta sección ofrecemos nuestros Charter privado en modalidad
+      // Premium que es el más vendido» + el boton «Consultar modalidades más
+      // económicas». Samuel pidio expresamente que fuera lo que dice el slide.
+      eyebrow: 'Premium mode',
+      texto:
+        'In this section we offer our Private Charter in Premium mode, which is our best seller.',
+      cta: { texto: 'See more affordable options', a: '/eventos/party-boat' },
     },
     tituloLargo: 'Private Charter — the whole catamaran for your group',
     // [v3 2026-08-06, WEBSITE-TOURS pag. 17] Titulo APROBADO del bloque de

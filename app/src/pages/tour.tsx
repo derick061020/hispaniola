@@ -19,7 +19,7 @@ import { GaleriaMosaico } from '@/components/internas/galeria-mosaico'
 import { ReelsSociales } from '@/components/ui/reels-sociales'
 import { ComparadorPremium } from '@/components/tour/comparador-premium'
 import { BandaPremium } from '@/components/tour/banda-premium'
-import { BandaModalidad } from '@/components/tour/banda-modalidad'
+import { SeccionModalidad } from '@/components/tour/seccion-modalidad'
 import { fotosComidaDe } from '@/data/tours'
 import { VideoAcompanante } from '@/components/tour/video-acompanante'
 import { AntesDeReservar } from '@/components/tour/antes-de-reservar'
@@ -223,13 +223,12 @@ export function TourPage() {
                 <MenuTour tour={tour} ficha={ficha} variante={variante} personas={personas} />
               ) : null}
 
-              {/* [v3 2026-08-06, slide 77] DEBAJO DE LOS MENUS, sitio que fijo
-                  Samuel: el visitante ya ha visto lo que se sirve a bordo, o
-                  sea que ya tiene el nivel de producto en la cabeza. Ofrecerle
-                  la alternativa mas barata antes de eso seria regalar la
-                  venta. Es una pieza APARTE de la banda «estas en Premium» de
-                  arriba — ver el porque en banda-modalidad.tsx. */}
-              <BandaModalidad ficha={ficha} />
+              {/* [v3 2026-08-06, slide 77] SECCION —no banda— debajo de los
+                  menus, sitio que fijo Samuel. Ni es la banda «estas en
+                  Premium» de arriba ni va en dorado (justo encima esta la
+                  lamina de oro de la langosta): el porque de las tres cosas,
+                  en seccion-modalidad.tsx. */}
+              <SeccionModalidad ficha={ficha} />
 
               {/* [v2 2026-07-28, plan 01 §7] «Antes de reservar»: UN bloque con
                   todo lo del slide 2 —duración elegible, lo que ahorras, cómo
