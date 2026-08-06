@@ -43,16 +43,17 @@ export type Tour = {
 export const TOURS: Tour[] = [
   {
     slug: 'semi-private-premium',
-    nombre: 'Semi-Privado Premium',
-    audienciaChip: 'Solo adultos',
+    nombre: 'Semi-Private Premium',
+    audienciaChip: 'Adults only',
     duracionCorta: '4 h',
     rating: 4.9,
     resenas: 1782,
     maxPax: 25,
     precioLight: 99,
     booking: 'completo',
+    // [v3 2026-08-06] Copy APROBADO por el cliente (WEBSITE - INICIO, pág. 2).
     descripcionCorta:
-      'Snorkel en vivero de coral con bióloga marina, playa desierta con coco-loco y comida hecha a bordo. Máximo 25 personas en un barco para 70.',
+      'An intimate adults-only Caribbean experience featuring protected reef snorkeling, an exclusive underwater museum, a secluded beach, and chef-prepared cuisine from our floating kitchen.',
     foto: 'tour-semi-privado',
     galeria: [
       'galeria-semi-privado-1',
@@ -61,12 +62,15 @@ export const TOURS: Tour[] = [
       'galeria-semi-privado-4',
       'galeria-semi-privado-5',
     ],
-    destacados: ['Equipo de snorkel', 'Comida + bebidas', 'Bióloga marina'],
+    // Los chips salen de la «tagline» que el cliente puso tras el asterisco
+    // en el mismo copy aprobado: «Limited guests. Adults only. Protected
+    // reefs, underwater museum, floating kitchen, and personalized service.»
+    destacados: ['Limited guests', 'Underwater museum', 'Floating kitchen'],
   },
   {
     slug: 'snorkel-lovers',
     nombre: 'Snorkel Lovers',
-    audienciaChip: 'Todas las edades',
+    audienciaChip: 'All ages',
     duracionCorta: '4 h',
     rating: 4.9,
     resenas: 1782,
@@ -79,8 +83,9 @@ export const TOURS: Tour[] = [
     precioLight: 114,
     precioNino: 65,
     booking: 'completo',
+    // [v3] Copy APROBADO (WEBSITE - INICIO, pág. 2).
     descripcionCorta:
-      'La versión familiar del Semi-Privado: mismo vivero de coral, misma cocina flotante, para que niños y adultos disfruten juntos el día en el mar.',
+      'An all-ages experience where coral restoration, symbolic coral planting, an exclusive underwater museum, and protected reefs inspire unforgettable memories.',
     foto: 'tour-snorkel-lovers',
     galeria: [
       'galeria-snorkel-lovers-1',
@@ -89,12 +94,14 @@ export const TOURS: Tour[] = [
       'galeria-snorkel-lovers-4',
       'galeria-snorkel-lovers-5',
     ],
-    destacados: ['Equipo de snorkel', 'Comida + bebidas', 'Guía de snorkel'],
+    // Tagline del cliente: «Limited guests exploring coral restoration, our
+    // underwater museum, protected reefs, and crystal-clear waters.»
+    destacados: ['Coral restoration', 'Underwater museum', 'Protected reefs'],
   },
   {
     slug: 'private-charter',
-    nombre: 'Charter Privado',
-    audienciaChip: 'Grupo privado',
+    nombre: 'Private Charter',
+    audienciaChip: 'Private group',
     // [v2 2026-07-28, plan 01 §7 — slide 2] «3-4 h» → «3 o 4 h», por el mismo
     // motivo que `duracion` en data/tours.ts: la duración se elige con el
     // barco, no es un rango aproximado.
@@ -111,8 +118,9 @@ export const TOURS: Tour[] = [
     // widget; el "a medida" del menú sí se coordina aparte).
     precioLight: 75,
     booking: 'completo',
+    // [v3] Copy APROBADO (WEBSITE - INICIO, pág. 2).
     descripcionCorta:
-      'El barco completo, solo para tu grupo. Elige uno de nuestros 4 botes (Maite, GrandMa, Santa Maria, Forever Teresa) según el tamaño y el plan.',
+      'Your boat. Your people. Private charters with catamarans for every group size, style, and budget.',
     foto: 'tour-charter-privado',
     galeria: [
       'galeria-charter-privado-1',
@@ -121,11 +129,11 @@ export const TOURS: Tour[] = [
       'galeria-charter-privado-4',
       'galeria-charter-privado-5',
     ],
-    destacados: ['Barco entero', 'Menú a medida', 'Coordinación dedicada'],
+    destacados: ['Whole boat', 'Menu your way', 'Dedicated coordinator'],
   },
   {
     slug: 'saona-island',
-    nombre: 'Isla Saona',
+    nombre: 'Saona Island',
     // v3 (2026-07-17, petición de Samuel al reemerger como producto completo):
     // Saona deja de ser "pendiente de confirmar" y se publica con su contenido
     // real de la web del cliente. Pasa de booking 'consulta' a 'completo'
@@ -135,15 +143,16 @@ export const TOURS: Tour[] = [
     // ~US$ 184 por persona. Es un ancla visual (no un precio por persona real,
     // porque Saona se vende por GRUPO — el widget lo recalcula por tramo al
     // elegir variante y pax).
-    audienciaChip: 'Día completo',
-    duracionCorta: 'día completo',
+    audienciaChip: 'Full day',
+    duracionCorta: 'full day',
     rating: 4.9,
     resenas: 1782,
     maxPax: 70,
     precioLight: 184,
     booking: 'completo',
+    // [v3] Copy APROBADO (WEBSITE - INICIO, pág. 2).
     descripcionCorta:
-      'Día completo navegando a Isla Saona: elige speedboat, catamarán o lancha con parada en Mano Juan. Piscina natural con estrellas gigantes y buffet en la isla.',
+      'Paradise made personal. White-sand beaches, turquoise waters, private charters, and unforgettable Saona Island experiences.',
     foto: 'tour-isla-saona',
     galeria: [
       'galeria-isla-saona-1',
@@ -152,14 +161,14 @@ export const TOURS: Tour[] = [
       'galeria-isla-saona-4',
       'galeria-isla-saona-5',
     ],
-    destacados: ['Speedboat o catamarán', 'Piscina natural + buffet', 'Día completo'],
+    destacados: ['Speedboat or catamaran', 'Natural pool + buffet', 'Full day'],
   },
 ]
 
 export const bookingCta: Record<Tour['booking'], string> = {
-  completo: 'Reservar',
-  cotizacion: 'Cotizar',
-  consulta: 'Consultar',
+  completo: 'Book now',
+  cotizacion: 'Get a quote',
+  consulta: 'Enquire',
 }
 
 export type Plato = { id: string; nombre: string; desc: string; foto: string }
@@ -229,52 +238,11 @@ export const OCASIONES: Ocasion[] = [
   },
 ]
 
-export type EventoEspecial = {
-  id: string
-  nombre: string
-  meta: string
-  /** nombre de archivo en /fotos (sin extensión) */
-  foto: string
-  /** solo Bodas tiene landing real (/eventos/:slug); el resto va a
-   *  EnlacePrototipo, igual que la ocasión genérica de OCASIONES. */
-  slug?: string
-}
-
-// Sección «Special Events» del final de la home actual (4 boxes: Birthdays,
-// Weddings, Anniversaries, Bachelor Experience — hispaniolaaquaticadventures.com/
-// index.php), traducida fiel y condensada a una línea por evento (mismo
-// criterio de síntesis que OCASIONES/INCLUYE_CRUCERO). NO es lo mismo que
-// OCASIONES: aquella son las 3 categorías del megamenú/hub de eventos; esta
-// es la vitrina visual de 4 boxes que la home actual muestra al final de la
-// página. Fotos PROVISIONALES (mismo criterio que OCASIONES): reutilizan la
-// galería real de charter-privado, no hay shooting propio de eventos.
-export const EVENTOS_ESPECIALES: EventoEspecial[] = [
-  {
-    id: 'cumpleanos',
-    nombre: 'Cumpleaños',
-    meta: 'Fiesta a bordo con familia y amigos — buena comida y barra libre nacional.',
-    foto: 'galeria-charter-privado-2',
-  },
-  {
-    id: 'weddings',
-    nombre: 'Bodas',
-    meta: 'El día más importante de tu vida, tan perfecto como un catamarán lo puede hacer.',
-    foto: 'galeria-charter-privado-5',
-    slug: 'weddings',
-  },
-  {
-    id: 'aniversarios',
-    nombre: 'Aniversarios',
-    meta: 'Celebra tu próximo aniversario en el agua y hazlo un año inolvidable.',
-    foto: 'galeria-charter-privado-3',
-  },
-  {
-    id: 'despedidas',
-    nombre: 'Despedidas de soltero/a',
-    meta: 'Barra libre, gran comida y música — la escapada perfecta antes de la boda.',
-    foto: 'galeria-charter-privado-6',
-  },
-]
+// [v3 2026-08-06] Aqui vivian `EventoEspecial` y `EVENTOS_ESPECIALES` (la
+// vitrina de 4 boxes Cumpleanos/Bodas/Aniversarios/Despedidas del final de
+// la home). El cliente pidio ELIMINAR esa seccion (WEBSITE - INICIO pag. 5,
+// «REMOVE:»), y su unico consumidor era home/eventos-especiales.tsx, que se
+// borra con ella. Contenido completo en el tag `v3-pre-en`.
 
 export type IncluyeItem = { id: string; titulo: string; texto: string }
 
@@ -289,15 +257,58 @@ export type IncluyeItem = { id: string; titulo: string; texto: string }
 // cada tour (fotos HD US$ 20 · suplemento desde Casa de Campo).
 // El icono se mapea por `id` en incluye-crucero.tsx (presentación, no
 // contenido — así este archivo sigue sin importar React).
+// [v3 2026-08-06, WEBSITE - INICIO págs. 4-5] Los 8 ítems APROBADOS por el
+// cliente, en SU orden y con SU numeración (01 Transportation … 08 GoPro).
+// Reemplazan a los 8 anteriores: siguen siendo 8, así que la composición de
+// 2 columnas de 4 a cada lado del catamarán no cambia.
+//
+// ⚠️ Dos ítems que estaban y ya no: «Entretenimiento a bordo» y «Playa
+// desierta» — el cliente los sustituye por «Coral Interpretation Center» y
+// «Marine Sanctuary». La playa sigue contada en el itinerario de cada ficha.
+// Los `id` se mantienen en español donde el concepto es el mismo: son claves
+// internas (orden y `key` de React), no texto visible.
 export const INCLUYE_CRUCERO: IncluyeItem[] = [
-  { id: 'snorkel', titulo: 'Snorkel', texto: 'Experiencia increíble en un vivero de coral real. Todo el equipo incluido.' },
-  { id: 'transporte', titulo: 'Transporte', texto: 'Ida y vuelta desde tu hotel, en bus cómodo con aire acondicionado.' },
-  { id: 'entretenimiento', titulo: 'Entretenimiento a bordo', texto: 'Música, actividades y una tripulación cercana y con energía.' },
-  { id: 'wifi', titulo: 'WiFi', texto: 'WiFi a bordo durante toda la excursión.' },
-  { id: 'comida', titulo: 'Comida fresca', texto: 'Frutas, mini-croissants y mariscos recién hechos en la cocina flotante.' },
-  { id: 'bebidas', titulo: 'Bebidas', texto: 'Cerveza nacional, ron añejo de 7 años, vodka, jugo de naranja y refrescos.' },
-  { id: 'playa', titulo: 'Playa desierta', texto: 'Parada con coco-loco (el cóctel típico) y coco para comer.' },
-  { id: 'fotos', titulo: 'Fotos', texto: 'De todo el tour, con GoPro también en el snorkel — se descargan de nuestro Facebook sin costo.' },
+  {
+    id: 'transporte',
+    titulo: 'Transportation',
+    texto: 'Air-conditioned vans with pick-ups from no more than three hotels (shared tours).',
+  },
+  {
+    id: 'coral',
+    titulo: 'Coral Interpretation Center',
+    texto: 'Discover the fascinating world of corals and how we help restore Caribbean reefs.',
+  },
+  {
+    id: 'entretenimiento',
+    titulo: 'Onboard Experience',
+    texto: 'Our experienced crew keeps the atmosphere fun, relaxed, and unforgettable.',
+  },
+  {
+    id: 'snorkel',
+    titulo: 'Marine Sanctuary',
+    texto: 'Experience snorkeling in a protected reef with an underwater museum and coral restoration.',
+  },
+  {
+    id: 'piscina',
+    titulo: 'Natural Pool',
+    texto: 'Relax in crystal-clear shallow waters and discover our artificial reef snorkeling area.',
+  },
+  {
+    id: 'comida',
+    titulo: 'Floating Kitchen',
+    texto: 'An exclusive live cooking experience with fresh seafood and gourmet menu choices.',
+  },
+  {
+    id: 'bebidas',
+    titulo: 'Open Bar',
+    texto:
+      'Unlimited Presidente beer (local beer), premium aged rum, vodka, tequila, tropical juices, refreshments, soft drinks (light and regular) and bottled water.',
+  },
+  {
+    id: 'fotos',
+    titulo: 'GoPro Memories',
+    texto: 'GoPro photos and videos uploaded to Facebook for free download after your tour.',
+  },
 ]
 
 export function formatoDinero(n: number | null): string {
@@ -431,16 +442,18 @@ export const NAV_AYUDA: ItemNav[] = [
 // NOTAS['home-stats'] del prototipo). v3-F11: sube al hero, entre el
 // subtítulo y el CTA (PLAN-v3.md §14).
 export type Stat = { valor: string; label: string }
+// [v3 2026-08-06] Labels en inglés y separador de miles con COMA — en un
+// sitio en inglés «91.607» se lee como noventa y uno con seiscientos siete.
 export const STATS: Stat[] = [
-  { valor: '91.607', label: 'clientes felices' },
-  { valor: '4.454', label: 'días navegados' },
+  { valor: '91,607', label: 'happy guests' },
+  { valor: '4,454', label: 'days at sea' },
   // v3-F13 (PLAN-v3.md §15.7): "de la capacidad del barco" (24 car.) partía en
   // 2 líneas contra los otros 3 labels — "aforo" ya es vocabulario del
   // proyecto (aforo máx. en las cards del ticker y en el megamenú de Tours),
   // no introduce una palabra nueva. El dato no cambia (≤35% de
   // NOTAS['home-stats']).
-  { valor: '≤35%', label: 'del aforo del barco' },
-  { valor: '0', label: 'plástico a bordo' },
+  { valor: '≤35%', label: 'of boat capacity' },
+  { valor: '0', label: 'plastic on board' },
 ]
 
 export type Premio = {
@@ -454,6 +467,15 @@ export type Premio = {
    *  que la cinta no dé un salto de layout (CLS) al cargar los 7 logos. */
   ancho: number
   alto: number
+  /** Cómo está construido el asset, no cómo queremos que se vea: 'macizo' = el
+   *  badge es un rectángulo de color de borde a borde (bloque navy del LTG,
+   *  cuadrados verdes de Viator, marco amarillo de WeddingWire); 'aire' = es
+   *  un logotipo sobre blanco (TripAdvisor, Luxury Travel Guide).
+   *  [v3 2026-08-06, slide 66] Desde que los logos van a todo color, esta
+   *  distinción decide la altura ÓPTICA (--premio-escala-*): a la misma
+   *  altura en píxeles un macizo pesa el doble que uno de aire, y ese
+   *  desequilibrio —no el color— es lo que rompía la fila. */
+  fondo: 'macizo' | 'aire'
 }
 
 // Los 7 premios reales de la web actual (imágenes descargadas de
@@ -471,10 +493,11 @@ export type Premio = {
 export const PREMIOS: Premio[] = [
   {
     id: 'tripadvisor',
-    nombre: 'TripAdvisor — #1 en actividades acuáticas de Bávaro / Punta Cana durante más de 7 años',
+    nombre: 'TripAdvisor — #1 water activity in Bávaro / Punta Cana for more than 7 years',
     foto: 'premio-tripadvisor',
     ancho: 222,
     alto: 82,
+    fondo: 'aire',
   },
   {
     id: 'weddingwire',
@@ -482,27 +505,51 @@ export const PREMIOS: Premio[] = [
     foto: 'premio-weddingwire',
     ancho: 128,
     alto: 128,
+    fondo: 'macizo',
   },
   {
     id: 'ltg',
-    nombre: 'LTG Global Awards 2021/22 — Ganador: Aquatic Tour Operator of the Year, República Dominicana',
+    nombre: 'LTG Global Awards 2021/22 — Winner: Aquatic Tour Operator of the Year, Dominican Republic',
     foto: 'premio-ltg',
     ancho: 318,
     alto: 128,
+    fondo: 'macizo',
   },
   // TripAdvisor y los Viator: nativo 82px / 109px de alto — no llegan a 128
   // (2× de --spacing-premio-alto), así que se exportan a su nativo y NO se
   // upscalean (PLAN-v3.md §14.4, Trampa №11). Pendiente pedirle al cliente
   // los assets en alta (§9).
-  { id: 'viator-2022', nombre: 'Viator Experience Award 2022', foto: 'premio-viator-2022', ancho: 95, alto: 109 },
-  { id: 'viator-2023', nombre: 'Viator Experience Award 2023', foto: 'premio-viator-2023', ancho: 95, alto: 109 },
-  { id: 'viator-2024', nombre: 'Viator Experience Awards 2024', foto: 'premio-viator-2024', ancho: 95, alto: 109 },
+  {
+    id: 'viator-2022',
+    nombre: 'Viator Experience Award 2022',
+    foto: 'premio-viator-2022',
+    ancho: 95,
+    alto: 109,
+    fondo: 'macizo',
+  },
+  {
+    id: 'viator-2023',
+    nombre: 'Viator Experience Award 2023',
+    foto: 'premio-viator-2023',
+    ancho: 95,
+    alto: 109,
+    fondo: 'macizo',
+  },
+  {
+    id: 'viator-2024',
+    nombre: 'Viator Experience Awards 2024',
+    foto: 'premio-viator-2024',
+    ancho: 95,
+    alto: 109,
+    fondo: 'macizo',
+  },
   {
     id: 'luxury-travel-guide',
-    nombre: 'Luxury Travel Guide — The Americas Awards 2016, Ganador: Tour Operator of the Year, Punta Cana',
+    nombre: 'Luxury Travel Guide — The Americas Awards 2016, Winner: Tour Operator of the Year, Punta Cana',
     foto: 'premio-luxury-travel-guide',
     ancho: 387,
     alto: 128,
+    fondo: 'aire',
   },
 ]
 
@@ -548,26 +595,38 @@ export const PREMIOS: Premio[] = [
 // reveal de scroll (use-experiencia-scroll.ts) las escalone una a una.
 export type SegmentoNarrativa = { t: string; fuerte?: boolean }
 
+// [v3 2026-08-06, WEBSITE - INICIO pág. 1] Copy APROBADO por el cliente. El
+// original era UN párrafo largo; se reparte en los mismos 3 tramos que ya
+// usaba la narrativa (el componente anima tramo a tramo) SIN cortar ni
+// reescribir ninguna frase — solo se elige dónde cae el salto. Los `fuerte`
+// marcan lo que la sección quiere que quede: qué es (experiencia cuidada),
+// qué la hace única (conservación, museo, cocina del chef) y con qué se
+// queda el visitante (recuerdos).
 export const EXPERIENCIA_NARRATIVA: SegmentoNarrativa[][] = [
   [
-    { t: 'No es solo un paseo en barco.', fuerte: true },
-    { t: ' Es una experiencia caribeña ' },
-    { t: 'cuidada al detalle.', fuerte: true },
+    { t: "This isn't just a day at sea", fuerte: true },
+    { t: " — it's a " },
+    { t: 'carefully crafted Caribbean experience.', fuerte: true },
   ],
   [
-    { t: 'Navegamos al arrecife de Cabeza de Toro — uno de los ' },
-    { t: '3 mayores proyectos de restauración de coral del país', fuerte: true },
-    { t: ' — y comes lo que se ' },
-    { t: 'cocina a bordo, recién hecho.', fuerte: true },
+    { t: 'From the moment you arrive, every detail has been thoughtfully designed to immerse you in the very best of Punta Cana, where ' },
+    { t: 'marine conservation', fuerte: true },
+    { t: ', exclusive access to our ' },
+    { t: 'underwater museum', fuerte: true },
+    { t: ', ' },
+    { t: 'chef-prepared cuisine', fuerte: true },
+    { t: ', spacious catamarans designed for comfort,' },
   ],
   [
-    { t: 'Desde que llegas, ' },
-    { t: 'te tratamos como familia', fuerte: true },
-    { t: ' — nunca como un pasajero más.' },
+    { t: 'and genuine Caribbean hospitality come together to create ' },
+    { t: 'unforgettable memories.', fuerte: true },
   ],
 ]
 
-export const EXPERIENCIA_KICKER = 'Sin costes ocultos. Sin barcos abarrotados.'
+// [v3 2026-08-06] «Sin costes ocultos. Sin barcos abarrotados.» se ELIMINA —
+// WEBSITE - INICIO pág. 1: «* REMOVE: sin costos ocultos…». La constante
+// desaparece con su consumidor (experiencia.tsx) para no dejar un token
+// muerto: si el cliente lo quiere de vuelta, está en el tag `v3-pre-en`.
 
 // El VIDEO de la sección Experiencia (correcciones v1 del cliente,
 // 2026-07-20 — planes/01-home.md slide 7: «agregar efecto de video como este
@@ -659,12 +718,49 @@ export const TICKER_ITEMS: TickerItem[] = [
 // boleto no los necesita.
 export type BeneficioDirecto = { id: string; titulo: string; texto: string }
 
+// [v3 2026-08-06, WEBSITE - INICIO pág. 3] Los 7 beneficios APROBADOS por el
+// cliente sustituyen a los 5 anteriores. Los titulares son literalmente los
+// suyos; el `texto` de apoyo lo conserva el sitio (el cliente dio la lista,
+// no la explicación) traducido de lo que ya decía cada beneficio equivalente
+// — los 3 sin equivalente previo (expertos locales, personalizar, apoyar la
+// conservación) se explican con datos que el sitio ya publica en otra parte,
+// sin prometer nada nuevo.
 export const BENEFICIOS_DIRECTO: BeneficioDirecto[] = [
-  { id: 'deposito', titulo: 'Confirma con 25%', texto: 'Paga el depósito hoy y el resto en efectivo el día del tour.' },
-  { id: 'cash', titulo: 'Descuento en cash', texto: '5% extra si el saldo lo pagas en efectivo a bordo.' },
-  { id: 'menu', titulo: 'Elige tu menú', texto: 'Langosta, Angus o vegetariano: solo reservando directo eliges plato por persona.' },
-  { id: 'whatsapp', titulo: 'WhatsApp directo', texto: 'Hablas con el equipo del barco, no con un call center.' },
-  { id: 'reembolso', titulo: 'Reembolso total', texto: 'Por mal clima o cancelando con 7 días.' },
+  {
+    id: 'expertos',
+    titulo: 'Direct access to our local experts',
+    texto: 'You talk to the team that runs the boat, not to a call center.',
+  },
+  {
+    id: 'personalizar',
+    titulo: 'Customize your experience',
+    texto: 'Pick-up, timing and celebration details are arranged with you, one to one.',
+  },
+  {
+    id: 'menu',
+    titulo: 'Choose your preferred menu',
+    texto: 'Lobster, certified Angus or vegetarian — booking direct is the only way to choose per person.',
+  },
+  {
+    id: 'perks',
+    titulo: 'Exclusive direct-booking perks',
+    texto: 'Confirm with 25% today, pay the rest on board — and save 5% more when you settle in cash.',
+  },
+  {
+    id: 'whatsapp',
+    titulo: 'Priority assistance via WhatsApp',
+    texto: 'A real person answers, before and during your day at sea.',
+  },
+  {
+    id: 'cancelacion',
+    titulo: 'Flexible cancellation policy',
+    texto: 'Full refund for bad weather, or cancelling 7 days ahead.',
+  },
+  {
+    id: 'conservacion',
+    titulo: 'Support local marine conservation',
+    texto: 'A fixed part of every booking funds the Bávaro Reefs Foundation.',
+  },
 ]
 
 // El tour que viaja impreso en los DOS boletos de la comparación: el buque
@@ -1080,14 +1176,18 @@ export const CONTACTO = {
   // igual. Mapea contact.php de la web actual (H1 "Contact Us" / subtítulo
   // "Punta Cana - Bavaro, Dominican Republic"), con el copy adaptado al tono
   // de marca del resto del sitio en vez de portado literal.
-  eyebrow: 'Contacto',
-  lead: 'El equipo real del barco, no un call center — WhatsApp, teléfono o el formulario de abajo. Respondemos en menos de 24 h.',
-  titulo: 'Hablas con nosotros, no con un call center',
-  direccion: 'Oficina Hispaniola Aquatic Adventures, C. P.º del Sol, Punta Cana 23500, República Dominicana',
+  // [v3 2026-08-06, WEBSITE - INICIO pág. 6] Título y bajada APROBADOS:
+  // «HABLA CON NOSOTROS → SPEAK WITH LOCAL EXPERTS» + «Our local specialists
+  // work exclusively for Hispaniola Aquatic Adventures and are here to help
+  // you.»
+  eyebrow: 'Contact',
+  lead: 'Our local specialists work exclusively for Hispaniola Aquatic Adventures and are here to help you.',
+  titulo: 'Speak with local experts',
+  direccion: 'Hispaniola Aquatic Adventures office, C. P.º del Sol, Punta Cana 23500, Dominican Republic',
   email: 'info@catamarantourspuntacana.com',
   mapaEmbedUrl: 'https://www.google.com/maps?q=18.669740,-68.401262&z=16&output=embed',
-  confirmacion: 'Recibimos tu mensaje — te respondemos en menos de 24 h (o antes por WhatsApp).',
-  microcopy: '¿Ya tienes una reserva? Ten a mano tu código (HSP-XXXX-XXXX) y te ayudamos más rápido.',
+  confirmacion: 'We got your message — we reply within 24 hours (sooner on WhatsApp).',
+  microcopy: 'Already booked? Have your code handy (HSP-XXXX-XXXX) and we can help you faster.',
   // Correcciones v1 del cliente (2026-07-20, planes/01-home.md slides 13-14:
   // «dale más cariño please»). La maqueta pone una card de persona real
   // arriba — es lo que hace que «hablas con nosotros, no con un call center»
@@ -1098,11 +1198,16 @@ export const CONTACTO = {
   // propio cliente identifica como atención al viajero en las OTRAS dos
   // maquetas (home slide 15 y nosotros slide 2) — un solo nombre en todo el
   // sitio, y que además es suyo. La fuente es EQUIPO en data/nosotros.ts.
+  //
+  // [v3 2026-08-06, WEBSITE - INICIO pág. 6] «QUITAR LA PARTE DEBAJO DE EVA,
+  // SOLO PONER FAST RESPONSE»: fuera el párrafo y los 3 chips; queda un único
+  // distintivo. `texto` pasa a null (el componente lo omite) en vez de
+  // borrarse del tipo — la card sigue admitiendo un párrafo si el cliente lo
+  // quiere de vuelta en otra página.
   persona: {
     idEquipo: 'eva',
-    texto:
-      'Detrás de cada reserva hay una persona real. Escríbenos y te respondemos nosotros mismos — no un robot ni un call center.',
-    chips: ['Respondemos en minutos', 'Español e inglés', 'Equipo local'],
+    texto: null,
+    chips: ['Fast response'],
   },
   // CANAL PREFERIDO del formulario. Las correcciones v1 (slide 13) ya lo
   // pedían y el comentario de contacto.tsx lo daba por hecho, pero nunca se
@@ -1112,19 +1217,24 @@ export const CONTACTO = {
   // Los ids coinciden a propósito con los de `cards`: el mismo icono sirve
   // para la fila de contacto y para el chip del canal, sin una segunda tabla
   // de iconos que mantener sincronizada.
+  //
+  // [v3 2026-08-06] «QUITAR: ¿Cómo prefieres que te contactemos?» — la fila
+  // de canales sale del formulario. Se conserva la lista porque los MISMOS
+  // ids alimentan los iconos de las 4 cards de contacto de abajo; lo que
+  // desaparece es el selector, no el dato.
   canales: [
     { id: 'whatsapp', label: 'WhatsApp' },
     { id: 'email', label: 'Email' },
-    { id: 'telefono', label: 'Teléfono' },
+    { id: 'telefono', label: 'Phone' },
   ] satisfies { id: ContactoCard['id']; label: string }[],
   // Opciones del «¿Sobre qué?» del formulario. Salen de lo que el sitio
   // vende de verdad (tours, eventos privados, agentes) — no una lista genérica.
   asuntos: [
-    'Reserva de un tour',
-    'Evento privado o boda',
-    'Cambiar una reserva que ya tengo',
-    'Agencias y agentes de viaje',
-    'Otra cosa',
+    'Booking a tour',
+    'Private event or wedding',
+    'Changing a booking I already have',
+    'Travel agencies and agents',
+    'Something else',
   ],
   cards: [
     {
@@ -1132,28 +1242,28 @@ export const CONTACTO = {
       titulo: 'WhatsApp',
       dato: '+1 829 305 2804',
       href: WHATSAPP_URL,
-      cta: 'Chatear ahora',
+      cta: 'Chat now',
     },
     {
       id: 'telefono',
-      titulo: 'Teléfono',
+      titulo: 'Phone',
       dato: '1-800-657-0016',
       href: 'tel:+18006570016',
-      cta: 'Llamar',
+      cta: 'Call us',
     },
     {
       id: 'email',
       titulo: 'Email',
       dato: 'info@catamarantourspuntacana.com',
       href: 'mailto:info@catamarantourspuntacana.com',
-      cta: 'Escribir',
+      cta: 'Write to us',
     },
     {
       id: 'oficina',
-      titulo: 'Oficina',
-      dato: 'C. P.º del Sol, Punta Cana 23500, República Dominicana',
+      titulo: 'Office',
+      dato: 'C. P.º del Sol, Punta Cana 23500, Dominican Republic',
       href: 'https://maps.app.goo.gl/iuu1EGaNYGCjhreC7',
-      cta: 'Ver en el mapa',
+      cta: 'View on the map',
     },
   ] satisfies ContactoCard[],
 }

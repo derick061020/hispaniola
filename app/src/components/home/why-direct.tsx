@@ -62,16 +62,18 @@ export function WhyDirect() {
         <div className="wd-banner-inner mx-auto grid max-w-contenido grid-cols-1 items-center gap-10 px-6 sm:px-10 lg:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)] lg:gap-12">
           {/* Izquierda — título, descripción y CTA, en blanco sobre la foto */}
           <div className="text-white">
-            <Etiqueta sobreOscuro>Reserva directa</Etiqueta>
+            {/* [v3 2026-08-06, WEBSITE - INICIO pág. 3] Título y bajada
+                APROBADOS por el cliente. */}
+            <Etiqueta sobreOscuro>Book direct</Etiqueta>
             <h2 className="mt-3 text-balance font-display text-h2 font-semibold">
-              ¿Por qué reservar aquí y no en un portal?
+              Book Direct. Experience More.
             </h2>
             <p className="mt-4 max-w-md text-lead text-white/80">
-              Mismo precio que en los portales — pero con todo esto incluido.
+              Everything the portals can&rsquo;t offer.
             </p>
             <div className="mt-7">
               <Boton href="#" tamaño="lg" onClick={(e) => e.preventDefault()}>
-                Ver disponibilidad
+                Check availability
               </Boton>
             </div>
           </div>

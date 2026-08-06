@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { EXPERIENCIA_NARRATIVA, EXPERIENCIA_KICKER, EXPERIENCIA_VIDEO } from '@/data/home'
+import { EXPERIENCIA_NARRATIVA, EXPERIENCIA_VIDEO } from '@/data/home'
 import { BotonSonido } from '@/components/ui/boton-sonido'
 import { useDevFlag } from '@/dev/use-dev-flag'
 import { useExperienciaScroll } from '@/components/home/use-experiencia-scroll'
@@ -146,7 +146,11 @@ export function Experiencia() {
             ))}
           </div>
 
-          <p className="exp-linea mt-7 text-lead font-semibold text-navy">{EXPERIENCIA_KICKER}</p>
+          {/* [v3 2026-08-06, WEBSITE - INICIO pág. 1: «REMOVE: sin costos
+              ocultos…»] Aquí vivía EXPERIENCIA_KICKER («Sin costes ocultos.
+              Sin barcos abarrotados.»). Se retira la línea Y la constante —
+              el argumento anti-comisión no se pierde: es el tema entero de
+              la sección Book Direct, justo debajo. */}
 
           {/* CTA sutil en coral (el color de "Ver disponibilidad"): estilo
               enlace, no botón sólido — no compite con los CTA sólidos del hero

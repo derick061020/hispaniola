@@ -215,9 +215,21 @@ function CardMiembro({ miembro, hrefHistoria }: { miembro: MiembroEquipo; hrefHi
 // nivel por distancia al centro en vez de con una lista fija.
 export function EquipoTeaser({
   miembros = EQUIPO,
-  etiqueta = 'Conócenos',
-  titulo = 'Las personas detrás de tu día en el mar',
-  texto = 'Gerencia española afincada en Punta Cana desde 2012. Conocemos el Caribe de cerca — y esa cercanía es justo lo que nos permite ofrecerte tours de calidad sin pasar por un portal.',
+  // [v3 2026-08-06, WEBSITE - INICIO pág. 6] Copy APROBADO: «MEET THE [TEAM]
+  // BEHIND YOUR CARIBBEAN ADVENTURE: Based in Punta Cana since 2010, we're
+  // the local team behind every tour, dedicated to creating unforgettable
+  // Caribbean experiences.»
+  //
+  // Dos correcciones al portarlo, ambas de forma, no de fondo:
+  //  · El titular del cliente dice «MEET THE BEHIND YOUR CARRIBEAN
+  //    ADVENTURE» — le falta el sujeto y «Caribbean» va con una R. Se corrige
+  //    a «Meet the team behind your Caribbean adventure».
+  //  · «since 2010» sustituye al «desde 2012» que tenía el sitio (auditado de
+  //    la web del cliente). Gana el copy aprobado; queda en la lista de
+  //    peticiones porque su propia web decía otra cosa.
+  etiqueta = 'Meet us',
+  titulo = 'Meet the team behind your Caribbean adventure',
+  texto = "Based in Punta Cana since 2010, we're the local team behind every tour, dedicated to creating unforgettable Caribbean experiences.",
   cierre,
   enmarcada = true,
   hrefHistoria = '/crew',

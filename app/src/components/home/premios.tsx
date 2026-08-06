@@ -9,6 +9,14 @@ import { PREMIOS } from '@/data/home'
 // de Samuel al ver la banda apretada contra el ticker) — 7 badges de premios
 // en fila ya dicen lo que son, y el texto costaba 30px del presupuesto
 // vertical que hacía falta para separarlos del ticker.
+//
+// CORRECCIONES v3 DEL CLIENTE (2026-08-06, PowerPoint slide 66: «estos logos
+// deben verse en máximo color»): los badges dejan de ir en gris al 72% —
+// nacen a color. Era una decisión nuestra (el guardarraíl de la dirección B:
+// el color lo ponen las fotos) y el cliente la revoca por escrito.
+// Lo que compensa el ruido ya no es el gris sino la composición: altura
+// ÓPTICA por tipo de asset (`fondo: 'macizo' | 'aire'` en data/home.ts) y más
+// hueco entre badges. El detalle, en el bloque .premio-logo de componentes.css.
 export function Premios() {
   return (
     // v3-F18: se retira el `border-b border-linea` (decisión de Samuel) — sin
@@ -23,7 +31,10 @@ export function Premios() {
       {/* v3-F13: max-w-contenido (antes max-w-6xl, no 5xl — con los logos a
           64px de alto las 7 juntas necesitan ~1046px + gaps, y a 1024px/5xl
           envolvían a 2 filas incluso en 1920px). */}
-      <ul className="mx-auto flex max-w-contenido flex-wrap items-center justify-center gap-x-8 gap-y-6 sm:gap-x-12">
+      {/* [v3] El hueco de desktop sale ahora de --spacing-premio-hueco (56px,
+          antes gap-x-12 = 48px): a todo color cada badge necesita su margen de
+          silencio o la fila se lee como un collage. */}
+      <ul className="mx-auto flex max-w-contenido flex-wrap items-center justify-center gap-x-8 gap-y-6 sm:gap-x-premio-hueco">
         {PREMIOS.map((premio) => (
           <li key={premio.id}>
             <img
@@ -32,7 +43,7 @@ export function Premios() {
               width={premio.ancho}
               height={premio.alto}
               loading="lazy"
-              className="premio-logo"
+              className={`premio-logo${premio.fondo === 'macizo' ? ' premio-logo--macizo' : ''}`}
             />
           </li>
         ))}

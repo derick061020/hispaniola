@@ -28,12 +28,18 @@ const ICONO_RED: Record<string, (p: { className?: string }) => React.ReactElemen
 // .footer-espuma en componentes.css) pero ESTÁTICA — img en vez de video,
 // sin sticky ni GSAP — y con assets PROPIOS (footer-oceano.webp +
 // footer-espuma-mapa.webp, Magnific — Samuel prohibió reutilizar los del
-// incluye). El CTA canónico de cierre ("Tu día en el Caribe empieza aquí")
-// se FUNDE aquí, sobre el océano y encima de las 4 columnas — ya no vive en
-// una sección propia. Footer único: se monta también en la ficha de tour y
+// incluye). El CTA canónico de cierre se FUNDE aquí, sobre el océano y encima
+// de las 4 columnas — ya no vive en una sección propia (su texto llega ahora
+// por prop, ver abajo). Footer único: se monta también en la ficha de tour y
 // en las landings de evento (por eso «Ver disponibilidad» usa `to="/#tours"`,
 // no `href="#tours"` — ScrollAlNavegar, hash-aware, vuelve a la home).
-export function Footer() {
+// [v3 2026-08-06, WEBSITE - INICIO pág. 6: «CAMBIAR TU DIA… PARA READY FOR AN
+// UNFORGETTABLE DAY?»] La banda CTA deja de tener el texto quemado. No es
+// generalizar por si acaso: /ventaja-competitiva pide OTRO texto para esta
+// MISMA banda en la tanda v3 («Your Caribbean story starts here», plan 07 §5),
+// y el footer es único para toda la web. Prop con el de la home por defecto —
+// las páginas que no lo pasen siguen igual que hasta ahora.
+export function Footer({ cta = 'Ready for an unforgettable day?' }: { cta?: string }) {
   return (
     <footer
       className="relative overflow-hidden bg-oceano-footer px-5 pb-6 text-white
@@ -55,7 +61,7 @@ export function Footer() {
       <div className="footer-espuma" />
 
       <div className="relative z-10 mx-auto flex max-w-contenido flex-col items-center gap-4 text-center">
-        <h2 className="font-display text-h2 font-semibold text-white">Tu día en el Caribe empieza aquí</h2>
+        <h2 className="font-display text-h2 font-semibold text-white">{cta}</h2>
         <Boton to="/#tours">Ver disponibilidad</Boton>
       </div>
 

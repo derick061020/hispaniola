@@ -146,32 +146,60 @@ export function Hero() {
                   preparar el frame. La lead se queda en max-w-xl (2 líneas,
                   sin cambios desde F12). El resto del bloque (rating, stats,
                   CTA) no tiene max-width propio. */}
-              <div className="mx-auto max-w-5xl">
+              {/* [v3 2026-08-06] max-w-7xl (antes 5xl/1024px). El titular
+                  aprobado es 17 caracteres más largo que el que había y a
+                  1024px envolvía en 4 líneas: el H1 crecía 134px, el hero se
+                  pasaba de su min-h y la banda de premios dejaba de verse sin
+                  scroll — justo la invariante que fijó v3-F13. Medido con
+                  Playwright a 1440px: 1024px → 4 líneas, 1152 → 3, 1280 → 2.
+                  Se ensancha el carril en vez de encoger la tipografía: el
+                  cliente pide más impacto, no menos. Los hijos (lead, stats,
+                  CTA, insignias) van centrados o con su propio max-width, así
+                  que solo heredan aire. */}
+              <div className="mx-auto max-w-7xl">
                 {/* PRUEBA (Samuel, 2026-07-14) — 4ª iteración: el subrayado de
                     ola viva SE QUEDA, pero el flotado suave («titulo-palabra»)
                     ya no va en todo el titular — se restringe a las 2 palabras
-                    que lleva subrayadas, «catamaranes originales». El resto
-                    ("Los", "de", "Punta Cana, en grupos pequeños") es texto
-                    quieto, sin envolver en spans que no aportan nada si no
-                    animan. text-balance vuelve a decidir el salto de línea
-                    (ya no hace falta partirlo a mano: ninguna línea entera
-                    necesita ya su propio tratamiento). */}
+                    que lleva subrayadas. El resto es texto quieto, sin envolver
+                    en spans que no aportan nada si no animan. text-balance
+                    vuelve a decidir el salto de línea (ya no hace falta
+                    partirlo a mano: ninguna línea entera necesita ya su propio
+                    tratamiento).
+
+                    [v3 2026-08-06, WEBSITE - INICIO pág. 1, TITLE CHANGE]
+                    Titular APROBADO por el cliente, literal. Las 2 palabras
+                    que heredan ola + flotado pasan de «catamaranes originales»
+                    a «Caribbean Catamaran»: es el mismo papel —el par que
+                    define QUÉ es esto— y son las 2 únicas contiguas que
+                    aguantan el subrayado sin partirse entre líneas.
+                    ⚠️ El titular nuevo es 17 caracteres más largo que el que
+                    había, y eso obligó a ensanchar el carril a max-w-7xl para
+                    conservar las 2 líneas de desktop — ver el comentario del
+                    contenedor, justo arriba. */}
                 <h1 className="text-balance font-display text-hero-movil font-semibold text-white sm:text-hero">
-                  Los{' '}
+                  Redefining the{' '}
                   <span className="titulo-subrayado">
                     <span className="titulo-palabra" style={{ '--i': 0 } as CSSProperties}>
-                      catamaranes
+                      Caribbean
                     </span>{' '}
                     <span className="titulo-palabra" style={{ '--i': 1 } as CSSProperties}>
-                      originales
+                      Catamaran
                     </span>
                     <span className="titulo-ola" aria-hidden="true" />
                   </span>{' '}
-                  de Punta Cana, en grupos pequeños
+                  Experience — More than just a tour!
                 </h1>
+                {/* [v3] Esta lead NO viene en el documento del cliente (el
+                    párrafo largo que él aprueba para la pág. 1 es el de la
+                    sección Experiencia, ya portado en data/home.ts) — así que
+                    es traducción nuestra del que había, sin cambiar el
+                    argumento. «Desde 2012» → «Since 2010»: el copy aprobado de
+                    la v3 fija 2010 y el teaser de equipo ya lo dice; que dos
+                    piezas de la misma home se contradigan es peor que el dato
+                    pendiente de confirmar (índice de planes, petición 8). */}
                 <p className="mx-auto mt-4 max-w-xl text-lead text-white/90">
-                  Snorkel en un vivero de coral real, cocina flotante con menú a tu elección y barcos a
-                  media capacidad. Desde 2012.
+                  Snorkeling over a real coral nursery, a floating kitchen with the menu of your choice, and
+                  boats at half capacity. Since 2010.
                 </p>
 
                 <div className="mt-6 flex flex-wrap items-start justify-center gap-x-10 gap-y-4">

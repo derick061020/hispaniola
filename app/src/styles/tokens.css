@@ -577,18 +577,31 @@
   /* Cinta de premios (dentro de la sección de stats). Los 7 badges son MUY
      heterogéneos (bloque navy del LTG, cuadrado amarillo de WeddingWire,
      verdes de Viator/TripAdvisor, dorado de Luxury Travel Guide): se
-     normalizan a una sola ALTURA y se desaturan en reposo — el guardarraíl de
-     la dirección B dice que el color lo ponen las fotos, no los badges. */
+     normalizan a una sola ALTURA. */
   /* v3-F11: la banda de premios se queda SOLA en su sección (los stats suben
      al hero, §14) — los logos crecen para llenar el protagonismo que ganan. */
   --spacing-premio-alto: 4rem; /* 64px — desktop (antes 48px) */
   --spacing-premio-alto-movil: 3rem; /* 48px (antes 40px) */
-  /* ⚠️ No bajar de ~0.7: los badges no pesan lo mismo en gris. Los oscuros
-     (el bloque navy del LTG) aguantan cualquier opacidad, pero los claros
-     (Luxury Travel Guide, TripAdvisor — texto fino sobre blanco) se
-     DESVANECEN contra el papel. A 0.55 el Luxury Travel Guide desaparecía. */
-  --premio-opacidad: 0.72; /* en reposo, ya en gris */
-  --premio-transicion: 240ms; /* vuelta al color al pasar el ratón */
+
+  /* [v3 2026-08-06, PowerPoint slide 66: «estos logos deben verse en máximo
+     color»] Se retiran el `grayscale(1)` y --premio-opacidad (0.72) que los
+     tenían apagados en reposo. Era una decisión NUESTRA (guardarraíl de la
+     dirección B: el color lo ponen las fotos, no los badges); el cliente la
+     revoca por escrito y gana él — son sus premios y los quiere legibles.
+     La mitigación del ruido pasa a ser de COMPOSICIÓN, no de color (plan
+     02, slide 66): más aire entre badges (--spacing-premio-hueco) y una
+     altura óptica por familia (--premio-escala-*), porque un badge de fondo
+     macizo pesa mucho más que un logotipo transparente a la misma altura. */
+  --spacing-premio-hueco: 3.5rem; /* 56px entre badges en desktop (antes 48px): a todo color cada uno reclama su propio aire o la fila se lee como un collage */
+  /* Altura óptica: el alto en píxeles NO es el peso que ve el ojo. Los badges
+     con fondo macizo de borde a borde (LTG navy, los 3 Viator verdes,
+     WeddingWire) se sirven un pelín más bajos que los logotipos que son casi
+     todo aire (TripAdvisor, Luxury Travel Guide) para que los 7 pesen igual.
+     Se multiplican por --spacing-premio-alto, no son alturas absolutas. */
+  --premio-escala-macizo: 0.88;
+  --premio-escala-aire: 1;
+  --premio-transicion: 240ms; /* el realce al pasar el ratón */
+  --premio-realce-y: -0.125rem; /* -2px — lo único que queda del hover: el badge se levanta del papel. Ya no puede "volver al color": nace a color */
 
   /* Padding superior de la banda de premios. ⚠️ NO es "el aire sobre los
      logos": el ticker es `absolute` y CUELGA media card por fuera del hero
@@ -1632,9 +1645,55 @@
      animaciones-a-figma), no "a ojo" en el JS. */
   --eco-reveal-y: 1rem; /* 16px — de dónde sube cada texto; más corto que --sost-reveal-y (24px), el cintillo es angosto y un salto grande se vería fuera de escala */
   --eco-reveal-duracion: 0.5s; /* también el pop de .eco-sello-fondo */
-  --eco-reveal-stagger: 0.08; /* s — entre los 2 textos ("Eco-friendly" / "Cero plástico a bordo") */
+  --eco-reveal-stagger: 0.08; /* s — entre los 2 textos ("Eco-friendly" / "Zero plastic on board") */
   --eco-sello-dibujo-duracion: 0.9s; /* s — cuánto tarda cada trazo en completarse */
   --eco-sello-dibujo-retraso: 0.15s; /* s — pausa de suspenso ENTRE que el trazo termina y el color empieza a entrar (no a la vez: el hueco es lo que hace notar el remate) */
+
+  /* ---------- [v3 2026-08-06, PowerPoint slide 66 + reunión 07-31
+     12:46–14:25] ---------- El cliente: «esta sección que tenga algún efecto
+     eco y que el diseño sea más moderno». En la reunión lo aterrizó: «efecto
+     eco» NO es literal («mejor hagas un efecto o algo así chulo... como has
+     hecho con el tema del barquito») y el problema concreto es que el
+     cintillo «tiene una animación de entrada pero luego se queda quieto» —
+     quiere movimiento CONSTANTE, «sutil, un poquito más modernito».
+
+     Dos frentes, los dos con la misma cura:
+
+     1) MATERIA. Lo que se leía viejo del cintillo era el relleno PLANO: una
+        barra de --color-menta maciza. Es el diagnóstico literal del «IA
+        slop» del 07-28 (cerebro: lo que hace que un material se lea como
+        caro es que RESPONDA A LA LUZ). Así que la cinta pasa a tener cara
+        superior e inferior (degradado vertical: menta aclarada arriba, donde
+        pega la luz → menta rota hacia el aqua abajo), filo de luz blanco de
+        1px en el borde de arriba y hairline de aqua a baja opacidad en el de
+        abajo. El fundido horizontal a los extremos —decisión de Samuel del
+        07-17, dos vueltas— NO se toca: pasa de ser el `background` a ser la
+        MÁSCARA de toda la pieza, así que ahora también disuelve los filos.
+
+     2) MOVIMIENTO CONSTANTE, en tres capas lentas y desincronizadas (nada
+        entra en bucle a compás, que es lo que delata una animación barata):
+        olas dentro de la cinta, la hoja del sello meciéndose y el anillo
+        punteado girando. Las olas son EL MISMO mecanismo que las del CTA-mar
+        (máscara SVG repetida en x + deriva de mask-position, --cta-ola-*) —
+        que es justo «el tema del barquito» al que apuntó Miguel.
+     ⚠️ FUENTE del prototipo de Figma (playbook animaciones-a-figma). */
+  /* ⚠️ La cara de arriba se ACLARA, no se despinta: a 45% de menta la cinta
+     entera dejaba de leerse (se veía casi blanca contra el papel) y eso
+     rompía la decisión de Samuel del 07-17 — «su nivel de protagonismo», ni
+     bloque sólido ni una línea que se pierde. El degradado tiene que notarse
+     como luz sobre la MISMA menta, no como una menta que se desvanece. */
+  --color-eco-cinta-luz: color-mix(in srgb, var(--color-menta) 82%, var(--color-papel)); /* cara de arriba de la cinta */
+  --color-eco-cinta-sombra: color-mix(in srgb, var(--color-menta) 92%, var(--color-aqua)); /* cara de abajo — la misma menta, un paso hacia el aqua */
+  --color-eco-cinta-filo: color-mix(in srgb, var(--color-papel) 70%, transparent); /* filo especular de 1px arriba: es un highlight, se elige blanco y opaco, no por contraste contra el relleno */
+  --color-eco-cinta-borde: color-mix(in srgb, var(--color-aqua) 16%, transparent); /* hairline de abajo — el lado en sombra */
+  --color-eco-ola: color-mix(in srgb, var(--color-aqua) 13%, transparent); /* capa de delante */
+  --color-eco-ola-fondo: color-mix(in srgb, var(--color-aqua) 8%, transparent); /* capa de detrás, más tenue */
+  --spacing-eco-ola-alto: 0.75rem; /* 12px sobre una cinta de 36/48px: agua en el tercio bajo, no una cenefa que la parta en dos */
+  --spacing-eco-ola-largo: 8rem; /* 128px de longitud de onda — larga y tendida; a menor largo se lee como zigzag decorativo */
+  --eco-ola-duracion: 26s; /* la capa de delante; la de detrás va a 1.7× y en contra (el desfase es lo que se lee como agua) */
+  --eco-hoja-vaiven-duracion: 6s;
+  --eco-hoja-vaiven-angulo: 1.2deg; /* ±1.2° pivotando en la BASE de la hoja (48 72 del viewBox): una hoja se mece desde su tallo, no desde su centro */
+  --eco-anillo-giro-duracion: 40s; /* una vuelta entera del anillo punteado — a menos de ~30s deja de leerse como sello vivo y empieza a parecer un spinner de carga */
 
   /* ---------- Carrusel de destacados del blog (2026-07-22, pedido de
      Samuel: "un slider de al menos 4 cards... la que viene se pone más

@@ -8,7 +8,6 @@ import { IncluyeCrucero } from '@/components/home/incluye-crucero'
 import { Reviews } from '@/components/home/reviews'
 import { Contacto } from '@/components/home/contacto'
 import { EquipoTeaser } from '@/components/home/equipo-teaser'
-import { EventosEspeciales } from '@/components/home/eventos-especiales'
 import { ReelsSociales } from '@/components/ui/reels-sociales'
 import { PruebaSocial } from '@/components/home/prueba-social'
 import { Footer } from '@/components/home/footer'
@@ -85,11 +84,20 @@ export function HomePage() {
       <ToursGrid />
       <WhyDirect />
       <IncluyeCrucero />
-      {/* [v2 2026-07-27] «Eventos especiales» sube por encima de las reseñas
-          (slide 9). No rompe el razonamiento del 2026-07-17 que la bajó aquí
-          —«separa el bloque de confianza de la conversión»—: Reviews sigue
-          pegada a Contacto/cierre, que era el punto. */}
-      <EventosEspeciales />
+      {/* [v3 2026-08-06, WEBSITE - INICIO pág. 5: «REMOVE:» sobre la captura
+          de la sección] «Cada ocasión merece su propio catamarán»
+          (EventosEspeciales, la vitrina de 4 boxes Cumpleaños/Bodas/
+          Aniversarios/Despedidas) SALE de la home. Vivía aquí desde la v2,
+          que la había subido por encima de las reseñas.
+
+          ⚠️ Con ella se pierde el único puente home → eventos que había en el
+          cuerpo de la página. Siguen existiendo dos caminos: el mega-menú de
+          Eventos (siempre visible) y el footer.
+
+          El componente (eventos-especiales.tsx) y su fuente
+          (EVENTOS_ESPECIALES) se BORRAN, no se comentan: eran sus únicos
+          consumidores y este proyecto no deja cadáveres. Si el cliente los
+          quiere de vuelta, viven completos en el tag `v3-pre-en`. */}
       <Reviews />
       <ReelsSociales />
       <Contacto />

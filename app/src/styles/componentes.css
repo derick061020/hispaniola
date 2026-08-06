@@ -308,38 +308,55 @@
    POR QUÉ ES CSS A MEDIDA: los 7 badges vienen de 5 familias cromáticas que
    no tienen nada que ver entre sí (bloque navy del LTG, cuadrado de marco
    amarillo de WeddingWire, verdes de Viator y TripAdvisor, dorado del Luxury
-   Travel Guide). Puestos a todo color en fila se leen como 7 objetos sueltos
-   —exactamente lo que la auditoría critica de la web actual— en vez de como
-   UNA cinta de confianza. Desaturarlos los unifica y respeta el guardarraíl
-   de la dirección B (direccion-visual.md §6): el color lo ponen las FOTOS,
-   no los badges.
+   Travel Guide).
 
-   El color real vuelve al pasar el ratón: quien quiera inspeccionar un premio
-   lo ve tal cual es, y el gris no se lee como "logo apagado" sino como una
-   decisión. Solo con puntero real — en táctil no hay hover que recompensar,
-   así que ahí el badge se queda en su gris (es textura de confianza, no un
-   control). */
+   [v3 2026-08-06, PowerPoint slide 66: «estos logos deben verse en máximo
+   color»] Hasta aquí iban desaturados (`grayscale(1)` + 72% de opacidad) y
+   solo recuperaban su color al pasar el ratón: puestos a todo color en fila
+   se leían como 7 objetos sueltos en vez de como UNA cinta, y el guardarraíl
+   de la dirección B (direccion-visual.md §6) dice que el color lo ponen las
+   FOTOS. El cliente revoca esa decisión por escrito y gana él: son sus
+   premios, los pagó y los quiere legibles.
+
+   Lo que NO se hace es rendirse al collage. La unidad, que antes la daba el
+   gris, ahora la dan tres cosas de composición (plan 02, slide 66):
+   1. Una altura ÓPTICA, no física: los badges de fondo macizo (LTG, los 3
+      Viator, WeddingWire) van al 88% de la altura de los que son casi todo
+      aire (TripAdvisor, Luxury Travel Guide). A la misma altura en píxeles,
+      un rectángulo verde lleno pesa el doble que un logotipo sobre blanco, y
+      es ese desequilibrio —no el color— lo que rompía la fila.
+   2. Más hueco entre ellos (--spacing-premio-hueco): a color, cada badge
+      necesita su margen de silencio para no contaminar al vecino.
+   3. La fila entera sigue sobre --color-papel y sin caja: son los badges los
+      que llevan color, no la banda.
+   ⚠️ Los 7 assets se verificaron uno a uno: TODOS vienen a color de origen
+   (el Luxury Travel Guide es negro y oro DE MARCA, no un asset gris) — no
+   hace falta pedir ni re-extraer ninguno.
+
+   Del hover ya no puede colgar "volver al color" (nace a color): queda un
+   realce de 2px, el gesto mínimo que dice "esto se puede mirar de cerca".
+   Solo con puntero real. */
 
 .premio-logo {
-  height: var(--spacing-premio-alto-movil);
+  height: calc(var(--spacing-premio-alto-movil) * var(--premio-escala, var(--premio-escala-aire)));
   width: auto;
-  filter: grayscale(1);
-  opacity: var(--premio-opacidad);
-  transition:
-    filter var(--premio-transicion) ease-out,
-    opacity var(--premio-transicion) ease-out;
+  transition: translate var(--premio-transicion) ease-out;
+}
+
+/* Los de fondo macizo se sirven un punto más bajos — ver el punto 1 de arriba. */
+.premio-logo--macizo {
+  --premio-escala: var(--premio-escala-macizo);
 }
 
 @media (min-width: 640px) {
   .premio-logo {
-    height: var(--spacing-premio-alto);
+    height: calc(var(--spacing-premio-alto) * var(--premio-escala, var(--premio-escala-aire)));
   }
 }
 
 @media (hover: hover) {
   .premio-logo:hover {
-    filter: grayscale(0);
-    opacity: 1;
+    translate: 0 var(--premio-realce-y);
   }
 }
 
@@ -347,6 +364,143 @@
   .premio-logo {
     transition: none;
   }
+}
+
+/* ============================================================
+   Cintillo Eco-friendly — la cinta y sus tres bucles.
+   [v3 2026-08-06, PowerPoint slide 66 + reunión 07-31 12:46–14:25]
+
+   POR QUÉ ES CSS A MEDIDA: el pedido del cliente («que tenga algún efecto eco
+   y que el diseño sea más moderno») se traduce en dos cosas que Tailwind no
+   da: una cinta con MATERIA (dos caras + filo de luz, todo disuelto por una
+   máscara horizontal) y movimiento CONSTANTE en bucle (@keyframes). El porqué
+   de cada decisión está en el bloque --eco-* de tokens.css; aquí va el cómo.
+
+   El fundido a los extremos era antes el `background` (linear-gradient a
+   transparente en 0%/100%). Ahora es la MÁSCARA de toda la pieza: así el
+   degradado vertical, el filo de luz, la hairline y las dos olas se disuelven
+   TODOS con la misma curva. Un filo blanco que llegara nítido hasta el borde
+   y ahí se cortara sería peor que no tenerlo. */
+
+.eco-cinta {
+  /* ⚠️ NADA de `position` aquí. La cinta ya es `absolute` por utilidad en el
+     JSX (inset-x-0 top-1/2 -translate-y-1/2) y este archivo va SIN capa, así
+     que cualquier `position` de aquí le gana a la utilidad de Tailwind: un
+     `position: relative` la sacaba del posicionado absoluto y la dejaba de
+     ancho 0 (flex item sin contenido) — la cinta desaparecía entera. Al ser
+     `absolute`, ya es el bloque contenedor de las olas de dentro. */
+  overflow: hidden; /* las olas derivan por dentro, no por encima de Premios/Experiencia */
+  background-image: linear-gradient(to bottom, var(--color-eco-cinta-luz), var(--color-eco-cinta-sombra));
+  /* Filo de luz arriba + hairline en sombra abajo, en `inset` para que no
+     midan: con border-* la cinta crecería 2px y dejaría de casar con el eje
+     vertical del sello. */
+  box-shadow:
+    inset 0 1px 0 var(--color-eco-cinta-filo),
+    inset 0 -1px 0 var(--color-eco-cinta-borde);
+  /* `black` aquí no es un color de diseño: en una máscara solo cuenta el
+     canal alfa (opaco = se ve). Los stops 15%/85% son los de Samuel del
+     07-17, intactos. */
+  mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);
+}
+
+/* Las olas: MISMO mecanismo que las del CTA-mar (.cta-ola) — máscara SVG de
+   una onda repetida en x y deriva infinita de mask-position. Es literalmente
+   «el tema del barquito» al que apuntó Miguel cuando le pedimos que
+   concretara «efecto eco». Corren SIEMPRE, no esperan al reveal: la cinta ya
+   está pintada antes de que el sello se dibuje, y una franja de agua que
+   arranca de cero delante del usuario se nota; a mitad de ciclo, no. */
+.eco-ola {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: var(--spacing-eco-ola-alto);
+  background-color: var(--color-eco-ola);
+  /* Mismo trazado de onda que .cta-ola, pero con preserveAspectRatio='none'.
+     ⚠️ Sin eso, el SVG conserva la proporción de su viewBox (24×10) al
+     escalarse al tile: el CTA tiene tokens 24px×10px y encaja clavado, pero
+     aquí la onda es LARGA y BAJA (128×12) y el navegador la dibujaba a 46px
+     de ancho centrada en cada tile de 128px — olas sueltas con hueco entre
+     ellas, como piedras, en vez de agua continua. */
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 10' preserveAspectRatio='none'%3E%3Cpath d='M0 5Q6 1 12 5T24 5V10H0Z'/%3E%3C/svg%3E");
+  mask-repeat: repeat-x;
+  mask-size: var(--spacing-eco-ola-largo) 100%;
+  animation: eco-ola-deriva var(--eco-ola-duracion) linear infinite;
+}
+
+/* Capa de detrás: más alta, más lenta, más tenue y EN CONTRA — el desfase
+   entre las dos es lo que se lee como agua y no como una cenefa deslizándose
+   (el mismo par que .cta-ola--fondo, con los tiempos estirados: aquello es un
+   botón que invita a pulsar, esto es un cintillo que debe pasar desapercibido
+   hasta que te fijas). */
+.eco-ola--fondo {
+  height: calc(var(--spacing-eco-ola-alto) * 1.6);
+  background-color: var(--color-eco-ola-fondo);
+  animation-duration: calc(var(--eco-ola-duracion) * 1.7);
+  animation-direction: reverse;
+}
+
+@keyframes eco-ola-deriva {
+  from {
+    mask-position: 0 0;
+  }
+  to {
+    mask-position: var(--spacing-eco-ola-largo) 0;
+  }
+}
+
+/* Los dos bucles del SELLO sí esperan: solo corren bajo `.eco-vivo`, la clase
+   que el hook pone cuando el reveal TERMINA (use-eco-friendly-reveal.ts).
+   Mecerse mientras te están dibujando rompe la lectura de "boceto
+   completándose", que es justo lo que Samuel afinó en dos vueltas el 07-22.
+   Sin reveal (reduced-motion o ?dev-eco=estatico) la clase no llega nunca y
+   el sello se queda quieto — que es el frame que viaja a Figma.
+
+   Van en <g> aparte, NO sobre los propios paths: GSAP escribe transform
+   inline en .eco-sello-fondo (el pop con rebote) y una animación CSS de
+   transform sobre el mismo elemento GANA siempre a lo inline — el pop se
+   perdería. Girando/meciendo el GRUPO, las dos transformadas se componen en
+   vez de pisarse. Y en `rotate:`, propiedad independiente, por la misma razón
+   que el balanceo del barco del CTA. */
+.eco-vivo .eco-hoja {
+  transform-origin: 48px 72px; /* la punta inferior del trazo de la hoja, en unidades del viewBox (0 0 96 96) */
+  animation: eco-hoja-vaiven var(--eco-hoja-vaiven-duracion) ease-in-out infinite alternate;
+}
+
+@keyframes eco-hoja-vaiven {
+  from {
+    rotate: calc(var(--eco-hoja-vaiven-angulo) * -1);
+  }
+  to {
+    rotate: var(--eco-hoja-vaiven-angulo);
+  }
+}
+
+/* El anillo punteado gira lentísimo: las rayitas desfilan alrededor del
+   sello. Es el bucle más callado de los tres y el que hace que el conjunto no
+   se sienta congelado cuando la hoja está en el extremo de su vaivén. */
+.eco-vivo .eco-anillo {
+  transform-origin: 48px 48px; /* centro del viewBox */
+  animation: eco-anillo-giro var(--eco-anillo-giro-duracion) linear infinite;
+}
+
+@keyframes eco-anillo-giro {
+  to {
+    rotate: 360deg;
+  }
+}
+
+/* Congelar: reduced-motion y el flag del Dev Mode dejan la MISMA imagen (cinta
+   con su materia, sello asentado), que es la que se captura para Figma. */
+@media (prefers-reduced-motion: reduce) {
+  .eco-ola,
+  .eco-vivo .eco-hoja,
+  .eco-vivo .eco-anillo {
+    animation: none;
+  }
+}
+
+.eco-estatico .eco-ola {
+  animation: none;
 }
 
 /* ============================================================

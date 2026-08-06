@@ -52,19 +52,45 @@ function nombrePlato(id: string, menu: { nombre: string }[]) {
   return menu.find((p) => p.nombre === id)?.nombre ?? NOMBRES_PLATO[id] ?? id
 }
 
+// [v3 2026-08-06, slide 67] Los 3 modos de acceso. El `id` viaja en la URL
+// (`?modo=`) para que el cajón de la home (home/contacto.tsx) pueda mandar
+// aquí a alguien que ya escribió su dato, con la pestaña correcta abierta.
+const MODOS = [
+  { id: 'codigo', etiqueta: 'Booking code', campo: 'Booking code', placeholder: 'HSP-XXXX-NNNN' },
+  { id: 'email', etiqueta: 'Email', campo: 'Booking email', placeholder: 'you@email.com' },
+  { id: 'telefono', etiqueta: 'Phone', campo: 'Booking phone number', placeholder: '+1 829 000 0000' },
+] as const
+
+type Modo = (typeof MODOS)[number]['id']
+
+const AYUDA_MODO: Record<Modo, string> = {
+  codigo: 'Find it in your Hispaniola confirmation email — it starts with HSP.',
+  email: "We'll send an access link to the email you booked with.",
+  telefono: "We'll text an access link to the number you booked with.",
+}
+
 export function MiReservaPage() {
   const [params] = useSearchParams()
   const navigate = useNavigate()
-  const codigo = params.get('codigo')
+  // `codigo` es el parámetro histórico (enlaces ya compartidos); `q` es el
+  // nuevo, que acompaña a `modo`. Cualquiera de los dos abre el DETALLE.
+  const consulta = params.get('q') ?? params.get('codigo')
+  const modoUrl = params.get('modo')
+  const modoInicial: Modo = MODOS.some((m) => m.id === modoUrl) ? (modoUrl as Modo) : 'codigo'
 
-  // 2 estados: INGRESO (input) o DETALLE (la demo). Sin `?codigo=…` en
-  // la URL siempre arranca en INGRESO — ni siquiera se monta la página
-  // de detalle, que es la parte pesada.
-  if (!codigo) {
-    return <PantallaIngreso onSubmit={(c) => navigate(`/my-booking?codigo=${encodeURIComponent(c)}`)} />
+  // 2 estados: INGRESO (input) o DETALLE (la demo). Sin dato en la URL
+  // siempre arranca en INGRESO — ni siquiera se monta la página de detalle,
+  // que es la parte pesada.
+  if (!consulta) {
+    return (
+      <PantallaIngreso
+        modoInicial={modoInicial}
+        onSubmit={(modo, valor) => navigate(`/my-booking?modo=${modo}&q=${encodeURIComponent(valor)}`)}
+      />
+    )
   }
 
-  return <DetalleReserva codigoIngresado={codigo} />
+  return <DetalleReserva codigoIngresado={consulta} />
 }
 
 // Pantalla 1 — ingreso de código. Una sola columna centrada (max-w-md),
@@ -74,24 +100,34 @@ export function MiReservaPage() {
 // (a día de hoy cualquier cosa funciona; cuando se conecte el backend
 // se valida y se muestra error). El submit navega a `?codigo=…`; el
 // resto de la lógica vive en DetalleReserva.
-function PantallaIngreso({ onSubmit }: { onSubmit: (codigo: string) => void }) {
+function PantallaIngreso({
+  modoInicial,
+  onSubmit,
+}: {
+  modoInicial: Modo
+  onSubmit: (modo: Modo, valor: string) => void
+}) {
   const [valor, setValor] = useState('')
   // CORRECCIONES v1 DEL CLIENTE (2026-07-20, planes/07-mi-reserva.md): la
   // maqueta añade un toggle «Con código / Con email» — poder recuperar la
   // reserva con el email con que se reservó, no solo con el código.
   //
-  // ⚠️ Sin backend, el acceso por email NO puede validar nada (no hay a quién
-  // preguntar), exactamente igual que hoy pasa con el código: la pantalla de
-  // detalle muestra SIEMPRE la reserva de ejemplo. Se construye el toggle
-  // porque es la estructura que el cliente quiere ver y porque cuando llegue
-  // el motor solo hay que cambiar lo que pasa en el submit — pero no se finge
-  // una búsqueda que no existe.
-  const [modo, setModo] = useState<'codigo' | 'email'>('codigo')
+  // [v3 2026-08-06, slide 67 + reunión 07-31 14:31] Entra el TERCER modo,
+  // teléfono: «que el cliente pueda buscar por reserva, por email y por
+  // teléfono». El toggle pasa de 2 a 3 columnas.
+  //
+  // ⚠️ Sin backend, ninguno de los tres puede validar nada (no hay a quién
+  // preguntar): la pantalla de detalle muestra SIEMPRE la reserva de ejemplo.
+  // Se construye porque es la estructura que el cliente quiere ver y porque
+  // cuando llegue el motor solo hay que cambiar lo que pasa en el submit —
+  // pero no se finge una búsqueda que no existe.
+  const [modo, setModo] = useState<Modo>(modoInicial)
+  const activo = MODOS.find((m) => m.id === modo) ?? MODOS[0]
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault()
     const limpio = valor.trim()
     if (!limpio) return
-    onSubmit(limpio)
+    onSubmit(modo, limpio)
   }
   return (
     <div className="min-h-screen bg-papel-hueso">
@@ -125,40 +161,45 @@ function PantallaIngreso({ onSubmit }: { onSubmit: (codigo: string) => void }) {
               <Ticket className="size-7" aria-hidden="true" strokeWidth={2} />
             </div>
             <h1 className="mt-5 font-display text-2xl font-semibold text-navy sm:text-3xl">
-              Gestiona tu reserva
+              Manage your booking
             </h1>
             <p className="mt-3 text-sm text-navy-sub">
-              Accede con el código de tu reserva o con el email con el que reservaste. Podrás ver tu
-              itinerario, la hora de recogida y hacer cambios.
+              Access it with your booking code, or with the email or phone number you booked with.
+              You&rsquo;ll be able to see your itinerary, your pick-up time and make changes.
             </p>
           </div>
 
-          {/* Toggle código / email. Mismo lenguaje visual que el selector de
-              paquete del widget de reserva (pista gris + thumb blanco). */}
+          {/* Toggle código / email / teléfono. Mismo lenguaje visual que el
+              selector de paquete del widget de reserva (pista gris + thumb
+              blanco). El thumb se mueve por ÍNDICE, no por comparación con un
+              valor concreto: con 3 opciones ya no vale un booleano, y así
+              añadir una cuarta no volvería a tocar esta fórmula. */}
           <div
             role="group"
-            aria-label="Cómo quieres acceder"
-            className="relative mt-6 grid grid-cols-2 gap-1 rounded-full bg-linea p-1"
+            aria-label="How you want to access your booking"
+            className="relative mt-6 grid grid-cols-3 gap-1 rounded-full bg-linea p-1"
           >
             <span
               aria-hidden="true"
-              className="pointer-events-none absolute inset-y-1 left-1 w-[calc(50%-0.375rem)] rounded-full bg-papel shadow-sm transition-transform duration-200 ease-out motion-reduce:transition-none"
-              style={{ transform: modo === 'email' ? 'translateX(calc(100% + 0.25rem))' : 'translateX(0)' }}
+              className="pointer-events-none absolute inset-y-1 left-1 w-[calc(33.333%-0.4167rem)] rounded-full bg-papel shadow-sm transition-transform duration-200 ease-out motion-reduce:transition-none"
+              style={{
+                transform: `translateX(calc(${MODOS.findIndex((m) => m.id === modo)} * (100% + 0.25rem)))`,
+              }}
             />
-            {(['codigo', 'email'] as const).map((m) => (
+            {MODOS.map((m) => (
               <button
-                key={m}
+                key={m.id}
                 type="button"
                 onClick={() => {
-                  setModo(m)
+                  setModo(m.id)
                   setValor('')
                 }}
-                aria-pressed={modo === m}
+                aria-pressed={modo === m.id}
                 className={`relative z-10 rounded-full px-3 py-2 text-sm font-semibold transition-colors ${
-                  modo === m ? 'text-navy' : 'text-navy-sub/55 hover:text-navy-sub'
+                  modo === m.id ? 'text-navy' : 'text-navy-sub/55 hover:text-navy-sub'
                 }`}
               >
-                {m === 'codigo' ? 'Con código' : 'Con email'}
+                {m.etiqueta}
               </button>
             ))}
           </div>
@@ -168,37 +209,30 @@ function PantallaIngreso({ onSubmit }: { onSubmit: (codigo: string) => void }) {
                 teclado apenas carga la página — quien llega desde un link de
                 WhatsApp/email ni ve el título antes de que el teclado se coma
                 medio viewport. El usuario toca el campo cuando quiere escribir. */}
-            {modo === 'codigo' ? (
-              <Campo
-                etiqueta="Código de reserva"
-                value={valor}
-                onChange={(e) => setValor(e.target.value.toUpperCase())}
-                placeholder="HSP-XXXX-NNNN"
-                required
-              />
-            ) : (
-              <Campo
-                etiqueta="Email de la reserva"
-                type="email"
-                value={valor}
-                onChange={(e) => setValor(e.target.value)}
-                placeholder="tu@email.com"
-                required
-              />
-            )}
-            <p className="text-xs text-navy-soft">
-              {modo === 'codigo'
-                ? 'Búscalo en el email de confirmación de Hispaniola — empieza por HSP.'
-                : 'Te enviaremos un enlace de acceso al correo con el que hiciste la reserva.'}
-            </p>
+            <Campo
+              // `key` remonta el input al cambiar de modo: sin él, React
+              // reutiliza el mismo nodo y el navegador conserva el estado de
+              // validación del type anterior (un email a medio escribir deja
+              // el campo en :invalid al pasar a teléfono).
+              key={activo.id}
+              etiqueta={activo.campo}
+              type={activo.id === 'email' ? 'email' : activo.id === 'telefono' ? 'tel' : undefined}
+              value={valor}
+              // Solo el código se pasa a mayúsculas: así se emite. Hacerlo con
+              // un email o un teléfono no aporta y en el email molesta.
+              onChange={(e) => setValor(activo.id === 'codigo' ? e.target.value.toUpperCase() : e.target.value)}
+              placeholder={activo.placeholder}
+              required
+            />
+            <p className="text-xs text-navy-soft">{AYUDA_MODO[modo]}</p>
             <button
               type="submit"
               className="inline-flex w-full items-center justify-center gap-2 rounded-btn bg-coral px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-coral-dark"
             >
-              Ver mi reserva
+              View my booking
               <ChevronRight className="size-4" aria-hidden="true" />
             </button>
-            <p className="text-center text-xs text-navy-soft">Tu reserva es privada y segura.</p>
+            <p className="text-center text-xs text-navy-soft">Your booking is private and secure.</p>
           </form>
 
           <div className="mt-6 border-t border-linea pt-5">

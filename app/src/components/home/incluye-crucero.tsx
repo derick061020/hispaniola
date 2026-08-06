@@ -114,9 +114,9 @@ export function IncluyeCrucero() {
           lo ocupa a propósito y el catamarán navega por encima del texto al
           scrollear). La mezcla con el agua vive en .incluye-titulo. */}
       <div className="relative z-10 mx-auto w-full max-w-contenido px-5 text-center sm:px-10">
-        <Etiqueta sobreOscuro>A bordo</Etiqueta>
+        <Etiqueta sobreOscuro>On board</Etiqueta>
         <h2 className="incluye-titulo mx-auto mt-4 max-w-4xl font-display text-incluye-titulo-movil font-semibold text-aqua-claro lg:text-incluye-titulo">
-          Todos nuestros cruceros incluyen
+          All our cruises include
         </h2>
       </div>
 

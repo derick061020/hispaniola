@@ -152,8 +152,12 @@ function Persona() {
   const persona = EQUIPO.find((m) => m.id === CONTACTO.persona.idEquipo)
   if (!persona) return null
 
-  // chips[0] («Respondemos en minutos») es el estado, no una etiqueta: sube a
-  // la píldora con el punto que late. El resto queda como meta en una línea.
+  // chips[0] («Fast response») es el estado, no una etiqueta: sube a la
+  // píldora con el punto que late. El resto queda como meta en una línea.
+  // [v3 2026-08-06] Desde las correcciones v3 solo hay UN chip y `texto` es
+  // null (WEBSITE - INICIO pág. 6: «quitar la parte debajo de Eva, solo
+  // poner Fast Response»), así que `resto` viene vacío y el párrafo no se
+  // pinta — las dos ramas condicionales de abajo ya lo contemplaban.
   const [estado, ...resto] = CONTACTO.persona.chips
 
   return (
@@ -176,7 +180,9 @@ function Persona() {
         </p>
       ) : null}
 
-      <p className="mt-4 text-sm leading-relaxed text-navy-sub">{CONTACTO.persona.texto}</p>
+      {CONTACTO.persona.texto ? (
+        <p className="mt-4 text-sm leading-relaxed text-navy-sub">{CONTACTO.persona.texto}</p>
+      ) : null}
 
       {resto.length ? (
         <p className="mt-3 text-xs text-navy-soft">{resto.join(' · ')}</p>
@@ -238,11 +244,29 @@ function FilaContacto({ card }: { card: ContactoCard }) {
 // que sí tiene el formulario (pedir info), esta es «ya soy cliente». No
 // valida el código aquí (no hay backend): manda a /mi-reserva, que es donde
 // vive ese flujo completo, con el código ya escrito en la URL.
+//
+// [v3 2026-08-06, PowerPoint slide 67 + reunión 07-31 14:31: «que el cliente
+// pueda buscar por reserva, por email y por teléfono»] El campo deja de ser
+// SOLO el código. Sigue habiendo UN input —al ancho del carril no caben tres
+// controles— y es la página de destino quien resuelve qué se escribió:
+// con «@» es un email, solo dígitos/+/espacios/guiones es un teléfono, y
+// cualquier otra cosa es el código. El upper-case automático se retira: era
+// correcto para HSP-XXXX pero destroza un email al escribirlo.
 function BloqueReserva() {
-  const [codigo, setCodigo] = useState('')
-  const destino = codigo.trim()
-    ? `/my-booking?codigo=${encodeURIComponent(codigo.trim().toUpperCase())}`
+  const [valor, setValor] = useState('')
+
+  const buscado = valor.trim()
+  const modo = buscado.includes('@')
+    ? 'email'
+    : /^[\d+\s().-]+$/.test(buscado) && /\d/.test(buscado)
+      ? 'telefono'
+      : 'codigo'
+  // El código viaja en mayúsculas (así se emite); email y teléfono, tal cual.
+  const consulta = modo === 'codigo' ? buscado.toUpperCase() : buscado
+  const destino = buscado
+    ? `/my-booking?modo=${modo}&q=${encodeURIComponent(consulta)}`
     : '/my-booking'
+
   return (
     <div className="mt-auto border-t border-linea p-6 sm:p-7">
       <div className="flex items-start gap-3">
@@ -253,9 +277,9 @@ function BloqueReserva() {
           <Ticket className="size-4" strokeWidth={2} />
         </span>
         <div>
-          <p className="text-sm font-semibold text-navy">¿Ya tienes una reserva?</p>
+          <p className="text-sm font-semibold text-navy">Already have a booking?</p>
           <p className="mt-1 text-sm leading-snug text-navy-sub">
-            Gestiónala tú mismo: cambia el menú, la recogida o paga el saldo.
+            Manage it yourself: change the menu, the pick-up or pay the balance.
           </p>
         </div>
       </div>
@@ -265,17 +289,17 @@ function BloqueReserva() {
           hay sitio para dos controles sueltos con gap. */}
       <div className="mt-3 flex items-center gap-2 rounded-btn bg-papel p-1.5 ring-1 ring-linea focus-within:ring-2 focus-within:ring-aqua">
         <input
-          value={codigo}
-          onChange={(e) => setCodigo(e.target.value.toUpperCase())}
-          placeholder="HSP-XXXX-XXXX"
-          aria-label="Código de reserva"
+          value={valor}
+          onChange={(e) => setValor(e.target.value)}
+          placeholder="Booking code, email or phone"
+          aria-label="Booking code, email or phone number"
           className="min-w-0 flex-1 bg-transparent px-2.5 py-1.5 text-sm text-navy placeholder:text-navy-soft focus:outline-none"
         />
         <Link
           to={destino}
           className="inline-flex shrink-0 items-center gap-1.5 rounded-btn bg-navy px-3.5 py-2 text-sm font-semibold text-white transition-colors hover:bg-aqua-dark"
         >
-          Gestionar
+          Manage
           <ArrowRight className="size-3.5" aria-hidden="true" />
         </Link>
       </div>
@@ -283,40 +307,10 @@ function BloqueReserva() {
   )
 }
 
-// Canal preferido — lo pedían las correcciones v1 (slide 13) y el comentario
-// de este archivo lo daba por construido, pero nunca se llegó a hacer: el
-// formulario solo tenía el «¿Sobre qué?». Segmentado con radios reales
-// (`sr-only` + `has-[:checked]:`), no botones con estado en React: así
-// funciona sin JS, va en el submit del form y el teclado lo recorre con las
-// flechas como cualquier grupo de radio.
-function CanalPreferido() {
-  return (
-    <fieldset>
-      <legend className="text-sm font-medium text-navy">¿Cómo prefieres que te contactemos?</legend>
-      <div className="mt-2 grid grid-cols-3 gap-2">
-        {CONTACTO.canales.map((canal, i) => {
-          const Icono = ICONOS[canal.id]
-          return (
-            <label
-              key={canal.id}
-              className="flex cursor-pointer items-center justify-center gap-1.5 rounded-btn px-2 py-2.5 text-sm font-medium text-navy-sub ring-1 ring-linea transition-colors hover:bg-papel-hueso has-[:checked]:bg-navy has-[:checked]:font-semibold has-[:checked]:text-white has-[:checked]:ring-navy has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-aqua"
-            >
-              <input
-                type="radio"
-                name="canal"
-                value={canal.id}
-                defaultChecked={i === 0}
-                className="sr-only"
-              />
-              <Icono className="size-3.5 shrink-0" strokeWidth={2} aria-hidden="true" />
-              {canal.label}
-            </label>
-          )
-        })}
-      </div>
-    </fieldset>
-  )
-}
+// [v3 2026-08-06] Aquí vivía `CanalPreferido` (el segmentado «¿Cómo prefieres
+// que te contactemos?»). El cliente pidió QUITARLO (WEBSITE - INICIO pág. 6);
+// era su único consumidor, así que se borra en vez de dejarlo sin montar.
+// Sigue en el tag `v3-pre-en` si hiciera falta recuperarlo.
 
 // El envío ya no es una línea verde debajo del botón (se quedaba a media
 // altura de un formulario que seguía ahí, invitando a reenviarlo): ahora
@@ -503,26 +497,34 @@ export function Contacto({ mostrarEncabezado = true }: { mostrarEncabezado?: boo
                   }}
                   className="flex h-full flex-col"
                 >
-                  <h3 className="font-display text-h3 font-semibold text-navy">
-                    ¿Prefieres que te escribamos?
-                  </h3>
+                  {/* [v3 2026-08-06, WEBSITE - INICIO pág. 6] Título y bajada
+                      APROBADOS: «¿Prefieres que te escribamos?» → «How can we
+                      help you?» + «We don't just answer questions, we help
+                      you choose the right experience for your group, budget,
+                      and travel style.» */}
+                  <h3 className="font-display text-h3 font-semibold text-navy">How can we help you?</h3>
                   <p className="mt-2 text-sm text-navy-sub">
-                    Déjanos tus datos y te contactamos por tu canal preferido.
+                    We don&rsquo;t just answer questions, we help you choose the right experience for your
+                    group, budget, and travel style.
                   </p>
 
                   <div className="mt-6 flex flex-1 flex-col gap-5">
-                    <CanalPreferido />
+                    {/* [v3 2026-08-06] «QUITAR: ¿Cómo prefieres que te
+                        contactemos?» — aquí iba <CanalPreferido />. El dato no
+                        se pierde: el visitante deja teléfono y/o email, y el
+                        carril de al lado sigue ofreciendo los 3 canales
+                        directos. El componente se borra con el selector. */}
 
                     <div className="grid gap-4 sm:grid-cols-2">
-                      <Campo etiqueta="Nombre" name="nombre" required />
-                      <Campo etiqueta="WhatsApp / Teléfono" name="telefono" type="tel" />
+                      <Campo etiqueta="Name" name="nombre" required />
+                      <Campo etiqueta="WhatsApp / Phone" name="telefono" type="tel" />
                     </div>
 
                     <div className="grid gap-4 sm:grid-cols-2">
                       <Campo etiqueta="Email" name="email" type="email" required />
                       <div>
                         <label htmlFor="contacto-asunto" className="text-sm font-medium text-navy">
-                          ¿Sobre qué?
+                          What about?
                         </label>
                         {/* appearance-none + chevron propio: la flecha nativa
                             del select es la del sistema operativo y era el
@@ -554,7 +556,7 @@ export function Contacto({ mostrarEncabezado = true }: { mostrarEncabezado?: boo
                         encogerse por debajo de esas 5 líneas — en un viewport
                         corto desbordaría el panel en vez de adaptarse. */}
                     <Campo
-                      etiqueta="Mensaje"
+                      etiqueta="Message"
                       name="mensaje"
                       textarea
                       required
@@ -564,10 +566,10 @@ export function Contacto({ mostrarEncabezado = true }: { mostrarEncabezado?: boo
                   </div>
 
                   <Boton type="submit" className="mt-6 w-full">
-                    Enviar mensaje
+                    Send message
                   </Boton>
                   <p className="mt-3 text-center text-xs text-navy-soft">
-                    Te respondemos en menos de 24 h. Sin listas de correo ni llamadas de venta.
+                    We reply within 24 hours. No mailing lists, no sales calls.
                   </p>
                 </form>
               )}

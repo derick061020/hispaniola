@@ -43,10 +43,35 @@ import { useEcoFriendlyReveal } from '@/components/home/use-eco-friendly-reveal'
 // se pule es la animación (use-eco-friendly-reveal.ts). Los 3 trazos de línea
 // (contorno, nervadura, venillas) llevan `eco-sello-trazo` (se DIBUJAN con
 // stroke-dashoffset, como un boceto completándose); el disco + anillo
-// punteado + relleno translúcido de la hoja llevan `eco-sello-fondo` y entran
+// punteado + relleno de la hoja llevan `eco-sello-fondo` y entran
 // DESPUÉS, con rebote — el color es el remate del dibujo, no su acompañante
 // (3ª vuelta, mismo día: al ir a la vez, el relleno adelantaba la silueta y
 // el trazo no se notaba) — ver el hook para el porqué completo.
+//
+// CORRECCIONES v3 DEL CLIENTE (2026-08-06, PowerPoint slide 66 + reunión
+// 07-31 12:46–14:25): «que tenga algún efecto eco y que el diseño sea más
+// moderno». En la reunión Miguel concretó las dos partes: el «efecto eco» no
+// es literal («mejor hagas un efecto o algo así chulo... como has hecho con
+// el tema del barquito») y lo que le molesta es que el cintillo «tiene una
+// animación de entrada pero luego se queda quieto» — quiere movimiento
+// CONSTANTE, «sutil, un poquito más modernito». Su motivo es de negocio, no
+// de estética: «es la única empresa que se apoya en la parte sostenible, por
+// aquí nadie hace nada de eso».
+//
+// Lo que se veía viejo esta vez tampoco era el sello (ya rediseñado en la
+// v1): era el RELLENO PLANO de la cinta —una barra de menta maciza—, el
+// diagnóstico literal del «IA slop» del 07-28. La cinta pasa a tener materia
+// (dos caras + filo de luz + hairline) y tres bucles lentos: olas por dentro
+// —el mismo mecanismo que el CTA-mar, o sea «el tema del barquito»—, la hoja
+// meciéndose y el anillo punteado girando. Todo en CSS (componentes.css) con
+// tokens --eco-*; el JSX solo aporta los ganchos.
+//
+// Copy: «Cero plástico a bordo» → «Zero plastic on board», la misma frase que
+// el stat del hero ya traducido ("0 / plastic on board") — las 3 apariciones
+// del dato en la home siguen hablando igual. ⚠️ La 3ª, la del footer, sigue
+// en español («Eco-friendly · Sin plástico · Desde 2012.»): es chrome
+// compartido por todas las páginas y además arrastra el 2012 vs 2010 sin
+// resolver, así que cae en el barrido F7 (plan 01 §5), no aquí.
 
 // Sello eco: círculo con anillo + hoja + gota. Todo con currentColor y los
 // tokens de la paleta (cero hex sueltos, regla de CLAUDE.md).
@@ -65,56 +90,76 @@ function SelloEco({ className = '' }: { className?: string }) {
       viewBox="0 0 96 96"
       className={className}
       role="img"
-      aria-label="Sello eco-friendly — cero plástico a bordo"
+      aria-label="Eco-friendly seal — zero plastic on board"
     >
       {/* Disco de fondo y anillo: el aqua de marca, con cuentagotas — es una
           pieza pequeña, no un fondo de sección. */}
       <circle className="eco-sello-fondo" cx="48" cy="48" r="46" fill="var(--color-menta)" />
-      <circle
-        className="eco-sello-fondo"
-        cx="48"
-        cy="48"
-        r="41"
-        fill="none"
-        stroke="var(--color-aqua)"
-        strokeWidth="1.5"
-        strokeDasharray="4 5"
-        strokeLinecap="round"
-        opacity="0.55"
-      />
-      {/* Hoja: dos arcos que se cierran en punta arriba y abajo. */}
-      <path
-        className="eco-sello-fondo"
-        d="M48 24c13 7 20 17 20 27 0 11-9 21-20 21s-20-10-20-21c0-10 7-20 20-27z"
-        fill="var(--color-aqua)"
-        opacity="0.18"
-      />
-      <path
-        className="eco-sello-trazo"
-        d="M48 24c13 7 20 17 20 27 0 11-9 21-20 21s-20-10-20-21c0-10 7-20 20-27z"
-        fill="none"
-        stroke="var(--color-aqua-dark)"
-        strokeWidth="2.5"
-        strokeLinejoin="round"
-      />
-      {/* Nervadura: la línea que hace que la forma se lea como hoja y no como
-          gota. Llega hasta la punta inferior. */}
-      <path
-        className="eco-sello-trazo"
-        d="M48 30v40"
-        stroke="var(--color-aqua-dark)"
-        strokeWidth="2.5"
-        strokeLinecap="round"
-      />
-      <path
-        className="eco-sello-trazo"
-        d="M48 44c-5 2-8 5-10 9M48 56c4 1.5 7 4 9 7"
-        fill="none"
-        stroke="var(--color-aqua-dark)"
-        strokeWidth="2"
-        strokeLinecap="round"
-        opacity="0.7"
-      />
+      {/* [v3] El anillo va en su propio <g> porque el grupo es lo que GIRA en
+          bucle (.eco-anillo, componentes.css): GSAP escribe transform inline
+          en el <circle> para el pop de entrada, y una animación CSS sobre ESE
+          mismo elemento le ganaría al inline y se comería el pop. */}
+      {/* ⚠️ [v3] Ni el anillo ni el relleno de la hoja llevan ya `opacity` de
+          atributo (tenían 0.55 y 0.18). No es un cambio de diseño: era un
+          atributo MUERTO en producción y una trampa para el traspaso. GSAP
+          los revela con autoAlpha, que al terminar deja `opacity: 1` INLINE y
+          se come cualquier opacidad declarada — o sea que la web lleva desde
+          la v1 enseñando el sello a plena fuerza, que es lo que Samuel vio y
+          aprobó el 07-22 (y explica su queja de aquel día, «el stroke se
+          parece al color de la hoja»: aqua-dark sobre aqua PLENO se parecen;
+          sobre un 18% no). Lo único que hacían esos atributos era que
+          ?dev-eco=estatico —el frame que viaja a Figma— saliera más pálido
+          que la web real. Se quitan para que los dos estados coincidan. */}
+      <g className="eco-anillo">
+        <circle
+          className="eco-sello-fondo"
+          cx="48"
+          cy="48"
+          r="41"
+          fill="none"
+          stroke="var(--color-aqua)"
+          strokeWidth="1.5"
+          strokeDasharray="4 5"
+          strokeLinecap="round"
+        />
+      </g>
+      {/* [v3] Mismo motivo para la hoja entera (relleno + los 3 trazos): el
+          grupo .eco-hoja se mece desde la base, los paths de dentro siguen
+          siendo los que GSAP dibuja y rellena. */}
+      <g className="eco-hoja">
+        {/* Hoja: dos arcos que se cierran en punta arriba y abajo. */}
+        <path
+          className="eco-sello-fondo"
+          d="M48 24c13 7 20 17 20 27 0 11-9 21-20 21s-20-10-20-21c0-10 7-20 20-27z"
+          fill="var(--color-aqua)"
+        />
+        <path
+          className="eco-sello-trazo"
+          d="M48 24c13 7 20 17 20 27 0 11-9 21-20 21s-20-10-20-21c0-10 7-20 20-27z"
+          fill="none"
+          stroke="var(--color-aqua-dark)"
+          strokeWidth="2.5"
+          strokeLinejoin="round"
+        />
+        {/* Nervadura: la línea que hace que la forma se lea como hoja y no como
+            gota. Llega hasta la punta inferior. */}
+        <path
+          className="eco-sello-trazo"
+          d="M48 30v40"
+          stroke="var(--color-aqua-dark)"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+        />
+        <path
+          className="eco-sello-trazo"
+          d="M48 44c-5 2-8 5-10 9M48 56c4 1.5 7 4 9 7"
+          fill="none"
+          stroke="var(--color-aqua-dark)"
+          strokeWidth="2"
+          strokeLinecap="round"
+          opacity="0.7"
+        />
+      </g>
     </svg>
   )
 }
@@ -131,21 +176,29 @@ export function EcoFriendly() {
   useEcoFriendlyReveal(sectionRef, { activo: !estatico }) // [dev-mode] gate
 
   return (
-    <section ref={sectionRef} className="flex justify-center px-5 py-3 sm:px-10 sm:py-4">
+    <section
+      ref={sectionRef}
+      // [dev-mode] `eco-estatico` congela también los bucles CSS que corren
+      // sin esperar al reveal (las olas de la cinta) — los del sello no hacen
+      // falta congelarlos porque cuelgan de `.eco-vivo`, que sin reveal no
+      // llega nunca. Ver dev-registry.ts.
+      className={`flex justify-center px-5 py-3 sm:px-10 sm:py-4${estatico ? ' eco-estatico' : ''}`} // [dev-mode]
+    >
       <div className="relative flex h-20 w-full max-w-contenido items-center justify-center sm:h-28">
-        <div
-          aria-hidden="true"
-          className="absolute inset-x-0 top-1/2 h-9 -translate-y-1/2 sm:h-12"
-          style={{
-            background:
-              'linear-gradient(to right, transparent 0%, var(--color-menta) 15%, var(--color-menta) 85%, transparent 100%)',
-          }}
-        />
+        {/* [v3] La cinta ya no es un div con un `background` plano: toda su
+            materia (dos caras, filo de luz, hairline, máscara del fundido a
+            los extremos) vive en `.eco-cinta`, y dentro derivan las 2 capas
+            de olas. Las alturas siguen en utilidades (36px/48px, decisión de
+            Samuel del 07-17) porque son layout, no material. */}
+        <div aria-hidden="true" className="eco-cinta absolute inset-x-0 top-1/2 h-9 -translate-y-1/2 sm:h-12">
+          <span className="eco-ola eco-ola--fondo" />
+          <span className="eco-ola" />
+        </div>
         {/* grid-cols-[1fr_auto_1fr], NO flex (2026-07-22, Samuel: «el sello
             no está centrado con respecto a la pantalla… quiero que el sello,
             sin importar eso, esté centrado»). Con `flex justify-center` los
             3 hijos se centran COMO GRUPO: el sello acaba donde lo dejen los
-            textos, y como «Cero plástico a bordo» es bastante más ancho que
+            textos, y como «Zero plastic on board» es bastante más ancho que
             «Eco-friendly», el grupo entero se corre y el sello queda a la
             izquierda del eje. Con dos columnas laterales de 1fr —que por
             definición miden lo mismo— la columna `auto` del centro cae
@@ -161,7 +214,7 @@ export function EcoFriendly() {
           </span>
           <SelloEco className="h-20 w-20 shrink-0 sm:h-28 sm:w-28" />
           <span className="eco-reveal justify-self-start text-left text-sm font-semibold uppercase tracking-[0.2em] text-navy sm:text-base">
-            Cero plástico a bordo
+            Zero plastic on board
           </span>
         </div>
       </div>

@@ -22,8 +22,23 @@ export function ToursGrid() {
   return (
     <section id="tours" className="scroll-mt-20 px-5 py-seccion-sm sm:px-10 sm:py-seccion">
       <div className="mx-auto max-w-contenido">
-        <Etiqueta>Nuestros tours</Etiqueta>
-        <h2 className="mt-3 font-display text-h2 font-semibold text-navy">Elige tu día en el Caribe</h2>
+        {/* [v3 2026-08-06, WEBSITE - INICIO pág. 2] Título y subtítulo
+            APROBADOS por el cliente. El subtítulo es nuevo: antes esta
+            sección solo tenía título.
+            La cabecera va CENTRADA (pedido de Samuel, 2026-08-06): al llegar
+            el subtítulo, la sección se quedó a medio camino —eyebrow y título
+            a la izquierda, y un párrafo con `mx-auto max-w-2xl`, que es un
+            bloque centrado con el texto pegado a la izquierda—. Se resuelve
+            por el lado del centrado, que es el patrón de cabecera que ya usan
+            Reviews y EquipoTeaser: mismo `<div className="text-center">`
+            envolviendo eyebrow + h2 + lead. */}
+        <div className="text-center">
+          <Etiqueta>Our tours</Etiqueta>
+          <h2 className="mt-3 font-display text-h2 font-semibold text-navy">Choose your Caribbean experience</h2>
+          <p className="mx-auto mt-3 max-w-2xl text-lead text-navy-sub">
+            Shared tours and private charters designed for unforgettable Caribbean experiences.
+          </p>
+        </div>
 
         {/* tours-cards: activa el hover de GRUPO de las cards (:has(), ver
             componentes.css) — v3-F17.2.

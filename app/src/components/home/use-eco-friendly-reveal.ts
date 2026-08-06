@@ -42,6 +42,15 @@ gsap.registerPlugin(ScrollTrigger)
 // reduced-motion o ?dev-eco=estatico no se engancha nada — el cintillo se ve
 // directamente asentado (el frame que viaja a Figma).
 //
+// [v3 2026-08-06, slide 66] Este reveal deja de ser el final del cintillo y
+// pasa a ser su ARRANQUE: el cliente quiere movimiento constante, no una
+// entrada y después quieto. Al terminar el pop del color, el hook añade
+// `.eco-vivo` a la sección y eso enciende los 2 bucles CSS del sello (hoja
+// meciéndose + anillo girando; las olas de la cinta no dependen de esto y
+// corren desde el principio). La clase la pone el onComplete a mano, así que
+// el cleanup la retira a mano también — ctx.revert() solo deshace lo que ha
+// tocado GSAP.
+//
 // ⚠️ Las constantes salen de TOKENS (--eco-reveal-*/--eco-sello-dibujo-*,
 // tokens.css), no van "a ojo": son la FUENTE del prototipo de Figma (playbook
 // animaciones-a-figma).
@@ -94,11 +103,26 @@ export function useEcoFriendlyReveal(sectionRef: RefObject<HTMLElement | null>, 
             duration: duracion,
             delay: dibujoDuracion + dibujoRetraso,
             ease: 'back.out(1.7)',
+            // [v3 2026-08-06, slide 66] Y aquí ARRANCA la vida constante del
+            // sello: `.eco-vivo` es lo que enciende los dos bucles CSS (la
+            // hoja meciéndose y el anillo girando — componentes.css). No
+            // pueden correr antes: mecer una hoja mientras se está dibujando
+            // rompe la lectura de "boceto completándose". Las olas de la
+            // cinta no cuelgan de esta clase — esas corren desde el principio,
+            // porque la cinta ya está pintada cuando el sello aún no existe.
+            onComplete: () => section.classList.add('eco-vivo'),
           })
         },
       })
     }, section)
 
-    return () => ctx.revert()
+    return () => {
+      ctx.revert()
+      // `.eco-vivo` la pone el onComplete a mano, así que ctx.revert() no la
+      // recoge: si no se limpia aquí, un remount con el flag de Dev Mode
+      // puesto dejaría los bucles corriendo sobre un sello que se supone
+      // congelado.
+      section.classList.remove('eco-vivo')
+    }
   }, [sectionRef, activo])
 }
