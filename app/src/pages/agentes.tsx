@@ -11,7 +11,7 @@ export function AgentesPage() {
     <div>
       <Meta
         titulo="Travel agents"
-        descripcion="Registration for travel agencies and DMCs — direct coordination, formal invoicing and real availability."
+        descripcion="Registration for travel agencies and DMCs: direct coordination, formal invoicing and real availability."
         ruta="/travel-agents"
       />
       <HeroInterna ctaHref="/#tours">

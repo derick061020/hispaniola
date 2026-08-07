@@ -156,7 +156,7 @@ function Card({
         {esPremium ? (
           <span className="mb-2 inline-flex w-fit items-center gap-1 rounded-chip bg-aqua-tint px-2 py-0.5 text-xs font-semibold text-aqua-dark">
             <Sparkles className="size-3" aria-hidden="true" />
-            El más completo
+            Most complete
           </span>
         ) : null}
 
@@ -170,7 +170,7 @@ function Card({
         {/* El precio y su condición, juntos. `extraPrecio` es texto del
             cliente ("US$ 99.00 por persona extra") — se pinta tal cual. */}
         <p className="text-xs text-navy-soft">
-          {incluidas !== null ? `Hasta ${incluidas} personas` : paquete.capacidad}
+          {incluidas !== null ? `Up to ${incluidas} guests` : paquete.capacidad}
           {paquete.extraPrecio ? <> · +{paquete.extraPrecio}</> : null}
         </p>
         <p className="mt-0.5 text-xs text-navy-soft">{paquete.meta}</p>
@@ -222,7 +222,7 @@ function Card({
           </ul>
         ) : (
           <p className="mt-4 flex-1 text-sm italic text-navy-soft">
-            Full menu on confirmation — message us on WhatsApp and we’ll send it over.
+            Full menu on confirmation. Message us on WhatsApp and we’ll send it over.
           </p>
         )}
 
@@ -243,10 +243,10 @@ function Card({
           {elegido ? (
             <span className="flex items-center justify-center gap-1.5">
               <Check className="size-4" aria-hidden="true" />
-              Elegido
+              Selected
             </span>
           ) : (
-            'Elegir este paquete'
+            'Choose this package'
           )}
         </button>
       </div>
@@ -281,19 +281,12 @@ export function PaquetesEvento({
     <section id="ancla-paquetes" className={`${BLOQUE_FICHA} scroll-mt-sticky-top`}>
       <TituloSeccion>{paquetes.titulo}</TituloSeccion>
       <p className="mt-2 text-sm text-navy-sub">{paquetes.intro}</p>
-      {/* La instrucción, una línea: sin ella, 4 cards con botón son 4 botones
-          sin destino claro. */}
-      {/* Sin referencias de sitio («arriba a la derecha»): en móvil el widget
-          está debajo, no al lado. */}
-      {/* «Los N» sale del array y no de un 4 escrito a mano: el mismo bloque
-          lo pintan ya dos landings (party boat y bodas) y el día que el
-          cliente añada o quite un paquete, la frase no puede quedarse
-          mintiendo. */}
-      <p className="mt-1 text-sm text-navy-soft">
-        Los {paquetes.items.length} llevan lo mismo a bordo —todo lo de «{evento.incluyeTitulo}»
-        above—; what changes is the menu, the duration and the price. Pick one and your group total
-        works itself out.
-      </p>
+      {/* [2026-08-07, pedido de Samuel] SE RETIRA LA LÍNEA DE INSTRUCCIÓN que
+          iba aquí («Los N llevan lo mismo a bordo, todo lo de "What's
+          Included" arriba…»). Repetía lo que la sección de «Incluye» ya dice
+          dos bloques más arriba y lo que las propias cards enseñan de un
+          vistazo. Afecta a las DOS landings que pintan este bloque (party boat
+          y bodas): es el mismo componente. */}
 
       <div className="mt-5 flex flex-col gap-4">
         {destacados.map((p) => (

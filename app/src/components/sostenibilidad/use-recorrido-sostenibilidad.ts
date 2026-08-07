@@ -131,6 +131,38 @@ export function useRecorridoSostenibilidad(
       for (let i = 0; i < limites.length; i++) if (progreso < limites[i]!) return i
       return limites.length - 1
     }
+
+    // LAS FRONTERAS SE MIDEN EN EL ESPACIO DEL SCROLL, NO EN EL DEL TRAZADO
+    // (2026-08-07). Antes salían de la LONGITUD DE PATH: se muestreaba la curva
+    // buscando en qué fracción caía cada pilar y la frontera era el punto medio
+    // entre dos. Y se comparaban contra `self.progress`, que es una fracción de
+    // SCROLL — dos magnitudes distintas. Coinciden solo si la curva avanza en
+    // vertical a ritmo constante, y no lo hace: el zigzag cruza el contenedor
+    // de lado a lado, así que cada tramo gasta mucha más longitud de path que
+    // de página. El resultado era que el relevo se adelantaba.
+    //
+    // Estaba latente desde el principio y saltó al entrar el copy aprobado del
+    // cliente (2026-08-07): el pilar 1 pasó de ~500px a ~740px de alto y, a un
+    // cuarto de su tarjeta, ya se veía la foto del pilar 2 — leías un texto
+    // sobre áreas protegidas con la foto del siguiente punto al lado.
+    //
+    // Aquí se le pregunta al propio ScrollTrigger: `st.start`/`st.end` son las
+    // posiciones de scroll absolutas del rango, así que convertir «la marca del
+    // pilar cruza el centro de la ventana» a progreso es una regla de tres, sin
+    // suponer nada sobre la forma de la curva. La frontera sigue siendo el punto
+    // medio entre pilar y pilar, que es lo que se pidió («cuando pasa a la
+    // siguiente se quita la imagen pasada»), pero medido donde se mira.
+    const calcularLimites = (st: ScrollTrigger) => {
+      const marcas = gsap.utils.toArray<HTMLElement>('[data-recorrido-punto]', root)
+      const span = st.end - st.start
+      if (marcas.length < 2 || span <= 0) return
+      const progresoDe = (el: HTMLElement) => {
+        const yDoc = el.getBoundingClientRect().top + window.scrollY
+        return gsap.utils.clamp(0, 1, (yDoc - window.innerHeight / 2 - st.start) / span)
+      }
+      const puntos = marcas.map(progresoDe)
+      limites = puntos.map((p, i) => (i === puntos.length - 1 ? 1 : (p + puntos[i + 1]!) / 2))
+    }
     const mostrar = (i: number) => {
       if (i === activa) return
       activa = i
@@ -178,35 +210,11 @@ export function useRecorridoSostenibilidad(
       const d = trazado(pts)
       svg.setAttribute('viewBox', `0 0 ${caja.width} ${caja.height}`)
       ruta.setAttribute('d', d)
-
-      // ¿En qué punto del recorrido (0-1) queda cada pilar? La curva pasa por
-      // sus puntos, pero NO a fracciones regulares: los tramos tienen largos
-      // distintos, así que hay que preguntárselo al path ya construido. Se
-      // muestrea y se busca, para cada marca, la fracción más cercana. 240
-      // muestras sobre ~1.600px son ~7px de resolución — de sobra para decidir
-      // un cambio de foto, y corre una sola vez por medición, no por frame.
-      const largo = ruta.getTotalLength()
-      const fracciones = marcas.map((_, i) => {
-        const objetivo = pts[i + 1]! // +1: pts[0] es el punto de entrada
-        let mejor = 0
-        let mejorDist = Infinity
-        for (let s = 0; s <= 240; s++) {
-          const t = s / 240
-          const q = ruta.getPointAtLength(t * largo)
-          const dist = (q.x - objetivo.x) ** 2 + (q.y - objetivo.y) ** 2
-          if (dist < mejorDist) {
-            mejorDist = dist
-            mejor = t
-          }
-        }
-        return mejor
-      })
-
-      // La frontera de cada paso es el PUNTO MEDIO hasta el siguiente pilar
-      // (el último llega hasta el final del recorrido).
-      limites = fracciones.map((f, i) =>
-        i === fracciones.length - 1 ? 1 : (f + fracciones[i + 1]!) / 2,
-      )
+      // Aquí se muestreaba la curva (240 puntos) para saber en qué fracción de
+      // PATH caía cada pilar y sacar de ahí las fronteras del relevo de fotos.
+      // Se retira: esas fracciones se comparaban contra un progreso de SCROLL
+      // y no son la misma magnitud — ver `calcularLimites`, que lo mide donde
+      // toca y de paso ahorra el muestreo.
     }
 
     // Coloca el barco sobre el trazado. `align` al propio path + alignOrigin
@@ -262,11 +270,21 @@ export function useRecorridoSostenibilidad(
             // MotionPath cachea el path parseado al inicializarse.
             // invalidateOnRefresh lo obliga a releerlo.
             invalidateOnRefresh: true,
+            // Las fronteras del relevo se recalculan en CADA refresh y no una
+            // sola vez al montar: dependen de `st.start`/`st.end`, que es justo
+            // lo que cambia al redimensionar, al asentar la tipografía o al
+            // editar el copy (el ResizeObserver de más abajo dispara refresh).
+            onRefresh: calcularLimites,
             // El relevo de fotos se engancha AQUÍ y no como un tween más de la
             // timeline: no es una interpolación (no hay nada que "ir
             // recorriendo"), es un cambio de estado discreto disparado por el
             // tramo en el que va el recorrido.
-            onUpdate: (self) => mostrar(pasoDe(self.progress)),
+            // El guard de `limites` evita el único caso en que esto se pintaría
+            // mal: un update antes del primer refresh dejaría `pasoDe` en -1 y
+            // se apagarían LAS TRES fotos.
+            onUpdate: (self) => {
+              if (limites.length) mostrar(pasoDe(self.progress))
+            },
           },
         })
         // ease 'none': la curva la pone el scroll, no el easing.

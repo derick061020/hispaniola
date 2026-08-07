@@ -1,8 +1,9 @@
 import { useState } from 'react'
-import { Image as ImageIcon, Plus, Users, UtensilsCrossed } from 'lucide-react'
+import { Image as ImageIcon, Users, UtensilsCrossed } from 'lucide-react'
 import { GaleriaLightbox } from '@/components/tour/galeria-lightbox'
+import { BannerLangosta } from '@/components/tour/banner-langosta'
+import { estadoDeFranja, type SeleccionAddOns } from '@/lib/tarifas'
 import { useOrigenExpansion } from '@/lib/use-expansion-flip'
-import { formatoDinero } from '@/data/home'
 import type { CartaCharter as CartaCharterDatos } from '@/data/tours'
 
 // LA CARTA DEL CHARTER — «El menú a medida».
@@ -199,9 +200,20 @@ function BentoBuffet({ celdas }: { celdas: NonNullable<CartaCharterDatos['bento'
   )
 }
 
-export function CartaCharter({ carta, etiqueta }: { carta: CartaCharterDatos; etiqueta: string }) {
+export function CartaCharter({
+  carta,
+  etiqueta,
+  seleccionAddOns,
+}: {
+  carta: CartaCharterDatos
+  etiqueta: string
+  /** [2026-08-07] Deja que la franja de la langosta marque el add-on en la
+   *  reserva. Sin ella la franja sigue existiendo, informativa. */
+  seleccionAddOns?: SeleccionAddOns
+}) {
   const [lightbox, setLightbox] = useState<number | null>(null)
   const origen = useOrigenExpansion()
+  const seleccion = estadoDeFranja(carta.addOn, seleccionAddOns)
 
   // Los platos con foto propia, y aparte el grupo de brochetas — que es UNA
   // celda aunque sean tres platos. El `!p.brocheta` del primer filtro es lo que
@@ -314,68 +326,23 @@ export function CartaCharter({ carta, etiqueta }: { carta: CartaCharterDatos; et
 
       {/* EL UPSELL, EN LÁMINA DE ORO. Antes era una card gris idéntica a la
           del buffet de Saona (el único extra de pago del menú se leía como una
-          nota al pie) y después un rectángulo casi negro, que era peor: la
-          piel del bloque Premium necesita superficie para respirar y aquí solo
-          hay una franja.
-          El degradado en diagonal —oro hundido → champán → oro— es lo que da
-          la lectura de METAL en vez de relleno plano; la tinta va en
-          --color-premium-fondo, como una carta impresa sobre pan de oro.
-          `group`: el hover de TODA la franja mueve la langosta, no solo el de
-          la langosta — es la franja entera la que responde. */}
+          nota al pie) y después un rectángulo casi negro, que era peor.
+          [2026-08-07] La franja se MUDA a tour/banner-langosta.tsx —ver allí el
+          porqué del oro y el detalle de la langosta que sangra— porque desde
+          hoy se puede clicar para marcar el add-on en la reserva, y porque el
+          bloque de menú de Saona pasa a usar exactamente la misma pieza. */}
       {menu.addOn ? (
-        <div className="group relative mt-2.5 flex flex-col gap-3 overflow-hidden rounded-card bg-gradient-to-br from-premium-oro-oscuro via-premium-oro-claro to-premium-oro p-4 ring-1 ring-premium-oro-oscuro/40 sm:flex-row sm:items-center sm:gap-4 sm:p-5 sm:pr-44">
-          {/* La langosta: decorativa, anclada al canto derecho y SANGRANDA
-              (sale del marco por la derecha). Un emblema centrado y entero
-              parecería un icono de lista; recortado por el borde parece un
-              sello estampado en la lámina.
-              Al hover se levanta y gira un punto — «que se mueva ligeramente»,
-              no que salte. `motion-safe` la deja quieta para quien pidió menos
-              movimiento; `pointer-events-none` evita que se coma clics.
-              Se oculta por debajo de sm: en una franja estrecha se solaparía
-              con el precio, que es el dato que no puede estorbarse.
-              El `sm:pr-44` de la franja le RESERVA el sitio: la langosta cae
-              justo donde iba el «US$ 30 por persona» y, aunque la cifra va
-              montada por delante, se leía sobre un enredo de pinzas. El
-              reservado tiene que cubrir lo que la imagen mete DENTRO del marco
-              (ancho pintado menos lo que sangra por la derecha) — con pr-36 se
-              quedaba corto por unos 25 px y una pinza seguía pisando la
-              palabra «persona». */}
-          <img
-            src="/fotos/langosta.webp"
-            alt=""
-            aria-hidden="true"
-            loading="lazy"
-            className="pointer-events-none absolute -right-6 top-1/2 hidden h-24 -translate-y-1/2 transition-transform duration-500 ease-out motion-safe:group-hover:-translate-y-[calc(50%+0.35rem)] motion-safe:group-hover:-rotate-6 sm:block"
-          />
-
-          {/* Icono y texto viajan juntos en su propia fila: en móvil la franja
-              se apila (texto arriba, precio debajo) y sin este envoltorio el
-              `flex-wrap` de la primera vuelta metía el precio AL LADO del
-              párrafo, dejándolo en una columna de cuatro palabras de ancho. */}
-          <div className="relative flex min-w-0 flex-1 items-center gap-3 sm:gap-4">
-            <span
-              aria-hidden="true"
-              className="grid size-10 shrink-0 place-items-center rounded-full bg-premium-fondo/10 text-premium-fondo ring-1 ring-premium-fondo/15"
-            >
-              <Plus className="size-5" />
-            </span>
-            <div className="min-w-0">
-              <p className="font-display text-base font-semibold text-premium-fondo">
-                Add premium lobster
-              </p>
-              {menu.addOn.descripcion ? (
-                <p className="mt-0.5 text-sm text-premium-fondo/70">{menu.addOn.descripcion}</p>
-              ) : null}
-            </div>
-          </div>
-          {/* relative: el precio se monta POR ENCIMA de la langosta, que pasa
-              justo por detrás. Sin esto la cifra —el dato que decide— quedaría
-              cruzada por una pinza. */}
-          <p className="relative shrink-0 font-display text-lg font-semibold text-premium-fondo">
-            {formatoDinero(menu.addOn.precio)}{' '}
-            <span className="text-xs font-normal text-premium-fondo/60">per person</span>
-          </p>
-        </div>
+        <BannerLangosta
+          addOn={menu.addOn}
+          activo={seleccion.activo}
+          onAlternar={seleccion.alternar}
+          // Esta carta se puede abrir a mano desde un barco de 3 h (el
+          // visitante compara los dos menús antes de elegir). Ahí la langosta
+          // no se puede añadir —esos barcos no llevan la cocina flotante— y la
+          // franja lo dice en vez de callarse.
+          notaNoElegible="Available on 4-hour charters, which sail with the Floating Kitchen."
+          className="mt-2.5"
+        />
       ) : null}
 
       {lightbox !== null ? (

@@ -93,7 +93,25 @@ export type PlatoBuffet = { nombre: string; desc?: string }
 export type MenuBuffetTour = {
   platos: PlatoBuffet[]
   /** Add-on al hacer check-out (ej: langosta premium). */
-  addOn?: { nombre: string; precio: number; descripcion?: string }
+  addOn?: AddOnDeMenu
+}
+
+/** El extra de pago que anuncia un bloque de menú (la franja dorada de la
+ *  langosta). Es la CARA de un `AddOn` del widget, no otro producto.
+ *
+ *  [2026-08-07, pedido de Samuel: «que el banner de add premium lobster sirva
+ *  para seleccionarlo en el widget»] `addOnId` es lo que ata las dos piezas: la
+ *  franja marca ESE add-on de `ficha.addOns` y refleja si está puesto. Sin el
+ *  campo la franja es solo informativa —el estado anterior— y el componente lo
+ *  pinta sin botón. Se declara aquí, en los datos, y no adivinando por nombre o
+ *  por precio desde el componente: si mañana hay un segundo extra de menú, el
+ *  vínculo sigue siendo explícito. */
+export type AddOnDeMenu = {
+  nombre: string
+  precio: number
+  descripcion?: string
+  /** id del add-on de `ficha.addOns` que marca esta franja. */
+  addOnId?: string
 }
 
 /** Menú transversal del charter (los 7 platos + 1 add-on de langosta).
@@ -120,15 +138,12 @@ export type CartaCharter = {
    *  no como segunda carta: la del buffet no existe todavia por escrito y no
    *  se inventan platos. */
   nota?: string
-  /** Sello sobre el titulo. El «New» con el que el cliente presenta los menus
-   *  de brocheta en su maqueta. */
-  badge?: string
   /** A cuantas personas aplica esta carta. Nace con la regla del tarifario que
    *  el cliente confirma en la slide 73: emplatado hasta 20, buffet de pinchos
    *  de 21 en adelante. */
   aforo?: string
   platos: { nombre: string; desc?: string; foto?: string; brocheta?: boolean }[]
-  addOn?: { nombre: string; precio: number; descripcion?: string }
+  addOn?: AddOnDeMenu
   /** [v3 2026-08-06, maqueta de la slide 74] Carta que NO se presenta como
    *  rejilla de platos sino como BENTO de fotos: una grande del menu completo
    *  y, al lado, la porcion por persona y dos de como se sirve. Es el formato
@@ -350,7 +365,7 @@ const QUE_LLEVAR_MARINE_PARK = [
 // los dos ejemplos que dio Miguel en la reunión del 07-31, no una lista
 // redactada. La definitiva está pedida (índice de planes, petición 2).
 const RECOMENDACIONES_V3 = [
-  'Bring reef-safe sunscreen and skin cream — the sun on the water is stronger than it feels. [placeholder-v3]',
+  'Bring reef-safe sunscreen and skin cream. The sun on the water is stronger than it feels. [placeholder-v3]',
   'Cash in US dollars is the easiest way to pay for tips and any on-board add-on. [placeholder-v3]',
 ]
 
@@ -374,7 +389,7 @@ const MENU_PREMIUM_CASA: PlatoMenu[] = [
 
 export const FICHAS: Record<string, FichaTour> = {
   'semi-private-premium': {
-    tituloLargo: 'Semi-Private Premium — adults-only catamaran',
+    tituloLargo: 'Semi-Private Premium · adults-only catamaran',
     // [v3 2026-08-06, WEBSITE-TOURS pág. 2] Título APROBADO del bloque de
     // descripción, literal. Convive con el H1 del hero, que sigue siendo el
     // NOMBRE del producto (el que usan el ticker, el grid y el megamenú): uno
@@ -445,7 +460,7 @@ export const FICHAS: Record<string, FichaTour> = {
       'galeria-semi-privado-7',
     ],
     videoGaleria: '/video/hero.mp4',
-    quoteDestacada: 'The coral was the highlight of the trip — the biologist explained everything to us.',
+    quoteDestacada: 'The coral was the highlight of the trip. The biologist explained everything to us.',
     // [v3 2026-08-06, WEBSITE-TOURS pág. 8] Itinerario APROBADO, con DOBLE
     // SALIDA: cada parada trae la hora del turno de mañana y la del de tarde
     // («8:20 AM / 12:20 PM»), tal como lo escribió el cliente. Hasta ahora la
@@ -485,7 +500,7 @@ export const FICHAS: Record<string, FichaTour> = {
         hora: '12:00 PM / 4:00 PM',
         titulo: 'Natural Pool & Floating Kitchen',
         texto:
-          "Swim in Punta Cana's famous crystal-clear natural pool before enjoying your freshly prepared gourmet lunch from our signature Floating Kitchen. No buffets — every meal is cooked fresh on board.",
+          "Swim in Punta Cana's famous crystal-clear natural pool before enjoying your freshly prepared gourmet lunch from our signature Floating Kitchen. No buffets. Every meal is cooked fresh on board.",
       },
       {
         hora: '1:15 PM / 5:15 PM',
@@ -507,10 +522,10 @@ export const FICHAS: Record<string, FichaTour> = {
     faqTour: [
       { p: 'What if it rains?', r: 'Full refund or a date change, at no cost.' },
       { p: 'Is there a restroom on board?', r: 'Yes, every one of our boats has a restroom.' },
-      { p: 'Can I come if I cannot swim?', r: 'Yes — the snorkeling is in shallow water and life jackets are available.' },
+      { p: 'Can I come if I cannot swim?', r: 'Yes, the snorkeling is in shallow water and life jackets are available.' },
       {
         p: 'Should I bring cash? How much?',
-        r: 'Only if you choose to pay the 25% deposit — the balance gets a 5% discount when paid in cash.',
+        r: 'Only if you choose to pay the 25% deposit, the balance gets a 5% discount when paid in cash.',
       },
     ],
     tambienTeGusta: ['snorkel-lovers', 'private-charter'],
@@ -547,7 +562,7 @@ export const FICHAS: Record<string, FichaTour> = {
   },
 
   'snorkel-lovers': {
-    tituloLargo: 'Snorkel Lovers — a catamaran for all ages',
+    tituloLargo: 'Snorkel Lovers · a catamaran for all ages',
     // [v3 2026-08-06, WEBSITE-TOURS pág. 11] Título APROBADO del bloque de
     // descripción.
     promesa: 'Discover the Caribbean Beneath the Surface',
@@ -572,7 +587,7 @@ export const FICHAS: Record<string, FichaTour> = {
       "Departing from Bávaro, you'll sail to our exclusive Marine Park, where you'll snorkel among vibrant coral reefs, tropical fish, artificial reefs and the Underwater Museum, all within one of the Dominican Republic's leading coral restoration projects.",
       "Before boarding, you'll visit our Marine Interpretation Center, where our Foundation team will introduce you to the reef ecosystem, explain how coral restoration works and show how these projects are helping protect Punta Cana's marine life for future generations.",
       "On board, you'll take part in a symbolic coral planting activity, becoming part of the restoration effort and creating a meaningful connection with the ocean you'll soon explore.",
-      'The experience continues with two incredible snorkeling locations. First, the protected reef inside our Marine Park. Then, the crystal-clear Natural Pool, where our artificial reefs attract colorful marine life and provide an ideal second snorkeling experience for both beginners and experienced swimmers. Keep your eyes on the horizon as well — sea turtles are frequently spotted from the catamaran during the journey.',
+      'The experience continues with two incredible snorkeling locations. First, the protected reef inside our Marine Park. Then, the crystal-clear Natural Pool, where our artificial reefs attract colorful marine life and provide an ideal second snorkeling experience for both beginners and experienced swimmers. Keep your eyes on the horizon as well. Sea turtles are frequently spotted from the catamaran during the journey.',
       'To complete the day, enjoy our signature Floating Kitchen, where every meal is freshly prepared on board using premium ingredients. Choose from our Premium Menu featuring certified Angus beef, fresh lobster, Surf & Turf and other gourmet options, while relaxing with our open bar in the heart of the Caribbean.',
       "This isn't simply a snorkeling excursion. It's an opportunity to explore, learn, contribute and experience one of the most unique marine conservation projects in Punta Cana. Don't just discover the reef. Become part of its future.",
     ],
@@ -689,7 +704,7 @@ export const FICHAS: Record<string, FichaTour> = {
       'galeria-snorkel-lovers-18',
     ],
     videoGaleria: '/video/hero.mp4',
-    quoteDestacada: 'Perfect for going with kids — everyone felt safe.',
+    quoteDestacada: 'Perfect for going with kids. Everyone felt safe.',
     itinerarioTitulo: 'Marine Park Journey',
     itinerarioNota:
       'Hotel pickup time depends on your location. Your exact pickup time will be confirmed after your reservation.',
@@ -743,19 +758,25 @@ export const FICHAS: Record<string, FichaTour> = {
     // Los 8 items aprobados son IDENTICOS a los del semi-privado en el
     // documento del cliente (pags. 16-17 = 9-10) -> constante compartida.
     incluye: INCLUYE_MARINE_PARK,
-    noIncluido: NO_INCLUIDO_MARINE_PARK,
+    // [v3 2026-08-07, pedido de Samuel] SIN «professional photographer (on
+    // request, extra cost)». Por eso esta ficha deja de usar
+    // NO_INCLUIDO_MARINE_PARK y escribe su propia línea: el resto es idéntico
+    // —si se toca una, hay que mirar la otra—, pero el fotógrafo no se anuncia
+    // aquí. Mismo cambio en Saona.
+    noIncluido:
+      'Not included: HD photo album (US$ 20/group via Dropbox) · transportation surcharge from Casa de Campo.',
     queLlevar: QUE_LLEVAR_MARINE_PARK,
     recomendaciones: RECOMENDACIONES_V3,
     faqTour: [
       {
         p: 'What is the minimum age for children?',
-        r: 'There is no minimum age — the snorkeling is in shallow water and we carry life jackets in every size.',
+        r: 'There is no minimum age. The snorkeling is in shallow water and we carry life jackets in every size.',
       },
       { p: 'Are there child life jackets?', r: 'Yes, for every age and size.' },
-      { p: 'Can I come if I cannot swim?', r: 'Yes — the snorkeling is in shallow water and life jackets are available.' },
+      { p: 'Can I come if I cannot swim?', r: 'Yes, the snorkeling is in shallow water and life jackets are available.' },
       {
         p: 'Should I bring cash? How much?',
-        r: 'Only if you choose to pay the 25% deposit — the balance gets a 5% discount when paid in cash.',
+        r: 'Only if you choose to pay the 25% deposit, the balance gets a 5% discount when paid in cash.',
       },
     ],
     tambienTeGusta: ['semi-private-premium', 'private-charter'],
@@ -790,7 +811,7 @@ export const FICHAS: Record<string, FichaTour> = {
         'In this section we offer our Private Charter in Premium mode, which is our best seller.',
       cta: { texto: 'See more affordable options', a: '/eventos/party-boat' },
     },
-    tituloLargo: 'Private Charter — the whole catamaran for your group',
+    tituloLargo: 'Private Charter · the whole catamaran for your group',
     // [v3 2026-08-06, WEBSITE-TOURS pag. 17] Titulo APROBADO del bloque de
     // descripcion.
     promesa: 'Your Private Caribbean Experience',
@@ -807,6 +828,22 @@ export const FICHAS: Record<string, FichaTour> = {
     // Forever Teresa 120 -> 85). Ver el comentario de cada barco.
     descripcionLarga: [
       "Whether you're celebrating with family, friends or colleagues, our Private Catamaran Charters give you the freedom to enjoy Punta Cana your way.",
+      // [v3 2026-08-07, pedido de Samuel: «este texto tal cual»] LA LISTA DE
+      // BARCOS, que faltaba. Se había omitido porque el selector del widget ya
+      // enseña los cuatro con sus horas y su aforo; pero el documento la pone
+      // en la descripción, y ahí hace algo que el widget no: se lee sin tocar
+      // nada y sobrevive al móvil, donde el widget queda a pantallas de
+      // distancia. Cada barco es su propia línea —así lo escribe él— y el
+      // bloque de descripción las separa como párrafos cortos.
+      // ⚠️ ESTAS CIFRAS Y LAS DE `subVariantes` SON EL MISMO DATO ESCRITO DOS
+      // VECES. Es la excepción, no la regla: el copy es del cliente y va
+      // literal. Si cambia un aforo, hay que tocar los dos sitios — y el
+      // segundo manda en lo que se cobra.
+      'Choose the catamaran that best fits your group:',
+      'Maite – 4 hours · Up to 15 guests',
+      'GrandMa – 3 hours · Up to 50 guests',
+      'Santa Maria – 4 hours · Up to 45 guests',
+      'Forever Teresa – 3 or 4 hours · Up to 85 guests',
       "Departing from our private marina in Bávaro, you'll cruise along Punta Cana's spectacular coastline toward Cabeza de Toro, where you'll discover our exclusive Marine Park. Snorkel among the Underwater Museum, coral restoration gardens and artificial reefs before relaxing in the famous crystal-clear Natural Pool.",
       'Our 4-hour charters include our signature Floating Kitchen, where every meal is freshly prepared on board. Guests can choose from seven gourmet menu options, including seafood, certified Angus beef, Surf & Turf, vegetarian dishes and more. Fresh lobster is available as an optional upgrade.',
       'For 3-hour charters, we serve our popular Taste of Hispaniola Menu, featuring freshly prepared grilled skewers with your choice of chicken, beef or shrimp, accompanied by sides and our open bar.',
@@ -1007,7 +1044,7 @@ export const FICHAS: Record<string, FichaTour> = {
           // carta: la del buffet de pinchos no existe por escrito todavia y
           // este proyecto no inventa platos. Cuando llegue, es una carta mas.
           aforo: 'Up to 20 guests',
-          nota: 'From 21 guests the menu changes — see the skewer buffet.',
+          nota: 'From 21 guests the menu changes. See the skewer buffet.',
           // Son los 7 platos Premium de la casa — los mismos que el copy
           // aprobado describe («seafood, certified Angus beef, Surf & Turf,
           // vegetarian dishes and more») y los mismos que ya sirven el
@@ -1016,24 +1053,24 @@ export const FICHAS: Record<string, FichaTour> = {
           // cliente las pone, y sin ellas la carta se quedaba en 4 — no en los
           // «seven» que promete su propio texto.
           platos: MENU_PREMIUM_CASA,
+          // [2026-08-07] `addOnId` conecta esta franja con el add-on 'langosta'
+          // de `addOns` (abajo): la franja del menú ya no solo lo anuncia, lo
+          // MARCA en el widget. El precio no se repite en la descripción — la
+          // franja lo pinta a su derecha.
           addOn: {
-            nombre: 'Lobster premium',
+            nombre: 'Premium lobster',
             precio: 30,
-            descripcion: 'Add fresh lobster to your dish, US$ 30 per person.',
+            descripcion: 'Add fresh lobster to your dish, grilled on board.',
+            addOnId: 'langosta',
           },
         },
         {
           id: '3h',
           pestana: '3-hour menu',
           aforo: 'Up to 20 guests',
-          nota: 'From 21 guests the menu changes — see the skewer buffet.',
+          nota: 'From 21 guests the menu changes. See the skewer buffet.',
           titulo: 'Taste of Hispaniola Menu',
-          // Nombre canonico del menu de 3 h, de WEBSITE-TOURS pag. 17. SIN
-          // sello «New»: el cliente lo dibuja sobre la maqueta del menu de
-          // brochetas de 21+ (slide 74), y su propio copy llama a este «our
-          // POPULAR Taste of Hispaniola Menu» — que es justo lo contrario de
-          // nuevo. Dos «New» seguidos en la misma fila de pestanas ademas no
-          // destacan nada.
+          // Nombre canonico del menu de 3 h, de WEBSITE-TOURS pag. 17.
           texto:
             'Freshly prepared grilled skewers with your choice of chicken, beef or shrimp, accompanied by sides and our open bar.',
           // ⚠️ [placeholder-v3] Las 3 brochetas comparten la foto de la
@@ -1061,7 +1098,12 @@ export const FICHAS: Record<string, FichaTour> = {
           pestana: 'Groups of 21+',
           aforo: 'From 21 guests',
           titulo: 'Skewer buffet',
-          badge: 'New',
+          // Sin sello «New» (Samuel, 2026-08-07). El cliente lo dibuja en su
+          // maqueta de la slide 74, pero en la fila de pestanas no marcaba una
+          // novedad sino la carta que te toca por aforo — y esa ya la elige el
+          // widget solo. Con el sello fuera, ninguna de las 3 cartas lleva
+          // distintivo: las tres son igual de vigentes y lo que las separa es
+          // la regla (duracion o numero de personas), no la antiguedad.
           texto:
             'From 21 guests, on both 3-hour and 4-hour charters, the menu is served as a skewer buffet: chicken, beef and shrimp, freshly grilled on board and served for the whole group.',
           // Sin rejilla de platos: en un buffet no se elige plato por persona,
@@ -1132,7 +1174,7 @@ export const FICHAS: Record<string, FichaTour> = {
       'galeria-charter-privado-7',
     ],
     videoGaleria: '/video/hero.mp4',
-    quoteDestacada: 'They tailored everything for us — the whole boat just for the family.',
+    quoteDestacada: 'They tailored everything for us, the whole boat just for the family.',
     // [v3 2026-08-06, WEBSITE-TOURS pag. 20: «QUITAR HORAS Y PONER DEBAJO DE
     // PLAYA DESIERTA SOLO EN TOUR DE 4 HORAS»] Las horas desaparecen — un
     // charter privado zarpa cuando quiere el grupo, y publicarlas fijas
@@ -1173,10 +1215,10 @@ export const FICHAS: Record<string, FichaTour> = {
       },
     ],
     incluye: [
-      { titulo: 'The whole boat', texto: 'No strangers on board — the boat is yours alone.' },
+      { titulo: 'The whole boat', texto: 'No strangers on board. The boat is yours alone.' },
       { titulo: 'Round-trip transportation', texto: 'Air-conditioned, from your hotel (Bávaro / Punta Cana).' },
       { titulo: 'Food your way', texto: '7 dishes to choose from: seafood, meat, surf & turf, vegetarian and skewers.' },
-      { titulo: 'A dedicated coordinator', texto: 'One person from start to finish — no surprises.' },
+      { titulo: 'A dedicated coordinator', texto: 'One person from start to finish, no surprises.' },
     ],
     incluyeExtra: [
       'WiFi on board',
@@ -1202,9 +1244,9 @@ export const FICHAS: Record<string, FichaTour> = {
         p: 'How many guests fit on each catamaran?',
         r: 'Maite up to 15 · GrandMa up to 50 · Santa Maria up to 45 · Forever Teresa up to 85.',
       },
-      { p: 'Is there a minimum number of guests?', r: 'Maite starts at 1 guest (the US$ 625 rate covers up to 8). The others have no formal minimum — ask us on WhatsApp for groups under 6.' },
-      { p: 'Can I choose the menu?', r: 'Yes — we agree the seven dishes with you (seafood, meat, Surf & Turf, vegetarian and the chicken, beef or shrimp skewers). Premium lobster is an optional add-on.' },
-      { p: 'Do you accept corporate payments?', r: 'Yes — see the Corporate & MICE page for formal invoicing.' },
+      { p: 'Is there a minimum number of guests?', r: 'Maite starts at 1 guest (the US$ 625 rate covers up to 8). The others have no formal minimum. Ask us on WhatsApp for groups under 6.' },
+      { p: 'Can I choose the menu?', r: 'Yes, we agree the seven dishes with you (seafood, meat, Surf & Turf, vegetarian and the chicken, beef or shrimp skewers). Premium lobster is an optional add-on.' },
+      { p: 'Do you accept corporate payments?', r: 'Yes, see the Corporate & MICE page for formal invoicing.' },
       { p: 'What if it rains?', r: 'Full refund or a date change, at no cost.' },
     ],
     tambienTeGusta: ['semi-private-premium', 'snorkel-lovers'],
@@ -1254,7 +1296,7 @@ export const FICHAS: Record<string, FichaTour> = {
     // catamarán), no eligiendo menú: no hay Light contra el que contrastar, y
     // el día completo a la isla es el producto caro de la casa.
     widgetPremiumDeBase: true,
-    tituloLargo: 'Saona Island — full day, choose your boat',
+    tituloLargo: 'Saona Island · full day, choose your boat',
     // [v3 2026-08-06, WEBSITE-TOURS pag. 21] Titulo APROBADO del bloque de
     // descripcion.
     promesa: 'A Day in Paradise',
@@ -1272,7 +1314,7 @@ export const FICHAS: Record<string, FichaTour> = {
     descripcionLarga: [
       "Saona Island is one of the Dominican Republic's most iconic destinations, famous for its powder-white beaches, crystal-clear turquoise waters and breathtaking Natural Pool, where giant starfish can often be seen resting on the sandy bottom.",
       "Departing from Bayahibe, you'll spend the day exploring the island's most beautiful locations, including Catuano, Las Palmillas and, on our Fishing Town itinerary, the charming fishing village of Mano Juan.",
-      'Choose the experience that best suits your group: Private Speedboat — the fastest and most exclusive option, for up to 9 guests. Catamaran — the classic Caribbean sailing experience. Speedboat Adventure — including stops at Mano Juan and Playa Toro.',
+      'Choose the experience that best suits your group: Private Speedboat, the fastest and most exclusive option, for up to 9 guests. Catamaran, the classic Caribbean sailing experience. Speedboat Adventure, including stops at Mano Juan and Playa Toro.',
       'All options include a traditional Dominican buffet served on the island and time to relax in the famous Natural Pool at Las Palmillas.',
       'As the day comes to an end, enjoy a scenic cruise back along the Caribbean coastline before returning to your hotel.',
     ],
@@ -1362,10 +1404,14 @@ export const FICHAS: Record<string, FichaTour> = {
         { nombre: 'Pork chops' },
         { nombre: 'Tropical fruit' },
       ],
+      // [2026-08-07] Igual que en el charter: `addOnId` ata la franja al add-on
+      // 'langosta' del widget. La descripción decía «Added at checkout» y eso ya
+      // no es verdad —se puede añadir aquí mismo—, así que cambia.
       addOn: {
         nombre: 'Premium lobster',
         precio: 30,
-        descripcion: 'Added at checkout, US$ 30 per person.',
+        descripcion: 'Lobster for everyone on board, on top of the buffet.',
+        addOnId: 'langosta',
       },
     },
     // Galería de 11 fotos reales de la web del cliente
@@ -1387,7 +1433,7 @@ export const FICHAS: Record<string, FichaTour> = {
       'galeria-isla-saona-11',
     ],
     videoGaleria: '/video/hero.mp4',
-    quoteDestacada: 'The Natural Pool with the giant starfish was the best part — and the buffet on the beach, incredible.',
+    quoteDestacada: 'The Natural Pool with the giant starfish was the best part, and the buffet on the beach, incredible.',
     // [v3 2026-08-06] Traduccion NUESTRA: el documento del cliente no trae
     // itinerario de Saona, asi que se porta el que habia. Lo unico que cambia
     // ademas del idioma es el nombre de la variante que pasa por Mano Juan,
@@ -1437,8 +1483,10 @@ export const FICHAS: Record<string, FichaTour> = {
       { titulo: 'Natural Pool', texto: 'Stop at Las Palmillas with giant starfish and a snack in the water.' },
     ],
     incluyeExtra: ['Wi-Fi on board', 'Snorkeling gear', 'Bilingual guide throughout the day'],
+    // [v3 2026-08-07, pedido de Samuel] SIN «professional photographer (on
+    // request, extra cost)», igual que en snorkel-lovers.
     noIncluido:
-      'Not included: premium lobster (US$ 30/person, optional add-on at checkout) · professional photographer (on request, extra cost) · transportation from Casa de Campo (surcharge).',
+      'Not included: premium lobster (US$ 30/person, optional add-on at checkout) · transportation from Casa de Campo (surcharge).',
     queLlevar: [
       'Swimsuit',
       'Towel',
@@ -1457,7 +1505,7 @@ export const FICHAS: Record<string, FichaTour> = {
       { p: 'What if it rains?', r: 'Full refund or a date change, at no cost.' },
       {
         p: 'Is there a minimum age for children?',
-        r: 'No minimum age — we carry life jackets in every size on both the speedboat and the catamaran.',
+        r: 'No minimum age. We carry life jackets in every size on both the speedboat and the catamaran.',
       },
     ],
     tambienTeGusta: ['semi-private-premium', 'private-charter'],

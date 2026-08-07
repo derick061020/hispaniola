@@ -61,7 +61,8 @@ export function SeccionModalidad({ ficha }: { ficha: FichaTour }) {
             <p className="text-eyebrow font-semibold uppercase tracking-[0.14em] text-premium-oro-oscuro">
               {modalidad.eyebrow}
             </p>
-            <p className="mt-1 max-w-2xl text-navy-sub">{modalidad.texto}</p>
+            {/* [v3 2026-08-07] Sin tope de ancho (ver comparador-premium.tsx). */}
+            <p className="mt-1 text-navy-sub">{modalidad.texto}</p>
           </div>
         </div>
 

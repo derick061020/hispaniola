@@ -76,7 +76,7 @@ export function AddOnsWidget({
                 ¿Seguro? Estas fotos no se repiten.
               </p>
               <p className="mt-1 text-xs leading-relaxed text-navy-sub">
-                El álbum completo en máxima calidad —todas, sin recortar— por{' '}
+                El álbum completo en máxima calidad (todas, sin recortar) por{' '}
                 {formatoDinero(a.precio)} para todo el grupo.
               </p>
               <div className="mt-3 flex gap-2">

@@ -12,7 +12,7 @@ export function FaqPage() {
     <div>
       <Meta
         titulo="Frequently asked questions"
-        descripcion="Bookings and payments, what to bring, food, weather and children — the 17 most frequently asked questions about Hispaniola’s tours."
+        descripcion="Bookings and payments, what to bring, food, weather and children: the 17 most frequently asked questions about Hispaniola’s tours."
         ruta="/faq"
       />
       <HeroInterna ctaHref="/#tours">

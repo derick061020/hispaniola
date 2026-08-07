@@ -1,10 +1,12 @@
+import { useId, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight, Clock, Star, Users } from 'lucide-react'
 import type { Tour } from '@/data/home'
 import { formatoDinero } from '@/data/home'
 import { CarruselImagenes } from '@/components/ui/carrusel-imagenes'
+import { useTextoRecortado } from '@/lib/use-texto-recortado'
 
-// Card de tour — el escaparate de "Nuestros tours". El CTA "Ver tour" navega a
+// Card de tour — el escaparate de "Nuestros tours". El CTA "View tour" navega a
 // la ficha REAL (/tours/:slug, PLAN-TOURS.md): era un EnlacePrototipo mientras
 // la ficha solo existía en prototipo/.
 //
@@ -29,8 +31,23 @@ import { CarruselImagenes } from '@/components/ui/carrusel-imagenes'
 // v3-F17.2 sigue vivo: las clases `tour-card` (aquí) + `.tours-cards` (en
 // tours-grid.tsx) enganchan el hover de GRUPO por `:has()` (componentes.css) —
 // al pasar por una, crece/rota y las demás se apagan.
-export function TourCard({ tour, autoAvance = true }: { tour: Tour; autoAvance?: boolean }) {
+export function TourCard({
+  tour,
+  autoAvance = true,
+  descripcionDesplegada = false, // [dev-mode]
+}: {
+  tour: Tour
+  autoAvance?: boolean
+  descripcionDesplegada?: boolean
+}) {
   const galeria = tour.galeria ?? [tour.foto]
+
+  const idDescripcion = useId()
+  const [desplegadaAqui, setDesplegadaAqui] = useState(false)
+  const desplegada = desplegadaAqui || descripcionDesplegada // [dev-mode] gate
+  // El 2 va emparejado con el `line-clamp-2` del párrafo (Tailwind necesita la
+  // clase literal): si cambia uno, cambia el otro.
+  const { ref: refDescripcion, recortado } = useTextoRecortado(2)
 
   return (
     <article className="tour-card group relative flex flex-col overflow-hidden rounded-card-grande bg-papel shadow-card ring-1 ring-linea transition motion-safe:hover:-translate-y-1 hover:shadow-card-flotante">
@@ -69,7 +86,57 @@ export function TourCard({ tour, autoAvance = true }: { tour: Tour; autoAvance?:
           )}
         </div>
 
-        <p className="line-clamp-2 text-sm text-navy-sub">{tour.descripcionCorta}</p>
+        {/* Descripción plegada a 2 líneas con un «See more» al final, como el
+            pie de foto de Instagram (pedido de Samuel).
+            El botón NO cuelga debajo del párrafo: se SUPERPONE al final de la
+            2ª línea con el fondo de la card (bg-papel) y un degradado a su
+            izquierda, así tapa los puntos suspensivos que pinta `line-clamp` y
+            los sustituye por los suyos + la palabra. De paso, la card plegada
+            mide exactamente lo que medía antes de que existiera el botón.
+            z-20 en LOS DOS estados: el "stretched link" que hace navegable la
+            card entera vive en z-10 (arriba) — sin esto, el clic abriría la
+            ficha del tour en vez de desplegar el texto.
+            `recortado` (lib/use-texto-recortado.ts) mide de verdad si el clamp
+            dejó texto fuera: las 4 descripciones no miden lo mismo y la
+            rejilla va a 1, 2 o 4 columnas, así que hay anchos donde alguna
+            entra entera y ahí no debe salir botón. */}
+        <div className={desplegada ? undefined : 'relative'}>
+          <p
+            ref={refDescripcion}
+            id={idDescripcion}
+            className={`text-sm text-navy-sub ${desplegada ? '' : 'line-clamp-2'}`}
+          >
+            {tour.descripcionCorta}
+          </p>
+          {recortado && (
+            <button
+              type="button"
+              onClick={() => setDesplegadaAqui((v) => !v)}
+              aria-expanded={desplegada}
+              aria-controls={idDescripcion}
+              className={`z-20 text-sm font-medium text-navy-soft transition-colors hover:text-navy focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aqua ${
+                desplegada
+                  ? 'relative mt-1'
+                  : 'absolute bottom-0 right-0 bg-papel pl-1 before:pointer-events-none before:absolute before:right-full before:top-0 before:h-full before:w-8 before:bg-linear-to-r before:from-transparent before:to-papel'
+              }`}
+            >
+              {desplegada ? (
+                'See less'
+              ) : (
+                <>
+                  {/* Los puntos van en el color del PÁRRAFO y ocultos al lector
+                      de pantalla: son la continuación visual del texto que
+                      tapamos, no parte del nombre del botón (que es "See
+                      more"). */}
+                  <span aria-hidden="true" className="text-navy-sub">
+                    …
+                  </span>{' '}
+                  See more
+                </>
+              )}
+            </button>
+          )}
+        </div>
 
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-navy-soft">
           <span className="flex items-center gap-1.5">
@@ -120,7 +187,7 @@ export function TourCard({ tour, autoAvance = true }: { tour: Tour; autoAvance?:
             to={`/tours/${tour.slug}`}
             className="relative z-20 flex w-full items-center justify-center gap-2 rounded-chip bg-coral px-4 py-3 text-sm font-semibold text-white shadow-boton-fancy transition duration-200 ease-out before:pointer-events-none before:absolute before:inset-0 before:z-10 before:rounded-[inherit] before:bg-linear-to-b before:from-white/12 before:to-transparent before:p-px before:[mask-clip:content-box,border-box] before:[mask-composite:exclude] before:[mask-image:linear-gradient(#fff_0_0),linear-gradient(#fff_0_0)] after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:bg-linear-to-b after:from-white after:to-transparent after:opacity-[.16] after:transition after:duration-200 after:ease-out hover:after:opacity-[.24]"
           >
-            Ver tour
+            View tour
             <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
           </Link>
         </div>

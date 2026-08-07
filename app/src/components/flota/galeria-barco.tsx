@@ -146,10 +146,18 @@ export function GaleriaBarco({
             className="absolute right-3 top-3 inline-flex items-center gap-1.5 rounded-chip bg-papel/90 px-3 py-1.5 text-xs font-semibold text-navy shadow-sm backdrop-blur-sm transition hover:bg-papel"
           >
             <Rotate3d className="size-3.5" aria-hidden="true" />
-            Ver en 360º
-            <span className="sr-only"> — {nombre}</span>
+            View in 360º
+            <span className="sr-only">, {nombre}</span>
           </button>
         ) : null}
+
+        {/* ⚠️ EL SELLO ECO NO VIVE AQUÍ, aunque su sitio esté a caballo del canto
+            de arriba de esta caja. Vive en barco-card.tsx, posicionado contra la
+            CARD, porque esta caja es `overflow-hidden` —lo necesita para
+            recortar la foto/vídeo a su radio— y le comería justo la mitad que
+            tiene que sobresalir (2ª vuelta 2026-08-07, Samuel: «que sobresalga;
+            que el centro del badge esté en el extremo superior de la imagen»).
+            Se anota aquí para que nadie lo mueva de vuelta. */}
 
         <span className="pointer-events-none absolute bottom-3 left-3 text-xs font-medium text-white/90">
           {actual.etiqueta}
@@ -164,7 +172,7 @@ export function GaleriaBarco({
             <button
               type="button"
               onClick={() => ir(indice - 1)}
-              aria-label={`Ver la pieza anterior de ${nombre}`}
+              aria-label={`View the previous item of ${nombre}`}
               className="absolute left-2 top-1/2 grid size-9 -translate-y-1/2 place-items-center rounded-chip bg-papel/85 text-navy opacity-0 shadow-sm backdrop-blur-sm transition hover:bg-papel focus-visible:opacity-100 group-hover/media:opacity-100 max-sm:opacity-100"
             >
               <ChevronLeft className="size-5" aria-hidden="true" />
@@ -172,7 +180,7 @@ export function GaleriaBarco({
             <button
               type="button"
               onClick={() => ir(indice + 1)}
-              aria-label={`Ver la pieza siguiente de ${nombre}`}
+              aria-label={`View the next item of ${nombre}`}
               className="absolute right-2 top-1/2 grid size-9 -translate-y-1/2 place-items-center rounded-chip bg-papel/85 text-navy opacity-0 shadow-sm backdrop-blur-sm transition hover:bg-papel focus-visible:opacity-100 group-hover/media:opacity-100 max-sm:opacity-100"
             >
               <ChevronRight className="size-5" aria-hidden="true" />
@@ -200,8 +208,8 @@ export function GaleriaBarco({
             onClick={() => ir(i)}
             aria-label={
               pieza.tipo === 'video'
-                ? `Ver el vídeo de ${nombre}`
-                : `Ver la foto «${pieza.etiqueta}» de ${nombre}`
+                ? `Watch the video of ${nombre}`
+                : `View the “${pieza.etiqueta}” photo of ${nombre}`
             }
             aria-current={i === indice}
             className={`relative aspect-[4/3] min-w-0 flex-1 overflow-hidden rounded-btn border-2 transition ${

@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom'
-import { ArrowRight, Users } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import { Etiqueta } from '@/components/ui/etiqueta'
 import { SelloTripAdvisor } from '@/components/ui/sello-tripadvisor'
-import { FAMILIA_FLOTA, RECORRIDO_FLOTA } from '@/data/flota'
+import { FAMILIA_FLOTA } from '@/data/flota'
 import { EQUIPO } from '@/data/nosotros'
 
 // LA PRESENTACIÓN DE /flota — «Bienvenido a la familia Hispaniola», el dueño
@@ -20,7 +20,8 @@ import { EQUIPO } from '@/data/nosotros'
 //   │ eyebrow                 │ │ foto grande        │
 //   │ titular                 │ │  · sello flotando  │
 //   │ párrafo                 │ │  · card anidada    │
-//   │ caja de destacado       │ │    abajo-derecha   │
+//   │ (caja de destacado:     │ │    abajo-derecha   │
+//   │  retirada, ver abajo)   │ │                    │
 //   │ cita del fundador       │ └────────────────────┘
 //   │ CTA                     │
 //   └─────────────────────────┘
@@ -41,15 +42,17 @@ import { EQUIPO } from '@/data/nosotros'
 //    bienvenida y las cards es el único sitio donde se lee como explicación
 //    de lo que viene después (los barcos). Detrás de las cards habría sido un
 //    epílogo.
+//    ⚠️ SIGUE SIENDO CIERTO, pero el recorrido YA NO VIVE EN ESTE ARCHIVO
+//    (2026-08-07): se fue a flota/recorrido-flota.tsx para poder sangrar hasta
+//    el borde de la pantalla, lo que exige colgar fuera del contenedor de la
+//    página. El ORDEN no cambia — pages/flota.tsx lo monta justo detrás de
+//    esta sección, que es lo que decía esta nota.
 //
-// 3. LA CIFRA DE LA FLOTA SE CUENTA, NO SE ESCRIBE (ver data/flota.ts): el
-//    KPI y el último hito salen de `FLOTA.length`. El plan 04 §2 avisa de que
-//    «Flota de 6» está escrito a mano en varios sitios y hay que cambiarlos
-//    todos al pasar a 12 — aquí ya no.
-//
-// El trazado de la línea de tiempo lo sigue haciendo `use-timeline-historia`,
-// que engancha por las clases `.nosotros-timeline` / `.timeline-*`: se
-// conservan literalmente para no duplicar un hook que ya funciona.
+// 3. LA CIFRA DE LA FLOTA SE LEE DE UN SOLO SITIO, NO SE ESCRIBE EN LA VISTA:
+//    el KPI sale de `BARCOS_FLOTA` (data/flota.ts). Hasta el 2026-08-07 salía
+//    de `FLOTA.length`, y eso hacía que la banda dijera «Fleet of 6» — la
+//    cuenta de los barcos con ficha completa, no la flota. El cliente dice 12
+//    y su timeline los nombra; ver el porqué de la constante.
 export function FamiliaHispaniola() {
   // `cta?.` — el campo es opcional desde el 2026-07-28 (las cards de
   // /fundacion no llevan CTA). Aquí no cambia nada: los miembros de EQUIPO lo
@@ -73,19 +76,15 @@ export function FamiliaHispaniola() {
             ))}
           </div>
 
-          {/* La caja de destacado. Barra aqua a la izquierda en vez de un
-              recuadro completo: el guardarraíl de la dirección B pide el aqua
-              con cuentagotas, y una caja teñida entera a este tamaño ya es
-              fondo de sección. */}
-          <div className="mt-6 flex gap-4 rounded-card bg-papel-hueso p-5">
-            <span className="grid size-9 shrink-0 place-items-center rounded-full bg-aqua-tint text-aqua-dark">
-              <Users className="size-4" aria-hidden="true" />
-            </span>
-            <div>
-              <p className="font-display text-sm font-semibold text-navy">{FAMILIA_FLOTA.destacado.titulo}</p>
-              <p className="mt-1.5 text-sm text-navy-sub">{FAMILIA_FLOTA.destacado.texto}</p>
-            </div>
-          </div>
+          {/* [2026-08-07, pedido de Samuel] AQUÍ NO VA CAJA DE DESTACADO. La
+              del slide (primero «Grupos pequeños», luego «Since 2010, a fleet
+              of 12») se retira: sus dos datos son ya dos de los cuatro KPIs de
+              la banda de abajo, y su párrafo es el que presenta el recorrido de
+              años. La anatomía del slide 26 se respeta en todo lo demás; esta
+              ranura se queda vacía a propósito, no por olvido.
+              Con ella se va el único `bg-papel-hueso` de esta mitad: la banda
+              de KPIs pasa a ser la única superficie gris de la sección, que es
+              lo que la hace destacar. */}
 
           {/* EL DUEÑO. Sale de EQUIPO para que su frase no viva en dos sitios
               (la home ya la usa en su card de equipo).
@@ -105,7 +104,9 @@ export function FamiliaHispaniola() {
                 <blockquote className="text-sm font-medium italic text-navy-sub">«{fundador.quote}»</blockquote>
                 <figcaption className="mt-1 text-xs text-navy-soft">
                   <span className="font-semibold text-navy">— {fundador.nombre}</span>,{' '}
-                  {FAMILIA_FLOTA.duenoRolLargo} · desde {fundador.desde}
+                  {/* «since», no «desde»: se quedó en español en el barrido de
+                      F7 porque es texto suelto en el JSX y no en data/. */}
+                  {FAMILIA_FLOTA.duenoRolLargo} · since {fundador.desde}
                 </figcaption>
               </div>
             </figure>
@@ -199,77 +200,7 @@ export function FamiliaHispaniola() {
         ))}
       </dl>
 
-      {/* ── EL RECORRIDO DE AÑOS (slide 27) ────────────────────────────── */}
-      <div id="historia" className="scroll-mt-24">
-        <Etiqueta>{FAMILIA_FLOTA.recorridoEyebrow}</Etiqueta>
-        <h2 className="mt-3 max-w-2xl text-balance font-display text-h2 font-semibold text-navy">
-          {FAMILIA_FLOTA.recorridoTitulo}
-        </h2>
-        <p className="mt-4 max-w-2xl text-lead text-navy-sub">{FAMILIA_FLOTA.recorridoTexto}</p>
 
-        {/* LÍNEA DE TIEMPO — mecánica intacta de nosotros/nuestra-historia.tsx,
-            que este componente sustituye. En móvil se apila en vertical con el
-            riel a la izquierda; desde sm pasa a horizontal.
-
-            El riel son DOS capas superpuestas: la gris (siempre entera, para
-            que la línea exista aunque no haya GSAP) y la coral encima, que es
-            la que se traza con `scaleX` desde el borde izquierdo. La coral va
-            `hidden sm:block`: en móvil el riel es vertical y un scaleX no lo
-            dibujaría.
-
-            `sm:gap-x-0` + `w-4/5` no es un apaño: el riel tiene que MORIR EN
-            EL ÚLTIMO PUNTO (una línea que lo sobrepasa dice que la historia
-            sigue fuera de pantalla). Con las 5 columnas pegadas, el punto 5
-            cae exactamente al 80% del ancho y `w-4/5` es exacto sin cálculos a
-            ojo; con gap, el 80% se queda corto por una fracción del hueco. El
-            aire entre columnas lo pone el `sm:pr-4` de cada hito.
-
-            `.nosotros-timeline` es el TRIGGER del trazado
-            (use-timeline-historia.ts), no una clase con estilos. */}
-        <div className="nosotros-timeline relative mt-12">
-          <div aria-hidden="true" className="absolute left-1.5 top-1.5 hidden h-px w-4/5 bg-linea sm:block" />
-          <div
-            aria-hidden="true"
-            className="timeline-riel-progreso absolute left-1.5 top-1.5 hidden h-px w-4/5 origin-left bg-coral sm:block"
-          />
-
-          {/* [v3 2026-08-06] De 5 columnas a 3. La timeline aprobada trae NUEVE
-              hitos (antes 5) y a cinco por fila cada uno se quedaba en un
-              canal de ~110px con un parrafo dentro. Tres columnas dan tres
-              filas de tres, que ademas es como se lee una historia por
-              decadas. */}
-          <ol className="grid gap-6 sm:grid-cols-3 sm:gap-x-6">
-            {RECORRIDO_FLOTA.map((hito, i) => (
-              <li key={hito.anio} className="timeline-hito relative flex gap-4 sm:block">
-                <div className="flex flex-col items-center sm:block">
-                  {/* `block` no es decorativo: desde sm el envoltorio deja de
-                      ser flex y un <span> vuelve a ser inline — ahí `size-3`
-                      no aplica y el punto se queda en una caja de 0. */}
-                  <span
-                    aria-hidden="true"
-                    className="timeline-punto block size-3 shrink-0 rounded-full bg-coral ring-4 ring-coral/15"
-                  />
-                  {i < RECORRIDO_FLOTA.length - 1 ? (
-                    <span aria-hidden="true" className="w-px grow bg-linea sm:hidden" />
-                  ) : null}
-                </div>
-                <div className="pb-2 sm:mt-5 sm:pr-4">
-                  <p className="font-display text-lead font-semibold text-coral">{hito.anio}</p>
-                  <p className="mt-1 font-display text-base font-semibold text-navy">
-                    {hito.titulo}
-                  </p>
-                  {/* [v3] El hito gana su parrafo: el cliente no da solo el
-                      titular de cada anio, da lo que paso — que barco llego y
-                      por que importo. */}
-                  {hito.texto ? (
-                    <p className="mt-1 text-sm text-navy-sub">{hito.texto}</p>
-                  ) : null}
-                </div>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </div>
     </section>
   )
 }

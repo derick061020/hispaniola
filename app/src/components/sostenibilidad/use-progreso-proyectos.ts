@@ -4,7 +4,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 gsap.registerPlugin(ScrollTrigger)
 
-// Barra de progreso vertical de los 5 frentes de la fundación en
+// Barra de progreso vertical de los 6 frentes de la fundación en
 // /ventaja-competitiva (slide 63) — 2026-07-28, pedido de Samuel: «no así con
 // box, puede ser con una barra de progreso vertical y van apareciendo los
 // puntos».
@@ -23,7 +23,7 @@ gsap.registerPlugin(ScrollTrigger)
 // que la punta cae siempre donde está mirando el lector, ni arriba del todo ni
 // pegada al pie.
 //
-// El estado NATURAL del JSX es «todo recorrido» (barra entera, los 5
+// El estado NATURAL del JSX es «todo recorrido» (barra entera, los 6
 // marcadores encendidos) y este hook lo apaga al montarse para luego
 // animarlo. Al revés —natural apagado— con reduced-motion, con el flag
 // ?dev-sost=estatico o si falla el JS, la sección se quedaría en gris con la
@@ -58,7 +58,7 @@ export function useProgresoProyectos(
           // Medido contra la lista y no con offsetTop: cada marcador es
           // `absolute` dentro de su `li` (que es `relative`), así que su
           // offsetParent es el li y offsetTop daría la distancia al li, no al
-          // origen de la barra. Son 5 elementos por frame, sale gratis.
+          // origen de la barra. Son 6 elementos por frame, sale gratis.
           const topLista = lista.getBoundingClientRect().top
           const recorrido = lista.offsetHeight * self.progress
           puntos.forEach((p) => {

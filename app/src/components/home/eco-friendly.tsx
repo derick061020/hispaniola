@@ -90,7 +90,7 @@ function SelloEco({ className = '' }: { className?: string }) {
       viewBox="0 0 96 96"
       className={className}
       role="img"
-      aria-label="Eco-friendly seal — zero plastic on board"
+      aria-label="Eco-friendly seal, zero plastic on board"
     >
       {/* Disco de fondo y anillo: el aqua de marca, con cuentagotas — es una
           pieza pequeña, no un fondo de sección. */}

@@ -5,8 +5,8 @@ import { BENEFICIOS_DIRECTO, BOLETO_TOUR, formatoDinero } from '@/data/home'
 // DOS variantes (→ variantes del futuro componente Figma):
 //   · «portal»  — el encabezado (mismo tour, mismo precio) y nada más: las
 //     líneas del cuerpo son ranuras vacías que se van desvaneciendo.
-//   · «directo» — el mismo encabezado, y el cuerpo sigue: los 5 beneficios
-//     "impresos" + el sello «Reserva directa».
+//   · «directo» — el mismo encabezado, y el cuerpo sigue: los 7 beneficios
+//     "impresos" (una línea cada uno) + el sello «Direct booking».
 //
 // El ENCABEZADO es idéntico en las dos A PROPÓSITO (mismos nodos, mismos
 // tamaños, centrado): en el toggle móvil de why-direct.tsx el precio no se
@@ -23,9 +23,9 @@ import { BENEFICIOS_DIRECTO, BOLETO_TOUR, formatoDinero } from '@/data/home'
 // reparto "JS mide, CSS pinta" que el dock del ticker (use-ticker-dock.ts).
 //
 // ⚠️ Microcopy nuevo, pendiente de reconciliar con datos.js (fuente canónica
-// del copy): «En un portal», «Reservando directo» y «El mismo tour. Nada
-// más.» — el resto (beneficios, «Desde», «máx. N», el sello = el eyebrow de
-// la sección) ya existía.
+// del copy): «On a booking portal», «Booking direct» y «The same tour. Nothing
+// else.» — el resto (beneficios, «From», «max. N people», el sello = el eyebrow
+// de la sección) ya existía.
 
 export type VarianteBoleto = 'portal' | 'directo'
 
@@ -77,14 +77,14 @@ export function BoletoReserva({
           <p
             className={`text-eyebrow font-semibold uppercase tracking-[0.12em] ${directo ? 'text-aqua-dark' : 'text-navy-soft'}`}
           >
-            {directo ? 'Reservando directo' : 'En un portal'}
+            {directo ? 'Booking direct' : 'On a booking portal'}
           </p>
           <p className="mt-3 font-display text-h3 font-semibold text-navy">{BOLETO_TOUR.nombre}</p>
           <p className="mt-1 text-sm text-navy-soft">
-            {BOLETO_TOUR.duracionCorta} · máx. {BOLETO_TOUR.maxPax} personas
+            {BOLETO_TOUR.duracionCorta} · max. {BOLETO_TOUR.maxPax} people
           </p>
           <p className="mt-3 flex items-baseline justify-center gap-2">
-            <span className="text-eyebrow uppercase tracking-[0.12em] text-navy-soft">Desde</span>
+            <span className="text-eyebrow uppercase tracking-[0.12em] text-navy-soft">From</span>
             <span className="text-precio font-bold text-navy">{formatoDinero(BOLETO_TOUR.precioLight)}</span>
           </p>
         </div>
@@ -97,29 +97,34 @@ export function BoletoReserva({
         <div className={`mt-5 ${cuerpoAnimado ? 'boleto-cuerpo' : ''}`}>
           {directo ? (
             <>
-              <ul className="space-y-3.5 text-left">
+              {/* Una línea por check, sin frase de apoyo: es la lista literal
+                  del cliente (ver BENEFICIOS_DIRECTO). Cada ítem cabe en un
+                  renglón al ancho del boleto — así el cuerpo mide lo que debe
+                  y el objeto se sigue leyendo como un boleto, no como una
+                  columna de texto. */}
+              <ul className="space-y-2.5 text-left">
                 {BENEFICIOS_DIRECTO.map((b) => (
                   <li key={b.id} className="flex gap-2.5 text-sm">
                     <span aria-hidden className="font-bold text-aqua-dark">
                       +
                     </span>
-                    <p className="text-navy-soft">
-                      <span className="font-semibold text-navy">{b.titulo}.</span> {b.texto}
-                    </p>
+                    <p className="font-medium text-navy">{b.titulo}</p>
                   </li>
                 ))}
               </ul>
-              {/* El -mt-2 lo mete en el hueco del space-y de la lista (14px),
-                  sin tocar el texto: el sello pisa el papel, no las líneas. */}
-              <div className="-mt-2 flex justify-end pr-2">
+              {/* El sello pisa el papel, no las líneas: con la lista escueta
+                  las líneas llegan más a la derecha y el hueco del space-y
+                  (10px) ya no basta — el sello va girado −8°, su esquina alta
+                  sube ~9px sobre su caja. mt-3 le da ese aire justo. */}
+              <div className="mt-3 flex justify-end pr-2">
                 <p className="boleto-sello inline-block px-3.5 py-1.5 text-eyebrow font-bold uppercase tracking-[0.12em] text-aqua-dark opacity-85">
-                  Reserva directa
+                  Direct booking
                 </p>
               </div>
             </>
           ) : (
             <>
-              <p className="text-center text-sm text-navy-soft">El mismo tour. Nada más.</p>
+              <p className="text-center text-sm text-navy-soft">The same tour. Nothing else.</p>
               <div aria-hidden className="mx-auto mt-5 max-w-[13rem] space-y-4">
                 {RANURAS.map((r) => (
                   <div key={r} className={`mx-auto h-3 border-b-2 border-dashed border-linea-fuerte ${r}`} />

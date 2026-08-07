@@ -16,10 +16,11 @@ export function Itinerario({ ficha }: { ficha: FichaTour }) {
           nota de recogida. La nota nace con el itinerario de DOBLE SALIDA: en
           cuanto una parada muestra dos horas hay que decir de qué son. */}
       <TituloSeccion>
-        {ficha.itinerarioTitulo ?? 'Itinerary'} — {ficha.duracion}
+        {ficha.itinerarioTitulo ?? 'Itinerary'} · {ficha.duracion}
       </TituloSeccion>
       {ficha.itinerarioNota ? (
-        <p className="mt-2 max-w-2xl text-sm text-navy-sub">{ficha.itinerarioNota}</p>
+        // [v3 2026-08-07] Sin tope de ancho (ver comparador-premium.tsx).
+        <p className="mt-2 text-sm text-navy-sub">{ficha.itinerarioNota}</p>
       ) : null}
 
       {/* El raíl es un border-left en la <ul>; cada hito pone su punto encima.

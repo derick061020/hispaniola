@@ -21,6 +21,7 @@ import { ComparadorPremium } from '@/components/tour/comparador-premium'
 import { BandaPremium } from '@/components/tour/banda-premium'
 import { SeccionModalidad } from '@/components/tour/seccion-modalidad'
 import { fotosComidaDe } from '@/data/tours'
+import { ALBUM_UPSELL, addOnsDisponibles } from '@/lib/tarifas'
 import { VideoAcompanante } from '@/components/tour/video-acompanante'
 import { AntesDeReservar } from '@/components/tour/antes-de-reservar'
 import { TambienTeGusta } from '@/components/internas/tambien-te-gusta'
@@ -68,6 +69,17 @@ export function TourPage() {
   // número de personas del widget sin poder hacerlo. Ver `onPersonasChange`
   // en widget-reserva.tsx.
   const [personas, setPersonas] = useState<number | null>(null)
+  // [2026-08-07, pedido de Samuel: «que el banner de add premium lobster sirva
+  // para seleccionarlo en el widget»] CUARTO estado que sube aquí, y el primero
+  // de doble sentido: lo escriben el panel de add-ons del widget (columna
+  // derecha) Y la franja de la langosta del bloque de menú (columna izquierda),
+  // y las dos tienen que estar mirando la misma reserva.
+  // El valor inicial replica el del widget: los add-ons `porDefecto` (hoy solo
+  // el álbum de fotos) arrancan marcados, y ese comportamiento sigue viviendo
+  // en ALBUM_UPSELL — un booleano, no una condición cableada aquí.
+  const [addOnsElegidos, setAddOnsElegidos] = useState<string[]>(() =>
+    (ficha?.addOns ?? []).filter((a) => a.porDefecto && ALBUM_UPSELL.porDefecto).map((a) => a.id),
+  )
 
   // Slug desconocido → a la home. Un 404 diseñado es otra pantalla (y otro
   // plan): fingir una aquí sería inventarse una página que nadie ha aprobado.
@@ -220,7 +232,25 @@ export function TourPage() {
                   quitar la comparativa anterior, fundida dentro del bloque. */}
               {tour.booking === 'completo' ? <ComparadorPremium tour={tour} ficha={ficha} /> : null}
               {tour.booking === 'completo' ? (
-                <MenuTour tour={tour} ficha={ficha} variante={variante} personas={personas} />
+                <MenuTour
+                  tour={tour}
+                  ficha={ficha}
+                  variante={variante}
+                  personas={personas}
+                  // [2026-08-07] Lo que hace clicable la franja de la langosta.
+                  // `disponibles` aplica la MISMA regla que el widget (la
+                  // langosta solo existe en los charters de 4 h), así que en un
+                  // barco de 3 h la franja vuelve a ser informativa en vez de
+                  // ofrecer algo que esa cocina no puede servir.
+                  seleccionAddOns={{
+                    elegidos: addOnsElegidos,
+                    disponibles: addOnsDisponibles(ficha, variante).map((a) => a.id),
+                    alternar: (id) =>
+                      setAddOnsElegidos((prev) =>
+                        prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
+                      ),
+                  }}
+                />
               ) : null}
 
               {/* [v3 2026-08-06, slide 77] SECCION —no banda— debajo de los
@@ -286,7 +316,7 @@ export function TourPage() {
                   conHashtag={false}
                   eyebrow="On video"
                   titulo="This is what a day with us looks like"
-                  lead="Clips from on board and from our guests — the tour before the tour."
+                  lead="Clips from on board and from our guests, the tour before the tour."
                 />
               </div>
 
@@ -330,6 +360,8 @@ export function TourPage() {
                 onVarianteChange={setVariante}
                 onPaqueteChange={setPaquete}
                 onPersonasChange={setPersonas}
+                addOnsElegidos={addOnsElegidos}
+                onAddOnsChange={setAddOnsElegidos}
               />
             </div>
           </div>

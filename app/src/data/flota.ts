@@ -13,6 +13,18 @@ import {
 } from 'lucide-react'
 import { FLOTA, TIMELINE_FLOTA, type BarcoFlota } from './nosotros'
 
+/** Barcos que tiene la flota DE VERDAD. Dato del cliente: «SINCE 2010, FLEET
+ *  CONSISTING OF 12» (WEBSITE - NOSOTROS pag. 4), y su timeline aprobada los
+ *  nombra uno a uno.
+ *
+ *  ⚠️ NO es `FLOTA.length`, y esa es toda la gracia de que exista esta
+ *  constante. `FLOTA` son los barcos con FICHA COMPLETA (foto, specs, galería,
+ *  360º) — hoy 6. Derivar de ahí el titular de la empresa hacía que la web
+ *  dijera «Fleet of 6» por no tener assets de los otros 6, que es un dato
+ *  falso por un motivo de maquetación. Cuando entren los 6 que faltan al
+ *  array, este número no cambia: ya es 12. */
+export const BARCOS_FLOTA = 12
+
 // ─────────────────────────────────────────────────────────────────────────
 // PÁGINA FLOTA (/flota) — contenido propio de la página.
 //
@@ -68,14 +80,15 @@ export const FAMILIA_FLOTA = {
     "Each vessel in our fleet has been carefully selected and customized for the experience. Unlike many tour operators, we don't rely on third-party boats: every vessel is our own, professionally maintained by our in-house team and continuously upgraded to meet the highest standards.",
     "Below, you'll find detailed specifications, onboard features, and technical fact sheets for each vessel, so you know exactly what to expect before you step aboard.",
   ],
-  // [v3] La caja «Grupos pequeños, espacio de verdad» se retira (tachada por
-  // el cliente). En su lugar, el dato que su propia timeline convierte en
-  // argumento: doce barcos construidos uno a uno desde 2010.
-  destacado: {
-    titulo: 'Since 2010, a fleet of 12',
-    texto:
-      'Our journey began in 2010 with a single boat and one clear vision: to create unforgettable experiences at sea. Every new vessel was made possible by the success of the one before it, allowing us to grow step by step without ever compromising quality.',
-  },
+  // [v3 2026-08-07, pedido de Samuel] SIN CAJA DE DESTACADO. Aquí vivió
+  // «Since 2010, a fleet of 12» + el párrafo del viaje, que ocupó el hueco de
+  // la caja «Grupos pequeños» que el cliente tachó. Sale por repetición: sus
+  // dos datos —el año y el tamaño de la flota— son literalmente dos de los
+  // cuatro KPIs de la banda que va justo debajo, y el párrafo es el mismo que
+  // presenta el recorrido de años. Decirlo tres veces en una pantalla y media
+  // no lo hace más cierto.
+  // El párrafo NO se pierde: es `recorridoTexto`, que es donde el cliente lo
+  // pone (pág. 5, como intro de la timeline).
   cta: { label: 'Meet the crew', to: '/crew' },
 
   // ── Media del lado derecho ──────────────────────────────────────────────
@@ -103,17 +116,29 @@ export const FAMILIA_FLOTA = {
   // cuanto entren los 6 barcos que faltan, un número escrito a mano en un
   // titular es justo lo que se queda obsoleto sin que nadie lo note.
   recorridoTitulo: 'From one boat to a fleet',
+  // [v3 2026-08-07, WEBSITE - NOSOTROS pag. 5] La intro APROBADA de la
+  // timeline, literal y completa (la caja de destacado solo traía las tres
+  // primeras frases; la cuarta —«Today, our fleet is the result of…»— es la
+  // que cierra el recorrido, y aquí sí tiene sitio).
+  // Sustituye a la redacción v2, que abría con «We started in 2012» — un año
+  // que la propia timeline aprobada contradice: el primer barco es de 2010.
   recorridoTexto:
-    'We started in 2012 with a single vessel. Every boat that joined after it was chosen for what the previous one was missing — more length, sails, a slide, two levels — and not just to have one more.',
+    'Our journey began in 2010 with a single boat and one clear vision: to create unforgettable experiences at sea. Every new vessel was made possible by the success of the one before it, allowing us to grow step by step without ever compromising quality. Today, our fleet is the result of years of hard work, reinvestment, and an unwavering commitment to excellence.',
 
   // ── Banda de KPIs ───────────────────────────────────────────────────────
-  // ⚠️ La cifra de la flota NO se escribe: se CUENTA sobre FLOTA. El plan 04
-  // §2 avisa de que «Flota de 6» aparece a mano en varios sitios y hay que
-  // cambiarlos todos al pasar a 12; aquí eso no puede pasar.
+  // [v3 2026-08-07, pedido de Samuel] ESTA BANDA SE QUEDA CON LOS DOS DATOS DE
+  // LA CAJA QUE SALE: «Since 2010» y «Fleet of 12». Es su sitio — la caja los
+  // decía en prosa a dos dedos de una banda que existe para decir cifras.
+  //   · 2012 → 2010: lo dice el cliente («SINCE 2010, FLEET CONSISTING OF 12»,
+  //     pág. 5) y lo confirma su timeline, que fecha el primer barco (Teresa)
+  //     en 2010. El «desde 2012» venía de la web vieja.
+  //   · La cifra sigue SIN escribirse a mano, solo que ahora se lee de
+  //     `BARCOS_FLOTA` (la flota real) y no de `FLOTA.length` (los barcos con
+  //     ficha completa, hoy 6) — ver la constante y su porqué arriba.
   kpis: [
-    { cifra: 'Since 2012', label: 'sailing this coast' },
+    { cifra: 'Since 2010', label: 'sailing this coast' },
     { cifra: '4.9', label: '1,782 verified reviews' },
-    { cifra: `Fleet of ${FLOTA.length}`, label: 'boats we own' },
+    { cifra: `Fleet of ${BARCOS_FLOTA}`, label: 'boats we own' },
     { cifra: 'The only', label: 'floating kitchen in Punta Cana' },
   ],
 }
@@ -152,15 +177,24 @@ export type MediaBarco =
   | { tipo: 'video'; src: string; poster: string; etiqueta: string; alt: string }
   | { tipo: 'foto'; foto: string; etiqueta: string; alt: string }
 
-// Cabecera de la rejilla. El titular de /nosotros decía «Seis catamaranes,
-// uno para cada plan» — con la cifra dentro y con «catamaranes», que ya no es
-// exacto (el Joker es una lancha y el Karaya una plataforma de eventos). Este
-// no envejece al pasar a 12 ni miente sobre el tipo de casco.
+// Cabecera de la rejilla.
+//
+// [v3 2026-08-07, WEBSITE - NOSOTROS pag. 7: «CHANGE:»] Titular y párrafo
+// APROBADOS, literales. Sustituyen a la redacción de la casa («A boat for
+// every plan» + «All of them ours, well maintained…»), que decía lo mismo con
+// otras palabras: los barcos son propios, se cuidan, y cada uno trae vídeo,
+// galería y ficha. El copy del cliente lo dice mejor en dos sitios —«its own
+// personality, its own purpose» le pone carácter a la rejilla, y enumera las
+// cinco piezas de media que la card de verdad tiene (fotos, 360º, vídeo,
+// specs, equipamiento)— así que no hay nada que salvar del anterior.
+//
+// El titular va en Title Case porque así lo escribe él; es el mismo caso que
+// «More Than Lunch. A Memory You Can Taste.» de la cocina flotante.
 export const REJILLA_FLOTA = {
   eyebrow: 'The fleet',
-  titulo: 'A boat for every plan',
+  titulo: 'More Than Boats. Your Home at Sea.',
   texto:
-    'All of them ours, well maintained and always spotless — we look after every detail so your tour feels special, not mass-produced. For each one you get its video, its gallery and the full spec sheet.',
+    "Every vessel in our fleet has its own personality, its own purpose, and thousands of unforgettable stories. We own, design, and maintain every boat ourselves, so every detail reflects the experience we want you to live. Explore each vessel through photos, 360° tours, videos, technical specifications, and onboard features before choosing the one that's perfect for you.",
 }
 
 const VIDEO_BARCO = {
@@ -363,7 +397,7 @@ const PERFILES: Record<string, PerfilTecnico> = {
   'Santa María': {
     casco: 'Twin fiberglass hulls, laminated, with structural reinforcement where the hulls meet',
     astillero: 'Custom-built for Hispaniola Aquatic Adventures',
-    refit: '2022 — engines, deck upholstery and electrical system',
+    refit: '2022: engines, deck upholstery and electrical system',
     cubiertaUtil: '68 m² of usable deck',
     manga: '6.4 m (21 ft)',
     calado: '0.95 m',
@@ -387,7 +421,7 @@ const PERFILES: Record<string, PerfilTecnico> = {
   'Forever Teresa': {
     casco: 'Twin fiberglass hulls with a continuous two-level deck',
     astillero: 'Custom-built for Hispaniola Aquatic Adventures',
-    refit: '2023 — upper deck, bar and sound system',
+    refit: '2023: upper deck, bar and sound system',
     cubiertaUtil: '145 m² of usable deck across two levels',
     manga: '9.1 m (30 ft)',
     calado: '1.20 m',
@@ -414,8 +448,8 @@ const PERFILES: Record<string, PerfilTecnico> = {
   },
   Maite: {
     casco: 'Twin fiberglass hulls with PVC sandwich core, sailing-cruiser design',
-    astillero: 'European shipyard — production sailing cruiser, adapted for day trips',
-    refit: '2021 — full sail wardrobe, standing rigging and navigation electronics',
+    astillero: 'European shipyard: production sailing cruiser, adapted for day trips',
+    refit: '2021: full sail wardrobe, standing rigging and navigation electronics',
     cubiertaUtil: '52 m² of usable deck',
     manga: '6.8 m (22 ft)',
     calado: '1.15 m',
@@ -431,7 +465,7 @@ const PERFILES: Record<string, PerfilTecnico> = {
     maxima: '9 knots under engine',
     combustible: '2 × 200 L',
     autonomia: '240 nautical miles under engine; unlimited under sail',
-    generador: 'No generator — 400 Ah lithium battery bank with solar panels',
+    generador: 'No generator, 400 Ah lithium battery bank with solar panels',
     aguaDulce: '400 L + stern shower',
     sombra: '18 m² bimini over the cockpit',
     vela: {
@@ -446,7 +480,7 @@ const PERFILES: Record<string, PerfilTecnico> = {
   GrandMa: {
     casco: 'Twin fiberglass hulls, open deck with a slide built into the stern',
     astillero: 'Custom-built for Hispaniola Aquatic Adventures',
-    refit: '2024 — slide, upholstery and engine overhaul',
+    refit: '2024: slide, upholstery and engine overhaul',
     cubiertaUtil: '61 m² of usable deck',
     manga: '6.2 m (20 ft)',
     calado: '0.90 m',
@@ -473,7 +507,7 @@ const PERFILES: Record<string, PerfilTecnico> = {
   Joker: {
     casco: 'Planing fiberglass hull with a two-story superstructure and sliding roof',
     astillero: 'Custom-built for Hispaniola Aquatic Adventures',
-    refit: '2023 — sliding roof, sound system and upper bar',
+    refit: '2023: sliding roof, sound system and upper bar',
     cubiertaUtil: '78 m² across two floors',
     manga: '5.6 m (18 ft)',
     calado: '0.80 m',
@@ -502,8 +536,8 @@ const PERFILES: Record<string, PerfilTecnico> = {
   },
   Karaya: {
     casco: 'Two-level catamaran platform in steel and aluminum, built for static events and bay cruising',
-    astillero: 'Custom-built — the largest event vessel in the Caribbean',
-    refit: '2024 — service kitchen, stage lighting and railings',
+    astillero: 'Custom-built, the largest event vessel in the Caribbean',
+    refit: '2024: service kitchen, stage lighting and railings',
     cubiertaUtil: '938 m² of total area across two levels',
     manga: '18 m (59 ft)',
     calado: '1.40 m',
@@ -546,7 +580,7 @@ const REGISTRO_COMUN: FilaSpec[] = [
   },
   {
     label: 'Certificate of seaworthiness',
-    valor: 'Current — annual inspection by the Dominican Republic Navy',
+    valor: 'Current, annual inspection by the Dominican Republic Navy',
     nota: 'Without a valid certificate the vessel cannot take passengers on board. It is renewed every year.',
   },
   {
@@ -555,7 +589,7 @@ const REGISTRO_COMUN: FilaSpec[] = [
   },
   {
     label: 'Call sign / MMSI',
-    valor: 'Assigned — provided in the charter paperwork',
+    valor: 'Assigned, provided in the charter paperwork',
     nota: 'The boat’s radio ID: it is what gets transmitted when calling for assistance over VHF.',
   },
 ]
@@ -569,10 +603,10 @@ const NAVEGACION_COMUN: FilaSpec[] = [
   {
     label: 'Depth sounder',
     valor: 'Echo sounder with minimum-depth alarm',
-    nota: 'It warns before we reach shallow water — that protects the reef as much as the hull.',
+    nota: 'It warns before we reach shallow water. That protects the reef as much as the hull.',
   },
   { label: 'Radio', valor: 'Fixed VHF with DSC + 2 handhelds, permanent watch on channel 16' },
-  { label: 'AIS', valor: 'Class B transponder — the boat is seen and sees the traffic around it' },
+  { label: 'AIS', valor: 'Class B transponder, the boat is seen and sees the traffic around it' },
   { label: 'Compass', valor: 'Lit binnacle magnetic compass' },
   { label: 'Navigation lights', valor: 'LED, compliant with the international collision regulations (COLREG)' },
   { label: 'Anchor and ground tackle', valor: 'Electric windlass with 50 m of calibrated chain' },
@@ -630,7 +664,7 @@ const SOSTENIBILIDAD_COMUN: FilaSpec[] = [
   },
   {
     label: 'Anchoring',
-    valor: 'Fixed mooring at the tour stops — the anchor never touches coral',
+    valor: 'Fixed mooring at the tour stops, the anchor never touches coral',
     nota: 'A dragging anchor is the fastest damage an excursion boat can do.',
   },
   {
@@ -958,7 +992,9 @@ export const CERO_PLASTICO = {
 //   · las 3 CIFRAS separadas por líneas verticales → fuera la fila. «La única
 //     cocina flotante» era el H2 repetido en formato de cifra, que es
 //     literalmente el patrón que hay que evitar; lo que sí aportaban las otras
-//     dos (0% recalentado, 7 platos) se absorbe en el párrafo.
+//     dos (0% recalentado, 7 platos) se absorbió en un párrafo redactado aquí
+//     — que también se ha retirado (2026-08-07), porque el copy aprobado ya
+//     daba las dos cifras. Ver la nota en `COCINA_Y_PARADAS`, más abajo.
 // Se retira también la tira «Míralo por dentro»: con las 3 fotos-prueba y las
 // 3 paradas, era una cuarta fila de fotos en la misma sección.
 //
@@ -967,11 +1003,20 @@ export const CERO_PLASTICO = {
 // añade — y `momentos`, que sale de la propia maqueta del cliente (slide 34:
 // «PRIMERA PARADA · AL MEDIODÍA · PARA CERRAR»).
 export const COCINA_Y_PARADAS = {
-  // El párrafo que absorbe las dos cifras útiles del slide 33 (0% recalentado
-  // y 7 platos). Va como prosa y no como fila de stats: son dos datos, y dos
-  // datos no necesitan una banda propia con separadores.
-  detalle:
-    'Seven dishes to choose from, grilled while you sail. Zero reheated food: what reaches your plate was cooked on board, a few meters from where you are sitting.',
+  // ⚠️ AQUÍ VIVÍA `detalle` Y SE RETIRA (2026-08-07, Samuel: «quítala»). Era el
+  // párrafo que absorbía las dos cifras del slide 33 como prosa —«Seven dishes
+  // to choose from, grilled while you sail. Zero reheated food…»—, y era copy
+  // REDACTADO AQUÍ, no aprobado por el cliente: justo lo que prohíbe la regla
+  // de tres líneas más arriba en este mismo bloque.
+  //
+  // No se pierde nada al quitarlo. Los dos datos ya los dice, con palabras
+  // aprobadas, `COCINA_FLOTANTE.textoExtra[0]` de data/nosotros.ts («Choose
+  // from seven freshly grilled dishes… No reheated food. No buffet trays.»),
+  // que la banda pinta JUSTO ENCIMA de donde estaba este párrafo. Era la misma
+  // afirmación contada dos veces seguidas, una de ellas sin aprobar.
+  //
+  // Si algún día hace falta rematar ese bloque, la frase sale del copy
+  // aprobado — no se vuelve a redactar aquí.
 
   // LAS 3 PRUEBAS. Cada afirmación de `COCINA_FLOTANTE.puntos` va emparejada
   // con la foto que la demuestra — de ahí que el orden importe y no se pueda
@@ -1011,7 +1056,7 @@ export const COCINA_Y_PARADAS = {
   paradasEyebrow: 'The day’s route',
   paradasTitulo: 'A day at sea in 3 stops',
   paradasSub:
-    'This is not a one-spot tour: it is a route designed so each stop adds something — nature, beach and downtime, in that order.',
+    'This is not a one-spot tour: it is a route designed so each stop adds something. Nature, beach and downtime, in that order.',
   // Copy del cliente (slide 34). Sustituye al numeral en círculo sobre la foto
   // que llevaba la versión anterior: «Primera parada» dice lo mismo que un
   // «01» y además dice CUÁNDO, que es la información que se estaba perdiendo.

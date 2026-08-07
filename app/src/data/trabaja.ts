@@ -50,7 +50,7 @@ export const PERFILES_TRABAJO: PerfilTrabajo[] = [
     resumen:
       'You run excursions, transport, catering, music or water gear in Punta Cana and you want to join our trips.',
     quePasa:
-      'If it fits, we coordinate directly — no middlemen between your team and ours.',
+      'If it fits, we coordinate directly, no middlemen between your team and ours.',
     grupoCampos: 'About your operation',
     campos: [
       { name: 'empresa', etiqueta: 'Company or operation', requerido: true },
@@ -70,7 +70,7 @@ export const PERFILES_TRABAJO: PerfilTrabajo[] = [
     resumen:
       'You film, photograph or write about travel and you want to come on board to tell a real day at sea.',
     quePasa:
-      'If it fits what we tell, we find a date on a real trip — not a setup for the camera.',
+      'If it fits what we tell, we find a date on a real trip, not a setup for the camera.',
     grupoCampos: 'About your profile',
     campos: [
       {
@@ -122,7 +122,7 @@ export const PERFILES_TRABAJO: PerfilTrabajo[] = [
 // (data/nosotros.ts, los 6 catamaranes reales de about-hispaniola.php), para
 // que añadir o quitar uno allí no deje esta frase mintiendo.
 export const RESPALDO: string[] = [
-  'Our own fleet — {barcos} catamarans with names and a fixed crew.',
+  'Our own fleet: {barcos} catamarans with names and a fixed crew.',
   'The only excursion company in the DR with a floating kitchen.',
   'Operating in Punta Cana since 2012.',
   '#1 on TripAdvisor 7 years in a row.',

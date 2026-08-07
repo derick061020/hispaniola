@@ -190,7 +190,7 @@ export function EventoPage() {
               <div className={BLOQUE_FICHA}>
                 <h2 className="font-display text-h3 font-semibold text-navy">
                   {/* MICE es sigla, no se minusculiza al bajar el resto del nombre */}
-                  Sobre {evento.nombre.toLowerCase().replace(/\bmice\b/, 'MICE')}
+                  About {evento.nombre.toLowerCase().replace(/\bmice\b/, 'MICE')}
                 </h2>
                 <div className="mt-3 space-y-3 text-sm text-navy-sub">
                   {evento.descripcionLarga.map((parrafo, i) => (
@@ -253,7 +253,7 @@ export function EventoPage() {
                   gestionan con el click normal del acordeón. */}
               {evento.faq.length > 0 ? (
                 <section id="ancla-faq" className={`${BLOQUE_FICHA} scroll-mt-sticky-top`}>
-                  <TituloSeccion>Preguntas frecuentes</TituloSeccion>
+                  <TituloSeccion>Frequently asked questions</TituloSeccion>
                   <Accordion.Root
                     type="single"
                     collapsible
@@ -310,29 +310,22 @@ export function EventoPage() {
                   medida. Con la calculadora arriba, el caso simple se resuelve
                   solo y el formulario queda para lo que de verdad se cotiza. */}
               {/* [v3 2026-08-06, WEBSITE-EVENTOS pag. 5 + PowerPoint slide 79]
-                  Los perks, DESTACADOS junto al widget. El cliente pidio
-                  expresamente que este mensaje no se quedara dentro de un
-                  parrafo: es la razon por la que unos novios eligen este barco
-                  y no otro, y va donde se decide. Solo bodas los trae. */}
-              {evento.perks?.length ? (
-                <div className="flex flex-col gap-2 rounded-card-grande bg-menta p-4 sm:p-5">
-                  {evento.perks.map((perk) => (
-                    <p key={perk.texto} className="flex items-start gap-2.5 text-sm text-navy">
-                      <span aria-hidden="true" className="text-base leading-tight">
-                        {perk.icono}
-                      </span>
-                      <span className="font-medium">{perk.texto}</span>
-                    </p>
-                  ))}
-                </div>
-              ) : null}
-
+                  Los perks de bodas —novios gratis y brindis de champagne— van
+                  DESTACADOS donde se decide, no perdidos en un parrafo.
+                  [2026-08-07, Samuel: «que los avisos de los novios y la
+                  champaña vayan dentro del widget, no aparte fuera»] Eran una
+                  card de menta SUELTA encima de la calculadora, y eso los
+                  dejaba como un cartel que se lee antes de empezar y se olvida.
+                  Ahora bajan DENTRO —justo bajo el contador de invitados, que
+                  es lo que dispara el regalo, y pegados al desglose que lo
+                  descuenta—: se pasa el dato en vez de anunciarlo aparte. */}
               {evento.paquetes ? (
                 <CalculadoraEvento
                   paquetes={evento.paquetes.items}
                   elegido={paquete}
                   onElegir={elegirPaquete}
                   slug={evento.slug}
+                  perks={evento.perks}
                 />
               ) : null}
               {/* [v2 2026-07-28] El formulario se PLIEGA solo cuando encima

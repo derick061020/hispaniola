@@ -13,11 +13,12 @@
 // la historia completa, la otra la menciona y enlaza, y el copy no se duplica
 // a mano en dos sitios.
 //
-// ⚠️ Pendiente de confirmar con el cliente: el NOMBRE de la entidad. Hoy
-// conviven CUATRO en sus materiales — «Fundación Ecológica Arrecifes de
-// Bávaro», «Bávaro Reefs Foundation», «Fundación The Bávaro Reef» y
-// «Fundación» a secas. Aquí se usa el nombre legal en español para el bloque
-// institucional; hay que fijar un alias corto para el resto del sitio.
+// ✅ RESUELTO EL NOMBRE (2026-08-07). Aquí decía que convivían CUATRO en sus
+// materiales —«Fundación Ecológica Arrecifes de Bávaro», «Bávaro Reefs
+// Foundation», «Fundación The Bávaro Reef» y «Fundación» a secas— y que había
+// que fijar uno. El copy v3 lo fija él: BÁVARO REEFS FOUNDATION, y lo usa así
+// en los tres documentos nuevos (es también el nombre del departamento en
+// /crew). Se adopta ese en toda la web.
 //
 // ⚠️ Pendiente: confirmar los nombres de los dos cofundadores antes de
 // publicarlos. «Fernando Sánchez Fernández» es muy probablemente el mismo
@@ -44,7 +45,11 @@
 // hecho lo que la foto no enseña.
 
 export const FUNDACION = {
-  nombreLegal: 'Fundación Ecológica Arrecifes de Bávaro',
+  // [v3 2026-08-07, WEBSITE-SOSTENIBILIDAD pag. 6] El nombre que el cliente
+  // usa ahora en todos sus documentos — ver el ✅ de la cabecera. Lo pintan el
+  // teaser de /competitive-advantage (como titular) y el hero de /foundation
+  // (como eyebrow), así que el cambio entra en los dos sitios de una vez.
+  nombreLegal: 'Bávaro Reefs Foundation',
 
   // Titular de la página. Es la frase del propio cliente (slide 63): sube al
   // hero porque resume la fundación entera en siete palabras, y así la
@@ -54,10 +59,26 @@ export const FUNDACION = {
   heroTexto:
     'Coral restoration and artificial reefs at Playa Bávaro since 2016, alongside the Ministry of Environment.',
 
+  // [v3 2026-08-07, WEBSITE-SOSTENIBILIDAD pag. 7: «Los datos de la derecha»]
+  // Los CUATRO datos aprobados, en su orden. Sustituyen a los 3 que había
+  // (2016 · 3rd coral nursery · Partners), que decían lo mismo con menos:
+  //   · «3rd coral nursery in the country» SALE. No está en el copy nuevo y no
+  //     es un detalle menor — era un puesto en un ranking. Su sitio lo ocupa
+  //     «one of the leading coral restoration programs», que es como lo cuenta
+  //     él ahora. Si el 3er puesto sigue siendo cierto, es dato suyo y vuelve.
+  //   · Entran el ÁREA MARINA PROTEGIDA y las TORTUGAS VERDES, que son los dos
+  //     hechos que la página lleva contando desde arriba y que aquí no tenían
+  //     ficha.
+  // Los dos últimos vienen como frase corrida en el documento («One of the
+  // Dominican Republic's leading coral restoration programs»); se parten en
+  // sujeto + afirmación para que entren en la misma anatomía que los otros dos,
+  // que él SÍ escribe partidos. No se recorta ni se sube ningún claim: «one of
+  // the leading» sigue diciendo «one of the leading».
   hitos: [
-    { cifra: '2016', texto: 'project start' },
-    { cifra: '3rd', texto: 'coral nursery in the country' },
-    { cifra: 'Partners', texto: 'Ministry of Environment' },
+    { cifra: '2016', texto: 'Foundation established' },
+    { cifra: 'Protected marine area', texto: 'working alongside the Ministry of Environment' },
+    { cifra: 'Coral restoration', texto: "one of the Dominican Republic's leading programs" },
+    { cifra: 'Green sea turtles', texto: 'largest population in the Dominican Republic' },
   ],
 
   // LA HISTORIA, EN TRES TIEMPOS. Antes eran dos párrafos de ~60 palabras
@@ -110,10 +131,19 @@ export const FUNDACION = {
   // inventarle un retrato a alguien que existe. La card cae sola a su
   // fallback de monograma (`iniciales`) hasta que el cliente mande fotos —
   // ese día es cambiar `null` por el nombre del archivo y nada más.
+  // [v3 2026-08-07, WEBSITE-SOSTENIBILIDAD pag. 8] Titular y párrafo
+  // APROBADOS. Dicen lo mismo que la redacción de la casa («dos personas y la
+  // empresa cuya operación diaria vio el problema») con dos ganancias: el
+  // titular deja de contar cuántos son —que ya lo dicen las tres cards de
+  // debajo— y nombra POR QUÉ están ahí, y el párrafo cierra con los cuatro
+  // frentes de la fundación (ciencia, educación, comunidad y gestión a largo
+  // plazo), que es lo que la conecta con la sección de proyectos.
+  // El eyebrow se queda: sigue presentando exactamente lo que viene.
+  // La raya larga del original («initiatives—bringing together…») pasa a coma.
   fundadoresEyebrow: 'Who’s behind it',
-  fundadoresTitulo: 'Three names sustain the foundation',
+  fundadoresTitulo: 'Built by people who refused to look away.',
   fundadoresIntro:
-    'It was born out of the shared passion for the environment of two people, backed by the company whose daily operation witnessed the problem.',
+    "The Bávaro Reefs Foundation was born from the shared vision of marine conservationists and Hispaniola Aquatic Adventures. What began as a commitment to protect the reefs where we operate has grown into one of the Dominican Republic's leading marine conservation initiatives, bringing together science, education, community engagement and long-term environmental stewardship.",
   fundadores: [
     {
       id: 'fernando',
@@ -268,17 +298,52 @@ export const FUNDACION = {
   // precios, ni pasarela de cobro (mismo bloqueo Odoo que el resto de pagos).
   // Recoger interés real desde el primer día es preferible a prometer un
   // flujo que no está.
-  membresiasEyebrow: 'Membresías',
-  membresiasTitulo: 'Conoce nuestras membresías',
+  // [v3 2026-08-07, WEBSITE-SOSTENIBILIDAD pag. 12: «Tarjeta izquierda»]
+  // Titular, párrafo y botón APROBADOS. De paso caen las DOS ÚLTIMAS cadenas
+  // en español de este bloque («Membresías» / «Conoce nuestras membresías»),
+  // que se le escaparon al barrido de F7 porque el resto de la tarjeta sí
+  // estaba en inglés.
+  //
+  // ⚠️ EL BLOQUE YA NO HABLA DE MEMBRESÍAS. El copy nuevo pide apoyar a la
+  // fundación —sin niveles ni cuotas—, que además es lo único que el sitio
+  // puede sostener hoy (no hay producto de membresía: ni precios, ni pasarela).
+  // El eyebrow se traduce y se queda en «Memberships» porque es lo que dice el
+  // chip de la barra de anclas y el ancla `#membresias`; si esto se queda así,
+  // conviene renombrar los tres a la vez.
+  membresiasEyebrow: 'Memberships',
+  membresiasTitulo: 'Become Part of the Change',
   membresiasTexto:
-    'Every contribution counts. By joining, you support initiatives that protect our ecosystems and educate future generations.',
-  membresiasCta: 'I want to support the foundation',
+    "Every contribution helps expand coral restoration, protect endangered wildlife, support environmental education and strengthen one of the Dominican Republic's most impactful marine conservation initiatives.",
+  membresiasCta: 'Support the Foundation',
 
   // ---------- Copy exclusivo del TEASER en /ventaja-competitiva ----------
-  // Slide 62 condensado a un bloque. No repite la historia entera: da el
-  // nombre, quién está detrás y los 3 hitos, y manda a la página.
+  // [v3 2026-08-07, WEBSITE-SOSTENIBILIDAD pags. 6-7] Copy APROBADO, literal.
+  // El teaser dejaba la fundación en una sola frase de contexto («Behind every
+  // tour there is a foundation with a name of its own…»), escrita por nosotros
+  // para presentarla sin repetir su página. El cliente escribe ahora esas
+  // líneas, y son mejores porque no la presentan: la explican — por qué existe
+  // (2016, «if our business depends on the ocean…»), qué la separa de un
+  // lavado de cara (el credo de dos líneas) y qué ha conseguido con el
+  // Ministerio.
+  //
+  // ⚠️ ESTE COPY ES EL DEL HERO DE /foundation EN EL DOCUMENTO. Se monta aquí
+  // porque es lo que Samuel pidió (2026-08-07) y porque el teaser es el único
+  // sitio donde hoy se pinta. Cuando /foundation adopte su hero v3, los dos
+  // bloques se van a mirar de frente: o el teaser se queda con el claim + el
+  // credo (que es lo que engancha) o la página cambia de entrada. Decidirlo
+  // entonces, no duplicarlo.
   teaserEyebrow: 'Our foundation',
-  teaserTexto:
-    'Behind every tour there is a foundation with a name of its own: the one that in 2016 started coral restoration at Playa Bávaro alongside the Ministry of the Environment, today the third most important coral nursery in the country.',
+  teaserClaim: 'Protecting the place that has given us everything.',
+  teaserTexto: [
+    'Founded in 2016, the Bávaro Reefs Foundation was created with a simple belief: if our business depends on the ocean, we have a responsibility to protect it.',
+    "Working alongside the Dominican Republic's Ministry of Environment, we've helped restore coral reefs, protect one of the country's most important green sea turtle habitats and contribute to the conservation of the protected marine area where we operate today. Every guest who sails with us helps make this work possible.",
+  ],
+  // El credo, entre los dos párrafos: dos frases que se contestan y que en
+  // párrafo corrido se perderían. Es la misma figura que la letanía de esta
+  // página («You're helping…»), así que se pinta con su mismo recurso.
+  teaserCredo: [
+    "We didn't create a foundation to support our business.",
+    'We built a business that could support conservation.',
+  ],
   teaserCta: 'Meet the Foundation',
 } as const

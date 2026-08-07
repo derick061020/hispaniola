@@ -167,7 +167,7 @@ export function CabeceraFicha({ tour, ficha }: Props) {
             <InsigniaTooltip
               icono={ShieldCheck}
               titulo="Best price guarantee"
-              texto="Booking here you pay the same or less than on any portal — and you also choose your menu, confirm with 25% and talk directly to the boat's team."
+              texto="Booking here you pay the same or less than on any portal, and you also choose your menu, confirm with 25% and talk directly to the boat's team."
             >
               Best price guarantee
             </InsigniaTooltip>

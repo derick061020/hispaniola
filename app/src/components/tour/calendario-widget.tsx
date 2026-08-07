@@ -112,7 +112,7 @@ function GridMensual({ fecha, onSeleccionar }: { fecha: string | null; onSelecci
               disabled={deshabilitado}
               onClick={() => onSeleccionar(c.iso)}
               aria-pressed={elegido}
-              aria-label={`${diaSemanaLargo(c.iso)}${agotado ? ' — sold out' : ''}`}
+              aria-label={`${diaSemanaLargo(c.iso)}${agotado ? ', sold out' : ''}`}
               // `dia-cal` no pinta nada por sí sola: es el asidero para que el
               // tema oscuro del widget pueda subir el contraste de los días
               // DISPONIBLES sin tocar el tema claro (componentes.css).

@@ -154,7 +154,7 @@ export function ArticuloPage() {
           ) : (
             <div className="mt-10 rounded-card-grande bg-papel-hueso p-6 text-center sm:p-8">
               <p className="text-lead text-navy-sub">
-                We’re still finishing this article — come back soon to read it in full.
+                We’re still finishing this article. Come back soon to read it in full.
               </p>
             </div>
           )}

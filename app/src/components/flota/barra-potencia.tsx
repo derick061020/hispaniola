@@ -193,12 +193,12 @@ export function BarraPotencia({
         <p className="flex items-baseline gap-2">
           <span className="flex items-center gap-1.5 text-xs text-navy-soft">
             <Gauge className="size-3.5" aria-hidden="true" />
-            Potencia
+            Power
           </span>
           <span className="font-display text-lead font-semibold text-navy">{hp} hp</span>
-          <span className="text-xs text-navy-soft">totales</span>
+          <span className="text-xs text-navy-soft">total</span>
         </p>
-        <p className="text-xs text-navy-soft">Máximo de la flota: {maximo} hp</p>
+        <p className="text-xs text-navy-soft">Fleet maximum: {maximo} hp</p>
       </div>
     </div>
   )

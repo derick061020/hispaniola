@@ -84,7 +84,8 @@ export function TablaPreciosCharter({
           arrancar la sección con dos reglas de tarificación es exactamente lo
           que confundía al cliente. Cada card lo explica dentro de «How pricing
           works», donde solo lo lee quien lo quiere leer. */}
-      <p className="mt-3 max-w-2xl text-sm text-navy-sub">
+      {/* [v3 2026-08-07] Sin tope de ancho (ver comparador-premium.tsx). */}
+      <p className="mt-3 text-sm text-navy-sub">
         {personas
           ? `Every price below is the total for your ${personas} ${personas === 1 ? 'guest' : 'guests'}. Change the number in the booking widget and they all follow.`
           : 'Choose the number of guests in the booking widget and every boat shows your total.'}
@@ -98,7 +99,7 @@ export function TablaPreciosCharter({
 
       <p className="mt-4 text-xs text-navy-soft">
         * Premium lobster is an optional add-on at checkout (US$ 30 per person). * Prices may vary
-        with season and availability — confirm with the team when you book.
+        with season and availability. Confirm with the team when you book.
       </p>
     </section>
   )
@@ -163,7 +164,7 @@ function CardBarco({
           >
             <Rotate3d className="size-3.5" aria-hidden="true" />
             360º
-            <span className="sr-only"> — view {s.nombre} in 360 degrees</span>
+            <span className="sr-only">, view {s.nombre} in 360 degrees</span>
           </button>
         ) : null}
 

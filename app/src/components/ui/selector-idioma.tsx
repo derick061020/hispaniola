@@ -57,7 +57,7 @@ type Idioma = 'EN' | 'ES'
 
 function BanderaES({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 32 32" className={className} role="img" aria-label="Spanish — flag of Spain">
+    <svg viewBox="0 0 32 32" className={className} role="img" aria-label="Spanish, flag of Spain">
       <defs>
         <clipPath id="selector-idioma-circulo-es">
           <circle cx="16" cy="16" r="16" />
@@ -75,7 +75,7 @@ function BanderaES({ className }: { className?: string }) {
 
 function BanderaUS({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 32 32" className={className} role="img" aria-label="English — flag of the United States">
+    <svg viewBox="0 0 32 32" className={className} role="img" aria-label="English, flag of the United States">
       <defs>
         <clipPath id="selector-idioma-circulo-us">
           <circle cx="16" cy="16" r="16" />

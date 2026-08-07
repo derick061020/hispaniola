@@ -102,7 +102,7 @@ export const CONCEPTOS_SUELTOS: ConceptoSuelto[] = [
     nota: 'Cooked on board, in the floating kitchen',
     importe: 50,
     foto: 'plato-mariscos',
-    fotoAlt: 'Seafood plate —lobster, octopus and shrimp— freshly made on board',
+    fotoAlt: 'Seafood plate (lobster, octopus and shrimp) freshly made on board',
   },
   {
     id: 'bebidas',
@@ -155,7 +155,7 @@ export const CARA_A_CARA: FilaCaraACara[] = [
     nosotros: 'Fresh, caught that day',
     otros: 'Frozen',
     foto: 'plato-mariscos',
-    fotoAlt: 'Seafood plate —lobster, octopus and shrimp— freshly made on board',
+    fotoAlt: 'Seafood plate (lobster, octopus and shrimp) freshly made on board',
   },
   {
     concepto: 'Drinks',
@@ -293,7 +293,7 @@ export const TOTAL_RAZONES = RAZONES.reduce((s, g) => s + g.razones.length, 0)
 // real de comprador que hoy no contesta nadie.
 export const UBICACION = {
   eyebrow: 'Location, location, location',
-  titulo: 'The best spot on the coast — with no endless drives',
+  titulo: 'The best spot on the coast, with no endless drives',
   texto:
     'We take you to Cabeza de Toro, a natural park in the crystal-clear waters of Cabo Engaño: the best reef in the area for snorkeling. And we leave from the middle of the hotel zone, so your day starts when you step on board.',
   /** El dato que hace de titular visual del bloque. */
@@ -312,7 +312,7 @@ export const CIERRE = {
   eyebrow: 'Ready?',
   titulo: 'See you on the beach',
   texto:
-    'Book direct with us and get all of this for a fair price. No middlemen, no surprises — just the best day at sea in Punta Cana.',
+    'Book direct with us and get all of this for a fair price. No middlemen, no surprises. Just the best day at sea in Punta Cana.',
   letraPequena: 'Legal, insured company · every tourism license in Punta Cana-Bávaro',
   foto: 'hero-catamaran-2',
   fotoAlt: 'Hispaniola catamaran at sunset off the coast of Punta Cana',

@@ -79,7 +79,8 @@ export function AntesDeReservar({ tour, ficha }: { tour: Tour; ficha: FichaTour 
           (F3.3), que reescribe ese bloque entero con los 5 claims de cocina
           aprobados. */}
       <TituloSeccion>Book Direct. Enjoy More.</TituloSeccion>
-      <p className="mt-2 max-w-2xl text-navy-sub">
+      {/* [v3 2026-08-07] Sin tope de ancho (ver comparador-premium.tsx). */}
+      <p className="mt-2 text-navy-sub">
         Unlock exclusive savings and benefits available only when you book directly with Hispaniola.
       </p>
 
@@ -96,8 +97,7 @@ export function AntesDeReservar({ tour, ficha }: { tour: Tour; ficha: FichaTour 
           <p className="text-sm text-navy-sub">
             <strong className="font-semibold text-navy">
               Private charters of {ficha.duracion}
-            </strong>{' '}
-            — the duration comes with the catamaran you choose.
+            </strong>, the duration comes with the catamaran you choose.
           </p>
         </div>
       ) : null}
@@ -150,7 +150,7 @@ export function AntesDeReservar({ tour, ficha }: { tour: Tour; ficha: FichaTour 
                       en vez de esconderse. */}
                   {!d.autoAplicable ? (
                     <span className="mt-0.5 block text-xs text-navy-soft">
-                      We apply it when confirming — just tell us you have sailed with us before.
+                      We apply it when confirming. Just tell us you have sailed with us before.
                     </span>
                   ) : null}
                 </span>

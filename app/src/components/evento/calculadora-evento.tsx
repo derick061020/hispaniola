@@ -3,6 +3,7 @@ import { Minus, Package, Plus, Users } from 'lucide-react'
 import * as CompactButton from '@/components/alignui/compact-button'
 import * as FancyButton from '@/components/alignui/fancy-button'
 import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
+import { NumeroEditable } from '@/components/ui/numero-editable'
 import { formatoDinero } from '@/data/home'
 import {
   NOVIOS_GRATIS_DESDE,
@@ -42,8 +43,15 @@ export function CalculadoraEvento({
   elegido,
   onElegir,
   slug,
+  perks,
 }: {
   paquetes: PaqueteEvento[]
+  /** [2026-08-07, Samuel: «que los avisos de los novios y la champaña vayan
+   *  dentro del widget, no aparte fuera»] Las ventajas exclusivas de la landing
+   *  (hoy solo bodas). Vivían en una card suelta encima de la calculadora, en
+   *  pages/evento.tsx; entran aquí para que se lean CON el precio que las
+   *  aplica, no antes de empezar a configurarlo. */
+  perks?: { icono: string; texto: string }[]
   /** [v3 2026-08-06] La landing. Solo bodas aplica el perk de los novios
    *  gratis (WEBSITE-EVENTOS pag. 5), y el precio lo decide `data/eventos.ts`
    *  — aqui solo se pasa el dato para que el total del widget sea el mismo
@@ -123,7 +131,7 @@ export function CalculadoraEvento({
           abreviatura nunca aparece sola. */}
       <div>
         <span className="mb-1 block text-xs font-medium text-navy-sub" id="calc-label-paquete">
-          Paquete
+          Package
         </span>
         <div
           role="tablist"
@@ -207,46 +215,95 @@ export function CalculadoraEvento({
           número donde el paquete rinde más, y así el primer total que ve el
           visitante es el de la tarifa cerrada, sin extras. */}
       <div>
-        <span className="mb-1 block text-xs font-medium text-navy-sub">Personas</span>
-        <div className="flex h-10 items-center justify-between rounded-10 border border-stroke-soft-200 bg-bg-white-0 pl-3 pr-1.5">
-          <span className="flex items-center gap-2 text-paragraph-sm">
-            <Users className="size-5 shrink-0 text-text-sub-600" aria-hidden="true" />
-            <span className="text-navy-sub">Invitados</span>
+        <span className="mb-1 block text-xs font-medium text-navy-sub">Guests</span>
+        {/* [2026-08-07, Samuel] MISMO ORDEN que el stepper de la ficha de tour y
+            que el del widget de evento: el número va pegado al icono y hace
+            frase con él («12 guests»), con los −/+ solos a la derecha. Aquí
+            estaba al revés —icono + «Invitados» a la izquierda y el número
+            suelto junto a los botones—, así que de los cinco steppers del sitio
+            este era el único que se leía distinto. Ahora los cinco son la misma
+            pieza, que es lo que tiene que llegar a Figma. */}
+        <div
+          role="group"
+          aria-label="Number of guests"
+          className="flex h-10 items-center justify-between rounded-10 border border-stroke-soft-200 bg-bg-white-0 pl-3 pr-1.5"
+        >
+          <span className="flex items-center gap-1 text-paragraph-sm text-text-strong-950">
+            <Users className="mr-1 size-5 shrink-0 text-text-sub-600" aria-hidden="true" />
+            {/* Sin tope: el tarifario de eventos es marginal (base hasta 12 +
+                US$ 99 por cabeza) y no publica aforo máximo — igual que el
+                botón «+», que tampoco se deshabilita nunca. El único freno es
+                el de 4 dígitos del propio campo. */}
+            <NumeroEditable
+              valor={personas}
+              min={1}
+              max={Number.POSITIVE_INFINITY}
+              onCambio={setPersonas}
+              etiqueta="Number of guests"
+              className="tabular-nums"
+            />
+            {personas === 1 ? 'guest' : 'guests'}
           </span>
-          <div className="flex items-center gap-2">
-            <span
-              key={personas}
-              aria-live="polite"
-              className="stepper-tick min-w-[2rem] text-center font-semibold tabular-nums text-navy"
+          <div className="flex items-center gap-1">
+            <CompactButton.Root
+              type="button"
+              variant="stroke"
+              fullRadius
+              aria-label="Remove one guest"
+              disabled={personas <= 1}
+              onClick={() => setPersonas((n) => Math.max(1, n - 1))}
+              className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
             >
-              {personas}
-            </span>
-            <div className="flex items-center gap-1">
-              <CompactButton.Root
-                type="button"
-                variant="stroke"
-                fullRadius
-                aria-label="Remove one guest"
-                disabled={personas <= 1}
-                onClick={() => setPersonas((n) => Math.max(1, n - 1))}
-                className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
-              >
-                <CompactButton.Icon as={Minus} />
-              </CompactButton.Root>
-              <CompactButton.Root
-                type="button"
-                variant="stroke"
-                fullRadius
-                aria-label="Add one guest"
-                onClick={() => setPersonas((n) => n + 1)}
-                className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
-              >
-                <CompactButton.Icon as={Plus} />
-              </CompactButton.Root>
-            </div>
+              <CompactButton.Icon as={Minus} />
+            </CompactButton.Root>
+            <CompactButton.Root
+              type="button"
+              variant="stroke"
+              fullRadius
+              aria-label="Add one guest"
+              onClick={() => setPersonas((n) => n + 1)}
+              className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
+            >
+              <CompactButton.Icon as={Plus} />
+            </CompactButton.Root>
           </div>
         </div>
       </div>
+
+      {/* LOS PERKS DE LA LANDING (hoy solo bodas: novios gratis desde 14 y
+          brindis de champagne). Van AQUÍ, entre el contador y el desglose, y no
+          en una card aparte encima del widget (Samuel, 2026-08-07). El sitio no
+          es cosmético: el primero de los dos es una regla que depende del número
+          de invitados que se acaba de teclear arriba, y su efecto se cobra en la
+          línea «Bride & Groom sail free» del desglose de abajo. Entre las dos
+          cosas, el aviso se lee como parte de la cuenta.
+          Menta y no oro: es un regalo incluido, el mismo idioma de ahorro que
+          el sitio ya usa para lo que no se paga (el chip de descuento del
+          widget de tours, la línea de novios del desglose). El oro está
+          reservado para lo que SUMA al total. */}
+      {/* [2026-08-07, 2ª vuelta — Samuel: «los textos de los perks un poco más
+          pequeños»] Bajan de text-sm a text-xs. Dentro del widget ya no son el
+          titular que eran cuando vivían en su propia card: son una nota al pie
+          de la cuenta, y a 14px pesaban lo mismo que el desglose que hay justo
+          debajo. `leading-relaxed` porque las dos frases ocupan dos renglones
+          y a 12px sin aire se apelmazan. El emoji baja con ellos —a 16px sobre
+          texto de 12 quedaba enorme— pero se queda un punto por encima
+          (text-sm): es la marca que hace la lista escaneable. */}
+      {perks?.length ? (
+        <div className="flex flex-col gap-1.5 rounded-card bg-menta p-3">
+          {perks.map((perk) => (
+            <p
+              key={perk.texto}
+              className="flex items-start gap-2 text-xs leading-relaxed text-navy"
+            >
+              <span aria-hidden="true" className="text-sm leading-relaxed">
+                {perk.icono}
+              </span>
+              <span className="font-medium">{perk.texto}</span>
+            </p>
+          ))}
+        </div>
+      ) : null}
 
       {/* Desglose. Se enseña SIEMPRE, no solo cuando hay extras: que el
           visitante vea de dónde sale el total es la mitad del argumento de
@@ -254,13 +311,13 @@ export function CalculadoraEvento({
       {total !== null ? (
         <div className="flex flex-col gap-1.5 border-t border-linea pt-3 text-sm">
           <div className="flex justify-between text-navy-sub">
-            <span>Paquete (hasta {incluidas} personas)</span>
+            <span>Package (up to {incluidas} guests)</span>
             <span className="tabular-nums">{formatoDinero(paquete.precioBase!)}</span>
           </div>
           {extras > 0 ? (
             <div className="flex justify-between text-navy-sub">
               <span>
-                {extras} {extras === 1 ? 'persona extra' : 'personas extra'} ×{' '}
+                {extras} {extras === 1 ? 'extra guest' : 'extra guests'} ×{' '}
                 {formatoDinero(paquete.porPersonaExtra ?? 0)}
               </span>
               <span className="tabular-nums">
@@ -293,7 +350,7 @@ export function CalculadoraEvento({
 
       <EnlacePrototipo>
         <FancyButton.Root variant="primary" className="w-full" asChild>
-          <span>Reservar este paquete</span>
+          <span>Book this package</span>
         </FancyButton.Root>
       </EnlacePrototipo>
     </div>

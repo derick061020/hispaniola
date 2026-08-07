@@ -102,9 +102,22 @@ export const INSTALACIONES = {
   videoLead: 'A complete look behind the scenes of Hispaniola Aquatic Adventures.',
 
   seccionEyebrow: 'A complex, not just a dock',
-  seccionTitulo: 'Everything behind your experience',
+  // [v3 2026-08-07, WEBSITE - NOSOTROS pag. 11] Titular y bajada APROBADOS.
+  // Sustituyen a la redacción de la casa («Everything behind your experience»
+  // + el inventario de zonas), que hacía de índice de lo que venía; el copy
+  // del cliente dice algo mejor en ese sitio — que la experiencia EMPIEZA
+  // antes de embarcar, que es justo el argumento de tener esta página.
+  // El inventario no se pierde: cada zona se presenta con su nombre y su copy
+  // real unas líneas más abajo, y el `lead` del hero ya lo enumera entero.
+  //
+  // El cliente lo escribe en versales (DREAM IT. ARRIVE. LIVE IT), que en sus
+  // documentos es marca de énfasis y no de estilo — mismo criterio que con
+  // «THE PEOPLE BEHIND THE SCENES» en /crew, que se pinta en caja baja. El
+  // punto final es NUESTRO: sus tres tiempos van con punto y dejar el último
+  // sin él se lee como una errata, no como una decisión.
+  seccionTitulo: 'Dream it. Arrive. Live it.',
   seccionLead:
-    'Our own kitchens, a marine biology lab, an open-air museum, a shop and our offices. Walk through it zone by zone, in video and photos.',
+    'Before the boat leaves the shore, your unforgettable experience has already begun. Every space has been designed to welcome you, inspire you, and prepare you for an unforgettable day.',
   /** Enlace discreto al pie de cada zona (slides 46-49). */
   zonaCta: 'Book your tour',
 
@@ -197,7 +210,7 @@ export const ZONAS: ZonaInstalacion[] = [
     nombre: 'Marine Biology Center',
     claim: 'Where Science Meets Conservation',
     descripcion:
-      "This isn't a display—it's a working marine biology center. Visit our coral laboratory, explore our open-air underwater museum, and discover how our team restores coral reefs and protects Punta Cana's marine life. Before entering the sea, you'll understand exactly what you're about to explore.",
+      "This isn't a display. It's a working marine biology center. Visit our coral laboratory, explore our open-air underwater museum, and discover how our team restores coral reefs and protects Punta Cana's marine life. Before entering the sea, you'll understand exactly what you're about to explore.",
     bullets: [
       'Live coral nursery',
       'Marine biologists on site',
@@ -233,9 +246,9 @@ export const ZONAS: ZonaInstalacion[] = [
     fotos: [
       // ⚠️ NI cocina-flotante NI plato-mariscos, que eran los candidatos
       // obvios: la primera es la cocina A BORDO (otra cosa distinta de las
-      // cocinas en tierra de esta zona) y encima ya protagoniza la franja
-      // «Un día de mar» de esta misma página, así que se repetiría a dos
-      // pantallas de distancia; el plato es un bodegón RECORTADO SOBRE BLANCO
+      // cocinas en tierra de esta zona) y encima protagonizaba la franja
+      // «Un día de mar», que estaba en esta misma página hasta que se retiró
+      // (2026-08-07); el plato es un bodegón RECORTADO SOBRE BLANCO
       // y dentro de una celda del bento se lee como un hueco vacío, no como
       // una foto. Estas dos sí tienen fondo y cuentan preparación y servicio,
       // que es de lo que habla la zona.

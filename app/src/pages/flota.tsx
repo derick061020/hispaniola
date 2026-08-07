@@ -4,8 +4,9 @@ import { HeroInterna } from '@/components/internas/hero-interna'
 import { CabeceraInterna } from '@/components/internas/cabecera-interna'
 import { FamiliaHispaniola } from '@/components/flota/familia-hispaniola'
 import { FlotaGrid } from '@/components/flota/flota-grid'
-import { CocinaYParadas } from '@/components/flota/cocina-y-paradas'
-import { useTimelineHistoria } from '@/components/nosotros/use-timeline-historia'
+import { RecorridoFlota } from '@/components/flota/recorrido-flota'
+import { CocinaTiempos } from '@/components/flota/cocina-tiempos'
+
 import { useCascadaNosotros } from '@/components/nosotros/use-cascada-nosotros'
 import { useDevFlag } from '@/dev/use-dev-flag'
 import { Meta } from '@/components/seo/meta'
@@ -63,8 +64,12 @@ export function FlotaPage() {
   // mandaba a leer una página retirada. Ver dev-registry.ts.
   const [estatico, setEstatico] = useState(false)
   useDevFlag('dev-flota', (v) => setEstatico(v === 'estatico')) // [dev-mode]
-  useTimelineHistoria(contenidoRef, { activo: !estatico }) // [dev-mode] gate
   useCascadaNosotros(contenidoRef, { activo: !estatico }) // [dev-mode] gate
+  // ⚠️ `useTimelineHistoria` YA NO SE LLAMA AQUÍ (2026-08-07): con el carril
+  // nuevo, el año activo es estado de la propia timeline, así que el hook vive
+  // dentro de FamiliaHispaniola y esta página solo le pasa el flag. La cascada
+  // sí se queda: no tiene estado, y sus dos grupos de elementos viven en
+  // componentes distintos bajo este mismo contenedor.
 
   return (
     <div>
@@ -84,18 +89,73 @@ export function FlotaPage() {
         />
       </HeroInterna>
 
-      <div ref={contenidoRef} className="mx-auto max-w-contenido px-5 py-12 sm:px-10 lg:py-16">
-        <div className="flex flex-col gap-16 lg:gap-24">
-          <FamiliaHispaniola />
-          <FlotaGrid />
-          <CocinaYParadas />
-          {/* [v3 2026-08-06, PowerPoint slide 70] El banner de cero plastico
-              sale de /flota junto con las 3 paradas: el cliente tacha las dos.
-              El mensaje no se pierde — vive en el cintillo eco de la home y en
-              /sostenibilidad, que es su sitio. El componente se conserva por
-              si vuelve a hacer falta. */}
-        </div>
+      {/* ⚠️ EL CONTENEDOR ESTÁ PARTIDO EN DOS (2026-08-07, 4ª vuelta de la
+          cocina — Samuel: «que no esté metido como en un banner, hagamos que sea
+          ancho completo hasta los extremos de la pantalla»). Entre las dos
+          mitades va la banda de la cocina A SANGRE. Se saca de la columna en vez
+          de sangrarla con `100vw` + margen negativo: ese truco mete la barra de
+          scroll en la cuenta y deja la página con scroll horizontal en Windows —
+          misma decisión, y mismo porqué, que el barrido de /foundation (ver
+          pages/fundacion.tsx).
+          Este primer contenedor pierde su `py` simétrico: mantiene el de arriba
+          y deja el de abajo a 0, porque lo que sigue es la espuma de la banda y
+          cualquier aire extra ahí abriría una franja de papel muerta entre la
+          rejilla y las olas. */}
+      <div className="mx-auto max-w-contenido px-5 pt-12 sm:px-10 lg:pt-16">
+        <FamiliaHispaniola />
       </div>
+
+      {/* EL RECORRIDO DE AÑOS, FUERA DE LA COLUMNA (2026-08-07, Samuel: «que el
+          scroll fijo no se corte con el contenedor interno, sino con los
+          extremos de la pantalla, da mayor inmersión»). Es la MISMA razón, y la
+          misma técnica, que la banda de la cocina de más abajo: se saca de la
+          columna en vez de sangrarlo con `100vw` + margen negativo, porque ese
+          truco mete la barra de scroll en la cuenta y deja la página con scroll
+          horizontal en Windows.
+          El titular NO se sangra con él: la sección trae su propia rejilla de
+          tres columnas (`.escena-sangrada`) que deja el texto alineado con el
+          resto de /flota y manda solo la pista hasta el borde. */}
+      <RecorridoFlota estatico={estatico} /> {/* [dev-mode] gate */}
+
+      {/* El `pb` NO es aire decorativo (2026-08-07, Samuel: «con la sección de
+          abajo se corta el borde de la card y la sombra»): la rejilla terminaba
+          a ras del contenedor y la espuma de la banda de la cocina arrancaba
+          justo ahí, comiéndose el borde inferior y el `--shadow-card` (16px de
+          difuminado) de la última fila. La sombra necesita papel POR DEBAJO de
+          la card para existir. Se queda por debajo del `pt` a propósito: la
+          banda tiene que seguir leyéndose como continuación de la rejilla, no
+          como una sección suelta con una franja muerta delante. */}
+      <div ref={contenidoRef} className="mx-auto max-w-contenido px-5 pb-12 pt-16 sm:px-10 lg:pb-16 lg:pt-24">
+        <FlotaGrid />
+      </div>
+
+      {/* [2026-08-07, slide 69: «resaltar que es única en Punta Cana»] La cocina
+          flotante pasa a contarse POR TIEMPOS — el párrafo aprobado se enciende
+          al scrollear y la foto clavada cambia con él (ver
+          flota/cocina-tiempos.tsx). Sustituye a `CocinaYParadas`, que se conserva
+          sin montar por si hay que volver, igual que el banner de cero plástico.
+          ⚠️ Antes de esto hubo una tanda de 5 propuestas de COLOR (banda naranja
+          a sangre, carta, corte diagonal, foto oscura, bento): descartadas las
+          cinco por Samuel. Si la sección vuelve a mover, que no sea por ahí.
+          ⚠️ VA FUERA DE LA COLUMNA a propósito — es la banda a sangre. No
+          devolverla dentro sin quitarle antes su propio max-w interno.
+          ⚠️ Y ES LA ÚLTIMA SECCIÓN ANTES DEL FOOTER, que es lo que decide el
+          contenedor vacío de abajo. La banda sale por su propia espuma (5ª
+          vuelta: olas también en el pie) y el footer entra con LA SUYA, así que
+          entre las dos hace falta papel de verdad: las dos espumas son bloques
+          del color del papel, y pegadas se leería una franja clara continua
+          entre dos superficies oscuras en vez de dos umbrales. Ese tramo es lo
+          que las separa. */}
+      <CocinaTiempos />
+
+      {/* [v3 2026-08-06, PowerPoint slide 70] El banner de cero plastico sale de
+          /flota junto con las 3 paradas: el cliente tacha las dos. El mensaje no
+          se pierde — vive en el cintillo eco de la home y en /sostenibilidad, que
+          es su sitio. El componente se conserva por si vuelve a hacer falta.
+          Este contenedor se queda VACÍO de contenido a propósito: su trabajo hoy
+          es el tramo de papel que separa la banda del footer (ver arriba). El día
+          que entre una sección nueva, va aquí dentro. */}
+      <div className="mx-auto max-w-contenido px-5 pb-12 pt-12 sm:px-10 lg:pb-16 lg:pt-16" />
 
       <Footer />
     </div>

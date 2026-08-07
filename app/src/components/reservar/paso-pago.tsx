@@ -23,7 +23,7 @@ export function PasoPago({
     <div className="flex flex-col gap-4">
       <p className="text-sm text-navy-sub">
         Confirm your spot by paying only the <strong className="font-semibold text-navy">25% deposit</strong> today{' '}
-        ({formatoDinero(deposito)}). You pay the remaining {formatoDinero(saldo)} on the day of the tour — with a 5%
+        ({formatoDinero(deposito)}). You pay the remaining {formatoDinero(saldo)} on the day of the tour, with a 5%
         discount if you pay cash on board.
       </p>
 
@@ -39,7 +39,7 @@ export function PasoPago({
       ) : null}
 
       <FancyButton.Root variant="primary" className="w-full" disabled={!fechaElegida} onClick={onPagar}>
-        Pay deposit — {formatoDinero(deposito)}
+        Pay deposit · {formatoDinero(deposito)}
       </FancyButton.Root>
 
       <p className="flex items-center justify-center gap-1.5 text-xs text-navy-soft">

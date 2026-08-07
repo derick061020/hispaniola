@@ -157,7 +157,7 @@ export function GaleriaLightbox({
             <img
               ref={refExpansion}
               src={`/fotos/${fotos[indice]}.webp`}
-              alt={`${etiqueta} — foto ${indice + 1} de ${n}`}
+              alt={`${etiqueta}, foto ${indice + 1} de ${n}`}
               onClick={(e) => e.stopPropagation()}
               className="max-h-full max-w-full rounded-card object-contain"
             />

@@ -57,7 +57,11 @@ export function ComparadorPremium({ tour, ficha }: { tour: Tour; ficha: FichaTou
       <h2 className="mt-3 font-display text-h3 font-semibold text-navy">
         One unforgettable journey. One small upgrade.
       </h2>
-      <p className="mt-3 max-w-xl text-navy-sub">
+      {/* [v3 2026-08-07] Sin tope de ancho — misma petición de Samuel que ya
+          documenta descripcion-tour.tsx, ahora a TODAS las secciones de ficha y
+          eventos: un `max-w` dentro de una card más ancha no es medida de
+          lectura, es una franja blanca a la derecha. */}
+      <p className="mt-3 text-navy-sub">
         The same catamaran, the same route and the same incredible destinations. Upgrade to Premium
         for just {formatoDinero(upgrade)} more and enjoy a freshly prepared gourmet lunch, seven
         dishes to choose from and our signature Floating Kitchen experience.

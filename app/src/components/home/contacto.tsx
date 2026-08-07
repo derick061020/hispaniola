@@ -188,13 +188,19 @@ function Persona() {
         <p className="mt-3 text-xs text-navy-soft">{resto.join(' · ')}</p>
       ) : null}
 
-      {/* El canal que el cliente quiere empujar: único botón coral del carril.
+      {/* El canal que el cliente quiere empujar: único botón lleno del carril.
           El icono es la marca real (ui/iconos-redes.tsx), no el bocadillo
           genérico de lucide que usa la fila de la lista — a tamaño de CTA la
-          diferencia se nota. */}
-      <Boton href={CARD.whatsapp.href ?? WHATSAPP_URL} className="mt-5 w-full">
+          diferencia se nota.
+          [v3 2026-08-07, pedido de Samuel] `tono="whatsapp"` (ui/boton.tsx):
+          deja de ser coral y pasa al verde de marca. Es el ÚNICO botón del
+          sitio que no es coral, y a propósito — el coral dice «reserva» en
+          toda la home, así que un CTA coral aquí competía con esa promesa
+          además de no parecerse a lo que abre. El verde + el icono + el
+          nombre del canal en el texto lo identifican sin leerlo. */}
+      <Boton href={CARD.whatsapp.href ?? WHATSAPP_URL} tono="whatsapp" className="mt-5 w-full">
         <IconoWhatsApp className="size-4" />
-        {CARD.whatsapp.cta ?? 'Chatear ahora'}
+        {CARD.whatsapp.cta ?? 'Chat now on WhatsApp'}
       </Boton>
     </div>
   )
@@ -267,8 +273,12 @@ function BloqueReserva() {
     ? `/my-booking?modo=${modo}&q=${encodeURIComponent(consulta)}`
     : '/my-booking'
 
+  // Sin `border-t` propio: la línea que lo separa de la lista de canales la
+  // pinta ESA lista, por abajo (ver el comentario del carril en Contacto). Con
+  // las dos, cuando no sobra alto quedaban dos hairlines pegados — una raya de
+  // 2px, más gruesa que el resto de la retícula.
   return (
-    <div className="mt-auto border-t border-linea p-6 sm:p-7">
+    <div className="mt-auto p-6 sm:p-7">
       <div className="flex items-start gap-3">
         <span
           aria-hidden="true"
@@ -284,25 +294,54 @@ function BloqueReserva() {
         </div>
       </div>
 
-      {/* Campo y botón UNIDOS en una sola pieza (el anillo vive en el
-          contenedor y se activa con focus-within): al ancho del carril no
-          hay sitio para dos controles sueltos con gap. */}
-      <div className="mt-3 flex items-center gap-2 rounded-btn bg-papel p-1.5 ring-1 ring-linea focus-within:ring-2 focus-within:ring-aqua">
+      {/* Campo y botón UNIDOS en una sola pieza, LADO A LADO (el anillo vive en
+          el contenedor y se activa con focus-within) — decisión de Samuel,
+          reafirmada el 2026-08-07 sobre una versión apilada: «me gusta que esté
+          al lado del input».
+          [v3 2026-08-07, pedido de Samuel: «hay que mencionar y explicar mejor
+          que puede poner el código de booking, el mail o el teléfono»]. Las tres
+          opciones ya se aceptaban desde el 08-06 (ver el comentario de arriba),
+          pero el único sitio que lo contaba era el placeholder — y NO CABÍA:
+          medido, al campo le quedaban 132px de hueco de texto y «Booking code,
+          email or phone» mide 208px, así que se leía «Booking code, ema…» y la
+          mitad del mensaje (email Y teléfono, justo lo que había que anunciar)
+          no llegaba nunca.
+          Con los dos controles en la misma fila, esos 208px NO se pueden
+          recuperar: el carril da 288px y el botón se lleva su parte pase lo que
+          pase. Así que el mensaje se reparte en vez de forzarlo en el hueco
+          equivocado — el placeholder se queda con una versión corta que sí entra
+          entera (medida abajo), y la explicación completa, con el formato del
+          código (HSP-XXXX-XXXX, el dato que nadie recuerda de memoria), baja a
+          una línea de ayuda propia. La línea, además, hace algo que un
+          placeholder no puede: NO desaparece al empezar a escribir.
+          Lo que compra el ancho del placeholder corto, todo en la misma fila:
+          el botón pierde la flecha (~20px — el chevron de las filas de arriba ya
+          no está aquí para justificarla, y «Manage» solo ya dice que es una
+          acción) y se recortan tres paddings mínimos (campo px-2, botón px-3,
+          gap-1.5). Con eso el hueco pasa de 132px a 162px y «Code, email or
+          phone» (151px) entra con 11px de margen — medido en el navegador, no a
+          ojo: es el tipo de ajuste que se rompe solo si alguien lo devuelve a
+          los valores «redondos» sin volver a medir. */}
+      <div className="mt-4 flex items-center gap-1.5 rounded-btn bg-papel p-1.5 ring-1 ring-linea focus-within:ring-2 focus-within:ring-aqua">
         <input
           value={valor}
           onChange={(e) => setValor(e.target.value)}
-          placeholder="Booking code, email or phone"
+          placeholder="Code, email or phone"
           aria-label="Booking code, email or phone number"
-          className="min-w-0 flex-1 bg-transparent px-2.5 py-1.5 text-sm text-navy placeholder:text-navy-soft focus:outline-none"
+          aria-describedby="reserva-ayuda"
+          className="min-w-0 flex-1 bg-transparent px-2 py-1.5 text-sm text-navy placeholder:text-navy-soft focus:outline-none"
         />
         <Link
           to={destino}
-          className="inline-flex shrink-0 items-center gap-1.5 rounded-btn bg-navy px-3.5 py-2 text-sm font-semibold text-white transition-colors hover:bg-aqua-dark"
+          className="shrink-0 rounded-btn bg-navy px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-aqua-dark"
         >
           Manage
-          <ArrowRight className="size-3.5" aria-hidden="true" />
         </Link>
       </div>
+      <p id="reserva-ayuda" className="mt-2 text-xs leading-snug text-navy-soft">
+        Any of the three works: your booking code (HSP-XXXX-XXXX), the email or the phone number you
+        booked with.
+      </p>
     </div>
   )
 }
@@ -404,7 +443,7 @@ function MapaInteractivo() {
     <div className="relative mt-10 h-contacto-mapa-movil -mx-5 sm:-mx-10 lg:h-contacto-mapa">
       <iframe
         src={CONTACTO.mapaEmbedUrl}
-        title="Mapa — Oficina Hispaniola Aquatic Adventures, Punta Cana"
+        title="Mapa: Oficina Hispaniola Aquatic Adventures, Punta Cana"
         loading="lazy"
         referrerPolicy="no-referrer-when-downgrade"
         className="size-full border-0"
@@ -467,7 +506,21 @@ export function Contacto({ mostrarEncabezado = true }: { mostrarEncabezado?: boo
                 apila encima y el borde derecho pasa a ser el de abajo. */}
             <aside className="flex flex-col border-b border-linea bg-papel-hueso lg:w-contacto-rail lg:shrink-0 lg:border-b-0 lg:border-r">
               <Persona />
-              <div className="border-t border-linea">
+              {/* border-b, no solo border-t (v3 2026-08-07, bug visual que
+                  reportó Samuel: «el bloque de mail está muy alto, se ve raro»).
+                  El carril es un flex-col que se ESTIRA al alto del formulario
+                  —siempre más alto— y BloqueReserva lleva `mt-auto` para
+                  quedarse pegado al pie. Consecuencia: TODO el sobrante de alto
+                  del carril se acumulaba justo aquí, entre la última fila y ese
+                  bloque. Como la lista no se cerraba por abajo, esos ~70px de
+                  gris colgaban DENTRO de la fila de email (que además ya es la
+                  más alta, porque la dirección parte en dos líneas) y la hacían
+                  parecer el doble de alta que la de teléfono — el hairline
+                  siguiente estaba tan lejos que no leía como su borde.
+                  Cerrando la lista, el sobrante pasa a ser un respiro
+                  declarado ENTRE dos grupos (canales / «¿ya tienes reserva?»),
+                  que es lo que de verdad es. */}
+              <div className="border-y border-linea">
                 {FILAS.map((id, i) => (
                   <div key={id} className={i > 0 ? 'border-t border-linea' : ''}>
                     <FilaContacto card={CARD[id]} />

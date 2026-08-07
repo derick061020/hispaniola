@@ -130,6 +130,13 @@ export function RecorridoSostenibilidad({ activo }: { activo: boolean }) {
                 {String(i + 1).padStart(2, '0')}
               </p>
               <h3 className="sost-item-titulo font-display text-h3 font-semibold text-navy">{p.titulo}</h3>
+              {/* [v3 2026-08-07] El claim del cliente, entre el titular del
+                  pilar y su párrafo. Mismo papel y mismo trato que el de las
+                  zonas de /facilities (instalaciones/zonas-instalaciones.tsx):
+                  es la frase que vende el punto, no un segundo titular. */}
+              {p.claim ? (
+                <p className="mt-1 font-display text-lg font-semibold text-aqua-dark">{p.claim}</p>
+              ) : null}
               <p className="mt-3 text-lead text-navy-sub">{p.texto}</p>
 
               {/* [v2 2026-07-28, slide 60] «Hitos ambientales reales»: los 3
@@ -153,6 +160,14 @@ export function RecorridoSostenibilidad({ activo }: { activo: boolean }) {
                   {p.hitos.map((h) => (
                     <li key={h.titulo}>
                       <p className="text-sm font-semibold text-navy">{h.titulo}</p>
+                      {/* [v3 2026-08-07] La frase-titular de cada hito. Va en
+                          aqua como el claim del pilar —es el mismo tipo de
+                          línea, un escalón más abajo— y a text-sm, que es el
+                          tamaño de esta caja: subirla la convertiría en un
+                          titular compitiendo con el del pilar. */}
+                      {h.claim ? (
+                        <p className="mt-0.5 text-sm font-medium text-aqua-dark">{h.claim}</p>
+                      ) : null}
                       <p className="mt-1 text-sm text-navy-soft">{h.texto}</p>
                     </li>
                   ))}

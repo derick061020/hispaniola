@@ -56,7 +56,7 @@ export function MegaTours() {
             <span className="mt-0.5 block text-xs text-navy-soft">
               {t.precioLight !== null ? (
                 <>
-                  Desde <span className="font-semibold text-navy">{formatoDinero(t.precioLight)}</span> ·{' '}
+                  From <span className="font-semibold text-navy">{formatoDinero(t.precioLight)}</span> ·{' '}
                 </>
               ) : (
                 // Isla Saona no tiene precio publicado (datos.js): en vez de

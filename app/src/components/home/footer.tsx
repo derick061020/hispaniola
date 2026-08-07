@@ -291,7 +291,7 @@ export function Footer({ cta = 'Ready for an unforgettable day?' }: { cta?: stri
               se conserva — es el ÚNICO medio de pago que el proyecto tiene
               confirmado. */}
           <p className="mt-3 text-xs text-white/50">
-            Confirm with 25% online. The rest on the day of the tour — cash on board works too.
+            Confirm with 25% online. The rest on the day of the tour. Cash on board works too.
           </p>
         </div>
 

@@ -1,9 +1,7 @@
 import { Footer } from '@/components/home/footer'
-import { BandaInstalaciones } from '@/components/instalaciones/banda-instalaciones'
 import { ZonasInstalaciones } from '@/components/instalaciones/zonas-instalaciones'
 import { CabeceraInterna } from '@/components/internas/cabecera-interna'
 import { HeroInterna } from '@/components/internas/hero-interna'
-import { ExperienciaABordo } from '@/components/nosotros/experiencia-abordo'
 import { Meta } from '@/components/seo/meta'
 import { ReelsSociales } from '@/components/ui/reels-sociales'
 import { INSTALACIONES, VERTICALES_INSTALACIONES } from '@/data/instalaciones'
@@ -72,29 +70,19 @@ export function InstalacionesPage() {
         alineacion="izquierda"
       />
 
+      {/* [2026-08-07, pedido de Samuel] SE RETIRAN LAS DOS SECCIONES DE CIERRE:
+          · «A day at sea, cared for down to the detail» (ExperienciaABordo),
+            que estaba aquí de paso desde /nosotros — su colocación ya era
+            provisional, «pendiente del reparto final», y este es el reparto.
+          · La banda de cierre «Ven a conocernos en persona» (BandaInstalaciones
+            variante="cierre").
+          La página termina ahora en las 6 zonas: el CTA intercalado a mitad de
+          recorrido (ver zonas-instalaciones.tsx) y el Footer siguen dando salida,
+          así que no se queda sin llamada a la acción. Los campos `cierre*` de
+          data/instalaciones.ts quedan sin consumir a propósito, por si la banda
+          vuelve a colocarse en otro sitio. */}
       <div className="mx-auto max-w-contenido px-5 pb-12 sm:px-10 lg:pb-16">
         <ZonasInstalaciones />
-
-        {/* [v2 2026-07-27] «Un día de mar, cuidado al detalle» se REUBICA aquí
-            desde /nosotros, que desaparece. Encaja: esta página cuenta lo que
-            hay EN TIERRA detrás de la experiencia, y esta franja cuenta cómo se
-            traduce eso a bordo — el complejo y el día de mar son las dos
-            mitades del mismo argumento. Sin esto se habría perdido con la
-            página. ⚠️ Colocación provisional, pendiente del reparto final. */}
-        <div className="mt-20">
-          <ExperienciaABordo />
-        </div>
-
-        <div className="mt-20">
-          <BandaInstalaciones
-            variante="cierre"
-            foto={INSTALACIONES.cierreFoto}
-            eyebrow={INSTALACIONES.cierreEyebrow}
-            titulo={INSTALACIONES.cierreTitulo}
-            texto={INSTALACIONES.cierreTexto}
-            cta={INSTALACIONES.cierreCta}
-          />
-        </div>
       </div>
 
       <Footer />

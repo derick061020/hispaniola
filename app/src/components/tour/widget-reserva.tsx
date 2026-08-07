@@ -12,9 +12,16 @@ import { useDevFlag } from '@/dev/use-dev-flag'
 import { hoyISO, sumarDias } from '@/lib/fechas'
 import { formatoDinero, QUOTES, type Tour } from '@/data/home'
 import { WHATSAPP_URL, calcularTotalTour, type FichaTour } from '@/data/tours'
-import { ALBUM_UPSELL, DESCUENTO_MAXIMO, totalAddOns, saltoDeTramo } from '@/lib/tarifas'
+import {
+  ALBUM_UPSELL,
+  DESCUENTO_MAXIMO,
+  addOnsDisponibles,
+  totalAddOns,
+  saltoDeTramo,
+} from '@/lib/tarifas'
 import { AddOnsWidget } from '@/components/tour/add-ons-widget'
 import { PistaInfo } from '@/components/ui/pista-info'
+import { NumeroEditable } from '@/components/ui/numero-editable'
 import { PasajerosPopover, FilaPasajero } from '@/components/tour/pasajeros-popover'
 
 // «El widget ES la página» (wireframe A2): sticky en desktop, con el precio en
@@ -89,6 +96,13 @@ type Props = {
    *  aplica según las personas que elijas en el widget» — y no lo hacía. Era
    *  una promesa falsa en pantalla, no solo una función que faltaba. */
   onPersonasChange?: (n: number) => void
+  /** [2026-08-07] Los add-ons marcados. CUARTO estado que sube a la página, y
+   *  el primero que es de DOBLE sentido: el panel de aquí los marca, pero la
+   *  franja de la langosta del bloque de menú —columna izquierda— también, y
+   *  las dos piezas tienen que mostrar la misma reserva. Por eso es una prop
+   *  controlada (como `variante`) y no un `onChange` a secas. */
+  addOnsElegidos: string[]
+  onAddOnsChange: (ids: string[]) => void
 }
 
 // Tope del contador de personas de ESTE booking. v3 (2026-07-17, Saona): con
@@ -130,12 +144,22 @@ export const MAX_PERSONAS_DEFAULT = 6
 function Caja({
   children,
   premium = false,
+  pieFijo = false,
 }: {
   children: React.ReactNode
   /** [v2 2026-07-28] Tema oscuro/oro del widget. Va como PROP y no leyendo el
    *  estado: `Caja` es un envoltorio de presentación sin acceso al estado del
    *  widget, y darle uno solo para el color lo convertiría en otra cosa. */
   premium?: boolean
+  /** [2026-08-07] El widget de booking completo fija su CTA al pie de la caja
+   *  (`.widget-pie`), y para eso la caja tiene que CEDERLE su padding inferior:
+   *  un elemento `sticky` se detiene en el borde de la caja de CONTENIDO, así
+   *  que con el padding puesto el pie se paraba 20px antes del suelo y por esa
+   *  franja seguía asomando el contenido que pasa por debajo. Sin padding
+   *  abajo, el pie llega al borde real y es él quien pone la separación.
+   *  Las ramas de cotización/consulta NO lo activan: no tienen pie fijo y su
+   *  último elemento quedaría pegado al borde. */
+  pieFijo?: boolean
 }) {
   // Mismo lenguaje «objeto suave» que la TourCard de la home: la decisión de
   // compra vive en una caja propia, no suelta sobre el fondo — pero con SU
@@ -179,7 +203,7 @@ function Caja({
       // bloque «Widget de reserva en modo PREMIUM» en componentes.css.
       className={`flex scroll-mt-sticky-top flex-col gap-4 rounded-card-grande bg-papel p-4 widget-marco [&>*]:shrink-0 sm:p-5 lg:max-h-[calc(100svh-var(--spacing-sticky-top)-1.5rem)] lg:overflow-y-auto lg:overscroll-contain scroll-sutil ${
         premium ? 'widget-premium' : ''
-      }`}
+      } ${pieFijo ? 'lg:pb-0' : ''}`}
     >
       {children}
     </div>
@@ -248,6 +272,8 @@ export function WidgetReserva({
   onVarianteChange,
   onPaqueteChange,
   onPersonasChange,
+  addOnsElegidos,
+  onAddOnsChange,
 }: Props) {
   const [fecha, setFecha] = useState<string | null>(null)
   const [horario, setHorario] = useState(0)
@@ -465,7 +491,7 @@ export function WidgetReserva({
       <Caja premium={premiumDeBase}>
         <Precio precio={tour.precioLight} unidad="desde" />
         <p className="text-sm text-navy-sub">
-          This tour is quoted to fit you, based on the number of guests and the menu — up to{' '}
+          This tour is quoted to fit you, based on the number of guests and the menu. Up to{' '}
           {tour.maxPax} guests.
         </p>
         <FancyButton.Root variant="primary" className="w-full" asChild>
@@ -526,15 +552,16 @@ export function WidgetReserva({
   // parte eligió añadir.
   // [v3 2026-08-06] Los add-ons pueden estar atados a sub-variantes concretas
   // (`soloSubVariantes`): la langosta del charter solo existe en los barcos de
-  // 4 h, que son los que navegan con la cocina flotante. Se filtra AQUÍ, en el
-  // único sitio donde se declara la lista, para que el panel, el desglose y el
-  // total no puedan discrepar entre ellos.
-  const addOns = (ficha.addOns ?? []).filter(
-    (a) => !a.soloSubVariantes || (variante !== null && a.soloSubVariantes.includes(variante)),
-  )
-  const [addOnsElegidos, setAddOnsElegidos] = useState<string[]>(() =>
-    addOns.filter((a) => a.porDefecto && ALBUM_UPSELL.porDefecto).map((a) => a.id),
-  )
+  // 4 h, que son los que navegan con la cocina flotante. El filtro estaba
+  // escrito aquí; desde el 2026-08-07 vive en `addOnsDisponibles` (lib/tarifas)
+  // porque la franja de la langosta del bloque de menú también marca add-ons y
+  // tiene que aplicar EXACTAMENTE la misma regla — si no, el panel, el desglose,
+  // el total y la franja podrían discrepar sobre si la langosta aplica.
+  const addOns = addOnsDisponibles(ficha, variante)
+  // ¿Hay algún extra que el visitante haya PEDIDO, en vez de venir marcado de
+  // fábrica? Decide si el panel de upsells se adelanta a la fecha — ver la
+  // puerta más abajo.
+  const hayAddOnPedido = addOns.some((a) => addOnsElegidos.includes(a.id) && !a.porDefecto)
   const paxParaAddOns = esDual ? totalPersonas : personas
   const importeAddOns = totalAddOns(addOns, addOnsElegidos, paxParaAddOns)
   const total = totalTour === null ? null : totalTour + importeAddOns
@@ -613,7 +640,7 @@ export function WidgetReserva({
       : 'desde'
 
   return (
-    <Caja premium={pielOscura}>
+    <Caja premium={pielOscura} pieFijo>
       {/* Chips de aceleración, lo primero del widget (Samuel, 2026-07-22).
           Van ARRIBA DEL TODO, antes incluso del rating: son el motivo por el
           que alguien deja de leer y mira el precio.
@@ -920,13 +947,14 @@ export function WidgetReserva({
                   />
                 }
               >
-                  <span
-                    key={adultos}
-                    aria-live="polite"
-                    className="stepper-tick min-w-[1.5rem] text-center font-semibold tabular-nums text-navy"
-                  >
-                    {adultos}
-                  </span>
+                  <NumeroEditable
+                    valor={adultos}
+                    min={1}
+                    max={maxPersonas - ninos}
+                    onCambio={setAdultos}
+                    etiqueta="Number of adults"
+                    className="min-w-[1.5rem] font-semibold tabular-nums text-navy"
+                  />
                   <CompactButton.Root
                     type="button"
                     variant="stroke"
@@ -964,13 +992,14 @@ export function WidgetReserva({
                   />
                 }
               >
-                  <span
-                    key={ninos}
-                    aria-live="polite"
-                    className="stepper-tick min-w-[1.5rem] text-center font-semibold tabular-nums text-navy"
-                  >
-                    {ninos}
-                  </span>
+                  <NumeroEditable
+                    valor={ninos}
+                    min={0}
+                    max={maxPersonas - adultos}
+                    onCambio={setNinos}
+                    etiqueta="Number of children"
+                    className="min-w-[1.5rem] font-semibold tabular-nums text-navy"
+                  />
                   <CompactButton.Root
                     type="button"
                     variant="stroke"
@@ -1011,13 +1040,17 @@ export function WidgetReserva({
                   />
                 }
               >
-                  <span
-                    key={bebes}
-                    aria-live="polite"
-                    className="stepper-tick min-w-[1.5rem] text-center font-semibold tabular-nums text-navy"
-                  >
-                    {bebes}
-                  </span>
+                  {/* El máximo NO es el aforo (los bebés no ocupan plaza), pero
+                      sí es el tope que anuncia la propia fila: escribir 40
+                      bebés en un barco de 30 no tendría a quién sentar. */}
+                  <NumeroEditable
+                    valor={bebes}
+                    min={0}
+                    max={maxPersonas}
+                    onCambio={setBebes}
+                    etiqueta="Number of infants"
+                    className="min-w-[1.5rem] font-semibold tabular-nums text-navy"
+                  />
                   <CompactButton.Root
                     type="button"
                     variant="stroke"
@@ -1070,11 +1103,17 @@ export function WidgetReserva({
               aria-label="Number of guests"
               className="flex h-10 items-center justify-between rounded-10 border border-stroke-soft-200 bg-bg-white-0 pl-3 pr-1.5"
             >
-              <span className="flex items-center gap-2 text-paragraph-sm text-text-strong-950">
-                <Users className="size-5 shrink-0 text-text-sub-600" aria-hidden="true" />
-                <span key={personas} aria-live="polite" className="stepper-tick tabular-nums">
-                  {personas === 1 ? '1 guest' : `${personas} guests`}
-                </span>
+              <span className="flex items-center gap-1 text-paragraph-sm text-text-strong-950">
+                <Users className="mr-1 size-5 shrink-0 text-text-sub-600" aria-hidden="true" />
+                <NumeroEditable
+                  valor={personas}
+                  min={1}
+                  max={maxPersonas}
+                  onCambio={setPersonas}
+                  etiqueta="Number of guests"
+                  className="tabular-nums"
+                />
+                {personas === 1 ? 'guest' : 'guests'}
               </span>
               <div className="flex items-center gap-1">
                 <CompactButton.Root
@@ -1176,12 +1215,18 @@ export function WidgetReserva({
           Al final, cuando ya decidió ir, US$ 20 sobre una reserva de varios
           cientos es un sí fácil. Es la posición de «order bump» y es lo que
           Samuel pidió: «llamativo en su momento, pero no invasivo». */}
-      {addOns.length > 0 && fecha !== null ? (
+      {/* [2026-08-07] …CON UNA EXCEPCIÓN: si el visitante ya PIDIÓ un extra
+          desde la franja de la langosta del bloque de menú, esconderlo aquí
+          sería peor que enseñarlo pronto — habría marcado algo que no aparece
+          por ninguna parte. La puerta se abre entonces aunque no haya fecha.
+          Se compara contra los add-ons que arrancan marcados (el álbum) para
+          no confundir «lo eligió» con «venía puesto». */}
+      {addOns.length > 0 && (fecha !== null || hayAddOnPedido) ? (
         <AddOnsWidget
           addOns={addOns}
           personas={paxParaAddOns}
           elegidos={addOnsElegidos}
-          onCambiar={setAddOnsElegidos}
+          onCambiar={onAddOnsChange}
           mensajeAlDesmarcar={ALBUM_UPSELL.mensajeAlDesmarcar}
         />
       ) : null}
@@ -1205,52 +1250,87 @@ export function WidgetReserva({
           igual navega): el estado vacío es una variante del componente en
           Figma (FancyButton disabled), y se resuelve con los slots del
           sistema, no bajando la opacidad. */}
-      {fecha === null ? (
-        <FancyButton.Root variant="primary" className="w-full" disabled>
-          Elige una fecha
-        </FancyButton.Root>
-      ) : total === null ? (
-        // v3 (2026-07-17, Saona): con subVariantes, hay un 2º estado disabled
-        // — la fecha está pero el nº de personas no llega al mínimo del
-        // tramo de la variante activa. Sin este caso el botón se queda
-        // habilitado y "Continuar — —" (que no se ve bien) al cambiar
-        // variante sin ajustar pax.
-        <FancyButton.Root variant="primary" className="w-full" disabled>
-          Adjust the number of guests
-        </FancyButton.Root>
-      ) : (
-        <FancyButton.Root variant="primary" className="w-full" asChild>
-          <Link
-            to={`/book/${tour.slug}?${new URLSearchParams({
-              // Saona (subVariantes) manda `variante` en vez de `paquete` (no
-              // hay Light/Premium — el menú buffet es igual en las 3
-              // sub-variantes; lo que cambia es el BOTE). El funnel aún no
-              // conoce `variante` — cuando se desbloquee la frontera con el
-              // motor, leerá este param y hará la rama de sub-variante.
-              ...(tieneSubVariantes ? { variante: variante ?? '' } : { paquete }),
-              fecha,
-              horario: String(horario),
-              // Snorkel Lovers (tarifa dual, v3 2026-07-17): manda adultos y
-              // niños por separado, Y la suma como `personas` (compatibilidad
-              // con el funnel cuando se construya, que hoy lee `personas`).
-              ...(esDual
-                ? {
-                    adultos: String(adultos),
-                    ninos: String(ninos),
-                    // [v2] Los bebés viajan al funnel aunque no paguen: la
-                    // tripulación necesita saber cuántos van a bordo
-                    // (chalecos, sillas). Solo se añade si hay alguno, para no
-                    // ensuciar la URL del caso normal.
-                    ...(bebes > 0 ? { bebes: String(bebes) } : {}),
-                    personas: String(totalPersonas),
-                  }
-                : { personas: String(personas) }),
-            }).toString()}`}
-          >
-            Continuar — {formatoDinero(total)}
-          </Link>
-        </FancyButton.Root>
-      )}
+      {/* [2026-08-07] EL CTA SE FIJA AL PIE DE LA CAJA (Samuel: «cuando hay
+          scroll suficiente el botón se sale y no se ve completo; debe estar
+          fijado al final, la idea es que siempre siempre esté visible para ser
+          clickeado»). Desde que el scroll vive en la propia caja (v2
+          2026-07-27, comentario de `Caja`), el widget mide ~900px de contenido
+          en los ~700 que deja la pantalla: el botón —que es la razón de ser de
+          toda esta columna— quedaba cortado por el borde inferior salvo que se
+          scrolleara hasta él.
+
+          `sticky bottom-0` y no un pie fuera del scroll: así el botón se
+          despega solo cuando hace falta y, al llegar al final, vuelve a su
+          sitio del flujo con el ticker de garantías y la reseña debajo — no
+          hay dos maquetas distintas que mantener.
+
+          Los negativos laterales (`-mx-5` + `px-5`) llevan el fondo hasta los
+          bordes de la caja, para que el contenido no asome por los costados al
+          pasar por debajo. Son los 5 del `sm:p-5` de `Caja`: a partir de lg el
+          padding ya es siempre ese, así que no hace falta la pareja de móvil.
+
+          `z-10` deja el pie por encima del selector de paquete (su thumb
+          también es z-10, pero este va después en el DOM) y POR DEBAJO del
+          calendario y el popover de pasajeros (z-20): un panel abierto tiene
+          que taparlo, no al revés.
+
+          El `pb-5` del pie ES el padding inferior de la caja, que se lo cede
+          (`pieFijo` en `Caja`, y el `lg:pb-5` de la fila de deseos que lo
+          devuelve al final del scroll). No es decoración: un `sticky` se para
+          en el borde de la caja de CONTENIDO de su contenedor, así que con el
+          padding puesto el pie se detenía 20px antes del suelo y por esa franja
+          seguía asomando el contenido que pasaba por debajo — probado en el
+          navegador, y un margen negativo NO lo arregla (Chrome recorta igual).
+          Cediéndolo, el pie llega al borde real y el hueco bajo el botón lo
+          pone él. */}
+      <div className="widget-pie lg:sticky lg:bottom-0 lg:z-10 lg:-mx-5 lg:px-5 lg:pb-5 lg:pt-3">
+        {fecha === null ? (
+          <FancyButton.Root variant="primary" className="w-full" disabled>
+            Elige una fecha
+          </FancyButton.Root>
+        ) : total === null ? (
+          // v3 (2026-07-17, Saona): con subVariantes, hay un 2º estado disabled
+          // — la fecha está pero el nº de personas no llega al mínimo del
+          // tramo de la variante activa. Sin este caso el botón se queda
+          // habilitado y "Continuar — —" (que no se ve bien) al cambiar
+          // variante sin ajustar pax.
+          <FancyButton.Root variant="primary" className="w-full" disabled>
+            Adjust the number of guests
+          </FancyButton.Root>
+        ) : (
+          <FancyButton.Root variant="primary" className="w-full" asChild>
+            <Link
+              to={`/book/${tour.slug}?${new URLSearchParams({
+                // Saona (subVariantes) manda `variante` en vez de `paquete` (no
+                // hay Light/Premium — el menú buffet es igual en las 3
+                // sub-variantes; lo que cambia es el BOTE). El funnel aún no
+                // conoce `variante` — cuando se desbloquee la frontera con el
+                // motor, leerá este param y hará la rama de sub-variante.
+                ...(tieneSubVariantes ? { variante: variante ?? '' } : { paquete }),
+                fecha,
+                horario: String(horario),
+                // Snorkel Lovers (tarifa dual, v3 2026-07-17): manda adultos y
+                // niños por separado, Y la suma como `personas` (compatibilidad
+                // con el funnel cuando se construya, que hoy lee `personas`).
+                ...(esDual
+                  ? {
+                      adultos: String(adultos),
+                      ninos: String(ninos),
+                      // [v2] Los bebés viajan al funnel aunque no paguen: la
+                      // tripulación necesita saber cuántos van a bordo
+                      // (chalecos, sillas). Solo se añade si hay alguno, para no
+                      // ensuciar la URL del caso normal.
+                      ...(bebes > 0 ? { bebes: String(bebes) } : {}),
+                      personas: String(totalPersonas),
+                    }
+                  : { personas: String(personas) }),
+              }).toString()}`}
+            >
+              Continuar · {formatoDinero(total)}
+            </Link>
+          </FancyButton.Root>
+        )}
+      </div>
 
       {/* v3 (2026-07-17, charter): el desglose del total se pinta ARRIBA,
           en la cabecera, justo debajo del precio unitario (no aquí, donde
@@ -1303,7 +1383,11 @@ export function WidgetReserva({
           en localStorage, como el resto del prototipo (lib/reservas.ts hace
           lo mismo con la reserva). Compartir usa la Web Share API nativa
           cuando existe (móvil) y cae a copiar el enlace en escritorio. */}
-      <div className="flex items-center justify-between gap-2 border-t border-linea pt-3">
+      {/* [2026-08-07] `lg:pb-5` devuelve aquí el padding inferior que la caja
+          le cede al pie fijo del CTA (ver `pieFijo` en `Caja`): esta fila es el
+          último elemento, y sin él quedaría pegada al borde al llegar al final
+          del scroll. */}
+      <div className="flex items-center justify-between gap-2 border-t border-linea pt-3 lg:pb-5">
         <button
           type="button"
           onClick={() => setEnDeseos((v) => !v)}

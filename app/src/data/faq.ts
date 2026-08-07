@@ -33,7 +33,7 @@ export const FAQ_CATEGORIAS: CategoriaFaq[] = [
       },
       {
         p: 'How much cash should I bring?',
-        r: 'If you chose the 25% deposit, the remaining balance — with a 5% discount if you pay in cash on board.',
+        r: 'If you chose the 25% deposit, the remaining balance (with a 5% discount if you pay in cash on board).',
       },
       {
         p: 'Do you accept cards? Can I pay at the hotel?',
@@ -66,7 +66,7 @@ export const FAQ_CATEGORIAS: CategoriaFaq[] = [
       { p: 'Is there a restroom on board?', r: 'Yes, every one of our boats has a restroom.' },
       {
         p: 'Can I come if I cannot swim?',
-        r: 'Yes — the snorkeling is in shallow water and life jackets are available.',
+        r: 'Yes, the snorkeling is in shallow water and life jackets are available.',
       },
     ],
   },
@@ -88,7 +88,7 @@ export const FAQ_CATEGORIAS: CategoriaFaq[] = [
       { p: 'What if it rains on the day of my tour?', r: 'Full refund or a date change, at no cost.' },
       {
         p: 'Do you cancel for rough seas?',
-        r: 'Only if conditions are not safe — in that case, a full refund or a reschedule.',
+        r: 'Only if conditions are not safe. In that case, a full refund or a reschedule.',
       },
     ],
   },

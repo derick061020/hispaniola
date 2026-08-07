@@ -49,8 +49,30 @@ export function FundacionTeaser() {
           <h2 className="sost-reveal mt-2 text-balance font-display text-h2 font-semibold text-navy">
             {FUNDACION.nombreLegal}
           </h2>
+          {/* [v3 2026-08-07] El claim del cliente bajo el nombre, en aqua:
+              mismo papel y mismo trato que el de las zonas de /facilities y el
+              de los pilares de esta misma página. */}
+          <p className="sost-reveal mt-2 font-display text-lg font-semibold text-aqua-dark">
+            {FUNDACION.teaserClaim}
+          </p>
+
+          {/* Los dos párrafos aprobados, con EL CREDO EN MEDIO — ese es su
+              orden en el documento y es el que hace que funcione: primero por
+              qué nació, luego el giro («no creamos una fundación para sostener
+              el negocio; montamos un negocio que pudiera sostener la
+              conservación»), y solo entonces lo conseguido. */}
           <p className="sost-reveal mt-3 max-w-2xl text-lead text-navy-sub">
-            {FUNDACION.teaserTexto}
+            {FUNDACION.teaserTexto[0]}
+          </p>
+          <ul className="sost-reveal mt-5 flex max-w-2xl flex-col gap-1.5">
+            {FUNDACION.teaserCredo.map((linea) => (
+              <li key={linea} className="font-display text-lg font-medium text-navy">
+                {linea}
+              </li>
+            ))}
+          </ul>
+          <p className="sost-reveal mt-5 max-w-2xl text-lead text-navy-sub">
+            {FUNDACION.teaserTexto[1]}
           </p>
 
           <div className="sost-reveal mt-8">

@@ -46,6 +46,21 @@
   --color-navy: #0b2545; /* texto fuerte, footer, headings */
   --color-navy-sub: #42525f; /* texto secundario sobre papel */
   --color-navy-soft: #5b6b78; /* meta/caption sobre papel */
+  /* El ESPEJO de --color-navy-sub cuando el fondo es navy (2026-08-07, la
+     cocina flotante de /flota pasa a panel oscuro). Hasta hoy el texto
+     secundario sobre oscuro se resolvía con `text-white/85` suelto (banner de
+     cero plástico, why-direct); eso vale para un pie de foto, pero la cocina
+     lo necesita para su ESTADO APAGADO —copy aprobado que el mecanismo
+     enciende— y una property de opacidad no es una variable de color en
+     Figma: el par encendido/apagado tiene que ser dos tokens, como lo es
+     navy/navy-sub sobre papel.
+     Slate azulado, no gris neutro: es el navy lavado hacia el blanco, así que
+     pertenece a la familia en vez de meter un gris ajeno.
+     ⚠️ Medido sobre --color-navy: 6,2:1 (AA ✓ de sobra). Eso es lo que hace
+     legible el texto apagado — en esta sección «apagado» significa secundario,
+     nunca invisible. El blanco encendido da 15,4:1, así que entre los dos hay
+     2,5× de separación: suficiente para que el encendido se NOTE. */
+  --color-sobre-navy-suave: #93a7bb;
   --color-aqua: #0e8c9c; /* acento de marca — cuentagotas */
   --color-aqua-dark: #0b6f7c; /* hover del acento */
   --color-aqua-tint: #eaf3f4; /* fondo tenue del acento (hover, icon circles) */
@@ -62,6 +77,42 @@
   --color-menta-texto: #0c7a5e; /* precio dentro del panel */
   --color-linea: #dfe6ea; /* bordes hairline */
   --color-linea-fuerte: #c3ced4;
+
+  /* ── VERDE DE WHATSAPP (2026-08-07, pedido de Samuel: «el botón de chat now
+     de WhatsApp… que tenga el color de WhatsApp») ────────────────────────
+     MARCA DE TERCEROS, NO PALETA HISPANIOLA. Mismo estatus que los logos de
+     Visa/Mastercard/PayPal (ui/marcas-pago.tsx): el valor no lo elige el
+     diseño, lo dicta el dueño de la marca — #25d366 es el verde oficial de
+     WhatsApp. Vive aquí y no suelto en el componente por la regla de «cero
+     hex fuera de tokens», pero NO entra en el sistema de color de la marca:
+     su único uso legítimo es un control que ABRE WhatsApp. Si aparece en
+     cualquier otro sitio, está mal usado.
+     El «dark» es el hover: el mismo verde un escalón hundido (el propio
+     WhatsApp usa esta familia en sus estados presionados).
+
+     ⚠️ CONTRASTE. Blanco sobre #25d366 da 1.98:1 — por debajo de AA (4.5:1)
+     para texto normal. No es un despiste del token: NINGÚN verde que siga
+     leyéndose como «WhatsApp» llega a 4.5:1 con blanco (el propio botón
+     oficial de WhatsApp es blanco sobre este verde). Se asume a propósito
+     porque el reconocimiento de marca es lo que hace funcionar ese botón, y
+     porque no es el único camino al canal (la fila de teléfono/email del
+     mismo carril y el Topbar lo repiten en texto legible). Si algún día se
+     prioriza AA por encima del reconocimiento, el reemplazo es #128c7e (el
+     verde oscuro secundario de WhatsApp, 4.14:1) o navy sobre el verde. */
+  --color-whatsapp: #25d366;
+  --color-whatsapp-dark: #1da851;
+
+  /* [2026-08-07] AQUÍ VIVIÓ LA FAMILIA «BRASA» (--color-brasa y sus tres
+     tonos), el naranja con el que se probaron 5 propuestas para la cocina
+     flotante de /flota. Samuel las descartó las cinco («no me gusta ninguna
+     para nada») y con ellas se va la paleta: la sección no se arregla con
+     color, se arregla con un mecanismo (ver flota/cocina-tiempos.tsx).
+     Se anota, y no se borra en silencio, lo único que valía la pena de ese
+     experimento por si el naranja vuelve algún día: sobre un naranja de ese
+     rango la tinta tiene que ser NAVY, nunca blanca — medido, el blanco daba
+     2,56:1 y --color-navy-sub 3,03:1, los dos por debajo de la AA incluso para
+     titulares. Un fondo naranja obliga a renunciar al escalón de gris del
+     texto secundario en toda la sección. */
 
   /* ── MODO PREMIUM (correcciones v2, 2026-07-27) ─────────────────────────
      La familia oscura/oro con la que se vende el paquete Premium. Sale del
@@ -335,10 +386,20 @@
      párrafo GRANDE con palabras alternando gris/negro para resaltar (ref. que
      aportó Samuel — "Who we are" de Journeo). No reusa --text-h2: aquí el peso
      es 400/500 (texto corrido, no titular) y necesita un interlineado más
-     abierto para que las 3 frases respiren en la columna estrecha. */
-  --text-narrativa: 2rem; /* 32px — desktop (v3-F18.1: sube de 28px, "un poco más grande") */
+     abierto para que las 3 frases respiren en la columna estrecha.
+
+     [2026-08-07, Samuel: "reduce el tamaño del texto para que se adapte mejor
+     a la sección"] BAJA de 32px a 28px (y de 24 a 22 en móvil), que es donde
+     estaba antes de v3-F18.1. El 32px se decidió cuando el copy era una
+     SÍNTESIS de 3 frases cortas; el copy aprobado por el cliente (v3, agosto)
+     es bastante más largo, y a 32px en media columna (≈668px de los 1400 de
+     --container-contenido) la narrativa crecía muy por encima del vídeo con
+     el que comparte fila. A 28px la columna de texto y la de vídeo vuelven a
+     pesar parecido y la medida sube a ~47 caracteres por línea, más cómoda de
+     leer que los ~41 de antes. */
+  --text-narrativa: 1.75rem; /* 28px — desktop */
   --text-narrativa--line-height: 1.4;
-  --text-narrativa-movil: 1.5rem; /* 24px — móvil (sube de 22px); Poppins ancha desborda a más */
+  --text-narrativa-movil: 1.375rem; /* 22px — móvil; Poppins ancha desborda a más */
   --text-narrativa-movil--line-height: 1.5;
   --text-precio: 1.5rem; /* número de precio en panel menta */
   --text-precio--line-height: 1.1;
@@ -363,6 +424,12 @@
      del notch Y del "amague" cóncavo de arriba, ver componentes.css. */
   --radius-notch: 1.25rem; /* 20px */
   --radius-foto: 0.375rem; /* 6px — foto dentro del passe-partout del photo-stack */
+  /* Realce del número editable del stepper (ui/numero-editable.tsx): el fondo
+     que aparece al pasar el ratón y el anillo de foco. Ceñido —envuelve 1-3
+     dígitos, no una caja— así que va por debajo del radio de los campos
+     (--radius-btn, 10px): a ese radio un rectángulo de 20px de alto se
+     redondea casi a píldora y el número parecía un chip pulsable. */
+  --radius-numero: 0.25rem; /* 4px */
   /* v3-F17: TourCard «objeto suave» (PLAN-v3.md §17) — ref. soft-UI de Samuel.
      Wrapper de TourCard únicamente; --radius-card (16px) se queda para todo
      lo demás, incluida la sub-card de precio anidada dentro de esta. */
@@ -1615,6 +1682,31 @@
      aire cae en los cantos de la página y no en el pasillo central. */
   --spacing-sost-proyecto-foto: 24rem; /* 384px — ver arriba: los originales miden 368 */
 
+  /* LA ENTRADA DE CADA PROYECTO (v3 2026-08-07, Samuel: «que las animaciones
+     de aparición de los textos e imágenes sea más creativo, y además que vaya
+     con el scroll, es decir, si me vuelvo para atrás se vuelvan a ocultar»).
+     Sustituye al `.sost-reveal` de la página en ESTOS 12 bloques: aquel es un
+     fundido de un disparo (`once: true`) y no vuelve atrás por diseño. Ver
+     use-entrada-proyectos.ts.
+
+     EL GESTO SALE DEL EJE. Cada bloque nace pegado a la barra y se abre hacia
+     su lado, así que la barra no solo mide el avance: parece emitir los
+     proyectos. Y de paso es la única dirección SEGURA — todo empieza más cerca
+     del centro que donde acaba, así que nada puede empujar el ancho de la
+     página mientras entra (con el gesto al revés, un bloque desplazado hacia
+     fuera genera scroll horizontal en el tramo estrecho de lg). */
+  --proyecto-entrada-x: 3rem; /* 48px — lo que el bloque viaja desde el eje. Es la mitad del pasillo (gap-x-24 = 96px), así que arranca justo donde acaba el canal de la barra y no por debajo de ella */
+  --proyecto-entrada-y: 1rem; /* 16px — la subida que acompaña. Más corta que --sost-reveal-y (24px): aquí el movimiento principal es horizontal y sumar el salto entero se leía como dos gestos peleados */
+  --proyecto-entrada-escala: 1.12; /* la foto entra un 12% grande y se asienta: da profundidad sin que se note el reescalado (12% sobre 384px es un original de 430px, todavía por debajo del punto donde el webp de 368 se ve blando) */
+  --proyecto-entrada-stagger: 0.12; /* s entre rótulo, título, claim y párrafo. Con scrub NO es tiempo, es DISTANCIA: las cuatro líneas se descubren una tras otra a medida que la fila sube, y es lo que hace que el bloque se lea escribiéndose en vez de encendiéndose de golpe */
+  --proyecto-entrada-scrub: 0.5; /* s de amortiguación. `true` (pegado al píxel) delata cada tirón de la rueda; medio segundo mantiene la reversibilidad que pidió Samuel y quita el nerviosismo. Mismo criterio que --recorrido-scrub (0.6) */
+  /* El rango: la fila entra cuando asoma por abajo y queda asentada al llegar
+     al medio de la pantalla, o sea que termina de aparecer JUSTO cuando el
+     lector la tiene delante — no antes (se pierde el gesto) ni después (se lee
+     a medio aparecer). Es también el rango que se recorre al revés al subir. */
+  --proyecto-entrada-inicio: top 88%;
+  --proyecto-entrada-fin: top 52%;
+
   /* ---------- Página Guías (rediseño editorial, 2026-07-17, pedido de
      Samuel: "parece una página con solo cajas... más editorial, más
      creativa e interesante") ---------- Mismo lenguaje que el rediseño de
@@ -1710,6 +1802,143 @@
   --eco-hoja-vaiven-angulo: 1.2deg; /* ±1.2° pivotando en la BASE de la hoja (48 72 del viewBox): una hoja se mece desde su tallo, no desde su centro */
   --eco-anillo-giro-duracion: 40s; /* una vuelta entera del anillo punteado — a menos de ~30s deja de leerse como sello vivo y empieza a parecer un spinner de carga */
 
+  /* ---------- SELLO ECO DE LAS CARDS DE FLOTA (v3 2026-08-07, PowerPoint
+     slide 68 + 📞 reunión 07-31 15:40: «estos logos que tengamos en la ficha:
+     embarcación sostenible» → Samuel: «como un sello, una estampa ahí de eco…
+     más llamativos, que resalte») ---------- ui/sello-eco.tsx.
+
+     ⚠️ POR QUÉ ESTE SELLO NO ES EL DE LA CINTA (SelloEco, privado en
+     home/eco-friendly.tsx). Aquel es un DISCO PLANO, y está bien que lo sea:
+     vive sobre la cinta de menta, una superficie plana. Este vive sobre FOTO y
+     VÍDEO, y ahí un disco plano ya se probó y se descartó — el 2026-07-28, en
+     el banner de cero plástico: «un disco plano sobre una foto se lee como
+     pegatina por bien dibujado que esté, y eso no se arregla con tamaño ni con
+     sombra». Lo que sí aguanta sobre foto, en esta misma web, es el sello de
+     TripAdvisor, y aguanta por un motivo que se dejó escrito: se lee como UN
+     objeto de metal con volumen, no como tres capas apiladas. De ahí sale esta
+     paleta: no es decoración, es la materia (cara con luz arriba y sombra
+     abajo, filo especular, canto en sombra, sombra proyectada sobre la escena).
+
+     LA CARA ES CLARA, NO AQUA. Contraintuitivo para un sello «eco», y es a
+     propósito: el fondo de estas cards es mar del Caribe: un disco aqua sobre
+     agua turquesa desaparece. Blanco esmaltado con canto y hoja de marca
+     destaca sobre agua, sobre arena y sobre el velo navy del pie de la media,
+     que es donde vive. Mismo criterio que las otras píldoras de la card, que
+     son papel al 90% y no color de marca. */
+  --color-sello-eco-cara-luz: var(--color-papel); /* alto de la cara esmaltada — highlight, blanco puro */
+  --color-sello-eco-cara-sombra: color-mix(in srgb, var(--color-papel-hueso) 88%, var(--color-aqua)); /* bajo de la cara: el mismo esmalte girado hacia la sombra, un paso hacia el aqua */
+  --color-sello-eco-canto: var(--color-aqua-dark); /* el canto del sello — es el borde del objeto, no una línea de contorno */
+  --color-sello-eco-filo: color-mix(in srgb, var(--color-papel) 85%, transparent); /* filo especular del canto, arriba. Blanco muy opaco por ser un highlight; nunca elegido por contraste contra el relleno */
+  --color-sello-eco-canto-sombra: color-mix(in srgb, var(--color-navy) 22%, transparent); /* el mismo canto, abajo: el lado que no recibe luz */
+  --color-sello-eco-anillo: color-mix(in srgb, var(--color-aqua) 55%, transparent); /* el anillo punteado que gira, sobre la cara clara */
+  --sello-eco-sombra: drop-shadow(0 3px 5px rgb(11 37 69 / 34%)); /* la sombra que lo separa de la foto. CLARA y corta: un sello de 56px apoyado, no un cartel flotando */
+  --sello-eco-anillo-giro-duracion: 44s; /* una vuelta. Un pelo más lento que el de la cinta (40s) porque aquí el sello es más pequeño: a igual duración, un anillo más corto recorre menos y se percibe más rápido */
+  --sello-eco-hoja-vaiven-duracion: 6s; /* igual que la hoja de la cinta: es la misma hoja y debe mecerse al mismo ritmo en las dos piezas */
+  --sello-eco-hoja-vaiven-angulo: 1.5deg; /* ±1.5°, algo más que la cinta (1.2°) — a 56px un grado y pico no se ve */
+  /* EL DESTELLO ES EN BUCLE, NO AL HOVER (que es como lo hace el sello de
+     TripAdvisor). La queja del cliente en la reunión fue literalmente que la
+     pieza eco «tiene una animación de entrada pero luego se queda quieto», y
+     pidió movimiento CONSTANTE y sutil; un brillo que solo existe al pasar el
+     ratón no lo tiene, y en táctil no existiría nunca.
+     El ciclo es largo y el barrido corto: la banda cruza en ~0,9s y el resto
+     del ciclo está fuera de cuadro, así que se lee como un destello cada tanto
+     —lo que hace el metal cuando la luz cambia— y no como una pieza que
+     parpadea. Las dos cifras van juntas: si se cambia una, se recalcula el
+     porcentaje de --sello-eco-destello-* en componentes.css. */
+  --sello-eco-destello-ciclo: 7s;
+  --sello-eco-destello-recorrido: 110%; /* de -110% a +110%: la banda mide ~30 de las 100 unidades del lienzo, así que solo se ve mientras su centro cruza la pieza */
+
+  /* DÓNDE VIVE EL SELLO EN LA CARD (2ª vuelta, 2026-08-07 — Samuel: «que el
+     badge esté centrado horizontalmente y esté arriba de la card, y sobresalga;
+     que el centro del badge verticalmente esté en el extremo superior de la
+     imagen»). Deja de estar metido en una esquina de la media y pasa a ser un
+     MEDALLÓN clavado en el canto de arriba: centrado, y a caballo del borde
+     superior de la foto — mitad sobre la imagen, mitad fuera.
+
+     ⚠️ ESTO OBLIGÓ A DOS CAMBIOS ESTRUCTURALES, los dos verificados antes de
+     hacerlos: (1) el sello SALE de galeria-barco.tsx, porque la caja de la
+     media es `overflow-hidden` y le habría comido justo la mitad que tiene que
+     sobresalir; ahora se posiciona contra la card. (2) la card pierde su
+     `overflow-hidden`, que era VESTIGIAL —herencia de la card de tour, que sí
+     tenía foto a sangre—: aquí el `p-2` mete a todos los hijos 8px, la media y
+     las miniaturas se recortan solas con su propio radio, y la cascada de
+     entrada es solo un selector de GSAP sin clip. Sin quitarlo, la card
+     recortaba el medallón a 8px del canto.
+
+     `--cima: 0.5rem` es el `p-2` de la card, o sea EXACTAMENTE el borde superior
+     de la imagen: ahí va el centro del sello. Si cambia el padding de la card,
+     cambia este token — no es un 8 cualquiera, es el mismo 8.
+
+     EL TAMAÑO va en porcentaje del ancho de la CARD con techo y suelo, y el
+     motivo es el mismo que hizo fracasar dos montajes con `size-*` por
+     breakpoint: el ancho de la card no crece con el viewport, porque la rejilla
+     cambia de columnas por el camino (medido: card de 350px a 390 de ventana,
+     268px a 640, 332px a 768, 460px a 1024, 384px a 1280, 424px a 1440 — o sea
+     que a 640 la card es MÁS ESTRECHA que en un móvil). En porcentaje, el sello
+     crece con la card y no hay breakpoint que ajustar. */
+  --sello-eco-cima: 0.5rem; /* = el p-2 de la card: el borde superior de la imagen */
+  --sello-eco-tamano: 13%; /* del ancho de la card */
+  --sello-eco-min: 2.25rem; /* 36px */
+  --sello-eco-max: 3.5rem; /* 56px — por encima, el medallón empieza a competir con el barco que enseña la foto */
+  /* LA ALZADA DEL TRAMO ESTRECHO. El medallón, con su centro en el canto de la
+     foto, invade siempre la banda de píldoras del techo de la media (que empieza
+     a 12px del borde): funciona porque el chip de categoría está pegado a la
+     izquierda, el botón de 360º a la derecha y en medio sobra sitio. MEDIDO: ese
+     sitio son 75px a 768 de ventana, 51px a 720, 31px a 680 y ONCE a 640 — o sea
+     que entre 640 y 767, donde la rejilla pone 2 columnas con la ventana todavía
+     pequeña, NO CABE NINGÚN MEDALLÓN CENTRADO, del tamaño que sea. (El peor caso
+     lo marca la card «Large groups», que es la del chip más largo.)
+     En ese tramo el medallón SUBE 10px, lo justo para que su canto inferior
+     quede por encima de la banda de píldoras: ahí ya da igual que se cruce con
+     ellas en horizontal, porque no se cruzan en vertical. El precio es que en
+     esos 128px de ventana el centro del sello no cae exactamente en el canto de
+     la foto, sino un pelo por encima — a cambio de no tapar dos píldoras que
+     están siempre pintadas. Los 10px salen del sello más grande del tramo
+     (43px): 12 − 43/2 ≈ −10.
+     ⚠️ La otra salida, que quita el caso especial de raíz, es que la rejilla
+     pase a 2 columnas en `md` y no en `sm` (flota-grid.tsx). Es decisión de
+     Samuel: cambia el layout del tramo, y de paso arreglaría que ahí las
+     miniaturas caen a 41px — por debajo de los 55px que el propio equipo ya
+     marcó como el punto donde dejan de decir qué hay dentro. */
+  --sello-eco-alzada: 0.625rem;
+
+  /* ---------- LA ORLA: el rótulo circular que aparece al hover ----------
+     (2ª vuelta, Samuel: «al ponerse hover en el badge aparezca un texto
+     circular girando sobre el eje del badge que diga algo eco, puede ser el
+     mismo texto del home […] en círculo girando alrededor, y que al hacer hover
+     esto salga desde atrás y desde el centro del badge, es decir la idea es que
+     crezca desde detrás del badge»).
+
+     LA ESCALA DE ARRANQUE NO ES UN 0 CUALQUIERA: es el tamaño al que la orla
+     entera CABE DETRÁS del disco del sello. El rótulo llega hasta el radio 73
+     de su lienzo y el disco opaco mide 40 de radio, así que 40/73 = 0,548 es el
+     último tamaño al que no asoma nada. Arrancando ahí, el rótulo no «aparece»:
+     estaba detrás y sale de debajo del sello, que es lo que se pidió. Con un 0
+     se vería nacer un punto en el centro, que es otra cosa.
+     ⚠️ Si cambia el radio del rótulo o el del disco, este número se recalcula.
+
+     EL GIRO SOLO CORRE MIENTRAS HAY HOVER. Dejarlo perpetuo serían seis
+     animaciones girando permanentemente en elementos invisibles. Y por eso la
+     vuelta es de 9s y no de las 40s del anillo de puntos: un hover dura dos o
+     tres segundos, y a 40s la orla no se vería girar — se vería quieta. */
+  --sello-eco-orla-escala-inicio: 0.548;
+  --sello-eco-orla-duracion: 0.45s; /* lo que tarda en salir de detrás del sello */
+  --sello-eco-orla-giro-duracion: 9s; /* una vuelta entera — ver arriba: la dura el hover, no el sello */
+  /* EL RÓTULO VA EN AZUL Y DESNUDO — SIN NINGUNA SUPERFICIE DETRÁS
+     (Samuel, 2026-08-07: «le pusiste al texto un fondo azul, ponlo de color azul
+     el texto y ya, sin fondo»).
+     El intento anterior le había dado un ala de vidrio navy con filo especular,
+     por un motivo real: la orla no cruza un fondo, cruza DOS —la foto de su card
+     por abajo y, por arriba, el aire de la rejilla y la card blanca de la fila
+     anterior—. Samuel lo ve y decide que la letra se defienda sola, que además
+     es lo que hace un sello grabado de verdad: relieve, no etiqueta.
+     ⚠️ CONSECUENCIA CONOCIDA, no un descuido: el navy es sólido sobre el blanco
+     de arriba y sobre el agua clara, pero en la mitad de abajo el rótulo se apoya
+     en la franja de cielo/mar oscuro del techo de la foto, y ahí el contraste
+     baja. Se deja así por decisión de diseño; si molesta, la salida que NO es un
+     fondo es una sombra suave sobre la letra. */
+  --color-sello-eco-orla: var(--color-navy);
+
   /* ---------- Carrusel de destacados del blog (2026-07-22, pedido de
      Samuel: "un slider de al menos 4 cards... la que viene se pone más
      grande y activa mientras la activa se pone para la izquierda e
@@ -1762,9 +1991,44 @@
         trazo lo alcanza. El pop no lleva scrub a propósito: un punto que
         crece y decrece según el usuario sube y baja se lee como un fallo, no
         como un efecto. */
-  --nosotros-timeline-scrub: 0.6; /* s — suavizado del trazado del riel */
-  --nosotros-timeline-pop: 0.45s; /* duración del pop de cada hito (punto + año + texto) */
+  /* [2026-08-07] Aquí vivió --nosotros-timeline-scrub (0.6). Se retira con el
+     rediseño del carril: el riel ya no lo interpola GSAP enganchado al scroll
+     —lo avanza una transición CSS a partir del año activo, que también se puede
+     elegir a mano—, y `scrub` sobre un ScrollTrigger sin animación no hace
+     nada. Su trabajo (suavizar el avance) lo hace ahora --nosotros-timeline-
+     avance. */
+  --nosotros-timeline-pop: 0.45s; /* duración del pop del punto de cada hito */
   --nosotros-timeline-pop-escala: 0.6; /* de qué tamaño arranca el punto antes del pop */
+
+  /* ── El BARRIDO HORIZONTAL de la timeline (2026-08-07, Samuel: «puede ser
+     scroll fijo con gsap pero vayan pasando en horizontal el scroll»).
+
+     CUÁNTO SCROLL CUESTA POR PÍXEL DE PISTA. 1,15 = el barrido va un pelín más
+     despacio que el dedo, que es lo que hace que se sienta controlado en vez de
+     resbaladizo. Por debajo de 1 la pista corre MÁS que el scroll y marea.
+
+     ⚠️ Es una proporción sobre la DISTANCIA, no un precio por hito como el
+     --fund-paso-pantallas de /foundation. Allí cada paso centra una card y el
+     precio por paso tiene que ser fijo; aquí solo se recorre una pista, y
+     contarlo por hitos daba 3.600px de scroll para mover 1.848px de pista
+     (medido) — el doble de peaje que de recorrido. Ver el comentario largo de
+     use-timeline-historia.ts. */
+  --timeline-recorrido-factor: 1.15;
+  /* Ancho de cada hito en la pista. Es el único número de la pieza: manda
+     cuántos años se ven a la vez (con --container-contenido, 22rem deja ~4) y,
+     a través de él, cuánto mide el recorrido. Por debajo de ~18rem el párrafo
+     del cliente parte en 6 líneas y la fila se lee como una tabla. */
+  --spacing-timeline-hito: 22rem; /* 352px — genera la utilidad w-timeline-hito */
+  /* Cuánto dura el difuminado del borde derecho de la pista. Igual de ancho que
+     el `pr-10` que separa un hito del siguiente (40px), más un pelín: así, con
+     el barrido al final, lo que se disuelve es exactamente el aire sobrante del
+     último hito y ni una letra. */
+  --spacing-timeline-desvanecido: 3rem; /* 48px */
+  /* [2026-08-07] Aquí vivió --spacing-timeline-sticky-top (96px), el offset con
+     el que se clavaba la pista sola. Se retira al pasar el bloque a escena
+     completa: ahora lo que se pincha es un contenedor de alto de ventana con el
+     titular dentro y su contenido centrado, así que se clava a `top: 0` y el
+     aire lo pone el centrado, no un offset. */
 
   /* 3. CASCADAS de entrada (las 3 paradas del itinerario y las 6 cards de la
         flota). Misma receta que --sost-reveal-* (batch, once, sin scrub): un
@@ -1900,6 +2164,136 @@
      («80vh», literal), así que una unidad relativa al viewport no sobrevive
      al viaje a JS. Como número puro se multiplica por `innerHeight` allí. */
   --fund-paso-pantallas: 0.8;
+
+  /* ---------- LA COCINA FLOTANTE, POR TIEMPOS (/flota) ----------
+     [2026-08-07, 2ª vuelta. La 1ª fueron 5 propuestas de COLOR y Samuel las
+     descartó las cinco; el encargo pasa a ser un MECANISMO en la estética clara
+     de la casa — flota/cocina-tiempos.tsx + use-tiempos-cocina.ts.]
+
+     El copy aprobado ya trae una secuencia dentro («The aroma comes first. Then
+     the sound of the grill. Moments later, your meal is served»), así que el
+     mecanismo no se inventa un gesto: ENCIENDE esa secuencia al scrollear y
+     cambia la foto con cada tiempo. Cero color nuevo — lo apagado es
+     --color-navy-soft y lo encendido --color-navy, que es la misma alternancia
+     gris/negro que ya usa la narrativa de Experiencia en la home.
+
+     ⚠️ FUENTE DEL PROTOTIPO DE FIGMA (playbook animaciones-a-figma): las dos
+     duraciones salen de aquí, no «a ojo» en el JS ni en el TSX. A Figma NO
+     viaja animado — el frame que viaja es un tiempo concreto ya encendido
+     (?dev-cocina=2 o prefers-reduced-motion). */
+  /* EL RECORRIDO que se reparte entre los tres tiempos. Dos números y no un
+     rango «de aquí a allá»: dónde empieza (fracción de ventana: el techo de la
+     sección al 72% de la pantalla, o sea ya bien dentro y no asomando) y
+     CUÁNTO DURA, en pantallas de scroll. Los tres tramos son iguales — el hook
+     divide esto, no hay un número por tiempo.
+     ⚠️ El final NO se deduce del alto de la sección: se probó («bottom 45%») y
+     el reparto salía casi del doble de largo de lo que predecía el alto real,
+     también tras refrescar. Ver el comentario largo en use-tiempos-cocina.ts.
+     1,05 pantallas está calibrado para que los tres tiempos ocurran mientras
+     la sección se ve; más largo y el tercero se enciende cuando ya se fue. */
+  --cocina-tiempo-entrada: 0.72;
+  --cocina-tiempo-recorrido: 1.05;
+  --cocina-tiempo-encendido: 420ms; /* el tiempo pasa de apagado a navy */
+  /* ⚠️ ESTE TOKEN Y LOS DOS QUE SIGUEN SE QUEDARON SIN CONSUMIDORES el
+     2026-08-07 (6ª vuelta: la columna derecha pasa a ser una sola foto fija, sin
+     fundido entre tiempos — ver `.cocina-foto` en componentes.css). Se conservan
+     marcados y no borrados, mismo criterio que la clase. El encendido del TEXTO
+     (--cocina-tiempo-encendido) sí sigue vivo: ese mecanismo no se ha tocado.
+
+     El fundido de la foto. MÁS LARGO que el encendido del texto a propósito: si
+     los dos duran lo mismo se leen como un solo corte de plano y el bloque
+     parpadea. Con la foto llegando un pelín después, primero entiendes QUÉ
+     tiempo es y luego lo ves — que es el orden en que el párrafo lo cuenta. */
+  --cocina-tiempo-foto: 700ms;
+  --cocina-tiempo-easing: cubic-bezier(0.22, 1, 0.36, 1);
+  /* Cuánto arranca escalada la foto que entra. Un zoom mínimo: lo justo para
+     que el cambio se lea como que la escena AVANZA y no como dos imágenes
+     intercambiadas. Por encima de ~1.05 se nota el reencuadre y las caras de
+     la foto del chef se van fuera. */
+  --cocina-tiempo-foto-escala: 1.035;
+  /* Dónde se clava la foto mientras los tiempos pasan por su lado. Mismo
+     criterio que --spacing-faq-sticky-top: 16px de offset del nav flotante
+     fijo + 52px de su alto medido + aire. Aquí el aire es mayor porque lo que
+     se pega es una foto grande, no una columna de texto. */
+  --spacing-cocina-sticky-top: 6.5rem; /* 104px */
+  /* En móvil se clava más arriba: ahí la foto va PRIMERA y el texto le pasa por
+     detrás, así que cada píxel de offset es un píxel menos para leer. Solo
+     tiene que despejar el borde superior de la ventana con un respiro. */
+  --spacing-cocina-sticky-movil: 1rem; /* 16px */
+
+  /* ---------- LA BANDA A SANGRE Y SU ESPUMA (2026-08-07, 4ª vuelta — Samuel:
+     «que no esté metido como en un banner, hagamos que sea ancho completo hasta
+     los extremos de la pantalla, y tenga la transición de olas en la parte de
+     arriba») ---------- La sección deja de ser una card navy dentro de la
+     columna y pasa a banda de borde a borde.
+
+     ⚠️ ESTO REVOCA EL PÁRRAFO QUE HABÍA EN cocina-tiempos.tsx, que defendía el
+     panel redondeado precisamente para no repetir la banda oscura que se cayó en
+     julio («quita todo ese tema oscuro… el cambio es demasiado brusco»). Lo que
+     cambia y hace que esta vez funcione es LA ESPUMA: aquel montaje entraba con
+     un corte duro papel→casi-negro a mitad de una página clara, y el corte duro
+     es exactamente lo que el footer océano vino a resolver en julio. Con la
+     transición de olas, el paso ya no es un corte: es el mismo umbral que la web
+     usa dos veces (el «Incluye» de la home y el footer).
+
+     ⚠️ EL MAPA DE MÁSCARA ES, DE MOMENTO, EL DEL FOOTER. Es la única deuda que
+     deja esta pasada: Samuel prohibió en julio reutilizar los assets del
+     «Incluye» para el footer, lo que dice que cada umbral quiere su propia
+     silueta — y aquí, además, la banda y el footer conviven en la MISMA página
+     (/fleet), así que dos espumas idénticas se ven seguidas. Hace falta generar
+     un mapa propio en Magnific, recortarlo y COSERLO para que teselee, y medir su
+     aspecto real (como se hizo con footer-espuma-mapa.webp). Hasta entonces el
+     token apunta al del footer y este aviso queda aquí.
+
+     LA ALTURA es de umbral, no de paisaje: 224px en desktop, por debajo de los
+     320 del footer (que remata la página y puede permitirse más oleaje) y muy por
+     debajo de los 480 del «Incluye» (que ahí la espuma ES el paisaje por donde
+     baja el catamarán). Este umbral solo tiene que decir «cambia la superficie».
+     ⚠️ El aspecto NO es un valor libre: es la proporción REAL del asset y se
+     recalcula si se cambia el mapa. Si no cuadra, la espuma se deforma. */
+  --spacing-cocina-espuma: 14rem; /* 224px — desktop */
+  --spacing-cocina-espuma-movil: 5.5rem; /* 88px */
+  /* EL AIRE ENTRE LAS OLAS Y EL CONTENIDO, arriba y abajo. Se suma a la altura
+     de la espuma para formar el padding de la banda, así que vive en un token y
+     no repetido cuatro veces en las utilidades: sube de 2rem a 4rem en la 6ª
+     vuelta (2026-08-07, Samuel: «agrégale un poco más de padding interno arriba
+     y abajo»). No es solo respiro estético — con 2rem, el rótulo quedaba a un
+     pelo de los últimos jirones de espuma, que son finos y llegan más abajo de
+     donde parece que acaba la banda. */
+  --spacing-cocina-aire: 4rem; /* 64px */
+
+  /* ---------- EL FONDO DE OCÉANO PROFUNDO (2026-08-07, 6ª vuelta — Samuel:
+     «dale al fondo un fondo igual azul profundo del océano, puedes generarlo con
+     el mcp de magnific») ---------- La banda deja de ser navy plano y pasa a
+     tener AGUA: /fotos/cocina-oceano.webp, generada en Magnific (Seedream 5 Pro,
+     2304×1728, cenital de mar abierto muy profundo, sin horizonte ni espuma ni
+     objetos) y convertida a webp. Se generaron dos variantes y se eligió la más
+     UNIFORME de las dos, no la más bonita: la otra tenía más oleaje y bajo un
+     bloque de texto largo una cresta acaba peleándose con una línea de tipo.
+     Medida antes de elegir: luminancia media 22/255 y desviación 12 — o sea
+     oscura y plana, que es lo que necesita un fondo que lleva texto blanco
+     encima.
+
+     ⚠️ ASSET PROPIO, no el del footer. Es la misma regla que Samuel fijó en
+     julio al prohibir reutilizar los del «Incluye» para el footer: cada
+     superficie de agua de la web tiene la suya. Y aquí importa el doble, porque
+     la banda y el footer conviven en /fleet — es la MISMA página. (La espuma
+     sigue debiendo su propio mapa; ver --cocina-espuma-mapa.)
+
+     EL FALLBACK está muestreado de la propia foto (su RGB medio), no elegido a
+     ojo: si la imagen no carga, la banda se ve igual en vez de saltar a otro
+     azul. Mismo criterio que --color-oceano-footer.
+     EL VELO ES MUY SUAVE —20%, frente al 45% del footer— y no está ahí por
+     contraste: con luminancia 22 el texto blanco ya va sobradísimo, y un velo
+     como el del footer dejaría la banda casi negra. Su trabajo es tirar del agua
+     hacia el navy de MARCA, para que se lea como el mar de esta web y no como
+     una foto de stock de mar profundo. */
+  --color-oceano-cocina: #04182c; /* fallback bajo la foto — el RGB medio real de cocina-oceano.webp */
+  --color-overlay-cocina: rgb(11 37 69 / 20%); /* velo de navy de marca; ver arriba por qué es tan flojo */
+  --cocina-espuma-mapa: var(--footer-espuma-mapa); /* deuda: ver arriba */
+  --cocina-espuma-aspecto: var(--footer-espuma-aspecto); /* va con el mapa: si cambia uno, cambia el otro */
+  --cocina-espuma-tile: calc(var(--spacing-cocina-espuma-movil) * var(--cocina-espuma-aspecto));
+  --cocina-espuma-sangrado: 2px; /* sello subpíxel del borde — mismo porqué que --footer-espuma-sangrado */
 }
 
 body {

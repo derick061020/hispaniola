@@ -167,7 +167,7 @@ export function ReelsSociales({
   // son videos nuestros. Se reutiliza el tono que la ficha de tour ya usaba y
   // que era el correcto desde el principio.
   eyebrow = 'On video',
-  lead = 'A day on board comes across better on video. This is us — and our guests enjoying the Caribbean.',
+  lead = 'A day on board comes across better on video. This is us, and our guests enjoying the Caribbean.',
   variante = 'seccion',
   // [v2] El hashtag también sugería feed en vivo → apagado por defecto. La
   // ficha ya lo pasaba en false; ahora ese es el comportamiento normal.

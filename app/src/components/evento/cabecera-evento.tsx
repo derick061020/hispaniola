@@ -1,6 +1,7 @@
 import { Quote } from 'lucide-react'
 import * as StatusBadge from '@/components/alignui/status-badge'
 import { SelloTripAdvisor } from '@/components/ui/sello-tripadvisor'
+import { Etiqueta } from '@/components/ui/etiqueta'
 import type { FichaEvento } from '@/data/eventos'
 
 // Cabecera de las landings de eventos (PLAN-EVENTOS.md) — clon de la
@@ -33,6 +34,21 @@ export function CabeceraEvento({ evento }: Props) {
           Mismo sitio y misma pieza que en la ficha de tour: dos cabeceras que
           se declaran clones no deberían diferir en esto. */}
       <SelloTripAdvisor className="mb-4" />
+
+      {/* [v3 2026-08-07, pedido de Samuel] EL RÓTULO VUELVE A VERSE. `eyebrow`
+          existía en el dato desde siempre y lo pintaba solo la rejilla de
+          «otras ocasiones»: en esta cabecera lo había desplazado el sello de
+          TripAdvisor, que se justificó (2026-07-28) diciendo que «funciona
+          como eyebrow». Funciona como ARRANQUE, pero no dice de qué va la
+          página, y el copy v3 lo necesita: el cliente escribe el titular en
+          DOS pisos —«Private Events & Party Boats» arriba y «Celebrate Life's
+          Best Moments at Sea» debajo— y sin el primero se publicaba medio
+          titular suyo.
+          Va entre el sello y el H1, que es donde lo pone él y donde etiqueta a
+          lo que precede. Es UNA línea de 11px: el aviso de «hero cargado» de
+          la ficha de tour (cabecera-ficha.tsx) sigue vigente para lo que
+          crezca A SU LADO, no para el rótulo del propio título. */}
+      <Etiqueta sobreOscuro className="mb-2">{evento.eyebrow}</Etiqueta>
 
       {/* Mismo --text-h2 que la ficha de tour (32px). El H1 manda por
           jerarquía, no por tamaño — el hero de la home es el único con

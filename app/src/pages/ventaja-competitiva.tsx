@@ -78,7 +78,7 @@ export function VentajaCompetitivaPage() {
     <div>
       <Meta
         titulo={SOSTENIBILIDAD.titulo}
-        descripcion="Coral reef restoration, support for local communities and responsible operations — the Bávaro Reefs Foundation behind every tour."
+        descripcion="Coral reef restoration, support for local communities and responsible operations: the Bávaro Reefs Foundation behind every tour."
         ruta="/competitive-advantage"
       />
       <HeroInterna ctaHref="/#tours">

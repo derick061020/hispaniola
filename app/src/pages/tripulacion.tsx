@@ -78,14 +78,26 @@ export function TripulacionPage() {
         <div className="flex flex-col gap-10 lg:gap-12">
           <FranjaEquipo />
 
+          {/* [v3 2026-08-07, pedido de Samuel] LA FRASE VA AQUI, PEGADA A LA
+              FRANJA. El doc del cliente (WEBSITE - NOSOTROS pag. 2) la escribe
+              justo asi: pega el pantallazo de esta misma franja de 4 datos y
+              debajo pone «DEBAJO DE ESTO → ONE COMPANY, SIX DEPARTMENTS AND
+              ONE SHARED PASSION». Estaba encabezando la rejilla (que es lo que
+              describe), pero leida contra la franja hace algo mejor: los
+              cuatro datos son cifras sueltas —70 personas, 6 departamentos,
+              2010, RD + España— y esta linea es la frase que los suma. Lo que
+              viene despues (la historia del CEO y los seis departamentos) es
+              el desarrollo de esa frase, no otra cosa. */}
+          <p className="text-center font-display text-h3 font-semibold text-navy">
+            One company, six departments and one shared passion
+          </p>
+
           {/* [v3 2026-08-06, WEBSITE - NOSOTROS pag. 2] LA HISTORIA DEL CEO.
               El cliente escribe un texto largo en primera persona y no tenia
               sitio: la ficha de Omar solo daba para una frase. Va entre la
               franja de datos y la rejilla de departamentos porque es lo que
               los une — la empresa la monto el primer capitan, y los seis
-              departamentos son en lo que se convirtio.
-              Su segunda linea aprobada («ONE COMPANY, SIX DEPARTMENTS AND ONE
-              SHARED PASSION») encabeza la rejilla, que es lo que describe. */}
+              departamentos son en lo que se convirtio. */}
           {ceo?.bio ? (
             <section className={BLOQUE_FICHA}>
               <div className="grid gap-6 sm:grid-cols-[auto_1fr] sm:items-start sm:gap-8">
@@ -107,19 +119,19 @@ export function TripulacionPage() {
                       </p>
                     ))}
                   </div>
-                  {ceo.quote ? (
-                    <blockquote className="mt-4 border-l-2 border-aqua-dark pl-4 font-display text-lg font-medium text-navy">
-                      «{ceo.quote}»
-                    </blockquote>
-                  ) : null}
+                  {/* SIN LA FRASE DEL CEO («I never wanted to build the
+                      biggest tour company…»). El cliente la escribe en la
+                      pagina 4 del doc, que es la de FLOTA, y ahi es donde se
+                      pinta (flota/familia-hispaniola.tsx). Aqui sobraba: la
+                      bio de la pagina 2 ya cierra con su propio credo («never
+                      stop getting their feet wet»), asi que eran dos remates
+                      en primera persona seguidos y el segundo le quitaba
+                      fuerza al primero. Pedido de Samuel, 2026-08-07. */}
                 </div>
               </div>
             </section>
           ) : null}
 
-          <p className="text-center font-display text-h3 font-semibold text-navy">
-            One company, six departments and one shared passion
-          </p>
           <GridEquipo />
           {/* El cierre va fuera de GridEquipo (donde vivía): no depende del
               filtro ni del equipo, es el remate de la página. */}

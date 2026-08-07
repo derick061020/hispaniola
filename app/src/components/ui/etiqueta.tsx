@@ -8,6 +8,12 @@
 // `sobreOscuro` decide el color: aqua-dark sobre papel (aqua puro falla AA a
 // 12px, ~4.0:1 contra ~5.9:1 de aqua-dark) o aqua-claro sobre navy/foto
 // (aqua-dark se hunde contra el navy — hace falta el pálido para leerse).
+//
+// [2026-08-07] Aquí vivió un momento una property `tono` con 5 valores, que
+// pedían las 5 propuestas de color de la cocina flotante (el aqua no se lee
+// sobre naranja: 2,2:1). Se retira con ellas — la sección final vuelve a la
+// estética clara y usa el eyebrow de siempre, así que dejarla sería una
+// property de Figma con cuatro valores que nadie usa.
 export function Etiqueta({
   children,
   sobreOscuro = false,

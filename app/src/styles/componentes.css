@@ -2106,12 +2106,16 @@
    "cuando se suma o resta personas como que no se nota, hay que agregarle
    sensación de interacción"). El número de personas PULSA al cambiar (un
    tick corto: escala 1 → 1.18 → 1 + un flash de color navy → navy-sub) para
-   que el cambio sea imposible de no ver al lado del icono. La animación
-   corre al re-montar el <span> (key={personas}, en widget-reserva.tsx), no
-   con un watch de estado — así no acumula tiempo si el usuario machaca el
-   botón. La curva es un ease-out al subir y ease-in al volver, para que el
-   "pico" se note y el aterrizaje sea suave (no un latido simétrico).
-   Respeta prefers-reduced-motion. */
+   que el cambio sea imposible de no ver al lado del icono. La curva es un
+   ease-out al subir y ease-in al volver, para que el "pico" se note y el
+   aterrizaje sea suave (no un latido simétrico). Respeta
+   prefers-reduced-motion.
+   ⚠️ 2026-08-07: el número dejó de ser un <span> y pasó a ser un input
+   escribible (ui/numero-editable.tsx), así que la animación ya NO se
+   reinicia remontando el nodo con `key` —eso le quitaría el foco a quien
+   está tecleando— sino quitando y reponiendo esta clase con un reflow en
+   medio, y solo cuando el cambio viene de los botones. Sigue sin acumular
+   tiempo si se machaca el botón, que era la razón de ser del `key`. */
 .stepper-tick {
   display: inline-block;
   animation: stepper-tick 280ms ease-out;
@@ -2137,6 +2141,17 @@
   .stepper-tick {
     animation: none;
   }
+}
+
+/* El número editable se AUTOSELECCIONA al enfocarlo (ui/numero-editable.tsx),
+   para que teclear reemplace la cantidad en vez de añadirse a ella. Con la
+   selección azul del sistema eso pintaba un rectángulo azul dentro del widget
+   —un color que no es de la paleta— y en la piel premium, sobre negro, se leía
+   como un error. Se viste con el navy del TEMA (en .widget-premium ese token
+   es el claro), así que sale bien en las dos pieles con una sola regla. */
+.numero-editable::selection {
+  background: color-mix(in srgb, var(--color-navy) 22%, transparent);
+  color: var(--color-navy);
 }
 
 /* ============================================================
@@ -2725,6 +2740,40 @@
   box-shadow: inset 0 0 0 1px var(--color-linea);
 }
 
+/* Fondo del PIE FIJO del widget (2026-08-07, Samuel: «cuando hay scroll
+   suficiente el botón se sale y no se ve completo; debe estar fijado al final,
+   siempre visible para ser clickeado»). El sticky lo hace Tailwind en el
+   componente; aquí vive solo el fondo, porque no puede ser una utilidad:
+
+   · La caja del widget en tema claro es un relleno liso (--color-papel), pero
+     en PREMIUM es un degradado vertical superficie → fondo (ver .widget-premium
+     más abajo). Un `bg-papel` en el pie pintaría el tono de ARRIBA justo donde
+     la caja ya va por el de abajo — un parche claro sobre el negro. Por eso el
+     tono se declara por tema: el pie fijado toca el borde inferior de la caja,
+     así que el color que le corresponde es el del FINAL del degradado.
+   · El primer tramo va en degradado a transparente (los 0.75rem del `pt-3`):
+     el contenido tiene que verse pasar POR DEBAJO del botón, no cortarse contra
+     un canto duro. Una hairline habría dibujado un pie permanente también
+     cuando no hay scroll y el botón está en su sitio del flujo.
+
+   Solo desde lg (64rem) por la misma razón que el tope de altura: en móvil la
+   caja no es contenedor de scroll —el CTA lo cubre BarraMovilFicha— así que el
+   pie no se fija y no debe pintar fondo ninguno. */
+@media (width >= 64rem) {
+  .widget-pie {
+    --widget-pie-fondo: var(--color-papel);
+    background: linear-gradient(
+      180deg,
+      transparent 0,
+      var(--widget-pie-fondo) 0.75rem
+    );
+  }
+
+  .widget-premium .widget-pie {
+    --widget-pie-fondo: var(--color-premium-fondo);
+  }
+}
+
 /* ── Sello de TripAdvisor: picos giratorios + destello ─────────────────────
    Samuel, 2026-07-28: «agregarle estos picos que estén girando infinitamente
    [...] que pareciera que los picos fueran parte del dorado de la imagen [...]
@@ -2805,6 +2854,229 @@
   }
 
   .group:hover .sello-destello {
+    animation: none;
+  }
+}
+
+/* ---------- SELLO ECO DE LAS CARDS DE FLOTA (ui/sello-eco.tsx) ----------
+   v3 2026-08-07, PowerPoint slide 68 + reunión 07-31: «como un sello, una
+   estampa ahí de eco… más llamativos, que resalte».
+
+   Tres bucles LENTOS Y DESINCRONIZADOS (44s el anillo, 6s la hoja, 7s el
+   destello): ninguno cae nunca en el mismo frame que otro, así que la pieza no
+   late, se mueve. Es la misma receta que la cinta eco de la home, y por el
+   mismo motivo: el cliente pidió movimiento CONSTANTE y sutil.
+
+   ⚠️ AQUÍ NO HAY `.eco-vivo`. En la cinta los bucles del sello ESPERAN a que
+   termine el reveal (mecer una hoja mientras se está dibujando rompe la lectura
+   de «boceto completándose»). Este sello no se dibuja: existe hecho desde el
+   primer frame, así que los bucles corren desde el principio y no hace falta
+   ninguna clase que los arranque — ni, por tanto, JS.
+
+   La sombra proyectada va en el <span> y no en el <svg>: `drop-shadow` sobre el
+   svg entero seguiría el contorno de CADA forma —incluidos los puntos del
+   anillo y las venillas de la hoja— y saldrían seis sombritas sueltas en vez de
+   la de un objeto. Sobre la caja, la silueta es una y la sombra es una. */
+.sello-eco {
+  filter: var(--sello-eco-sombra);
+}
+
+/* EL MARCO lo pone el propio componente y es lo mínimo que necesita para
+   funcionar en cualquier sitio: da el sistema de coordenadas a la orla y es EL
+   ÁREA DE HOVER. Mide lo que mide EL SELLO, no la orla —que es un 160% y se sale
+   de él—, y eso es deliberado: con el área sensible del tamaño de la orla, un
+   ratón a 20px del sello ya la dispararía y además le robaría el clic al chip de
+   categoría y al botón de 360º. La orla va `pointer-events: none` por lo mismo.
+   Dónde se COLOCA el marco no es asunto suyo: eso lo dice quien lo monta (en la
+   card, `.sello-eco-caja`), para que la pieza pueda reutilizarse en la ficha de
+   tour sin arrastrar la posición de la flota. */
+.sello-eco-marco {
+  position: relative;
+  display: block;
+}
+
+/* EL MEDALLÓN EN LA CARD DE BARCO: centrado y a caballo del borde superior de la
+   imagen (2ª vuelta 2026-08-07, ver --sello-eco-cima en tokens.css). El `-50%`
+   de Y es lo que lo pone A CABALLO — su centro cae justo en el canto de la foto,
+   así que la mitad de arriba sobresale. Va DESPUÉS de .sello-eco-marco para
+   ganarle el `position` (las dos son de una clase: manda el orden del archivo). */
+.sello-eco-caja {
+  position: absolute;
+  left: 50%;
+  top: var(--sello-eco-cima);
+  /* ⚠️ EL z-index NO ES DEFENSIVO, arregla un bug medido. La caja de la media es
+     `relative` y va DESPUÉS del sello en el DOM, así que con los dos en `z-auto`
+     ganaba ella por orden de documento: le tapaba al medallón la mitad de abajo
+     —justo la que va sobre la foto— y encima el <video> le interceptaba el
+     puntero, o sea que el hover de la orla no llegaba a dispararse nunca.
+     z-10 es el primer escalón de la escala que ya usa el proyecto. */
+  z-index: 10;
+  width: clamp(var(--sello-eco-min), var(--sello-eco-tamano), var(--sello-eco-max));
+  aspect-ratio: 1;
+  translate: -50% -50%;
+}
+
+/* EL ÚNICO BREAKPOINT DE TODA LA PIEZA, y está donde toca: entre `sm` y `md` la
+   rejilla de flota pone DOS columnas con la ventana todavía pequeña, así que la
+   card baja a 268-332px y el techo de la media —chip a un lado, 360º al otro—
+   se queda con 11px libres en medio a 640px. Ahí no cabe ningún medallón
+   centrado, así que sube 10px y pasa por ENCIMA de la banda de píldoras: si no
+   se cruzan en vertical, da igual que se crucen en horizontal.
+   No contradice el «nada de breakpoints» del resto de la pieza: aquello era
+   sobre el TAMAÑO, que no puede seguir al viewport porque la rejilla cambia de
+   columnas. Esto es justamente el tramo de ventana donde cambia. Ver
+   --sello-eco-alzada en tokens.css para los números medidos y para la
+   alternativa que quitaría este caso especial. */
+@media (min-width: 40rem) and (max-width: 47.99rem) {
+  .sello-eco-caja {
+    top: calc(var(--sello-eco-cima) - var(--sello-eco-alzada));
+  }
+}
+
+/* LA ORLA. Centrada sobre el sello y al 160% de su tamaño, con el lienzo de 160
+   unidades: así 1 unidad de la orla mide lo mismo que 1 unidad del sello (que
+   tiene lienzo de 100 para el 100% de la caja) y los dos radios se pueden
+   comparar de cabeza — el disco del sello está en r=40 y el rótulo, en r=62,
+   cae por fuera sin tener que convertir nada.
+
+   VA ANTES DEL SELLO EN EL DOM, o sea DEBAJO. Eso es lo que hace que «salga de
+   detrás»: a la escala de arranque queda tapada por el disco opaco y lo que se
+   ve es cómo asoma por su canto, no cómo aparece encima. */
+.sello-eco-orla {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 160%;
+  height: 160%;
+  pointer-events: none;
+  opacity: 0;
+  /* El translate y la escala van en la MISMA declaración porque `transform` es
+     una sola propiedad: escribirlos por separado (o con la utilidad `translate`)
+     haría que el segundo pisara al primero y la orla se iría de sitio al crecer. */
+  transform: translate(-50%, -50%) scale(var(--sello-eco-orla-escala-inicio));
+  transition:
+    opacity var(--sello-eco-orla-duracion) ease-out,
+    transform var(--sello-eco-orla-duracion) cubic-bezier(0.34, 1.3, 0.64, 1);
+}
+
+/* `cubic-bezier` con rebote corto en la salida y no un `ease-out` limpio: el
+   gesto es una pieza que EMPUJA hacia fuera desde debajo de otra, y eso se pasa
+   un pelo y se asienta. Sin el rebote se lee como un fundido con zoom. */
+.sello-eco-marco:hover .sello-eco-orla,
+.sello-eco-marco:focus-visible .sello-eco-orla {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* El giro va en un <g> DE DENTRO del svg y no en el svg: el svg ya lleva el
+   translate+scale de la salida, y una segunda transformación sobre el mismo
+   elemento la pisaría. Misma lección que los bucles del sello de la cinta, que
+   viven en <g> envolventes por lo mismo. */
+.sello-eco-marco:hover .sello-eco-orla-giro,
+.sello-eco-marco:focus-visible .sello-eco-orla-giro {
+  transform-box: view-box;
+  transform-origin: 50% 50%;
+  animation: sello-eco-orla-giro var(--sello-eco-orla-giro-duracion) linear infinite;
+}
+
+@keyframes sello-eco-orla-giro {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ⚠️ `transform-box: view-box` NO ES OPCIONAL EN SVG (misma trampa que
+   .sello-picos): por defecto los elementos SVG resuelven `transform-origin`
+   contra su propia caja, así que el anillo giraría alrededor de su centro
+   geométrico desplazado y describiría una órbita en vez de rotar sobre sí
+   mismo. Con `view-box` el origen es el centro del lienzo, que es donde está
+   el sello. */
+.sello-eco-anillo {
+  transform-box: view-box;
+  transform-origin: 50% 50%;
+  animation: sello-eco-giro var(--sello-eco-anillo-giro-duracion) linear infinite;
+}
+
+@keyframes sello-eco-giro {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* La hoja se mece desde su BASE y no desde su centro — una hoja pivota en el
+   tallo. La base está en 50 72 del viewBox de 100 (en la cinta era 48 72 sobre
+   un lienzo de 96: los números NO son intercambiables entre las dos piezas). */
+.sello-eco-hoja {
+  transform-box: view-box;
+  transform-origin: 50px 72px;
+  animation: sello-eco-hoja-vaiven var(--sello-eco-hoja-vaiven-duracion) ease-in-out infinite
+    alternate;
+}
+
+@keyframes sello-eco-hoja-vaiven {
+  from {
+    rotate: calc(var(--sello-eco-hoja-vaiven-angulo) * -1);
+  }
+
+  to {
+    rotate: var(--sello-eco-hoja-vaiven-angulo);
+  }
+}
+
+/* EL DESTELLO EN BUCLE, no al hover como el de TripAdvisor (ver el porqué en
+   sello-eco.tsx y en el token). El ciclo es de 7s y el barrido ocupa solo el
+   primer 13% —unos 0,9s, el mismo tiempo que tarda el de TripAdvisor en cruzar—
+   así que el 87% restante la banda está fuera de cuadro: se lee como un
+   destello de vez en cuando, que es lo que hace el metal cuando la luz cambia,
+   y no como una pieza que parpadea.
+   `linear` dentro del barrido: un reflejo especular cruza a velocidad
+   constante; con ease la banda llegaría frenando.
+   ⚠️ El 13% y --sello-eco-destello-ciclo están ajustados ENTRE SÍ. Si el ciclo
+   cambia, hay que recalcular el porcentaje para que el barrido siga durando
+   ~0,9s — con un ciclo de 14s y el mismo 13%, el destello tardaría casi dos
+   segundos en cruzar y se vería como un velo que pasa. */
+.sello-eco-destello {
+  transform-box: view-box;
+  transform: translateX(calc(var(--sello-eco-destello-recorrido) * -1));
+  animation: sello-eco-brillo var(--sello-eco-destello-ciclo) linear infinite;
+}
+
+@keyframes sello-eco-brillo {
+  0% {
+    transform: translateX(calc(var(--sello-eco-destello-recorrido) * -1));
+  }
+
+  13%,
+  100% {
+    transform: translateX(var(--sello-eco-destello-recorrido));
+  }
+}
+
+/* Un giro perpetuo, un vaivén y un reflejo que cruza la pieza son movimiento
+   continuo, de los que peor sientan a quien tiene sensibilidad vestibular. Los
+   tres se detienen — el sello se lee igual de bien quieto, el movimiento es
+   materia y no información — y ese estado quieto es el frame que viaja a Figma.
+   El destello se para FUERA DE CUADRO (el translate del estado base), no a
+   medio camino: congelado encima dejaría una banda blanca cruzando el sello,
+   que no es ningún estado real de la pieza. */
+@media (prefers-reduced-motion: reduce) {
+  .sello-eco-anillo,
+  .sello-eco-hoja,
+  .sello-eco-destello {
+    animation: none;
+  }
+
+  /* La ORLA no se retira con reduced-motion: es CONTENIDO (dice qué certifica
+     el sello), y esconderlo dejaría el medallón mudo para quien pide menos
+     movimiento. Lo que se va es el MOVIMIENTO: no gira, y no crece desde detrás
+     — aparece ya a su tamaño. */
+  .sello-eco-orla {
+    transition: opacity var(--sello-eco-orla-duracion) ease-out;
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  .sello-eco-marco:hover .sello-eco-orla-giro,
+  .sello-eco-marco:focus-visible .sello-eco-orla-giro {
     animation: none;
   }
 }
@@ -3430,4 +3702,241 @@
 .widget-premium .dia-cal:not(:disabled):not([aria-pressed='true']):hover {
   background-color: color-mix(in srgb, var(--color-premium-oro) 22%, transparent);
   color: var(--color-premium-oro-claro);
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   LA COCINA FLOTANTE, POR TIEMPOS (/flota — flota/cocina-tiempos.tsx)
+   [2026-08-07, 2ª vuelta. La 1ª fueron 5 propuestas de color y Samuel las
+   descartó las cinco: «no me gusta ninguna para nada». El encargo pasa a ser
+   un MECANISMO, no una paleta.]
+
+   El párrafo aprobado se enciende por tiempos al scrollear y la foto cambia
+   con cada uno. Todo el estado vive en un atributo `data-activo` que pone el
+   hook: el CSS solo describe los dos extremos. Así el JS no escribe estilos —
+   puede fallar, quedarse a medias o no cargar, y lo que queda en pantalla es
+   el estado apagado, que sigue siendo texto legible (--color-navy-soft da
+   5,6:1 sobre papel: apagado NO es invisible, es secundario).
+   ════════════════════════════════════════════════════════════════════════ */
+
+/* ════════════════════════════════════════════════════════════════════════
+   LÍNEA DE TIEMPO DE /flota — un carril por todos los años
+   [2026-08-07, Samuel: «hay muchos más años pero solo hay una línea
+   progresiva de 3 puntos, debería pasar por todos los años»]
+   Ver el comentario largo de flota/familia-hispaniola.tsx: los 9 hitos vuelven
+   a un solo carril horizontal y el texto baja a un panel que cambia con el año
+   activo. Aquí solo viven los dos estados; quién manda lo decide el componente.
+   ════════════════════════════════════════════════════════════════════════ */
+
+/* El riel se compone de un TRAMO POR HITO (el trozo que va de un punto al
+   siguiente), y lo dibuja GSAP con `scaleX` durante el barrido. Aquí solo vive
+   el estado de reposo: sin JS —móvil, reduced-motion, ?dev-flota=estatico— los
+   tramos se ven ENTEROS, que es la línea completa de la lista de siempre.
+   `will-change` solo desde lg, que es donde de verdad se anima: es un aviso al
+   compositor, y ponerlo donde nada se mueve solo gasta memoria de GPU. */
+/* ── LA ESCENA SANGRADA ────────────────────────────────────────────────────
+   [2026-08-07, Samuel: «que el scroll fijo no se corte con el contenedor
+   interno, sino con los extremos de la pantalla, da mayor inmersión»]
+
+   Tres columnas —margen | contenido | margen— con la del medio del tamaño del
+   contenedor de la página. Los hijos van a la del medio (así el titular sigue
+   alineado con el resto de /flota) y el que lleve `.sangra-pantalla` ocupa LAS
+   TRES: se corta en los dos bordes de la ventana, no en la columna.
+
+   ⚠️ SANGRAR NO ES DESALINEAR. La pista se recorta en los extremos pero
+   ARRANCA alineada con el titular, y eso lo hace el `padding-left` de abajo:
+   vale exactamente lo que mide la columna de margen. Sin él, 2010 empezaría
+   pegado al canto de la pantalla y el bloque perdería el eje de la página
+   justo en el único momento en que está quieto (antes de barrer). El primer
+   montaje sangraba solo por la derecha por eso mismo, pero entonces las cards
+   salían por un borde distinto del que entraban — que es peor.
+
+   ⚠️ SIN `100vw` NI MÁRGENES NEGATIVOS, que es como se sangra «a mano» y está
+   descartado por escrito dos veces en esta casa (la banda de la cocina y el
+   barrido de /foundation): 100vw incluye la barra de scroll y deja la página
+   con scroll horizontal en Windows. Con `100%` dentro de una rejilla no hay
+   nada que compensar — de ahí que la sección tenga que colgar FUERA del
+   contenedor de la página (pages/flota.tsx), no sangrarse desde dentro.
+
+   Los dos números son los gutters de la página (px-5 → 2×20px; sm:px-10 →
+   2×40px): el `min()` hace que en pantallas estrechas mande el gutter y en
+   anchas el contenedor, exactamente igual que `mx-auto max-w-contenido px-*`. */
+.escena-sangrada {
+  display: grid;
+  grid-template-columns: 1fr min(var(--container-contenido), 100% - 2.5rem) 1fr;
+}
+
+@media (min-width: 40rem) {
+  .escena-sangrada {
+    grid-template-columns: 1fr min(var(--container-contenido), 100% - 5rem) 1fr;
+  }
+}
+
+.escena-sangrada > * {
+  grid-column: 2;
+}
+
+@media (min-width: 64rem) {
+  /* Solo desde lg: por debajo no hay barrido ni recorte, y una pista que se
+     saliera del contenedor en móvil sería contenido fuera de pantalla sin
+     forma de alcanzarlo. */
+  .escena-sangrada > .sangra-pantalla {
+    grid-column: 1 / -1;
+  }
+
+  /* La misma fórmula que la rejilla de arriba, resuelta contra el ancho del
+     bloque sangrado: lo que sobra a los lados del contenedor, partido por dos,
+     es la columna de margen. Escrita dos veces a propósito y no en una
+     variable: aquí `100%` significa «el ancho de la pantalla» y allí «el ancho
+     de la escena», y aunque hoy midan lo mismo, una variable compartida daría
+     a entender que uno depende del otro. */
+  .escena-sangrada > .sangra-pantalla [data-timeline-pista] {
+    padding-left: calc((100% - min(var(--container-contenido), 100% - 5rem)) / 2);
+  }
+
+  .timeline-tramo {
+    will-change: transform;
+  }
+
+  /* El borde derecho de la pista se DISUELVE en vez de cortarse a cuchillo:
+     el corte recto a media palabra se lee como un fallo de maquetación, el
+     difuminado dice «esto sigue». Mismo recurso que el de las filas del muro
+     de reseñas (--spacing-reviews-desvanecido), aquí en un solo lado — ver el
+     porqué en el JSX de familia-hispaniola.tsx. */
+  .timeline-desvanecido {
+    mask-image: linear-gradient(
+      to right,
+      #000 calc(100% - var(--spacing-timeline-desvanecido)),
+      transparent 100%
+    );
+  }
+}
+
+/* EL TIEMPO. Solo cambia de COLOR — nada de opacidad: un párrafo de copy
+   aprobado a media opacidad se lee como un fallo de carga, y además el texto
+   apagado tiene que seguir pasando AA (es contenido, no decorado).
+   [2026-08-07, Samuel: «intenta que esa sección sea del color azul oscuro de
+   fondo»] El par se invierte: sobre el panel navy, apagado es
+   --color-sobre-navy-suave (6,2:1) y encendido es blanco (15,4:1). Los dos
+   siguen siendo TOKENS, no una opacidad — ver la nota del token. */
+.cocina-tiempo {
+  color: var(--color-sobre-navy-suave);
+  transition: color var(--cocina-tiempo-encendido) var(--cocina-tiempo-easing);
+}
+
+.cocina-tiempo[data-activo='true'] {
+  color: var(--color-papel);
+}
+
+/* LA FOTO. Las tres viven apiladas en el mismo marco y solo cambia cuál está
+   visible. `visibility` va emparejada con la opacidad (no solo opacity) para
+   que las dos que no tocan no sigan capturando el puntero ni saliendo en el
+   orden de lectura — la misma trampa que documenta use-experiencia-video-etapa
+   («invisible no es lo mismo que ausente»). */
+/* ⚠️ SIN CONSUMIDORES DESDE EL 2026-08-07 (6ª vuelta — Samuel: «la imagen de la
+   derecha que sea una imagen y ya, sin ese footer ni que pase tipo slider»): la
+   columna derecha es una sola foto fija, así que ya no hay tres fotos que se
+   fundan. NO SE BORRA a propósito, criterio de la casa: una clase CSS que
+   desaparece no da error, solo deja de aplicarse, y retirarla mientras otra rama
+   pueda estar montando algo encima es la clase de limpieza que se paga cara.
+   Marcada para la próxima pasada de limpieza, junto con los tokens
+   --cocina-tiempo-foto* que la alimentan. */
+.cocina-foto {
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(var(--cocina-tiempo-foto-escala));
+  transition:
+    opacity var(--cocina-tiempo-foto) var(--cocina-tiempo-easing),
+    transform var(--cocina-tiempo-foto) var(--cocina-tiempo-easing),
+    visibility 0s linear var(--cocina-tiempo-foto);
+}
+
+.cocina-foto[data-activo='true'] {
+  opacity: 1;
+  visibility: visible;
+  transform: scale(1);
+  transition-delay: 0s;
+}
+
+/* Con prefers-reduced-motion el mecanismo no se apaga: se queda QUIETO. Sin
+   fundido ni zoom, y con LOS TRES tiempos encendidos (lo decide el componente)
+   — o sea, la sección editorial de toda la vida. Nada de contenido
+   inalcanzable: sin scroll que dispare, dejar dos tercios del párrafo en gris
+   para siempre sería esconder copy aprobado. La foto se queda en la primera,
+   que es donde empieza el recorrido. */
+@media (prefers-reduced-motion: reduce) {
+  .cocina-tiempo,
+  .cocina-foto {
+    transition: none;
+  }
+
+  .cocina-foto {
+    transform: none;
+  }
+}
+
+/* LA ESPUMA DE LA BANDA DE LA COCINA (2026-08-07, 4ª vuelta — Samuel: «que tenga
+   la transición de olas en la parte de arriba»). MISMA TÉCNICA que .footer-espuma
+   y .incluye-espuma, que es lo que la hace parte del idioma de la casa y no un
+   efecto nuevo: un bloque del color del PAPEL recortado por el mapa de espuma y
+   teseleado en x. No dibuja olas encima del navy — es el papel de la página el
+   que se mete en la banda con forma de espuma, así que las dos superficies
+   comparten un borde de verdad en vez de tocarse en una línea recta.
+
+   ⚠️ HERMANA DEL FONDO, NO HIJA, y con 2px de sangrado hacia arriba: el mismo
+   bug de subpíxel que ya está medido y documentado en .incluye-espuma y
+   .footer-espuma — dentro del elemento recortado, el borde se redondea distinto
+   a como se pinta el fondo y deja una raya de un píxel.
+
+   El mapa y el aspecto salen de tokens (--cocina-espuma-*), incluida la deuda
+   anotada: hoy apuntan a los del footer y quieren un asset propio. */
+/* EL AGUA DE LA BANDA (2026-08-07, 6ª vuelta). Calca .footer-oceano: una capa a
+   `inset: 0` con la foto dentro, y el velo en un ::after para no ensuciar el JSX
+   con un `style` inline (el footer lo hace así por herencia; aquí no hace falta).
+   Va PRIMERA en el DOM de la banda, así que las dos espumas y el contenido —que
+   son posicionados y vienen después— se pintan encima sin necesidad de z-index. */
+.cocina-oceano {
+  position: absolute;
+  inset: 0;
+}
+
+.cocina-oceano::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--color-overlay-cocina);
+}
+
+.cocina-espuma {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: calc(var(--spacing-cocina-espuma-movil) + var(--cocina-espuma-sangrado));
+  pointer-events: none;
+  background: var(--color-papel);
+  mask-image: var(--cocina-espuma-mapa);
+  mask-size: var(--cocina-espuma-tile) 100%;
+  mask-repeat: repeat-x;
+}
+
+.cocina-espuma--top {
+  top: calc(var(--cocina-espuma-sangrado) * -1);
+}
+
+/* LA DE ABAJO (2026-08-07, 5ª vuelta — Samuel: «haz que abajo también tenga la
+   transición de olas»). 180°, NO ESPEJO VERTICAL, y el porqué está ya resuelto
+   en la sección «Incluye», que hace exactamente esto: la toma es CENITAL, así
+   que no hay gravedad que delate la rotación (en una vista de dron no existe un
+   «arriba» natural), y girar la banda entera evita que las dos se lean como
+   reflejo la una de la otra — que es lo que pasaría espejándola. `rotate`
+   longhand y no dentro de `transform`, igual que allí. */
+.cocina-espuma--bottom {
+  bottom: calc(var(--cocina-espuma-sangrado) * -1);
+  rotate: 180deg;
+}
+
+@media (min-width: 640px) {
+  .cocina-espuma {
+    height: calc(var(--spacing-cocina-espuma) + var(--cocina-espuma-sangrado));
+    --cocina-espuma-tile: calc(var(--spacing-cocina-espuma) * var(--cocina-espuma-aspecto));
+  }
 }

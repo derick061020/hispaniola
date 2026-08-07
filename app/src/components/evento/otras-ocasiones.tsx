@@ -24,7 +24,7 @@ export function OtrasOcasiones({ slugActual }: { slugActual: string }) {
 
   return (
     <section className="mx-auto max-w-contenido px-5 py-seccion-sm sm:px-10 sm:py-seccion">
-      <Etiqueta>Otras ocasiones</Etiqueta>
+      <Etiqueta>Other occasions</Etiqueta>
 
       <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
         {otras.map((e) => (

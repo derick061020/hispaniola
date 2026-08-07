@@ -61,7 +61,7 @@ export function HojaRazones() {
           {TOTAL_RAZONES} reasons, on one sheet
         </h2>
         <p className="mt-4 text-lead text-navy-sub">
-          It’s not marketing — it’s what every one of our guests lives. They’re all here, with no
+          It’s not marketing. It’s what every one of our guests lives. They’re all here, with no
           fine print.
         </p>
       </div>
@@ -104,7 +104,7 @@ export function HojaRazones() {
 
             <div className="mt-8 flex flex-col items-center gap-4 text-center sm:flex-row sm:justify-between sm:text-left">
               <p className="font-display text-h3 font-semibold text-navy">
-                All of this, for {formatoDinero(PRECIO_TODO_INCLUIDO)} — everything included
+                All of this, for {formatoDinero(PRECIO_TODO_INCLUIDO)}. Everything included
               </p>
               <Boton to="/#tours" className="shrink-0">
                 Book my tour

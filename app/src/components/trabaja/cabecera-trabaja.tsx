@@ -14,7 +14,7 @@ export function CabeceraTrabaja() {
 
       <p className="mt-4 max-w-2xl text-lead text-white/85">
         Providers operating in Punta Cana, creators who tell the sea as it is, and affiliates with a
-        community of travelers. Tell us which one you are and let’s talk — we answer on WhatsApp, not
+        community of travelers. Tell us which one you are and let’s talk. We answer on WhatsApp, not
         with an automated form.
       </p>
     </div>

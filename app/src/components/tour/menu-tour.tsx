@@ -1,10 +1,18 @@
 import { useEffect, useState } from 'react'
-import { Check, Image as ImageIcon, UtensilsCrossed, Plus } from 'lucide-react'
+import { Check, Image as ImageIcon, UtensilsCrossed } from 'lucide-react'
 import { TituloSeccion } from '@/components/tour/titulo-seccion'
 import { BLOQUE_FICHA } from '@/components/tour/bloque-ficha'
 import { CartaCharter } from '@/components/tour/carta-charter'
+import { BannerLangosta } from '@/components/tour/banner-langosta'
+import { estadoDeFranja, type SeleccionAddOns } from '@/lib/tarifas'
 import { formatoDinero, type Tour } from '@/data/home'
-import type { CartaCharter as CartaCharterDatos, FichaTour, PlatoBuffet, PlatoMenu } from '@/data/tours'
+import type {
+  AddOnDeMenu,
+  CartaCharter as CartaCharterDatos,
+  FichaTour,
+  PlatoBuffet,
+  PlatoMenu,
+} from '@/data/tours'
 
 // «Tu menú, a tu elección» (wireframe A4) — el diferenciador estrella: fotos
 // reales de los platos, un activo que ningún competidor tiene. Solo en
@@ -244,63 +252,75 @@ function PaqueteMenu({
 // Asi que el hueco se pinta como hueco (marco discontinuo + icono + pie), el
 // mismo trato que el bento del menu de 21+, y se pide la foto real (indice de
 // planes, peticion 1).
-function MenuBuffet({ platos, addOn }: { platos: PlatoBuffet[]; addOn?: { nombre: string; precio: number; descripcion?: string } }) {
+function MenuBuffet({
+  platos,
+  addOn,
+  seleccionAddOns,
+}: {
+  platos: PlatoBuffet[]
+  addOn?: AddOnDeMenu
+  seleccionAddOns?: SeleccionAddOns
+}) {
+  const seleccion = estadoDeFranja(addOn, seleccionAddOns)
   return (
-    <div className="overflow-hidden rounded-card-grande bg-fondo-ficha">
-      <div className="grid gap-4 p-4 sm:p-5 lg:grid-cols-[1.1fr_1fr] lg:gap-6">
-        {/* LA FOTO, primera y grande. En movil va arriba (es lo que vende) y
-            en desktop a la izquierda, con los platos leyendose a su lado. */}
-        <figure className="relative flex min-h-56 flex-col justify-end rounded-card border border-dashed border-linea-fuerte bg-papel-hueso p-4 lg:min-h-72">
-          <span
-            aria-hidden="true"
-            className="mb-auto grid size-10 place-items-center rounded-full bg-papel text-navy-soft ring-1 ring-linea"
-          >
-            <ImageIcon className="size-5" />
-          </span>
-          <figcaption>
-            <span className="block font-display text-sm font-semibold text-navy sm:text-base">
-              The buffet, served on the island
+    <>
+      <div className="overflow-hidden rounded-card-grande bg-fondo-ficha">
+        <div className="grid gap-4 p-4 sm:p-5 lg:grid-cols-[1.1fr_1fr] lg:gap-6">
+          {/* LA FOTO, primera y grande. En movil va arriba (es lo que vende) y
+              en desktop a la izquierda, con los platos leyendose a su lado. */}
+          <figure className="relative flex min-h-56 flex-col justify-end rounded-card border border-dashed border-linea-fuerte bg-papel-hueso p-4 lg:min-h-72">
+            <span
+              aria-hidden="true"
+              className="mb-auto grid size-10 place-items-center rounded-full bg-papel text-navy-soft ring-1 ring-linea"
+            >
+              <ImageIcon className="size-5" />
             </span>
-            <span className="mt-0.5 block text-xs text-navy-soft">
-              Set up on Catuano beach, with the Natural Pool before and after.
-            </span>
-          </figcaption>
-        </figure>
-
-        <div className="flex flex-col">
-          <h3 className="border-b border-linea pb-3 font-display text-h3 font-semibold text-navy">
-            Traditional Dominican buffet
-          </h3>
-          <ul className="mt-4 flex flex-col gap-2.5">
-            {platos.map((p) => (
-              <li key={p.nombre} className="flex items-start gap-2.5 text-sm text-navy">
-                <Check className="mt-0.5 size-4 shrink-0 text-menta-texto" aria-hidden="true" />
-                <span>
-                  <span className="font-semibold">{p.nombre}</span>
-                  {p.desc ? <span className="text-navy-soft"> · {p.desc}</span> : null}
-                </span>
-              </li>
-            ))}
-          </ul>
-          {addOn ? (
-            <div className="mt-auto flex items-center gap-3 rounded-card border border-linea bg-papel p-3 lg:mt-6">
-              <span className="grid size-9 shrink-0 place-items-center rounded-full bg-aqua-tint text-aqua-dark">
-                <Plus className="size-4" aria-hidden="true" />
+            <figcaption>
+              <span className="block font-display text-sm font-semibold text-navy sm:text-base">
+                The buffet, served on the island
               </span>
-              <div className="flex-1">
-                <p className="text-sm font-semibold text-navy">
-                  {addOn.nombre} · {formatoDinero(addOn.precio)}{' '}
-                  <span className="text-xs font-normal text-navy-soft">per person</span>
-                </p>
-                {addOn.descripcion ? (
-                  <p className="mt-0.5 text-xs text-navy-soft">{addOn.descripcion}</p>
-                ) : null}
-              </div>
-            </div>
-          ) : null}
+              <span className="mt-0.5 block text-xs text-navy-soft">
+                Set up on Catuano beach, with the Natural Pool before and after.
+              </span>
+            </figcaption>
+          </figure>
+
+          <div className="flex flex-col">
+            <h3 className="border-b border-linea pb-3 font-display text-h3 font-semibold text-navy">
+              Traditional Dominican buffet
+            </h3>
+            <ul className="mt-4 flex flex-col gap-2.5">
+              {platos.map((p) => (
+                <li key={p.nombre} className="flex items-start gap-2.5 text-sm text-navy">
+                  <Check className="mt-0.5 size-4 shrink-0 text-menta-texto" aria-hidden="true" />
+                  <span>
+                    <span className="font-semibold">{p.nombre}</span>
+                    {p.desc ? <span className="text-navy-soft"> · {p.desc}</span> : null}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
-    </div>
+
+      {/* [2026-08-07, Samuel: «en isla saona dentro del bento también se
+          menciona premium lobster como extra, ponlo dorado igual que el de
+          charter privado y que igual sea clickeable»] La langosta ERA una card
+          gris metida al pie de la columna de platos: el único extra de pago de
+          este menú se leía como una nota. Ahora es la MISMA pieza que en el
+          charter —el componente, no un estilo parecido— y por eso sale de la
+          columna: la franja de oro pide el ancho del bloque, igual que allí, y
+          ahí es donde el gesto se ve. Ver banner-langosta.tsx. */}
+      {addOn ? (
+        <BannerLangosta
+          addOn={addOn}
+          activo={seleccion.activo}
+          onAlternar={seleccion.alternar}
+          className="mt-2.5"
+        />
+      ) : null}
+    </>
   )
 }
 
@@ -335,12 +355,14 @@ function CartasCharter({
   variante,
   personas,
   etiqueta,
+  seleccionAddOns,
 }: {
   menu: NonNullable<FichaTour['menuCharter']>
   ficha: FichaTour
   variante?: string | null
   personas?: number | null
   etiqueta: string
+  seleccionAddOns?: SeleccionAddOns
 }) {
   // Que carta le toca a este visitante. Dos datos del widget mandan, y en este
   // orden: el AFORO gana a la duracion, porque de 21 personas en adelante el
@@ -377,22 +399,13 @@ function CartasCharter({
               role="tab"
               aria-selected={sel}
               onClick={() => setActiva(c.id)}
-              className={`inline-flex items-center gap-2 whitespace-nowrap rounded-chip px-4 py-2 text-sm font-semibold transition-colors ${
+              className={`whitespace-nowrap rounded-chip px-4 py-2 text-sm font-semibold transition-colors ${
                 sel
                   ? 'bg-navy text-white'
                   : 'bg-papel-hueso text-navy-sub ring-1 ring-linea hover:text-navy'
               }`}
             >
               {c.pestana}
-              {c.badge ? (
-                <span
-                  className={`shrink-0 whitespace-nowrap rounded-full px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide ${
-                    sel ? 'bg-white/20 text-white' : 'bg-aqua-tint text-aqua-dark'
-                  }`}
-                >
-                  {c.badge}
-                </span>
-              ) : null}
             </button>
           )
         })}
@@ -412,9 +425,10 @@ function CartasCharter({
             </span>
           ) : null}
         </p>
-        {carta.texto ? <p className="mt-2 max-w-2xl text-sm text-navy-sub">{carta.texto}</p> : null}
+        {/* [v3 2026-08-07] Sin tope de ancho (ver comparador-premium.tsx). */}
+        {carta.texto ? <p className="mt-2 text-sm text-navy-sub">{carta.texto}</p> : null}
         <div className="mt-4">
-          <CartaCharter carta={carta} etiqueta={etiqueta} />
+          <CartaCharter carta={carta} etiqueta={etiqueta} seleccionAddOns={seleccionAddOns} />
         </div>
       </div>
     </div>
@@ -426,9 +440,15 @@ export function MenuTour({
   ficha,
   variante,
   personas,
+  seleccionAddOns,
 }: {
   tour: Tour
   ficha: FichaTour
+  /** [2026-08-07] La selección de add-ons de la reserva, para que la franja de
+   *  la langosta de este bloque pueda marcarla en el widget (pedido de Samuel:
+   *  el banner tenía un «+» que no hacía nada). Vive en tour.tsx — ver
+   *  banner-langosta.tsx. */
+  seleccionAddOns?: SeleccionAddOns
   /** [v3 2026-08-06] El barco elegido en el widget. Decide que carta del
    *  charter se abre por defecto (slides 73-74): los barcos de 4 h abren la
    *  carta de platos y los de 3 h el Taste of Hispaniola. Vive en tour.tsx
@@ -468,7 +488,8 @@ export function MenuTour({
       <TituloSeccion>
         {esBuffet ? 'The menu of the day' : esCharter ? 'Your menu, your way' : 'Your table comes with an ocean view'}
       </TituloSeccion>
-      <p className="mt-3 max-w-2xl text-sm text-navy-sub">
+      {/* [v3 2026-08-07] Sin tope de ancho (ver comparador-premium.tsx). */}
+      <p className="mt-3 text-sm text-navy-sub">
         {esBuffet
           ? 'A traditional Dominican buffet served on the island itself, with a stop at the Natural Pool before and after.'
           : esCharter
@@ -478,7 +499,11 @@ export function MenuTour({
 
       {esBuffet ? (
         <div className="mt-4">
-          <MenuBuffet platos={ficha.menuBuffet!.platos} addOn={ficha.menuBuffet!.addOn} />
+          <MenuBuffet
+            platos={ficha.menuBuffet!.platos}
+            addOn={ficha.menuBuffet!.addOn}
+            seleccionAddOns={seleccionAddOns}
+          />
         </div>
       ) : ficha.menuCharter ? (
         // [v3 2026-08-06, slides 73-74] Dos cartas, no una. La activa la
@@ -493,6 +518,7 @@ export function MenuTour({
             variante={variante}
             personas={personas}
             etiqueta={tour.nombre}
+            seleccionAddOns={seleccionAddOns}
           />
         </div>
       ) : (

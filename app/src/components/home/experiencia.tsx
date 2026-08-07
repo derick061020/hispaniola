@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { EXPERIENCIA_NARRATIVA, EXPERIENCIA_VIDEO } from '@/data/home'
+import { EXPERIENCIA_NARRATIVA, EXPERIENCIA_VIDEO, type SegmentoNarrativa } from '@/data/home'
 import { BotonSonido } from '@/components/ui/boton-sonido'
 import { useDevFlag } from '@/dev/use-dev-flag'
 import { useExperienciaScroll } from '@/components/home/use-experiencia-scroll'
@@ -58,6 +58,34 @@ function palabras(texto: string): string[] {
 }
 
 const esEspacio = (t: string) => /^\s+$/.test(t)
+
+// LA COMA NUNCA ABRE RENGLÓN (2026-08-07). Varios segmentos del copy EMPIEZAN
+// por signo («, exclusive access to our …», porque el signo va en gris y lo
+// anterior en negrita). Como cada palabra es un inline-block, el navegador
+// puede partir la línea ENTRE dos de ellos aunque no haya espacio en medio —
+// y ahí salía «underwater museum» y, al renglón siguiente, «, chef-prepared
+// cuisine». Se pega el signo al final del segmento anterior: hereda su estilo
+// (una coma en negrita detrás de una frase en negrita es tipografía normal) y
+// deja de ser un trozo suelto que puede saltar de línea.
+//
+// Va en el componente y no en los datos a propósito: home.ts guarda el copy
+// del cliente tal cual se aprueba, y este es un problema de maquetación que
+// hay que resolver una vez, no en cada frase que llegue.
+function pegarPuntuacion(frase: SegmentoNarrativa[]): SegmentoNarrativa[] {
+  const salida: SegmentoNarrativa[] = []
+  for (const seg of frase) {
+    const signo = seg.t.match(/^[,.;:!?)»…]+/)
+    const previo = salida[salida.length - 1]
+    // Si el anterior ya termina en espacio, pegar ahí daría «museum ,»: se deja.
+    if (signo && previo && !/\s$/.test(previo.t)) {
+      salida[salida.length - 1] = { ...previo, t: previo.t + signo[0] }
+      salida.push({ ...seg, t: seg.t.slice(signo[0].length) })
+    } else {
+      salida.push({ ...seg })
+    }
+  }
+  return salida.filter((seg) => seg.t.length > 0)
+}
 
 export function Experiencia() {
   const sectionRef = useRef<HTMLElement>(null)
@@ -140,7 +168,7 @@ export function Experiencia() {
                 key={i}
                 className="text-balance font-display text-narrativa-movil font-medium text-navy-sub sm:text-narrativa"
               >
-                {frase.map((seg, j) => (
+                {pegarPuntuacion(frase).map((seg, j) => (
                   <span key={j} className={seg.fuerte ? 'font-semibold text-navy' : undefined}>
                     {palabras(seg.t).map((p, k) => (
                       <span key={k} className={esEspacio(p) ? undefined : 'exp-palabra'}>

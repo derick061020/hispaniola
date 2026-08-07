@@ -187,7 +187,7 @@ export function Hero() {
                     </span>
                     <span className="titulo-ola" aria-hidden="true" />
                   </span>{' '}
-                  Experience — More than just a tour!
+                  Experience. More than just a tour!
                 </h1>
                 {/* [v3] Esta lead NO viene en el documento del cliente (el
                     párrafo largo que él aprueba para la pág. 1 es el de la

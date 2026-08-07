@@ -37,7 +37,7 @@ export function Duelo() {
           The same thing, they say. Look at it side by side.
         </h2>
         <p className="mt-4 text-lead text-navy-sub">
-          What you don’t see in the price — but you feel all day.
+          What you don’t see in the price, but you feel all day.
         </p>
       </div>
 

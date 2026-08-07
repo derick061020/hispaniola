@@ -247,3 +247,51 @@ export function saltoDeTramo(
 export function addOnsDeFicha(ficha: FichaTour): AddOn[] {
   return ficha.addOns ?? []
 }
+
+/** Los add-ons que se pueden elegir AHORA: los de la ficha menos los que su
+ *  `soloSubVariantes` deja fuera del barco activo (la langosta del charter solo
+ *  existe en los barcos de 4 h — ver `soloSubVariantes` arriba).
+ *
+ *  [2026-08-07] El filtro vivía dentro de widget-reserva.tsx, con una nota que
+ *  pedía mantenerlo en UN solo sitio para que el panel, el desglose y el total
+ *  no pudieran discrepar. Sube aquí porque ahora hay un segundo sitio donde se
+ *  marcan add-ons —la franja de la langosta del bloque de menú
+ *  (tour/banner-langosta.tsx)— y la regla tiene que seguir siendo una. */
+export function addOnsDisponibles(ficha: FichaTour, variante?: string | null): AddOn[] {
+  return addOnsDeFicha(ficha).filter(
+    (a) => !a.soloSubVariantes || (variante != null && a.soloSubVariantes.includes(variante)),
+  )
+}
+
+/** Lo que el bloque de menú necesita saber de la reserva para que su franja de
+ *  extra (la langosta, en oro) sea elegible y no solo un cartel.
+ *
+ *  Baja desde tour.tsx, que es donde vive la selección de add-ons desde el
+ *  2026-08-07 — misma mudanza que ya hicieron `variante`, `paquete` y
+ *  `personas`, y por la misma razón: la columna izquierda tiene que poder tocar
+ *  algo que se pinta en la derecha. */
+export type SeleccionAddOns = {
+  /** ids marcados en la reserva. */
+  elegidos: string[]
+  /** ids que el barco activo permite — la salida de `addOnsDisponibles`. */
+  disponibles: string[]
+  alternar: (id: string) => void
+}
+
+/** Resuelve la franja de un bloque de menú contra la selección de la reserva.
+ *
+ *  Devuelve las props VACÍAS —y por tanto una franja informativa, sin botón—
+ *  en los tres casos en que no hay nada que marcar: la franja no declara
+ *  `addOnId`, la página no pasó contexto, o el add-on no aplica al barco activo
+ *  (la langosta en un charter de 3 h, cuya cocina no puede servirla). */
+export function estadoDeFranja(
+  addOn: { addOnId?: string } | undefined,
+  seleccion?: SeleccionAddOns,
+): { activo?: boolean; alternar?: () => void } {
+  const id = addOn?.addOnId
+  if (!id || !seleccion || !seleccion.disponibles.includes(id)) return {}
+  return {
+    activo: seleccion.elegidos.includes(id),
+    alternar: () => seleccion.alternar(id),
+  }
+}

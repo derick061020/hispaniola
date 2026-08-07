@@ -298,7 +298,7 @@ export function FichaTecnicaModal({ barco, onCerrar }: { barco: BarcoFlota; onCe
                             <span className="text-sm font-medium text-navy">{fila.valor}</span>
                           ) : (
                             <span className="text-sm italic text-navy-soft">
-                              Pending — no documented figure
+                              Pending, no documented figure
                             </span>
                           )}
                           {fila.nota ? <p className="mt-1 text-xs text-navy-soft">{fila.nota}</p> : null}

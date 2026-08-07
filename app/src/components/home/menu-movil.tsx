@@ -116,16 +116,16 @@ export function MenuMovil({
         ref={hojaRef}
         role="dialog"
         aria-modal="true"
-        aria-label="Menú"
+        aria-label="Menu"
         className="menu-hoja fixed inset-hero-margen z-50 flex flex-col overflow-hidden rounded-hero bg-papel shadow-hero md:hidden"
       >
         <div className="flex items-center justify-between border-b border-linea px-5 py-4">
-          <strong className="font-display text-lg text-navy">Menú</strong>
+          <strong className="font-display text-lg text-navy">Menu</strong>
           <button
             ref={cerrarBtnRef}
             type="button"
             onClick={onCerrar}
-            aria-label="Cerrar"
+            aria-label="Close"
             className="grid size-9 place-items-center rounded-lg text-navy hover:bg-papel-hueso"
           >
             <X className="size-5" />
@@ -172,7 +172,7 @@ export function MenuMovil({
                         >
                           <span className="text-sm font-medium text-navy">{t.nombre}</span>
                           <span className="text-xs font-semibold text-menta-texto">
-                            {t.precioLight !== null ? `Desde ${formatoDinero(t.precioLight)}` : bookingCta[t.booking]}
+                            {t.precioLight !== null ? `From ${formatoDinero(t.precioLight)}` : bookingCta[t.booking]}
                           </span>
                         </Link>
                       ))}
@@ -282,7 +282,7 @@ export function MenuMovil({
               widget de reserva (el mismo destino que el «Reservar» del header),
               y en la home al grid de tours. */}
           <Boton href={ctaHref} onClick={onCerrar} className="w-full">
-            Reservar ahora
+            Book now
           </Boton>
         </div>
       </div>

@@ -430,7 +430,7 @@ export function NavFlotante() {
             <Link
               ref={logoRef}
               to="/"
-              aria-label="Hispaniola Aquatic Adventures — inicio"
+              aria-label="Hispaniola Aquatic Adventures, home"
               className="mr-1 shrink-0"
               style={{ transformOrigin: 'right center' }}
             >
@@ -452,7 +452,7 @@ export function NavFlotante() {
               className="ml-1 shrink-0"
               style={{ transformOrigin: 'left center' }}
             >
-              Reservar
+              Book now
             </Boton>
           ) : null}
         </nav>

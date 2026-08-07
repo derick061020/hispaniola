@@ -47,7 +47,7 @@ export const LEGAL: Record<string, DocumentoLegal> = {
       {
         titulo: 'Cancellation due to weather',
         texto:
-          'If the tour is canceled because of rain or rough seas (at the captain’s discretion, for safety), we offer a full refund or a date change at no cost — never the loss of the deposit.',
+          'If the tour is canceled because of rain or rough seas (at the captain’s discretion, for safety), we offer a full refund or a date change at no cost, never the loss of the deposit.',
       },
       {
         titulo: 'Date changes',
@@ -85,7 +85,7 @@ export const LEGAL: Record<string, DocumentoLegal> = {
     nombre: 'Terms and Conditions',
     actualizado: 'July 17, 2026',
     contenidoReal: false,
-    intro: 'Conditions for using the site and for purchasing tours. Reference structure — pending legal drafting.',
+    intro: 'Conditions for using the site and for purchasing tours. Reference structure, pending legal drafting.',
     secciones: [
       { titulo: 'Acceptance of the terms', texto: PLACEHOLDER },
       { titulo: 'Bookings and payments', texto: PLACEHOLDER },

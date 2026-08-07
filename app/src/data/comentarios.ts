@@ -53,7 +53,7 @@ export const COMENTARIOS_POOL: Comentario[] = [
       {
         autor: 'Hispaniola Aquatic Adventures',
         fecha: '17 jul 2026',
-        texto: 'Hi Javier! Yes, we welcome families with children of all ages — if you like, message us on WhatsApp and we’ll recommend the tour that best fits your kids’ ages.',
+        texto: 'Hi Javier! Yes, we welcome families with children of all ages. If you like, message us on WhatsApp and we’ll recommend the tour that best fits your kids’ ages.',
       },
     ],
   },

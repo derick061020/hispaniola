@@ -46,7 +46,15 @@ export function AporteSostenibilidad() {
               <span className="text-sm font-medium text-navy-soft">{a.unidad}</span>
             </p>
             <p className="mt-4 font-display text-base font-semibold text-navy">{a.destino}</p>
-            <p className="mt-1 text-sm text-navy-sub">{a.detalle}</p>
+            {/* [v3 2026-08-07] El detalle puede traer más de un párrafo: el
+                aporte a conservación tiene dos en el copy aprobado. Se pintan
+                separados (mt-3 entre ellos, mt-1 bajo el destino) porque el
+                segundo no continúa al primero — dice otra cosa. */}
+            {a.detalle.map((d, i) => (
+              <p key={d.slice(0, 30)} className={`${i === 0 ? 'mt-1' : 'mt-3'} text-sm text-navy-sub`}>
+                {d}
+              </p>
+            ))}
           </div>
         ))}
       </div>

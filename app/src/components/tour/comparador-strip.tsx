@@ -18,7 +18,7 @@ export function ComparadorStrip() {
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 rounded-card bg-aqua-tint px-4 py-3 ring-1 ring-aqua/20">
       <p className="text-sm text-navy-sub">
-        Same price as on Viator or Civitatis — here with a <strong className="font-semibold text-navy">25% deposit</strong>
+        Same price as on Viator or Civitatis. Here with a <strong className="font-semibold text-navy">25% deposit</strong>
         , menú a elección y WhatsApp directo.
       </p>
       {/* Etapa A: Button neutral/stroke del sistema (xsmall) — la pastilla

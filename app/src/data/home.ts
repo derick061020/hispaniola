@@ -360,7 +360,7 @@ export const NAV_NOSOTROS: ItemNav[] = [
   {
     id: 'instalaciones',
     nombre: 'Facilities',
-    descripcion: 'More than a marina—our headquarters include a marine museum, biology lab, floating kitchens, workshops, and guest facilities.',
+    descripcion: 'More than a marina: our headquarters include a marine museum, biology lab, floating kitchens, workshops, and guest facilities.',
     to: '/facilities',
   },
   {
@@ -507,7 +507,7 @@ export type Premio = {
 export const PREMIOS: Premio[] = [
   {
     id: 'tripadvisor',
-    nombre: 'TripAdvisor — #1 water activity in Bávaro / Punta Cana for more than 7 years',
+    nombre: 'TripAdvisor, #1 water activity in Bávaro / Punta Cana for more than 7 years',
     foto: 'premio-tripadvisor',
     ancho: 222,
     alto: 82,
@@ -515,7 +515,7 @@ export const PREMIOS: Premio[] = [
   },
   {
     id: 'weddingwire',
-    nombre: "WeddingWire — Couples' Choice Awards 2018-2021",
+    nombre: "WeddingWire, Couples' Choice Awards 2018-2021",
     foto: 'premio-weddingwire',
     ancho: 128,
     alto: 128,
@@ -523,7 +523,7 @@ export const PREMIOS: Premio[] = [
   },
   {
     id: 'ltg',
-    nombre: 'LTG Global Awards 2021/22 — Winner: Aquatic Tour Operator of the Year, Dominican Republic',
+    nombre: 'LTG Global Awards 2021/22, Winner: Aquatic Tour Operator of the Year, Dominican Republic',
     foto: 'premio-ltg',
     ancho: 318,
     alto: 128,
@@ -559,7 +559,7 @@ export const PREMIOS: Premio[] = [
   },
   {
     id: 'luxury-travel-guide',
-    nombre: 'Luxury Travel Guide — The Americas Awards 2016, Winner: Tour Operator of the Year, Punta Cana',
+    nombre: 'Luxury Travel Guide, The Americas Awards 2016, Winner: Tour Operator of the Year, Punta Cana',
     foto: 'premio-luxury-travel-guide',
     ancho: 387,
     alto: 128,
@@ -616,23 +616,35 @@ export type SegmentoNarrativa = { t: string; fuerte?: boolean }
 // marcan lo que la sección quiere que quede: qué es (experiencia cuidada),
 // qué la hace única (conservación, museo, cocina del chef) y con qué se
 // queda el visitante (recuerdos).
+//
+// [2026-08-07, Samuel] FUERA LA RAYA. «This isn't just a day at sea — it's
+// a…» llevaba un guion largo, y el guion largo entre cláusulas es hoy el tic
+// que delata texto de IA («esas líneas son muy IA»). Se sustituye por PUNTO
+// y frase nueva: el contraste («no es X, es Y») no depende de la raya, y en
+// dos frases cortas pega más fuerte que en una con inciso. No se reescribe
+// nada más del copy aprobado — solo cambia el signo.
+// El SALTO del tramo 2 se mueve además de «…comfort,» a «…Punta Cana,»:
+// cortaba en mitad de la enumeración (museo, cocina, catamaranes | y
+// hospitalidad) y dejaba un tramo largo seguido de uno de dos renglones.
+// Ahora rompe en la junta natural de la frase, justo antes de «where», y los
+// dos bloques quedan parejos.
 export const EXPERIENCIA_NARRATIVA: SegmentoNarrativa[][] = [
   [
-    { t: "This isn't just a day at sea", fuerte: true },
-    { t: " — it's a " },
+    { t: "This isn't just a day at sea.", fuerte: true },
+    { t: " It's a " },
     { t: 'carefully crafted Caribbean experience.', fuerte: true },
   ],
   [
-    { t: 'From the moment you arrive, every detail has been thoughtfully designed to immerse you in the very best of Punta Cana, where ' },
+    { t: 'From the moment you arrive, every detail has been thoughtfully designed to immerse you in the very best of Punta Cana,' },
+  ],
+  [
+    { t: 'where ' },
     { t: 'marine conservation', fuerte: true },
     { t: ', exclusive access to our ' },
     { t: 'underwater museum', fuerte: true },
     { t: ', ' },
     { t: 'chef-prepared cuisine', fuerte: true },
-    { t: ', spacious catamarans designed for comfort,' },
-  ],
-  [
-    { t: 'and genuine Caribbean hospitality come together to create ' },
+    { t: ', spacious catamarans designed for comfort, and genuine Caribbean hospitality come together to create ' },
     { t: 'unforgettable memories.', fuerte: true },
   ],
 ]
@@ -730,51 +742,26 @@ export const TICKER_ITEMS: TickerItem[] = [
 // reembolso, que SUBE del pie de la sección a 5ª línea del boleto directo.
 // Los "iconos" de la v1 (25% / −5% / 🍽 / 💬) se retiran: la metáfora del
 // boleto no los necesita.
-export type BeneficioDirecto = { id: string; titulo: string; texto: string }
+export type BeneficioDirecto = { id: string; titulo: string }
 
 // [v3 2026-08-06, WEBSITE - INICIO pág. 3] Los 7 beneficios APROBADOS por el
-// cliente sustituyen a los 5 anteriores. Los titulares son literalmente los
-// suyos; el `texto` de apoyo lo conserva el sitio (el cliente dio la lista,
-// no la explicación) traducido de lo que ya decía cada beneficio equivalente
-// — los 3 sin equivalente previo (expertos locales, personalizar, apoyar la
-// conservación) se explican con datos que el sitio ya publica en otra parte,
-// sin prometer nada nuevo.
+// cliente sustituyen a los 5 anteriores. Van LITERALES y SOLOS: el cliente
+// entregó una lista de checks, sin explicación debajo, y el boleto imprime
+// exactamente eso.
+// ⚠️ Se probó acompañar cada titular con una frase de apoyo (heredada de los
+// 5 beneficios de v2) y el boleto crecía tanto de alto que rompía el stack
+// del banner — el objeto dejaba de leerse como boleto. La lista escueta ES
+// el formato: una línea por check, sin `texto`. Si algún día vuelve el texto
+// de apoyo, hay que rehacer la escena (anchos y sobresalir del banner), no
+// solo añadir el campo.
 export const BENEFICIOS_DIRECTO: BeneficioDirecto[] = [
-  {
-    id: 'expertos',
-    titulo: 'Direct access to our local experts',
-    texto: 'You talk to the team that runs the boat, not to a call center.',
-  },
-  {
-    id: 'personalizar',
-    titulo: 'Customize your experience',
-    texto: 'Pick-up, timing and celebration details are arranged with you, one to one.',
-  },
-  {
-    id: 'menu',
-    titulo: 'Choose your preferred menu',
-    texto: 'Lobster, certified Angus or vegetarian — booking direct is the only way to choose per person.',
-  },
-  {
-    id: 'perks',
-    titulo: 'Exclusive direct-booking perks',
-    texto: 'Confirm with 25% today, pay the rest on board — and save 5% more when you settle in cash.',
-  },
-  {
-    id: 'whatsapp',
-    titulo: 'Priority assistance via WhatsApp',
-    texto: 'A real person answers, before and during your day at sea.',
-  },
-  {
-    id: 'cancelacion',
-    titulo: 'Flexible cancellation policy',
-    texto: 'Full refund for bad weather, or cancelling 7 days ahead.',
-  },
-  {
-    id: 'conservacion',
-    titulo: 'Support local marine conservation',
-    texto: 'A fixed part of every booking funds the Bávaro Reefs Foundation.',
-  },
+  { id: 'expertos', titulo: 'Direct access to our local experts' },
+  { id: 'personalizar', titulo: 'Customize your experience' },
+  { id: 'menu', titulo: 'Choose your preferred menu' },
+  { id: 'perks', titulo: 'Exclusive direct-booking perks' },
+  { id: 'whatsapp', titulo: 'Priority assistance via WhatsApp' },
+  { id: 'cancelacion', titulo: 'Flexible cancellation policy' },
+  { id: 'conservacion', titulo: 'Support local marine conservation' },
 ]
 
 // El tour que viaja impreso en los DOS boletos de la comparación: el buque
@@ -828,7 +815,7 @@ export const QUOTES: Review[] = [
     id: 'ny',
     lugar: 'Family from New York',
     texto:
-      'The coral nursery was the best part of the trip — the biologist explained everything to us, and the food on board was incredible.',
+      'The coral nursery was the best part of the trip. The biologist explained everything to us, and the food on board was incredible.',
     autor: 'Jessica M.',
     plataforma: 'Viator',
     fecha: 'Jun 2026',
@@ -838,7 +825,7 @@ export const QUOTES: Review[] = [
     id: 'tx',
     lugar: 'Couple from Texas',
     texto:
-      'Excellent service, a small group just as promised — not like other catamarans packed with people. It felt like the boat was ours alone.',
+      'Excellent service, a small group just as promised, not like other catamarans packed with people. It felt like the boat was ours alone.',
     autor: 'Carlos R.',
     plataforma: 'TripAdvisor',
     fecha: 'May 2026',
@@ -1200,7 +1187,7 @@ export const CONTACTO = {
   direccion: 'Hispaniola Aquatic Adventures office, C. P.º del Sol, Punta Cana 23500, Dominican Republic',
   email: 'info@catamarantourspuntacana.com',
   mapaEmbedUrl: 'https://www.google.com/maps?q=18.669740,-68.401262&z=16&output=embed',
-  confirmacion: 'We got your message — we reply within 24 hours (sooner on WhatsApp).',
+  confirmacion: 'We got your message. We reply within 24 hours (sooner on WhatsApp).',
   microcopy: 'Already booked? Have your code handy (HSP-XXXX-XXXX) and we can help you faster.',
   // Correcciones v1 del cliente (2026-07-20, planes/01-home.md slides 13-14:
   // «dale más cariño please»). La maqueta pone una card de persona real
@@ -1256,7 +1243,11 @@ export const CONTACTO = {
       titulo: 'WhatsApp',
       dato: '+1 829 305 2804',
       href: WHATSAPP_URL,
-      cta: 'Chat now',
+      // [v3 2026-08-07, pedido de Samuel] «Chat now» a secas no decía a DÓNDE
+      // llevaba: el icono de marca lo insinuaba, pero el verbo no. Nombrar el
+      // canal en el propio botón es lo que hace que se entienda sin mirar el
+      // icono — y es el patrón del botón oficial de WhatsApp.
+      cta: 'Chat now on WhatsApp',
     },
     {
       id: 'telefono',
@@ -1468,7 +1459,7 @@ export const FAQ_HOME: FaqItem[] = [
   },
   {
     p: 'Can I pay just the deposit?',
-    r: 'Yes — you confirm with 25% and pay the rest on the day of the tour.',
+    r: 'Yes, you confirm with 25% and pay the rest on the day of the tour.',
   },
   {
     p: '¿Incluye recogida en mi hotel?',
@@ -1480,7 +1471,7 @@ export const FAQ_HOME: FaqItem[] = [
   },
   {
     p: '¿Puedo elegir mi plato?',
-    r: 'Yes — each person picks their dish when booking: Seafood, Meat, Surf & Turf or Vegetarian. You can change it from My Booking up to 24 hours before.',
+    r: 'Yes, each person picks their dish when booking: Seafood, Meat, Surf & Turf or Vegetarian. You can change it from My Booking up to 24 hours before.',
   },
   { p: '¿Hay baño a bordo?', r: 'Sí, todos nuestros barcos tienen baño.' },
   {
@@ -1489,7 +1480,7 @@ export const FAQ_HOME: FaqItem[] = [
   },
   {
     p: 'Can I come if I cannot swim?',
-    r: 'Yes — the snorkeling is in shallow water and life jackets are available.',
+    r: 'Yes, the snorkeling is in shallow water and life jackets are available.',
   },
   {
     p: 'Is it suitable for pregnant women or older guests?',

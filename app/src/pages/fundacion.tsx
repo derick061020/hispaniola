@@ -2,7 +2,6 @@ import { Footer } from '@/components/home/footer'
 import { HeroInterna } from '@/components/internas/hero-interna'
 import { Etiqueta } from '@/components/ui/etiqueta'
 import { Meta } from '@/components/seo/meta'
-import { CronologiaFundacion } from '@/components/fundacion/cronologia-fundacion'
 import { FrentesFundacion } from '@/components/fundacion/frentes-fundacion'
 import { FundadoresFundacion } from '@/components/fundacion/fundadores-fundacion'
 import { CierreDoble } from '@/components/sostenibilidad/cierre-doble'
@@ -53,7 +52,7 @@ export function FundacionPage() {
     <div>
       <Meta
         titulo="The Foundation"
-        descripcion="Fundación Ecológica Arrecifes de Bávaro: coral restoration and artificial reefs since 2016, in partnership with the Ministry of the Environment."
+        descripcion="Bávaro Reefs Foundation: coral restoration and artificial reefs since 2016, in partnership with the Ministry of the Environment."
         ruta="/foundation"
       />
 
@@ -64,10 +63,12 @@ export function FundacionPage() {
           la derecha en el hero»). El hero vuelve a una sola columna —badge,
           título y descripción— y con ella se va también `anchoCompleto`, que
           existía solo para que esa banda derecha tuviera sitio.
-          ⚠️ No se pierde ningún dato: 2016, el tercer vivero del país y el
-          convenio con Medio Ambiente los cuenta la línea de tiempo de justo
-          debajo (CronologiaFundacion), que es de donde salieron. Y siguen
-          visibles como los 3 features del teaser de /ventaja-competitiva. */}
+          ⚠️ Este aviso decía que los tres datos (2016, el tercer vivero y el
+          convenio con Medio Ambiente) los recogía la línea de tiempo de justo
+          debajo. YA NO: esa línea sale de la página el 2026-08-07 (ver abajo).
+          Hoy los cuentan los cuatro datos del teaser de
+          /competitive-advantage, que es contenido aprobado v3 — salvo el
+          tercer vivero, que el propio cliente retiró. */}
       <HeroInterna
         ctaHref="/competitive-advantage"
         imagen={{
@@ -95,8 +96,20 @@ export function FundacionPage() {
           página con scroll horizontal en Windows. */}
       <div className="mx-auto max-w-contenido px-5 pt-12 sm:px-10 lg:pt-16">
         <div className="flex flex-col gap-16 lg:gap-24">
-          <CronologiaFundacion />
-
+          {/* [v3 2026-08-07, pedido de Samuel] AQUÍ IBA LA LÍNEA DE TIEMPO
+              «How it started» (Before · 2016 · Today). Sale de la página.
+              El componente y su dato (`FUNDACION.cronologia`) SE CONSERVAN sin
+              montar, criterio de la casa — igual que CocinaYParadas en /fleet.
+              ⚠️ Con ella se va de la web el «tercer vivero más importante del
+              país», que era su tercera parada. No es pérdida accidental: el
+              cliente ya lo había sustituido por «one of the leading coral
+              restoration programs» en los otros dos sitios donde aparecía (los
+              datos de la fundación y el check de la tarjeta de reserva), así
+              que este era el último rastro de ese puesto en el ranking.
+              Lo que sí contaba solo ella: el ANTES —el arrecife perdiéndose y
+              la operación diaria que lo vio— y sus tres fotos submarinas. Si
+              ese arranque hace falta, la historia está viva en
+              `SOSTENIBILIDAD.historia` (/competitive-advantage). */}
           <FundadoresFundacion />
 
           <section id="proyectos" className="scroll-mt-header-alto">

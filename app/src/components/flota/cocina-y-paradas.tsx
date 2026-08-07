@@ -50,7 +50,9 @@ import { COCINA_FLOTANTE } from '@/data/nosotros'
 //   4. LAS 3 CIFRAS separadas por líneas verticales. Fuera la fila. «La única
 //      cocina flotante» era el H2 repetido en formato de cifra —el patrón
 //      literal a evitar—, y lo que sí aportaban las otras dos (0% recalentado,
-//      7 platos) se absorbe en el párrafo (`COCINA_Y_PARADAS.detalle`).
+//      7 platos) pasó a un párrafo redactado aquí, `COCINA_Y_PARADAS.detalle`
+//      — retirado el 2026-08-07 por no ser copy aprobado: esas dos cifras ya
+//      las dice `COCINA_FLOTANTE.textoExtra[0]`, que sí lo es.
 //      También se retira la tira «Míralo por dentro»: con las 3 fotos-prueba y
 //      las 3 paradas ya había una cuarta fila de fotos en la misma sección.
 //
@@ -82,7 +84,6 @@ export function CocinaYParadas() {
                 {t}
               </p>
             ))}
-            <p className="mt-4 max-w-xl text-lead text-navy-sub">{COCINA_Y_PARADAS.detalle}</p>
 
             <Link
               to={COCINA_Y_PARADAS.cta.to}

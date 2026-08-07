@@ -79,7 +79,7 @@ export function schemaTour(tour: Tour, ficha?: FichaTour) {
         precios.push(precioPublicado)
         tramos.push({
           '@type': 'Offer',
-          name: `${v.nombre} — ${t.desde}${t.hasta === null ? '+' : `-${t.hasta}`} pax`,
+          name: `${v.nombre} · ${t.desde}${t.hasta === null ? '+' : `-${t.hasta}`} pax`,
           price: String(precioPublicado),
           priceCurrency: 'USD',
           availability: 'https://schema.org/InStock',

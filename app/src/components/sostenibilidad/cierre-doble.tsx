@@ -98,7 +98,15 @@ export function CierreDoble({
             <h2 className="mt-3 text-balance font-display text-h2 font-semibold text-white">
               {SOSTENIBILIDAD.cierreTitulo}
             </h2>
-            <p className="mt-4 text-white/85">{SOSTENIBILIDAD.cierreTexto}</p>
+            {/* [v3 2026-08-07] El texto aprobado trae DOS párrafos: el gancho
+                («The Caribbean has given us everything») y el mecanismo (en qué
+                se convierte cada reserva). Separados, el primero funciona como
+                lo que es — una frase, no la entrada de un bloque. */}
+            {SOSTENIBILIDAD.cierreTexto.map((t, i) => (
+              <p key={t.slice(0, 30)} className={`${i === 0 ? 'mt-4' : 'mt-3'} text-white/85`}>
+                {t}
+              </p>
+            ))}
 
             <ul className="mt-6 flex flex-col gap-3">
               {SOSTENIBILIDAD.cierrePuntos.map((p) => (
@@ -111,7 +119,7 @@ export function CierreDoble({
 
             <div className="mt-auto pt-8">
               <Boton to="/#tours" tamaño="lg" className="w-full">
-                Book and leave your mark
+                {SOSTENIBILIDAD.cierreCta}
               </Boton>
             </div>
           </div>

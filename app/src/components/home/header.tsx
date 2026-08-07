@@ -82,7 +82,7 @@ export function Header({
             su comentario) — cuando este logo sale de vista, NavFlotante funde
             su propia versión compacta dentro del panel de tabs. 'solida' no
             lo necesita (no tiene NavFlotante propio, la 404 es autónoma). */}
-        <Link to="/" aria-label="Hispaniola Aquatic Adventures — inicio" id={sobreVideo ? 'logo-hero' : undefined}>
+        <Link to="/" aria-label="Hispaniola Aquatic Adventures, home" id={sobreVideo ? 'logo-hero' : undefined}>
           <Logo sobreOscuro={sobreVideo} />
         </Link>
 
@@ -109,7 +109,7 @@ export function Header({
           <button
             type="button"
             onClick={() => setMovilAbierto(true)}
-            aria-label="Menú"
+            aria-label="Menu"
             className={`grid size-10 place-items-center rounded-lg md:hidden ${sobreVideo ? 'text-white hover:bg-white/10' : 'text-navy hover:bg-papel-hueso'}`}
           >
             <Menu className="size-5" />

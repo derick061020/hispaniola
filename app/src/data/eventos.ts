@@ -264,7 +264,7 @@ const PAQUETES_COMIDA: PaqueteEvento[] = [
     capacidad: '1-12 guests',
     meta: '4 hours on board',
     foto: 'paquete-premium',
-    fotoAlt: 'Hispaniola Premium Package — langosta, brochetas y fries en plato blanco',
+    fotoAlt: 'Hispaniola Premium Package: lobster, skewers and fries on a white plate',
     items: [
       { titulo: 'Chicken Skewer', texto: '1p/p' },
       { titulo: 'Beef Skewer', texto: '1p/p' },
@@ -410,7 +410,7 @@ const PARTY_BOAT: FichaEvento = {
   formatos: [
     {
       titulo: 'Birthdays',
-      texto: 'A party with family and friends — great food and a national open bar.',
+      texto: 'A party with family and friends, great food and a national open bar.',
       foto: 'events-2',
       fotoAlt: 'Group celebrating on board the catamaran, cocktails in hand',
     },
@@ -439,7 +439,7 @@ const PARTY_BOAT: FichaEvento = {
     { titulo: 'Private Check-In Lobby', texto: 'Private reception at our facilities before you set sail.' },
     { titulo: 'Floating Kitchen', texto: 'A floating kitchen for freshly made food on board.' },
     { titulo: 'Snorkeling Equipment', texto: 'Sanitized gear, every size.' },
-    { titulo: 'Photos (Facebook)', texto: 'We upload the tour photos to our Facebook — free.' },
+    { titulo: 'Photos (Facebook)', texto: 'We upload the tour photos to our Facebook. Free.' },
     { titulo: 'Underwater Photos (Facebook)', texto: 'From the snorkeling too, on our Facebook.' },
     { titulo: 'WiFi & AUX port', texto: 'WiFi on board and an AUX port for your music.' },
     { titulo: 'Music & Dance', texto: 'Sound system and a crew with energy.' },
@@ -489,7 +489,7 @@ const PARTY_BOAT: FichaEvento = {
   ctaPrincipal: 'Request a quote',
   cotizacionPlegada: {
     titulo: 'Your event doesn’t fit a package?',
-    sub: 'Weddings, large groups or a custom menu — we quote you free in 24 h.',
+    sub: 'Weddings, large groups or a custom menu: we quote you free in 24 h.',
   },
 }
 
@@ -574,19 +574,25 @@ const BODAS: FichaEvento = {
   // y se adaptan al lenguaje de la ficha de tour (texto corto, sin
   // sub-línea en los secundarios).
   incluye: [
-    { titulo: 'Snorkeling', texto: 'Gear included and shallow water — suitable for every level.' },
+    { titulo: 'Snorkeling', texto: 'Gear included and shallow water, suitable for every level.' },
     { titulo: 'Music', texto: 'Sound system on board and a custom playlist.' },
     { titulo: 'Floating bar', texto: 'Cocktails by the chef and a national open bar.' },
-    { titulo: 'Deserted beach', texto: 'Private stop with a coco loco.' },
-    { titulo: 'Photos', texto: 'Of the whole event, uploaded to our Facebook — free.' },
-    { titulo: 'Food', texto: 'Freshly made in our floating kitchen — custom menu.' },
+    // [2026-08-07, Samuel] LA PLAYA DESIERTA NO ENTRA EN TODOS: es la 3ª parada
+    // y solo la da el paquete de 4 horas (el Premium — los otros tres son de
+    // 3 h · 2 paradas, ver PAQUETES_COMIDA). Se queda en la lista con su
+    // salvedad al final, igual que el brindis de abajo dice «Weddings only»:
+    // sacarla escondería una parada que sí se vende, y dejarla sin condición
+    // prometía tres paradas en los paquetes de 3 h.
+    { titulo: 'Deserted beach', texto: 'Private stop with a coco loco. 4-hour Premium package only.' },
+    { titulo: 'Photos', texto: 'Of the whole event, uploaded to our Facebook. Free.' },
+    { titulo: 'Food', texto: 'Freshly made in our floating kitchen, custom menu.' },
     { titulo: 'Coordinator', texto: 'One person just for you, from start to finish.' },
     // 8º ítem, y es EL dato que separa bodas de party boat: las dos
     // ocasiones comparten los 4 paquetes y los mismos incluidos comunes,
     // y bodas suma el brindis (TARIFARIO-WEB-ORIGINAL.md §3: «+ Champagne
     // toast solo en bodas»). Va aquí y no dentro de un paquete porque en
     // la web del cliente entra en TODOS.
-    { titulo: 'Champagne toast', texto: 'A toast with all your guests — weddings only.' },
+    { titulo: 'Champagne toast', texto: 'A toast with all your guests. Weddings only.' },
   ],
   // MISMOS 4 PAQUETES QUE PARTY BOAT, mismo array (PAQUETES_COMIDA):
   // `weddings.php` publica el tarifario idéntico —mismos precios, mismos
@@ -637,11 +643,11 @@ const BODAS: FichaEvento = {
     },
     {
       p: 'How many guests can come on board?',
-      r: 'Up to 120 guests — with two deck levels for the ceremony and the banquet.',
+      r: 'Up to 120 guests, with two deck levels for the ceremony and the banquet.',
     },
     {
       p: 'Can we bring our own wedding planner?',
-      r: 'Yes — we work with the wedding planners in the area and we coordinate with yours without any trouble.',
+      r: 'Yes, we work with the wedding planners in the area and we coordinate with yours without any trouble.',
     },
     {
       p: 'Is there a dress code?',
@@ -658,7 +664,7 @@ const BODAS: FichaEvento = {
   // coordinación), que es justo lo que ningún paquete cierra.
   cotizacionPlegada: {
     titulo: 'Does your wedding need more than a package?',
-    sub: 'Ceremony on board, decoration or a custom menu — we quote it free within 24 h.',
+    sub: 'Ceremony on board, decoration or a custom menu: we quote it free within 24 h.',
   },
 }
 
@@ -747,7 +753,7 @@ const EMPRESAS: FichaEvento = {
     'Other',
   ],
   tipoFijo: -1, // empresas: el visitante elige
-  formatosTitulo: 'Formatos',
+  formatosTitulo: 'Formats',
   formatos: [
     {
       titulo: 'Incentive',
@@ -768,16 +774,23 @@ const EMPRESAS: FichaEvento = {
       fotoAlt: 'Corporate cocktail on board at sunset',
     },
   ],
+  // [v3 2026-08-07, pedido de Samuel] FUERA «What an event planner needs to
+  // know» en /corporate. La lista se vacía y con ella desaparece la sección
+  // entera: `IncluyeEvento` devuelve null cuando `incluye` está vacío, así que
+  // no hay nada que desmontar en la página — y las otras dos landings
+  // (party-boat y bodas) conservan la suya intacta.
+  // El titular se queda porque el tipo lo exige y porque, si la sección
+  // vuelve, vuelve con su nombre.
+  //
+  // ⚠️ LO QUE SE LLEVA POR DELANTE son los 4 datos operativos que un DMC o un
+  // head de eventos pregunta primero: capacidad real por barco y montajes
+  // multi-barco, plan B por meteorología POR ESCRITO, transfers desde los
+  // hoteles sede y condiciones de facturación corporativa. Eran copy aprobado
+  // y homologado, y de los cuatro solo la capacidad sobrevive en otra parte
+  // (la FAQ de esta misma página: «120 guests per boat»). Los otros tres no
+  // los cuenta nadie más en la web.
   incluyeTitulo: 'What an event planner needs to know',
-  // 4 ítems — el "lo que un organizador corporativo necesita saber" de
-  // la versión anterior de data/eventos.ts (ya estaba aprobada y
-  // homologada con el cliente).
-  incluye: [
-    { titulo: 'Capacity and fleet', texto: 'Number of boats, real capacity per vessel, multi-boat setups for large groups.' },
-    { titulo: 'Weather plan B', texto: 'Rescheduling policy in writing.' },
-    { titulo: 'Logistics', texto: 'Transfers from the host hotels, fixed schedules.' },
-    { titulo: 'Invoicing', texto: 'Corporate payment terms and formal invoicing.' },
-  ],
+  incluye: [],
   // Foto de portada: la cubierta llena de grupos sentados comiendo.
   foto: 'mice-3',
   fotoAlt: 'The catamaran deck with several groups eating at their tables',
@@ -794,7 +807,7 @@ const EMPRESAS: FichaEvento = {
     },
     {
       p: 'Do you work with our DMC or agency?',
-      r: 'Yes — we have net rates for DMCs and can invoice locally or internationally.',
+      r: 'Yes, we have net rates for DMCs and can invoice locally or internationally.',
     },
     {
       p: 'What is the cancellation policy?',
@@ -802,7 +815,7 @@ const EMPRESAS: FichaEvento = {
     },
     {
       p: 'Can you handle several languages on deck?',
-      r: 'Yes — bilingual crew (ES/EN), and we arrange guides in other languages on request.',
+      r: 'Yes, bilingual crew (ES/EN), and we arrange guides in other languages on request.',
     },
   ],
   cierreMeta: 'We get back to you within 24 h with your proposal',
@@ -815,7 +828,7 @@ const EMPRESAS: FichaEvento = {
   // promesa de contacto, no de descarga) y la página de gracias
   // cierra el ciclo ofreciendo el dossier por WhatsApp si el cliente
   // lo pide.
-  ctaSecundaria: 'Pedir dossier corporativo (PDF)',
+  ctaSecundaria: 'Request the corporate dossier (PDF)',
 }
 
 export const EVENTOS: Record<FichaEvento['slug'], FichaEvento> = {

@@ -159,7 +159,7 @@ export const EQUIPO: MiembroEquipo[] = [
     // ⚠️ Jose aparece con nombre y cargo porque es dato del cliente, de su
     // propio documento. No se inventa nada alrededor.
     bio: [
-      "I started this company as its very first captain. Over the years, I've worked in nearly every role—from leading tours at sea to building the team that now makes it all possible. Watching people grow alongside the company has been one of the greatest rewards. In fact, our Operations Manager, Jose, learned to swim with me years ago, and today he leads one of the most important departments in the company. He is my right wing man.",
+      "I started this company as its very first captain. Over the years, I've worked in nearly every role, from leading tours at sea to building the team that now makes it all possible. Watching people grow alongside the company has been one of the greatest rewards. In fact, our Operations Manager, Jose, learned to swim with me years ago, and today he leads one of the most important departments in the company. He is my right wing man.",
       'No matter how much we grow, I believe the best leaders never stop learning, never stop listening, and never stop getting their feet wet.',
     ],
     foto: 'equipo-omar',
@@ -195,7 +195,7 @@ export const EQUIPO: MiembroEquipo[] = [
     nombre: 'Eva',
     rol: 'Guest support',
     desde: '2018',
-    quote: 'When you write in, I’m the one who answers. No bots — I’ll help you put together your perfect day.',
+    quote: 'When you write in, I’m the one who answers. No bots. I’ll help you put together your perfect day.',
     foto: 'equipo-eva',
     cta: { label: 'Chat with Eva', tipo: 'whatsapp' },
   },
@@ -353,7 +353,7 @@ export const FLOTA: BarcoFlota[] = [
     // La fuente no fecha el GrandMa (ni el Joker ni el Karaya): sin año, no se
     // pinta la casilla. Nada de rellenar un hueco con un año plausible.
     anio: null,
-    descripcionCorta: 'With a slide on board — perfect for mid-size groups, families and fun plans.',
+    descripcionCorta: 'With a slide on board, perfect for mid-size groups, families and fun plans.',
     foto: 'flota-grandma',
     fotoAlt: 'GrandMa catamaran with passengers on board',
     chipFoto: 'Families',
@@ -406,7 +406,7 @@ export const NOSOTROS = {
   equipoEyebrow: 'The team',
   equipoTitulo: 'The team that welcomes you',
   equipoTexto:
-    'Spanish management based in Punta Cana since 2012, and a team that lives the sea with you — the same one that answers you when you write in.',
+    'Spanish management based in Punta Cana since 2012, and a team that lives the sea with you, the same one that answers you when you write in.',
 
   tripulacionTitulo: 'And our Dominican crew on board',
   // Condensado de "Nuestro maravilloso equipo está altamente capacitado,
@@ -414,7 +414,7 @@ export const NOSOTROS = {
   // Nuestro equipo multilingüe estará allí con usted en cada paso del
   // camino, asegurando su comodidad y bienestar."
   tripulacionTexto:
-    'Multilingual, highly trained and looking after your safety every step of the way — from the moment you step on board until you are back on shore.',
+    'Multilingual, highly trained and looking after your safety every step of the way, from the moment you step on board until you are back on shore.',
 
   flotaEyebrow: 'The fleet',
   // Titular de la maqueta (slide 5). El eyebrow se queda con «La flota»: es la
@@ -473,7 +473,7 @@ export const EXPERIENCIA = {
   eyebrow: 'The onboard experience',
   titulo: 'A day at sea, cared for down to the detail',
   sub: 'What you live with us, you don’t live on just any excursion.',
-  cta: 'Live this day — see availability',
+  cta: 'Live this day, see availability',
 }
 
 export type ParadaExperiencia = {
@@ -491,7 +491,7 @@ export const EXPERIENCIA_ABORDO: ParadaExperiencia[] = [
     numero: '01',
     titulo: 'Snorkeling at the coral nursery',
     texto:
-      'Our first stop is a coral nursery where the Bávaro Reefs Foundation restores the marine habitat — you’ll swim surrounded by colorful fish in crystal-clear water.',
+      'Our first stop is a coral nursery where the Bávaro Reefs Foundation restores the marine habitat. You’ll swim surrounded by colorful fish in crystal-clear water.',
     foto: 'galeria-semi-privado-4',
     fotoAlt: 'Snorkeling among tropical fish at the coral nursery',
     chip: 'Reef restoration · Bávaro Reefs Foundation',
@@ -499,7 +499,7 @@ export const EXPERIENCIA_ABORDO: ParadaExperiencia[] = [
   {
     numero: '02',
     titulo: 'Deserted beach and coco-loco',
-    texto: 'We land on a deserted beach for cold coconuts opened on the spot and coconut cocktails — have all the ones you want.',
+    texto: 'We land on a deserted beach for cold coconuts opened on the spot and coconut cocktails. Have all the ones you want.',
     foto: 'galeria-charter-privado-6',
     fotoAlt: 'Family enjoying fresh coconuts on a deserted beach',
   },
@@ -528,18 +528,36 @@ export const EXPERIENCIA_ABORDO: ParadaExperiencia[] = [
 // una afirmacion de exclusividad. Es ademas la seccion que la slide 69 pide
 // destacar («resaltar que es unica en Punta Cana»), y el copy nuevo lo hace
 // mejor que el viejo: no lo dice, lo describe.
+// LOS TRES TIEMPOS del párrafo sensorial (2026-08-07). NO ES COPY NUEVO: es el
+// `texto` aprobado partido por donde el propio cliente lo partió al escribirlo
+// — «The aroma comes first. / Then the sound of the grill. / Moments later,
+// your meal is served». El copy ya venía con una secuencia dentro; esto solo la
+// hace explícita para que /flota pueda ENCENDERLA por tiempos al scrollear
+// (flota/cocina-tiempos.tsx).
+//
+// ⚠️ `texto` SE DERIVA de aquí con un join, no se escribe dos veces. Es la
+// misma regla que ya protege la cifra de la flota («no se escribe: se CUENTA
+// sobre FLOTA»): si alguien retoca un tiempo, el párrafo que pinta
+// /instalaciones cambia con él y no pueden divergir en silencio. El separador
+// es un espacio simple porque los tres trozos ya traen su punto final.
+const COCINA_TIEMPOS = [
+  'Imagine the sea breeze on your face, the scent of fresh seafood and grilled meats filling the air. The aroma comes first.',
+  'Then the sound of the grill.',
+  'Moments later, your meal is served, freshly prepared just a few steps from your table, while you sail through the crystal-clear waters of Punta Cana.',
+]
+
 export const COCINA_FLOTANTE = {
   badge: 'Only in Punta Cana',
   eyebrow: 'Only with Hispaniola',
   titulo: 'More Than Lunch. A Memory You Can Taste.',
-  texto:
-    'Imagine the sea breeze on your face, the scent of fresh seafood and grilled meats filling the air. The aroma comes first. Then the sound of the grill. Moments later, your meal is served—freshly prepared just a few steps from your table, while you sail through the crystal-clear waters of Punta Cana.',
+  tiempos: COCINA_TIEMPOS,
+  texto: COCINA_TIEMPOS.join(' '),
   // [v3] El segundo y el tercer parrafo aprobados. Antes esta seccion tenia un
   // solo bloque de texto; el copy nuevo trae tres, y el tercero es el que
   // remata («lunch isn't just another stop»).
   textoExtra: [
     'Choose from seven freshly grilled dishes, including premium meats, fresh seafood, and local specialties, all prepared live by our chefs in a true show-cooking experience. No reheated food. No buffet trays. Just fresh ingredients, authentic Caribbean flavors, and meals cooked the moment you order them.',
-    "For us, lunch isn't just another stop on the tour—it's one of the moments our guests remember long after they return home.",
+    "For us, lunch isn't just another stop on the tour. It's one of the moments our guests remember long after they return home.",
   ],
   puntos: [
     'Cooked fresh, served fresh',

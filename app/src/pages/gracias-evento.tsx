@@ -191,19 +191,24 @@ export function GraciasEventoPage() {
 
         {/* 6. CELEBRACIÓN — callout (mismo idioma que gracias.tsx de
             reservas, para eventos aplica a bodas, despedidas, etc.). */}
-        {cotizacion.tipoEvento !== 'Otro' &&
-        !cotizacion.tipoEvento.toLowerCase().includes('corporativo') &&
-        !cotizacion.tipoEvento.toLowerCase().includes('incentivo') &&
+        {/* ⚠️ Los términos que descartan el callout tienen que ser LOS DE
+            `tiposEvento` en data/eventos.ts, que desde F7 están en inglés: con
+            los de antes («corporativo», «incentivo», «convención»,
+            «lanzamiento») el filtro no casaba con nada y a un lanzamiento de
+            producto se le ofrecía tarta. */}
+        {cotizacion.tipoEvento !== 'Other' &&
+        !cotizacion.tipoEvento.toLowerCase().includes('corporate') &&
+        !cotizacion.tipoEvento.toLowerCase().includes('incentive') &&
         !cotizacion.tipoEvento.toLowerCase().includes('team building') &&
-        !cotizacion.tipoEvento.toLowerCase().includes('convención') &&
-        !cotizacion.tipoEvento.toLowerCase().includes('lanzamiento') ? (
+        !cotizacion.tipoEvento.toLowerCase().includes('convention') &&
+        !cotizacion.tipoEvento.toLowerCase().includes('product launch') ? (
           <section className="mt-6 rounded-card border border-linea bg-papel-hueso p-4 sm:p-5">
             <div className="flex items-start gap-3">
               <Sparkles className="size-5 shrink-0 text-coral" aria-hidden="true" />
               <div>
                 <p className="font-display text-base font-semibold text-navy">Celebrating something?</p>
                 <p className="mt-1 text-sm text-navy-sub">
-                  If it is a special occasion, tell us on WhatsApp — decorations, cake,
+                  If it is a special occasion, tell us on WhatsApp: decorations, cake,
                   surprises on board. We’ll take care of it.
                 </p>
               </div>

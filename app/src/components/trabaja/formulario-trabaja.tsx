@@ -225,7 +225,7 @@ function Confirmacion({ perfil, onReset }: { perfil: PerfilTrabajo; onReset: () 
       </div>
       <p className="mt-4 font-display text-h3 font-semibold text-navy">Application sent</p>
       <p className="mt-2 max-w-prose text-sm leading-relaxed text-navy-sub">
-        We received it as {perfil.titulo.toLowerCase()}. We’ll write to you within 24 h — and if you want
+        We received it as {perfil.titulo.toLowerCase()}. We’ll write to you within 24 h, and if you want
         to get ahead in the meantime, our WhatsApp is right here.
       </p>
       <button

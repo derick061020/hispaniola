@@ -69,35 +69,25 @@ const CARD =
 // dentro sigue leyéndose como siempre.
 const CONTENIDO = 'mx-auto w-full max-w-5xl px-6 sm:px-10'
 
-// LAS SEIS CARDS, en un solo molde (2026-07-28, 3ª vuelta — Samuel: «que la
-// primera card de arrecifes artificiales sea igual que las demás, que tenga
-// una sola imagen a la derecha, no 2»).
+// LAS CARDS DEL BARRIDO son los frentes de `data/fundacion.ts`, y nada más
+// (hoy seis; el número no se escribe aquí ni en ningún texto de la sección
+// precisamente porque el cliente ya lo ha movido dos veces).
 //
-// El proyecto insignia entró al barrido conservando su forma anterior: fondo
-// navy y dos fotos clavadas en ángulo. Dentro de un carrusel eso no se leía
-// como «la primera de seis» sino como otra cosa que se ha colado. Ahora usa el
-// MISMO molde y se distingue por lo único que debe distinguirlo: su rótulo
-// («El proyecto insignia» en vez de un numeral) y el sitio, que es el primero.
-//
-// De sus dos fotos se queda la PRIMERA — los bloques sumergidos tapados de
-// peces, que es lo que un arrecife artificial ES. La segunda era la tortuga:
-// bonita, pero ilustra el mar, no el proyecto.
-//
-// ⚠️ Esto dejó `fundacion/arrecife-artificial.tsx` sin consumidores y se ha
-// borrado. `.fund-foto` (componentes.css) y los tokens --fund-foto-rot-* eran
-// suyos y quedan SIN USAR — no se retiran aquí a propósito: una clase CSS que
-// desaparece no da error, solo deja de aplicarse, así que borrarlas mientras
-// otra rama pueda estar montando algo encima es la clase de limpieza que se
-// paga cara. Están marcadas para la próxima pasada de limpieza.
+// [v3 2026-08-07, pedido de Samuel] FUERA LA PRIMERA, «Artificial Reefs / The
+// flagship project». Abría el barrido desde el 2026-07-28, cuando el proyecto
+// insignia dejó su bloque propio (fondo navy y dos fotos en ángulo) y entró
+// aquí con el mismo molde que las demás. Sale entera: el carrusel arranca ya
+// en el frente 01.
+// ⚠️ El contenido NO se borra — `FUNDACION.destacado` sigue en data/ con sus
+// dos fotos y su copy, hoy SIN CONSUMIDORES (criterio de la casa: se conserva,
+// no se limpia mientras otra rama pueda estar montando encima). Con la card se
+// va de la web la única mención a los arrecifes artificiales como PROYECTO;
+// siguen nombrados de pasada en el primer check de la tarjeta de la fundación
+// («Coral reef restoration and artificial reefs»).
+// ⚠️ Y con ella se queda sin uso el caso `numeral: null` de más abajo: era el
+// único sitio donde una card se rotulaba con texto en vez de con un ordinal.
+// Se deja el condicional puesto — si el insignia vuelve, vuelve con su rótulo.
 const CARDS = [
-  {
-    numeral: null,
-    clave: FUNDACION.destacado.eyebrow,
-    titulo: FUNDACION.destacado.titulo,
-    texto: FUNDACION.destacado.texto,
-    foto: FUNDACION.destacado.fotos[0].src,
-    fotoAlt: FUNDACION.destacado.fotos[0].alt,
-  },
   ...FUNDACION.frentes.map((frente, i) => ({
     numeral: String(i + 1).padStart(2, '0'),
     clave: frente.clave,
@@ -114,9 +104,9 @@ const CARDS = [
 export function FrentesFundacion() {
   const escenarioRef = useRef<HTMLDivElement>(null)
 
-  // [dev-mode] ?dev-frentes=estatico desengancha el barrido y deja las cinco
-  // cards apiladas en vertical — el frame limpio que viaja a Figma (a Figma
-  // no va un pin de scroll, va la lista). Ver dev-registry.ts.
+  // [dev-mode] ?dev-frentes=estatico desengancha el barrido y deja las cards
+  // apiladas en vertical — el frame limpio que viaja a Figma (a Figma no va un
+  // pin de scroll, va la lista). Ver dev-registry.ts.
   const [estatico, setEstatico] = useState(false)
   useDevFlag('dev-frentes', (v) => setEstatico(v === 'estatico')) // [dev-mode]
   useFrentesHorizontal(escenarioRef, { activo: !estatico }) // [dev-mode] gate

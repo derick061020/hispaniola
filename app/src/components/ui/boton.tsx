@@ -2,7 +2,21 @@ import { forwardRef, type AnchorHTMLAttributes, type ButtonHTMLAttributes, type 
 import { Link, type LinkProps } from 'react-router-dom'
 
 const clasesBase =
-  'inline-flex items-center justify-center gap-2 bg-coral font-semibold text-white transition hover:bg-coral-dark'
+  'inline-flex items-center justify-center gap-2 font-semibold text-white transition'
+
+// El COLOR sale de `clasesBase` y pasa a ser una property propia (2026-08-07,
+// pedido de Samuel: «el botón de chat now de WhatsApp… que tenga el color de
+// WhatsApp»). Es una property del mismo componente, no un botón nuevo — igual
+// que `tamaño`: en Figma mapea a una variante, no a otro componente.
+//
+// 'whatsapp' es un caso ESTRICTO, no un tono más de la paleta: se usa cuando
+// el botón abre WhatsApp y el verde de marca es lo que hace que se reconozca
+// de un vistazo. Ver --color-whatsapp en tokens.css (marca de terceros, y la
+// nota de contraste que la acompaña). Cualquier otro CTA del sitio es 'coral'.
+const tonos = {
+  coral: 'bg-coral hover:bg-coral-dark',
+  whatsapp: 'bg-whatsapp hover:bg-whatsapp-dark',
+}
 
 // v3-F13 (PLAN-v3.md §15.8): 'lg' es el CTA principal del hero — más ancho,
 // con halo (--shadow-cta) y un levantamiento sutil al pasar el ratón. No es
@@ -39,6 +53,7 @@ const tamaños = {
 // navegación SPA (mismo motivo que el «Reservar ahora» de footer.tsx).
 type Props = {
   tamaño?: keyof typeof tamaños
+  tono?: keyof typeof tonos
 } & (
   | ({ to: LinkProps['to'] } & Omit<LinkProps, 'to'>)
   | ({ href: string } & AnchorHTMLAttributes<HTMLAnchorElement>)
@@ -53,10 +68,10 @@ type Props = {
 // ocurren (ningún consumidor actual necesita apuntar a un <button>, pero se
 // tipa completo por si acaso).
 export const Boton = forwardRef<HTMLAnchorElement | HTMLButtonElement, Props>(function Boton(
-  { className = '', tamaño = 'md', ...props },
+  { className = '', tamaño = 'md', tono = 'coral', ...props },
   ref,
 ) {
-  const clases = `${clasesBase} ${tamaños[tamaño]} ${className}`
+  const clases = `${clasesBase} ${tonos[tono]} ${tamaños[tamaño]} ${className}`
   if ('to' in props && props.to !== undefined) {
     return <Link ref={ref as Ref<HTMLAnchorElement>} className={clases} {...(props as LinkProps)} />
   }

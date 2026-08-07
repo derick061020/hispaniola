@@ -15,9 +15,14 @@ const TOURS_ESCAPARATE = TOURS.filter((t) => t.galeria && t.galeria.length > 0)
 
 export function ToursGrid() {
   // [dev-mode] ?dev-tours=estatico congela los carruseles en su 1ª foto (sin
-  // auto-avance) → frame limpio para Figma. Ver dev-registry.ts.
+  // auto-avance) y ?dev-tours=descripcion abre las 4 descripciones («See
+  // more») → frames limpios para Figma. Ver dev-registry.ts.
   const [estatico, setEstatico] = useState(false)
-  useDevFlag('dev-tours', (v) => setEstatico(v === 'estatico')) // [dev-mode]
+  const [descripciones, setDescripciones] = useState(false)
+  useDevFlag('dev-tours', (v) => {
+    setEstatico(v === 'estatico')
+    setDescripciones(v === 'descripcion')
+  }) // [dev-mode]
 
   return (
     <section id="tours" className="scroll-mt-20 px-5 py-seccion-sm sm:px-10 sm:py-seccion">
@@ -49,7 +54,7 @@ export function ToursGrid() {
             de 3 — el ancho por card se reduce un poco, sigue legible. */}
         <div className="tours-cards mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4">
           {TOURS_ESCAPARATE.map((t) => (
-            <TourCard key={t.slug} tour={t} autoAvance={!estatico} /> // [dev-mode] gate
+            <TourCard key={t.slug} tour={t} autoAvance={!estatico} descripcionDesplegada={descripciones} /> // [dev-mode] gate
           ))}
         </div>
       </div>

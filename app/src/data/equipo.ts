@@ -72,7 +72,7 @@ export const DEPARTAMENTOS: Departamento[] = [
     id: 'playa',
     nombre: 'Marine Operations',
     descripcion:
-      'More than a crew: from boarding to snorkeling and every unforgettable moment in between, our team is dedicated to your safety, comfort, and enjoyment—making you feel like part of our family.',
+      'More than a crew: from boarding to snorkeling and every unforgettable moment in between, our team is dedicated to your safety, comfort, and enjoyment, making you feel like part of our family.',
     plantilla: 21,
   },
   {

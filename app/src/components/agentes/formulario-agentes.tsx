@@ -41,7 +41,7 @@ export function FormularioAgentes() {
 
         {enviado ? (
           <p role="status" className="mt-4 rounded-btn bg-papel-hueso p-4 text-sm font-medium text-menta-texto">
-            We got your registration — we’ll be in touch within 24 h.
+            We got your registration. We’ll be in touch within 24 h.
           </p>
         ) : null}
       </form>

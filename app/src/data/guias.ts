@@ -55,7 +55,7 @@ export const TIPS_GUIAS: TipGuia[] = [
     pregunta: 'Is Punta Cana a good area for snorkeling?',
     lead: 'For pure diving, there are better spots in the Caribbean. But for seeing turtles, few beat it.',
     respuesta:
-      'Let’s be honest: much of the Atlantic coast has been damaged over the years, and Catalina or Bayahibe, on the south coast, have better visibility. Even so, on our route there’s an almost 100% chance of seeing turtles from the catamaran, thanks to the artificial reefs we’ve been planting since 2016 with the Fundación de Arrecifes Ecológicos de Bávaro — a project the Ministry of the Environment ranks among the 3 largest coral gardening efforts in the country.',
+      'Let’s be honest: much of the Atlantic coast has been damaged over the years, and Catalina or Bayahibe, on the south coast, have better visibility. Even so, on our route there’s an almost 100% chance of seeing turtles from the catamaran, thanks to the artificial reefs we’ve been planting since 2016 with the Fundación de Arrecifes Ecológicos de Bávaro, a project the Ministry of the Environment ranks among the 3 largest coral gardening efforts in the country.',
     foto: 'galeria-snorkel-lovers-4',
     fotoAlt: 'Snorkelers swimming over the reef next to the catamaran in Cabeza de Toro',
     fotoPie: 'Snorkel Lovers · Cabeza de Toro reef',
@@ -66,7 +66,7 @@ export const TIPS_GUIAS: TipGuia[] = [
   {
     categoria: 'Sailing',
     pregunta: 'Is sailing an option in the Bávaro area?',
-    lead: 'It isn’t pure sailing — we run on engine for a good part of the route. And even so, it pays off.',
+    lead: 'It isn’t pure sailing. We run on engine for a good part of the route. And even so, it pays off.',
     respuesta:
       'The route runs inside the reef, in shallow water, and with the wind direction the catamaran uses the engine at least half the time. Not ideal conditions for pure sailing, but the snorkeling, the length of the trip and the food cooked fresh on board more than make up for the motoring stretch.',
     foto: 'flota-maite',
@@ -90,9 +90,9 @@ export const TIPS_GUIAS: TipGuia[] = [
   {
     categoria: 'Food',
     pregunta: 'Is Punta Cana a good place to try seafood?',
-    lead: 'Yes — and one of the few places with freshly caught seafood, not frozen.',
+    lead: 'Yes, and one of the few places with freshly caught seafood, not frozen.',
     respuesta:
-      'Most hotels and restaurants use frozen, imported seafood. Ours is caught locally and we season it with fresh herbs and olive oil right in front of you, in the floating kitchen — fully permitted and above the hygiene requirements of the Ministry of the Environment.',
+      'Most hotels and restaurants use frozen, imported seafood. Ours is caught locally and we season it with fresh herbs and olive oil right in front of you, in the floating kitchen, fully permitted and above the hygiene requirements of the Ministry of the Environment.',
     foto: 'plato-coctel-mariscos',
     fotoAlt: 'Seafood cocktail freshly prepared on board in the floating kitchen',
     fotoPie: 'Local seafood, seasoned in front of you',
@@ -113,6 +113,6 @@ export const GUIAS_CIERRE = {
 export const GUIAS_HERO = {
   eyebrow: 'Guides',
   titulo: 'Punta Cana guides',
-  sub: 'What we know after more than a decade sailing this coast — so you can decide with real information, not marketing.',
+  sub: 'What we know after more than a decade sailing this coast, so you can decide with real information, not marketing.',
   galeria: ['galeria-snorkel-lovers-4', 'galeria-semi-privado-2'],
 }

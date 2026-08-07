@@ -105,7 +105,7 @@ export function Visor360({
               loop
               playsInline
               preload="metadata"
-              aria-label={`Recorrido en 360º del ${nombre}`}
+              aria-label={`360º tour of the ${nombre}`}
               onClick={(e) => e.stopPropagation()}
               className="max-h-full w-full rounded-card object-cover"
             />

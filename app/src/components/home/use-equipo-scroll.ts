@@ -2,6 +2,7 @@ import { useLayoutEffect, type RefObject } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { tokenAPx } from '@/lib/lee-tokens'
+import { refrescaScrollTriggerAlCrecer } from '@/lib/refresca-scrolltrigger'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -108,38 +109,19 @@ export function useEquipoScroll(sectionRef: RefObject<HTMLElement | null>, { act
       })
     }, section)
 
-    // ⚠️ POR QUÉ ESTE ResizeObserver: ScrollTrigger traduce `start`/`end` a
-    // posiciones ABSOLUTAS en píxeles una sola vez, al crearse, y solo las
-    // recalcula en `load` y en `resize`. Pero la home va llena de imágenes
-    // `loading="lazy"` que entran DESPUÉS de `load`, según se scrollea: cada
-    // una que aparece por encima de esta sección la empuja hacia abajo, y las
-    // posiciones cacheadas se quedan viejas — el efecto termina disparando
-    // ANTES de lo configurado, cuando la sección todavía está baja en
-    // pantalla. Medido con Playwright: con `top 30%` puesto, arrancaba de
-    // hecho cerca de `top 55%`.
-    //
-    // Esa deriva es la causa REAL de que el efecto «pasara desapercibido»
-    // (2 vueltas de Samuel seguidas). Subir el % solo compensaba el síntoma,
-    // y de forma frágil: el desfase depende de cuántas imágenes hayan cargado
-    // y cambia entre visitas.
-    //
-    // ScrollTrigger.refresh() es GLOBAL: recalcula todos los triggers de la
-    // página, así que esto además endereza de paso los otros bloques
-    // enganchados al scroll (why-direct, experiencia…), que sufren lo mismo.
-    // Si algún día hay más de un sitio pidiendo refresco, esto debería subir
-    // a un único observador de app en vez de vivir en este hook.
-    let pendiente = 0
-    const observador = new ResizeObserver(() => {
-      window.clearTimeout(pendiente)
-      // Debounce: al cargar varias imágenes de golpe llegan ráfagas de
-      // cambios de altura, y refrescar en cada una es trabajo tirado.
-      pendiente = window.setTimeout(() => ScrollTrigger.refresh(), 200)
-    })
-    observador.observe(document.documentElement)
+    // Las imágenes `loading="lazy"` que entran DESPUÉS de `load` empujan esta
+    // sección hacia abajo y dejan viejas las posiciones que ScrollTrigger
+    // cacheó al crearse — la causa real de que el efecto «pasara
+    // desapercibido» (2 vueltas de Samuel seguidas). El observador que lo
+    // corrige VIVÍA AQUÍ con la nota de que debía subir a un sitio común en
+    // cuanto lo pidiera alguien más; el 2026-08-07 lo pidió la cocina flotante
+    // de /flota, así que se mudó a lib/refresca-scrolltrigger.ts —con el
+    // diagnóstico completo— y ahora los dos consumidores comparten un único
+    // ResizeObserver.
+    const dejaDeRefrescar = refrescaScrollTriggerAlCrecer()
 
     return () => {
-      window.clearTimeout(pendiente)
-      observador.disconnect()
+      dejaDeRefrescar()
       ctx.revert()
     }
   }, [sectionRef, activo])

@@ -258,7 +258,7 @@ export function Newsletter() {
             Don’t miss a thing
           </h2>
           <p className="mt-2 max-w-md text-sm text-white/80 sm:text-base">
-            Guides, stories from the sea and deals for your trip to Punta Cana — straight to your
+            Guides, stories from the sea and deals for your trip to Punta Cana. Straight to your
             inbox, no spam.
           </p>
 

@@ -6,6 +6,7 @@ import * as Select from '@/components/alignui/select'
 import * as FancyButton from '@/components/alignui/fancy-button'
 import * as CompactButton from '@/components/alignui/compact-button'
 import { ChecksTicker } from '@/components/ui/checks-ticker'
+import { NumeroEditable } from '@/components/ui/numero-editable'
 import { guardarCotizacion } from '@/lib/cotizacion-evento'
 import { useDevFlag } from '@/dev/use-dev-flag'
 import { WHATSAPP_URL, type FichaEvento } from '@/data/eventos'
@@ -200,11 +201,17 @@ function StepperPersonas({
 }) {
   return (
     <div className="flex h-10 items-center justify-between rounded-10 border border-stroke-soft-200 bg-bg-white-0 pl-3 pr-1.5">
-      <span className="flex items-center gap-2 text-paragraph-sm text-text-strong-950">
-        <Users className="size-5 shrink-0 text-text-sub-600" aria-hidden="true" />
-        <span key={value} aria-live="polite" className="stepper-tick tabular-nums">
-          {value === 1 ? '1 persona' : `${value} personas`}
-        </span>
+      <span className="flex items-center gap-1 text-paragraph-sm text-text-strong-950">
+        <Users className="mr-1 size-5 shrink-0 text-text-sub-600" aria-hidden="true" />
+        <NumeroEditable
+          valor={value}
+          min={min}
+          max={max}
+          onCambio={onChange}
+          etiqueta="Number of guests"
+          className="tabular-nums"
+        />
+        {value === 1 ? 'guest' : 'guests'}
       </span>
       <div className="flex items-center gap-1">
         <CompactButton.Root
@@ -313,7 +320,7 @@ export function WidgetEvento({ evento, colapsable = false }: Props) {
       >
         <Campo
           id="evento-nombre"
-          label="Nombre"
+          label="Name"
           required
           value={nombre}
           onChange={setNombre}
@@ -327,7 +334,7 @@ export function WidgetEvento({ evento, colapsable = false }: Props) {
           required
           value={email}
           onChange={setEmail}
-          placeholder="tu@email.com"
+          placeholder="you@email.com"
           autoComplete="email"
         />
         <Campo
@@ -355,7 +362,7 @@ export function WidgetEvento({ evento, colapsable = false }: Props) {
         ) : (
           <div>
             <label htmlFor="evento-tipo" className="mb-1 block text-xs font-medium text-navy-sub">
-              Tipo de evento
+              Event type
               <span aria-hidden="true" className="ml-0.5 text-coral">
                 *
               </span>
@@ -406,7 +413,7 @@ export function WidgetEvento({ evento, colapsable = false }: Props) {
 
         <Campo
           id="evento-fecha"
-          label="Fecha tentativa"
+          label="Preferred date"
           type="date"
           value={fecha}
           onChange={setFecha}
@@ -414,7 +421,7 @@ export function WidgetEvento({ evento, colapsable = false }: Props) {
 
         <div>
           <span className="mb-1 block text-xs font-medium text-navy-sub" id="evento-label-personas">
-            Nº de personas
+            No. of guests
           </span>
           <div role="group" aria-labelledby="evento-label-personas">
             <StepperPersonas value={personas} onChange={setPersonas} />
@@ -445,7 +452,7 @@ export function WidgetEvento({ evento, colapsable = false }: Props) {
         {evento.ctaSecundaria ? (
           <FancyButton.Root variant="basic" className="w-full sm:col-span-2" asChild>
             <a
-              href={`${WHATSAPP_URL}?text=${encodeURIComponent(`Hola! Me interesa el dossier corporativo de Hispaniola Aquatic Adventures. Mi nombre es `)}`}
+              href={`${WHATSAPP_URL}?text=${encodeURIComponent(`Hi! I'd like the corporate dossier for Hispaniola Aquatic Adventures. My name is `)}`}
               target="_blank"
               rel="noopener"
             >
@@ -479,7 +486,7 @@ export function WidgetEvento({ evento, colapsable = false }: Props) {
         <ChecksTicker
           lineas={[
             'Reply within 24 h',
-            'No commitment — quotes are free',
+            'No commitment, quotes are free',
             'WhatsApp straight to the boat’s team',
           ]}
         />
@@ -515,7 +522,7 @@ export function WidgetEvento({ evento, colapsable = false }: Props) {
         </p>
         <p className="-mt-2 text-sm text-navy-sub">
           {evento.cotizacionPlegada?.sub ??
-            'Grupos grandes o menú a medida — te cotizamos gratis en 24 h.'}
+            'Large groups or a custom menu: we quote you free within 24 h.'}
         </p>
         {/* `basic` (neutro) a propósito: el coral de esta columna es del CTA
             de reserva, y dos botones coral seguidos serían dos «acción
@@ -559,7 +566,7 @@ export function WidgetEvento({ evento, colapsable = false }: Props) {
                 {evento.ctaPrincipal}
               </Modal.Title>
               <p className="mt-1 text-sm text-navy-sub">
-                Tell us what you have in mind and we’ll reply within 24 h — no commitment.
+                Tell us what you have in mind and we’ll reply within 24 h. No commitment.
               </p>
             </div>
 

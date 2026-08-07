@@ -41,7 +41,7 @@ export function CabeceraPorQueReservar() {
 
         <p className="mt-4 max-w-xl text-lead text-white/85">
           We’re the <strong className="font-semibold text-aqua-claro">owner</strong>, not a
-          middleman. That means better service and a better price — with no commissions eating into
+          middleman. That means better service and a better price, with no commissions eating into
           your experience.
         </p>
 

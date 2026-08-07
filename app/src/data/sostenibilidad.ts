@@ -30,13 +30,27 @@ export type AporteSost = {
   /** «por huésped» — el matiz que lo separa de «por reserva» */
   unidad: string
   destino: string
-  detalle: string
+  /**
+   * [v3 2026-08-07] Pasa de una frase a UNA LISTA DE PÁRRAFOS: el copy
+   * aprobado da al aporte de conservación dos, y el segundo no es una coletilla
+   * del primero (uno enumera en qué se gasta, el otro explica que el importe es
+   * fijo). Juntarlos en un párrafo de seis líneas dentro de una card los
+   * escondía.
+   */
+  detalle: string[]
 }
 
 export type PilarSost = {
   /** ancla estable para deep-links / migaja interna */
   id: string
   titulo: string
+  /**
+   * [v3 2026-08-07] La línea que VENDE el pilar, antes de su párrafo
+   * («Conservation succeeds when people become part of it»). Es del cliente y
+   * no todos los pilares la traen. Mismo campo, mismo papel y mismo trato
+   * visual que el `claim` de las zonas de /facilities.
+   */
+  claim?: string
   texto: string
   /**
    * Sub-hitos con nombre propio dentro del paso (slide 60 del cliente). Solo
@@ -44,8 +58,10 @@ export type PilarSost = {
    * prosa corrida y la maqueta los separa, con razón — «áreas marinas
    * protegidas», «tortugas verdes» y «restauración de coral» son tres cosas
    * distintas y verificables, no una lista dentro de una frase.
+   * [v3 2026-08-07] Cada uno estrena su propio `claim`: el copy aprobado da a
+   * los tres una frase-titular además del párrafo.
    */
-  hitos?: { titulo: string; texto: string }[]
+  hitos?: { titulo: string; claim?: string; texto: string }[]
   /** foto de apoyo del paso en el recorrido (nombre en /public/fotos, sin extensión) */
   foto: string
   fotoAlt: string
@@ -160,24 +176,44 @@ export const SOSTENIBILIDAD = {
   pilares: [
     {
       id: 'conservacion',
-      titulo: 'Conservation and protected areas',
-      // [v2 2026-07-28, slide 60] El párrafo enumeraba los 3 logros en prosa
-      // corrida; ahora los presenta y cada uno se cuenta aparte, en `hitos`.
-      // Es la estructura de su maqueta y es mejor: son tres cosas distintas
-      // y verificables, no una coma dentro de una frase larga.
-      texto: 'Through direct financial contributions and active collaboration, we support the Bávaro Reefs Foundation in real environmental milestones that protect the sea for future generations.',
+      // [v3 2026-08-07, WEBSITE-SOSTENIBILIDAD pags. 3-4: «CHANGE:»] EL PILAR
+      // ENTERO ES COPY APROBADO, literal: el titular, la entradilla y los tres
+      // hitos con su frase-titular y su párrafo.
+      //
+      // La ESTRUCTURA que ya tenía (pilar + 3 hitos con nombre propio) resulta
+      // ser exactamente la del documento —él numera 01/02/03 dentro del punto
+      // 1—, así que no hay que reorganizar nada: cada hito estrena `claim` y
+      // sus párrafos de una línea pasan a ser los suyos, que cuentan el CÓMO
+      // (el Ministerio de Medio Ambiente, la microfragmentación, el
+      // seguimiento de las tortugas) en vez de afirmar el QUÉ.
+      //
+      // Titulares en caja baja, como el resto de esta página: el cliente
+      // escribe este en versales y el del punto 2 en Title Case, o sea no hay
+      // señal de estilo que respetar — y son tres epígrafes de una misma lista.
+      titulo: 'Conservation & protected areas',
+      texto:
+        'Every conservation project we lead has one shared purpose: protecting the ecosystems that make Punta Cana extraordinary. Together with our guests, scientists and environmental authorities, we restore reefs, protect endangered wildlife and create measurable impact that will benefit the Caribbean for generations to come.',
       hitos: [
         {
           titulo: 'Marine protected areas',
-          texto: 'Creating and expanding protected areas, safeguarding vital habitats for future generations.',
+          claim: 'Protecting an ecosystem is the greatest form of conservation.',
+          texto:
+            "Our conservation work helped support the creation of a protected marine area, now managed in collaboration with the Dominican Republic's Ministry of Environment. Together, we're implementing long-term actions that safeguard one of Punta Cana's most valuable coastal ecosystems.",
         },
         {
-          titulo: 'Green sea turtle recovery',
-          texto: 'Significant progress in the recovery and monitoring of their populations in the Dominican Republic.',
+          titulo: 'Green sea turtle conservation',
+          claim: "Protecting one of the country's most important sea turtle habitats.",
+          texto:
+            "The reefs where we operate are home to one of the Dominican Republic's largest populations of endangered green sea turtles. Through monitoring, education and active protection, we work every day to make these waters a safer place for future generations.",
         },
         {
-          titulo: 'Coral restoration',
-          texto: 'Successful initiatives at Coral Garden, today one of the most effective reef restoration areas in the country.',
+          titulo: 'Coral reef restoration',
+          claim: 'Rebuilding reefs, one coral at a time.',
+          // ⚠️ SE PIERDE «Coral Garden» con nombre propio, que era el dato más
+          // verificable del hito viejo. No está en el copy nuevo y no se
+          // rescata por libre: si el cliente lo quiere, es una frase suya.
+          texto:
+            'From coral nurseries and laboratory propagation to microfragmentation and outplanting, we use science-based restoration techniques to help damaged reefs recover and create healthier marine habitats.',
         },
       ],
       // La foto MÁS literal de todo el proyecto para este pilar: una estructura
@@ -187,11 +223,29 @@ export const SOSTENIBILIDAD = {
     },
     {
       id: 'comunidades',
-      titulo: 'Direct support for local communities',
-      texto: 'Sustainability is also about caring for people. Beyond environmental action, we actively support a local orphanage, contributing to the well-being and development of vulnerable children in our community. For us, protecting the environment and social responsibility go hand in hand.',
+      // [v3 2026-08-07, WEBSITE-SOSTENIBILIDAD pag. 4: «CHANGE:»] Copy
+      // APROBADO. El pilar cambia de tema, no solo de redacción: de «apoyamos
+      // un orfanato» pasa a EDUCACIÓN AMBIENTAL — comunidades, colegios,
+      // autoridades y los miles de visitantes de cada año, con el tour como
+      // vehículo.
+      //
+      // ⚠️ SE CAE EL ORFANATO, y con él el único contenido social concreto de
+      // la web. Venía de sustainability.php (es del cliente, no inventado) y
+      // NO sobrevive en ninguna otra página — solo queda su rastro en la cifra
+      // «200+ children supported» de la banda de impacto, que ahora no tiene
+      // quien la explique. El cliente lo tacha él mismo, así que se aplica;
+      // pero si quiere conservarlo, hay que decidirle un sitio.
+      titulo: 'Community & environmental education',
+      claim: 'Conservation succeeds when people become part of it.',
+      // El punto final es NUESTRO: el cliente cierra el párrafo sin puntuar.
+      texto:
+        'We work alongside local communities, schools, authorities and thousands of visitors every year, transforming every tour into an opportunity to inspire environmental awareness and create lasting change.',
       // ⚠️ PROVISIONAL — decisión consciente de Samuel (2026-07-22): NO existe
-      // ni una foto del orfanato ni de la acción comunitaria en todo el
-      // proyecto, así que esta ilustra "personas", no lo que dice el texto.
+      // ni una foto de la acción comunitaria en todo el proyecto, así que esta
+      // ilustra "personas", no lo que dice el texto. Con el copy nuevo encaja
+      // algo mejor (dos personas haciendo snorkel = el visitante que se lleva
+      // la conciencia ambiental), pero sigue sin ser lo que el párrafo cuenta:
+      // ni comunidad, ni colegios, ni charla.
       // Es EL pendiente de contenido de esta página: pedir al cliente fotos
       // propias de la fundación (mismo pendiente que la foto de cabecera).
       // Sustituir en cuanto lleguen — no hace falta tocar código, solo este
@@ -202,11 +256,18 @@ export const SOSTENIBILIDAD = {
     {
       id: 'operacion',
       titulo: 'Responsible operations and valuing our team',
-      // Detalle portado del original (sustainability.php: "a percentage is
-      // also allocated to our office and sales teams") — faltaba en la 1ª
-      // versión de este copy; los montos exactos ($3.50/$2.00) se muestran
-      // aparte, en `stats`.
-      texto: 'Sustainability starts from within: we invest in our team with fair pay, continuous training and high safety standards, so that every experience reflects our mission. An additional percentage goes to our office and sales teams, the foundation of flawless service on every booking.',
+      // [v3 2026-08-07, WEBSITE-SOSTENIBILIDAD pag. 4: «CHANGE:»] El párrafo
+      // APROBADO. El cliente solo manda el texto —este punto no lleva titular
+      // nuevo—, así que el epígrafe se queda como estaba.
+      // Dice lo mismo que la versión portada de sustainability.php (salario
+      // justo, formación, seguridad) y añade lo que faltaba: los incentivos
+      // por desempeño y el porqué («by taking care of our people first»).
+      // ⚠️ Se cae el detalle de que una parte va a los equipos de oficina y
+      // ventas. No se pierde de la página: es exactamente lo que desglosa el
+      // aporte de US$ 4.50 por huésped, unas secciones más abajo, y con las
+      // palabras del propio cliente.
+      texto:
+        'Exceptional experiences begin with exceptional people. We invest in fair compensation, continuous training, performance incentives and a culture where every team member feels valued. By taking care of our people first, we create better experiences for our guests and a stronger future for our community.',
       // Tripulación REAL uniformada trabajando en el bar flotante. Se descartó
       // cocina-flotante.webp (también real y también del equipo) porque el
       // primer plano son dos turistas sin camiseta haciendo el payaso: lee
@@ -261,22 +322,41 @@ export const SOSTENIBILIDAD = {
   // documento, asi que manda el aprobado. El de conservacion no cambia (2.00).
   aporteEyebrow: 'Responsible operations',
   aporteTitulo: 'Where Your Contribution Creates Impact',
+  // [v3 2026-08-07] EL LEAD VUELVE AL QUE ESCRIBE EL CLIENTE (pág. 5). El que
+  // había empezaba por «Every contribution is fixed per guest, not based on
+  // what's left over», que es la frase con la que él CIERRA la card de los
+  // US$ 2.00 (pág. 6): la pasada anterior repartió sus frases entre lead y
+  // cards, y al bajar esa frase a su card —que es donde va— el lead la habría
+  // repetido palabra por palabra tres centímetros más arriba.
   aporteLead:
-    "Every contribution is fixed per guest—not based on what's left over. Sustainability starts from within, so part of every booking is already assigned before you step on board.",
+    'Every guest who joins us contributes directly to both people and nature. A fixed portion of every reservation is invested in our team and the conservation projects led by the Bávaro Reefs Foundation, because lasting sustainability begins long before we set sail.',
   aportes: [
     {
       valor: 'US$ 4.50',
       unidad: 'per guest',
       destino: 'Investing in Our People',
-      detalle:
-        'Fair compensation, continuous training, performance incentives, workplace safety and the operational teams that make every experience seamless—from reservation to return.',
+      detalle: [
+        'Fair compensation, continuous training, performance incentives, workplace safety and the operational teams that make every experience seamless, from reservation to return.',
+      ],
     },
     {
       valor: 'US$ 2.00',
       unidad: 'per guest',
       destino: 'Protecting the Caribbean',
-      detalle:
-        'Coral restoration, green sea turtle monitoring and the conservation projects led by the Bávaro Reefs Foundation—because lasting sustainability begins long before we set sail.',
+      // [v3 2026-08-07, WEBSITE-SOSTENIBILIDAD pag. 6] Los DOS párrafos
+      // aprobados de esta card, literales. El primero sustituye al resumen que
+      // había («coral restoration, green sea turtle monitoring…»): dice lo
+      // mismo y añade lo que faltaba — educación ambiental, áreas protegidas e
+      // iniciativas con la comunidad, que son los otros tres frentes de la
+      // fundación. El segundo es el que blinda el dato: el aporte es FIJO por
+      // huésped, no lo que sobre.
+      // Las rayas largas del original («fixed per guest—not based on what's
+      // left over—ensuring…») pasan a comas, que es lo que se está haciendo en
+      // todo el copy de esta tanda.
+      detalle: [
+        'Coral reef restoration, green sea turtle conservation, environmental education, protected marine areas and community initiatives through the Bávaro Reefs Foundation.',
+        "Every contribution is fixed per guest, not based on what's left over, ensuring continuous investment in both our people and the protection of Punta Cana's marine ecosystems.",
+      ],
     },
   ] satisfies AporteSost[],
 
@@ -313,18 +393,40 @@ export const SOSTENIBILIDAD = {
   // «DEJANDO UNA HUELLA POSITIVA» de «Arrecifes más sanos, comunidades más
   // fuertes»), y el texto se acorta al suyo: el nuestro decía lo mismo en 55
   // palabras y, junto a la tarjeta de membresías, desequilibraba la pareja.
+  // [v3 2026-08-07, WEBSITE-SOSTENIBILIDAD pag. 12: «Tarjeta derecha»] Las dos
+  // tarjetas pasan a ser copy APROBADO de cabo a rabo — titular, párrafos,
+  // checks y botón. La ANATOMÍA no cambia (el cliente la escribe exactamente
+  // así: titular, texto, tres ✔ y botón), solo el texto.
+  // ⚠️ El tercer check ya no dice «Third most important coral nursery in the
+  // country»: el cliente cambia ese puesto en un ranking por «one of the
+  // leading», igual que hizo en los datos de la fundación. Los dos importes
+  // siguen siendo los mismos y siguen cuadrando con la sección «Where Your
+  // Contribution Creates Impact» de más arriba.
   cierreEyebrow: 'Leaving a positive mark',
-  cierreTitulo: 'Healthier reefs, stronger communities',
-  cierreTexto: 'Every company leaves a mark where it operates. We want ours to be a positive one: from marine conservation to community work, ethical operations and the development of our team. Booking with us means adding to a more sustainable future for the Dominican Republic.',
+  cierreTitulo: 'Healthier Reefs. Stronger Communities.',
+  cierreTexto: [
+    "The Caribbean has given us everything. That's why every guest helps us give something back.",
+    "Each reservation directly invests in our people, supports the Bávaro Reefs Foundation and protects the marine ecosystems that make Punta Cana extraordinary. Together, we're proving that tourism can become a force for conservation.",
+  ],
   cierrePuntos: [
     'US$ 4.50 invested in our operational and guest experience teams',
-    'US$ 2.00 per guest to the foundation’s initiatives',
-    'Third most important coral nursery in the country',
+    'US$ 2.00 invested in marine conservation through the Bávaro Reefs Foundation',
+    "Supporting one of the Dominican Republic's leading coral restoration programs",
   ],
+  // El botón vivía ESCRITO A MANO en cierre-doble.tsx («Book and leave your
+  // mark»), que era el único copy del bloque fuera de data/. Baja aquí con el
+  // texto aprobado. Es largo para un botón —es una frase de dos tiempos— pero
+  // el botón ocupa el ancho de la tarjeta y aguanta; en móvil parte en dos
+  // líneas, que es lo que hace su propia maqueta.
+  cierreCta: 'Book Your Experience. Leave a Positive Legacy.',
+  // [v3 2026-08-07, pag. 12: «Tarjeta izquierda»] Los tres checks aprobados.
+  // Son los mismos tres frentes que ya listaba, con las palabras del cliente:
+  // el segundo dice ahora «schools and local communities» y el tercero deja de
+  // ser «un convenio» para ser lo que ese convenio produce, proyectos.
   membresiasPuntos: [
-    'Coral restoration and artificial reefs',
-    'Environmental education with schools and the community',
-    'Agreement with the Ministry of Environment',
+    'Coral reef restoration and artificial reefs',
+    'Environmental education for schools and local communities',
+    'Marine conservation projects developed with the Ministry of Environment',
   ],
   // Foto de fondo del cierre (2026-07-17, pedido de Samuel: "ponle el mismo
   // background de fondo del mar que tiene el banner de nosotros"). Mismo

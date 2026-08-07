@@ -43,7 +43,7 @@ export const MARINE_PARK = {
   // El cliente remata el titular con ⭐⭐⭐. Es una marca de ÉNFASIS suya en el
   // documento (usa la misma en /instalaciones), no parte del copy: se respeta
   // el texto y el énfasis lo pone la tipografía, no tres emojis en un H1.
-  lead: "The Caribbean isn't just where we work—it's our home. Every coral we restore, every turtle we protect, and every reef we help recover is part of our commitment to preserving Punta Cana for future generations. When you visit our Marine Park, you become part of that mission.",
+  lead: "The Caribbean isn't just where we work. It's our home. Every coral we restore, every turtle we protect, and every reef we help recover is part of our commitment to preserving Punta Cana for future generations. When you visit our Marine Park, you become part of that mission.",
   heroFoto: 'arrecife-fondo-cenital',
   heroFotoAlt: 'The reef seen from the air, turquoise water over the coral structures',
 
@@ -53,7 +53,7 @@ export const MARINE_PARK = {
       titulo: 'Underwater Museum',
       claim: 'More Than Art. A Living Reef.',
       parrafos: [
-        "Discover one of Punta Cana's most unique underwater attractions. Dominican-inspired sculptures—including a baseball player, pitcher, Carnival Devil, musicians, and a traditional domino table—blend culture with marine conservation beneath the sea.",
+        "Discover one of Punta Cana's most unique underwater attractions. Dominican-inspired sculptures (including a baseball player, pitcher, Carnival Devil, musicians, and a traditional domino table) blend culture with marine conservation beneath the sea.",
         'Surrounding the museum are more than 70 artificial reef structures designed to restore coral ecosystems, provide shelter for marine life, and create new habitats where fish can thrive.',
       ],
       checks: [
@@ -69,7 +69,7 @@ export const MARINE_PARK = {
       claim: 'Your Ticket Protects the Ocean',
       parrafos: [
         'Access to the Underwater Museum is included through a Foundation conservation bracelet. Every bracelet directly supports the operation of The Bávaro Reef Foundation and contributes to the protection, restoration, and monitoring of Punta Cana’s marine ecosystems.',
-        "Your visit doesn't just create memories—it helps create a healthier ocean.",
+        "Your visit doesn't just create memories. It helps create a healthier ocean.",
       ],
       foto: 'galeria-snorkel-lovers-10',
       fotoAlt: 'A Hispaniola guide explaining the coral nursery to a group of children',

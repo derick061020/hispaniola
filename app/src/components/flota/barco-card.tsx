@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight, CalendarDays, FileText, Ruler, Users } from 'lucide-react'
 import { MEDIA_FLOTA } from '@/data/flota'
+import { SelloEco } from '@/components/ui/sello-eco'
 import { useDevFlag } from '@/dev/use-dev-flag'
 import type { BarcoFlota } from '@/data/nosotros'
 import { GaleriaBarco } from './galeria-barco'
@@ -78,7 +79,29 @@ export function BarcoCard({
   ].filter((s) => s.valor)
 
   return (
-    <article className="nosotros-cascada-diagonal group flex flex-col overflow-hidden rounded-card-grande bg-papel p-2 shadow-card ring-1 ring-linea transition motion-safe:hover:-translate-y-1 hover:shadow-card-flotante">
+    // ⚠️ SIN `overflow-hidden`, y es un cambio deliberado de la 2ª vuelta del
+    // slide 68 (Samuel: «que sobresalga»): el medallón eco tiene que asomar por
+    // encima del canto de la card. Comprobado que ese recorte era VESTIGIAL,
+    // herencia de la card de tour —que sí llevaba foto a sangre—: aquí el `p-2`
+    // mete a todos los hijos 8px, la media y las miniaturas se recortan solas con
+    // su propio radio, y la cascada de entrada (`nosotros-cascada-diagonal`) es
+    // solo un selector que GSAP usa para animar autoAlpha/x/y, sin clip.
+    // `relative` es lo que hace de referencia al medallón.
+    <article className="nosotros-cascada-diagonal group relative flex flex-col rounded-card-grande bg-papel p-2 shadow-card ring-1 ring-linea transition motion-safe:hover:-translate-y-1 hover:shadow-card-flotante">
+      {/* EL MEDALLÓN ECO (v3 2026-08-07, slide 68 + reunión 07-31: «como un
+          sello, una estampa ahí de eco… que resalte»; 2ª vuelta: «centrado
+          horizontalmente, arriba de la card, y que sobresalga — el centro del
+          badge en el extremo superior de la imagen»).
+          Va en LAS SEIS cards y sin bandera por barco: lo que afirma —cero
+          plástico a bordo y la aportación por huésped a la fundación— es política
+          de la OPERACIÓN y no propiedad de un casco, y es lo que está marcado
+          `origen: 'verificado'` en data/flota.ts. Un flag por barco insinuaría
+          que hay barcos que no cumplen, que no es lo que dice el cliente.
+          Se monta AQUÍ y no dentro de GaleriaBarco porque la caja de la media es
+          `overflow-hidden` y le cortaría justo la mitad que sobresale. El sitio
+          exacto lo pone `.sello-eco-caja` (componentes.css), contra esta card. */}
+      <SelloEco className="sello-eco-caja" />
+
       <GaleriaBarco
         media={media}
         nombre={barco.nombre}
@@ -154,8 +177,8 @@ export function BarcoCard({
             className="inline-flex w-full items-center justify-center gap-2 rounded-btn px-4 py-2 text-sm font-semibold text-navy-sub transition hover:bg-papel-hueso hover:text-navy"
           >
             <FileText className="size-4 text-navy-soft" aria-hidden="true" />
-            Ver ficha técnica completa
-            <span className="sr-only"> del {barco.nombre}</span>
+            View full spec sheet
+            <span className="sr-only"> for {barco.nombre}</span>
           </button>
         </div>
       </div>

@@ -102,7 +102,7 @@ export const ARTICULOS: Articulo[] = [
       {
         tipo: 'parrafo',
         texto:
-          'Let’s be honest: the Dominican Republic —Punta Cana included— does not have the best diving areas in the Caribbean. If you have been to the Virgin Islands or to Turks and Caicos, the view will probably disappoint you a little. Many areas of the Atlantic coast have been damaged over the years by diving and fishing, and Catalina or Bayahibe, on the south coast facing the Caribbean Sea, have better visibility.',
+          'Let’s be honest: the Dominican Republic (Punta Cana included) does not have the best diving areas in the Caribbean. If you have been to the Virgin Islands or to Turks and Caicos, the view will probably disappoint you a little. Many areas of the Atlantic coast have been damaged over the years by diving and fishing, and Catalina or Bayahibe, on the south coast facing the Caribbean Sea, have better visibility.',
       },
       { tipo: 'h2', id: 'lo-que-si-puedes-ver', texto: 'What you can see, almost guaranteed' },
       {
@@ -114,7 +114,7 @@ export const ARTICULOS: Articulo[] = [
       {
         tipo: 'parrafo',
         texto:
-          'The foundation —founded and run by Hispaniola Aquatic Adventures— supports real environmental milestones with direct financial contributions and active collaboration: the creation and expansion of marine protected areas, the recovery and monitoring of the green turtle in the Dominican Republic, and coral restoration at Coral Garden, today one of the most effective reef restoration sites in the country.',
+          'The foundation, founded and run by Hispaniola Aquatic Adventures, supports real environmental milestones with direct financial contributions and active collaboration: the creation and expansion of marine protected areas, the recovery and monitoring of the green turtle in the Dominican Republic, and coral restoration at Coral Garden, today one of the most effective reef restoration sites in the country.',
       },
       { tipo: 'h4', id: 'aporte-por-huesped', texto: 'A direct contribution from every guest' },
       {
@@ -144,7 +144,7 @@ export const ARTICULOS: Articulo[] = [
       {
         tipo: 'parrafo',
         texto:
-          'The floating kitchen holds every permit and exceeds the hygiene requirements of the Ministry of the Environment — the same regulations as any kitchen on land, not an improvised grill on deck.',
+          'The floating kitchen holds every permit and exceeds the hygiene requirements of the Ministry of the Environment, the same regulations as any kitchen on land, not an improvised grill on deck.',
       },
       { tipo: 'h2', id: 'conclusion', texto: 'Conclusion' },
       {
@@ -221,7 +221,7 @@ export const ARTICULOS: Articulo[] = [
   {
     slug: 'que-llevar-a-un-catamaran',
     titulo: 'What to bring on a catamaran trip (the real list)',
-    extracto: 'The short, honest list of what you do need — and what you don’t.',
+    extracto: 'The short, honest list of what you do need, and what you don’t.',
     categoria: 'Travel tips',
     autorId: 'eva',
     fecha: '30 may 2026',
