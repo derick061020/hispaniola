@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { Calendar, Check, Download, MessageCircle, Sparkles } from 'lucide-react'
 import { Logo } from '@/components/ui/logo'
 import { Meta } from '@/components/seo/meta'
+import { etiquetaOcasion } from '@/components/reservar/tipos'
 import { sumarDias, fechaLarga } from '@/lib/fechas'
 import { buscarReserva, type Reserva } from '@/lib/reservas'
 import { dispararConfetti } from '@/lib/celebracion'
@@ -65,6 +66,8 @@ export function GraciasPage() {
 
   if (!reserva) return null
 
+  // Ocasión que el visitante contó en el funnel, si la contó (2026-08-07).
+  const celebra = etiquetaOcasion(reserva.celebracion?.ocasion)
   const totalCon5Pct = Math.round(reserva.saldo * 0.95)
   const horario = reserva.ficha.horarios[reserva.horarioIdx]
   // sumarDias ya devuelve ISO string (formato 'YYYY-MM-DD'), listo para fechaLarga.
@@ -236,24 +239,51 @@ export function GraciasPage() {
           </Link>
         </section>
 
-        {/* 6. ¿Celebráis algo? */}
+        {/* 6. ¿Celebráis algo? — dos versiones. Si el visitante YA lo dijo en el
+            funnel (2026-08-07, la pregunta se adelantó al paso de contacto), esta
+            tarjeta deja de preguntar y ACUSA RECIBO: preguntar dos veces lo mismo
+            hace dudar de que la primera respuesta llegara a alguien. El CTA de
+            WhatsApp se queda en los dos casos, pero cambia de trabajo — allí se
+            afina lo concreto (tarta, decoración). */}
         <section className="mt-6 rounded-card border border-linea bg-papel-hueso p-4 sm:p-5">
           <div className="flex items-start gap-3">
             <Sparkles className="size-5 shrink-0 text-coral" aria-hidden="true" />
-            <div>
-              <p className="font-display text-base font-semibold text-navy">¿Celebráis algo?</p>
-              <p className="mt-1 text-sm text-navy-sub">
-                Cumpleaños, aniversario, pedida… cuéntanoslo por WhatsApp y lo preparamos a bordo.
-              </p>
-              <a
-                href={`https://wa.me/18293052804?text=${encodeURIComponent(`Hola! Soy ${reserva.contacto.nombre}, tengo la reserva ${reserva.codigo} y quería hablaros de una celebración especial 🎉`)}`}
-                target="_blank"
-                rel="noopener"
-                className="mt-2 inline-block text-sm font-semibold text-aqua-dark hover:underline"
-              >
-                Escribirnos por WhatsApp →
-              </a>
-            </div>
+            {celebra ? (
+              <div>
+                <p className="font-display text-base font-semibold text-navy">
+                  Anotado: {celebra.toLowerCase()}
+                </p>
+                <p className="mt-1 text-sm text-navy-sub">
+                  {reserva.celebracion?.nota
+                    ? `«${reserva.celebracion.nota}» — la tripulación lo sabrá antes de zarpar. `
+                    : 'La tripulación lo sabrá antes de zarpar. '}
+                  Si quieres algo concreto —tarta, decoración— lo organizamos por aquí.
+                </p>
+                <a
+                  href={`https://wa.me/18293052804?text=${encodeURIComponent(`Hola! Soy ${reserva.contacto.nombre}, tengo la reserva ${reserva.codigo} y quería organizar algo para ${celebra.toLowerCase()} 🎉`)}`}
+                  target="_blank"
+                  rel="noopener"
+                  className="mt-2 inline-block text-sm font-semibold text-aqua-dark hover:underline"
+                >
+                  Organizarlo por WhatsApp →
+                </a>
+              </div>
+            ) : (
+              <div>
+                <p className="font-display text-base font-semibold text-navy">¿Celebráis algo?</p>
+                <p className="mt-1 text-sm text-navy-sub">
+                  Cumpleaños, aniversario, pedida… cuéntanoslo por WhatsApp y lo preparamos a bordo.
+                </p>
+                <a
+                  href={`https://wa.me/18293052804?text=${encodeURIComponent(`Hola! Soy ${reserva.contacto.nombre}, tengo la reserva ${reserva.codigo} y quería hablaros de una celebración especial 🎉`)}`}
+                  target="_blank"
+                  rel="noopener"
+                  className="mt-2 inline-block text-sm font-semibold text-aqua-dark hover:underline"
+                >
+                  Escribirnos por WhatsApp →
+                </a>
+              </div>
+            )}
           </div>
         </section>
 

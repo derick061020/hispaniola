@@ -1,6 +1,6 @@
 import type { Tour } from '@/data/home'
 import type { FichaTour } from '@/data/tours'
-import type { DatosContacto, DatosRecogida, Paquete } from '@/components/reservar/tipos'
+import type { DatosCelebracion, DatosContacto, DatosRecogida, Paquete } from '@/components/reservar/tipos'
 
 // Capa de datos de la reserva completada. Como el proyecto no tiene
 // backend (Bloque A del PLAN-LANZAMIENTO), la reserva vive en
@@ -26,6 +26,9 @@ export type Reserva = {
   saldo: number
   fechaCreacionISO: string
   comoNosConociste?: string
+  /** «¿Celebras algo especial?» del paso de contacto (2026-08-07). Opcional
+   *  de verdad: solo existe si el visitante eligió una ocasión. */
+  celebracion?: DatosCelebracion
 }
 
 const STORAGE_KEY = 'hsp:reservas:v1'

@@ -1,4 +1,6 @@
-import { Check, ShieldCheck, MessageCircle } from 'lucide-react'
+import { Check, Lock, MessageCircle, Minus, Plus, ShieldCheck, Users } from 'lucide-react'
+import * as CompactButton from '@/components/alignui/compact-button'
+import { CalendarioWidget } from '@/components/tour/calendario-widget'
 import { formatoDinero, type Tour } from '@/data/home'
 
 // Columna DERECHA del funnel (Fase C, layout Viator): «qué estás comprando»,
@@ -14,28 +16,76 @@ import { formatoDinero, type Tour } from '@/data/home'
 // contador «te guardamos la plaza 18 min» ni «reservado 5+ veces» — el proyecto
 // prohíbe la urgencia que no se sostiene con un dato real (revision-wireframes.md
 // §2.7). Lo que queda es honesto: producto, config, precio, depósito y cancelación.
+//
+// 2026-08-07 (iteración pedida por Samuel sobre el funnel). Tres cambios y todos
+// van en la misma dirección — que nadie tenga que salir del checkout ni fiarse
+// de un número que no puede comprobar:
+//   1. LA CONFIG SE EDITA AQUÍ (fecha + personas). Antes venían de la URL y eran
+//      de solo lectura: para cambiar de 2 a 3 personas había que volver a la
+//      ficha y empezar de nuevo. La fecha, además, podía quedarse en «Fecha por
+//      confirmar» si se entraba directo a /book/:slug — se podía completar una
+//      reserva SIN fecha.
+//   2. EL PRECIO SE EXPLICA. Antes: una línea «2 personas · Menú Premium» y un
+//      total. Ahora el desglose dice de dónde sale cada dólar (tarifa × personas,
+//      upgrade aparte) y, sobre todo, que el depósito NO es un cargo extra: se
+//      descuenta del total. El cliente es un señor mayor y la versión anterior
+//      del tarifario ya le confundió — mismo criterio aquí.
+//   3. «PAGO SEGURO» sale del widget y baja a los puntos de confianza, junto a
+//      flexibilidad y trato directo (antes solo aparecía al pie del paso 4, o
+//      sea, cuando ya habías decidido).
 export function ResumenReserva({
   tour,
-  fechaTxt,
+  fechaISO,
+  onFecha,
+  horarios,
+  horarioIdx,
+  onHorario,
   horarioTxt,
+  horaSalida,
   nombrePaquete,
   personas,
+  minPersonas,
+  maxPersonas,
+  onPersonas,
+  precioBase,
+  upgrade,
   total,
   deposito,
   saldo,
 }: {
   tour: Tour
-  fechaTxt: string
+  fechaISO: string | null
+  onFecha: (iso: string) => void
+  /** Horarios publicados del tour; el selector solo se pinta si hay más de uno. */
+  horarios: { hora: string; regreso?: string }[]
+  horarioIdx: number
+  onHorario: (i: number) => void
   horarioTxt: string
+  /** Solo la hora de zarpe, para pintarla dentro del campo de fecha. */
+  horaSalida: string | null
   nombrePaquete: string
   personas: number
+  minPersonas: number
+  maxPersonas: number
+  onPersonas: (n: number) => void
+  /** Tarifa por persona del paquete base (Light). */
+  precioBase: number
+  /** Sobrecoste por persona del Premium; 0 si la reserva es Light. */
+  upgrade: number
   total: number
   deposito: number
   saldo: number
 }) {
+  const enEfectivo = Math.round(saldo * 0.95)
+  const ahorro = saldo - enEfectivo
+
   return (
     <div>
-      <div className="overflow-hidden rounded-card bg-papel ring-1 ring-linea">
+      {/* SIN `overflow-hidden` (2026-08-07): al entrar el calendario en la
+          tarjeta, ese clip le cortaba el popover — el grid mensual es más ancho
+          que la columna y perdía la columna del sábado. Las esquinas de abajo
+          las redondea ahora el propio bloque de pago (rounded-b-card). */}
+      <div className="rounded-card bg-papel ring-1 ring-linea">
         <div className="flex items-center gap-3 p-4">
           <img
             src={`/fotos/${tour.foto}.webp`}
@@ -43,32 +93,147 @@ export function ResumenReserva({
             aria-hidden="true"
             className="size-16 shrink-0 rounded-card object-cover"
           />
-          <p className="font-display text-sm font-semibold leading-snug text-navy">{tour.nombre}</p>
+          <div className="min-w-0">
+            <p className="font-display text-sm font-semibold leading-snug text-navy">{tour.nombre}</p>
+            <p className="mt-0.5 text-xs text-navy-soft">
+              Menú {nombrePaquete} · {tour.duracionCorta}
+            </p>
+          </div>
         </div>
 
-        <div className="border-t border-linea p-4 text-sm">
-          <div className="flex items-center justify-between gap-3">
-            <span className="text-navy-soft">
-              {personas === 1 ? '1 persona' : `${personas} personas`} · Menú {nombrePaquete}
+        {/* CONFIGURACIÓN EDITABLE. Los dos campos que cambian el precio —fecha y
+            personas— son las MISMAS piezas del widget de la ficha (mismo
+            CalendarioWidget, mismo stepper h-10 de AlignUI), no una versión
+            parecida: quien viene de configurar allí reconoce el control. */}
+        <div className="flex flex-col gap-2 border-t border-linea p-4">
+          <CalendarioWidget fecha={fechaISO} onSeleccionar={onFecha} hora={horaSalida} />
+
+          <div
+            role="group"
+            aria-label="Número de personas"
+            className="flex h-10 items-center justify-between rounded-10 border border-stroke-soft-200 bg-bg-white-0 pl-3 pr-1.5"
+          >
+            <span className="flex items-center gap-2 text-paragraph-sm text-text-strong-950">
+              <Users className="size-5 shrink-0 text-text-sub-600" aria-hidden="true" />
+              <span key={personas} aria-live="polite" className="stepper-tick tabular-nums">
+                {personas === 1 ? '1 persona' : `${personas} personas`}
+              </span>
             </span>
-            <span className="font-medium text-navy">{formatoDinero(total)}</span>
+            <div className="flex items-center gap-1">
+              <CompactButton.Root
+                type="button"
+                variant="stroke"
+                fullRadius
+                aria-label="Quitar una persona"
+                disabled={personas <= minPersonas}
+                onClick={() => onPersonas(Math.max(minPersonas, personas - 1))}
+                className="size-9 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
+              >
+                <CompactButton.Icon as={Minus} />
+              </CompactButton.Root>
+              <CompactButton.Root
+                type="button"
+                variant="stroke"
+                fullRadius
+                aria-label="Añadir una persona"
+                disabled={personas >= maxPersonas}
+                onClick={() => onPersonas(Math.min(maxPersonas, personas + 1))}
+                className="size-9 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
+              >
+                <CompactButton.Icon as={Plus} />
+              </CompactButton.Root>
+            </div>
           </div>
-          <p className="mt-1 text-navy-soft">
-            {fechaTxt} · {horarioTxt}
+
+          {/* HORARIO. Misma píldora que el widget de la ficha (solo la hora de
+              SALIDA; el regreso vive en la línea de confirmación de abajo).
+              Se pinta solo con 2+ salidas: con una sola, elegir no es elegir.
+              Sin esto, quien entraba directo a /book/:slug se quedaba con la
+              salida de la mañana sin manera de cambiarla — el mismo agujero
+              que tenía la fecha. */}
+          {horarios.length > 1 ? (
+            <div className="flex flex-wrap gap-2">
+              {horarios.map((h, i) => {
+                const elegido = horarioIdx === i
+                return (
+                  <button
+                    key={h.hora}
+                    type="button"
+                    onClick={() => onHorario(i)}
+                    aria-pressed={elegido}
+                    aria-label={`Salida ${h.hora}${h.regreso ? `, regreso ${h.regreso}` : ''}`}
+                    className={`rounded-full px-3.5 py-2 text-sm tabular-nums transition-colors ${
+                      elegido
+                        ? 'bg-navy font-semibold text-papel shadow-sm'
+                        : 'bg-papel-hueso text-navy-sub hover:bg-papel-hueso/70 hover:text-navy'
+                    }`}
+                  >
+                    {h.hora}
+                  </button>
+                )
+              })}
+            </div>
+          ) : null}
+
+          <p className="text-xs text-navy-soft">
+            {fechaISO ? horarioTxt : 'Elige la fecha para confirmar tu plaza.'}
+          </p>
+        </div>
+
+        {/* DESGLOSE. Se pinta SIEMPRE, también sin extras: ver de dónde sale el
+            total es la mitad del argumento de reservar directo (mismo criterio
+            que la calculadora de eventos). El upgrade Premium va en su propia
+            línea porque es la decisión que se puede deshacer. */}
+        <div className="border-t border-linea p-4 text-sm">
+          <FilaPrecio
+            concepto={
+              <>
+                Menú {upgrade > 0 ? 'Light' : nombrePaquete}{' '}
+                <span className="text-navy-soft">
+                  {formatoDinero(precioBase)} × {personas}
+                </span>
+              </>
+            }
+            importe={precioBase * personas}
+          />
+          {upgrade > 0 ? (
+            <FilaPrecio
+              concepto={
+                <>
+                  Upgrade a Premium{' '}
+                  <span className="text-navy-soft">
+                    {formatoDinero(upgrade)} × {personas}
+                  </span>
+                </>
+              }
+              importe={upgrade * personas}
+            />
+          ) : null}
+          <div className="mt-3 flex items-center justify-between border-t border-linea pt-3">
+            <span className="font-semibold text-navy">Total</span>
+            <span className="font-display text-precio font-semibold text-navy">{formatoDinero(total)}</span>
+          </div>
+        </div>
+
+        {/* CÓMO SE PAGA. Dos líneas que suman el total de arriba, y la frase que
+            evita la duda de siempre: el depósito no se suma, se descuenta. */}
+        <div className="rounded-b-card border-t border-linea bg-papel-hueso p-4 text-sm">
+          <div className="flex items-center justify-between">
+            <span className="font-semibold text-navy">Pagas hoy (25%)</span>
+            <span className="font-semibold text-navy">{formatoDinero(deposito)}</span>
+          </div>
+          <div className="mt-1.5 flex items-center justify-between">
+            <span className="text-navy-sub">El día del tour</span>
+            <span className="text-navy">{formatoDinero(saldo)}</span>
+          </div>
+          <p className="mt-2.5 text-xs leading-relaxed text-navy-soft">
+            El depósito no es un cargo extra: se descuenta del total. En efectivo a bordo el saldo baja a{' '}
+            <span className="font-semibold text-navy">{formatoDinero(enEfectivo)}</span> — ahorras{' '}
+            {formatoDinero(ahorro)}.
           </p>
           <p className="mt-2 flex items-center gap-1.5 text-xs font-medium text-menta-texto">
             <Check className="size-3.5 shrink-0" aria-hidden="true" />
             Cancela gratis hasta 7 días antes
-          </p>
-        </div>
-
-        <div className="border-t border-linea p-4">
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-semibold text-navy">Depósito hoy (25%)</span>
-            <span className="font-display text-precio font-semibold text-navy">{formatoDinero(deposito)}</span>
-          </div>
-          <p className="mt-1 text-xs text-navy-soft">
-            Total {formatoDinero(total)} · saldo de {formatoDinero(saldo)} el día del tour (−5% en efectivo).
           </p>
         </div>
       </div>
@@ -90,8 +255,29 @@ export function ResumenReserva({
               barco, no con un call center.
             </span>
           </li>
+          {/* «Pago seguro» vivía al pie del paso 4 — se leía cuando ya habías
+              decidido pagar. Aquí acompaña a la decisión. El copy dice solo lo
+              que se puede sostener: la pasarela cifra y nosotros no guardamos
+              la tarjeta. Nada de logos de marcas que aún no están contratadas
+              (el motor de pago sigue pendiente del cliente). */}
+          <li className="flex gap-2.5">
+            <Lock className="size-4 shrink-0 text-aqua-dark" aria-hidden="true" />
+            <span>
+              <strong className="font-semibold text-navy">Pago seguro.</strong> Conexión cifrada; los datos de tu
+              tarjeta los procesa la pasarela y no se guardan en nuestra web.
+            </span>
+          </li>
         </ul>
       </div>
+    </div>
+  )
+}
+
+function FilaPrecio({ concepto, importe }: { concepto: React.ReactNode; importe: number }) {
+  return (
+    <div className="flex items-baseline justify-between gap-3 py-0.5">
+      <span className="text-navy">{concepto}</span>
+      <span className="shrink-0 tabular-nums text-navy">{formatoDinero(importe)}</span>
     </div>
   )
 }

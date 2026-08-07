@@ -10,10 +10,13 @@ import { formatoDinero } from '@/data/home'
 export function PasoPago({
   deposito,
   saldo,
+  fechaElegida,
   onPagar,
 }: {
   deposito: number
   saldo: number
+  /** Sin fecha no se puede pagar — ver el aviso de abajo. */
+  fechaElegida: boolean
   onPagar: () => void
 }) {
   return (
@@ -24,7 +27,18 @@ export function PasoPago({
         si es en efectivo a bordo.
       </p>
 
-      <FancyButton.Root variant="primary" className="w-full" onClick={onPagar}>
+      {/* Entrando directo a /book/:slug (sin pasar por el widget) la reserva
+          llegaba hasta aquí SIN FECHA y el botón cobraba igual. 2026-08-07: el
+          paso se bloquea y dice dónde se arregla — el calendario está a la
+          derecha, en el resumen (en móvil, arriba del todo). */}
+      {!fechaElegida ? (
+        <p className="rounded-lg border border-linea bg-papel-hueso px-3 py-2 text-xs leading-relaxed text-navy-sub">
+          Todavía no has elegido <strong className="text-navy">la fecha</strong>. Escógela en el resumen de tu reserva
+          para poder confirmar.
+        </p>
+      ) : null}
+
+      <FancyButton.Root variant="primary" className="w-full" disabled={!fechaElegida} onClick={onPagar}>
         Pagar depósito — {formatoDinero(deposito)}
       </FancyButton.Root>
 

@@ -98,7 +98,10 @@ type Props = {
 // reemplaza, conservado para los tours "completo" sin sub-variantes como
 // semi-privado y snorkel-lovers). Un grupo de 25+ no se arma en un solo
 // formulario de los tours clásicos — para eso existe el charter.
-const MAX_PERSONAS_DEFAULT = 6
+// Exportado desde 2026-08-07: el stepper del FUNNEL (resumen-reserva.tsx) tiene
+// que topar en el mismo número que el del widget, o el visitante podría subir
+// en el checkout a un grupo que la ficha no le deja configurar.
+export const MAX_PERSONAS_DEFAULT = 6
 
 // Garantías del pie del widget — TICKER (components/ui/checks-ticker.tsx).
 //

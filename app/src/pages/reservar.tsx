@@ -9,10 +9,10 @@ import { PasoRecogida } from '@/components/reservar/paso-recogida'
 import { PasoContacto } from '@/components/reservar/paso-contacto'
 import { PasoPago } from '@/components/reservar/paso-pago'
 import { ResumenReserva } from '@/components/reservar/resumen-reserva'
-import type { DatosContacto, DatosRecogida, Paquete } from '@/components/reservar/tipos'
+import { etiquetaOcasion, type DatosCelebracion, type DatosContacto, type DatosRecogida, type Paquete } from '@/components/reservar/tipos'
+import { MAX_PERSONAS_DEFAULT } from '@/components/tour/widget-reserva'
 import { TOURS, type Tour } from '@/data/home'
 import { FICHAS, type FichaTour } from '@/data/tours'
-import { DIAS_CORTOS, MESES_CORTOS, parseFechaISO } from '@/lib/fechas'
 import { guardarReserva, generarCodigoReserva, type Reserva } from '@/lib/reservas'
 
 // Funnel de reserva (/reservar/:slug, Fase C). El widget de la ficha es el
@@ -35,12 +35,6 @@ import { guardarReserva, generarCodigoReserva, type Reserva } from '@/lib/reserv
 // Orden de las secciones (2026-07-17, Samuel): contacto primero, luego el menú.
 const PASOS = ['Contacto', 'Tu menú', 'Recogida', 'Pago']
 
-function fechaLegible(iso: string | null): string {
-  if (!iso) return 'Fecha por confirmar'
-  const d = parseFechaISO(iso)
-  return `${DIAS_CORTOS[d.getDay()]} ${d.getDate()} ${MESES_CORTOS[d.getMonth()]}`
-}
-
 export function ReservarPage() {
   const { slug } = useParams()
   const [params] = useSearchParams()
@@ -54,11 +48,16 @@ export function ReservarPage() {
   }
 
   // Config que trae el widget en la URL; defaults sensatos si se entra directo.
+  // Desde 2026-08-07 la URL es solo el VALOR INICIAL: fecha y personas se
+  // pueden cambiar ya dentro del funnel (ResumenReserva), sin volver a la ficha.
   const paquete: Paquete = params.get('paquete') === 'premium' ? 'premium' : 'light'
   const horarioIdx = Number(params.get('horario')) || 0
   const fechaISO = params.get('fecha')
-  const maxPax = tour.maxPax ?? 8
-  const personas = Math.min(Math.max(Number(params.get('personas')) || 2, 1), maxPax)
+  // Mismo tope que el stepper del widget de la ficha (ver MAX_PERSONAS_DEFAULT):
+  // tours duales (Snorkel Lovers, con precio de niño) llegan al maxPax del tour;
+  // el resto se queda en 6 — un grupo mayor se arma con el charter, no aquí.
+  const maxPersonas = tour.precioNino != null ? (tour.maxPax ?? MAX_PERSONAS_DEFAULT) : MAX_PERSONAS_DEFAULT
+  const personas = Math.min(Math.max(Number(params.get('personas')) || 2, 1), maxPersonas)
 
   return (
     <FlujoReserva
@@ -66,9 +65,10 @@ export function ReservarPage() {
       ficha={ficha}
       precioLight={tour.precioLight}
       paquete={paquete}
-      personas={personas}
-      horarioIdx={horarioIdx}
-      fechaISO={fechaISO}
+      personasIniciales={personas}
+      maxPersonas={maxPersonas}
+      horarioInicial={horarioIdx}
+      fechaInicialISO={fechaISO}
     />
   )
 }
@@ -81,32 +81,36 @@ function FlujoReserva({
   ficha,
   precioLight,
   paquete,
-  personas,
-  horarioIdx,
-  fechaISO,
+  personasIniciales,
+  maxPersonas,
+  horarioInicial,
+  fechaInicialISO,
 }: {
   tour: Tour
   ficha: FichaTour
   precioLight: number
   paquete: Paquete
-  personas: number
-  horarioIdx: number
-  fechaISO: string | null
+  personasIniciales: number
+  maxPersonas: number
+  horarioInicial: number
+  fechaInicialISO: string | null
 }) {
   const navigate = useNavigate()
   const platosPaquete = paquete === 'premium' ? ficha.menuPremium : ficha.menuLight
   const nombrePaquete = paquete === 'premium' ? 'Premium' : 'Light'
-  const horario = ficha.horarios[horarioIdx] ?? ficha.horarios[0]
-  const precioPersona =
-    paquete === 'premium' && ficha.upgradePremium !== null ? precioLight + ficha.upgradePremium : precioLight
-  const total = precioPersona * personas
-  const deposito = Math.round(total * 0.25)
-  const saldo = total - deposito
 
   const [paso, setPaso] = useState(0)
+  const [horarioIdx, setHorarioIdx] = useState(horarioInicial)
+  const horario = ficha.horarios[horarioIdx] ?? ficha.horarios[0]
+  // Fecha y personas son ESTADO desde 2026-08-07 (antes: props de solo lectura
+  // leídas de la URL). Cambiarlas aquí evita el viaje de vuelta a la ficha —y,
+  // en el caso de la fecha, cierra un agujero: entrando directo a /book/:slug
+  // se podía completar el flujo entero sin haber elegido día.
+  const [personas, setPersonas] = useState(personasIniciales)
+  const [fechaISO, setFechaISO] = useState<string | null>(fechaInicialISO)
   // Empieza SIN plato elegido (2026-07-17, Samuel): cada persona lo escoge
   // activamente en su card. «Continuar» del paso 1 se habilita al elegir todos.
-  const [platos, setPlatos] = useState<string[]>(() => Array.from({ length: personas }, () => ''))
+  const [platos, setPlatos] = useState<string[]>(() => Array.from({ length: personasIniciales }, () => ''))
   const [recogida, setRecogida] = useState<DatosRecogida>({ hotel: '', notas: '' })
   const [contacto, setContacto] = useState<DatosContacto>({
     nombre: '',
@@ -115,6 +119,22 @@ function FlujoReserva({
     emailConfirm: '',
     telefono: '',
   })
+  const [celebracion, setCelebracion] = useState<DatosCelebracion>({ ocasion: null, nota: '' })
+
+  const upgrade = paquete === 'premium' && ficha.upgradePremium !== null ? ficha.upgradePremium : 0
+  const total = (precioLight + upgrade) * personas
+  const deposito = Math.round(total * 0.25)
+  const saldo = total - deposito
+
+  // Cambiar el nº de personas re-dimensiona la lista de platos conservando los
+  // ya elegidos. Si el grupo CRECE y el paso del menú ya estaba cerrado, el
+  // flujo vuelve a él: el comensal nuevo no tiene plato y salir a pagar con un
+  // menú incompleto sería una reserva que la cocina no puede preparar.
+  const cambiarPersonas = (n: number) => {
+    setPersonas(n)
+    setPlatos((prev) => Array.from({ length: n }, (_, i) => prev[i] ?? ''))
+    if (n > personas && paso > 1) setPaso(1)
+  }
 
   // "Pagar" — persiste la reserva en localStorage y navega a la pantalla
   // de confirmación. No hay backend todavía (PLAN-LANZAMIENTO Bloque A),
@@ -152,6 +172,11 @@ function FlujoReserva({
         email: contacto.email.trim(),
         telefono: contacto.telefono.trim(),
       },
+      // Solo viaja si hay algo que celebrar: `ninguna` es una respuesta válida
+      // en pantalla, pero guardarla no aporta nada a la tripulación.
+      ...(celebracion.ocasion && celebracion.ocasion !== 'ninguna'
+        ? { celebracion: { ocasion: celebracion.ocasion, nota: celebracion.nota.trim() } }
+        : {}),
       total,
       deposito,
       saldo,
@@ -161,8 +186,11 @@ function FlujoReserva({
     navigate(`/book/${tour.slug}/thank-you?codigo=${codigo}`)
   }
 
-  const fechaTxt = fechaLegible(fechaISO)
-  const horarioTxt = horario ? `${horario.hora}${horario.regreso ? ` — regreso ${horario.regreso}` : ''}` : '—'
+  // La FECHA ya la pinta el propio campo de calendario del resumen (con su hora
+  // de salida), así que esta línea solo añade lo que allí no cabe: el regreso.
+  const horarioTxt = horario
+    ? `Salida ${horario.hora}${horario.regreso ? ` · regreso ${horario.regreso}` : ''}`
+    : 'Horario por confirmar'
 
   const cambiarPlato = (persona: number, plato: string) =>
     setPlatos((prev) => prev.map((p, i) => (i === persona ? plato : p)))
@@ -218,16 +246,29 @@ function FlujoReserva({
                 estado={estadoDe(0)}
                 onEditar={() => setPaso(0)}
                 resumen={
-                  <p>
-                    <span className="font-medium text-navy">
-                      {[contacto.nombre, contacto.apellidos].filter(Boolean).join(' ') || '—'}
-                    </span>
-                    {contacto.email ? ` · ${contacto.email}` : ''}
-                    {contacto.telefono ? ` · ${contacto.telefono}` : ''}
-                  </p>
+                  <>
+                    <p>
+                      <span className="font-medium text-navy">
+                        {[contacto.nombre, contacto.apellidos].filter(Boolean).join(' ') || '—'}
+                      </span>
+                      {contacto.email ? ` · ${contacto.email}` : ''}
+                      {contacto.telefono ? ` · ${contacto.telefono}` : ''}
+                    </p>
+                    {etiquetaOcasion(celebracion.ocasion) ? (
+                      <p className="mt-0.5 text-coral">
+                        {etiquetaOcasion(celebracion.ocasion)}
+                        {celebracion.nota.trim() ? ` · ${celebracion.nota.trim()}` : ''}
+                      </p>
+                    ) : null}
+                  </>
                 }
               >
-                <PasoContacto datos={contacto} onCambio={(parcial) => setContacto((c) => ({ ...c, ...parcial }))} />
+                <PasoContacto
+                  datos={contacto}
+                  onCambio={(parcial) => setContacto((c) => ({ ...c, ...parcial }))}
+                  celebracion={celebracion}
+                  onCambioCelebracion={(parcial) => setCelebracion((c) => ({ ...c, ...parcial }))}
+                />
                 <Continuar
                   habilitado={
                     contacto.nombre.trim() !== '' &&
@@ -283,20 +324,39 @@ function FlujoReserva({
               </SeccionPaso>
 
               <SeccionPaso numero={4} titulo={PASOS[3]} estado={estadoDe(3)}>
-                <PasoPago deposito={deposito} saldo={saldo} onPagar={handlePagar} />
+                <PasoPago
+                  deposito={deposito}
+                  saldo={saldo}
+                  fechaElegida={fechaISO !== null}
+                  onPagar={handlePagar}
+                />
               </SeccionPaso>
             </div>
           </div>
 
-          {/* DERECHA: zona GRIS a sangre (bg + ::after w-screen), altura completa */}
-          <div className="relative bg-fondo-ficha px-5 py-8 sm:px-8 sm:py-10 lg:after:absolute lg:after:inset-y-0 lg:after:left-full lg:after:w-screen lg:after:bg-fondo-ficha lg:after:content-['']">
+          {/* DERECHA: zona GRIS a sangre (bg + ::after w-screen), altura completa.
+              En MÓVIL va PRIMERA (order-first): ahí no hay dos columnas, y con la
+              tarjeta al final el visitante rellenaba el formulario entero sin ver
+              qué compra, cuánto paga hoy ni el stepper de personas que ahora vive
+              dentro. En desktop no cambia nada (lg:order-none). */}
+          <div className="relative order-first bg-fondo-ficha px-5 py-8 sm:px-8 sm:py-10 lg:order-none lg:after:absolute lg:after:inset-y-0 lg:after:left-full lg:after:w-screen lg:after:bg-fondo-ficha lg:after:content-['']">
             <div className="lg:sticky lg:top-6">
               <ResumenReserva
                 tour={tour}
-                fechaTxt={fechaTxt}
+                fechaISO={fechaISO}
+                onFecha={setFechaISO}
+                horarios={ficha.horarios}
+                horarioIdx={horarioIdx}
+                onHorario={setHorarioIdx}
                 horarioTxt={horarioTxt}
+                horaSalida={horario?.hora ?? null}
                 nombrePaquete={nombrePaquete}
                 personas={personas}
+                minPersonas={1}
+                maxPersonas={maxPersonas}
+                onPersonas={cambiarPersonas}
+                precioBase={precioLight}
+                upgrade={upgrade}
                 total={total}
                 deposito={deposito}
                 saldo={saldo}
