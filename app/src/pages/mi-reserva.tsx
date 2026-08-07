@@ -450,6 +450,10 @@ function BloqueMenu({ reserva, guardar }: { reserva: Reserva; guardar: (r: Reser
         )}
       </div>
 
+      {/* 2026-08-07: el funnel ya permite reservar sin elegir plato, así que
+          ESTA pantalla es donde se completa. Dos consecuencias: el select
+          arranca con una opción vacía («Sin elegir») en vez de mentir con el
+          primer plato de la carta, y la lista de abajo dice qué falta. */}
       {edit ? (
         <div className="mt-4 space-y-3">
           {platos.map((p, i) => (
@@ -462,6 +466,7 @@ function BloqueMenu({ reserva, guardar }: { reserva: Reserva; guardar: (r: Reser
                 onChange={(e) => setPlatos((prev) => prev.map((x, j) => (i === j ? e.target.value : x)))}
                 className="mt-1 w-full rounded-btn border border-linea bg-papel px-3 py-2 text-sm text-navy focus:border-aqua focus:outline-none focus:ring-2 focus:ring-aqua/20"
               >
+                <option value="">Sin elegir — lo confirmamos por correo</option>
                 {menu.map((plato) => (
                   <option key={plato.nombre} value={plato.nombre}>
                     {plato.nombre}
@@ -492,7 +497,11 @@ function BloqueMenu({ reserva, guardar }: { reserva: Reserva; guardar: (r: Reser
           {reserva.platos.map((p, i) => (
             <li key={i} className="flex items-center justify-between">
               <span className="text-navy-soft">Persona {i + 1}</span>
-              <span className="font-medium text-navy">{nombrePlato(p, menu)}</span>
+              {p ? (
+                <span className="font-medium text-navy">{nombrePlato(p, menu)}</span>
+              ) : (
+                <span className="text-navy-soft">Sin elegir</span>
+              )}
             </li>
           ))}
         </ul>

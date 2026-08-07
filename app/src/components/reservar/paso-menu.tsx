@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ArrowRight, Check, ChevronDown, UtensilsCrossed } from 'lucide-react'
+import { ArrowRight, Check, ChevronDown, Mail, UtensilsCrossed } from 'lucide-react'
 import type { PlatoMenu } from '@/data/tours'
 
 // Paso 1 del funnel: cada persona elige su plato del paquete que vino del widget.
@@ -18,6 +18,15 @@ import type { PlatoMenu } from '@/data/tours'
 // como confirmación explícita antes de pulsar. Prototipo de UX: la elección
 // vive en el estado del funnel, no viaja a ningún motor (xpotours bloqueado; la
 // frontera es el depósito).
+//
+// 2026-08-07 (pedido de Samuel): elegir plato DEJA DE SER OBLIGATORIO para
+// reservar. «Por si no tienes claro algún plato, que esto no sea una fricción».
+// Es un menú de comida elegido con semanas de antelación y a veces con gente
+// que ni siquiera está en la habitación: obligar a decidirlo en la pantalla del
+// pago es pedir una decisión menor en el peor momento posible. Como de todas
+// formas se manda un correo confirmando las comidas, la salida honesta es
+// decirlo aquí y dejar seguir. Lo que NO se hace es esconder el paso: quien lo
+// tiene claro elige ahora y ve sus platos en el resumen.
 export function PasoMenu({
   platosDisponibles,
   seleccion,
@@ -54,6 +63,16 @@ export function PasoMenu({
         hasta 48 h antes del tour.
       </p>
 
+      {/* La salida sin fricción, ARRIBA y no escondida al pie: quien no lo tiene
+          claro tiene que verla ANTES de empezar a abrir acordeones. */}
+      <p className="flex items-start gap-2.5 rounded-card border border-linea bg-papel-hueso px-4 py-3 text-sm text-navy-sub">
+        <Mail className="mt-0.5 size-4 shrink-0 text-aqua-dark" aria-hidden="true" />
+        <span>
+          <strong className="font-semibold text-navy">No hace falta decidirlo ahora.</strong> Te enviamos un correo para
+          confirmar las comidas — puedes elegir allí, o desde «Mi reserva», hasta 48 h antes del tour.
+        </span>
+      </p>
+
       <div className="flex flex-col gap-3">
         {seleccion.map((elegido, i) => {
           const abierta = expandida === i
@@ -78,7 +97,7 @@ export function PasoMenu({
                     {elegido ? (
                       <p className="truncate text-xs font-medium text-menta-texto">Listo · {elegido}</p>
                     ) : (
-                      <p className="text-xs text-navy-soft">Elige tu plato</p>
+                      <p className="text-xs text-navy-soft">Elige tu plato (opcional)</p>
                     )}
                   </div>
                 </div>
@@ -140,6 +159,10 @@ export function PasoMenu({
                       que se lea como un paso explícito (no otro botón de card) y
                       muestra al visitante QUÉ plato lleva antes de pulsar
                       «Siguiente» — refuerza la sensación de control. 2026-07-17. */}
+                  {/* 2026-08-07: el botón ya NO se deshabilita sin plato — cambia
+                      de trabajo. Con plato confirma y avanza («Siguiente»); sin
+                      plato avanza igual y lo dice («Lo decido luego»), que es la
+                      salida sin fricción hecha botón en vez de un callejón. */}
                   <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-linea pt-4">
                     <p className="text-xs text-navy-soft">
                       {elegido ? (
@@ -147,16 +170,15 @@ export function PasoMenu({
                           Seleccionado: <span className="font-semibold text-navy">{elegido}</span>
                         </>
                       ) : (
-                        'Selecciona un plato para continuar'
+                        'Sin elegir — lo confirmamos por correo'
                       )}
                     </p>
                     <button
                       type="button"
                       onClick={() => avanzar(i)}
-                      disabled={!elegido}
-                      className="inline-flex items-center justify-center gap-2 rounded-btn border-2 border-aqua-dark bg-white px-4 py-2.5 text-sm font-semibold text-aqua-dark transition hover:bg-aqua-tint focus:outline-none focus-visible:ring-2 focus-visible:ring-aqua focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-white motion-safe:hover:-translate-y-0.5"
+                      className="inline-flex items-center justify-center gap-2 rounded-btn border-2 border-aqua-dark bg-white px-4 py-2.5 text-sm font-semibold text-aqua-dark transition hover:bg-aqua-tint focus:outline-none focus-visible:ring-2 focus-visible:ring-aqua focus-visible:ring-offset-2 motion-safe:hover:-translate-y-0.5"
                     >
-                      Siguiente
+                      {elegido ? 'Siguiente' : 'Lo decido luego'}
                       <ArrowRight className="size-4" aria-hidden="true" />
                     </button>
                   </div>

@@ -68,6 +68,9 @@ export function GraciasPage() {
 
   // Ocasión que el visitante contó en el funnel, si la contó (2026-08-07).
   const celebra = etiquetaOcasion(reserva.celebracion?.ocasion)
+  // Platos realmente elegidos: el funnel ya deja reservar sin decidirlos.
+  const platosElegidos = reserva.platos.filter(Boolean)
+  const faltanPlatos = platosElegidos.length < reserva.platos.length
   const totalCon5Pct = Math.round(reserva.saldo * 0.95)
   const horario = reserva.ficha.horarios[reserva.horarioIdx]
   // sumarDias ya devuelve ISO string (formato 'YYYY-MM-DD'), listo para fechaLarga.
@@ -173,6 +176,16 @@ export function GraciasPage() {
                   Recibes el voucher + el recibo del depósito de{' '}
                   <strong className="font-semibold text-navy">{formatoDinero(reserva.deposito)}</strong>{' '}
                   a tu email y por WhatsApp.
+                  {/* La promesa que sostiene el «puedes elegirlo luego» del
+                      funnel: si quedó menú sin decidir, aquí se dice cuándo
+                      llega el correo que lo resuelve. */}
+                  {faltanPlatos ? (
+                    <>
+                      {' '}
+                      En ese mismo correo eliges las comidas que dejaste sin decidir — o lo haces desde{' '}
+                      <strong className="font-semibold text-navy">Mi reserva</strong>, hasta 48 h antes.
+                    </>
+                  ) : null}
                 </>
               }
             />
@@ -219,7 +232,16 @@ export function GraciasPage() {
             />
             <FilaResumen
               label="Menú"
-              valor={reserva.platos.map((p) => nombrePlato(p)).join(', ')}
+              valor={
+                // Desde 2026-08-07 se puede reservar sin elegir plato: los
+                // huecos se dicen, no se pintan como una lista con comas
+                // vacías. Si no eligió ninguno, la fila entera lo declara.
+                platosElegidos.length === 0
+                  ? 'Por confirmar por correo'
+                  : platosElegidos.length < reserva.platos.length
+                    ? `${platosElegidos.map((p) => nombrePlato(p)).join(', ')} · el resto, por correo`
+                    : platosElegidos.map((p) => nombrePlato(p)).join(', ')
+              }
             />
             <FilaResumen label="Recogida" valor={reserva.recogida.hotel || '—'} />
             <div className="!mt-3 flex items-center justify-between border-t border-linea pt-3 text-sm">

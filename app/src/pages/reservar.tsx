@@ -6,6 +6,7 @@ import { Logo } from '@/components/ui/logo'
 import { Meta } from '@/components/seo/meta'
 import { PasoMenu } from '@/components/reservar/paso-menu'
 import { PasoRecogida } from '@/components/reservar/paso-recogida'
+import { BannerPremium } from '@/components/reservar/banner-premium'
 import { PasoContacto } from '@/components/reservar/paso-contacto'
 import { PasoPago } from '@/components/reservar/paso-pago'
 import { ResumenReserva } from '@/components/reservar/resumen-reserva'
@@ -64,7 +65,7 @@ export function ReservarPage() {
       tour={tour}
       ficha={ficha}
       precioLight={tour.precioLight}
-      paquete={paquete}
+      paqueteInicial={paquete}
       personasIniciales={personas}
       maxPersonas={maxPersonas}
       horarioInicial={horarioIdx}
@@ -80,7 +81,7 @@ function FlujoReserva({
   tour,
   ficha,
   precioLight,
-  paquete,
+  paqueteInicial,
   personasIniciales,
   maxPersonas,
   horarioInicial,
@@ -89,17 +90,20 @@ function FlujoReserva({
   tour: Tour
   ficha: FichaTour
   precioLight: number
-  paquete: Paquete
+  paqueteInicial: Paquete
   personasIniciales: number
   maxPersonas: number
   horarioInicial: number
   fechaInicialISO: string | null
 }) {
   const navigate = useNavigate()
-  const platosPaquete = paquete === 'premium' ? ficha.menuPremium : ficha.menuLight
-  const nombrePaquete = paquete === 'premium' ? 'Premium' : 'Light'
 
   const [paso, setPaso] = useState(0)
+  // El PAQUETE también es estado desde 2026-08-07: el banner de upsell lo cambia
+  // sin salir del checkout (antes había que volver a la ficha).
+  const [paquete, setPaquete] = useState<Paquete>(paqueteInicial)
+  const platosPaquete = paquete === 'premium' ? ficha.menuPremium : ficha.menuLight
+  const nombrePaquete = paquete === 'premium' ? 'Premium' : 'Light'
   const [horarioIdx, setHorarioIdx] = useState(horarioInicial)
   const horario = ficha.horarios[horarioIdx] ?? ficha.horarios[0]
   // Fecha y personas son ESTADO desde 2026-08-07 (antes: props de solo lectura
@@ -134,6 +138,17 @@ function FlujoReserva({
     setPersonas(n)
     setPlatos((prev) => Array.from({ length: n }, (_, i) => prev[i] ?? ''))
     if (n > personas && paso > 1) setPaso(1)
+  }
+
+  // Subir a Premium desde el banner. Los platos elegidos se BORRAN porque las
+  // dos cartas no comparten platos: conservarlos dejaría en la reserva nombres
+  // que ya no existen en el menú que se va a cocinar. No devuelve al paso del
+  // menú a la fuerza —desde 2026-08-07 elegir plato es opcional— pero el
+  // resumen de ese paso vuelve a decir «Por confirmar» y el aviso del correo
+  // sigue en pie, así que el visitante ve que hay algo que puede reelegir.
+  const subirAPremium = () => {
+    setPaquete('premium')
+    setPlatos((prev) => prev.map(() => ''))
   }
 
   // "Pagar" — persiste la reserva en localStorage y navega a la pantalla
@@ -289,7 +304,11 @@ function FlujoReserva({
                     {platos.map((p, i) => (
                       <li key={i}>
                         <span className="text-navy-soft">Persona {i + 1}:</span>{' '}
-                        <span className="font-medium text-navy">{p || '—'}</span>
+                        {p ? (
+                          <span className="font-medium text-navy">{p}</span>
+                        ) : (
+                          <span className="text-navy-soft">por confirmar por correo</span>
+                        )}
                       </li>
                     ))}
                   </ul>
@@ -301,7 +320,14 @@ function FlujoReserva({
                   onCambio={cambiarPlato}
                   nombrePaquete={nombrePaquete}
                 />
-                <Continuar habilitado={platos.every((p) => p)} onClick={() => setPaso(2)} />
+                {/* Siempre habilitado (2026-08-07): el menú dejó de ser un
+                    requisito para reservar. El botón cambia de texto para que
+                    nadie avance creyendo que ya eligió. */}
+                <Continuar
+                  habilitado
+                  texto={platos.every((p) => p) ? 'Continuar' : 'Continuar y elegir el menú luego'}
+                  onClick={() => setPaso(2)}
+                />
               </SeccionPaso>
 
               <SeccionPaso
@@ -341,6 +367,19 @@ function FlujoReserva({
               dentro. En desktop no cambia nada (lg:order-none). */}
           <div className="relative order-first bg-fondo-ficha px-5 py-8 sm:px-8 sm:py-10 lg:order-none lg:after:absolute lg:after:inset-y-0 lg:after:left-full lg:after:w-screen lg:after:bg-fondo-ficha lg:after:content-['']">
             <div className="lg:sticky lg:top-6">
+              {/* Banner de upgrade ARRIBA de la tarjeta (2026-08-07, pedido de
+                  Samuel). Solo con Light elegido y solo si el tour publica
+                  upgrade y ventajas — en Premium desaparece porque ya no hay
+                  nada que ofrecer, igual que la caja del widget de la ficha. */}
+              {paquete === 'light' && ficha.upgradePremium !== null && ficha.ventajasPremium?.length ? (
+                <BannerPremium
+                  upgrade={ficha.upgradePremium}
+                  personas={personas}
+                  totalActual={total}
+                  ventajas={ficha.ventajasPremium}
+                  onCambiar={subirAPremium}
+                />
+              ) : null}
               <ResumenReserva
                 tour={tour}
                 fechaISO={fechaISO}
@@ -432,11 +471,20 @@ function SeccionPaso({
   )
 }
 
-function Continuar({ habilitado, onClick }: { habilitado: boolean; onClick: () => void }) {
+function Continuar({
+  habilitado,
+  texto = 'Continuar',
+  onClick,
+}: {
+  habilitado: boolean
+  /** Texto del botón; el paso del menú lo cambia cuando se avanza sin elegir. */
+  texto?: string
+  onClick: () => void
+}) {
   return (
     <div className="mt-5">
       <FancyButton.Root variant="primary" disabled={!habilitado} onClick={onClick}>
-        Continuar
+        {texto}
       </FancyButton.Root>
     </div>
   )
