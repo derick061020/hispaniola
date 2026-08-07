@@ -85,7 +85,14 @@ export function Experiencia() {
     // OJO: en desktop este padding NO es el grueso del hueco que se ve bajo
     // el cintillo — ese lo manda --exp-etapa-inicio-top-vh (cuán abajo
     // arranca el video para asomarse). Ver el comentario del token.
-    <section ref={sectionRef} className="bg-papel px-5 pb-0 pt-8 sm:px-10">
+    // [v3 F8 · QA 2026-08-07] `max-lg:overflow-x-clip`: en móvil el reveal
+    // arranca el vídeo a escala 1.14 (--exp-video-movil-escala) y esos ~50px
+    // de más asomaban por la derecha — la home se podía arrastrar 5px en
+    // horizontal a 390px de ancho. Se recorta SOLO por debajo de lg: en
+    // desktop el recorrido pineado agranda el vídeo hasta ~1.8x a propósito y
+    // recortarlo ahí mataría el efecto. `clip` y no `hidden`: no crea
+    // contenedor de scroll, así el pin de GSAP sigue funcionando.
+    <section ref={sectionRef} className="bg-papel px-5 pb-0 pt-8 max-lg:overflow-x-clip sm:px-10">
       {/* .exp-etapa: el grid entero es lo que use-experiencia-video-etapa.ts
           PINEA en desktop mientras dura el recorrido del video — el video y
           el texto siguen siendo hijos normales de este mismo grid, nunca se

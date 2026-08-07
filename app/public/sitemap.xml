@@ -114,4 +114,34 @@
     <changefreq>yearly</changefreq>
     <priority>0.4</priority>
   </url>
+  <!-- [v3 F8 · QA 2026-08-07] Faltaban 5 URLs indexables que sí existen en el
+       router: /marine-park (página nueva de la fase F5) y las 4 legales, que
+       el footer enlaza desde todas las pantallas. Sin ellas, el buscador solo
+       llega por rastreo interno. Las legales van con prioridad baja y
+       changefreq yearly: son obligatorias, no comerciales. -->
+  <url>
+    <loc>https://hispaniolaaquaticadventures.com/marine-park</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://hispaniolaaquaticadventures.com/legal/cancellation-policy</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://hispaniolaaquaticadventures.com/legal/privacy</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  <url>
+    <loc>https://hispaniolaaquaticadventures.com/legal/terms</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  <url>
+    <loc>https://hispaniolaaquaticadventures.com/legal/cookies</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.2</priority>
+  </url>
 </urlset>

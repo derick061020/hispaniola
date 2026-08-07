@@ -19,7 +19,11 @@ export function NoEncontradoPage() {
       <Header />
       <div className="grid min-h-[70svh] place-items-center px-5 text-center">
         <div>
-          <p className="font-display text-h2 font-semibold text-navy">404</p>
+          {/* [v3 F8 · QA 2026-08-07] El «404» pasa de <p> a <h1>: era la única
+              página del sitio sin encabezado de nivel 1, así que un lector de
+              pantalla la abría sin título y el esquema del documento empezaba
+              en h2. Mismos estilos, solo cambia la etiqueta. */}
+          <h1 className="font-display text-h2 font-semibold text-navy">404</h1>
           <p className="mt-2 text-lead text-navy-sub">We couldn’t find this page.</p>
           <Boton href="/" className="mt-6">
             Back to home

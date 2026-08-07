@@ -130,6 +130,12 @@ export function GaleriaMosaico({
           setConjunto('galeria')
           setLightbox(indice)
         }}
+        // [v3 F8 · QA 2026-08-07] La foto es DECORATIVA (alt vacío + aria-hidden:
+        // describir una a una las 8 fotos de un mosaico es ruido para quien usa
+        // lector de pantalla), pero eso dejaba al BOTÓN sin nombre accesible —
+        // se anunciaba solo como «botón». El nombre va aquí, y dice lo que el
+        // botón HACE, no lo que la foto muestra.
+        aria-label={`Open photo ${indice + 1} of ${fotos.length} in the gallery`}
         className={`group relative overflow-hidden bg-papel-hueso ${span}`}
       >
         <img

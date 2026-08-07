@@ -46,7 +46,7 @@ export function InstalacionesPage() {
   return (
     <div>
       <Meta
-        titulo="Instalaciones"
+        titulo="Facilities"
         descripcion="A full complex in Punta Cana: open-air marine museum, biology lab, our own kitchens, shop and offices."
         ruta="/facilities"
       />
