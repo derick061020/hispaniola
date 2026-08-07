@@ -117,6 +117,23 @@ type Props = {
 // en el checkout a un grupo que la ficha no le deja configurar.
 export const MAX_PERSONAS_DEFAULT = 6
 
+// La fórmula del tope, en una función porque la usan el widget y el funnel y
+// tenían dos copias distintas: el widget subía a 85 en el charter (el tramo más
+// alto de sus botes) y el funnel topaba en 6, así que un charter configurado
+// para 30 personas llegaba al checkout convertido en uno de 6 —silenciosamente,
+// y con el menú equivocado, porque de 21 en adelante la carta pasa a buffet de
+// pinchos (lib/menu-reserva.ts). Detectado el 2026-08-07 al revisar por qué el
+// paso del menú salía vacío en Saona y en el charter.
+export function maxPersonasDe(tour: Tour, ficha: FichaTour): number {
+  // Tarifa dual (Snorkel Lovers): el aforo del tour.
+  if (tour.precioNino != null) return tour.maxPax ?? 30
+  // Sub-variantes (Saona, charter): el tramo más alto de cualquier bote.
+  if (ficha.subVariantes) {
+    return Math.max(...ficha.subVariantes.flatMap((v) => v.tabla.map((t) => t.hasta ?? t.desde)))
+  }
+  return MAX_PERSONAS_DEFAULT
+}
+
 // Garantías del pie del widget — TICKER (components/ui/checks-ticker.tsx).
 //
 // Historia completa, porque esta línea ha ido y venido tres veces y conviene
@@ -388,15 +405,10 @@ export function WidgetReserva({
     onPersonasChange?.(esDual ? adultos + ninos : personas)
   }, [esDual, adultos, ninos, personas, onPersonasChange])
 
-  // Tope del stepper de personas:
-  //  - esDual (Snorkel Lovers): el max del tour (30).
-  //  - subVariantes (Saona): el tramo más alto (70 en catamarán).
-  //  - resto: 6 (tope clásico del Select que el stepper reemplaza).
-  const maxPersonas = esDual
-    ? tour.maxPax ?? 30
-    : ficha.subVariantes
-      ? Math.max(...ficha.subVariantes.flatMap((v) => v.tabla.map((t) => t.hasta ?? t.desde)))
-      : MAX_PERSONAS_DEFAULT
+  // Tope del stepper de personas — misma fórmula que el funnel (ver
+  // maxPersonasDe, arriba): aforo del tour si la tarifa es dual, el tramo más
+  // alto si hay sub-variantes, y 6 en el resto.
+  const maxPersonas = maxPersonasDe(tour, ficha)
   // Para Snorkel Lovers (dual), adultos + niños no puede superar maxPax.
   const totalPersonas = esDual ? adultos + ninos : personas
 

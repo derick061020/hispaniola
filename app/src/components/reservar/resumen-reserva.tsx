@@ -1,7 +1,9 @@
-import { Check, Lock, MessageCircle, Minus, Plus, ShieldCheck, Users } from 'lucide-react'
+import { Check, Lock, MessageCircle, Minus, Plus, ShieldCheck, UtensilsCrossed, Users } from 'lucide-react'
 import * as CompactButton from '@/components/alignui/compact-button'
 import { CalendarioWidget } from '@/components/tour/calendario-widget'
+import { NumeroEditable } from '@/components/ui/numero-editable'
 import { formatoDinero, type Tour } from '@/data/home'
+import type { MenuReserva } from '@/lib/menu-reserva'
 
 // Columna DERECHA del funnel (Fase C, layout Viator): «qué estás comprando»,
 // sticky, siempre visible mientras se rellena el formulario de la izquierda.
@@ -33,6 +35,14 @@ import { formatoDinero, type Tour } from '@/data/home'
 //   3. «PAGO SEGURO» sale del widget y baja a los puntos de confianza, junto a
 //      flexibilidad y trato directo (antes solo aparecía al pie del paso 4, o
 //      sea, cuando ya habías decidido).
+//
+// 2026-08-07 (2ª vuelta): la tarjeta deja de dar por hecho Light/Premium y
+// recibe el menú resuelto (lib/menu-reserva.ts). Dos consecuencias visibles:
+// la línea de producto de Saona ya no miente con «Light menu» —dice «Island
+// buffet»—, y cuando el menú es FIJO esta tarjeta pasa a ser el sitio donde se
+// enseña la comida, porque el funnel ya no pinta un paso para ella. Enseñarla
+// aquí no es un adorno: es parte de lo que se está comprando, y quitar el paso
+// sin enseñarla en algún sitio sería esconder el producto.
 export function ResumenReserva({
   tour,
   fechaISO,
@@ -42,11 +52,12 @@ export function ResumenReserva({
   onHorario,
   horarioTxt,
   horaSalida,
-  nombrePaquete,
+  menu,
   personas,
   minPersonas,
   maxPersonas,
   onPersonas,
+  conceptoBase,
   precioBase,
   upgrade,
   total,
@@ -63,11 +74,16 @@ export function ResumenReserva({
   horarioTxt: string
   /** Solo la hora de zarpe, para pintarla dentro del campo de fecha. */
   horaSalida: string | null
-  nombrePaquete: string
+  /** El menú que le toca a esta reserva; null en un tour sin comida publicada. */
+  menu: MenuReserva | null
   personas: number
   minPersonas: number
   maxPersonas: number
   onPersonas: (n: number) => void
+  /** Rótulo de la primera línea del desglose. Con paquetes es el nombre del
+   *  paquete («Light menu»); sin ellos (Saona, charter) es la tarifa del tour —
+   *  llamarla «Island buffet» daría a entender que la comida se paga aparte. */
+  conceptoBase: string
   /** Tarifa por persona del paquete base (Light). */
   precioBase: number
   /** Sobrecoste por persona del Premium; 0 si la reserva es Light. */
@@ -96,10 +112,41 @@ export function ResumenReserva({
           <div className="min-w-0">
             <p className="font-display text-sm font-semibold leading-snug text-navy">{tour.nombre}</p>
             <p className="mt-0.5 text-xs text-navy-soft">
-              {nombrePaquete} menu · {tour.duracionCorta}
+              {menu ? `${menu.etiqueta} · ` : ''}
+              {tour.duracionCorta}
             </p>
           </div>
         </div>
+
+        {/* QUÉ SE COME, cuando no hay nada que elegir. Es el reverso de haber
+            quitado el paso del menú: sin este bloque, un visitante de Saona
+            haría el checkout entero sin ver que la comida va incluida ni qué
+            es. Va plegado en un <details> porque es información de apoyo —no
+            una decisión— y la tarjeta ya es larga. */}
+        {menu?.modo === 'fijo' && (menu.platos.length > 0 || menu.texto) ? (
+          <details className="group border-t border-linea">
+            <summary className="flex cursor-pointer list-none items-center gap-2 p-4 text-sm">
+              <UtensilsCrossed className="size-4 shrink-0 text-aqua-dark" aria-hidden="true" />
+              <span className="font-semibold text-navy">{menu.titulo}</span>
+              <span className="ml-auto text-xs font-medium text-aqua-dark group-open:hidden">See what’s served</span>
+              <span className="ml-auto hidden text-xs font-medium text-aqua-dark group-open:inline">Hide</span>
+            </summary>
+            <div className="px-4 pb-4">
+              {menu.texto ? <p className="text-xs text-navy-soft">{menu.texto}</p> : null}
+              <ul className="mt-2 flex flex-col gap-1 text-sm text-navy-sub">
+                {menu.platos.map((p) => (
+                  <li key={p.nombre} className="flex gap-2">
+                    <Check className="mt-0.5 size-3.5 shrink-0 text-menta-texto" aria-hidden="true" />
+                    <span>
+                      <span className="text-navy">{p.nombre}</span>
+                      {p.desc ? <span className="text-navy-soft"> · {p.desc}</span> : null}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </details>
+        ) : null}
 
         {/* CONFIGURACIÓN EDITABLE. Los dos campos que cambian el precio —fecha y
             personas— son las MISMAS piezas del widget de la ficha (mismo
@@ -113,11 +160,17 @@ export function ResumenReserva({
             aria-label="Number of people"
             className="flex h-10 items-center justify-between rounded-10 border border-stroke-soft-200 bg-bg-white-0 pl-3 pr-1.5"
           >
-            <span className="flex items-center gap-2 text-paragraph-sm text-text-strong-950">
-              <Users className="size-5 shrink-0 text-text-sub-600" aria-hidden="true" />
-              <span key={personas} aria-live="polite" className="stepper-tick tabular-nums">
-                {personas === 1 ? '1 person' : `${personas} people`}
-              </span>
+            <span className="flex items-center gap-1 text-paragraph-sm text-text-strong-950">
+              <Users className="mr-1 size-5 shrink-0 text-text-sub-600" aria-hidden="true" />
+              <NumeroEditable
+                valor={personas}
+                min={minPersonas}
+                max={maxPersonas}
+                onCambio={onPersonas}
+                etiqueta="Number of people"
+                className="tabular-nums"
+              />
+              {personas === 1 ? 'person' : 'people'}
             </span>
             <div className="flex items-center gap-1">
               <CompactButton.Root
@@ -188,7 +241,7 @@ export function ResumenReserva({
           <FilaPrecio
             concepto={
               <>
-                {upgrade > 0 ? 'Light' : nombrePaquete} menu{' '}
+                {conceptoBase}{' '}
                 <span className="text-navy-soft">
                   {formatoDinero(precioBase)} × {personas}
                 </span>
@@ -228,7 +281,7 @@ export function ResumenReserva({
           </div>
           <p className="mt-2.5 text-xs leading-relaxed text-navy-soft">
             The deposit is not an extra charge: it comes off the total. Paying cash on board brings the balance down to{' '}
-            <span className="font-semibold text-navy">{formatoDinero(enEfectivo)}</span> — you save{' '}
+            <span className="font-semibold text-navy">{formatoDinero(enEfectivo)}</span>. You save{' '}
             {formatoDinero(ahorro)}.
           </p>
           <p className="mt-2 flex items-center gap-1.5 text-xs font-medium text-menta-texto">

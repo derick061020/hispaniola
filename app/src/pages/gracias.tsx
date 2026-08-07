@@ -6,6 +6,7 @@ import { Meta } from '@/components/seo/meta'
 import { etiquetaOcasion } from '@/components/reservar/tipos'
 import { sumarDias, fechaLarga } from '@/lib/fechas'
 import { buscarReserva, type Reserva } from '@/lib/reservas'
+import { menuDeLaReserva } from '@/lib/menu-reserva'
 import { dispararConfetti } from '@/lib/celebracion'
 import { formatoDinero } from '@/data/home'
 
@@ -68,22 +69,40 @@ export function GraciasPage() {
 
   // Ocasión que el visitante contó en el funnel, si la contó (2026-08-07).
   const celebra = etiquetaOcasion(reserva.celebracion?.ocasion)
+  // El menú de ESTA reserva, con la MISMA regla que el checkout (2026-08-07,
+  // lib/menu-reserva.ts): Light/Premium, la carta del charter que toca por
+  // barco y aforo, o el buffet. Antes esta pantalla leía siempre
+  // menuLight/menuPremium y en Saona y el charter esos arrays están vacíos:
+  // salía «Menu: to be confirmed by email» para una comida que no se elige.
+  const menu = menuDeLaReserva({
+    ficha: reserva.ficha,
+    paquete: reserva.paquete,
+    variante: reserva.variante,
+    personas: reserva.personas,
+  })
+  const seEligeMenu = menu?.modo === 'eleccion'
   // Platos realmente elegidos: el funnel ya deja reservar sin decidirlos.
   const platosElegidos = reserva.platos.filter(Boolean)
-  const faltanPlatos = platosElegidos.length < reserva.platos.length
+  const faltanPlatos = seEligeMenu && platosElegidos.length < reserva.platos.length
   const totalCon5Pct = Math.round(reserva.saldo * 0.95)
   const horario = reserva.ficha.horarios[reserva.horarioIdx]
   // sumarDias ya devuelve ISO string (formato 'YYYY-MM-DD'), listo para fechaLarga.
   const fechaRecordatorioISO = sumarDias(reserva.fechaISO, -1)
 
-  // Mapea el id guardado en reserva.platos al nombre del plato del menú
-  // del paquete. Como el funnel guarda `plato.nombre` directamente, el id
-  // suele ser ya el nombre — pero confirmamos buscando en el menú del
-  // paquete por si en el futuro el shape cambia.
-  const nombrePlato = (id: string) => {
-    const menu = reserva.paquete === 'premium' ? reserva.ficha.menuPremium : reserva.ficha.menuLight
-    return menu.find((p) => p.nombre === id)?.nombre ?? id
-  }
+  // Mapea el id guardado en reserva.platos al nombre del plato del menú que
+  // aplica. Como el funnel guarda `plato.nombre` directamente, el id suele ser
+  // ya el nombre — pero confirmamos contra la carta por si el shape cambia.
+  const nombrePlato = (id: string) => menu?.platos.find((p) => p.nombre === id)?.nombre ?? id
+
+  // Qué se escribe en la fila «Menu» del resumen. Tres casos, y ninguno miente:
+  // se eligió todo, falta parte (llega por correo) o no se elige (buffet).
+  const resumenMenu = !seEligeMenu
+    ? (menu?.titulo ?? '—')
+    : platosElegidos.length === 0
+      ? 'To be confirmed by email'
+      : faltanPlatos
+        ? `${platosElegidos.map(nombrePlato).join(', ')} · the rest, by email`
+        : platosElegidos.map(nombrePlato).join(', ')
 
   return (
     <div className="min-h-screen bg-papel">
@@ -182,7 +201,7 @@ export function GraciasPage() {
                   {faltanPlatos ? (
                     <>
                       {' '}
-                      In that same email you pick the meals you left undecided — or you do it from{' '}
+                      In that same email you pick the meals you left undecided, or you do it from{' '}
                       <strong className="font-semibold text-navy">My booking</strong>, up to 48 h before.
                     </>
                   ) : null}
@@ -207,7 +226,7 @@ export function GraciasPage() {
                 <>
                   Bring a swimsuit, a towel and biodegradable sunscreen. You pay the balance of{' '}
                   <strong className="font-semibold text-navy">{formatoDinero(reserva.saldo)}</strong> on
-                  board — in cash it comes to{' '}
+                  board. In cash it comes to{' '}
                   <strong className="font-semibold text-navy">{formatoDinero(totalCon5Pct)}</strong> with the 5%
                   discount.
                 </>
@@ -224,25 +243,22 @@ export function GraciasPage() {
             <FilaResumen label="Date" valor={fechaLarga(reserva.fechaISO)} />
             <FilaResumen
               label="Schedule"
-              valor={horario ? `${horario.hora}${horario.regreso ? ` — back at ${horario.regreso}` : ''}` : '—'}
+              valor={horario ? `${horario.hora}${horario.regreso ? ` · back at ${horario.regreso}` : ''}` : '—'}
             />
+            {/* El nombre del menú solo acompaña al nº de personas cuando hay
+                elección («3 · Premium»): ahí la fila «Menu» lista platos y no
+                dice de qué carta salen. Con buffet la fila de abajo ya se
+                llama igual, y repetirlo dos veces seguidas se lee como un
+                error. */}
             <FilaResumen
               label="Guests"
-              valor={`${reserva.personas} · ${reserva.paquete === 'premium' ? 'Premium' : 'Light'}`}
+              valor={`${reserva.personas}${seEligeMenu && menu ? ` · ${menu.etiqueta}` : ''}`}
             />
-            <FilaResumen
-              label="Menu"
-              valor={
-                // Desde 2026-08-07 se puede reservar sin elegir plato: los
-                // huecos se dicen, no se pintan como una lista con comas
-                // vacías. Si no eligió ninguno, la fila entera lo declara.
-                platosElegidos.length === 0
-                  ? 'To be confirmed by email'
-                  : platosElegidos.length < reserva.platos.length
-                    ? `${platosElegidos.map((p) => nombrePlato(p)).join(', ')} · the rest, by email`
-                    : platosElegidos.map((p) => nombrePlato(p)).join(', ')
-              }
-            />
+            {/* Desde 2026-08-07 se puede reservar sin elegir plato: los huecos
+                se dicen, no se pintan como una lista con comas vacías. Y desde
+                la 2ª vuelta del mismo día, con buffet la fila nombra el menú
+                («Island buffet») en vez de prometer un correo que no existe. */}
+            <FilaResumen label="Menu" valor={resumenMenu} />
             <FilaResumen label="Pickup" valor={reserva.recogida.hotel || '—'} />
             <div className="!mt-3 flex items-center justify-between border-t border-linea pt-3 text-sm">
               <span className="text-navy-soft">Already paid (deposit)</span>
@@ -257,7 +273,7 @@ export function GraciasPage() {
             to={`/my-booking?codigo=${reserva.codigo}`}
             className="mt-4 inline-block text-sm font-semibold text-aqua-dark hover:underline"
           >
-            Change the menu or the pickup →
+            {seEligeMenu ? 'Change the menu or the pickup' : 'Change your pickup'} →
           </Link>
         </section>
 
@@ -277,9 +293,9 @@ export function GraciasPage() {
                 </p>
                 <p className="mt-1 text-sm text-navy-sub">
                   {reserva.celebracion?.nota
-                    ? `“${reserva.celebracion.nota}” — the crew will know before we set sail. `
+                    ? `“${reserva.celebracion.nota}”. The crew will know before we set sail. `
                     : 'The crew will know before we set sail. '}
-                  If you want something specific — cake, decorations — we’ll arrange it here.
+                  If you want something specific (cake, decorations), we’ll arrange it here.
                 </p>
                 <a
                   href={`https://wa.me/18293052804?text=${encodeURIComponent(`Hi! I’m ${reserva.contacto.nombre}, my booking is ${reserva.codigo} and I’d like to organize something for a ${celebra.toLowerCase()} 🎉`)}`}

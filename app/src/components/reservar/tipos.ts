@@ -6,7 +6,7 @@ export type Paquete = 'light' | 'premium'
 
 export type DatosRecogida = { hotel: string; notas: string }
 
-export type DatosContacto = { nombre: string; apellidos: string; email: string; emailConfirm: string; telefono: string }
+export type DatosContacto = { nombre: string; apellidos: string; email: string; telefono: string }
 
 // «¿Celebras algo especial?» — dato OPCIONAL del paso de contacto (2026-08-07,
 // pedido de Samuel). No es marketing: la pantalla de gracias ya invitaba a

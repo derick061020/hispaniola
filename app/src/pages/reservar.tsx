@@ -11,10 +11,11 @@ import { PasoContacto } from '@/components/reservar/paso-contacto'
 import { PasoPago } from '@/components/reservar/paso-pago'
 import { ResumenReserva } from '@/components/reservar/resumen-reserva'
 import { etiquetaOcasion, type DatosCelebracion, type DatosContacto, type DatosRecogida, type Paquete } from '@/components/reservar/tipos'
-import { MAX_PERSONAS_DEFAULT } from '@/components/tour/widget-reserva'
+import { maxPersonasDe } from '@/components/tour/widget-reserva'
 import { TOURS, type Tour } from '@/data/home'
 import { FICHAS, type FichaTour } from '@/data/tours'
 import { guardarReserva, generarCodigoReserva, type Reserva } from '@/lib/reservas'
+import { menuDeLaReserva } from '@/lib/menu-reserva'
 
 // Funnel de reserva (/reservar/:slug, Fase C). El widget de la ficha es el
 // CONFIGURADOR (paquete · fecha · hora · personas); «Continuar» abre aquí, con
@@ -34,7 +35,21 @@ import { guardarReserva, generarCodigoReserva, type Reserva } from '@/lib/reserv
 // veces»), prohibida por revision-wireframes.md §2.7. `noindex`.
 
 // Orden de las secciones (2026-07-17, Samuel): contacto primero, luego el menú.
-const PASOS = ['Contact', 'Your menu', 'Pickup', 'Payment']
+//
+// [2026-08-07] Las secciones dejan de ser una lista fija de 4 y el paso activo
+// deja de ser un ÍNDICE: ahora es un id. El motivo es que «Your menu» ya no
+// existe en todos los tours (ver lib/menu-reserva.ts — Saona sirve buffet y el
+// charter pasa a buffet de pinchos a partir de 21 personas), y en el charter
+// puede APARECER Y DESAPARECER sin recargar, porque el nº de personas se edita
+// en la tarjeta de al lado. Con índices, subir de 20 a 21 personas movía el
+// flujo al paso equivocado; con ids, la numeración se recalcula sola.
+type PasoId = 'contacto' | 'menu' | 'recogida' | 'pago'
+const TITULOS: Record<PasoId, string> = {
+  contacto: 'Contact',
+  menu: 'Your menu',
+  recogida: 'Pickup',
+  pago: 'Payment',
+}
 
 export function ReservarPage() {
   const { slug } = useParams()
@@ -54,10 +69,14 @@ export function ReservarPage() {
   const paquete: Paquete = params.get('paquete') === 'premium' ? 'premium' : 'light'
   const horarioIdx = Number(params.get('horario')) || 0
   const fechaISO = params.get('fecha')
-  // Mismo tope que el stepper del widget de la ficha (ver MAX_PERSONAS_DEFAULT):
-  // tours duales (Snorkel Lovers, con precio de niño) llegan al maxPax del tour;
-  // el resto se queda en 6 — un grupo mayor se arma con el charter, no aquí.
-  const maxPersonas = tour.precioNino != null ? (tour.maxPax ?? MAX_PERSONAS_DEFAULT) : MAX_PERSONAS_DEFAULT
+  // La SUB-VARIANTE (el bote, en Saona y en el charter). El widget la manda
+  // desde siempre; hasta hoy el funnel la ignoraba. Ahora hace falta: es lo que
+  // decide qué carta del charter se come (3 h, 4 h o buffet de pinchos).
+  const variante = params.get('variante')
+  // Mismo tope que el stepper del widget de la ficha, con la misma fórmula
+  // (maxPersonasDe): antes aquí había una copia que topaba en 6 salvo tarifa
+  // dual, así que un charter de 30 personas entraba al checkout como uno de 6.
+  const maxPersonas = maxPersonasDe(tour, ficha)
   const personas = Math.min(Math.max(Number(params.get('personas')) || 2, 1), maxPersonas)
 
   return (
@@ -66,6 +85,7 @@ export function ReservarPage() {
       ficha={ficha}
       precioLight={tour.precioLight}
       paqueteInicial={paquete}
+      varianteInicial={variante}
       personasIniciales={personas}
       maxPersonas={maxPersonas}
       horarioInicial={horarioIdx}
@@ -82,6 +102,7 @@ function FlujoReserva({
   ficha,
   precioLight,
   paqueteInicial,
+  varianteInicial,
   personasIniciales,
   maxPersonas,
   horarioInicial,
@@ -91,6 +112,8 @@ function FlujoReserva({
   ficha: FichaTour
   precioLight: number
   paqueteInicial: Paquete
+  /** Sub-variante (bote) elegida en el widget; null en los tours sin ellas. */
+  varianteInicial: string | null
   personasIniciales: number
   maxPersonas: number
   horarioInicial: number
@@ -98,12 +121,10 @@ function FlujoReserva({
 }) {
   const navigate = useNavigate()
 
-  const [paso, setPaso] = useState(0)
+  const [paso, setPaso] = useState<PasoId>('contacto')
   // El PAQUETE también es estado desde 2026-08-07: el banner de upsell lo cambia
   // sin salir del checkout (antes había que volver a la ficha).
   const [paquete, setPaquete] = useState<Paquete>(paqueteInicial)
-  const platosPaquete = paquete === 'premium' ? ficha.menuPremium : ficha.menuLight
-  const nombrePaquete = paquete === 'premium' ? 'Premium' : 'Light'
   const [horarioIdx, setHorarioIdx] = useState(horarioInicial)
   const horario = ficha.horarios[horarioIdx] ?? ficha.horarios[0]
   // Fecha y personas son ESTADO desde 2026-08-07 (antes: props de solo lectura
@@ -120,7 +141,6 @@ function FlujoReserva({
     nombre: '',
     apellidos: '',
     email: '',
-    emailConfirm: '',
     telefono: '',
   })
   const [celebracion, setCelebracion] = useState<DatosCelebracion>({ ocasion: null, nota: '' })
@@ -130,6 +150,27 @@ function FlujoReserva({
   const deposito = Math.round(total * 0.25)
   const saldo = total - deposito
 
+  // QUÉ COME ESTE GRUPO. Resuelto en un solo sitio (lib/menu-reserva.ts) a
+  // partir del paquete, del bote y del aforo — los tres datos que pueden
+  // cambiarlo, y los tres editables sin salir de esta pantalla.
+  const menu = menuDeLaReserva({ ficha, paquete, variante: varianteInicial, personas })
+  // El paso «Your menu» SOLO existe si hay algo que elegir. Con buffet (Saona,
+  // charter de 21+) o con una carta de un plato no se le pide una decisión a
+  // quien no tiene ninguna: la comida se enseña en la tarjeta de la derecha.
+  const hayPasoMenu = menu?.modo === 'eleccion'
+  const pasos: PasoId[] = ['contacto', ...(hayPasoMenu ? (['menu'] as const) : []), 'recogida', 'pago']
+  // Si el paso activo deja de existir —subir a 21 personas en el charter quita
+  // el del menú— el flujo cae al siguiente que sí existe en vez de quedarse en
+  // un acordeón sin ninguna sección abierta.
+  const pasoActivo: PasoId = pasos.includes(paso) ? paso : 'recogida'
+  const indiceDe = (id: PasoId) => pasos.indexOf(id)
+  const siguienteDe = (id: PasoId): PasoId => pasos[indiceDe(id) + 1] ?? 'pago'
+  const estadoDe = (id: PasoId): EstadoSeccion => {
+    const i = indiceDe(id)
+    const activo = indiceDe(pasoActivo)
+    return i < activo ? 'done' : i === activo ? 'activo' : 'pendiente'
+  }
+
   // Cambiar el nº de personas re-dimensiona la lista de platos conservando los
   // ya elegidos. Si el grupo CRECE y el paso del menú ya estaba cerrado, el
   // flujo vuelve a él: el comensal nuevo no tiene plato y salir a pagar con un
@@ -137,7 +178,13 @@ function FlujoReserva({
   const cambiarPersonas = (n: number) => {
     setPersonas(n)
     setPlatos((prev) => Array.from({ length: n }, (_, i) => prev[i] ?? ''))
-    if (n > personas && paso > 1) setPaso(1)
+    // Se recalcula con el aforo NUEVO: en el charter, crecer hasta 21 elimina
+    // el paso del menú (pasa a buffet), así que devolver el flujo ahí sería
+    // mandarlo a una sección que ya no existe.
+    const menuNuevo = menuDeLaReserva({ ficha, paquete, variante: varianteInicial, personas: n })
+    if (n > personas && menuNuevo?.modo === 'eleccion' && indiceDe(pasoActivo) > indiceDe('menu')) {
+      setPaso('menu')
+    }
   }
 
   // Subir a Premium desde el banner. Los platos elegidos se BORRAN porque las
@@ -172,14 +219,26 @@ function FlujoReserva({
       ficha: {
         menuLight: ficha.menuLight,
         menuPremium: ficha.menuPremium,
+        // [2026-08-07] Los 3 campos nuevos son lo que necesita el resolutor de
+        // menú (lib/menu-reserva.ts) para contestar lo MISMO en «Gracias» y en
+        // «Mi reserva» que aquí: sin ellos, esas pantallas volvían a caer en
+        // menuLight/menuPremium —vacíos en Saona y en el charter— y pintaban un
+        // menú inexistente que además se podía «editar».
+        menuBuffet: ficha.menuBuffet,
+        menuCharter: ficha.menuCharter,
+        subVariantes: ficha.subVariantes,
         horarios: ficha.horarios,
         upgradePremium: ficha.upgradePremium,
       },
       paquete,
+      variante: varianteInicial ?? undefined,
       personas,
       horarioIdx,
       fechaISO: fechaISO ?? new Date().toISOString().slice(0, 10),
-      platos,
+      // Sin elección de plato (buffet), la lista va VACÍA en vez de con N
+      // huecos: no hay nada pendiente de confirmar y las pantallas de después
+      // no deben pedirlo.
+      platos: hayPasoMenu ? platos : [],
       recogida: { hotel: recogida.hotel.trim(), notas: recogida.notas.trim() },
       contacto: {
         nombre: contacto.nombre.trim(),
@@ -210,15 +269,13 @@ function FlujoReserva({
   const cambiarPlato = (persona: number, plato: string) =>
     setPlatos((prev) => prev.map((p, i) => (i === persona ? plato : p)))
 
-  const estadoDe = (i: number): EstadoSeccion => (i < paso ? 'done' : i === paso ? 'activo' : 'pendiente')
-
   return (
     // overflow-x-clip: recorta el ::after w-screen de la zona gris sin volverse
     // contenedor de scroll (a diferencia de overflow-hidden), así el sticky de
     // la derecha sigue funcionando.
     <div className="flex min-h-screen flex-col overflow-x-clip bg-papel">
       <Meta
-        titulo={`Book — ${tour.nombre}`}
+        titulo={`Book · ${tour.nombre}`}
         descripcion={`Set up your ${tour.nombre}: pick each guest’s dish, the pickup and confirm with just a 25% deposit.`}
         ruta={`/book/${tour.slug}`}
         indexable={false}
@@ -252,14 +309,14 @@ function FlujoReserva({
         <div className="mx-auto grid max-w-6xl grid-cols-1 lg:grid-cols-[minmax(0,1fr)_var(--spacing-ficha-widget)]">
           {/* IZQUIERDA (blanca): cabecera + secciones */}
           <div className="px-5 py-8 sm:px-8 sm:py-10">
-            <h1 className="sr-only">Complete your booking — {tour.nombre}</h1>
+            <h1 className="sr-only">Complete your booking: {tour.nombre}</h1>
 
             <div className="flex flex-col gap-4">
               <SeccionPaso
-                numero={1}
-                titulo={PASOS[0]}
-                estado={estadoDe(0)}
-                onEditar={() => setPaso(0)}
+                numero={indiceDe('contacto') + 1}
+                titulo={TITULOS.contacto}
+                estado={estadoDe('contacto')}
+                onEditar={() => setPaso('contacto')}
                 resumen={
                   <>
                     <p>
@@ -285,56 +342,53 @@ function FlujoReserva({
                   onCambioCelebracion={(parcial) => setCelebracion((c) => ({ ...c, ...parcial }))}
                 />
                 <Continuar
-                  habilitado={
-                    contacto.nombre.trim() !== '' &&
-                    contacto.email.trim() !== '' &&
-                    contacto.email === contacto.emailConfirm
+                  habilitado={contacto.nombre.trim() !== '' && contacto.email.trim() !== ''}
+                  onClick={() => setPaso(siguienteDe('contacto'))}
+                />
+              </SeccionPaso>
+
+              {/* El paso del menú SOLO se monta si hay platos que elegir. Sin
+                  él la numeración se recorre sola (los índices salen de
+                  `pasos`), que es justo lo que arregla el bug de Saona: antes
+                  aparecía un paso 2 con la rejilla vacía. */}
+              {hayPasoMenu && menu ? (
+                <SeccionPaso
+                  numero={indiceDe('menu') + 1}
+                  titulo={TITULOS.menu}
+                  estado={estadoDe('menu')}
+                  onEditar={() => setPaso('menu')}
+                  resumen={
+                    <ul className="flex flex-col gap-0.5">
+                      {platos.map((p, i) => (
+                        <li key={i}>
+                          <span className="text-navy-soft">Guest {i + 1}:</span>{' '}
+                          {p ? (
+                            <span className="font-medium text-navy">{p}</span>
+                          ) : (
+                            <span className="text-navy-soft">to be confirmed by email</span>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
                   }
-                  onClick={() => setPaso(1)}
-                />
-              </SeccionPaso>
+                >
+                  <PasoMenu menu={menu} seleccion={platos} onCambio={cambiarPlato} />
+                  {/* Siempre habilitado (2026-08-07): el menú dejó de ser un
+                      requisito para reservar. El botón cambia de texto para que
+                      nadie avance creyendo que ya eligió. */}
+                  <Continuar
+                    habilitado
+                    texto={platos.every((p) => p) ? 'Continue' : 'Continue and pick the menu later'}
+                    onClick={() => setPaso(siguienteDe('menu'))}
+                  />
+                </SeccionPaso>
+              ) : null}
 
               <SeccionPaso
-                numero={2}
-                titulo={PASOS[1]}
-                estado={estadoDe(1)}
-                onEditar={() => setPaso(1)}
-                resumen={
-                  <ul className="flex flex-col gap-0.5">
-                    {platos.map((p, i) => (
-                      <li key={i}>
-                        <span className="text-navy-soft">Persona {i + 1}:</span>{' '}
-                        {p ? (
-                          <span className="font-medium text-navy">{p}</span>
-                        ) : (
-                          <span className="text-navy-soft">to be confirmed by email</span>
-                        )}
-                      </li>
-                    ))}
-                  </ul>
-                }
-              >
-                <PasoMenu
-                  platosDisponibles={platosPaquete}
-                  seleccion={platos}
-                  onCambio={cambiarPlato}
-                  nombrePaquete={nombrePaquete}
-                />
-                {/* Siempre habilitado (2026-08-07): el menú dejó de ser un
-                    requisito para reservar. El botón cambia de texto para que
-                    nadie avance creyendo que ya eligió. */}
-                <Continuar
-                  habilitado
-                  texto={platos.every((p) => p) ? 'Continue' : 'Continue and pick the menu later'}
-                  onClick={() => setPaso(2)}
-                />
-              </SeccionPaso>
-
-              <SeccionPaso
-                numero={3}
-                titulo={PASOS[2]}
-                estado={estadoDe(2)}
-                onEditar={() => setPaso(2)}
+                numero={indiceDe('recogida') + 1}
+                titulo={TITULOS.recogida}
+                estado={estadoDe('recogida')}
+                onEditar={() => setPaso('recogida')}
                 resumen={
                   <p>
                     <span className="font-medium text-navy">{recogida.hotel || '—'}</span>
@@ -346,10 +400,13 @@ function FlujoReserva({
                   onCambio={(parcial) => setRecogida((r) => ({ ...r, ...parcial }))}
                   horaSalida={horario?.hora ?? null}
                 />
-                <Continuar habilitado={recogida.hotel.trim() !== ''} onClick={() => setPaso(3)} />
+                <Continuar
+                  habilitado={recogida.hotel.trim() !== ''}
+                  onClick={() => setPaso(siguienteDe('recogida'))}
+                />
               </SeccionPaso>
 
-              <SeccionPaso numero={4} titulo={PASOS[3]} estado={estadoDe(3)}>
+              <SeccionPaso numero={indiceDe('pago') + 1} titulo={TITULOS.pago} estado={estadoDe('pago')}>
                 <PasoPago
                   deposito={deposito}
                   saldo={saldo}
@@ -389,11 +446,16 @@ function FlujoReserva({
                 onHorario={setHorarioIdx}
                 horarioTxt={horarioTxt}
                 horaSalida={horario?.hora ?? null}
-                nombrePaquete={nombrePaquete}
+                menu={menu}
                 personas={personas}
                 minPersonas={1}
                 maxPersonas={maxPersonas}
                 onPersonas={cambiarPersonas}
+                conceptoBase={
+                  ficha.upgradePremium !== null
+                    ? `${upgrade > 0 ? 'Light' : paquete === 'premium' ? 'Premium' : 'Light'} menu`
+                    : 'Tour fare'
+                }
                 precioBase={precioLight}
                 upgrade={upgrade}
                 total={total}

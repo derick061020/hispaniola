@@ -13,14 +13,26 @@ export type Reserva = {
   codigo: string
   slug: string
   tour: Pick<Tour, 'nombre' | 'audienciaChip' | 'duracionCorta' | 'maxPax' | 'precioLight'>
-  ficha: Pick<FichaTour, 'menuLight' | 'menuPremium' | 'horarios' | 'upgradePremium'>
+  /** [2026-08-07] Se guardan también `menuBuffet`, `menuCharter` y
+   *  `subVariantes` (los tres opcionales): son lo que el resolutor de menú
+   *  (lib/menu-reserva.ts) necesita para contestar lo mismo en «Gracias» y en
+   *  «Mi reserva» que en el checkout. Sin ellos, esas pantallas volvían a
+   *  `menuLight`/`menuPremium` —vacíos en Saona y en el charter— y ofrecían
+   *  «cambiar el menú» de un menú que no existe. */
+  ficha: Pick<FichaTour, 'menuLight' | 'menuPremium' | 'horarios' | 'upgradePremium'> &
+    Partial<Pick<FichaTour, 'menuBuffet' | 'menuCharter' | 'subVariantes'>>
   paquete: Paquete
+  /** Sub-variante elegida (el BARCO en el charter, la modalidad en Saona).
+   *  Decide qué carta se come — ver `cartaCharterDe`. */
+  variante?: string
   personas: number
   horarioIdx: number
   fechaISO: string
+  /** Plato por persona. VACÍO cuando el menú no se elige (buffet): no es que
+   *  falten por decidir, es que no hay nada que decidir. */
   platos: string[]
   recogida: DatosRecogida
-  contacto: Omit<DatosContacto, 'emailConfirm'>
+  contacto: DatosContacto
   total: number
   deposito: number
   saldo: number

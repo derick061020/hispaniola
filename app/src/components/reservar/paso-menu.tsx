@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { ArrowRight, Check, ChevronDown, Mail, UtensilsCrossed } from 'lucide-react'
-import type { PlatoMenu } from '@/data/tours'
+import { AlertCircle, ArrowRight, Check, ChevronDown, Mail, UtensilsCrossed } from 'lucide-react'
+import type { MenuReserva } from '@/lib/menu-reserva'
 
 // Paso 1 del funnel: cada persona elige su plato del paquete que vino del widget.
 // Es el diferenciador de reservar directo —«eliges tu plato por persona»— hecho
@@ -27,17 +27,23 @@ import type { PlatoMenu } from '@/data/tours'
 // formas se manda un correo confirmando las comidas, la salida honesta es
 // decirlo aquí y dejar seguir. Lo que NO se hace es esconder el paso: quien lo
 // tiene claro elige ahora y ve sus platos en el resumen.
+//
+// 2026-08-07 (2ª vuelta, pedido de Samuel): el paso deja de asumir Light/
+// Premium y recibe el menú YA RESUELTO (lib/menu-reserva.ts). Antes leía
+// `menuLight`/`menuPremium` de la ficha y en Saona y el charter esos arrays
+// están vacíos a propósito —tienen buffet y cartas por barco—, así que el
+// acordeón se abría con la rejilla de platos VACÍA. Este componente ya solo se
+// monta cuando hay algo que elegir (`modo === 'eleccion'`); del caso «todos
+// comen lo mismo» se encarga la tarjeta de la derecha, sin paso.
 export function PasoMenu({
-  platosDisponibles,
+  menu,
   seleccion,
   onCambio,
-  nombrePaquete,
 }: {
-  platosDisponibles: PlatoMenu[]
+  menu: MenuReserva
   /** nombre del plato elegido por persona (índice = nº de persona - 1); '' = sin elegir */
   seleccion: string[]
   onCambio: (persona: number, plato: string) => void
-  nombrePaquete: string
 }) {
   // Qué persona está expandida eligiendo. Abre en la primera (la 1ª sin plato).
   const [expandida, setExpandida] = useState(0)
@@ -58,10 +64,22 @@ export function PasoMenu({
 
   return (
     <div className="flex flex-col gap-4">
-      <p className="text-sm text-navy-sub">
-        {nombrePaquete} menu · each person picks their dish, cooked fresh on board in the floating kitchen. You can
-        change it up to 48 h before the tour.
-      </p>
+      <div className="text-sm text-navy-sub">
+        <p>
+          <span className="font-semibold text-navy">{menu.titulo}</span> · each person picks their dish.
+          {menu.texto ? ` ${menu.texto}` : ''}
+        </p>
+        {/* La regla que puede CAMBIAR el menú sin salir de aquí (el aforo del
+            charter): las personas se editan en la tarjeta de al lado, así que
+            pasar de 20 a 21 cambia lo que se come. Decirlo antes evita que la
+            rejilla de platos «desaparezca» sin explicación al subir el grupo. */}
+        {menu.nota ? (
+          <p className="mt-2 flex items-start gap-2 text-xs text-navy-soft">
+            <AlertCircle className="mt-0.5 size-3.5 shrink-0" aria-hidden="true" />
+            {menu.nota}
+          </p>
+        ) : null}
+      </div>
 
       {/* La salida sin fricción, ARRIBA y no escondida al pie: quien no lo tiene
           claro tiene que verla ANTES de empezar a abrir acordeones. */}
@@ -69,7 +87,7 @@ export function PasoMenu({
         <Mail className="mt-0.5 size-4 shrink-0 text-aqua-dark" aria-hidden="true" />
         <span>
           <strong className="font-semibold text-navy">You don’t have to decide now.</strong> We’ll email you to confirm
-          the meals — you can choose there, or from “My booking”, up to 48 h before the tour.
+          the meals. You can choose there, or from “My booking”, up to 48 h before the tour.
         </span>
       </p>
 
@@ -93,7 +111,9 @@ export function PasoMenu({
                     {elegido ? <Check className="size-4" aria-hidden="true" /> : i + 1}
                   </span>
                   <div className="min-w-0">
-                    <p className="font-display text-sm font-semibold text-navy">Person {i + 1}</p>
+                    {/* «Guest», como en el resumen del paso, en «Gracias» y en
+                        «Mi reserva» — era el único sitio que decía «Person». */}
+                    <p className="font-display text-sm font-semibold text-navy">Guest {i + 1}</p>
                     {elegido ? (
                       <p className="truncate text-xs font-medium text-menta-texto">Done · {elegido}</p>
                     ) : (
@@ -114,7 +134,7 @@ export function PasoMenu({
               {abierta ? (
                 <div className="border-t border-linea p-4">
                   <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                    {platosDisponibles.map((plato) => {
+                    {menu.platos.map((plato) => {
                       const activo = elegido === plato.nombre
                       return (
                         <button
@@ -170,7 +190,7 @@ export function PasoMenu({
                           Selected: <span className="font-semibold text-navy">{elegido}</span>
                         </>
                       ) : (
-                        'Not chosen yet — we’ll confirm it by email'
+                        'Not chosen yet, we’ll confirm it by email'
                       )}
                     </p>
                     <button

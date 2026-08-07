@@ -5,6 +5,7 @@ import { Logo } from '@/components/ui/logo'
 import { Meta } from '@/components/seo/meta'
 import { fechaLarga } from '@/lib/fechas'
 import { guardarReserva, reservaDemo, type Reserva } from '@/lib/reservas'
+import { menuDeLaReserva } from '@/lib/menu-reserva'
 import { formatoDinero } from '@/data/home'
 import { Campo } from '@/components/ui/campo'
 
@@ -64,7 +65,7 @@ const MODOS = [
 type Modo = (typeof MODOS)[number]['id']
 
 const AYUDA_MODO: Record<Modo, string> = {
-  codigo: 'Find it in your Hispaniola confirmation email — it starts with HSP.',
+  codigo: 'Find it in your Hispaniola confirmation email. It starts with HSP.',
   email: "We'll send an access link to the email you booked with.",
   telefono: "We'll text an access link to the number you booked with.",
 }
@@ -398,17 +399,17 @@ function BloqueReserva({ reserva }: { reserva: Reserva }) {
             onClick={() => setPagado(true)}
             className="w-full rounded-btn bg-coral px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-coral-dark"
           >
-            Pay the balance online — {formatoDinero(reserva.saldo)}
+            Pay the balance online · {formatoDinero(reserva.saldo)}
           </button>
           <p className="mt-2 text-center text-xs text-navy-soft">
-            Or pay in cash on board — nothing to do here.
+            Or pay in cash on board, nothing to do here.
           </p>
         </div>
       )}
       {pagado && (
         <p className="mt-4 inline-flex items-center gap-1.5 rounded-chip bg-menta px-3 py-1.5 text-sm font-semibold text-menta-texto">
           <Check className="size-4" aria-hidden="true" />
-          Balance paid — nothing left to settle.
+          Balance paid, nothing left to settle.
         </p>
       )}
     </section>
@@ -424,10 +425,23 @@ function Fila({ label, valor }: { label: string; valor: string }) {
   )
 }
 
+// [2026-08-07] El bloque resuelve el menú con la misma regla que el checkout
+// (lib/menu-reserva.ts) en vez de leer siempre menuLight/menuPremium. En Saona
+// y en el charter esos dos arrays están vacíos: el select de «editar» salía sin
+// una sola opción y la lista decía «Guest 1 · Not chosen» para siempre, de una
+// comida que nunca se elige. Con buffet este bloque cambia de trabajo — enseña
+// lo que se sirve y no ofrece editar nada.
 function BloqueMenu({ reserva, guardar }: { reserva: Reserva; guardar: (r: Reserva) => void }) {
   const [edit, setEdit] = useState(false)
   const [platos, setPlatos] = useState(reserva.platos)
-  const menu = reserva.paquete === 'premium' ? reserva.ficha.menuPremium : reserva.ficha.menuLight
+  const menuReserva = menuDeLaReserva({
+    ficha: reserva.ficha,
+    paquete: reserva.paquete,
+    variante: reserva.variante,
+    personas: reserva.personas,
+  })
+  const menu = menuReserva?.platos ?? []
+  const seElige = menuReserva?.modo === 'eleccion'
 
   const guardarCambios = () => {
     guardar({ ...reserva, platos })
@@ -443,11 +457,12 @@ function BloqueMenu({ reserva, guardar }: { reserva: Reserva; guardar: (r: Reser
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Utensils className="size-5 text-aqua" aria-hidden="true" />
-          <h2 className="font-display text-lg font-semibold text-navy">Your menu</h2>
+          <h2 className="font-display text-lg font-semibold text-navy">
+            {menuReserva && !seElige ? menuReserva.titulo : 'Your menu'}
+          </h2>
         </div>
-        {!edit && (
-          <BotonEditar onClick={() => setEdit(true)} />
-        )}
+        {/* Solo se edita lo que se elige: con buffet no hay «Editar». */}
+        {seElige && !edit ? <BotonEditar onClick={() => setEdit(true)} /> : null}
       </div>
 
       {/* 2026-08-07: el funnel ya permite reservar sin elegir plato, así que
@@ -466,7 +481,7 @@ function BloqueMenu({ reserva, guardar }: { reserva: Reserva; guardar: (r: Reser
                 onChange={(e) => setPlatos((prev) => prev.map((x, j) => (i === j ? e.target.value : x)))}
                 className="mt-1 w-full rounded-btn border border-linea bg-papel px-3 py-2 text-sm text-navy focus:border-aqua focus:outline-none focus:ring-2 focus:ring-aqua/20"
               >
-                <option value="">Not chosen — we’ll confirm by email</option>
+                <option value="">Not chosen, we’ll confirm by email</option>
                 {menu.map((plato) => (
                   <option key={plato.nombre} value={plato.nombre}>
                     {plato.nombre}
@@ -492,7 +507,7 @@ function BloqueMenu({ reserva, guardar }: { reserva: Reserva; guardar: (r: Reser
             </button>
           </div>
         </div>
-      ) : (
+      ) : seElige ? (
         <ul className="mt-4 space-y-1.5 text-sm">
           {reserva.platos.map((p, i) => (
             <li key={i} className="flex items-center justify-between">
@@ -505,7 +520,24 @@ function BloqueMenu({ reserva, guardar }: { reserva: Reserva; guardar: (r: Reser
             </li>
           ))}
         </ul>
-      )}
+      ) : menuReserva ? (
+        // Buffet: no hay plato por persona que listar ni que cambiar. Lo que
+        // sí hay que enseñar es qué se sirve — es parte de lo ya pagado.
+        <>
+          {menuReserva.texto ? <p className="mt-2 text-sm text-navy-sub">{menuReserva.texto}</p> : null}
+          <ul className="mt-3 space-y-1.5 text-sm">
+            {menuReserva.platos.map((plato) => (
+              <li key={plato.nombre} className="flex gap-2">
+                <Check className="mt-0.5 size-4 shrink-0 text-menta-texto" aria-hidden="true" />
+                <span>
+                  <span className="text-navy">{plato.nombre}</span>
+                  {plato.desc ? <span className="text-navy-soft"> · {plato.desc}</span> : null}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </>
+      ) : null}
     </section>
   )
 }

@@ -5,13 +5,20 @@ import { OCASIONES, type DatosCelebracion, type DatosContacto } from '@/componen
 // Paso «Contacto» del funnel. Como Viator (2026-07-17, Samuel: "Viator dice para
 // qué se usará la información, hagámoslo también"): un subtítulo general + una
 // línea de microcopy bajo cada campo explicando para qué se pide. Nombre y
-// apellidos en 2 columnas; email con confirmación (deben coincidir para poder
-// continuar, evita erratas); teléfono para avisos de última hora. El gancho de
-// marca sigue siendo el trato directo (WhatsApp con el equipo del barco).
+// apellidos en 2 columnas; email para la confirmación; teléfono para avisos de
+// última hora. El gancho de marca sigue siendo el trato directo (WhatsApp con
+// el equipo del barco).
 //
 // 2026-08-07 (pedido de Samuel): cierra el paso «¿Celebras algo especial?»,
 // opcional y de un clic. Ver el comentario de `Ocasion` en tipos.ts — la
 // pregunta ya existía en la pantalla de gracias, pero llegaba tarde.
+//
+// 2026-08-07 (pedido de Samuel): FUERA el campo «Confirm your email». Era un
+// campo más que rellenar —y el único que podía bloquear «Continuar» sin que el
+// visitante hubiera escrito nada mal— a cambio de cazar erratas que el propio
+// type="email" y la pantalla de gracias ya dejan ver. El resumen del paso 1
+// imprime el correo tal cual se escribió, así que sigue habiendo dónde
+// revisarlo antes de pagar.
 export function PasoContacto({
   datos,
   onCambio,
@@ -23,8 +30,6 @@ export function PasoContacto({
   celebracion: DatosCelebracion
   onCambioCelebracion: (parcial: Partial<DatosCelebracion>) => void
 }) {
-  const noCoincide = datos.emailConfirm !== '' && datos.emailConfirm !== datos.email
-
   return (
     <div className="flex flex-col gap-5">
       <div>
@@ -65,22 +70,6 @@ export function PasoContacto({
 
         <div>
           <Campo
-            etiqueta="Confirm your email"
-            type="email"
-            autoComplete="email"
-            placeholder="you@email.com"
-            value={datos.emailConfirm}
-            onChange={(e) => onCambio({ emailConfirm: e.target.value })}
-          />
-          {noCoincide ? (
-            <p className="mt-1.5 text-xs font-medium text-coral">The two emails don’t match.</p>
-          ) : (
-            <p className="mt-1.5 text-xs text-navy-soft">To make sure there isn’t a single typo.</p>
-          )}
-        </div>
-
-        <div>
-          <Campo
             etiqueta="WhatsApp / phone"
             type="tel"
             autoComplete="tel"
@@ -89,7 +78,7 @@ export function PasoContacto({
             onChange={(e) => onCambio({ telefono: e.target.value })}
           />
           <p className="mt-1.5 text-xs text-navy-soft">
-            Only to let you know about last-minute changes — for example, if the weather forces us to move the tour.
+            Only to let you know about last-minute changes, for example if the weather forces us to move the tour.
           </p>
         </div>
       </div>
@@ -149,7 +138,7 @@ export function PasoContacto({
                   onChange={(e) => onCambioCelebracion({ nota: e.target.value })}
                 />
                 <p className="mt-1.5 text-xs text-navy-soft">
-                  If you want something specific —a cake, decorations— we’ll arrange it over WhatsApp before the tour.
+                  If you want something specific (a cake, decorations), we’ll arrange it over WhatsApp before the tour.
                 </p>
               </div>
             ) : null}

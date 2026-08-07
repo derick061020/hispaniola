@@ -5,6 +5,7 @@ import { BLOQUE_FICHA } from '@/components/tour/bloque-ficha'
 import { CartaCharter } from '@/components/tour/carta-charter'
 import { BannerLangosta } from '@/components/tour/banner-langosta'
 import { estadoDeFranja, type SeleccionAddOns } from '@/lib/tarifas'
+import { cartaCharterDe } from '@/lib/menu-reserva'
 import { formatoDinero, type Tour } from '@/data/home'
 import type {
   AddOnDeMenu,
@@ -364,21 +365,13 @@ function CartasCharter({
   etiqueta: string
   seleccionAddOns?: SeleccionAddOns
 }) {
-  // Que carta le toca a este visitante. Dos datos del widget mandan, y en este
-  // orden: el AFORO gana a la duracion, porque de 21 personas en adelante el
-  // buffet de pinchos aplica navegues 3 o 4 horas. Solo despues decide el
-  // barco. Si no ha tocado nada el widget, la primera carta.
-  const duracionBarco = ficha.subVariantes?.find((sv) => sv.id === variante)?.duracion
-  const idSegunWidget: CartaCharterDatos['id'] | null =
-    personas != null && personas >= 21
-      ? '21+'
-      : duracionBarco?.startsWith('3')
-        ? '3h'
-        : duracionBarco
-          ? '4h'
-          : null
+  // Que carta le toca a este visitante. La regla (el AFORO gana a la duracion)
+  // vive en lib/menu-reserva.ts desde 2026-08-07, porque el CHECKOUT tiene que
+  // aplicar exactamente la misma: si se separan, alguien puede ver una carta en
+  // la ficha y otra distinta al pagar.
+  const idSegunWidget = cartaCharterDe(menu, ficha.subVariantes, variante, personas).id
 
-  const [activa, setActiva] = useState<CartaCharterDatos['id']>(idSegunWidget ?? menu.cartas[0].id)
+  const [activa, setActiva] = useState<CartaCharterDatos['id']>(idSegunWidget)
   useEffect(() => {
     if (idSegunWidget) setActiva(idSegunWidget)
   }, [idSegunWidget])
