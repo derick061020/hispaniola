@@ -65,8 +65,8 @@ export function HomePage() {
     // final de la página queda tapado en un iPhone con home indicator.
     <div className="pb-[calc(4rem+env(safe-area-inset-bottom))] md:pb-0">
       <Meta
-        titulo="Catamaranes originales en Punta Cana"
-        descripcion="Snorkel en vivero de coral, playa desierta y comida hecha a bordo — grupos pequeños, 4.9★ en 1.782 reseñas y #1 en TripAdvisor 7 años seguidos. Reserva directo, sin comisión de intermediario."
+        titulo="Original catamaran tours in Punta Cana"
+        descripcion="Snorkeling in a real coral nursery, a secluded beach and food cooked on board — small groups, 4.9★ from 1,782 reviews and #1 on TripAdvisor 7 years running. Book direct, no middleman fees."
         ruta="/"
       />
       <SchemaJsonLd datos={schemaOrganizacion()} />

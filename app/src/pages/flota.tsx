@@ -70,7 +70,7 @@ export function FlotaPage() {
     <div>
       <Meta
         titulo="Our fleet"
-        descripcion="Las embarcaciones de Hispaniola Aquatic Adventures: catamaranes de vela y motor, lanchas y el catamarán de eventos, con vídeo, galería y ficha técnica completa de cada una."
+        descripcion="The Hispaniola Aquatic Adventures fleet: sailing and power catamarans, speedboats and the event catamaran, each with video, gallery and a full spec sheet."
         ruta="/fleet"
       />
       <HeroInterna ctaHref="/#tours">

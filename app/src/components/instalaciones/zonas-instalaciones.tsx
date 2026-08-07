@@ -72,7 +72,7 @@ export function ZonasInstalaciones() {
       </div>
 
       <nav
-        aria-label="Zonas del complejo"
+        aria-label="Zones of the complex"
         className="mt-8 flex flex-wrap justify-center gap-2"
       >
         {ZONAS.map((z) => (

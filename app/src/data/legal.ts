@@ -28,82 +28,82 @@ export type DocumentoLegal = {
   contenidoReal: boolean
 }
 
-const PLACEHOLDER = 'Pendiente de redacción con asesoría legal.'
+const PLACEHOLDER = 'To be drafted with legal counsel.'
 
 export const LEGAL: Record<string, DocumentoLegal> = {
   'cancellation-policy': {
     slug: 'cancellation-policy',
-    nombre: 'Política de cancelación',
-    actualizado: '17 de julio de 2026',
+    nombre: 'Cancellation Policy',
+    actualizado: 'July 17, 2026',
     contenidoReal: true,
     intro:
-      'Estos son los mismos términos que ya ves en cada tour y en la sección de preguntas frecuentes, reunidos aquí en una sola página.',
+      'These are the same terms you already see on every tour and in the frequently asked questions, gathered here on a single page.',
     secciones: [
       {
-        titulo: 'Cancelación por tu parte',
+        titulo: 'Cancellation by you',
         texto:
-          'Cancelación gratuita hasta 7 días antes de la fecha del tour, con reembolso total del depósito. Cancelaciones dentro de los 7 días previos no son reembolsables, salvo que se reprograme la fecha (sujeto a disponibilidad).',
+          'Free cancellation up to 7 days before the tour date, with a full refund of the deposit. Cancellations within the 7 days before the tour are non-refundable, unless the date is rescheduled (subject to availability).',
       },
       {
-        titulo: 'Cancelación por clima',
+        titulo: 'Cancellation due to weather',
         texto:
-          'Si el tour se cancela por lluvia o mar picado (a criterio del capitán, por seguridad), ofrecemos reembolso total o cambio de fecha sin costo — nunca la pérdida del depósito.',
+          'If the tour is canceled because of rain or rough seas (at the captain’s discretion, for safety), we offer a full refund or a date change at no cost — never the loss of the deposit.',
       },
       {
-        titulo: 'Cambios de fecha',
+        titulo: 'Date changes',
         texto:
-          'Puedes reprogramar escribiéndonos por WhatsApp con tu código de reserva. Sujeto a disponibilidad del nuevo horario.',
+          'You can reschedule by messaging us on WhatsApp with your booking code. Subject to availability of the new time.',
       },
       {
-        titulo: 'Depósito y saldo',
+        titulo: 'Deposit and balance',
         texto:
-          'Confirmas tu reserva con un depósito del 25%. El saldo se paga el día del tour: en efectivo (5% de descuento) o con tarjeta desde Mi Reserva.',
+          'You confirm your booking with a 25% deposit. The balance is paid on the day of the tour: in cash (5% discount) or by card from My Booking.',
       },
       {
-        titulo: 'Cambios de menú',
-        texto: 'Puedes cambiar el plato elegido por persona desde Mi Reserva hasta 24 horas antes del tour.',
+        titulo: 'Menu changes',
+        texto: 'You can change the dish chosen for each guest from My Booking up to 24 hours before the tour.',
       },
     ],
   },
   privacy: {
     slug: 'privacy',
-    nombre: 'Política de privacidad',
-    actualizado: '17 de julio de 2026',
+    nombre: 'Privacy Policy',
+    actualizado: 'July 17, 2026',
     contenidoReal: false,
     intro:
-      'Hispaniola Aquatic Adventures (Events & Entertainment Punta Cana LLC) respeta tu privacidad. Esta página describe, en términos generales, qué apartados debe cubrir esta política antes del lanzamiento.',
+      'Hispaniola Aquatic Adventures (Events & Entertainment Punta Cana LLC) respects your privacy. This page describes, in general terms, which sections this policy must cover before launch.',
     secciones: [
-      { titulo: 'Qué datos recopilamos', texto: PLACEHOLDER },
-      { titulo: 'Para qué los usamos', texto: PLACEHOLDER },
-      { titulo: 'Con quién los compartimos', texto: PLACEHOLDER },
-      { titulo: 'Tus derechos', texto: PLACEHOLDER },
-      { titulo: 'Contacto', texto: PLACEHOLDER },
+      { titulo: 'What data we collect', texto: PLACEHOLDER },
+      { titulo: 'What we use it for', texto: PLACEHOLDER },
+      { titulo: 'Who we share it with', texto: PLACEHOLDER },
+      { titulo: 'Your rights', texto: PLACEHOLDER },
+      { titulo: 'Contact', texto: PLACEHOLDER },
     ],
   },
   terms: {
     slug: 'terms',
-    nombre: 'Términos y condiciones',
-    actualizado: '17 de julio de 2026',
+    nombre: 'Terms and Conditions',
+    actualizado: 'July 17, 2026',
     contenidoReal: false,
-    intro: 'Condiciones de uso del sitio y de compra de tours. Estructura de referencia — pendiente de redacción legal.',
+    intro: 'Conditions for using the site and for purchasing tours. Reference structure — pending legal drafting.',
     secciones: [
-      { titulo: 'Aceptación de los términos', texto: PLACEHOLDER },
-      { titulo: 'Reservas y pagos', texto: PLACEHOLDER },
-      { titulo: 'Responsabilidad y seguridad a bordo', texto: PLACEHOLDER },
-      { titulo: 'Ley aplicable y jurisdicción', texto: PLACEHOLDER },
+      { titulo: 'Acceptance of the terms', texto: PLACEHOLDER },
+      { titulo: 'Bookings and payments', texto: PLACEHOLDER },
+      { titulo: 'Liability and safety on board', texto: PLACEHOLDER },
+      { titulo: 'Governing law and jurisdiction', texto: PLACEHOLDER },
     ],
   },
   cookies: {
     slug: 'cookies',
-    nombre: 'Política de cookies',
-    actualizado: '17 de julio de 2026',
+    nombre: 'Cookie Policy',
+    actualizado: 'July 17, 2026',
     contenidoReal: false,
     intro:
-      'Hoy el sitio no usa cookies de analítica ni publicidad (PLAN-LANZAMIENTO.md Bloque G, sin implementar aún). Esta página se completa cuando eso cambie.',
+      'Today the site uses no analytics or advertising cookies (PLAN-LANZAMIENTO.md Bloque G, not implemented yet). This page will be completed when that changes.',
     secciones: [
-      { titulo: 'Qué son las cookies', texto: PLACEHOLDER },
-      { titulo: 'Cookies que usamos', texto: PLACEHOLDER },
-      { titulo: 'Cómo desactivarlas', texto: PLACEHOLDER },
+      { titulo: 'What cookies are', texto: PLACEHOLDER },
+      { titulo: 'Cookies we use', texto: PLACEHOLDER },
+      { titulo: 'How to disable them', texto: PLACEHOLDER },
     ],
   },
 }

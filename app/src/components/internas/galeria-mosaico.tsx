@@ -141,7 +141,7 @@ export function GaleriaMosaico({
         />
         {esUltima && restantes > 0 ? (
           <span className="absolute inset-0 grid place-items-center bg-overlay-foto text-sm font-semibold text-white">
-            +{restantes} fotos →
+            +{restantes} photos →
           </span>
         ) : null}
       </button>
@@ -180,7 +180,7 @@ export function GaleriaMosaico({
               video360.abrirDesde(e.currentTarget)
               setVerVideo(true)
             }}
-            aria-label={`Ver el video de ${etiqueta}`}
+            aria-label={`Watch the video of ${etiqueta}`}
             className="group relative aspect-[9/16] h-galeria-video-alto-movil w-auto shrink-0 self-center overflow-hidden rounded-card-grande bg-papel-hueso sm:h-full sm:self-auto"
           >
             {/* Bucle mudo = cartel animado. El poster es la foto de portada:
@@ -219,7 +219,7 @@ export function GaleriaMosaico({
               className="absolute inset-x-0 bottom-0 flex items-center justify-center gap-1.5 px-3 pb-3 text-xs font-medium text-white"
             >
               <Volume2 className="size-3.5 shrink-0" />
-              Ver con sonido
+              Watch with sound
             </span>
           </button>
         ) : null}
@@ -231,7 +231,7 @@ export function GaleriaMosaico({
         <GaleriaLightbox
           fotos={conjunto === 'comida' ? fotosComida! : fotos}
           indiceInicial={lightbox}
-          etiqueta={conjunto === 'comida' ? `el menú de ${etiqueta}` : etiqueta}
+          etiqueta={conjunto === 'comida' ? `the ${etiqueta} menu` : etiqueta}
           origen={foto.origen}
           onCerrar={() => setLightbox(null)}
         />

@@ -44,7 +44,7 @@ export function DatosTour({ tour, ficha }: { tour: Tour; ficha: FichaTour }) {
   const datos = [
     { icono: Clock3, etiqueta: 'Duración', valor: `${ficha.duracion} (aprox.)` },
     ...(tour.booking === 'completo'
-      ? [{ icono: CarFront, etiqueta: 'Recogida', valor: 'Se ofrece recogida' }]
+      ? [{ icono: CarFront, etiqueta: 'Pickup', valor: 'Pickup available' }]
       : []),
     // [v2 2026-07-27] «Para dispositivos móviles» → «Para móviles» (pedido de
     // Samuel: ahorrar espacio y palabras). Dice exactamente lo mismo y deja de

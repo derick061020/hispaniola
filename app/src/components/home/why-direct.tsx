@@ -85,7 +85,7 @@ export function WhyDirect() {
               <div className="flex justify-center">
                 <div
                   role="group"
-                  aria-label="Comparar cómo reservar"
+                  aria-label="Compare how to book"
                   className="inline-flex rounded-chip bg-white/15 p-1 ring-1 ring-white/25 backdrop-blur-sm"
                 >
                   {VARIANTES.map((v) => (

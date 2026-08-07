@@ -30,7 +30,7 @@ import { formatoDinero } from '@/data/home'
 // (reservar.tsx → paso-pago → guardarReserva). Esta página la lee por
 // código (query param ?codigo=…). Sin código, redirige a /.
 
-const ORIGENES = ['Google', 'Instagram', 'TikTok', 'Recomendación', 'Otro']
+const ORIGENES = ['Google', 'Instagram', 'TikTok', 'Word of mouth', 'Other']
 
 export function GraciasPage() {
   const { slug } = useParams()
@@ -88,8 +88,8 @@ export function GraciasPage() {
   return (
     <div className="min-h-screen bg-papel">
       <Meta
-        titulo={`¡Nos vemos a bordo! · Reserva ${reserva.codigo}`}
-        descripcion={`Tu reserva ${reserva.codigo} está confirmada. ${reserva.tour.nombre} para ${reserva.personas} personas el ${fechaLarga(reserva.fechaISO)}.`}
+        titulo={`See you on board! · Booking ${reserva.codigo}`}
+        descripcion={`Your booking ${reserva.codigo} is confirmed. ${reserva.tour.nombre} for ${reserva.personas} guests on ${fechaLarga(reserva.fechaISO)}.`}
         ruta={`/book/${reserva.slug}/thank-you`}
         indexable={false}
       />
@@ -111,21 +111,21 @@ export function GraciasPage() {
             <Check className="size-8" strokeWidth={2.5} aria-hidden="true" />
           </div>
           <h1 className="mt-6 font-display text-3xl font-semibold text-navy sm:text-4xl">
-            ¡Nos vemos a bordo, {reserva.contacto.nombre}!
+            See you on board, {reserva.contacto.nombre}!
           </h1>
           <p className="mt-3 text-base text-navy-sub sm:text-lg">
-            Tu reserva está confirmada. Te enviamos el voucher a{' '}
-            <span className="font-medium text-navy">{reserva.contacto.email}</span> y por WhatsApp.
+            Your booking is confirmed. We’re sending the voucher to{' '}
+            <span className="font-medium text-navy">{reserva.contacto.email}</span> and on WhatsApp.
           </p>
         </div>
 
         {/* 2. CÓDIGO — destacado */}
         <div className="mt-8 flex flex-col items-center gap-2 rounded-card-grande border-2 border-linea-fuerte bg-papel-hueso px-6 py-5 text-center">
-          <p className="text-xs font-semibold uppercase tracking-wide text-navy-soft">Tu código de reserva</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-navy-soft">Your booking code</p>
           <p className="font-mono text-2xl font-semibold tracking-wider text-navy sm:text-3xl">
             {reserva.codigo}
           </p>
-          <p className="text-xs text-navy-soft">Lo necesitarás para gestionar la reserva o en WhatsApp.</p>
+          <p className="text-xs text-navy-soft">You’ll need it to manage your booking, or on WhatsApp.</p>
         </div>
 
         {/* 3. CTAs — voucher / calendario / WhatsApp */}
@@ -135,14 +135,14 @@ export function GraciasPage() {
             className="inline-flex items-center gap-2 rounded-btn border border-linea bg-papel px-4 py-2.5 text-sm font-semibold text-navy transition-colors hover:bg-papel-hueso"
           >
             <Download className="size-4" aria-hidden="true" />
-            Voucher PDF
+            PDF voucher
           </button>
           <button
             type="button"
             className="inline-flex items-center gap-2 rounded-btn border border-linea bg-papel px-4 py-2.5 text-sm font-semibold text-navy transition-colors hover:bg-papel-hueso"
           >
             <Calendar className="size-4" aria-hidden="true" />
-            Añadir al calendario
+            Add to calendar
           </button>
           <a
             href="https://wa.me/18293052804"
@@ -151,7 +151,7 @@ export function GraciasPage() {
             className="inline-flex items-center gap-2 rounded-btn border border-linea bg-papel px-4 py-2.5 text-sm font-semibold text-navy transition-colors hover:bg-papel-hueso"
           >
             <MessageCircle className="size-4" aria-hidden="true" />
-            Guardar WhatsApp
+            Save WhatsApp
           </a>
         </div>
 
@@ -160,30 +160,30 @@ export function GraciasPage() {
             to={`/my-booking?codigo=${reserva.codigo}`}
             className="font-semibold text-aqua-dark hover:underline"
           >
-            Gestionar mi reserva →
+            Manage my booking →
           </Link>
         </p>
 
         {/* 4. TIMELINE «Qué sigue» */}
         <section className="mt-12">
-          <p className="font-display text-lg font-semibold text-navy">Qué sigue</p>
+          <p className="font-display text-lg font-semibold text-navy">What happens next</p>
           <ol className="mt-4 space-y-4">
             <PasoTimeline
               numero={1}
-              cuando="Hoy"
+              cuando="Today"
               descripcion={
                 <>
-                  Recibes el voucher + el recibo del depósito de{' '}
+                  You get the voucher + the receipt for your{' '}
                   <strong className="font-semibold text-navy">{formatoDinero(reserva.deposito)}</strong>{' '}
-                  a tu email y por WhatsApp.
+                  deposit by email and on WhatsApp.
                   {/* La promesa que sostiene el «puedes elegirlo luego» del
                       funnel: si quedó menú sin decidir, aquí se dice cuándo
                       llega el correo que lo resuelve. */}
                   {faltanPlatos ? (
                     <>
                       {' '}
-                      En ese mismo correo eliges las comidas que dejaste sin decidir — o lo haces desde{' '}
-                      <strong className="font-semibold text-navy">Mi reserva</strong>, hasta 48 h antes.
+                      In that same email you pick the meals you left undecided — or you do it from{' '}
+                      <strong className="font-semibold text-navy">My booking</strong>, up to 48 h before.
                     </>
                   ) : null}
                 </>
@@ -191,11 +191,11 @@ export function GraciasPage() {
             />
             <PasoTimeline
               numero={2}
-              cuando={`${fechaLarga(fechaRecordatorioISO)} (día antes), por la tarde`}
+              cuando={`${fechaLarga(fechaRecordatorioISO)} (the day before), in the afternoon`}
               descripcion={
                 <>
-                  Te confirmamos por WhatsApp la recogida en{' '}
-                  <strong className="font-semibold text-navy">{reserva.recogida.hotel || 'tu hotel'}</strong>
+                  We confirm your pickup on WhatsApp at{' '}
+                  <strong className="font-semibold text-navy">{reserva.recogida.hotel || 'your hotel'}</strong>
                   {reserva.recogida.notas ? `, ${reserva.recogida.notas}` : ''}.
                 </>
               }
@@ -205,11 +205,11 @@ export function GraciasPage() {
               cuando={fechaLarga(reserva.fechaISO)}
               descripcion={
                 <>
-                  Trae traje de baño, toalla y protector biodegradable. El saldo de{' '}
-                  <strong className="font-semibold text-navy">{formatoDinero(reserva.saldo)}</strong> lo pagas
-                  a bordo — en efectivo te quedan{' '}
-                  <strong className="font-semibold text-navy">{formatoDinero(totalCon5Pct)}</strong> con el 5% de
-                  descuento.
+                  Bring a swimsuit, a towel and biodegradable sunscreen. You pay the balance of{' '}
+                  <strong className="font-semibold text-navy">{formatoDinero(reserva.saldo)}</strong> on
+                  board — in cash it comes to{' '}
+                  <strong className="font-semibold text-navy">{formatoDinero(totalCon5Pct)}</strong> with the 5%
+                  discount.
                 </>
               }
             />
@@ -218,38 +218,38 @@ export function GraciasPage() {
 
         {/* 5. RESUMEN */}
         <section className="mt-10 rounded-card-grande border border-linea bg-papel p-5 sm:p-6">
-          <p className="text-xs font-semibold uppercase tracking-wide text-navy-soft">Tu reserva</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-navy-soft">Your booking</p>
           <p className="mt-1 font-display text-lg font-semibold text-navy">{reserva.tour.nombre}</p>
           <dl className="mt-4 space-y-2 text-sm">
-            <FilaResumen label="Fecha" valor={fechaLarga(reserva.fechaISO)} />
+            <FilaResumen label="Date" valor={fechaLarga(reserva.fechaISO)} />
             <FilaResumen
-              label="Horario"
-              valor={horario ? `${horario.hora}${horario.regreso ? ` — regreso ${horario.regreso}` : ''}` : '—'}
+              label="Schedule"
+              valor={horario ? `${horario.hora}${horario.regreso ? ` — back at ${horario.regreso}` : ''}` : '—'}
             />
             <FilaResumen
-              label="Personas"
+              label="Guests"
               valor={`${reserva.personas} · ${reserva.paquete === 'premium' ? 'Premium' : 'Light'}`}
             />
             <FilaResumen
-              label="Menú"
+              label="Menu"
               valor={
                 // Desde 2026-08-07 se puede reservar sin elegir plato: los
                 // huecos se dicen, no se pintan como una lista con comas
                 // vacías. Si no eligió ninguno, la fila entera lo declara.
                 platosElegidos.length === 0
-                  ? 'Por confirmar por correo'
+                  ? 'To be confirmed by email'
                   : platosElegidos.length < reserva.platos.length
-                    ? `${platosElegidos.map((p) => nombrePlato(p)).join(', ')} · el resto, por correo`
+                    ? `${platosElegidos.map((p) => nombrePlato(p)).join(', ')} · the rest, by email`
                     : platosElegidos.map((p) => nombrePlato(p)).join(', ')
               }
             />
-            <FilaResumen label="Recogida" valor={reserva.recogida.hotel || '—'} />
+            <FilaResumen label="Pickup" valor={reserva.recogida.hotel || '—'} />
             <div className="!mt-3 flex items-center justify-between border-t border-linea pt-3 text-sm">
-              <span className="text-navy-soft">Ya pagado (depósito)</span>
+              <span className="text-navy-soft">Already paid (deposit)</span>
               <span className="font-semibold text-navy">{formatoDinero(reserva.deposito)}</span>
             </div>
             <div className="flex items-center justify-between text-sm">
-              <span className="text-navy-soft">Saldo a bordo (efectivo, −5%)</span>
+              <span className="text-navy-soft">Balance on board (cash, −5%)</span>
               <span className="font-semibold text-navy">{formatoDinero(totalCon5Pct)}</span>
             </div>
           </dl>
@@ -257,7 +257,7 @@ export function GraciasPage() {
             to={`/my-booking?codigo=${reserva.codigo}`}
             className="mt-4 inline-block text-sm font-semibold text-aqua-dark hover:underline"
           >
-            Cambiar el menú o la recogida →
+            Change the menu or the pickup →
           </Link>
         </section>
 
@@ -273,36 +273,36 @@ export function GraciasPage() {
             {celebra ? (
               <div>
                 <p className="font-display text-base font-semibold text-navy">
-                  Anotado: {celebra.toLowerCase()}
+                  Noted: {celebra.toLowerCase()}
                 </p>
                 <p className="mt-1 text-sm text-navy-sub">
                   {reserva.celebracion?.nota
-                    ? `«${reserva.celebracion.nota}» — la tripulación lo sabrá antes de zarpar. `
-                    : 'La tripulación lo sabrá antes de zarpar. '}
-                  Si quieres algo concreto —tarta, decoración— lo organizamos por aquí.
+                    ? `“${reserva.celebracion.nota}” — the crew will know before we set sail. `
+                    : 'The crew will know before we set sail. '}
+                  If you want something specific — cake, decorations — we’ll arrange it here.
                 </p>
                 <a
-                  href={`https://wa.me/18293052804?text=${encodeURIComponent(`Hola! Soy ${reserva.contacto.nombre}, tengo la reserva ${reserva.codigo} y quería organizar algo para ${celebra.toLowerCase()} 🎉`)}`}
+                  href={`https://wa.me/18293052804?text=${encodeURIComponent(`Hi! I’m ${reserva.contacto.nombre}, my booking is ${reserva.codigo} and I’d like to organize something for a ${celebra.toLowerCase()} 🎉`)}`}
                   target="_blank"
                   rel="noopener"
                   className="mt-2 inline-block text-sm font-semibold text-aqua-dark hover:underline"
                 >
-                  Organizarlo por WhatsApp →
+                  Arrange it on WhatsApp →
                 </a>
               </div>
             ) : (
               <div>
-                <p className="font-display text-base font-semibold text-navy">¿Celebráis algo?</p>
+                <p className="font-display text-base font-semibold text-navy">Celebrating something?</p>
                 <p className="mt-1 text-sm text-navy-sub">
-                  Cumpleaños, aniversario, pedida… cuéntanoslo por WhatsApp y lo preparamos a bordo.
+                  Birthday, anniversary, proposal… tell us on WhatsApp and we’ll set it up on board.
                 </p>
                 <a
-                  href={`https://wa.me/18293052804?text=${encodeURIComponent(`Hola! Soy ${reserva.contacto.nombre}, tengo la reserva ${reserva.codigo} y quería hablaros de una celebración especial 🎉`)}`}
+                  href={`https://wa.me/18293052804?text=${encodeURIComponent(`Hi! I’m ${reserva.contacto.nombre}, my booking is ${reserva.codigo} and I’d like to talk about a special celebration 🎉`)}`}
                   target="_blank"
                   rel="noopener"
                   className="mt-2 inline-block text-sm font-semibold text-aqua-dark hover:underline"
                 >
-                  Escribirnos por WhatsApp →
+                  Message us on WhatsApp →
                 </a>
               </div>
             )}
@@ -311,7 +311,7 @@ export function GraciasPage() {
 
         {/* 7. Tracking — ¿cómo nos encontraste? */}
         <section className="mt-10 border-t border-linea pt-6">
-          <p className="text-sm text-navy-soft">Por curiosidad: ¿cómo nos encontraste?</p>
+          <p className="text-sm text-navy-soft">Just curious: how did you find us?</p>
           <div className="mt-3 flex flex-wrap gap-2">
             {ORIGENES.map((o) => (
               <button
@@ -329,13 +329,13 @@ export function GraciasPage() {
             ))}
           </div>
           {origen && (
-            <p className="mt-3 text-sm text-aqua-dark">¡Gracias! Nos ayuda a mejorar.</p>
+            <p className="mt-3 text-sm text-aqua-dark">Thank you! It helps us improve.</p>
           )}
         </section>
       </main>
 
       <footer className="mt-12 border-t border-linea py-6 text-center text-xs text-navy-soft">
-        Hispaniola Aquatic Adventures · ¿Dudas? WhatsApp +1-829-305-2804
+        Hispaniola Aquatic Adventures · Questions? WhatsApp +1-829-305-2804
       </footer>
     </div>
   )

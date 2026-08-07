@@ -86,11 +86,11 @@ export function CalculadoraEvento({
     // de la caja y no hay overflow que pueda comérsela.
     <div className="flex flex-col gap-4 rounded-card-grande bg-papel p-4 widget-marco sm:p-5">
       <div>
-        <p className="font-display text-lg font-semibold text-navy">Reserva online</p>
+        <p className="font-display text-lg font-semibold text-navy">Book online</p>
         {/* Una línea, no dos (2026-07-28): cada línea que se ahorra aquí es
             una línea que la card de «¿tu evento no encaja?» gana para entrar
             sin scroll en una ventana de portátil. */}
-        <p className="mt-0.5 text-sm text-navy-sub">Precio cerrado, sin esperar cotización.</p>
+        <p className="mt-0.5 text-sm text-navy-sub">Fixed price, no waiting for a quote.</p>
       </div>
 
       {/* ── ELEGIR PAQUETE ───────────────────────────────────────────────
@@ -226,7 +226,7 @@ export function CalculadoraEvento({
                 type="button"
                 variant="stroke"
                 fullRadius
-                aria-label="Quitar un invitado"
+                aria-label="Remove one guest"
                 disabled={personas <= 1}
                 onClick={() => setPersonas((n) => Math.max(1, n - 1))}
                 className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
@@ -237,7 +237,7 @@ export function CalculadoraEvento({
                 type="button"
                 variant="stroke"
                 fullRadius
-                aria-label="Añadir un invitado"
+                aria-label="Add one guest"
                 onClick={() => setPersonas((n) => n + 1)}
                 className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
               >
@@ -285,8 +285,8 @@ export function CalculadoraEvento({
             <span className="tabular-nums">{formatoDinero(total)}</span>
           </div>
           <p className="text-xs text-navy-soft">
-            Reservas con el {DEPOSITO * 100}% ({formatoDinero(Math.round(total * DEPOSITO))}) y pagas
-            el resto el día del evento.
+            You book with {DEPOSITO * 100}% ({formatoDinero(Math.round(total * DEPOSITO))}) and pay
+            the rest on the day of the event.
           </p>
         </div>
       ) : null}

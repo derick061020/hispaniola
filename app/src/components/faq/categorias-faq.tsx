@@ -135,10 +135,10 @@ export function CategoriasFaq() {
           cambian la URL ni la posición del scroll, solo lo que se pinta. */}
       <div
         role="group"
-        aria-label="Filtrar preguntas por categoría"
+        aria-label="Filter questions by category"
         className="flex flex-wrap justify-center gap-2"
       >
-        {[{ id: null, nombre: 'Todos' }, ...FAQ_CATEGORIAS.map((c) => ({ id: c.id, nombre: c.nombre }))].map(
+        {[{ id: null, nombre: 'All' }, ...FAQ_CATEGORIAS.map((c) => ({ id: c.id, nombre: c.nombre }))].map(
           (chip) => {
             const seleccionado = activa === chip.id
             return (

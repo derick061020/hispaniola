@@ -29,8 +29,8 @@ export function FormularioAgentes() {
         className="rounded-card-grande bg-papel p-6 ring-1 ring-linea sm:p-8"
       >
         <div className="flex flex-col gap-4">
-          <Campo etiqueta="Nombre de la agencia / DMC" name="agencia" required />
-          <Campo etiqueta="Persona de contacto" name="contacto" required />
+          <Campo etiqueta="Agency / DMC name" name="agencia" required />
+          <Campo etiqueta="Contact person" name="contacto" required />
           <Campo etiqueta="Email" name="email" type="email" required />
           <Campo etiqueta="Teléfono / WhatsApp" name="telefono" type="tel" required />
           <Campo etiqueta="Mensaje" name="mensaje" textarea placeholder="Volumen estimado, destinos, temporada…" />
@@ -41,7 +41,7 @@ export function FormularioAgentes() {
 
         {enviado ? (
           <p role="status" className="mt-4 rounded-btn bg-papel-hueso p-4 text-sm font-medium text-menta-texto">
-            Recibimos tu registro — te contactamos en menos de 24 h.
+            We got your registration — we’ll be in touch within 24 h.
           </p>
         ) : null}
       </form>

@@ -132,8 +132,8 @@ function PantallaIngreso({
   return (
     <div className="min-h-screen bg-papel-hueso">
       <Meta
-        titulo="Mi reserva"
-        descripcion="Gestiona tu reserva: cambia el menú, la recogida o los datos, o paga el saldo. Introduce tu código HSP-XXXX-NNNN."
+        titulo="My booking"
+        descripcion="Manage your booking: change the menu, the pickup or your details, or pay the balance. Enter your HSP-XXXX-NNNN code."
         ruta="/my-booking"
       />
       <header className="border-b border-linea">
@@ -143,7 +143,7 @@ function PantallaIngreso({
             className="inline-flex items-center gap-1.5 justify-self-start text-sm font-semibold text-aqua-dark hover:underline"
           >
             <ArrowLeft className="size-4" aria-hidden="true" />
-            Volver al inicio
+            Back to home
           </Link>
           <Link to="/" aria-label="Inicio de Hispaniola Aquatic Adventures" className="justify-self-center">
             <Logo compacto />
@@ -237,7 +237,7 @@ function PantallaIngreso({
 
           <div className="mt-6 border-t border-linea pt-5">
             <p className="text-center text-xs text-navy-soft">
-              ¿Sigues sin encontrarla? Escríbenos por{' '}
+              Still cannot find it? Message us on{' '}
               <a
                 href="https://wa.me/18293052804"
                 target="_blank"
@@ -246,7 +246,7 @@ function PantallaIngreso({
               >
                 WhatsApp
               </a>{' '}
-              y la buscamos.
+              and we’ll look it up.
             </p>
           </div>
         </div>
@@ -281,7 +281,7 @@ function DetalleReserva({ codigoIngresado }: { codigoIngresado: string }) {
   return (
     <div className="min-h-screen bg-papel">
       <Meta
-        titulo={`Mi reserva · ${reservaParaMostrar.codigo}`}
+        titulo={`My booking · ${reservaParaMostrar.codigo}`}
         descripcion={`Gestiona tu reserva ${reservaParaMostrar.codigo} de ${reservaParaMostrar.tour.nombre} para ${reservaParaMostrar.personas} personas el ${fechaLarga(reservaParaMostrar.fechaISO)}.`}
         ruta={`/my-booking?codigo=${reservaParaMostrar.codigo}`}
         indexable={false}
@@ -294,7 +294,7 @@ function DetalleReserva({ codigoIngresado }: { codigoIngresado: string }) {
             className="inline-flex items-center gap-1.5 justify-self-start text-sm font-semibold text-aqua-dark hover:underline"
           >
             <ArrowLeft className="size-4" aria-hidden="true" />
-            Volver al inicio
+            Back to home
           </Link>
           <Link to="/" aria-label="Inicio de Hispaniola Aquatic Adventures" className="justify-self-center">
             <Logo compacto />
@@ -304,7 +304,7 @@ function DetalleReserva({ codigoIngresado }: { codigoIngresado: string }) {
             className="inline-flex items-center gap-1.5 justify-self-end rounded-btn border border-linea bg-papel px-3 py-1.5 text-sm font-medium text-navy transition-colors hover:bg-papel-hueso"
           >
             <KeyRound className="size-3.5" aria-hidden="true" />
-            Usar otro código
+            Use another code
           </Link>
         </div>
       </header>
@@ -317,22 +317,22 @@ function DetalleReserva({ codigoIngresado }: { codigoIngresado: string }) {
             completes una reserva real" porque la idea es que el cliente
             entienda que esta vista es el preview, no su reserva real. */}
         <div className="mb-6 rounded-card border border-coral/30 bg-coral/5 p-4 text-sm text-navy-sub">
-          Estás viendo una <strong className="font-semibold text-navy">reserva de ejemplo</strong>.
-          Cuando hagas una reserva real, esta pantalla mostrará la tuya con tus datos. Los cambios
-          que hagas aquí se guardan en tu navegador, no en nuestro sistema.
+          You are looking at a <strong className="font-semibold text-navy">sample booking</strong>.
+          When you make a real booking, this screen will show yours with your details. Any changes
+          you make here are saved in your browser, not in our system.
         </div>
 
         {/* 1. CABECERA */}
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-navy-soft">Mi reserva</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-navy-soft">My booking</p>
             <h1 className="mt-1 font-display text-2xl font-semibold text-navy sm:text-3xl">
               {reservaParaMostrar.codigo}
               <span className="text-navy-soft"> · {reservaParaMostrar.tour.nombre}</span>
             </h1>
             <p className="mt-1 text-sm text-navy-sub">
               {fechaLarga(reservaParaMostrar.fechaISO)} · {horario?.hora ?? '—'} · {reservaParaMostrar.personas}{' '}
-              {reservaParaMostrar.personas === 1 ? 'persona' : 'personas'}
+              {reservaParaMostrar.personas === 1 ? 'guest' : 'guests'}
             </p>
           </div>
           <span className="inline-flex items-center gap-1.5 rounded-chip bg-menta px-3 py-1.5 text-sm font-semibold text-menta-texto">
@@ -355,9 +355,9 @@ function DetalleReserva({ codigoIngresado }: { codigoIngresado: string }) {
 
         {/* 6. FOOTER */}
         <div className="mt-10 flex flex-wrap items-center justify-between gap-3 border-t border-linea pt-6 text-sm text-navy-soft">
-          <p>¿Algo no encaja? Escríbenos y lo arreglamos.</p>
+          <p>Something not right? Message us and we’ll fix it.</p>
           <a
-            href={`https://wa.me/18293052804?text=${encodeURIComponent(`Hola! Tengo la reserva ${reservaParaMostrar.codigo} y necesito ayuda.`)}`}
+            href={`https://wa.me/18293052804?text=${encodeURIComponent(`Hi! My booking is ${reservaParaMostrar.codigo} and I need some help.`)}`}
             target="_blank"
             rel="noopener"
             className="font-semibold text-aqua-dark hover:underline"
@@ -381,13 +381,13 @@ function BloqueReserva({ reserva }: { reserva: Reserva }) {
     <section className="mt-8 rounded-card-grande border border-linea bg-papel p-5 sm:p-6">
       <div className="flex items-center gap-2">
         <CreditCard className="size-5 text-aqua" aria-hidden="true" />
-        <h2 className="font-display text-lg font-semibold text-navy">Tu reserva</h2>
+        <h2 className="font-display text-lg font-semibold text-navy">Your booking</h2>
       </div>
       <dl className="mt-4 space-y-2 text-sm">
-        <Fila label="Total del tour" valor={formatoDinero(reserva.total)} />
-        <Fila label="Ya pagado" valor={formatoDinero(reserva.deposito)} />
+        <Fila label="Tour total" valor={formatoDinero(reserva.total)} />
+        <Fila label="Already paid" valor={formatoDinero(reserva.deposito)} />
         <div className="flex items-center justify-between border-t border-linea pt-3 text-sm">
-          <dt className="font-medium text-navy">Saldo pendiente</dt>
+          <dt className="font-medium text-navy">Balance due</dt>
           <dd className="text-base font-semibold text-navy">{formatoDinero(reserva.saldo)}</dd>
         </div>
       </dl>
@@ -398,17 +398,17 @@ function BloqueReserva({ reserva }: { reserva: Reserva }) {
             onClick={() => setPagado(true)}
             className="w-full rounded-btn bg-coral px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-coral-dark"
           >
-            Pagar saldo online — {formatoDinero(reserva.saldo)}
+            Pay the balance online — {formatoDinero(reserva.saldo)}
           </button>
           <p className="mt-2 text-center text-xs text-navy-soft">
-            O paga en efectivo a bordo — no hace falta hacer nada aquí.
+            Or pay in cash on board — nothing to do here.
           </p>
         </div>
       )}
       {pagado && (
         <p className="mt-4 inline-flex items-center gap-1.5 rounded-chip bg-menta px-3 py-1.5 text-sm font-semibold text-menta-texto">
           <Check className="size-4" aria-hidden="true" />
-          Saldo pagado — no queda nada pendiente.
+          Balance paid — nothing left to settle.
         </p>
       )}
     </section>
@@ -443,7 +443,7 @@ function BloqueMenu({ reserva, guardar }: { reserva: Reserva; guardar: (r: Reser
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Utensils className="size-5 text-aqua" aria-hidden="true" />
-          <h2 className="font-display text-lg font-semibold text-navy">Tu menú</h2>
+          <h2 className="font-display text-lg font-semibold text-navy">Your menu</h2>
         </div>
         {!edit && (
           <BotonEditar onClick={() => setEdit(true)} />
@@ -459,14 +459,14 @@ function BloqueMenu({ reserva, guardar }: { reserva: Reserva; guardar: (r: Reser
           {platos.map((p, i) => (
             <div key={i}>
               <label className="text-xs font-semibold uppercase tracking-wide text-navy-soft">
-                Persona {i + 1}
+                Guest {i + 1}
               </label>
               <select
                 value={p}
                 onChange={(e) => setPlatos((prev) => prev.map((x, j) => (i === j ? e.target.value : x)))}
                 className="mt-1 w-full rounded-btn border border-linea bg-papel px-3 py-2 text-sm text-navy focus:border-aqua focus:outline-none focus:ring-2 focus:ring-aqua/20"
               >
-                <option value="">Sin elegir — lo confirmamos por correo</option>
+                <option value="">Not chosen — we’ll confirm by email</option>
                 {menu.map((plato) => (
                   <option key={plato.nombre} value={plato.nombre}>
                     {plato.nombre}
@@ -481,14 +481,14 @@ function BloqueMenu({ reserva, guardar }: { reserva: Reserva; guardar: (r: Reser
               onClick={guardarCambios}
               className="rounded-btn bg-coral px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-coral-dark"
             >
-              Guardar menú
+              Save menu
             </button>
             <button
               type="button"
               onClick={cancelar}
               className="rounded-btn border border-linea bg-papel px-4 py-2 text-sm font-medium text-navy transition-colors hover:bg-papel-hueso"
             >
-              Cancelar
+              Cancel
             </button>
           </div>
         </div>
@@ -496,11 +496,11 @@ function BloqueMenu({ reserva, guardar }: { reserva: Reserva; guardar: (r: Reser
         <ul className="mt-4 space-y-1.5 text-sm">
           {reserva.platos.map((p, i) => (
             <li key={i} className="flex items-center justify-between">
-              <span className="text-navy-soft">Persona {i + 1}</span>
+              <span className="text-navy-soft">Guest {i + 1}</span>
               {p ? (
                 <span className="font-medium text-navy">{nombrePlato(p, menu)}</span>
               ) : (
-                <span className="text-navy-soft">Sin elegir</span>
+                <span className="text-navy-soft">Not chosen</span>
               )}
             </li>
           ))}
@@ -530,7 +530,7 @@ function BloqueRecogida({ reserva, guardar }: { reserva: Reserva; guardar: (r: R
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <MapPin className="size-5 text-aqua" aria-hidden="true" />
-          <h2 className="font-display text-lg font-semibold text-navy">Recogida</h2>
+          <h2 className="font-display text-lg font-semibold text-navy">Pickup</h2>
         </div>
         {!edit && <BotonEditar onClick={() => setEdit(true)} />}
       </div>
@@ -541,14 +541,14 @@ function BloqueRecogida({ reserva, guardar }: { reserva: Reserva; guardar: (r: R
             etiqueta="Hotel"
             value={hotel}
             onChange={(e) => setHotel(e.target.value)}
-            placeholder="Nombre del hotel"
+            placeholder="Hotel name"
             required
           />
           <Campo
-            etiqueta="Notas"
+            etiqueta="Notes"
             value={notas}
             onChange={(e) => setNotas(e.target.value)}
-            placeholder="Habitación, hora preferida, etc."
+            placeholder="Room number, preferred time, etc."
           />
           <div className="flex gap-2 pt-2">
             <button
@@ -556,14 +556,14 @@ function BloqueRecogida({ reserva, guardar }: { reserva: Reserva; guardar: (r: R
               onClick={guardarCambios}
               className="rounded-btn bg-coral px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-coral-dark"
             >
-              Guardar
+              Save
             </button>
             <button
               type="button"
               onClick={cancelar}
               className="rounded-btn border border-linea bg-papel px-4 py-2 text-sm font-medium text-navy transition-colors hover:bg-papel-hueso"
             >
-              Cancelar
+              Cancel
             </button>
           </div>
         </div>
@@ -605,7 +605,7 @@ function BloqueContacto({ reserva, guardar }: { reserva: Reserva; guardar: (r: R
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Users className="size-5 text-aqua" aria-hidden="true" />
-          <h2 className="font-display text-lg font-semibold text-navy">Datos de contacto</h2>
+          <h2 className="font-display text-lg font-semibold text-navy">Contact details</h2>
         </div>
         {!edit && <BotonEditar onClick={() => setEdit(true)} />}
       </div>
@@ -613,10 +613,10 @@ function BloqueContacto({ reserva, guardar }: { reserva: Reserva; guardar: (r: R
       {edit ? (
         <div className="mt-4 space-y-3">
           <div className="grid gap-3 sm:grid-cols-2">
-            <Campo etiqueta="Nombre" value={contacto.nombre} onChange={(e) => setContacto((c) => ({ ...c, nombre: e.target.value }))} required />
-            <Campo etiqueta="Apellidos" value={contacto.apellidos} onChange={(e) => setContacto((c) => ({ ...c, apellidos: e.target.value }))} />
+            <Campo etiqueta="First name" value={contacto.nombre} onChange={(e) => setContacto((c) => ({ ...c, nombre: e.target.value }))} required />
+            <Campo etiqueta="Last name" value={contacto.apellidos} onChange={(e) => setContacto((c) => ({ ...c, apellidos: e.target.value }))} />
             <Campo etiqueta="Email" type="email" value={contacto.email} onChange={(e) => setContacto((c) => ({ ...c, email: e.target.value }))} required />
-            <Campo etiqueta="Teléfono" type="tel" value={contacto.telefono} onChange={(e) => setContacto((c) => ({ ...c, telefono: e.target.value }))} />
+            <Campo etiqueta="Phone" type="tel" value={contacto.telefono} onChange={(e) => setContacto((c) => ({ ...c, telefono: e.target.value }))} />
           </div>
           <div className="flex gap-2 pt-2">
             <button
@@ -624,22 +624,22 @@ function BloqueContacto({ reserva, guardar }: { reserva: Reserva; guardar: (r: R
               onClick={guardarCambios}
               className="rounded-btn bg-coral px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-coral-dark"
             >
-              Guardar
+              Save
             </button>
             <button
               type="button"
               onClick={cancelar}
               className="rounded-btn border border-linea bg-papel px-4 py-2 text-sm font-medium text-navy transition-colors hover:bg-papel-hueso"
             >
-              Cancelar
+              Cancel
             </button>
           </div>
         </div>
       ) : (
         <dl className="mt-4 space-y-1 text-sm">
-          <Fila label="Nombre" valor={`${reserva.contacto.nombre} ${reserva.contacto.apellidos}`.trim()} />
+          <Fila label="Name" valor={`${reserva.contacto.nombre} ${reserva.contacto.apellidos}`.trim()} />
           <Fila label="Email" valor={reserva.contacto.email} />
-          <Fila label="Teléfono" valor={reserva.contacto.telefono} />
+          <Fila label="Phone" valor={reserva.contacto.telefono} />
         </dl>
       )}
     </section>
@@ -654,7 +654,7 @@ function BotonEditar({ onClick }: { onClick: () => void }) {
       className="inline-flex items-center gap-1.5 rounded-btn border border-linea bg-papel px-3 py-1.5 text-sm font-medium text-navy transition-colors hover:bg-papel-hueso"
     >
       <Pencil className="size-3.5" aria-hidden="true" />
-      Editar
+      Edit
     </button>
   )
 }

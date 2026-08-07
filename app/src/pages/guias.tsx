@@ -44,8 +44,8 @@ export function GuiasPage() {
   return (
     <div>
       <Meta
-        titulo="Guías"
-        descripcion="Tips reales sobre esnórquel y navegación en Punta Cana: cómo es el arrecife, cuánto se navega a vela, si el mar es seguro y qué mariscos sirvemos a bordo."
+        titulo="Guides"
+        descripcion="Real tips on snorkeling and sailing in Punta Cana: what the reef is like, how much of the trip is under sail, whether the sea is safe and what seafood we serve on board."
         ruta="/guides"
       />
       <HeroInterna ctaHref="/#tours">

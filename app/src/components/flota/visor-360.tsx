@@ -83,7 +83,7 @@ export function Visor360({
             <CompactButton.Root
               variant="ghost"
               size="large"
-              aria-label="Cerrar el visor de 360º"
+              aria-label="Close the 360º viewer"
               className="shrink-0 text-white hover:bg-white/10 hover:text-white"
             >
               <CompactButton.Icon as={X} />

@@ -303,7 +303,7 @@ export function EquipoTeaser({
               to="/crew"
               className="group inline-flex items-center gap-1.5 text-lead font-semibold text-coral transition-colors hover:text-coral-dark"
             >
-              Conoce también a la tripulación a bordo
+              Meet the crew on board too
               <ArrowRight
                 className="size-4 transition-transform duration-200 motion-safe:group-hover:translate-x-1"
                 aria-hidden="true"

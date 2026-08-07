@@ -111,7 +111,7 @@ export function CierreDoble({
 
             <div className="mt-auto pt-8">
               <Boton to="/#tours" tamaño="lg" className="w-full">
-                Reserva y deja tu huella
+                Book and leave your mark
               </Boton>
             </div>
           </div>

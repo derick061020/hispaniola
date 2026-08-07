@@ -18,11 +18,11 @@ export type DatosContacto = { nombre: string; apellidos: string; email: string; 
 export type Ocasion = 'cumpleanos' | 'aniversario' | 'luna-de-miel' | 'pedida' | 'ninguna'
 
 export const OCASIONES: { id: Ocasion; etiqueta: string }[] = [
-  { id: 'cumpleanos', etiqueta: 'Cumpleaños' },
-  { id: 'aniversario', etiqueta: 'Aniversario' },
-  { id: 'luna-de-miel', etiqueta: 'Luna de miel' },
-  { id: 'pedida', etiqueta: 'Pedida de mano' },
-  { id: 'ninguna', etiqueta: 'Nada en particular' },
+  { id: 'cumpleanos', etiqueta: 'Birthday' },
+  { id: 'aniversario', etiqueta: 'Anniversary' },
+  { id: 'luna-de-miel', etiqueta: 'Honeymoon' },
+  { id: 'pedida', etiqueta: 'Proposal' },
+  { id: 'ninguna', etiqueta: 'Nothing in particular' },
 ]
 
 export type DatosCelebracion = { ocasion: Ocasion | null; nota: string }

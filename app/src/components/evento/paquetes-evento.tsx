@@ -212,7 +212,7 @@ function Card({
                   <span>
                     {/* Para lectores de pantalla el icono no dice nada: la
                         palabra sí. */}
-                    <span className="sr-only">{item ? 'Incluido: ' : 'No incluido: '}</span>
+                    <span className="sr-only">{item ? 'Included: ' : 'Not included: '}</span>
                     {plato}
                     {item?.texto ? <span className="text-navy-soft"> · {item.texto}</span> : null}
                   </span>
@@ -222,7 +222,7 @@ function Card({
           </ul>
         ) : (
           <p className="mt-4 flex-1 text-sm italic text-navy-soft">
-            Menú detallado al confirmar — escríbenos por WhatsApp y te lo pasamos.
+            Full menu on confirmation — message us on WhatsApp and we’ll send it over.
           </p>
         )}
 
@@ -291,8 +291,8 @@ export function PaquetesEvento({
           mintiendo. */}
       <p className="mt-1 text-sm text-navy-soft">
         Los {paquetes.items.length} llevan lo mismo a bordo —todo lo de «{evento.incluyeTitulo}»
-        arriba—; lo que cambia es el menú, la duración y el precio. Elige uno y el total de tu grupo
-        se calcula solo.
+        above—; what changes is the menu, the duration and the price. Pick one and your group total
+        works itself out.
       </p>
 
       <div className="mt-5 flex flex-col gap-4">

@@ -48,7 +48,7 @@ export const KPIS: Kpi[] = [
   // «1782» y el resto del sitio dice «1.782» (footer, flota, reseñas).
   {
     valor: RESENAS_AGREGADO.rating,
-    label: `${RESENAS_AGREGADO.total.toLocaleString('es-ES', { useGrouping: 'always' })} reseñas`,
+    label: `${RESENAS_AGREGADO.total.toLocaleString('es-ES', { useGrouping: 'always' })} reviews`,
   },
 ]
 
@@ -82,51 +82,51 @@ export type ConceptoSuelto = {
 export const CONCEPTOS_SUELTOS: ConceptoSuelto[] = [
   {
     id: 'charter',
-    nombre: 'Charter de 4 h',
-    nota: 'Barco, tripulación, bebidas y picadera',
+    nombre: '4-hour charter',
+    nota: 'Boat, crew, drinks and appetizers',
     importe: 75,
     foto: 'hero-catamaran-1',
-    fotoAlt: 'Catamarán de Hispaniola navegando frente a la costa de Bávaro',
+    fotoAlt: 'Hispaniola catamaran sailing off the coast of Bávaro',
   },
   {
     id: 'snorkel',
-    nombre: 'Salida de snorkel',
-    nota: 'Equipo, guía y parada en el arrecife',
+    nombre: 'Snorkeling trip',
+    nota: 'Gear, guide and a stop at the reef',
     importe: 30,
     foto: 'galeria-semi-privado-4',
-    fotoAlt: 'Huésped haciendo snorkel entre peces sargento sobre el arrecife',
+    fotoAlt: 'Guest snorkeling among sergeant major fish over the reef',
   },
   {
     id: 'almuerzo',
-    nombre: 'Almuerzo de mariscos',
-    nota: 'Hecho a bordo, en la cocina flotante',
+    nombre: 'Seafood lunch',
+    nota: 'Cooked on board, in the floating kitchen',
     importe: 50,
     foto: 'plato-mariscos',
-    fotoAlt: 'Plato de mariscos —langosta, pulpo y camarón— recién hecho a bordo',
+    fotoAlt: 'Seafood plate —lobster, octopus and shrimp— freshly made on board',
   },
   {
     id: 'bebidas',
-    nombre: 'Bebidas de marca',
-    nota: 'Ron añejo, cerveza nacional, refrescos',
+    nombre: 'Name-brand drinks',
+    nota: 'Aged rum, local beer, soft drinks',
     importe: 10,
     foto: 'bar-flotante',
-    fotoAlt: 'La barra del catamarán durante el servicio de bebidas',
+    fotoAlt: 'The catamaran bar during drink service',
   },
   {
     id: 'coco-loco',
-    nombre: 'Coco Loco en la playa',
-    nota: 'El cóctel típico, en la parada de playa',
+    nombre: 'Coco Loco on the beach',
+    nota: 'The local cocktail, at the beach stop',
     importe: 5,
     foto: 'galeria-charter-privado-4',
-    fotoAlt: 'El catamarán fondeado frente a una playa de palmeras',
+    fotoAlt: 'The catamaran anchored off a palm-lined beach',
   },
   {
     id: 'fotos',
-    nombre: 'Fotos del tour',
-    nota: 'Todo el día, GoPro incluida en el snorkel',
+    nombre: 'Tour photos',
+    nota: 'All day long, GoPro included on the snorkel stop',
     importe: 20,
     foto: 'galeria-snorkel-lovers-9',
-    fotoAlt: 'Familia en cubierta durante una actividad del tour',
+    fotoAlt: 'Family on deck during a tour activity',
   },
 ]
 
@@ -151,38 +151,38 @@ export type FilaCaraACara = {
 // rellena, no se copia el hueco.
 export const CARA_A_CARA: FilaCaraACara[] = [
   {
-    concepto: 'Mariscos',
-    nosotros: 'Frescos del día',
-    otros: 'Congelados',
+    concepto: 'Seafood',
+    nosotros: 'Fresh, caught that day',
+    otros: 'Frozen',
     foto: 'plato-mariscos',
-    fotoAlt: 'Plato de mariscos —langosta, pulpo y camarón— recién hecho a bordo',
+    fotoAlt: 'Seafood plate —lobster, octopus and shrimp— freshly made on board',
   },
   {
-    concepto: 'Bebidas',
-    nosotros: 'De marca, sin diluir',
-    otros: 'Diluidas',
+    concepto: 'Drinks',
+    nosotros: 'Name-brand, never watered down',
+    otros: 'Watered down',
     foto: 'bar-flotante',
-    fotoAlt: 'La barra del catamarán durante el servicio de bebidas',
+    fotoAlt: 'The catamaran bar during drink service',
   },
   {
-    concepto: 'Cocina a bordo',
-    nosotros: 'La única cocina flotante de Punta Cana',
-    otros: 'Comida recalentada',
+    concepto: 'Cooking on board',
+    nosotros: 'The only floating kitchen in Punta Cana',
+    otros: 'Reheated food',
     foto: 'cocina-flotante',
-    fotoAlt: 'La parrilla de la cocina flotante en funcionamiento',
+    fotoAlt: 'The floating kitchen grill in action',
   },
   {
-    concepto: 'Fotos del tour',
-    nosotros: 'Incluidas, también las del snorkel',
-    otros: 'Se cobran aparte',
+    concepto: 'Tour photos',
+    nosotros: 'Included, snorkeling shots too',
+    otros: 'Charged separately',
     foto: 'galeria-snorkel-lovers-9',
-    fotoAlt: 'Familia en cubierta durante una actividad del tour',
+    fotoAlt: 'Family on deck during a tour activity',
   },
   // Las dos sin foto van al final a propósito: así el bloque ABRE con cuatro
   // duelos que se ven y remata con dos que se leen, en vez de intercalar
   // huecos entre las fotos y parecer que faltan imágenes.
-  { concepto: 'Traslado al hotel', nosotros: 'Bus con aire acondicionado', otros: 'Vehículo abierto' },
-  { concepto: 'Reserva', nosotros: 'Directa con el propietario', otros: 'Por intermediario' },
+  { concepto: 'Hotel transfer', nosotros: 'Air-conditioned bus', otros: 'Open-air vehicle' },
+  { concepto: 'Booking', nosotros: 'Direct with the owner', otros: 'Through a middleman' },
 ]
 
 export type GrupoRazones = {
@@ -213,68 +213,68 @@ export type GrupoRazones = {
 export const RAZONES: GrupoRazones[] = [
   {
     id: 'comida',
-    titulo: 'La comida',
-    resumen: 'La única cocina flotante de Punta Cana, cocinando mientras navegas.',
+    titulo: 'The food',
+    resumen: 'The only floating kitchen in Punta Cana, cooking while you sail.',
     foto: 'cocina-flotante',
-    fotoAlt: 'La parrilla de la cocina flotante en funcionamiento',
+    fotoAlt: 'The floating kitchen grill in action',
     razones: [
-      'Mariscos frescos, nunca congelados',
-      'Solo bebidas de marca, sin diluir',
-      'Plataforma de cocina certificada',
-      'Se cocina a bordo, no se recalienta',
+      'Fresh seafood, never frozen',
+      'Name-brand drinks only, never watered down',
+      'Certified cooking platform',
+      'Cooked on board, not reheated',
     ],
   },
   {
     id: 'barco',
-    titulo: 'El barco',
-    resumen: 'Catamaranes propios, con sitio de sobra y todo en regla.',
+    titulo: 'The boat',
+    resumen: 'Our own catamarans, room to spare and everything in order.',
     foto: 'flota-forever-teresa',
-    fotoAlt: 'El catamarán Forever Teresa de la flota de Hispaniola',
+    fotoAlt: 'The catamaran Forever Teresa from the Hispaniola fleet',
     razones: [
-      'Semi-privado de verdad: máximo 25 en un barco para 70',
-      'Barcos limpios y bien mantenidos',
-      'Plataforma de acceso: fácil subir y bajar',
-      'Baños limpios a bordo',
-      'Sin mareos, apto para toda la familia',
+      'Truly semi-private: 25 people max on a boat built for 70',
+      'Clean, well-maintained boats',
+      'Boarding platform: easy to get in and out of the water',
+      'Clean restrooms on board',
+      'No seasickness, good for the whole family',
     ],
   },
   {
     id: 'ubicacion',
-    titulo: 'La ubicación',
-    resumen: 'En el centro de la zona hotelera, con el arrecife a un paso.',
+    titulo: 'The location',
+    resumen: 'In the middle of the hotel zone, with the reef a step away.',
     foto: 'galeria-snorkel-lovers-3',
-    fotoAlt: 'Estructuras del vivero de coral de Cabeza de Toro rodeadas de peces',
+    fotoAlt: 'Structures of the Cabeza de Toro coral nursery surrounded by fish',
     razones: [
-      'En el centro de la zona hotelera',
-      'Traslados en bus con aire acondicionado',
-      'Snorkel en un vivero de coral real, no en cualquier punto',
+      'In the middle of the hotel zone',
+      'Transfers in an air-conditioned bus',
+      'Snorkeling at a real coral nursery, not just any spot',
     ],
   },
   {
     id: 'reserva',
-    titulo: 'El precio y la reserva',
-    resumen: 'Hablas con el propietario. No hay comisión que pagar en medio.',
+    titulo: 'The price and the booking',
+    resumen: 'You talk to the owner. There’s no commission to pay in between.',
     razones: [
-      'Reserva directa con el propietario',
-      'Fotos del tour incluidas',
-      'Excursión de medio día: te queda la tarde libre',
+      'Book direct with the owner',
+      'Tour photos included',
+      'Half-day trip: your afternoon stays free',
     ],
   },
   {
     id: 'personas',
-    titulo: 'Las personas y el planeta',
-    resumen: 'Empresa legal, tripulación bien pagada y un arrecife que crece.',
+    titulo: 'People and the planet',
+    resumen: 'A legal company, a well-paid crew and a reef that keeps growing.',
     // Foto REAL de huéspedes en el agua junto al catamarán. Aquí NO sirve
     // equipo-capitan (el retrato de la tripulación): es un recorte de estudio
     // sobre fondo liso, y en una cabecera de card a sangre se lee como un
     // pegote de stock justo en el bloque que habla de las personas.
     foto: 'galeria-semi-privado-6',
-    fotoAlt: 'Grupo de huéspedes en el agua junto al catamarán de Hispaniola',
+    fotoAlt: 'Group of guests in the water next to the Hispaniola catamaran',
     razones: [
-      'Legal y asegurada, con todas las licencias',
-      'Respetuosos con el medio ambiente',
-      'Salario justo a nuestro personal',
-      'Equipo multilingüe',
+      'Legal and insured, with every license',
+      'Respectful of the environment',
+      'Fair pay for our staff',
+      'Multilingual team',
     ],
   },
 ]
@@ -292,28 +292,28 @@ export const TOTAL_RAZONES = RAZONES.reduce((s, g) => s + g.razones.length, 0)
 // ninguna parte del sitio, y «no pierdes hora y media en bus» es una objeción
 // real de comprador que hoy no contesta nadie.
 export const UBICACION = {
-  eyebrow: 'Ubicación, ubicación, ubicación',
-  titulo: 'El mejor punto de la costa — sin viajes eternos',
+  eyebrow: 'Location, location, location',
+  titulo: 'The best spot on the coast — with no endless drives',
   texto:
-    'Te llevamos a Cabeza de Toro, un parque natural en las aguas cristalinas del Cabo Engaño: el mejor arrecife de la zona para hacer snorkel. Y salimos del centro de la zona hotelera, así que el día empieza cuando subes al barco.',
+    'We take you to Cabeza de Toro, a natural park in the crystal-clear waters of Cabo Engaño: the best reef in the area for snorkeling. And we leave from the middle of the hotel zone, so your day starts when you step on board.',
   /** El dato que hace de titular visual del bloque. */
   cifra: '1½ h',
-  cifraLabel: 'de bus que no pierdes antes de empezar',
+  cifraLabel: 'of bus time you don’t lose before you start',
   claves: [
-    'Dentro del arrecife: aguas tranquilas, sin mareos',
-    'Buen mar todo el año',
-    'A minutos de tu hotel, no al otro lado de la isla',
+    'Inside the reef: calm water, no seasickness',
+    'Good sea conditions all year round',
+    'Minutes from your hotel, not across the island',
   ],
   foto: 'arrecife-fondo-cenital',
-  fotoAlt: 'Vista aérea del arrecife de Cabeza de Toro con el agua turquesa del Cabo Engaño',
+  fotoAlt: 'Aerial view of the Cabeza de Toro reef with the turquoise water of Cabo Engaño',
 } as const
 
 export const CIERRE = {
-  eyebrow: '¿Listo?',
-  titulo: 'Nos vemos en la playa',
+  eyebrow: 'Ready?',
+  titulo: 'See you on the beach',
   texto:
-    'Reserva directo con nosotros y recibe todo esto por un precio justo. Sin intermediarios, sin sorpresas — solo el mejor día en el mar de Punta Cana.',
-  letraPequena: 'Empresa legal y asegurada · todas las licencias turísticas de Punta Cana-Bávaro',
+    'Book direct with us and get all of this for a fair price. No middlemen, no surprises — just the best day at sea in Punta Cana.',
+  letraPequena: 'Legal, insured company · every tourism license in Punta Cana-Bávaro',
   foto: 'hero-catamaran-2',
-  fotoAlt: 'Catamarán de Hispaniola al atardecer frente a la costa de Punta Cana',
+  fotoAlt: 'Hispaniola catamaran at sunset off the coast of Punta Cana',
 } as const

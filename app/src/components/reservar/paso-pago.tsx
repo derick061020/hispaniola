@@ -22,9 +22,9 @@ export function PasoPago({
   return (
     <div className="flex flex-col gap-4">
       <p className="text-sm text-navy-sub">
-        Confirma tu plaza pagando hoy solo el <strong className="font-semibold text-navy">depósito del 25%</strong>{' '}
-        ({formatoDinero(deposito)}). El saldo de {formatoDinero(saldo)} lo pagas el día del tour — con un 5% de descuento
-        si es en efectivo a bordo.
+        Confirm your spot by paying only the <strong className="font-semibold text-navy">25% deposit</strong> today{' '}
+        ({formatoDinero(deposito)}). You pay the remaining {formatoDinero(saldo)} on the day of the tour — with a 5%
+        discount if you pay cash on board.
       </p>
 
       {/* Entrando directo a /book/:slug (sin pasar por el widget) la reserva
@@ -33,17 +33,17 @@ export function PasoPago({
           derecha, en el resumen (en móvil, arriba del todo). */}
       {!fechaElegida ? (
         <p className="rounded-lg border border-linea bg-papel-hueso px-3 py-2 text-xs leading-relaxed text-navy-sub">
-          Todavía no has elegido <strong className="text-navy">la fecha</strong>. Escógela en el resumen de tu reserva
-          para poder confirmar.
+          You haven’t chosen <strong className="text-navy">the date</strong> yet. Pick it in your booking summary so you
+          can confirm.
         </p>
       ) : null}
 
       <FancyButton.Root variant="primary" className="w-full" disabled={!fechaElegida} onClick={onPagar}>
-        Pagar depósito — {formatoDinero(deposito)}
+        Pay deposit — {formatoDinero(deposito)}
       </FancyButton.Root>
 
       <p className="flex items-center justify-center gap-1.5 text-xs text-navy-soft">
-        <Lock className="size-3.5" aria-hidden="true" /> Pago seguro · Cancela gratis hasta 7 días antes
+        <Lock className="size-3.5" aria-hidden="true" /> Secure payment · Free cancellation up to 7 days before
       </p>
     </div>
   )

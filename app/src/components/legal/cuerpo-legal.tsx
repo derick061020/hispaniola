@@ -12,9 +12,9 @@ export function CuerpoLegal({ doc }: { doc: DocumentoLegal }) {
 
       {!doc.contenidoReal ? (
         <div className="mt-6 rounded-card bg-coral/10 p-5 text-sm text-navy ring-1 ring-coral/30">
-          <strong className="font-semibold">Borrador de estructura, no un documento vinculante.</strong> Los apartados
-          de abajo son los que se esperan de esta página; el texto legal real está pendiente de redacción con un
-          abogado antes de publicar el sitio en producción.
+          <strong className="font-semibold">A structural draft, not a binding document.</strong> The sections below
+          are the ones expected on this page; the actual legal text still has to be drafted with a lawyer before the
+          site goes live in production.
         </div>
       ) : null}
 

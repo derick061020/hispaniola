@@ -74,7 +74,7 @@ export function Ubicacion() {
         </ul>
 
         <div className="mt-7">
-          <Boton to="/#tours">Ver los tours</Boton>
+          <Boton to="/#tours">See the tours</Boton>
         </div>
       </div>
     </section>

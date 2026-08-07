@@ -1600,6 +1600,21 @@
   --text-sost-aporte: 1.5rem; /* 24px — los US$ por huésped: cifras de SEGUNDO orden (son el cómo, no el cuánto), así que bajan un escalón claro respecto a --text-sost-impacto */
   --text-sost-aporte--line-height: 1.15;
 
+  /* ---------- Timeline de los 6 proyectos (v3 2026-08-07, PowerPoint slide
+     81: «esta sección hacerla más dinámica, mucho texto y no tiene imágenes
+     ni efectos»; 📞 reunión: «una foto de un coral, una tortuga») ----------
+     La foto que ahora lleva cada proyecto enfrente de su texto, al otro lado
+     del eje. El ancho lo pone EL ORIGINAL, no la rejilla: las 5 fotos de
+     galería miden 368×287, así que 384px es el techo antes de que se vean
+     blandas — el mismo número y el mismo motivo que --spacing-fund-frente-foto
+     en el barrido de /fundacion, pero token propio y sin var() cruzado (mismo
+     criterio que --text-guias-numero frente a --text-sost-numero: si un día
+     una de las dos vistas cambia de escala, no arrastra a la otra).
+     A media rejilla le sobran ~200px por fuera y está bien: la foto va PEGADA
+     AL EJE, igual que el texto de enfrente va alineado hacia él, así que el
+     aire cae en los cantos de la página y no en el pasillo central. */
+  --spacing-sost-proyecto-foto: 24rem; /* 384px — ver arriba: los originales miden 368 */
+
   /* ---------- Página Guías (rediseño editorial, 2026-07-17, pedido de
      Samuel: "parece una página con solo cajas... más editorial, más
      creativa e interesante") ---------- Mismo lenguaje que el rediseño de

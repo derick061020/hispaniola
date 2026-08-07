@@ -66,7 +66,7 @@ export function CompartirArticulo({
 
   return (
     <div className="flex flex-wrap items-center gap-2.5">
-      <span className={`text-sm font-semibold ${sobreOscuro ? 'text-white/90' : 'text-navy'}`}>Compartir</span>
+      <span className={`text-sm font-semibold ${sobreOscuro ? 'text-white/90' : 'text-navy'}`}>Share</span>
       <ul className="flex items-center gap-2">
         {redes.map((red) => (
           <li key={red.nombre}>
@@ -74,7 +74,7 @@ export function CompartirArticulo({
               href={red.href}
               target="_blank"
               rel="noopener"
-              aria-label={`Compartir en ${red.nombre}`}
+              aria-label={`Share on ${red.nombre}`}
               className={clases}
             >
               <red.Icono className="size-4" aria-hidden="true" />
@@ -82,7 +82,7 @@ export function CompartirArticulo({
           </li>
         ))}
         <li>
-          <button type="button" onClick={copiarEnlace} aria-label="Copiar enlace" className={clases}>
+          <button type="button" onClick={copiarEnlace} aria-label="Copy link" className={clases}>
             {copiado ? (
               <Check className="size-4" aria-hidden="true" />
             ) : (

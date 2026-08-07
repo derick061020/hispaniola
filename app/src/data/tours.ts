@@ -445,7 +445,7 @@ export const FICHAS: Record<string, FichaTour> = {
       'galeria-semi-privado-7',
     ],
     videoGaleria: '/video/hero.mp4',
-    quoteDestacada: 'El coral fue lo mejor del viaje — la bióloga nos explicó todo.',
+    quoteDestacada: 'The coral was the highlight of the trip — the biologist explained everything to us.',
     // [v3 2026-08-06, WEBSITE-TOURS pág. 8] Itinerario APROBADO, con DOBLE
     // SALIDA: cada parada trae la hora del turno de mañana y la del de tarde
     // («8:20 AM / 12:20 PM»), tal como lo escribió el cliente. Hasta ahora la
@@ -536,9 +536,9 @@ export const FICHAS: Record<string, FichaTour> = {
     addOns: [
       {
         id: 'album-fotos',
-        etiqueta: 'El álbum completo, en máxima calidad',
+        etiqueta: 'The full album, at top quality',
         descripcion:
-          'El álbum entero del día, en resolución original y sin recortar, por US$ 20 para todo el grupo.',
+          'The whole album from the day, at original resolution and uncropped, for US$ 20 for the entire group.',
         base: 'grupo',
         precio: 20,
         porDefecto: true,
@@ -689,7 +689,7 @@ export const FICHAS: Record<string, FichaTour> = {
       'galeria-snorkel-lovers-18',
     ],
     videoGaleria: '/video/hero.mp4',
-    quoteDestacada: 'Perfecto para ir con los niños, todos se sintieron seguros.',
+    quoteDestacada: 'Perfect for going with kids — everyone felt safe.',
     itinerarioTitulo: 'Marine Park Journey',
     itinerarioNota:
       'Hotel pickup time depends on your location. Your exact pickup time will be confirmed after your reservation.',
@@ -765,9 +765,9 @@ export const FICHAS: Record<string, FichaTour> = {
     addOns: [
       {
         id: 'album-fotos',
-        etiqueta: 'El álbum completo, en máxima calidad',
+        etiqueta: 'The full album, at top quality',
         descripcion:
-          'El álbum entero del día, en resolución original y sin recortar, por US$ 20 para todo el grupo.',
+          'The whole album from the day, at original resolution and uncropped, for US$ 20 for the entire group.',
         base: 'grupo',
         precio: 20,
         porDefecto: true,
@@ -794,7 +794,7 @@ export const FICHAS: Record<string, FichaTour> = {
     // [v3 2026-08-06, WEBSITE-TOURS pag. 17] Titulo APROBADO del bloque de
     // descripcion.
     promesa: 'Your Private Caribbean Experience',
-    audiencia: 'Tu grupo',
+    audiencia: 'Your group',
     duracion: '3 or 4 hours',
     // [v3 2026-08-06, WEBSITE-TOURS pags. 17-18] Los parrafos APROBADOS,
     // literales, incluida la lista de barcos con sus capacidades.
@@ -1132,7 +1132,7 @@ export const FICHAS: Record<string, FichaTour> = {
       'galeria-charter-privado-7',
     ],
     videoGaleria: '/video/hero.mp4',
-    quoteDestacada: 'Coordinaron todo a nuestra medida, el barco entero para la familia.',
+    quoteDestacada: 'They tailored everything for us — the whole boat just for the family.',
     // [v3 2026-08-06, WEBSITE-TOURS pag. 20: «QUITAR HORAS Y PONER DEBAJO DE
     // PLAYA DESIERTA SOLO EN TOUR DE 4 HORAS»] Las horas desaparecen — un
     // charter privado zarpa cuando quiere el grupo, y publicarlas fijas
@@ -1173,25 +1173,25 @@ export const FICHAS: Record<string, FichaTour> = {
       },
     ],
     incluye: [
-      { titulo: 'Barco entero', texto: 'Sin desconocidos a bordo — el barco es solo para tu grupo.' },
-      { titulo: 'Transporte ida y vuelta', texto: 'AC, desde tu hotel (Bávaro / Punta Cana).' },
-      { titulo: 'Comida a medida', texto: '7 platos a elegir entre seafood, meat, surf & turf, vegetarian y skewers.' },
-      { titulo: 'Coordinación dedicada', texto: 'Una persona de principio a fin — sin sobresaltos.' },
+      { titulo: 'The whole boat', texto: 'No strangers on board — the boat is yours alone.' },
+      { titulo: 'Round-trip transportation', texto: 'Air-conditioned, from your hotel (Bávaro / Punta Cana).' },
+      { titulo: 'Food your way', texto: '7 dishes to choose from: seafood, meat, surf & turf, vegetarian and skewers.' },
+      { titulo: 'A dedicated coordinator', texto: 'One person from start to finish — no surprises.' },
     ],
     incluyeExtra: [
-      'WiFi a bordo',
-      'Equipo de snorkel (todas las tallas)',
-      'Bióloga marina como guía en el arrecife',
-      'Fotos gratis subidas a Facebook',
+      'WiFi on board',
+      'Snorkeling gear (every size)',
+      'Marine biologist as your guide on the reef',
+      'Free photos uploaded to Facebook',
     ],
     noIncluido:
-      'No incluido: langosta premium (US$ 30 pax, add-on opcional al check-out) · transporte desde Casa de Campo (suplemento) · fotógrafo profesional (con aviso previo, costo extra).',
+      'Not included: premium lobster (US$ 30/person, optional add-on at checkout) · transportation from Casa de Campo (surcharge) · professional photographer (on request, extra cost).',
     queLlevar: [
-      'Traje de baño',
-      'Toalla',
-      'Protector solar biodegradable',
-      'Cámara',
-      'Efectivo (para el add-on de langosta o propinas)',
+      'Swimsuit',
+      'Towel',
+      'Biodegradable sunscreen',
+      'Camera',
+      'Cash (for the lobster add-on or tips)',
     ],
     faqTour: [
       // [v3 2026-08-06] Capacidades segun el copy aprobado (WEBSITE-TOURS
@@ -1238,9 +1238,9 @@ export const FICHAS: Record<string, FichaTour> = {
       },
       {
         id: 'album-fotos',
-        etiqueta: 'Tus fotos en máxima calidad',
+        etiqueta: 'Your photos at top quality',
         descripcion:
-          'Los archivos originales, sin comprimir y en máxima resolución, por US$ 20 para todo el grupo.',
+          'The original files, uncompressed and at full resolution, for US$ 20 for the entire group.',
         base: 'grupo',
         precio: 20,
         porDefecto: true,
@@ -1258,7 +1258,7 @@ export const FICHAS: Record<string, FichaTour> = {
     // [v3 2026-08-06, WEBSITE-TOURS pag. 21] Titulo APROBADO del bloque de
     // descripcion.
     promesa: 'A Day in Paradise',
-    audiencia: 'Día completo',
+    audiencia: 'Full day',
     duracion: 'Full day (8 hours)',
     // [v3 2026-08-06, WEBSITE-TOURS pags. 21-22] Los parrafos APROBADOS,
     // literales, con la lista de variantes que trae el propio texto.
@@ -1292,7 +1292,7 @@ export const FICHAS: Record<string, FichaTour> = {
         // en 9 — el ultimo tramo de grupo que el tarifario define (US$ 1.280).
         // Las plazas 10 a 25 salen del widget.
         nombre: 'Private Speedboat',
-        descripcion: 'La forma más rápida y exclusiva',
+        descripcion: 'The fastest, most exclusive way',
         capacidad: 'Up to 9 guests',
         tabla: [
           // [tarifa-v2] Corregido 2026-07-27 contra la web original. Tenía
@@ -1321,8 +1321,8 @@ export const FICHAS: Record<string, FichaTour> = {
         // ⚠️ Su aforo NO se toca: el copy aprobado solo da cifra para el
         // Private Speedboat. Los tramos siguen como los publica el tarifario.
         nombre: 'Speedboat Adventure',
-        descripcion: 'Con parada en Mano Juan y Playa Toro',
-        capacidad: 'Hasta 10 personas (+US$ 140 por persona desde 11, hasta 25)',
+        descripcion: 'With a stop at Mano Juan and Playa Toro',
+        capacidad: 'Up to 10 guests (+US$ 140 per person from 11 up to 25)',
         tabla: [
           // [tarifa-v2] Corregido 2026-07-27: empezaba en `desde: 6` → 1-5
           // personas no encontraban tramo y el total salía null.
@@ -1345,7 +1345,7 @@ export const FICHAS: Record<string, FichaTour> = {
             hasta: 30,
             precio: 1950,
             tipo: 'grupo',
-            extra: 'Comida opcional: + US$ 45 por persona',
+            extra: 'Optional meal: + US$ 45 per person',
           },
           { desde: 31, hasta: 70, precio: 105, tipo: 'persona' },
         ],
@@ -1470,18 +1470,18 @@ export const FICHAS: Record<string, FichaTour> = {
     addOns: [
       {
         id: 'langosta',
-        etiqueta: 'Súbele langosta a todo el grupo',
+        etiqueta: 'Add lobster for the whole group',
         descripcion:
-          'Langosta para cada persona a bordo, además del buffet. Se añade al reservar.',
+          'Lobster for every person on board, on top of the buffet. Added when you book.',
         base: 'persona',
         precio: 30,
-        nota: 'De marzo a junio la langosta puede no estar disponible; en ese caso se sustituye por camarón gigante.',
+        nota: 'From March to June lobster may be unavailable; if so it is replaced with jumbo shrimp.',
       },
       {
         id: 'album-fotos',
-        etiqueta: 'El álbum completo, en máxima calidad',
+        etiqueta: 'The full album, at top quality',
         descripcion:
-          'El álbum entero del día, en resolución original y sin recortar, por US$ 20 para todo el grupo.',
+          'The whole album from the day, at original resolution and uncropped, for US$ 20 for the entire group.',
         base: 'grupo',
         precio: 20,
         porDefecto: true,

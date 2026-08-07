@@ -42,8 +42,8 @@ export function TripulacionBarcoPage() {
           comparación se alarga y empieza a circular el enlace, hay que
           añadirle un robots noindex de verdad. */}
       <Meta
-        titulo="Tripulación (variante: el barco como índice)"
-        descripcion="Variante de comparación de la página de Tripulación: el equipo se filtra tocando el plano del barco en vez de los chips de departamento."
+        titulo="Crew (variant: the boat as an index)"
+        descripcion="Comparison variant of the Crew page: the team is filtered by tapping the boat plan instead of the department chips."
         ruta="/crew-boat"
       />
       <HeroInterna ctaHref="/#tours">

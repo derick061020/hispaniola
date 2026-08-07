@@ -19,7 +19,7 @@ export function EnlacePrototipo({
   return (
     <a
       href="#"
-      title="Vive en el prototipo navegable (prototipo/) — no es parte de este build"
+      title="Lives in the clickable prototype (prototipo/) — not part of this build"
       onClick={(e) => e.preventDefault()}
       className={className}
       {...props}

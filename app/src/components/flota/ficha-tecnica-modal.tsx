@@ -147,7 +147,7 @@ export function FichaTecnicaModal({ barco, onCerrar }: { barco: BarcoFlota; onCe
   }
 
   const destino = barco.cta === 'charter' ? '/tours/private-charter' : '/events/weddings'
-  const etiquetaCta = barco.cta === 'charter' ? 'Ver tours con este barco' : 'Cotizar para tu evento'
+  const etiquetaCta = barco.cta === 'charter' ? 'See tours on this boat' : 'Get a quote for your event'
 
   return (
     <Modal.Root open onOpenChange={(abierto) => (abierto ? undefined : onCerrar())}>
@@ -227,7 +227,7 @@ export function FichaTecnicaModal({ barco, onCerrar }: { barco: BarcoFlota; onCe
 
               Solo desde lg: en móvil ocuparía media pantalla para navegar 9
               anclas que se recorren con el pulgar igual de rápido. */}
-          <nav aria-label="Secciones de la ficha técnica" className="hidden w-44 shrink-0 border-r border-linea p-3 lg:block">
+          <nav aria-label="Spec sheet sections" className="hidden w-44 shrink-0 border-r border-linea p-3 lg:block">
             <ul className="flex flex-col gap-0.5">
               {grupos.map((g) => (
                 <li key={g.id}>
@@ -298,7 +298,7 @@ export function FichaTecnicaModal({ barco, onCerrar }: { barco: BarcoFlota; onCe
                             <span className="text-sm font-medium text-navy">{fila.valor}</span>
                           ) : (
                             <span className="text-sm italic text-navy-soft">
-                              Pendiente — sin dato documentado
+                              Pending — no documented figure
                             </span>
                           )}
                           {fila.nota ? <p className="mt-1 text-xs text-navy-soft">{fila.nota}</p> : null}
@@ -317,7 +317,7 @@ export function FichaTecnicaModal({ barco, onCerrar }: { barco: BarcoFlota; onCe
                 de sm, donde la barra no da para nombre + botón. */}
             <div className="mt-10 border-t border-linea pt-6">
               <p className="text-sm text-navy-sub">
-                ¿Necesitas un dato que no está aquí? Escríbenos y te lo confirmamos antes de reservar.
+                Need a figure that isn’t here? Message us and we’ll confirm it before you book.
               </p>
               <Link
                 to={destino}

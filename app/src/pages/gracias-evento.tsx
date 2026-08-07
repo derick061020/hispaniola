@@ -63,8 +63,8 @@ export function GraciasEventoPage() {
   return (
     <div className="min-h-screen bg-papel">
       <Meta
-        titulo={`¡Recibimos tu solicitud! · ${codigo}`}
-        descripcion={`Tu solicitud ${codigo} fue recibida. Te contactamos en menos de 24 h.`}
+        titulo={`We got your request! · ${codigo}`}
+        descripcion={`Your request ${codigo} has been received. We’ll get back to you within 24 h.`}
         ruta={`/events/${slug}/thank-you`}
         indexable={false}
       />
@@ -89,64 +89,64 @@ export function GraciasEventoPage() {
             <Check className="size-8" strokeWidth={2.5} aria-hidden="true" />
           </div>
           <h1 className="mt-6 font-display text-3xl font-semibold text-navy sm:text-4xl">
-            ¡Recibimos tu solicitud, {nombreCorto}!
+            We got your request, {nombreCorto}!
           </h1>
           <p className="mt-3 text-base text-navy-sub sm:text-lg">
-            {evento.cierreMeta}. Te contactamos por WhatsApp o email con la cotización.
+            {evento.cierreMeta}. We’ll reach out on WhatsApp or by email with the quote.
           </p>
         </div>
 
         {/* 2. CÓDIGO — destacado */}
         <div className="mt-8 flex flex-col items-center gap-2 rounded-card-grande border-2 border-linea-fuerte bg-papel-hueso px-6 py-5 text-center">
           <p className="text-xs font-semibold uppercase tracking-wide text-navy-soft">
-            Tu código de solicitud
+            Your request code
           </p>
           <p className="font-mono text-xl font-semibold tracking-wider text-navy sm:text-2xl">
             {codigo}
           </p>
           <p className="text-xs text-navy-soft">
-            Lo necesitarás si nos escribes por WhatsApp o email.
+            You’ll need it if you write to us on WhatsApp or by email.
           </p>
         </div>
 
         {/* 3. RESUMEN del formulario enviado */}
         <section className="mt-8 rounded-card-grande border border-linea bg-papel p-5 sm:p-6">
           <p className="text-xs font-semibold uppercase tracking-wide text-navy-soft">
-            Tu solicitud
+            Your request
           </p>
           <p className="mt-1 font-display text-lg font-semibold text-navy">
             {evento.nombre}
           </p>
           <dl className="mt-4 space-y-2 text-sm">
-            <FilaResumen label="Nombre" valor={cotizacion.contacto.nombre} />
+            <FilaResumen label="Name" valor={cotizacion.contacto.nombre} />
             <FilaResumen label="Email" valor={cotizacion.contacto.email} />
             <FilaResumen label="WhatsApp" valor={cotizacion.contacto.whatsapp} />
-            <FilaResumen label="Tipo de evento" valor={cotizacion.tipoEvento} />
+            <FilaResumen label="Event type" valor={cotizacion.tipoEvento} />
             <FilaResumen
-              label="Fecha tentativa"
-              valor={cotizacion.fecha ? fechaLarga(cotizacion.fecha) : 'A coordinar'}
+              label="Tentative date"
+              valor={cotizacion.fecha ? fechaLarga(cotizacion.fecha) : 'To be arranged'}
             />
             <FilaResumen
-              label="Nº de personas"
-              valor={`${cotizacion.personas} ${cotizacion.personas === 1 ? 'persona' : 'personas'}`}
+              label="Number of guests"
+              valor={`${cotizacion.personas} ${cotizacion.personas === 1 ? 'guest' : 'guests'}`}
             />
             {cotizacion.mensaje ? (
-              <FilaResumen label="Mensaje" valor={cotizacion.mensaje} />
+              <FilaResumen label="Message" valor={cotizacion.mensaje} />
             ) : null}
           </dl>
         </section>
 
         {/* 4. TIMELINE «Qué sigue» */}
         <section className="mt-10">
-          <p className="font-display text-lg font-semibold text-navy">Qué sigue</p>
+          <p className="font-display text-lg font-semibold text-navy">What happens next</p>
           <ol className="mt-4 space-y-4">
             <PasoTimeline
               numero={1}
-              cuando="Hoy"
+              cuando="Today"
               descripcion={
                 <>
-                  Te confirmamos por email que recibimos tu solicitud. La cotización
-                  detallada te llega en menos de 24 h.
+                  We confirm by email that your request arrived. The detailed quote
+                  reaches you within 24 h.
                 </>
               }
             />
@@ -154,13 +154,13 @@ export function GraciasEventoPage() {
               numero={2}
               cuando={
                 fechaRecordatorioISO
-                  ? `${fechaLarga(fechaRecordatorioISO)} (día antes del evento)`
-                  : 'Cuando confirmes la fecha'
+                  ? `${fechaLarga(fechaRecordatorioISO)} (the day before the event)`
+                  : 'Once you confirm the date'
               }
               descripcion={
                 <>
-                  Te contactamos por WhatsApp para cerrar los últimos detalles: hora exacta
-                  de embarque, menú, recogida y logística.
+                  We reach out on WhatsApp to settle the last details: exact boarding
+                  time, menu, pickup and logistics.
                 </>
               }
             />
@@ -172,18 +172,18 @@ export function GraciasEventoPage() {
           <div className="flex items-start gap-3">
             <MessageCircle className="size-6 shrink-0 text-menta-texto" aria-hidden="true" />
             <div className="flex-1">
-              <p className="font-display text-lg font-semibold text-navy">¿Quieres adelantar algo?</p>
+              <p className="font-display text-lg font-semibold text-navy">Want to get ahead?</p>
               <p className="mt-1 text-sm text-navy-sub">
-                Escríbenos por WhatsApp con tu código de solicitud y te respondemos al instante.
+                Message us on WhatsApp with your request code and we’ll reply right away.
               </p>
               <a
-                href={`https://wa.me/18293052804?text=${encodeURIComponent(`Hola! Soy ${cotizacion.contacto.nombre}, envié una solicitud de ${evento.nombre.toLowerCase()} con el código ${codigo}.`)}`}
+                href={`https://wa.me/18293052804?text=${encodeURIComponent(`Hi! I’m ${cotizacion.contacto.nombre}, I sent a ${evento.nombre.toLowerCase()} request with code ${codigo}.`)}`}
                 target="_blank"
                 rel="noopener"
                 className="mt-4 inline-flex items-center gap-2 rounded-btn bg-menta-texto px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-menta-texto/90"
               >
                 <MessageCircle className="size-4" aria-hidden="true" />
-                Abrir WhatsApp con tu código
+                Open WhatsApp with your code
               </a>
             </div>
           </div>
@@ -201,10 +201,10 @@ export function GraciasEventoPage() {
             <div className="flex items-start gap-3">
               <Sparkles className="size-5 shrink-0 text-coral" aria-hidden="true" />
               <div>
-                <p className="font-display text-base font-semibold text-navy">¿Celebráis algo?</p>
+                <p className="font-display text-base font-semibold text-navy">Celebrating something?</p>
                 <p className="mt-1 text-sm text-navy-sub">
-                  Si es una ocasión especial, cuéntanoslo por WhatsApp — decoración, tarta,
-                  sorpresas a bordo, etc. Lo preparamos todo.
+                  If it is a special occasion, tell us on WhatsApp — decorations, cake,
+                  surprises on board. We’ll take care of it.
                 </p>
               </div>
             </div>
@@ -217,13 +217,13 @@ export function GraciasEventoPage() {
             to={`/events/${slug}`}
             className="font-semibold text-aqua-dark hover:underline"
           >
-            ← Hacer otra consulta sobre {evento.nombre.toLowerCase()}
+            ← Send another {evento.nombre.toLowerCase()} inquiry
           </Link>
         </p>
       </main>
 
       <footer className="mt-12 border-t border-linea py-6 text-center text-xs text-navy-soft">
-        Hispaniola Aquatic Adventures · ¿Dudas? WhatsApp +1-829-305-2804
+        Hispaniola Aquatic Adventures · Questions? WhatsApp +1-829-305-2804
       </footer>
     </div>
   )

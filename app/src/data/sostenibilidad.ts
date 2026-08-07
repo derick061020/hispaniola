@@ -68,13 +68,13 @@ export type PilarSost = {
  * Los 7 chips son ahora 7 secciones de aquí, en el orden real de lectura.
  */
 export const ANCLAS_VENTAJA = [
-  { id: 'conservacion', label: 'Conservación' },
-  { id: 'comunidades', label: 'Comunidad' },
-  { id: 'ancla-impacto', label: 'Impacto por huésped' },
-  { id: 'ancla-videos', label: 'En video' },
-  { id: 'ancla-fundacion', label: 'La fundación' },
-  { id: 'ancla-proyectos', label: 'Proyectos' },
-  { id: 'ancla-membresias', label: 'Membresías' },
+  { id: 'conservacion', label: 'Conservation' },
+  { id: 'comunidades', label: 'Community' },
+  { id: 'ancla-impacto', label: 'Impact per guest' },
+  { id: 'ancla-videos', label: 'On video' },
+  { id: 'ancla-fundacion', label: 'The foundation' },
+  { id: 'ancla-proyectos', label: 'Projects' },
+  { id: 'ancla-membresias', label: 'Memberships' },
 ]
 
 export type VideoSost = {
@@ -87,13 +87,13 @@ export type VideoSost = {
 // cada uno se descargó de YouTube a /public/video/sostenibilidad/{id}.jpg (sin
 // hotlink externo); el embed solo se carga al abrir el modal.
 export const VIDEOS_SOSTENIBILIDAD: VideoSost[] = [
-  { id: '6ixzXs68DPQ', titulo: 'Laboratorio y museo de restauración de coral' },
-  { id: 'r0XFksQSfrU', titulo: 'Nuestra cocina flotante' },
-  { id: 'ziUx_05VC-4', titulo: 'Donde empieza la comida' },
-  { id: 'KdGvJqdeaC0', titulo: 'Snorkel en el arrecife de coral' },
-  { id: 'sjyNxW6iNIs', titulo: 'Restaurando los arrecifes de coral' },
-  { id: 'GXA4y8JQ2v8', titulo: 'Protegiendo las tortugas marinas' },
-  { id: 'aMVg2cL3Z8o', titulo: 'Avistamiento de manatíes' },
+  { id: '6ixzXs68DPQ', titulo: 'Coral restoration laboratory and museum' },
+  { id: 'r0XFksQSfrU', titulo: 'Our floating kitchen' },
+  { id: 'ziUx_05VC-4', titulo: 'Where the food begins' },
+  { id: 'KdGvJqdeaC0', titulo: 'Snorkeling on the coral reef' },
+  { id: 'sjyNxW6iNIs', titulo: 'Restoring the coral reefs' },
+  { id: 'GXA4y8JQ2v8', titulo: 'Protecting sea turtles' },
+  { id: 'aMVg2cL3Z8o', titulo: 'Manatee watching' },
 ]
 
 export const SOSTENIBILIDAD = {
@@ -107,15 +107,15 @@ export const SOSTENIBILIDAD = {
   // la página fusiona sustainability.php Y competitive-advantage.php, y el
   // bloque de videos ya llevaba `videosEyebrow: 'Nuestra ventaja competitiva'`.
   // La idea estaba enterrada en una sección; ahora encuadra la página.
-  eyebrow: 'Nuestra ventaja competitiva',
-  titulo: 'Tu reserva sostiene a nuestra gente y al mar',
+  eyebrow: 'Our competitive advantage',
+  titulo: 'Your booking supports our people and the sea',
   // Hero corto a propósito (rediseño 2026-07-17, pedido de Samuel: "el texto
   // de la descripción del hero está muy largo") — la declaración completa
   // (Bávaro Reefs Foundation, "empoderar a nuestra gente", RD) no se pierde:
   // se muda a `mision`, el bloque editorial que abre la página. Desde
   // 2026-07-22 ese bloque vive en IntroSostenibilidad, a dos columnas con un
   // video al lado (y por eso baja de tamaño: --text-sost-mision).
-  sub: 'No es un añadido: es la base de cómo operamos, en el mar y en tierra.',
+  sub: 'It’s not an add-on: it’s the foundation of how we operate, at sea and on land.',
   // [v3 2026-08-06, WEBSITE-SOSTENIBILIDAD pags. 1-2] La mision APROBADA.
   // Sustituye a una declaracion de principios de tres lineas por LA HISTORIA
   // que la sostiene: documentaron colisiones de barcos con tortugas verdes en
@@ -149,9 +149,9 @@ export const SOSTENIBILIDAD = {
   // mismas 3 del arrecife/vivero de coral que ya usa la home en Experiencia,
   // reales y ya curadas, no nuevas.
   galeria: ['galeria-snorkel-lovers-3', 'galeria-semi-privado-1', 'galeria-snorkel-lovers-6'],
-  fotoAlt: 'Buceo de snorkel sobre el arrecife de coral que la fundación restaura',
+  fotoAlt: 'Snorkeling over the coral reef the foundation restores',
 
-  pilaresTitulo: 'Cómo lo hacemos realidad',
+  pilaresTitulo: 'How we make it happen',
   // ⚠️ FOTOS DE APOYO del recorrido (2026-07-22, 3ª vuelta): una por paso, va
   // apareciendo según avanza el recorrido. Todas son fotos REALES del cliente
   // (galerías de los tours), ninguna de stock — ojo con las `equipo-*.webp`,
@@ -160,35 +160,35 @@ export const SOSTENIBILIDAD = {
   pilares: [
     {
       id: 'conservacion',
-      titulo: 'Conservación y áreas protegidas',
+      titulo: 'Conservation and protected areas',
       // [v2 2026-07-28, slide 60] El párrafo enumeraba los 3 logros en prosa
       // corrida; ahora los presenta y cada uno se cuenta aparte, en `hitos`.
       // Es la estructura de su maqueta y es mejor: son tres cosas distintas
       // y verificables, no una coma dentro de una frase larga.
-      texto: 'Con aportes económicos directos y colaboración activa, apoyamos a la Bávaro Reefs Foundation en hitos ambientales reales que protegen el mar para las futuras generaciones.',
+      texto: 'Through direct financial contributions and active collaboration, we support the Bávaro Reefs Foundation in real environmental milestones that protect the sea for future generations.',
       hitos: [
         {
-          titulo: 'Áreas marinas protegidas',
-          texto: 'Creación y expansión de áreas protegidas, salvaguardando hábitats vitales para las futuras generaciones.',
+          titulo: 'Marine protected areas',
+          texto: 'Creating and expanding protected areas, safeguarding vital habitats for future generations.',
         },
         {
-          titulo: 'Recuperación de tortugas verdes',
-          texto: 'Avances significativos en la recuperación y el monitoreo de sus poblaciones en la República Dominicana.',
+          titulo: 'Green sea turtle recovery',
+          texto: 'Significant progress in the recovery and monitoring of their populations in the Dominican Republic.',
         },
         {
-          titulo: 'Restauración de coral',
-          texto: 'Iniciativas exitosas en Coral Garden, hoy una de las áreas de restauración de arrecifes más efectivas del país.',
+          titulo: 'Coral restoration',
+          texto: 'Successful initiatives at Coral Garden, today one of the most effective reef restoration areas in the country.',
         },
       ],
       // La foto MÁS literal de todo el proyecto para este pilar: una estructura
       // de vivero de coral con su placa de Hispaniola, lista para sembrar.
       foto: 'galeria-snorkel-lovers-15',
-      fotoAlt: 'Estructura de vivero de coral de Hispaniola lista para sembrarse en el arrecife',
+      fotoAlt: 'A Hispaniola coral nursery structure ready to be planted on the reef',
     },
     {
       id: 'comunidades',
-      titulo: 'Apoyo directo a las comunidades',
-      texto: 'Sostenibilidad también es cuidar a las personas. Más allá de la acción ambiental, apoyamos de forma activa a un orfanato local, contribuyendo al bienestar y desarrollo de niños vulnerables de nuestra comunidad. Para nosotros, la protección del medioambiente y la responsabilidad social van de la mano.',
+      titulo: 'Direct support for local communities',
+      texto: 'Sustainability is also about caring for people. Beyond environmental action, we actively support a local orphanage, contributing to the well-being and development of vulnerable children in our community. For us, protecting the environment and social responsibility go hand in hand.',
       // ⚠️ PROVISIONAL — decisión consciente de Samuel (2026-07-22): NO existe
       // ni una foto del orfanato ni de la acción comunitaria en todo el
       // proyecto, así que esta ilustra "personas", no lo que dice el texto.
@@ -197,23 +197,23 @@ export const SOSTENIBILIDAD = {
       // Sustituir en cuanto lleguen — no hace falta tocar código, solo este
       // par de campos.
       foto: 'galeria-snorkel-lovers-12',
-      fotoAlt: 'Dos personas haciendo snorkel juntas sobre el arrecife',
+      fotoAlt: 'Two people snorkeling together over the reef',
     },
     {
       id: 'operacion',
-      titulo: 'Operación responsable y valor del equipo',
+      titulo: 'Responsible operations and valuing our team',
       // Detalle portado del original (sustainability.php: "a percentage is
       // also allocated to our office and sales teams") — faltaba en la 1ª
       // versión de este copy; los montos exactos ($3.50/$2.00) se muestran
       // aparte, en `stats`.
-      texto: 'La sostenibilidad empieza por dentro: invertimos en nuestro equipo con salario justo, formación continua y altos estándares de seguridad, para que cada experiencia refleje nuestra misión. Un porcentaje adicional se destina a los equipos de oficina y ventas, la base de un servicio impecable en cada reserva.',
+      texto: 'Sustainability starts from within: we invest in our team with fair pay, continuous training and high safety standards, so that every experience reflects our mission. An additional percentage goes to our office and sales teams, the foundation of flawless service on every booking.',
       // Tripulación REAL uniformada trabajando en el bar flotante. Se descartó
       // cocina-flotante.webp (también real y también del equipo) porque el
       // primer plano son dos turistas sin camiseta haciendo el payaso: lee
       // como fiesta, no como "salario justo, formación y estándares de
       // seguridad", que es lo que dice el párrafo.
       foto: 'bar-flotante',
-      fotoAlt: 'Tripulación de Hispaniola atendiendo el bar flotante en el mar',
+      fotoAlt: 'Hispaniola crew running the floating bar out at sea',
     },
   ] satisfies PilarSost[],
 
@@ -226,13 +226,13 @@ export const SOSTENIBILIDAD = {
   // trato que los US$ 3.50 / 2.00. Quedan pendientes de contrastar contra las
   // memorias reales de la Bávaro Reefs Foundation antes de publicar (mismo
   // pendiente que las fotos propias de la fundación, app/PLAN-v3.md §9).
-  impactoEyebrow: 'Nuestro impacto',
-  impactoTitulo: 'Tu reserva deja huella real',
+  impactoEyebrow: 'Our impact',
+  impactoTitulo: 'Your booking leaves a real mark',
   impacto: [
-    { valor: '12.000+', label: 'corales sembrados' },
-    { valor: '350', label: 'tortugas verdes monitoreadas' },
-    { valor: '5.000 m²', label: 'de arrecife en restauración' },
-    { valor: '200+', label: 'niños apoyados' },
+    { valor: '12.000+', label: 'corals planted' },
+    { valor: '350', label: 'green sea turtles monitored' },
+    { valor: '5.000 m²', label: 'of reef under restoration' },
+    { valor: '200+', label: 'children supported' },
   ] satisfies StatSost[],
   // Los 2 aportes por huésped VIVÍAN dentro del pilar "operación" (como
   // `stats`); suben aquí porque son la BISAGRA de la banda: explican de dónde
@@ -286,9 +286,9 @@ export const SOSTENIBILIDAD = {
   // ya trae la solución en su maqueta: el rótulo pasa a ser «Lo que nos
   // diferencia, en video» (lo que era el titular) y el titular, su
   // «Míralo con tus propios ojos», que además invita en vez de describir.
-  videosEyebrow: 'Lo que nos diferencia, en video',
-  videosTitulo: 'Míralo con tus propios ojos',
-  videosTexto: 'Una serie de videos cortos que muestran los factores clave que nos distinguen de otras empresas que ofrecen servicios similares en la zona.',
+  videosEyebrow: 'What sets us apart, on video',
+  videosTitulo: 'See it with your own eyes',
+  videosTexto: 'A series of short videos showing the key factors that set us apart from other companies offering similar services in the area.',
 
   // ---------- Cierre: las 2 tarjetas de CTA (slide 64) ----------
   // [v2 2026-07-28, 5ª vuelta, Samuel: «los 2 banners CTA que estén uno al
@@ -313,18 +313,18 @@ export const SOSTENIBILIDAD = {
   // «DEJANDO UNA HUELLA POSITIVA» de «Arrecifes más sanos, comunidades más
   // fuertes»), y el texto se acorta al suyo: el nuestro decía lo mismo en 55
   // palabras y, junto a la tarjeta de membresías, desequilibraba la pareja.
-  cierreEyebrow: 'Dejando una huella positiva',
-  cierreTitulo: 'Arrecifes más sanos, comunidades más fuertes',
-  cierreTexto: 'Cada empresa deja una huella donde opera. La nuestra queremos que sea positiva: de la conservación marina al trabajo comunitario, la operación ética y el desarrollo de nuestro equipo. Reservar con nosotros es sumar a un futuro más sostenible para la República Dominicana.',
+  cierreEyebrow: 'Leaving a positive mark',
+  cierreTitulo: 'Healthier reefs, stronger communities',
+  cierreTexto: 'Every company leaves a mark where it operates. We want ours to be a positive one: from marine conservation to community work, ethical operations and the development of our team. Booking with us means adding to a more sustainable future for the Dominican Republic.',
   cierrePuntos: [
     'US$ 4.50 invested in our operational and guest experience teams',
-    'US$ 2.00 por huésped a las iniciativas de la fundación',
-    'Tercer vivero de coral más importante del país',
+    'US$ 2.00 per guest to the foundation’s initiatives',
+    'Third most important coral nursery in the country',
   ],
   membresiasPuntos: [
-    'Restauración coralina y arrecifes artificiales',
-    'Educación ambiental con centros y comunidad',
-    'Convenio con el Ministerio de Medio Ambiente',
+    'Coral restoration and artificial reefs',
+    'Environmental education with schools and the community',
+    'Agreement with the Ministry of Environment',
   ],
   // Foto de fondo del cierre (2026-07-17, pedido de Samuel: "ponle el mismo
   // background de fondo del mar que tiene el banner de nosotros"). Mismo

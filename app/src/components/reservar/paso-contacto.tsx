@@ -28,23 +28,23 @@ export function PasoContacto({
   return (
     <div className="flex flex-col gap-5">
       <div>
-        <h2 className="font-display text-h3 font-semibold text-navy">Datos de contacto</h2>
+        <h2 className="font-display text-h3 font-semibold text-navy">Contact details</h2>
         <p className="mt-1 text-sm text-navy-sub">
-          Usaremos esta información para enviarte la confirmación y avisarte de cualquier novedad de tu reserva. Nada de
-          spam.
+          We’ll use this information to send you your confirmation and to let you know about anything new with your
+          booking. No spam.
         </p>
       </div>
 
       <div className="flex flex-col gap-4">
         <div className="grid gap-4 sm:grid-cols-2">
           <Campo
-            etiqueta="Nombre"
+            etiqueta="First name"
             autoComplete="given-name"
             value={datos.nombre}
             onChange={(e) => onCambio({ nombre: e.target.value })}
           />
           <Campo
-            etiqueta="Apellidos"
+            etiqueta="Last name"
             autoComplete="family-name"
             value={datos.apellidos}
             onChange={(e) => onCambio({ apellidos: e.target.value })}
@@ -53,35 +53,35 @@ export function PasoContacto({
 
         <div>
           <Campo
-            etiqueta="Correo electrónico"
+            etiqueta="Email"
             type="email"
             autoComplete="email"
-            placeholder="tu@email.com"
+            placeholder="you@email.com"
             value={datos.email}
             onChange={(e) => onCambio({ email: e.target.value })}
           />
-          <p className="mt-1.5 text-xs text-navy-soft">Te enviaremos la confirmación de la reserva a esta dirección.</p>
+          <p className="mt-1.5 text-xs text-navy-soft">We’ll send your booking confirmation to this address.</p>
         </div>
 
         <div>
           <Campo
-            etiqueta="Confirma tu correo"
+            etiqueta="Confirm your email"
             type="email"
             autoComplete="email"
-            placeholder="tu@email.com"
+            placeholder="you@email.com"
             value={datos.emailConfirm}
             onChange={(e) => onCambio({ emailConfirm: e.target.value })}
           />
           {noCoincide ? (
-            <p className="mt-1.5 text-xs font-medium text-coral">Los dos correos no coinciden.</p>
+            <p className="mt-1.5 text-xs font-medium text-coral">The two emails don’t match.</p>
           ) : (
-            <p className="mt-1.5 text-xs text-navy-soft">Para asegurarnos de que no hay ninguna errata.</p>
+            <p className="mt-1.5 text-xs text-navy-soft">To make sure there isn’t a single typo.</p>
           )}
         </div>
 
         <div>
           <Campo
-            etiqueta="WhatsApp / teléfono"
+            etiqueta="WhatsApp / phone"
             type="tel"
             autoComplete="tel"
             placeholder="+1 809 000 0000"
@@ -89,7 +89,7 @@ export function PasoContacto({
             onChange={(e) => onCambio({ telefono: e.target.value })}
           />
           <p className="mt-1.5 text-xs text-navy-soft">
-            Solo para avisarte de cambios de última hora — por ejemplo, si el clima obliga a mover el tour.
+            Only to let you know about last-minute changes — for example, if the weather forces us to move the tour.
           </p>
         </div>
       </div>
@@ -104,11 +104,11 @@ export function PasoContacto({
           <Sparkles className="mt-0.5 size-5 shrink-0 text-coral" aria-hidden="true" />
           <div className="min-w-0 flex-1">
             <p className="font-display text-base font-semibold text-navy">
-              ¿Celebras algo especial?{' '}
-              <span className="text-sm font-normal text-navy-soft">(opcional)</span>
+              Celebrating something special?{' '}
+              <span className="text-sm font-normal text-navy-soft">(optional)</span>
             </p>
             <p className="mt-1 text-sm text-navy-sub">
-              Si nos lo dices ahora, la tripulación lo sabe antes de que subas a bordo.
+              Tell us now and the crew will know before you step on board.
             </p>
 
             <div className="mt-3 flex flex-wrap gap-2">
@@ -143,13 +143,13 @@ export function PasoContacto({
             {celebracion.ocasion && celebracion.ocasion !== 'ninguna' ? (
               <div className="mt-4">
                 <Campo
-                  etiqueta="Cuéntanos (opcional)"
-                  placeholder="Ej. es el cumpleaños de Ana, cumple 40"
+                  etiqueta="Tell us more (optional)"
+                  placeholder="E.g. it’s Ana’s birthday, she’s turning 40"
                   value={celebracion.nota}
                   onChange={(e) => onCambioCelebracion({ nota: e.target.value })}
                 />
                 <p className="mt-1.5 text-xs text-navy-soft">
-                  Si quieres algo concreto —tarta, decoración— lo organizamos por WhatsApp antes del tour.
+                  If you want something specific —a cake, decorations— we’ll arrange it over WhatsApp before the tour.
                 </p>
               </div>
             ) : null}

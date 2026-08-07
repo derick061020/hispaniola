@@ -100,22 +100,22 @@ export function reservaDemo(): Reserva {
     codigo: 'HSP-0000-0001',
     slug: 'semi-private-premium',
     tour: {
-      nombre: 'Semi-Privado Premium',
-      audienciaChip: 'Solo adultos',
+      nombre: 'Semi-Private Premium',
+      audienciaChip: 'Adults only',
       duracionCorta: '4 h',
       maxPax: 25,
       precioLight: 99,
     },
     ficha: {
       menuLight: [
-        { nombre: 'Pechuga de pollo a la parrilla' },
-        { nombre: 'Filete de pescado a la parrilla' },
+        { nombre: 'Grilled chicken breast' },
+        { nombre: 'Grilled fish fillet' },
       ],
       menuPremium: [
-        { nombre: 'Mariscos', desc: 'Langosta, pulpo, camarón' },
-        { nombre: 'Carne', desc: 'Angus certificado' },
-        { nombre: 'Surf & Turf', desc: 'Langosta + Angus' },
-        { nombre: 'Vegetariano', desc: 'Ceviche de zucchini' },
+        { nombre: 'Seafood', desc: 'Lobster, octopus, shrimp' },
+        { nombre: 'Meat', desc: 'Certified Angus beef' },
+        { nombre: 'Surf & Turf', desc: 'Lobster + Angus beef' },
+        { nombre: 'Vegetarian', desc: 'Zucchini ceviche' },
       ],
       horarios: [
         { hora: '9:00 AM', regreso: '1:00 PM' },
@@ -130,7 +130,7 @@ export function reservaDemo(): Reserva {
     platos: ['langosta', 'wagyu'],
     recogida: {
       hotel: 'Hotel Barceló Bávaro Palace',
-      notas: 'Habitación 1245, lobby a las 8:30',
+      notas: 'Room 1245, lobby at 8:30',
     },
     contacto: {
       nombre: 'María',

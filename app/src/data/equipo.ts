@@ -104,12 +104,12 @@ export const DEPARTAMENTOS: Departamento[] = [
 /** Roles por departamento — genéricos y verificables (son puestos, no
  *  personas). Se rotan para dar variedad al molde. */
 const ROLES: Record<DepartamentoId, string[]> = {
-  oficina: ['Atención al viajero', 'Coordinación de reservas', 'Soporte y recepción'],
-  playa: ['Capitán', 'Guía de snorkel', 'Tripulación de cubierta', 'Tour leader'],
-  marketing: ['Ejecutivo de ventas', 'Marketing', 'Community & contenido'],
-  administracion: ['Administración', 'Contabilidad', 'Recursos humanos'],
-  cocina: ['Chef a bordo', 'Ayudante de cocina', 'Logística de alimentos'],
-  fundacion: ['Biología marina', 'Restauración de coral', 'Coordinación de proyectos'],
+  oficina: ['Guest support', 'Booking coordination', 'Support & front desk'],
+  playa: ['Captain', 'Snorkeling guide', 'Deck crew', 'Tour leader'],
+  marketing: ['Sales executive', 'Marketing', 'Community & content'],
+  administracion: ['Administration', 'Accounting', 'Human resources'],
+  cocina: ['Onboard chef', 'Kitchen assistant', 'Food logistics'],
+  fundacion: ['Marine biology', 'Coral restoration', 'Project coordination'],
 }
 
 /** Retratos reales que YA existen en el repo. Se rotan como placeholder —
@@ -120,7 +120,7 @@ const RETRATOS = ['equipo-omar', 'equipo-lola', 'equipo-eva', 'equipo-capitan', 
 /** Frase de relleno. Lorem ipsum a propósito: NO se pone una frase verosímil
  *  en boca de alguien que no la ha dicho. Ver la cabecera del archivo. */
 const FRASE_PLACEHOLDER =
-  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pendiente de recoger la frase real de cada persona.'
+  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pending the real quote from each person.'
 
 export type MiembroEquipoV2 = {
   id: string
@@ -154,7 +154,7 @@ function generarPlantilla(): MiembroEquipoV2[] {
         id: `${depto.id}-${i + 1}`,
         // [placeholder-v2] Nombre genérico evidente. Sustituir por la
         // plantilla real cuando el cliente la mande.
-        nombre: `Nombre Apellido ${String(n).padStart(2, '0')}`,
+        nombre: `Name Surname ${String(n).padStart(2, '0')}`,
         rol: roles[i % roles.length],
         departamento: depto.id,
         desde: 2012 + (i % 13),
@@ -203,8 +203,8 @@ export const EQUIPO_PAGINA = {
   // su maqueta listaba 37. Mientras la plantilla real no llegue, el número es
   // una aproximación y se enseña como tal.
   datos: [
-    { id: 'personas', valor: `≈ ${TOTAL_EQUIPO}`, etiqueta: 'personas en el equipo' },
-    { id: 'departamentos', valor: `${DEPARTAMENTOS.length} departamentos`, etiqueta: 'de oficina al mar' },
+    { id: 'personas', valor: `≈ ${TOTAL_EQUIPO}`, etiqueta: 'people on the team' },
+    { id: 'departamentos', valor: `${DEPARTAMENTOS.length} departments`, etiqueta: 'from the office to the sea' },
     // [v3 2026-08-06] «Desde 2012» -> 2010: la timeline aprobada de /flota
     // fecha el primer barco en 2010 y el copy de la home dice «since 2010».
     { id: 'desde', valor: 'Since 2010', etiqueta: 'growing together' },
@@ -213,14 +213,14 @@ export const EQUIPO_PAGINA = {
     // del cliente (slide 37) y se publica por pedido explícito de Samuel
     // (2026-07-28: «que el equipo es de RD y España»). Si el cliente lo
     // desmiente, es lo primero que cae.
-    { id: 'origen', valor: 'RD + España', etiqueta: 'equipo local y gerencia' },
+    { id: 'origen', valor: 'DR + Spain', etiqueta: 'local team and management' },
   ],
   // El muro de retratos (equipo/muro-tripulacion.tsx) NO tiene copy: es solo
   // los dos tickers, sin eyebrow ni titular ni descripción (2ª vuelta del
   // 2026-07-28, pedido de Samuel). Aquí vivían `muroEyebrow` y `muroLead`, y
   // se retiran con la cabecera en vez de quedarse huérfanos.
-  cierreEyebrow: 'Trabaja con nosotros',
-  cierreTitulo: '¿Quieres remar con nosotros?',
+  cierreEyebrow: 'Work with us',
+  cierreTitulo: 'Want to row with us?',
   // Foto de fondo del banner de cierre (equipo/cierre-equipo.tsx). Mar abierto
   // y vela: es la toma más UNIFORME de las disponibles, y en un banner con el
   // texto centrado eso es lo que decide. Se probaron 6 candidatas; las de
@@ -233,10 +233,10 @@ export const EQUIPO_PAGINA = {
   // es el mismo componente cerrando dos páginas, no un descuido.
   cierreFoto: 'hero-catamaran-2',
   cierreTexto:
-    'Siempre buscamos gente que ame el mar y el trato de verdad con las personas. Si es lo tuyo, cuéntanos quién eres.',
+    'We’re always looking for people who love the sea and genuinely enjoy taking care of others. If that’s you, tell us who you are.',
   // El botón de la maqueta decía «Ver vacantes», pero /trabaja-con-nosotros no
   // lista vacantes — es un formulario abierto. Un botón que promete vacantes y
   // no las da es la clase de promesa pequeña que este proyecto evita, así que
   // se usa la frase que el propio cliente escribió debajo.
-  cierreCta: 'Cuéntanos quién eres',
+  cierreCta: 'Tell us who you are',
 } as const

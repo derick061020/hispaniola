@@ -10,8 +10,8 @@ export function AgentesPage() {
   return (
     <div>
       <Meta
-        titulo="Agentes de viaje"
-        descripcion="Registro para agencias de viaje y DMCs — coordinación directa, factura fiscal y disponibilidad real."
+        titulo="Travel agents"
+        descripcion="Registration for travel agencies and DMCs — direct coordination, formal invoicing and real availability."
         ruta="/travel-agents"
       />
       <HeroInterna ctaHref="/#tours">

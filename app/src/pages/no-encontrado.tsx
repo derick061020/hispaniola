@@ -15,14 +15,14 @@ import { Header } from '@/components/home/header'
 export function NoEncontradoPage() {
   return (
     <div>
-      <Meta titulo="Página no encontrada" descripcion="La página que buscas no existe." ruta="/404" indexable={false} />
+      <Meta titulo="Page not found" descripcion="The page you’re looking for doesn’t exist." ruta="/404" indexable={false} />
       <Header />
       <div className="grid min-h-[70svh] place-items-center px-5 text-center">
         <div>
           <p className="font-display text-h2 font-semibold text-navy">404</p>
-          <p className="mt-2 text-lead text-navy-sub">No encontramos esta página.</p>
+          <p className="mt-2 text-lead text-navy-sub">We couldn’t find this page.</p>
           <Boton href="/" className="mt-6">
-            Volver al inicio
+            Back to home
           </Boton>
         </div>
       </div>

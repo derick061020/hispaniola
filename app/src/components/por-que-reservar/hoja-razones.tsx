@@ -27,7 +27,7 @@ import { RAZONES, TOTAL_RAZONES, PRECIO_TODO_INCLUIDO } from '@/data/por-que-res
 const FOTOS = [
   {
     foto: 'galeria-semi-privado-4',
-    alt: 'Huésped haciendo snorkel entre peces sargento sobre el arrecife',
+    alt: 'Guest snorkeling among sergeant major fish over the reef',
     rot: 'var(--pqr-foto-rot-1)',
     // Cada foto se cuelga de un borde distinto del papel para que no se lean
     // como una fila: arriba-izquierda, centro-derecha, abajo-izquierda.
@@ -40,13 +40,13 @@ const FOTOS = [
   },
   {
     foto: 'galeria-semi-privado-6',
-    alt: 'Grupo de huéspedes en el agua junto al catamarán de Hispaniola',
+    alt: 'Group of guests in the water next to the Hispaniola catamaran',
     rot: 'var(--pqr-foto-rot-2)',
     posicion: 'right-4 top-1/3 w-36',
   },
   {
     foto: 'flota-forever-teresa',
-    alt: 'El catamarán Forever Teresa de la flota de Hispaniola',
+    alt: 'The catamaran Forever Teresa from the Hispaniola fleet',
     rot: 'var(--pqr-foto-rot-3)',
     posicion: 'left-4 bottom-24 w-36',
   },
@@ -56,13 +56,13 @@ export function HojaRazones() {
   return (
     <section>
       <div className="max-w-2xl">
-        <Etiqueta>Todo lo que incluye reservar con nosotros</Etiqueta>
+        <Etiqueta>Everything booking with us includes</Etiqueta>
         <h2 className="mt-2 font-display text-h2 font-semibold text-navy">
-          {TOTAL_RAZONES} razones, en una hoja
+          {TOTAL_RAZONES} reasons, on one sheet
         </h2>
         <p className="mt-4 text-lead text-navy-sub">
-          No es marketing — es lo que vive cada uno de nuestros huéspedes. Están todas aquí, sin
-          letra pequeña.
+          It’s not marketing — it’s what every one of our guests lives. They’re all here, with no
+          fine print.
         </p>
       </div>
 
@@ -104,10 +104,10 @@ export function HojaRazones() {
 
             <div className="mt-8 flex flex-col items-center gap-4 text-center sm:flex-row sm:justify-between sm:text-left">
               <p className="font-display text-h3 font-semibold text-navy">
-                Todo esto, por {formatoDinero(PRECIO_TODO_INCLUIDO)} — todo incluido
+                All of this, for {formatoDinero(PRECIO_TODO_INCLUIDO)} — everything included
               </p>
               <Boton to="/#tours" className="shrink-0">
-                Reservar mi tour
+                Book my tour
               </Boton>
             </div>
           </div>

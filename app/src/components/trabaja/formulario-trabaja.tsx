@@ -134,14 +134,14 @@ function FilaPerfil({
 // perfil, y no hay ningún dato nuevo inventado para construirla.
 function PasosDespues({ perfil }: { perfil: PerfilTrabajo }) {
   const pasos = [
-    'Lo lee el equipo. Aquí no hay bot que filtre.',
-    'Te escribimos en menos de 24 h, por donde prefieras.',
+    'The team reads it. There’s no bot filtering here.',
+    'We write back within 24 hours, however you prefer.',
     perfil.quePasa,
   ]
   return (
     <div className="border-t border-linea p-6 sm:p-7">
       <p className="text-eyebrow font-semibold uppercase tracking-[0.08em] text-navy-soft">
-        Qué pasa después
+        What happens next
       </p>
       <ol className="mt-3 flex flex-col gap-3">
         {pasos.map((paso, i) => (
@@ -168,7 +168,7 @@ function Respaldo() {
   return (
     <div className="border-t border-linea p-6 sm:p-7">
       <p className="text-eyebrow font-semibold uppercase tracking-[0.08em] text-navy-soft">
-        Con quién trabajarías
+        Who you’d be working with
       </p>
       <ul className="mt-3 flex flex-col gap-2.5">
         {RESPALDO.map((linea) => (
@@ -199,10 +199,10 @@ function AtajoWhatsApp() {
       <IconoWhatsApp className="size-4 shrink-0 text-aqua-dark" aria-hidden="true" />
       <span className="min-w-0 flex-1">
         <span className="block text-eyebrow font-semibold uppercase tracking-[0.08em] text-navy-soft">
-          ¿Prefieres hablarlo?
+          Rather talk it through?
         </span>
         <span className="mt-0.5 block text-sm font-medium leading-snug text-navy">
-          Escríbenos por WhatsApp
+          Message us on WhatsApp
         </span>
       </span>
       <ChevronRight
@@ -223,10 +223,10 @@ function Confirmacion({ perfil, onReset }: { perfil: PerfilTrabajo; onReset: () 
       <div aria-hidden="true" className="grid size-12 place-items-center rounded-full bg-menta text-menta-texto">
         <Check className="size-6" strokeWidth={2.5} />
       </div>
-      <p className="mt-4 font-display text-h3 font-semibold text-navy">Solicitud enviada</p>
+      <p className="mt-4 font-display text-h3 font-semibold text-navy">Application sent</p>
       <p className="mt-2 max-w-prose text-sm leading-relaxed text-navy-sub">
-        La recibimos como {perfil.titulo.toLowerCase()}. Te escribimos en menos de 24 h — si mientras
-        tanto quieres adelantar algo, tienes nuestro WhatsApp aquí al lado.
+        We received it as {perfil.titulo.toLowerCase()}. We’ll write to you within 24 h — and if you want
+        to get ahead in the meantime, our WhatsApp is right here.
       </p>
       <button
         type="button"
@@ -300,7 +300,7 @@ export function FormularioTrabaja() {
           <div className="order-1 border-b border-linea bg-papel-hueso lg:col-start-1 lg:row-start-1 lg:w-trabaja-rail lg:border-b-0 lg:border-r">
             <fieldset>
               <legend className="px-6 pb-1 pt-6 text-sm font-semibold text-navy sm:px-7">
-                ¿Cómo quieres trabajar con nosotros?
+                How would you like to work with us?
               </legend>
               <div className="mt-2 border-t border-linea">
                 {PERFILES_TRABAJO.map((p, i) => (
@@ -341,10 +341,10 @@ export function FormularioTrabaja() {
                     formulario de la derecha se adaptó a lo que marcaste en el
                     carril de la izquierda. */}
                 <h2 className="font-display text-h3 font-semibold text-navy">
-                  Solicitud como {perfil.titulo.toLowerCase()}
+                  Applying as {perfil.titulo.toLowerCase()}
                 </h2>
                 <p className="mt-2 text-sm text-navy-sub">
-                  Lo justo para poder escribirte. Sin registros ni contraseñas.
+                  Just enough for us to get back to you. No accounts, no passwords.
                 </p>
 
                 <div className="mt-7 flex flex-col gap-5">
@@ -386,19 +386,19 @@ export function FormularioTrabaja() {
                   ))}
 
                   <Campo
-                    etiqueta="Cuéntanos un poco más (opcional)"
+                    etiqueta="Tell us a bit more (optional)"
                     name="mensaje"
                     textarea
                     rows={4}
-                    placeholder="Lo que creas que deberíamos saber antes de escribirte."
+                    placeholder="Anything you think we should know before we reply."
                   />
                 </div>
 
                 <Boton type="submit" className="mt-7 w-full sm:w-auto">
-                  Enviar solicitud
+                  Send application
                 </Boton>
                 <p className="mt-3 text-xs text-navy-soft">
-                  Te respondemos en menos de 24 h. No te apuntamos a ninguna lista de correo.
+                  We reply within 24 h. We won’t add you to any mailing list.
                 </p>
               </>
             )}

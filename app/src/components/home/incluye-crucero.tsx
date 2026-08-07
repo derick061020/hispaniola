@@ -125,7 +125,7 @@ export function IncluyeCrucero() {
           mecánica vive en componentes.css + use-incluye-scroll.ts). */}
       <img
         src="/fotos/incluye-barco-cenital.webp"
-        alt="Catamarán de Hispaniola visto desde el aire, navegando en el mar del Caribe"
+        alt="A Hispaniola catamaran seen from the air, sailing the Caribbean Sea"
         width={964}
         height={1798}
         loading="lazy"

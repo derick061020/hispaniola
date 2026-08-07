@@ -18,7 +18,7 @@ export function ComparadorStrip() {
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 rounded-card bg-aqua-tint px-4 py-3 ring-1 ring-aqua/20">
       <p className="text-sm text-navy-sub">
-        Mismo precio que en Viator o Civitatis — aquí con <strong className="font-semibold text-navy">depósito del 25%</strong>
+        Same price as on Viator or Civitatis — here with a <strong className="font-semibold text-navy">25% deposit</strong>
         , menú a elección y WhatsApp directo.
       </p>
       {/* Etapa A: Button neutral/stroke del sistema (xsmall) — la pastilla
@@ -26,7 +26,7 @@ export function ComparadorStrip() {
           a /por-que-reservar: /reserva-directa se retiró y ahora el destino
           es la página completa de argumento (slides 50-56 del cliente). */}
       <Button.Root variant="neutral" mode="stroke" size="xsmall" className="shrink-0" asChild>
-        <Link to="/why-book-direct">Por qué reservar con nosotros →</Link>
+        <Link to="/why-book-direct">Why book direct →</Link>
       </Button.Root>
     </div>
   )

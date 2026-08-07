@@ -96,7 +96,7 @@ export function ResumenReserva({
           <div className="min-w-0">
             <p className="font-display text-sm font-semibold leading-snug text-navy">{tour.nombre}</p>
             <p className="mt-0.5 text-xs text-navy-soft">
-              Menú {nombrePaquete} · {tour.duracionCorta}
+              {nombrePaquete} menu · {tour.duracionCorta}
             </p>
           </div>
         </div>
@@ -110,13 +110,13 @@ export function ResumenReserva({
 
           <div
             role="group"
-            aria-label="Número de personas"
+            aria-label="Number of people"
             className="flex h-10 items-center justify-between rounded-10 border border-stroke-soft-200 bg-bg-white-0 pl-3 pr-1.5"
           >
             <span className="flex items-center gap-2 text-paragraph-sm text-text-strong-950">
               <Users className="size-5 shrink-0 text-text-sub-600" aria-hidden="true" />
               <span key={personas} aria-live="polite" className="stepper-tick tabular-nums">
-                {personas === 1 ? '1 persona' : `${personas} personas`}
+                {personas === 1 ? '1 person' : `${personas} people`}
               </span>
             </span>
             <div className="flex items-center gap-1">
@@ -124,7 +124,7 @@ export function ResumenReserva({
                 type="button"
                 variant="stroke"
                 fullRadius
-                aria-label="Quitar una persona"
+                aria-label="Remove one person"
                 disabled={personas <= minPersonas}
                 onClick={() => onPersonas(Math.max(minPersonas, personas - 1))}
                 className="size-9 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
@@ -135,7 +135,7 @@ export function ResumenReserva({
                 type="button"
                 variant="stroke"
                 fullRadius
-                aria-label="Añadir una persona"
+                aria-label="Add one person"
                 disabled={personas >= maxPersonas}
                 onClick={() => onPersonas(Math.min(maxPersonas, personas + 1))}
                 className="size-9 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
@@ -161,7 +161,7 @@ export function ResumenReserva({
                     type="button"
                     onClick={() => onHorario(i)}
                     aria-pressed={elegido}
-                    aria-label={`Salida ${h.hora}${h.regreso ? `, regreso ${h.regreso}` : ''}`}
+                    aria-label={`Departure ${h.hora}${h.regreso ? `, back at ${h.regreso}` : ''}`}
                     className={`rounded-full px-3.5 py-2 text-sm tabular-nums transition-colors ${
                       elegido
                         ? 'bg-navy font-semibold text-papel shadow-sm'
@@ -176,7 +176,7 @@ export function ResumenReserva({
           ) : null}
 
           <p className="text-xs text-navy-soft">
-            {fechaISO ? horarioTxt : 'Elige la fecha para confirmar tu plaza.'}
+            {fechaISO ? horarioTxt : 'Choose the date to confirm your spot.'}
           </p>
         </div>
 
@@ -188,7 +188,7 @@ export function ResumenReserva({
           <FilaPrecio
             concepto={
               <>
-                Menú {upgrade > 0 ? 'Light' : nombrePaquete}{' '}
+                {upgrade > 0 ? 'Light' : nombrePaquete} menu{' '}
                 <span className="text-navy-soft">
                   {formatoDinero(precioBase)} × {personas}
                 </span>
@@ -200,7 +200,7 @@ export function ResumenReserva({
             <FilaPrecio
               concepto={
                 <>
-                  Upgrade a Premium{' '}
+                  Upgrade to Premium{' '}
                   <span className="text-navy-soft">
                     {formatoDinero(upgrade)} × {personas}
                   </span>
@@ -219,40 +219,40 @@ export function ResumenReserva({
             evita la duda de siempre: el depósito no se suma, se descuenta. */}
         <div className="rounded-b-card border-t border-linea bg-papel-hueso p-4 text-sm">
           <div className="flex items-center justify-between">
-            <span className="font-semibold text-navy">Pagas hoy (25%)</span>
+            <span className="font-semibold text-navy">You pay today (25%)</span>
             <span className="font-semibold text-navy">{formatoDinero(deposito)}</span>
           </div>
           <div className="mt-1.5 flex items-center justify-between">
-            <span className="text-navy-sub">El día del tour</span>
+            <span className="text-navy-sub">On the day of the tour</span>
             <span className="text-navy">{formatoDinero(saldo)}</span>
           </div>
           <p className="mt-2.5 text-xs leading-relaxed text-navy-soft">
-            El depósito no es un cargo extra: se descuenta del total. En efectivo a bordo el saldo baja a{' '}
-            <span className="font-semibold text-navy">{formatoDinero(enEfectivo)}</span> — ahorras{' '}
+            The deposit is not an extra charge: it comes off the total. Paying cash on board brings the balance down to{' '}
+            <span className="font-semibold text-navy">{formatoDinero(enEfectivo)}</span> — you save{' '}
             {formatoDinero(ahorro)}.
           </p>
           <p className="mt-2 flex items-center gap-1.5 text-xs font-medium text-menta-texto">
             <Check className="size-3.5 shrink-0" aria-hidden="true" />
-            Cancela gratis hasta 7 días antes
+            Free cancellation up to 7 days before
           </p>
         </div>
       </div>
 
       <div className="mt-5 px-1">
-        <h2 className="font-display text-sm font-semibold text-navy">Reserva con confianza</h2>
+        <h2 className="font-display text-sm font-semibold text-navy">Book with confidence</h2>
         <ul className="mt-3 flex flex-col gap-3 text-xs text-navy-sub">
           <li className="flex gap-2.5">
             <ShieldCheck className="size-4 shrink-0 text-aqua-dark" aria-hidden="true" />
             <span>
-              <strong className="font-semibold text-navy">Flexibilidad total.</strong> Cancela gratis hasta 7 días antes
-              y reembolso completo por mal clima.
+              <strong className="font-semibold text-navy">Total flexibility.</strong> Free cancellation up to 7 days before
+              and a full refund for bad weather.
             </span>
           </li>
           <li className="flex gap-2.5">
             <MessageCircle className="size-4 shrink-0 text-aqua-dark" aria-hidden="true" />
             <span>
-              <strong className="font-semibold text-navy">Trato directo.</strong> Hablas por WhatsApp con el equipo del
-              barco, no con un call center.
+              <strong className="font-semibold text-navy">Talk to us directly.</strong> You chat on WhatsApp with the boat’s
+              team, not with a call center.
             </span>
           </li>
           {/* «Pago seguro» vivía al pie del paso 4 — se leía cuando ya habías
@@ -263,8 +263,8 @@ export function ResumenReserva({
           <li className="flex gap-2.5">
             <Lock className="size-4 shrink-0 text-aqua-dark" aria-hidden="true" />
             <span>
-              <strong className="font-semibold text-navy">Pago seguro.</strong> Conexión cifrada; los datos de tu
-              tarjeta los procesa la pasarela y no se guardan en nuestra web.
+              <strong className="font-semibold text-navy">Secure payment.</strong> Encrypted connection; your card details
+              are handled by the payment gateway and never stored on our site.
             </span>
           </li>
         </ul>

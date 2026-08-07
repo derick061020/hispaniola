@@ -50,7 +50,7 @@ export function BannerPremium({
         <Crown className="mt-0.5 size-5 shrink-0 text-premium-oro" aria-hidden="true" />
         <span className="min-w-0 flex-1">
           <span className="block text-sm font-semibold text-premium-oro">
-            ¿Subes a Premium por {formatoDinero(upgrade)} por persona?
+            Upgrade to Premium for {formatoDinero(upgrade)} per person?
           </span>
           {/* Plegado, el banner tiene que seguir diciendo QUÉ se gana o es una
               línea muerta que nadie vuelve a abrir — y lo dice con las propias
@@ -82,7 +82,7 @@ export function BannerPremium({
           {/* El salto completo, en dinero y para ESTE grupo — no un «+US$ 15»
               suelto que en un grupo de 4 se queda corto por cuatro. */}
           <p className="mt-3 text-xs text-premium-texto">
-            Tu total pasaría de <span className="font-semibold">{formatoDinero(totalActual)}</span> a{' '}
+            Your total would go from <span className="font-semibold">{formatoDinero(totalActual)}</span> to{' '}
             <span className="font-semibold">{formatoDinero(totalActual + diferencia)}</span> (+
             {formatoDinero(diferencia)}).
           </p>
@@ -92,7 +92,7 @@ export function BannerPremium({
             onClick={onCambiar}
             className="premium-thumb mt-3 w-full rounded-full px-4 py-2 text-xs font-bold text-premium-fondo transition hover:brightness-110"
           >
-            Cambiar a Premium
+            Switch to Premium
           </button>
         </div>
       ) : null}

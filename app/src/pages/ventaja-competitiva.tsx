@@ -78,7 +78,7 @@ export function VentajaCompetitivaPage() {
     <div>
       <Meta
         titulo={SOSTENIBILIDAD.titulo}
-        descripcion="Restauración de arrecifes de coral, apoyo a comunidades locales y operación responsable — la Bávaro Reefs Foundation detrás de cada tour."
+        descripcion="Coral reef restoration, support for local communities and responsible operations — the Bávaro Reefs Foundation behind every tour."
         ruta="/competitive-advantage"
       />
       <HeroInterna ctaHref="/#tours">
@@ -113,7 +113,7 @@ export function VentajaCompetitivaPage() {
             <p className="text-lead text-navy-sub">{SOSTENIBILIDAD.historia}</p>
             <img
               src="/fotos/arrecife-fondo-cenital.webp"
-              alt="El área marina protegida vista desde el aire"
+              alt="The protected marine area seen from the air"
               loading="lazy"
               className="h-56 w-full rounded-card object-cover lg:h-72"
             />

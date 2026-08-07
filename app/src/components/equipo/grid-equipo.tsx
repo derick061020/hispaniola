@@ -121,7 +121,7 @@ function CardMiembro({ miembro, Icono }: { miembro: MiembroEquipoV2; Icono: type
 
       {miembro.responsable ? (
         <span className="absolute left-3 top-3 rounded-chip bg-coral px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-white">
-          Responsable
+          Team lead
         </span>
       ) : null}
 
@@ -139,7 +139,7 @@ function CardMiembro({ miembro, Icono }: { miembro: MiembroEquipoV2; Icono: type
             de texto hasta la cara del retrato. El cargo y el nombre son lo que
             hay que leer de un vistazo; la antigüedad es dato de apoyo. */}
         <p className="hidden overflow-hidden text-xs text-white/70 transition-all duration-300 sm:block sm:max-h-0 sm:opacity-0 sm:group-hover:mt-1 sm:group-hover:max-h-8 sm:group-hover:opacity-100">
-          {miembro.experiencia} años de experiencia · desde {miembro.desde}
+          {miembro.experiencia} years of experience · since {miembro.desde}
         </p>
       </div>
     </article>
@@ -163,7 +163,7 @@ function SeccionDepartamento({ departamento }: { departamento: Departamento }) {
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
             <h2 className="font-display text-h3 font-semibold text-navy">{departamento.nombre}</h2>
             <span className="rounded-chip bg-aqua-tint px-2.5 py-0.5 text-xs font-semibold text-aqua-dark">
-              {gente.length} personas
+              {gente.length} people
             </span>
           </div>
           {/* Este copy SÍ es real: lo escribió el cliente en su PowerPoint. */}
@@ -213,7 +213,7 @@ export function GridEquipo({
               : 'border-linea text-navy hover:bg-papel-hueso'
           }`}
         >
-          Todos <span className="opacity-60">{TOTAL_EQUIPO}</span>
+          All <span className="opacity-60">{TOTAL_EQUIPO}</span>
         </button>
         {DEPARTAMENTOS.map((d) => {
           const n = EQUIPO_COMPLETO.filter((m) => m.departamento === d.id).length

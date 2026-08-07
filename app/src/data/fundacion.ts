@@ -50,14 +50,14 @@ export const FUNDACION = {
   // hero porque resume la fundación entera en siete palabras, y así la
   // sección de proyectos deja de repetirla como su h2 (antes el mismo texto
   // salía DOS veces en la misma página, a dos pantallas de distancia).
-  lema: 'Cuidar los arrecifes empieza con las personas',
+  lema: 'Caring for the reefs starts with people',
   heroTexto:
-    'Restauración coralina y arrecifes artificiales en Playa Bávaro desde 2016, junto al Ministerio de Medio Ambiente.',
+    'Coral restoration and artificial reefs at Playa Bávaro since 2016, alongside the Ministry of Environment.',
 
   hitos: [
-    { cifra: '2016', texto: 'inicio del proyecto' },
-    { cifra: '3er', texto: 'vivero de coral del país' },
-    { cifra: 'Aliados', texto: 'Ministerio de Medio Ambiente' },
+    { cifra: '2016', texto: 'project start' },
+    { cifra: '3rd', texto: 'coral nursery in the country' },
+    { cifra: 'Partners', texto: 'Ministry of Environment' },
   ],
 
   // LA HISTORIA, EN TRES TIEMPOS. Antes eran dos párrafos de ~60 palabras
@@ -65,31 +65,31 @@ export const FUNDACION = {
   // para sacar los tres momentos que de verdad cuentan (el problema, la
   // decisión, el resultado). Aquí es el MISMO texto troceado en esos tres
   // tiempos, con la foto de cada uno — sin un dato nuevo ni uno perdido.
-  cronologiaEyebrow: 'Cómo empezó',
+  cronologiaEyebrow: 'How it started',
   cronologia: [
     {
-      marca: 'Antes',
-      titulo: 'El arrecife se estaba perdiendo',
+      marca: 'Before',
+      titulo: 'The reef was being lost',
       texto:
-        'La operación diaria en Playa Bávaro fue testigo del deterioro de los ecosistemas marinos por el crecimiento del turismo.',
+        'Our daily operation at Playa Bávaro witnessed the decline of marine ecosystems as tourism grew.',
       foto: 'galeria-snorkel-lovers-1',
-      fotoAlt: 'Coral sobre el fondo del arrecife de Playa Bávaro',
+      fotoAlt: 'Coral on the reef bed at Playa Bávaro',
     },
     {
       marca: '2016',
-      titulo: 'Arranca la restauración',
+      titulo: 'Restoration begins',
       texto:
-        'Un proyecto de restauración coralina y construcción de arrecifes artificiales, en colaboración con el Ministerio de Medio Ambiente.',
+        'A coral restoration and artificial reef building project, in collaboration with the Ministry of Environment.',
       foto: 'galeria-snorkel-lovers-13',
-      fotoAlt: 'Fragmentos de coral creciendo en las estructuras del vivero, con un pez entre ellos',
+      fotoAlt: 'Coral fragments growing on the nursery structures, with a fish among them',
     },
     {
-      marca: 'Hoy',
-      titulo: 'Tercer vivero del país',
+      marca: 'Today',
+      titulo: 'Third nursery in the country',
       texto:
-        'El proyecto está reconocido como el tercer vivero de coral más importante de República Dominicana.',
+        'The project is recognized as the third most important coral nursery in the Dominican Republic.',
       foto: 'galeria-snorkel-lovers-3',
-      fotoAlt: 'Estructuras de arrecife artificial cubiertas de peces bajo el agua',
+      fotoAlt: 'Artificial reef structures covered in fish underwater',
     },
   ],
 
@@ -110,29 +110,29 @@ export const FUNDACION = {
   // inventarle un retrato a alguien que existe. La card cae sola a su
   // fallback de monograma (`iniciales`) hasta que el cliente mande fotos —
   // ese día es cambiar `null` por el nombre del archivo y nada más.
-  fundadoresEyebrow: 'Quién está detrás',
-  fundadoresTitulo: 'Tres firmas sostienen la fundación',
+  fundadoresEyebrow: 'Who’s behind it',
+  fundadoresTitulo: 'Three names sustain the foundation',
   fundadoresIntro:
-    'Nace de la pasión compartida por el medio ambiente de dos personas, con el respaldo de la empresa cuya operación fue testigo del problema.',
+    'It was born out of the shared passion for the environment of two people, backed by the company whose daily operation witnessed the problem.',
   fundadores: [
     {
       id: 'fernando',
       nombre: 'Fernando Sánchez Fernández',
-      rol: 'Cofundador',
+      rol: 'Co-founder',
       iniciales: 'FS',
       foto: null,
     },
     {
       id: 'manuel',
       nombre: 'Manuel Alejandro Redondo',
-      rol: 'Cofundador',
+      rol: 'Co-founder',
       iniciales: 'MR',
       foto: null,
     },
     {
       id: 'hispaniola',
       nombre: 'Hispaniola Aquatic Adventures',
-      rol: 'Empresa que respalda la fundación',
+      rol: 'Company backing the foundation',
       iniciales: 'HAA',
       foto: null,
     },
@@ -152,18 +152,18 @@ export const FUNDACION = {
   // una idea abstracta; con ellas se ve lo que es — bloques sumergidos que a
   // los meses están tapados de peces.
   destacado: {
-    eyebrow: 'El proyecto insignia',
-    titulo: 'Arrecifes artificiales',
+    eyebrow: 'The flagship project',
+    titulo: 'Artificial Reefs',
     texto:
-      'Crear las condiciones ecológicas necesarias para la restauración y el desarrollo de arrecifes coralinos, a través de la vigilancia y protección ambiental.',
+      'Creating the ecological conditions needed for the restoration and growth of coral reefs, through environmental monitoring and protection.',
     fotos: [
       {
         src: 'galeria-snorkel-lovers-4',
-        alt: 'Bloques de arrecife artificial sobre el fondo, rodeados de peces',
+        alt: 'Artificial reef blocks on the seabed, surrounded by fish',
       },
       {
         src: 'galeria-snorkel-lovers-18',
-        alt: 'Una tortuga marina nadando sobre el arrecife de Bávaro',
+        alt: 'A sea turtle swimming over the Bávaro reef',
       },
     ],
   },
@@ -211,7 +211,7 @@ export const FUNDACION = {
       texto:
         'We rescue coral fragments, grow them in our nurseries and laboratories, and transplant them using advanced restoration techniques to rebuild healthy reefs.',
       foto: 'galeria-snorkel-lovers-6',
-      fotoAlt: 'Estructuras del vivero de coral bajo el agua, con una buceadora revisándolas',
+      fotoAlt: 'Coral nursery structures underwater, with a diver checking them',
     },
     {
       clave: 'Biodiversity',
@@ -220,7 +220,7 @@ export const FUNDACION = {
       texto:
         'Our restoration strategy goes beyond corals by increasing fish populations, protecting key species and rebuilding the ecological balance that allows reefs to flourish naturally.',
       foto: 'galeria-snorkel-lovers-5',
-      fotoAlt: 'Peces nadando sobre un coral cerebro en el arrecife de Bávaro',
+      fotoAlt: 'Fish swimming over a brain coral on the Bávaro reef',
     },
     {
       clave: 'Clean-ups',
@@ -229,7 +229,7 @@ export const FUNDACION = {
       texto:
         'Regular coastal and underwater clean-up campaigns remove marine debris, improve habitat quality and protect the ecosystems that support marine life.',
       foto: 'galeria-semi-privado-3',
-      fotoAlt: 'Un grupo numeroso en la orilla de la playa de Bávaro',
+      fotoAlt: 'A large group at the shoreline of Bávaro beach',
       contexto: true,
     },
     {
@@ -239,7 +239,7 @@ export const FUNDACION = {
       texto:
         'We work alongside local fishermen, promoting sustainable practices and creating opportunities that align livelihoods with long-term marine conservation.',
       foto: 'galeria-semi-privado-4',
-      fotoAlt: 'Banco de peces sargento sobre el arrecife, junto a una nadadora',
+      fotoAlt: 'A school of sergeant major fish over the reef, next to a swimmer',
       contexto: true,
     },
     {
@@ -249,7 +249,7 @@ export const FUNDACION = {
       texto:
         'Every visitor, student and local resident becomes part of our mission through educational experiences that inspire long-term stewardship of the Caribbean.',
       foto: 'galeria-snorkel-lovers-10',
-      fotoAlt: 'Un guía de Hispaniola explicando el vivero de coral a un grupo de niños',
+      fotoAlt: 'A Hispaniola guide explaining the coral nursery to a group of children',
     },
     {
       clave: 'Protected area',
@@ -258,7 +258,7 @@ export const FUNDACION = {
       texto:
         'Working alongside the Ministry of Environment, we help manage the protected marine area where we operate through monitoring, scientific data collection and on-the-water conservation efforts.',
       foto: 'arrecife-fondo-cenital',
-      fotoAlt: 'El área marina protegida vista desde el aire',
+      fotoAlt: 'The marine protected area seen from the air',
       contexto: true,
     },
   ],
@@ -271,14 +271,14 @@ export const FUNDACION = {
   membresiasEyebrow: 'Membresías',
   membresiasTitulo: 'Conoce nuestras membresías',
   membresiasTexto:
-    'Cada aporte cuenta. Al unirte, apoyas iniciativas que protegen nuestros ecosistemas y educan a futuras generaciones.',
-  membresiasCta: 'Quiero apoyar la fundación',
+    'Every contribution counts. By joining, you support initiatives that protect our ecosystems and educate future generations.',
+  membresiasCta: 'I want to support the foundation',
 
   // ---------- Copy exclusivo del TEASER en /ventaja-competitiva ----------
   // Slide 62 condensado a un bloque. No repite la historia entera: da el
   // nombre, quién está detrás y los 3 hitos, y manda a la página.
-  teaserEyebrow: 'Nuestra fundación',
+  teaserEyebrow: 'Our foundation',
   teaserTexto:
-    'Detrás de cada tour hay una fundación con nombre propio: la que en 2016 arrancó la restauración coralina en Playa Bávaro junto al Ministerio de Medio Ambiente, hoy el tercer vivero de coral más importante del país.',
-  teaserCta: 'Conoce la Fundación',
+    'Behind every tour there is a foundation with a name of its own: the one that in 2016 started coral restoration at Playa Bávaro alongside the Ministry of the Environment, today the third most important coral nursery in the country.',
+  teaserCta: 'Meet the Foundation',
 } as const

@@ -213,10 +213,10 @@ function Precio({
   if (precio === null) {
     return <p className="font-display text-precio font-semibold text-navy">US$ —</p>
   }
-  const sufijo = unidad === 'grupo' ? 'por grupo' : 'por persona'
+  const sufijo = unidad === 'grupo' ? 'per group' : 'per person'
   return (
     <p className="text-navy">
-      {unidad === 'desde' ? <span className="text-sm text-navy-sub">Desde </span> : null}
+      {unidad === 'desde' ? <span className="text-sm text-navy-sub">From </span> : null}
       <span className="font-display text-precio font-semibold">{formatoDinero(precio)}</span>
       <span className="text-sm text-navy-sub"> {sufijo}</span>
     </p>
@@ -465,14 +465,15 @@ export function WidgetReserva({
       <Caja premium={premiumDeBase}>
         <Precio precio={tour.precioLight} unidad="desde" />
         <p className="text-sm text-navy-sub">
-          Este tour se cotiza a tu medida según nº de personas y menú — hasta {tour.maxPax} personas.
+          This tour is quoted to fit you, based on the number of guests and the menu — up to{' '}
+          {tour.maxPax} guests.
         </p>
         <FancyButton.Root variant="primary" className="w-full" asChild>
-          <EnlacePrototipo>Pedir cotización</EnlacePrototipo>
+          <EnlacePrototipo>Request a quote</EnlacePrototipo>
         </FancyButton.Root>
         <FancyButton.Root variant="basic" className="w-full" asChild>
           <a href={WHATSAPP_URL} target="_blank" rel="noopener">
-            WhatsApp directo
+            WhatsApp us directly
           </a>
         </FancyButton.Root>
       </Caja>
@@ -487,12 +488,12 @@ export function WidgetReserva({
             del cliente, ver PLAN-v3.md §9). Un precio inventado aquí sería el
             peor sitio posible para inventarlo. */}
         <p className="text-sm text-navy-sub">
-          <strong className="font-semibold text-navy">Precio pendiente de confirmar con el cliente.</strong> Duración y
-          capacidad también están por definir.
+          <strong className="font-semibold text-navy">Price still to be confirmed with the client.</strong> Duration and
+          capacity are still to be defined too.
         </p>
         <FancyButton.Root variant="primary" className="w-full" asChild>
           <a href={WHATSAPP_URL} target="_blank" rel="noopener">
-            Consultar por WhatsApp
+            Ask on WhatsApp
           </a>
         </FancyButton.Root>
       </Caja>
@@ -640,7 +641,7 @@ export function WidgetReserva({
           ★
         </span>
         <span className="font-semibold text-navy">{tour.rating}</span>
-        <span>· {tour.resenas.toLocaleString('es-ES')} reseñas verificadas</span>
+        <span>· {tour.resenas.toLocaleString('en-US')} verified reviews</span>
       </div>
 
       <Precio precio={precioAnclaNum} unidad={unidadAncla} />
@@ -658,15 +659,15 @@ export function WidgetReserva({
         <p className="-mt-2 text-xs text-navy-soft tabular-nums">
           {tramoActivo.tipo === 'persona' ? (
             <>
-              {formatoDinero(tramoActivo.precio)} × {paxActuales} {paxActuales === 1 ? 'persona' : 'personas'}
+              {formatoDinero(tramoActivo.precio)} × {paxActuales} {paxActuales === 1 ? 'guest' : 'guests'}
               {' · '}
-              <span className="text-navy-sub">tramo {tramoActivo.desde}–{tramoActivo.hasta === null ? '120' : tramoActivo.hasta} pax</span>
+              <span className="text-navy-sub">tier {tramoActivo.desde}–{tramoActivo.hasta === null ? '120' : tramoActivo.hasta} pax</span>
             </>
           ) : (
             <>
-              Precio fijo de grupo
+              Flat group price
               {' · '}
-              <span className="text-navy-sub">tramo {tramoActivo.desde}–{tramoActivo.hasta === null ? '120' : tramoActivo.hasta} pax</span>
+              <span className="text-navy-sub">tier {tramoActivo.desde}–{tramoActivo.hasta === null ? '120' : tramoActivo.hasta} pax</span>
             </>
           )}
         </p>
@@ -843,7 +844,7 @@ export function WidgetReserva({
                     type="button"
                     onClick={() => setHorario(i)}
                     aria-pressed={elegido}
-                    aria-label={`Salida ${h.hora}${h.regreso ? `, regreso ${h.regreso}` : ''}`}
+                    aria-label={`Departure ${h.hora}${h.regreso ? `, back at ${h.regreso}` : ''}`}
                     // `text-papel` y NO `text-white`: el blanco de Tailwind es un
                     // valor fijo, no un token, así que en el tema oscuro se
                     // quedaba blanco sobre el crema de `bg-navy` remapeado — la
@@ -867,7 +868,7 @@ export function WidgetReserva({
             {horariosActivos[horario]?.regreso ? (
               <p className="mt-2 flex items-center gap-1.5 text-xs text-navy-soft">
                 <ArrowDown className="size-3 shrink-0 -rotate-90" aria-hidden="true" />
-                Regresas a las{' '}
+                You’re back at{' '}
                 <span className="font-semibold text-navy">{horariosActivos[horario].regreso}</span>
                 <span className="text-navy-soft/70">&middot; {ficha.duracion}</span>
               </p>
@@ -905,17 +906,17 @@ export function WidgetReserva({
                 niños 4-7, bebés 0-3. El tope de 7 sigue sin confirmar por
                 escrito con Fernando (salió de la reunión, donde el cliente no
                 recordaba el rango) — y ahora es copy visible. */}
-            <div role="group" aria-label="Pasajeros" className="divide-y divide-linea">
+            <div role="group" aria-label="Passengers" className="divide-y divide-linea">
               <FilaPasajero
-                titulo="Adultos"
+                titulo="Adults"
                 edades="13-99"
                 minimo={1}
                 maximo={maxPersonas}
                 pista={
                   <PistaInfo
                     sobreOscuro={pielOscura}
-                    etiqueta="Qué cuenta como adulto"
-                    texto="A partir de 13 años se paga tarifa completa. Al menos un adulto tiene que acompañar a los menores."
+                    etiqueta="What counts as an adult"
+                    texto="From age 13 the full fare applies. At least one adult has to travel with the minors."
                   />
                 }
               >
@@ -930,7 +931,7 @@ export function WidgetReserva({
                     type="button"
                     variant="stroke"
                     fullRadius
-                    aria-label="Quitar un adulto"
+                    aria-label="Remove an adult"
                     disabled={adultos <= 1}
                     onClick={() => setAdultos((a) => Math.max(1, a - 1))}
                     className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
@@ -941,7 +942,7 @@ export function WidgetReserva({
                     type="button"
                     variant="stroke"
                     fullRadius
-                    aria-label="Añadir un adulto"
+                    aria-label="Add an adult"
                     disabled={adultos + ninos >= maxPersonas}
                     onClick={() => setAdultos((a) => Math.min(maxPersonas - ninos, a + 1))}
                     className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
@@ -951,15 +952,15 @@ export function WidgetReserva({
               </FilaPasajero>
 
               <FilaPasajero
-                titulo="Niños"
+                titulo="Children"
                 edades="4-7"
                 minimo={0}
                 maximo={maxPersonas - 1}
                 pista={
                   <PistaInfo
                     sobreOscuro={pielOscura}
-                    etiqueta="Qué edad cuenta como niño"
-                    texto="De 4 a 7 años pagan tarifa reducida. Los menores de 4 no pagan: añádelos como bebés."
+                    etiqueta="What age counts as a child"
+                    texto="Ages 4 to 7 pay a reduced fare. Under 4s do not pay: add them as infants."
                   />
                 }
               >
@@ -974,7 +975,7 @@ export function WidgetReserva({
                     type="button"
                     variant="stroke"
                     fullRadius
-                    aria-label="Quitar un niño"
+                    aria-label="Remove a child"
                     disabled={ninos <= 0}
                     onClick={() => setNinos((n) => Math.max(0, n - 1))}
                     className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
@@ -985,7 +986,7 @@ export function WidgetReserva({
                     type="button"
                     variant="stroke"
                     fullRadius
-                    aria-label="Añadir un niño"
+                    aria-label="Add a child"
                     disabled={adultos + ninos >= maxPersonas}
                     onClick={() => setNinos((n) => Math.min(maxPersonas - adultos, n + 1))}
                     className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
@@ -998,15 +999,15 @@ export function WidgetReserva({
                   «los bebés no suman»), por eso su máximo no depende de
                   `maxPersonas` ni deshabilita el «+». */}
               <FilaPasajero
-                titulo="Bebés"
+                titulo="Infants"
                 edades="0-3"
                 minimo={0}
                 maximo={maxPersonas}
                 pista={
                   <PistaInfo
                     sobreOscuro={pielOscura}
-                    etiqueta="Qué edad cuenta como bebé"
-                    texto="Hasta los 3 años viajan sin coste y no ocupan plaza. A partir de los 4 pagan tarifa de niño."
+                    etiqueta="What age counts as an infant"
+                    texto="Up to age 3 they travel free and do not take up a spot. From age 4 they pay the child fare."
                   />
                 }
               >
@@ -1021,7 +1022,7 @@ export function WidgetReserva({
                     type="button"
                     variant="stroke"
                     fullRadius
-                    aria-label="Quitar un bebé"
+                    aria-label="Remove an infant"
                     disabled={bebes <= 0}
                     onClick={() => setBebes((b) => Math.max(0, b - 1))}
                     className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
@@ -1032,7 +1033,7 @@ export function WidgetReserva({
                     type="button"
                     variant="stroke"
                     fullRadius
-                    aria-label="Añadir un bebé"
+                    aria-label="Add an infant"
                     disabled={false}
                     onClick={() => setBebes((b) => b + 1)}
                     className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
@@ -1060,19 +1061,19 @@ export function WidgetReserva({
               if (personas >= min) return null
               return (
                 <p className="mb-1.5 text-xs text-navy-soft">
-                  {v.nombre} requiere mínimo {min} personas.
+                  {v.nombre} requires a minimum of {min} guests.
                 </p>
               )
             })()}
             <div
               role="group"
-              aria-label="Número de personas"
+              aria-label="Number of guests"
               className="flex h-10 items-center justify-between rounded-10 border border-stroke-soft-200 bg-bg-white-0 pl-3 pr-1.5"
             >
               <span className="flex items-center gap-2 text-paragraph-sm text-text-strong-950">
                 <Users className="size-5 shrink-0 text-text-sub-600" aria-hidden="true" />
                 <span key={personas} aria-live="polite" className="stepper-tick tabular-nums">
-                  {personas === 1 ? '1 persona' : `${personas} personas`}
+                  {personas === 1 ? '1 guest' : `${personas} guests`}
                 </span>
               </span>
               <div className="flex items-center gap-1">
@@ -1080,7 +1081,7 @@ export function WidgetReserva({
                   type="button"
                   variant="stroke"
                   fullRadius
-                  aria-label="Quitar una persona"
+                  aria-label="Remove a guest"
                   disabled={personas <= 1}
                   onClick={() => setPersonas((p) => Math.max(1, p - 1))}
                   className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
@@ -1091,7 +1092,7 @@ export function WidgetReserva({
                   type="button"
                   variant="stroke"
                   fullRadius
-                  aria-label="Añadir una persona"
+                  aria-label="Add a guest"
                   disabled={personas >= maxPersonas}
                   onClick={() => setPersonas((p) => Math.min(maxPersonas, p + 1))}
                   className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
@@ -1116,7 +1117,7 @@ export function WidgetReserva({
       {tienePaquetes && paquete === 'light' && ficha.ventajasPremium?.length ? (
         <div className="rounded-card bg-premium-fondo p-4">
           <p className="text-sm font-semibold text-premium-oro">
-            Con Premium sumas 4 cosas por {formatoDinero(upgrade ?? 0)}
+            With Premium you add 4 things for {formatoDinero(upgrade ?? 0)}
           </p>
           <ul className="mt-2.5 flex flex-col gap-1.5">
             {ficha.ventajasPremium.map((v) => (
@@ -1146,7 +1147,7 @@ export function WidgetReserva({
             // mensaje.
             className="premium-thumb mt-3 w-full rounded-full px-4 py-2 text-xs font-bold text-premium-fondo transition hover:brightness-110"
           >
-            Cambiar a Premium
+            Switch to Premium
           </button>
         </div>
       ) : null}
@@ -1162,9 +1163,9 @@ export function WidgetReserva({
           tripulación por normativa. */}
       {salto !== null ? (
         <p className="rounded-lg border border-linea bg-papel-hueso px-3 py-2 text-xs leading-relaxed text-navy-sub">
-          Con <strong className="text-navy">{paxActuales + 1} personas</strong> cambia la tarifa de
-          este barco: pasa a {formatoDinero(salto.hasta)}. Las normativas de navegación exigen más
-          tripulación a partir de ese grupo.
+          With <strong className="text-navy">{paxActuales + 1} guests</strong> the rate for this
+          boat changes: it goes to {formatoDinero(salto.hasta)}. Boating regulations require more
+          crew from that group size on.
         </p>
       ) : null}
 
@@ -1197,7 +1198,7 @@ export function WidgetReserva({
           cifras pudieran separarse. */}
       <div className="flex items-center justify-center gap-1.5 rounded-btn bg-menta px-3 py-1.5 text-center text-xs font-medium text-menta-texto">
         <Tag className="size-3.5 shrink-0" aria-hidden="true" />
-        Reservando directo ahorras hasta {DESCUENTO_MAXIMO}%
+        Book direct and save up to {DESCUENTO_MAXIMO}%
       </div>
 
       {/* Sin fecha, el CTA está DESHABILITADO de verdad (no un botón gris que
@@ -1215,7 +1216,7 @@ export function WidgetReserva({
         // habilitado y "Continuar — —" (que no se ve bien) al cambiar
         // variante sin ajustar pax.
         <FancyButton.Root variant="primary" className="w-full" disabled>
-          Ajusta las personas
+          Adjust the number of guests
         </FancyButton.Root>
       ) : (
         <FancyButton.Root variant="primary" className="w-full" asChild>
@@ -1264,9 +1265,9 @@ export function WidgetReserva({
       <div className="border-t border-linea pt-3">
         <ChecksTicker
           lineas={[
-            'Reserva ahora y paga después: confirmas con solo el 25%',
-            'Cancela gratis hasta 7 días antes',
-            'Reembolso total por mal clima',
+            'Book now, pay later: confirm with just 25%',
+            'Free cancellation up to 7 days before',
+            'Full refund for bad weather',
           ]}
         />
       </div>
@@ -1313,7 +1314,7 @@ export function WidgetReserva({
             className={`size-4 ${enDeseos ? 'fill-coral text-coral' : ''}`}
             aria-hidden="true"
           />
-          {enDeseos ? 'En tu lista' : 'Agregar a la lista de deseos'}
+          {enDeseos ? 'On your list' : 'Add to wishlist'}
         </button>
         <button
           type="button"

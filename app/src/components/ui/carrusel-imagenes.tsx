@@ -56,7 +56,7 @@ export function CarruselImagenes({
       onPointerEnter={() => setPausado(true)}
       onPointerLeave={() => setPausado(false)}
       role="group"
-      aria-roledescription="carrusel"
+      aria-roledescription="carousel"
       aria-label={etiqueta}
     >
       {/* Pista: las N fotos una al lado de otra (cada una al 100% del ancho),
@@ -79,7 +79,7 @@ export function CarruselImagenes({
           <button
             type="button"
             onClick={() => ir(indice - 1)}
-            aria-label="Foto anterior"
+            aria-label="Previous photo"
             className="absolute left-2 top-1/2 z-20 grid size-8 -translate-y-1/2 place-items-center rounded-chip bg-papel/85 text-navy opacity-0 shadow-sm backdrop-blur-sm transition hover:bg-papel focus-visible:opacity-100 group-hover/carrusel:opacity-100"
           >
             <ChevronLeft className="size-5" aria-hidden="true" />
@@ -87,7 +87,7 @@ export function CarruselImagenes({
           <button
             type="button"
             onClick={() => ir(indice + 1)}
-            aria-label="Foto siguiente"
+            aria-label="Next photo"
             className="absolute right-2 top-1/2 z-20 grid size-8 -translate-y-1/2 place-items-center rounded-chip bg-papel/85 text-navy opacity-0 shadow-sm backdrop-blur-sm transition hover:bg-papel focus-visible:opacity-100 group-hover/carrusel:opacity-100"
           >
             <ChevronRight className="size-5" aria-hidden="true" />
@@ -100,7 +100,7 @@ export function CarruselImagenes({
                 key={foto}
                 type="button"
                 onClick={() => ir(i)}
-                aria-label={`Ir a la foto ${i + 1} de ${n}`}
+                aria-label={`Go to photo ${i + 1} of ${n}`}
                 aria-current={i === indice}
                 className={`h-1.5 rounded-chip shadow-sm transition-all ${
                   i === indice ? 'w-4 bg-white' : 'w-1.5 bg-white/60 hover:bg-white/80'

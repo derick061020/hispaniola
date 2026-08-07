@@ -79,7 +79,7 @@ export function Footer({ cta = 'Ready for an unforgettable day?' }: { cta?: stri
               usa el header sobre fondos oscuros. */}
           <Logo sobreOscuro />
           <p className="mt-3 text-sm text-white/70">
-            C. P.º del Sol, Punta Cana 23500, RD.
+            C. P.º del Sol, Punta Cana 23500, Dominican Republic.
             <br />
             Eco-friendly · Zero plastic · Since 2010.
           </p>
@@ -167,7 +167,7 @@ export function Footer({ cta = 'Ready for an unforgettable day?' }: { cta?: stri
             misma altura. */}
         <div>
           <h5 className="text-sm font-semibold uppercase tracking-wide text-white/50">
-            Trabaja con nosotros
+            Work with us
           </h5>
           <ul className="mt-3 flex flex-col gap-2 text-sm text-white/80">
             {/* Los tres van a la MISMA página con distinto `?perfil=`; la
@@ -192,14 +192,14 @@ export function Footer({ cta = 'Ready for an unforgettable day?' }: { cta?: stri
                   ruta delante vuelve a la home y ScrollAlNavegar (hash-aware)
                   baja al grid de tours. */}
               <Link to="/#tours" className="hover:text-white">
-                Reservar ahora
+                Book now
               </Link>
             </li>
             <li>
               {/* [v2 2026-07-28] /reserva-directa → /por-que-reservar: la
                   página se rehízo entera con los slides 50-56 del cliente. */}
               <Link to="/why-book-direct" className="font-semibold hover:text-white">
-                ¿Por qué reservar con nosotros?
+                Why book direct?
               </Link>
             </li>
             <li>
@@ -214,12 +214,12 @@ export function Footer({ cta = 'Ready for an unforgettable day?' }: { cta?: stri
                   contactarnos por WhatsApp (fricción). Va entre FAQ y
                   Contacto: misma columna semántica (gestión + ayuda). */}
               <Link to="/my-booking" className="font-semibold hover:text-white">
-                Gestionar mi reserva
+                Manage my booking
               </Link>
             </li>
             <li>
               <Link to="/contact" className="hover:text-white">
-                Contacto
+                Contact
               </Link>
             </li>
             <li>
@@ -291,7 +291,7 @@ export function Footer({ cta = 'Ready for an unforgettable day?' }: { cta?: stri
               se conserva — es el ÚNICO medio de pago que el proyecto tiene
               confirmado. */}
           <p className="mt-3 text-xs text-white/50">
-            Confirmas con el 25% online. El resto, el día del tour — también en efectivo a bordo.
+            Confirm with 25% online. The rest on the day of the tour — cash on board works too.
           </p>
         </div>
 
@@ -326,17 +326,17 @@ export function Footer({ cta = 'Ready for an unforgettable day?' }: { cta?: stri
         <ul className="flex flex-wrap items-center gap-x-4 gap-y-1">
           <li>
             <Link to="/legal/cancellation-policy" className="hover:text-white/70">
-              Política de cancelación
+              Cancellation policy
             </Link>
           </li>
           <li>
             <Link to="/legal/privacy" className="hover:text-white/70">
-              Privacidad
+              Privacy
             </Link>
           </li>
           <li>
             <Link to="/legal/terms" className="hover:text-white/70">
-              Términos
+              Terms
             </Link>
           </li>
           <li>

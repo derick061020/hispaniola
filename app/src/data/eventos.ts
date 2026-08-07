@@ -299,7 +299,7 @@ const PAQUETES_COMIDA: PaqueteEvento[] = [
     capacidad: '1-12 guests',
     meta: '3 hours on board · 2 stops',
     foto: 'paquete-i',
-    fotoAlt: 'Classic Package del party boat',
+    fotoAlt: 'Party boat Classic Package',
     items: [{ titulo: 'Hot Dog', texto: '1p/p' }],
     // Las "Vegetarian Substitutions" del cliente son reemplazos, no items
     // extra — el plato de cada comensal es O el hot dog O el vegetariano.
@@ -318,7 +318,7 @@ const PAQUETES_COMIDA: PaqueteEvento[] = [
     capacidad: '1-12 guests',
     meta: '3 hours on board · 2 stops',
     foto: 'paquete-ii',
-    fotoAlt: 'Signature Package del party boat',
+    fotoAlt: 'Party boat Signature Package',
     items: [
       { titulo: 'Hot Dog', texto: '1p/p' },
       { titulo: 'Chicken Skewer', texto: '1p/p' },
@@ -338,7 +338,7 @@ const PAQUETES_COMIDA: PaqueteEvento[] = [
     capacidad: '1-12 guests',
     meta: '3 hours on board · 2 stops',
     foto: 'paquete-iii',
-    fotoAlt: 'Grand Package del party boat',
+    fotoAlt: 'Party boat Grand Package',
     items: [
       { titulo: 'Chicken Skewer', texto: '1p/p' },
       { titulo: 'Beef Skewer', texto: '1p/p' },
@@ -355,7 +355,7 @@ const PAQUETES_COMIDA: PaqueteEvento[] = [
  *  compartida: los descuentos, el aviso de langosta y la regla de las
  *  sustituciones vegetarianas son del tarifario, no de la ocasión. */
 const NOTA_PAQUETES =
-  '*"Starting At Rates" con los descuentos aplicables: hasta 5% cliente recurrente · 5% reserva con 30+ días · 5% pago en efectivo. La langosta puede no estar disponible de marzo a junio (se reemplaza por langostino salvaje). Las opciones vegetarianas aplican SOLO a su paquete y no se pueden intercambiar con otros.'
+  '*“Starting At Rates” with the applicable discounts: up to 5% returning guest · 5% booking 30+ days ahead · 5% cash payment. Lobster may not be available from March to June (it is replaced with wild prawn). Vegetarian options apply ONLY to their own package and cannot be swapped with other packages.'
 
 // ────────────────────────────────────────────────────────────────────
 // 1) PARTY BOAT — /events-party-boat-puntacana.php
@@ -394,40 +394,40 @@ const PARTY_BOAT: FichaEvento = {
   // 9 tipos verbatim de la web del cliente + "Otro" para los casos que
   // no encajan. El widget pinta este array como <option>s.
   tiposEvento: [
-    'Cumpleaños',
+    'Birthday',
     'Bachelor / Bachelorette',
-    'Reunión familiar',
-    'Aniversario',
-    'Renovación de votos / Pre-post boda',
-    'Propuesta',
-    'Corporativo',
+    'Family reunion',
+    'Anniversary',
+    'Vow renewal / Pre-post wedding',
+    'Proposal',
+    'Corporate',
     'Spring break',
-    'Graduación',
-    'Otro',
+    'Graduation',
+    'Other',
   ],
   tipoFijo: -1, // party boat: el visitante elige
-  formatosTitulo: 'Cualquier ocasión, a bordo',
+  formatosTitulo: 'Any occasion, on board',
   formatos: [
     {
-      titulo: 'Cumpleaños',
-      texto: 'Fiesta con familia y amigos — buena comida y barra libre nacional.',
+      titulo: 'Birthdays',
+      texto: 'A party with family and friends — great food and a national open bar.',
       foto: 'events-2',
-      fotoAlt: 'Grupo celebrando a bordo del catamarán, cócteles en mano',
+      fotoAlt: 'Group celebrating on board the catamaran, cocktails in hand',
     },
     {
       titulo: 'Bachelor / Bachelorette',
-      texto: 'Despedida de soltero/a con música, barra libre y vista al Caribe.',
+      texto: 'A bachelor or bachelorette party with music, an open bar and Caribbean views.',
       foto: 'events-3',
-      fotoAlt: 'Grupo de despedida celebrando a bordo del catamarán',
+      fotoAlt: 'Bachelorette group celebrating on board the catamaran',
     },
     {
-      titulo: 'Corporativo',
-      texto: 'Team building, incentive, lanzamiento o cierre de convención.',
+      titulo: 'Corporate',
+      texto: 'Team building, incentive, launch or convention closing.',
       foto: 'events-4',
-      fotoAlt: 'Grupo corporativo cenando a bordo del catamarán',
+      fotoAlt: 'Corporate group having dinner on board the catamaran',
     },
   ],
-  incluyeTitulo: 'Qué incluye',
+  incluyeTitulo: 'What’s Included',
   // 12 ítems verbatim de la sección "All Packages Include" de la web
   // del cliente. La versión v1 de la landing tenía solo 6 (los más
   // "turísticos"); esta v2 suma los 6 que el cliente lista
@@ -435,18 +435,18 @@ const PARTY_BOAT: FichaEvento = {
   // fotos submarinas, barra nacional, mamajuana shots, etc. — todo
   // lo que ya está en el precio del party boat.
   incluye: [
-    { titulo: 'Transporte', texto: 'Ida y vuelta desde tu hotel, en bus con AC.' },
-    { titulo: 'Private Check-In Lobby', texto: 'Recepción privada en nuestras instalaciones antes de zarpar.' },
-    { titulo: 'Floating Kitchen', texto: 'Cocina flotante para comida recién hecha a bordo.' },
-    { titulo: 'Snorkeling Equipment', texto: 'Equipo sanitizado, todas las tallas.' },
-    { titulo: 'Photos (Facebook)', texto: 'Subimos las del tour a nuestro Facebook — gratis.' },
-    { titulo: 'Underwater Photos (Facebook)', texto: 'También del snorkel, en nuestro Facebook.' },
-    { titulo: 'WiFi & AUX port', texto: 'WiFi a bordo y puerto AUX para tu música.' },
-    { titulo: 'Music & Dance', texto: 'Equipo de sonido y crew con energía.' },
-    { titulo: 'National Open Bar', texto: 'Cerveza nacional, ron, vodka, jugos y refrescos.' },
-    { titulo: 'Mamajuana Shots', texto: 'La bebida típica de RD, en shots de cortesía.' },
-    { titulo: 'Fruit Skewers', texto: 'Brochetas de fruta fresca (1p/p).' },
-    { titulo: 'Mini Turkey & Cheese Croissant', texto: 'Aperitivo de pavo y queso (1p/p).' },
+    { titulo: 'Transportation', texto: 'Round-trip from your hotel, in an air-conditioned bus.' },
+    { titulo: 'Private Check-In Lobby', texto: 'Private reception at our facilities before you set sail.' },
+    { titulo: 'Floating Kitchen', texto: 'A floating kitchen for freshly made food on board.' },
+    { titulo: 'Snorkeling Equipment', texto: 'Sanitized gear, every size.' },
+    { titulo: 'Photos (Facebook)', texto: 'We upload the tour photos to our Facebook — free.' },
+    { titulo: 'Underwater Photos (Facebook)', texto: 'From the snorkeling too, on our Facebook.' },
+    { titulo: 'WiFi & AUX port', texto: 'WiFi on board and an AUX port for your music.' },
+    { titulo: 'Music & Dance', texto: 'Sound system and a crew with energy.' },
+    { titulo: 'National Open Bar', texto: 'National beer, rum, vodka, juices and sodas.' },
+    { titulo: 'Mamajuana Shots', texto: 'The classic Dominican drink, in complimentary shots.' },
+    { titulo: 'Fruit Skewers', texto: 'Fresh fruit skewers (1p/p).' },
+    { titulo: 'Mini Turkey & Cheese Croissant', texto: 'Turkey and cheese appetizer (1p/p).' },
   ],
   // Los 4 paquetes de la sección "All Packages" de la web del cliente —
   // el array compartido con bodas (ver PAQUETES_COMIDA arriba: las dos
@@ -463,7 +463,7 @@ const PARTY_BOAT: FichaEvento = {
   // Foto de portada (la 1ª del mosaico). Sin quote sobre la foto: el
   // party boat no tiene un review de 5★ "famoso" que destaque.
   foto: 'events-1',
-  fotoAlt: 'Cubierta del catamarán preparada para una celebración con luces y decoración',
+  fotoAlt: 'The catamaran deck set up for a celebration with lights and decorations',
   // 8 fotos de la galería original del cliente. La 1ª (`events-1`) es
   // la portada — el mosaico la pone primera.
   galeria: [
@@ -482,14 +482,14 @@ const PARTY_BOAT: FichaEvento = {
   // los detalles por formulario, que es más honesto que inventar
   // respuestas a preguntas que nadie ha hecho.
   faq: [],
-  cierreMeta: 'Te respondemos en menos de 24 h con tu cotización',
-  cierreTitulo: '¿Listo para tu party boat?',
-  cierreCta: 'Pedir cotización',
+  cierreMeta: 'We reply in less than 24 h with your quote',
+  cierreTitulo: 'Ready for your party boat?',
+  cierreCta: 'Request a quote',
   cierreWhatsapp: false,
-  ctaPrincipal: 'Pedir cotización',
+  ctaPrincipal: 'Request a quote',
   cotizacionPlegada: {
-    titulo: '¿Tu evento no encaja en un paquete?',
-    sub: 'Bodas, grupos grandes o menú a medida — te cotizamos gratis en 24 h.',
+    titulo: 'Your event doesn’t fit a package?',
+    sub: 'Weddings, large groups or a custom menu — we quote you free in 24 h.',
   },
 }
 
@@ -537,9 +537,9 @@ const BODAS: FichaEvento = {
   // predefinine. El widget no pregunta tipo: lo muestra como un chip de
   // info, no como select. Por eso tipoFijo = 0 (apunta a "Boda") y
   // tiposEvento tiene un solo elemento.
-  tiposEvento: ['Boda'],
+  tiposEvento: ['Wedding'],
   tipoFijo: 0,
-  formatosTitulo: 'Tres momentos, un barco',
+  formatosTitulo: 'Three moments, one boat',
   // "What we offer" de la web del cliente, traducido y condensado. La
   // web tenía 4 cards (Ceremony, Welcome Party, Rehearsal Dinner, After
   // Wedding Day) — se unifican en 3: Ceremonia, Welcome, Despedida. La
@@ -547,46 +547,46 @@ const BODAS: FichaEvento = {
   // ensayo es la Welcome del grupo).
   formatos: [
     {
-      titulo: 'Ceremonia a bordo',
-      texto: 'Íntima, hasta 40 invitados. Decoración, oficiante y brindis.',
+      titulo: 'Ceremony on board',
+      texto: 'Intimate, up to 40 guests. Decoration, officiant and a toast.',
       // Sin foto de ceremonia: va el barco fondeado frente a la playa
       // de palmeras (escenario de la ceremonia, sin fingir una que no
       // hay). Mismo criterio que el resto del proyecto (data/eventos.ts
       // versión anterior).
       foto: 'weddings-4',
-      fotoAlt: 'El catamarán fondeado frente a una playa de palmeras',
+      fotoAlt: 'The catamaran anchored off a palm-lined beach',
     },
     {
       titulo: 'Welcome party',
-      texto: 'Rompe el hielo entre las dos familias el día antes.',
+      texto: 'Break the ice between the two families the day before.',
       foto: 'weddings-1',
-      fotoAlt: 'La tripulación sirviendo bandejas a los invitados a bordo',
+      fotoAlt: 'The crew serving trays to the guests on board',
     },
     {
-      titulo: 'Despedida del grupo',
-      texto: 'El último día, todos juntos, sin protocolo.',
+      titulo: 'Farewell for the group',
+      texto: 'The last day, everyone together, no formalities.',
       foto: 'weddings-2',
-      fotoAlt: 'Grupo de amigos brindando en la playa, el catamarán detrás',
+      fotoAlt: 'A group of friends toasting on the beach, the catamaran behind them',
     },
   ],
-  incluyeTitulo: 'Qué incluye',
+  incluyeTitulo: 'What’s Included',
   // 7 ítems — el "What is included" de la web del cliente. Se traducen
   // y se adaptan al lenguaje de la ficha de tour (texto corto, sin
   // sub-línea en los secundarios).
   incluye: [
-    { titulo: 'Snorkel', texto: 'Equipo incluido y aguas poco profundas — apto para todos los niveles.' },
-    { titulo: 'Música', texto: 'Equipo de sonido a bordo y playlist a medida.' },
-    { titulo: 'Barra flotante', texto: 'Cócteles del chef y barra libre nacional.' },
-    { titulo: 'Playa desierta', texto: 'Parada privada con coco-loco.' },
-    { titulo: 'Fotos', texto: 'De todo el evento, subidas a nuestro Facebook — gratis.' },
-    { titulo: 'Comida', texto: 'Recién hecha en nuestra cocina flotante — menú a medida.' },
-    { titulo: 'Coordinadora', texto: 'Una persona vuestra de principio a fin.' },
+    { titulo: 'Snorkeling', texto: 'Gear included and shallow water — suitable for every level.' },
+    { titulo: 'Music', texto: 'Sound system on board and a custom playlist.' },
+    { titulo: 'Floating bar', texto: 'Cocktails by the chef and a national open bar.' },
+    { titulo: 'Deserted beach', texto: 'Private stop with a coco loco.' },
+    { titulo: 'Photos', texto: 'Of the whole event, uploaded to our Facebook — free.' },
+    { titulo: 'Food', texto: 'Freshly made in our floating kitchen — custom menu.' },
+    { titulo: 'Coordinator', texto: 'One person just for you, from start to finish.' },
     // 8º ítem, y es EL dato que separa bodas de party boat: las dos
     // ocasiones comparten los 4 paquetes y los mismos incluidos comunes,
     // y bodas suma el brindis (TARIFARIO-WEB-ORIGINAL.md §3: «+ Champagne
     // toast solo en bodas»). Va aquí y no dentro de un paquete porque en
     // la web del cliente entra en TODOS.
-    { titulo: 'Champagne toast', texto: 'Brindis con todos los invitados — solo en bodas.' },
+    { titulo: 'Champagne toast', texto: 'A toast with all your guests — weddings only.' },
   ],
   // MISMOS 4 PAQUETES QUE PARTY BOAT, mismo array (PAQUETES_COMIDA):
   // `weddings.php` publica el tarifario idéntico —mismos precios, mismos
@@ -610,7 +610,7 @@ const BODAS: FichaEvento = {
   // grupo. ES LA PORTADA — la 1ª del mosaico. Las 12 siguientes son la
   // galería del cliente.
   foto: 'weddings-5',
-  fotoAlt: 'Novia celebrando a bordo del catamarán con su grupo de invitados',
+  fotoAlt: 'Bride celebrating on board the catamaran with her group of guests',
   galeria: [
     'weddings-5',
     'weddings-1',
@@ -632,33 +632,33 @@ const BODAS: FichaEvento = {
   // de coordinar con novios).
   faq: [
     {
-      p: '¿Y si llueve el día de la boda?',
-      r: 'Reembolso total o cambio de fecha, sin costo.',
+      p: 'What if it rains on the wedding day?',
+      r: 'Full refund or a date change, at no cost.',
     },
     {
-      p: '¿Cuántos invitados pueden venir a bordo?',
-      r: 'Hasta 120 personas — con dos niveles de cubierta para la ceremonia y el banquete.',
+      p: 'How many guests can come on board?',
+      r: 'Up to 120 guests — with two deck levels for the ceremony and the banquet.',
     },
     {
-      p: '¿Pueden traer su propio wedding planner?',
-      r: 'Sí — trabajamos con los wedding planners de la zona y nos coordinamos con el vuestro sin problema.',
+      p: 'Can we bring our own wedding planner?',
+      r: 'Yes — we work with the wedding planners in the area and we coordinate with yours without any trouble.',
     },
     {
-      p: '¿Hay dress code?',
-      r: 'Recomendamos ropa cómoda y zapatos que se puedan mojar (se baja a la playa desierta en una parada).',
+      p: 'Is there a dress code?',
+      r: 'We recommend comfortable clothes and shoes that can get wet (there is a stop where you go ashore at the deserted beach).',
     },
   ],
-  cierreMeta: 'Te respondemos en menos de 24 h con tu cotización',
-  cierreTitulo: 'Hablemos de vuestra boda',
-  cierreCta: 'Pedir cotización de boda',
+  cierreMeta: 'We reply in less than 24 h with your quote',
+  cierreTitulo: 'Let’s talk about your wedding',
+  cierreCta: 'Request a wedding quote',
   cierreWhatsapp: true,
-  ctaPrincipal: 'Pedir cotización de boda',
+  ctaPrincipal: 'Request a wedding quote',
   // En party boat lo que se cotiza es «lo que no cabe en un paquete»; en
   // una boda, lo que hay ALREDEDOR de la comida (ceremonia, montaje,
   // coordinación), que es justo lo que ningún paquete cierra.
   cotizacionPlegada: {
-    titulo: '¿Vuestra boda necesita más que un paquete?',
-    sub: 'Ceremonia a bordo, decoración o menú a medida — os cotizamos gratis en 24 h.',
+    titulo: 'Does your wedding need more than a package?',
+    sub: 'Ceremony on board, decoration or a custom menu — we quote it free within 24 h.',
   },
 }
 
@@ -713,7 +713,7 @@ const EMPRESAS: FichaEvento = {
       'The largest event catamaran in the Caribbean, and the setting for conferences, gala dinners, award ceremonies and cocktail receptions on the water.',
     datos: ['Nearly 1,000 m² of event space', 'Up to 300 guests', 'Full kitchen on board'],
     foto: 'flota-karaya',
-    fotoAlt: 'Karaya, el catamarán de eventos de dos niveles, navegando',
+    fotoAlt: 'Karaya, the two-level event catamaran, under way',
   },
   // MICE no tiene quote de review de 5★ (es institucional, no consumer).
   // Traducido del original en inglés de la web del cliente (auditoría
@@ -739,48 +739,48 @@ const EMPRESAS: FichaEvento = {
     'When business meets paradise, extraordinary events happen. Let us help you create one your guests will never forget.',
   ],
   tiposEvento: [
-    'Incentivo',
+    'Incentive',
     'Team building',
-    'Cierre de convención',
-    'Convención anual',
-    'Lanzamiento',
-    'Otro',
+    'Convention closing',
+    'Annual convention',
+    'Product launch',
+    'Other',
   ],
   tipoFijo: -1, // empresas: el visitante elige
   formatosTitulo: 'Formatos',
   formatos: [
     {
-      titulo: 'Incentivo',
-      texto: 'El premio del año para el equipo comercial.',
+      titulo: 'Incentive',
+      texto: 'The year’s reward for the sales team.',
       foto: 'mice-1',
-      fotoAlt: 'Grupo celebrando el cierre de un incentivo a bordo',
+      fotoAlt: 'Group celebrating the close of an incentive trip on board',
     },
     {
       titulo: 'Team building',
-      texto: 'Regata, retos de snorkel, dinámicas a bordo.',
+      texto: 'Regatta, snorkeling challenges, activities on board.',
       foto: 'mice-2',
-      fotoAlt: 'Grupo haciendo team building en cubierta',
+      fotoAlt: 'Group doing team building on deck',
     },
     {
-      titulo: 'Cierre de convención',
-      texto: 'Cóctel de despedida navegando al atardecer.',
+      titulo: 'Convention closing',
+      texto: 'Farewell cocktail while cruising at sunset.',
       foto: 'mice-3',
-      fotoAlt: 'Cóctel corporativo a bordo al atardecer',
+      fotoAlt: 'Corporate cocktail on board at sunset',
     },
   ],
-  incluyeTitulo: 'Lo que un organizador necesita saber',
+  incluyeTitulo: 'What an event planner needs to know',
   // 4 ítems — el "lo que un organizador corporativo necesita saber" de
   // la versión anterior de data/eventos.ts (ya estaba aprobada y
   // homologada con el cliente).
   incluye: [
-    { titulo: 'Capacidad y flota', texto: 'Nº de barcos, aforo real por embarcación, multi-barco para grupos grandes.' },
-    { titulo: 'Plan B por clima', texto: 'Política de reprogramación por escrito.' },
-    { titulo: 'Logística', texto: 'Traslados desde los hoteles sede, horarios cerrados.' },
-    { titulo: 'Facturación', texto: 'Condiciones de pago corporativas y factura formal.' },
+    { titulo: 'Capacity and fleet', texto: 'Number of boats, real capacity per vessel, multi-boat setups for large groups.' },
+    { titulo: 'Weather plan B', texto: 'Rescheduling policy in writing.' },
+    { titulo: 'Logistics', texto: 'Transfers from the host hotels, fixed schedules.' },
+    { titulo: 'Invoicing', texto: 'Corporate payment terms and formal invoicing.' },
   ],
   // Foto de portada: la cubierta llena de grupos sentados comiendo.
   foto: 'mice-3',
-  fotoAlt: 'La cubierta del catamarán con varios grupos comiendo en sus mesas',
+  fotoAlt: 'The catamaran deck with several groups eating at their tables',
   // 4 fotos de la galería original del cliente.
   galeria: ['mice-3', 'mice-1', 'mice-2', 'mice-4'],
   videoGaleria: '/video/hero.mp4',
@@ -789,27 +789,27 @@ const EMPRESAS: FichaEvento = {
   // primero. Copiadas del data/eventos.ts versión anterior.
   faq: [
     {
-      p: '¿Cuál es la capacidad máxima por barco?',
-      r: '120 personas por barco. Para grupos mayores operamos multi-barco en convoy.',
+      p: 'What is the maximum capacity per boat?',
+      r: '120 guests per boat. For larger groups we run multiple boats in convoy.',
     },
     {
-      p: '¿Trabajan con nuestro DMC o agencia?',
-      r: 'Sí — tenemos tarifa neta para DMC y facturamos en RD o internacionalmente.',
+      p: 'Do you work with our DMC or agency?',
+      r: 'Yes — we have net rates for DMCs and can invoice locally or internationally.',
     },
     {
-      p: '¿Cuál es la política de cancelación?',
-      r: 'Cancelación gratis hasta 7 días antes. Plan B por mal clima por escrito.',
+      p: 'What is the cancellation policy?',
+      r: 'Free cancellation up to 7 days before. Bad-weather plan B in writing.',
     },
     {
-      p: '¿Pueden manejar varios idiomas en cubierta?',
-      r: 'Sí — tripulación bilingüe (ES/EN), y coordinamos con guías en otros idiomas bajo pedido.',
+      p: 'Can you handle several languages on deck?',
+      r: 'Yes — bilingual crew (ES/EN), and we arrange guides in other languages on request.',
     },
   ],
-  cierreMeta: 'Te contactamos en menos de 24 h con tu propuesta',
-  cierreTitulo: 'Planifica tu evento corporativo',
-  cierreCta: 'Solicitar propuesta',
+  cierreMeta: 'We get back to you within 24 h with your proposal',
+  cierreTitulo: 'Plan your corporate event',
+  cierreCta: 'Request a proposal',
   cierreWhatsapp: false,
-  ctaPrincipal: 'Solicitar propuesta',
+  ctaPrincipal: 'Request a proposal',
   // La web del cliente tenía "Dossier corporativo (PDF)" como CTA
   // secundario — el PDF no existe como asset. Se pinta igual (es
   // promesa de contacto, no de descarga) y la página de gracias

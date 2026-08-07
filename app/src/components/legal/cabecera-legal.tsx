@@ -10,7 +10,7 @@ export function CabeceraLegal({ doc }: { doc: DocumentoLegal }) {
 
       <h1 className="mt-3 max-w-2xl text-balance font-display text-h2 font-semibold text-white">{doc.nombre}</h1>
 
-      <p className="mt-4 text-sm text-white/70">Última actualización: {doc.actualizado}</p>
+      <p className="mt-4 text-sm text-white/70">Last updated: {doc.actualizado}</p>
     </div>
   )
 }

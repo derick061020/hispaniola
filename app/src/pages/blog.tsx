@@ -27,7 +27,7 @@ export function BlogPage() {
     <div>
       <Meta
         titulo="Blog"
-        descripcion="Guías honestas, historias del mar y consejos reales para tu viaje a Punta Cana, contados por quienes navegan esta costa desde 2012."
+        descripcion="Honest guides, stories from the sea and real advice for your trip to Punta Cana, told by the people who have been sailing this coast since 2012."
         ruta="/blog"
       />
       {/* El fondo pasa de blanco a --color-fondo-ficha (el gris frío que ya

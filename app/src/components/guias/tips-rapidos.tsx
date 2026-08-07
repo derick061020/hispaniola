@@ -26,9 +26,9 @@ import { TIPS_GUIAS, GUIAS_CIERRE } from '@/data/guias'
 export function TipsRapidos() {
   return (
     <section>
-      <Etiqueta className="guias-reveal">Antes de reservar</Etiqueta>
+      <Etiqueta className="guias-reveal">Before you book</Etiqueta>
       <h2 className="guias-reveal mt-3 max-w-2xl text-balance font-display text-h3 font-semibold text-navy">
-        Lo que más preguntan sobre esnórquel y navegación en Punta Cana
+        What people ask us most about snorkeling and sailing in Punta Cana
       </h2>
 
       <div className="mt-14 flex flex-col gap-16 sm:mt-16 sm:gap-24">
@@ -132,7 +132,7 @@ export function TipsRapidos() {
 
         <div className="relative grid grid-cols-1 items-center gap-6 lg:grid-cols-[1fr_auto] lg:gap-12">
           <div>
-            <Etiqueta sobreOscuro>Guías</Etiqueta>
+            <Etiqueta sobreOscuro>Guides</Etiqueta>
             <h2 className="mt-2 text-balance font-display text-h3 font-semibold text-white sm:text-h2">
               {GUIAS_CIERRE.titulo}
             </h2>

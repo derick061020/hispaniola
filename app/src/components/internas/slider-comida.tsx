@@ -88,14 +88,14 @@ export function SliderComida({
       <button
         type="button"
         onClick={(e) => onAbrir?.(e.currentTarget.parentElement as HTMLElement, indice)}
-        aria-label={`Ver las fotos de ${etiqueta}`}
+        aria-label={`See the photos of ${etiqueta}`}
         className="absolute inset-0 size-full"
       />
 
       {/* Etiqueta permanente: sin ella, una celda que cambia sola se lee como
           un fallo de carga en vez de como una galería. */}
       <span className="pointer-events-none absolute left-2 top-2 rounded-full bg-navy/80 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-white">
-        Menú
+        Menu
       </span>
 
       {/* [v2 2026-07-27] DOTS dentro de la propia imagen, abajo (pedido de
@@ -127,7 +127,7 @@ export function SliderComida({
               key={f}
               type="button"
               onClick={() => setIndice(i)}
-              aria-label={`Ver la foto ${i + 1} de ${fotos.length}`}
+              aria-label={`See photo ${i + 1} of ${fotos.length}`}
               aria-current={i === indice}
               className={`pointer-events-auto h-1.5 rounded-full transition-all duration-300 motion-reduce:transition-none ${
                 i === indice ? 'w-4 bg-white' : 'w-1.5 bg-white/55 hover:bg-white/80'
@@ -145,7 +145,7 @@ export function SliderComida({
           <button
             type="button"
             onClick={() => ir(-1)}
-            aria-label="Foto anterior"
+            aria-label="Previous photo"
             className="absolute left-1.5 top-1/2 grid size-7 -translate-y-1/2 place-items-center rounded-full bg-papel/85 text-navy opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100"
           >
             <ChevronLeft className="size-4" aria-hidden="true" />
@@ -153,7 +153,7 @@ export function SliderComida({
           <button
             type="button"
             onClick={() => ir(1)}
-            aria-label="Foto siguiente"
+            aria-label="Next photo"
             className="absolute right-1.5 top-1/2 grid size-7 -translate-y-1/2 place-items-center rounded-full bg-papel/85 text-navy opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100"
           >
             <ChevronRight className="size-4" aria-hidden="true" />

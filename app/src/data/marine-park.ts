@@ -45,7 +45,7 @@ export const MARINE_PARK = {
   // el texto y el énfasis lo pone la tipografía, no tres emojis en un H1.
   lead: "The Caribbean isn't just where we work—it's our home. Every coral we restore, every turtle we protect, and every reef we help recover is part of our commitment to preserving Punta Cana for future generations. When you visit our Marine Park, you become part of that mission.",
   heroFoto: 'arrecife-fondo-cenital',
-  heroFotoAlt: 'El arrecife visto desde el aire, con el agua turquesa sobre las estructuras de coral',
+  heroFotoAlt: 'The reef seen from the air, turquoise water over the coral structures',
 
   bloques: [
     {
@@ -62,7 +62,7 @@ export const MARINE_PARK = {
         'Coral gardening & marine habitat creation',
       ],
       foto: 'galeria-snorkel-lovers-6',
-      fotoAlt: 'Estructuras del vivero de coral bajo el agua, con una buceadora revisándolas',
+      fotoAlt: 'Coral nursery structures underwater, with a diver checking them',
     },
     {
       titulo: 'Foundation Bracelet',
@@ -72,7 +72,7 @@ export const MARINE_PARK = {
         "Your visit doesn't just create memories—it helps create a healthier ocean.",
       ],
       foto: 'galeria-snorkel-lovers-10',
-      fotoAlt: 'Un guía de Hispaniola explicando el vivero de coral a un grupo de niños',
+      fotoAlt: 'A Hispaniola guide explaining the coral nursery to a group of children',
     },
     {
       numero: '02',
@@ -83,7 +83,7 @@ export const MARINE_PARK = {
       ],
       checks: ['Coral nurseries', 'Reef restoration projects', 'Long-term scientific monitoring'],
       foto: 'galeria-snorkel-lovers-9',
-      fotoAlt: 'El equipo manipulando fragmentos de coral sobre la mesa de trabajo',
+      fotoAlt: 'The team handling coral fragments on the work bench',
     },
     {
       numero: '03',
@@ -93,7 +93,7 @@ export const MARINE_PARK = {
         "Years of conservation work have helped establish one of the country's most important Green Sea Turtle populations. Through habitat protection, education, and continuous monitoring, we're helping ensure future generations can experience these incredible animals in the wild.",
       ],
       foto: 'galeria-snorkel-lovers-4',
-      fotoAlt: 'Peces de colores sobre el arrecife en la parada de snorkel',
+      fotoAlt: 'Colorful fish over the reef at the snorkeling stop',
     },
     {
       numero: '04',
@@ -104,7 +104,7 @@ export const MARINE_PARK = {
       ],
       checks: ['Fish nursery habitats', 'Increased biodiversity', 'Healthier coral ecosystems'],
       foto: 'galeria-snorkel-lovers-2',
-      fotoAlt: 'Buceadora sobre el arrecife durante la parada de snorkel',
+      fotoAlt: 'Diver over the reef during the snorkeling stop',
     },
   ] satisfies BloqueMarinePark[],
 }

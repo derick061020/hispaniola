@@ -36,7 +36,7 @@ export function TambienTeGusta({ slugs }: { slugs: string[] }) {
 
   return (
     <section className="mx-auto max-w-contenido px-5 py-seccion-sm sm:px-10 sm:py-seccion">
-      <Etiqueta>También te puede gustar</Etiqueta>
+      <Etiqueta>You might also like</Etiqueta>
 
       <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
         {relacionados.map(({ tour: t, ficha: f }) => (
@@ -58,7 +58,7 @@ export function TambienTeGusta({ slugs }: { slugs: string[] }) {
               <p className="font-display text-lg font-semibold sm:text-xl">{t.nombre}</p>
               <p className="mt-1 text-sm text-white/85">
                 {f.audiencia} ·{' '}
-                {t.precioLight !== null ? `desde ${formatoDinero(t.precioLight)} /pers` : bookingCta[t.booking]}
+                {t.precioLight !== null ? `from ${formatoDinero(t.precioLight)} /person` : bookingCta[t.booking]}
               </p>
             </div>
           </Link>

@@ -59,7 +59,7 @@ export function BotonSonido({ videoRef, className = '' }: Props) {
       type="button"
       onClick={alternar}
       className={`inline-flex size-9 items-center justify-center rounded-full bg-navy/50 text-white ring-1 ring-white/40 backdrop-blur-sm transition-colors hover:bg-navy/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white ${className}`}
-      aria-label={silenciado ? 'Activar sonido' : 'Silenciar vídeo'}
+      aria-label={silenciado ? 'Turn on sound' : 'Mute video'}
     >
       {silenciado ? (
         <VolumeX className="size-4" aria-hidden="true" />

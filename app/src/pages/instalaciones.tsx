@@ -47,7 +47,7 @@ export function InstalacionesPage() {
     <div>
       <Meta
         titulo="Instalaciones"
-        descripcion="Un complejo completo en Punta Cana: museo marino al aire libre, laboratorio de biología, cocinas propias, tienda y oficinas."
+        descripcion="A full complex in Punta Cana: open-air marine museum, biology lab, our own kitchens, shop and offices."
         ruta="/facilities"
       />
       <HeroInterna ctaHref="/#tours">

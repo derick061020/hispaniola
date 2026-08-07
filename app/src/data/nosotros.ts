@@ -163,41 +163,41 @@ export const EQUIPO: MiembroEquipo[] = [
       'No matter how much we grow, I believe the best leaders never stop learning, never stop listening, and never stop getting their feet wet.',
     ],
     foto: 'equipo-omar',
-    cta: { label: 'Nuestra historia', tipo: 'historia' },
+    cta: { label: 'Our story', tipo: 'historia' },
   },
   {
     id: 'capitan-placeholder',
-    nombre: 'Capitán',
-    rol: 'Tripulación a bordo',
+    nombre: 'Captain',
+    rol: 'Onboard crew',
     foto: 'equipo-capitan',
     placeholder: true,
-    cta: { label: 'Nuestra historia', tipo: 'historia' },
+    cta: { label: 'Our story', tipo: 'historia' },
   },
   {
     id: 'lola',
     nombre: 'Lola',
     rol: 'Tour Leader Manager',
     desde: '2015',
-    quote: 'Llevo años enseñando este arrecife y todavía me emociona cada salida.',
+    quote: 'I’ve been showing people this reef for years and every trip out still moves me.',
     foto: 'equipo-lola',
-    cta: { label: 'Escríbele a Lola', tipo: 'whatsapp' },
+    cta: { label: 'Message Lola', tipo: 'whatsapp' },
   },
   {
     id: 'biologa-placeholder',
-    nombre: 'Bióloga marina',
-    rol: 'Tripulación a bordo',
+    nombre: 'Marine biologist',
+    rol: 'Onboard crew',
     foto: 'equipo-biologa',
     placeholder: true,
-    cta: { label: 'Nuestra historia', tipo: 'historia' },
+    cta: { label: 'Our story', tipo: 'historia' },
   },
   {
     id: 'eva',
     nombre: 'Eva',
-    rol: 'Atención al viajero',
+    rol: 'Guest support',
     desde: '2018',
-    quote: 'Cuando escribes, te respondo yo. Nada de robots — te ayudo a armar tu día perfecto.',
+    quote: 'When you write in, I’m the one who answers. No bots — I’ll help you put together your perfect day.',
     foto: 'equipo-eva',
-    cta: { label: 'Chatea con Eva', tipo: 'whatsapp' },
+    cta: { label: 'Chat with Eva', tipo: 'whatsapp' },
   },
 ]
 
@@ -252,10 +252,10 @@ export type MiembroTripulacion = { rol: string; nota: string }
 // del cliente (su propia maqueta), no nuestras — describen la función, que es
 // justo lo que el chip a secas no decía.
 export const TRIPULACION: MiembroTripulacion[] = [
-  { rol: 'Capitán', nota: 'Al timón en cada salida' },
-  { rol: 'Bióloga marina', nota: 'Te enseña el arrecife' },
-  { rol: 'Chef a bordo', nota: 'Cocina flotante en vivo' },
-  { rol: 'Guía de snorkel', nota: 'Contigo en el agua' },
+  { rol: 'Captain', nota: 'At the helm on every trip' },
+  { rol: 'Marine biologist', nota: 'Shows you the reef' },
+  { rol: 'Onboard chef', nota: 'Live floating kitchen' },
+  { rol: 'Snorkeling guide', nota: 'With you in the water' },
 ]
 
 // Correcciones v1 (planes/03-nosotros.md slide 5): la maqueta del cliente
@@ -307,94 +307,94 @@ export type BarcoFlota = {
 export const FLOTA: BarcoFlota[] = [
   {
     nombre: 'Santa María',
-    tipo: 'Catamarán a motor',
-    eslora: '41 pies',
+    tipo: 'Power catamaran',
+    eslora: '41 ft',
     anio: '2013',
-    descripcionCorta: 'Diseñado y construido especialmente para nuestra flota. Estable y cómodo para el tour clásico.',
+    descripcionCorta: 'Designed and built especially for our fleet. Stable and comfortable for the classic tour.',
     foto: 'flota-santa-maria',
-    fotoAlt: 'Catamarán Santa María navegando con pasajeros a bordo',
-    chipFoto: 'Tours compartidos',
-    capacidad: 'Hasta 20',
-    idealPara: 'Ideal para el tour clásico',
+    fotoAlt: 'Santa María catamaran sailing with passengers on board',
+    chipFoto: 'Shared tours',
+    capacidad: 'Up to 20',
+    idealPara: 'Ideal for the classic tour',
     cta: 'charter',
   },
   {
     nombre: 'Forever Teresa',
-    tipo: 'Catamarán',
-    eslora: '60 pies',
+    tipo: 'Catamaran',
+    eslora: '60 ft',
     anio: '2015',
     // Las descripciones van a `line-clamp-2` en la card (igual que en la de
     // tours): si no caben en dos líneas, el corte se lleva justo el final.
-    descripcionCorta: 'Nuestro catamarán de mayor eslora, con espacio de sobra a bordo.',
+    descripcionCorta: 'Our longest catamaran, with room to spare on board.',
     foto: 'flota-forever-teresa',
-    fotoAlt: 'Catamarán Forever Teresa visto desde el aire',
-    chipFoto: 'Grupos grandes',
-    capacidad: 'Hasta 120',
-    idealPara: 'Ideal para grupos grandes',
+    fotoAlt: 'Forever Teresa catamaran seen from the air',
+    chipFoto: 'Large groups',
+    capacidad: 'Up to 120',
+    idealPara: 'Ideal for large groups',
     cta: 'charter',
   },
   {
     nombre: 'Maite',
-    tipo: 'Catamarán de vela',
-    eslora: '39 pies',
+    tipo: 'Sailing catamaran',
+    eslora: '39 ft',
     anio: '2016',
-    descripcionCorta: 'El crucero a vela más moderno de Punta Cana / Bávaro. Romántico y tranquilo.',
+    descripcionCorta: 'The most modern sailing cruise in Punta Cana / Bávaro. Romantic and calm.',
     foto: 'flota-maite',
-    fotoAlt: 'Catamarán de vela Maite navegando con la vela desplegada',
-    chipFoto: 'Vela',
-    capacidad: 'Hasta 20',
-    idealPara: 'Ideal para parejas y sunset',
+    fotoAlt: 'Maite sailing catamaran under way with its sail unfurled',
+    chipFoto: 'Sailing',
+    capacidad: 'Up to 20',
+    idealPara: 'Ideal for couples and sunsets',
     cta: 'charter',
   },
   {
     nombre: 'GrandMa',
-    tipo: 'Catamarán con tobogán',
-    eslora: '40 pies',
+    tipo: 'Catamaran with a slide',
+    eslora: '40 ft',
     // La fuente no fecha el GrandMa (ni el Joker ni el Karaya): sin año, no se
     // pinta la casilla. Nada de rellenar un hueco con un año plausible.
     anio: null,
-    descripcionCorta: 'Con tobogán a bordo — perfecto para grupos medianos, familias y planes divertidos.',
+    descripcionCorta: 'With a slide on board — perfect for mid-size groups, families and fun plans.',
     foto: 'flota-grandma',
-    fotoAlt: 'Catamarán GrandMa con pasajeros a bordo',
-    chipFoto: 'Familias',
-    capacidad: 'Hasta 20',
-    idealPara: 'Ideal para familias y actividades',
+    fotoAlt: 'GrandMa catamaran with passengers on board',
+    chipFoto: 'Families',
+    capacidad: 'Up to 20',
+    idealPara: 'Ideal for families and activities',
     cta: 'charter',
   },
   {
     nombre: 'Joker',
-    tipo: 'Lancha de 2 pisos',
+    tipo: '2-deck powerboat',
     eslora: null,
     anio: null,
-    descripcionCorta: 'Dos pisos, tobogán, bar y techo corredizo. Pensada para la fiesta de tu grupo.',
+    descripcionCorta: 'Two decks, a slide, a bar and a sliding roof. Built for your group’s party.',
     foto: 'flota-joker',
-    fotoAlt: 'Catamarán Joker con pasajeros en la cubierta superior',
-    chipFoto: 'Eventos',
+    fotoAlt: 'Joker catamaran with passengers on the upper deck',
+    chipFoto: 'Events',
     // Joker no entra en las tablas del charter ni en las specs con una cifra
     // propia — se cotiza. No se le pone un «hasta N» inventado.
     capacidad: null,
-    idealPara: 'Ideal para grupos privados',
+    idealPara: 'Ideal for private groups',
     cta: 'evento',
   },
   {
     nombre: 'Karaya',
-    tipo: 'Catamarán de eventos',
-    eslora: '938 m² · 2 niveles',
+    tipo: 'Events catamaran',
+    eslora: '938 m² · 2 levels',
     anio: null,
-    descripcionCorta: 'El más grande del Caribe: el escenario para bodas y celebraciones.',
+    descripcionCorta: 'The largest in the Caribbean: the stage for weddings and celebrations.',
     foto: 'flota-karaya',
-    fotoAlt: 'Karaya, el catamarán de eventos más grande del Caribe, con dos niveles',
-    chipFoto: 'Eventos',
-    capacidad: 'Hasta 350',
-    idealPara: 'Ideal para grandes eventos y bodas',
+    fotoAlt: 'Karaya, the largest events catamaran in the Caribbean, with two levels',
+    chipFoto: 'Events',
+    capacidad: 'Up to 350',
+    idealPara: 'Ideal for large events and weddings',
     cta: 'evento',
   },
 ]
 
 export const NOSOTROS = {
-  eyebrow: 'Nosotros',
-  titulo: 'La tripulación y la flota detrás de cada tour',
-  sub: 'Dos catamaranes, una cocina flotante y un equipo que lleva desde 2012 navegando la costa de Punta Cana.',
+  eyebrow: 'About us',
+  titulo: 'The crew and the fleet behind every tour',
+  sub: 'Two catamarans, a floating kitchen and a team that has been sailing the Punta Cana coast since 2012.',
   // PLAN-INTERNAS-V2.md: fotos del hero-interna en fundido.
   galeria: ['galeria-charter-privado-1', 'hero-catamaran-1', 'galeria-semi-privado-3'],
 
@@ -403,18 +403,18 @@ export const NOSOTROS = {
   // (home/equipo-teaser.tsx, pedido de Samuel) — de ahí que su eyebrow y su
   // título vivan AQUÍ y no allí: la home tiene los suyos por defecto, esta
   // página le pasa estos.
-  equipoEyebrow: 'El equipo',
-  equipoTitulo: 'El equipo que te recibe',
+  equipoEyebrow: 'The team',
+  equipoTitulo: 'The team that welcomes you',
   equipoTexto:
-    'Gerencia española afincada en Punta Cana desde 2012, y un equipo que vive el mar contigo — el mismo que te va a atender cuando escribas.',
+    'Spanish management based in Punta Cana since 2012, and a team that lives the sea with you — the same one that answers you when you write in.',
 
-  tripulacionTitulo: 'Y nuestra tripulación dominicana a bordo',
+  tripulacionTitulo: 'And our Dominican crew on board',
   // Condensado de "Nuestro maravilloso equipo está altamente capacitado,
   // experimentado y garantizará la seguridad de todos los participantes...
   // Nuestro equipo multilingüe estará allí con usted en cada paso del
   // camino, asegurando su comodidad y bienestar."
   tripulacionTexto:
-    'Multilingüe, altamente capacitada y pendiente de tu seguridad en cada paso — desde que subes a bordo hasta que vuelves a la orilla.',
+    'Multilingual, highly trained and looking after your safety every step of the way — from the moment you step on board until you are back on shore.',
 
   flotaEyebrow: 'The fleet',
   // Titular de la maqueta (slide 5). El eyebrow se queda con «La flota»: es la
@@ -427,17 +427,17 @@ export const NOSOTROS = {
   flotaTexto:
     "Every vessel in our fleet has its own personality, its own purpose, and thousands of unforgettable stories. We own, design, and maintain every boat ourselves, so every detail reflects the experience we want you to live. Explore each vessel through photos, 360° tours, videos, technical specifications, and onboard features before choosing the one that's perfect for you.",
 
-  arrecifeTitulo: 'El arrecife que reconstruimos',
+  arrecifeTitulo: 'The reef we are rebuilding',
   arrecifeTexto:
-    'Cada tour navega al vivero de coral de Cabeza de Toro, un proyecto de restauración top-3 del país que apoyamos a través de la Bávaro Reefs Foundation.',
-  arrecifeCta: 'Ver toda la historia en Sostenibilidad',
+    'Every tour sails to the Cabeza de Toro coral nursery, a top-3 restoration project in the country that we support through the Bávaro Reefs Foundation.',
+  arrecifeCta: 'See the whole story in Sustainability',
   // Foto de fondo del banner de cierre. 6ª vuelta (2026-07-17, pedido de
   // Samuel: "usa otra imagen, usa una imagen de stock del océano Caribeño
   // vista cenital") — sustituimos la foto del vivero de coral real por una
   // cenital genérica de agua turquesa caribeña (stock, sin marca de agua).
   // El texto del banner YA cuenta el arrecife; el fondo solo ambienta mar.
   arrecifeFoto: 'arrecife-fondo-cenital',
-  arrecifeFotoAlt: 'Vista cenital del océano Caribe con agua turquesa cristalina',
+  arrecifeFotoAlt: 'Overhead view of the Caribbean Sea with crystal-clear turquoise water',
 }
 
 // ---------- Intro «Quiénes somos» (NUEVO, portado de about-hispaniola.php) ----------
@@ -457,7 +457,7 @@ export const INTRO_NOSOTROS = {
     "Below, you'll find detailed specifications, onboard features, and technical fact sheets for each vessel, so you know exactly what to expect before you step aboard.",
   ],
   foto: 'galeria-charter-privado-4',
-  fotoAlt: 'Catamarán fondeado frente a una playa de palmeras',
+  fotoAlt: 'Catamaran anchored off a palm-lined beach',
 }
 
 // ---------- La experiencia a bordo (NUEVO) — 3 paradas del tour ----------
@@ -470,10 +470,10 @@ export const INTRO_NOSOTROS = {
 // suelto tres bloques más abajo) y después el itinerario. La sección estrena
 // cabecera propia y un CTA de cierre, que es lo que la maqueta le pone.
 export const EXPERIENCIA = {
-  eyebrow: 'La experiencia a bordo',
-  titulo: 'Un día de mar, cuidado al detalle',
-  sub: 'Lo que vives con nosotros no lo vives en cualquier excursión.',
-  cta: 'Vive este día — ver disponibilidad',
+  eyebrow: 'The onboard experience',
+  titulo: 'A day at sea, cared for down to the detail',
+  sub: 'What you live with us, you don’t live on just any excursion.',
+  cta: 'Live this day — see availability',
 }
 
 export type ParadaExperiencia = {
@@ -489,26 +489,26 @@ export type ParadaExperiencia = {
 export const EXPERIENCIA_ABORDO: ParadaExperiencia[] = [
   {
     numero: '01',
-    titulo: 'Snorkel en el vivero de coral',
+    titulo: 'Snorkeling at the coral nursery',
     texto:
-      'Nuestra primera parada es un vivero coralino donde la Bávaro Reefs Foundation restaura el hábitat marino — nadarás rodeado de peces de colores en aguas transparentes.',
+      'Our first stop is a coral nursery where the Bávaro Reefs Foundation restores the marine habitat — you’ll swim surrounded by colorful fish in crystal-clear water.',
     foto: 'galeria-semi-privado-4',
-    fotoAlt: 'Snorkel entre peces tropicales en el vivero de coral',
-    chip: 'Restauración del arrecife · Bávaro Reefs Foundation',
+    fotoAlt: 'Snorkeling among tropical fish at the coral nursery',
+    chip: 'Reef restoration · Bávaro Reefs Foundation',
   },
   {
     numero: '02',
-    titulo: 'Playa desierta y coco-loco',
-    texto: 'Desembarcamos en una playa desierta para cocos fríos recién abiertos y cóctel de coco — pide todos los que quieras.',
+    titulo: 'Deserted beach and coco-loco',
+    texto: 'We land on a deserted beach for cold coconuts opened on the spot and coconut cocktails — have all the ones you want.',
     foto: 'galeria-charter-privado-6',
-    fotoAlt: 'Familia disfrutando cocos frescos en una playa desierta',
+    fotoAlt: 'Family enjoying fresh coconuts on a deserted beach',
   },
   {
     numero: '03',
-    titulo: 'Piscina natural',
-    texto: 'El último destino: una piscina natural en medio del mar, con las mejores bebidas de nuestro bar flotante.',
+    titulo: 'Natural pool',
+    texto: 'The last destination: a natural pool in the middle of the sea, with the best drinks from our floating bar.',
     foto: 'bar-flotante',
-    fotoAlt: 'Grupo disfrutando de bebidas en el bar flotante, en la piscina natural',
+    fotoAlt: 'Group enjoying drinks at the floating bar, in the natural pool',
   },
 ]
 
@@ -547,5 +547,5 @@ export const COCINA_FLOTANTE = {
     'Where great food brings everyone together',
   ],
   foto: 'cocina-flotante',
-  fotoAlt: 'La tripulación preparando mariscos a la parrilla en la cocina flotante',
+  fotoAlt: 'The crew grilling seafood in the floating kitchen',
 }

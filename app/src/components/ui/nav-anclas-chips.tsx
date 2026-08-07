@@ -68,7 +68,7 @@ export function NavAnclasChips({ anclas }: { anclas: AnclaChip[] }) {
 
   return (
     <nav
-      aria-label="Secciones de esta página"
+      aria-label="Sections on this page"
       className="sticky top-0 z-40 hidden border-y border-linea bg-papel/90 py-2 backdrop-blur-sm md:block"
     >
       <div className="mx-auto flex max-w-contenido flex-wrap justify-center gap-2 px-5 sm:px-10">

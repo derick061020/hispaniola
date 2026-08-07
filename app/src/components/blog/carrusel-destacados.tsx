@@ -220,8 +220,8 @@ export function CarruselDestacados({ articulos }: { articulos: Articulo[] }) {
         onPointerEnter={() => setPausado(true)}
         onPointerLeave={() => setPausado(false)}
         role="group"
-        aria-roledescription="carrusel"
-        aria-label="Artículos destacados"
+        aria-roledescription="carousel"
+        aria-label="Featured articles"
       >
         <div
           className="flex"
@@ -262,7 +262,7 @@ export function CarruselDestacados({ articulos }: { articulos: Articulo[] }) {
           <button
             type="button"
             onClick={() => setIndex((i) => i - 1)}
-            aria-label="Artículo anterior"
+            aria-label="Previous article"
             className="absolute left-2 top-1/2 z-20 grid size-10 -translate-y-1/2 place-items-center rounded-chip bg-papel/90 text-navy shadow-md backdrop-blur-sm transition hover:bg-aqua hover:text-white sm:left-4"
           >
             <ChevronLeft className="size-5" aria-hidden="true" />
@@ -270,7 +270,7 @@ export function CarruselDestacados({ articulos }: { articulos: Articulo[] }) {
           <button
             type="button"
             onClick={() => setIndex((i) => i + 1)}
-            aria-label="Artículo siguiente"
+            aria-label="Next article"
             className="absolute right-2 top-1/2 z-20 grid size-10 -translate-y-1/2 place-items-center rounded-chip bg-papel/90 text-navy shadow-md backdrop-blur-sm transition hover:bg-aqua hover:text-white sm:right-4"
           >
             <ChevronRight className="size-5" aria-hidden="true" />

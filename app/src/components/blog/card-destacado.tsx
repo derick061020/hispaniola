@@ -145,7 +145,7 @@ export function CardDestacado({ articulo }: { articulo: Articulo }) {
       <div className="flex flex-col justify-center pr-14">
         <div className="flex flex-wrap items-center gap-2">
           <span className="rounded-chip bg-navy px-3 py-1 text-xs font-semibold text-white">
-            Destacado
+            Featured
           </span>
           <ChipCategoria categoria={articulo.categoria} />
         </div>
@@ -160,7 +160,7 @@ export function CardDestacado({ articulo }: { articulo: Articulo }) {
             plantilla (pages/articulo.tsx) resuelve `cuerpo: null` con su
             propia nota honesta, así que ya no hace falta distinguir aquí. */}
         <span className="mt-5 inline-flex items-center gap-1.5 self-start rounded-btn bg-coral px-5 py-3 text-sm font-semibold text-white transition-colors group-hover:bg-coral-dark">
-          Leer el artículo
+          Read the article
           <ArrowRight className="size-4" aria-hidden="true" />
         </span>
       </div>

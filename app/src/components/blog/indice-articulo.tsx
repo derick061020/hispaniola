@@ -37,8 +37,8 @@ export function IndiceArticulo({ bloques }: { bloques: BloqueArticulo[] }) {
   if (items.length === 0) return null
 
   return (
-    <nav aria-label="Índice del artículo" className="rounded-card-grande bg-papel-hueso p-5 ring-1 ring-linea sm:p-6">
-      <Etiqueta>En este artículo</Etiqueta>
+    <nav aria-label="Article contents" className="rounded-card-grande bg-papel-hueso p-5 ring-1 ring-linea sm:p-6">
+      <Etiqueta>In this article</Etiqueta>
       <ul className="mt-3 flex flex-col border-l border-linea">
         {items.map((item) => (
           <li key={item.id}>

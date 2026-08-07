@@ -69,7 +69,7 @@ function CardReel({ reel, onAbrir }: { reel: Reel; onAbrir: (r: Reel, el: HTMLEl
         // [v2 2026-07-28] Entrega su propio nodo para que el visor EXPANDA
         // desde esta card en vez de aparecer en el centro.
         onClick: (e: React.MouseEvent<HTMLElement>) => onAbrir(reel, e.currentTarget),
-        'aria-label': `Ver el reel: ${reel.titulo}`,
+        'aria-label': `Watch the reel: ${reel.titulo}`,
       }
         : {})}
     >
@@ -161,13 +161,13 @@ type Props = {
 }
 
 export function ReelsSociales({
-  titulo = 'Así se ve un día con nosotros',
+  titulo = 'This is what a day with us looks like',
   // [v2 2026-07-27] El eyebrow deja de nombrar las redes («Reels · Instagram ·
   // TikTok») por lo mismo que se fue el badge de red: no es un feed conectado,
   // son videos nuestros. Se reutiliza el tono que la ficha de tour ya usaba y
   // que era el correcto desde el principio.
-  eyebrow = 'En video',
-  lead = 'Un día a bordo se vive mejor en video. Estos somos nosotros — y nuestros clientes disfrutando el Caribe.',
+  eyebrow = 'On video',
+  lead = 'A day on board comes across better on video. This is us — and our guests enjoying the Caribbean.',
   variante = 'seccion',
   // [v2] El hashtag también sugería feed en vivo → apagado por defecto. La
   // ficha ya lo pasaba en false; ahora ese es el comportamiento normal.
@@ -233,8 +233,8 @@ export function ReelsSociales({
     <div className="hidden items-center gap-2 sm:flex">
       {(
         [
-          { dir: -1 as const, Icono: ChevronLeft, etiqueta: 'Reels anteriores', apagada: alInicio },
-          { dir: 1 as const, Icono: ChevronRight, etiqueta: 'Más reels', apagada: alFinal },
+          { dir: -1 as const, Icono: ChevronLeft, etiqueta: 'Previous reels', apagada: alInicio },
+          { dir: 1 as const, Icono: ChevronRight, etiqueta: 'More reels', apagada: alFinal },
         ]
       ).map(({ dir, Icono, etiqueta, apagada }) => (
         <button
@@ -325,8 +325,8 @@ export function ReelsSociales({
 
       {conHashtag ? (
         <p className="mt-8 text-center text-sm text-navy-sub">
-          ¿Navegaste con nosotros? Etiquétanos con{' '}
-          <span className="font-semibold text-coral">{REELS_HASHTAG}</span> y sal en nuestra web.
+          Sailed with us? Tag us with{' '}
+          <span className="font-semibold text-coral">{REELS_HASHTAG}</span> and get featured on our website.
         </p>
       ) : null}
 

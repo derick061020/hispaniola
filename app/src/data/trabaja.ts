@@ -45,63 +45,63 @@ export type PerfilTrabajo = {
 export const PERFILES_TRABAJO: PerfilTrabajo[] = [
   {
     id: 'proveedor',
-    enlace: 'Como proveedor de actividades',
-    titulo: 'Proveedor de actividades',
+    enlace: 'As an activity provider',
+    titulo: 'Activity provider',
     resumen:
-      'Operas excursiones, transporte, catering, música o equipo náutico en Punta Cana y quieres sumarte a nuestras salidas.',
+      'You run excursions, transport, catering, music or water gear in Punta Cana and you want to join our trips.',
     quePasa:
-      'Si encaja, coordinamos directo — sin intermediarios entre tu equipo y el nuestro.',
-    grupoCampos: 'Sobre tu operación',
+      'If it fits, we coordinate directly — no middlemen between your team and ours.',
+    grupoCampos: 'About your operation',
     campos: [
-      { name: 'empresa', etiqueta: 'Empresa u operación', requerido: true },
+      { name: 'empresa', etiqueta: 'Company or operation', requerido: true },
       {
         name: 'actividad',
-        etiqueta: '¿Qué ofreces?',
-        pista: 'Transporte, catering, música en vivo, equipo de buceo…',
+        etiqueta: 'What do you offer?',
+        pista: 'Transport, catering, live music, diving gear…',
         requerido: true,
       },
-      { name: 'web', etiqueta: 'Web o redes de la empresa', pista: 'https://', tipo: 'url' },
+      { name: 'web', etiqueta: 'Company website or social media', pista: 'https://', tipo: 'url' },
     ],
   },
   {
     id: 'creador',
-    enlace: 'Como creador de contenido',
-    titulo: 'Creador de contenido',
+    enlace: 'As a content creator',
+    titulo: 'Content creator',
     resumen:
-      'Grabas, fotografías o escribes sobre viajes y quieres subir a bordo a contar un día de mar de verdad.',
+      'You film, photograph or write about travel and you want to come on board to tell a real day at sea.',
     quePasa:
-      'Si encaja con lo que contamos, buscamos fecha en una salida real — no un montaje para la cámara.',
-    grupoCampos: 'Sobre tu perfil',
+      'If it fits what we tell, we find a date on a real trip — not a setup for the camera.',
+    grupoCampos: 'About your profile',
     campos: [
       {
         name: 'perfil',
-        etiqueta: 'Enlace a tu perfil o portafolio',
+        etiqueta: 'Link to your profile or portfolio',
         pista: 'https://instagram.com/…',
         requerido: true,
         tipo: 'url',
       },
-      { name: 'plataforma', etiqueta: 'Plataforma principal', pista: 'Instagram, TikTok, YouTube, blog…' },
-      { name: 'idiomas', etiqueta: 'Idiomas en los que publicas', pista: 'Español, inglés…' },
+      { name: 'plataforma', etiqueta: 'Main platform', pista: 'Instagram, TikTok, YouTube, blog…' },
+      { name: 'idiomas', etiqueta: 'Languages you publish in', pista: 'Spanish, English…' },
     ],
   },
   {
     id: 'afiliado',
-    enlace: 'Como afiliado',
-    titulo: 'Afiliado',
+    enlace: 'As an affiliate',
+    titulo: 'Affiliate',
     resumen:
-      'Tienes web, blog, newsletter o una comunidad de viajeros y quieres recomendar nuestros tours.',
+      'You have a website, blog, newsletter or a community of travelers and you want to recommend our tours.',
     quePasa:
-      'Hablamos las condiciones contigo. Hoy no están publicadas: preferimos acordarlas antes que ponerte un número que luego cambie.',
-    grupoCampos: 'Sobre tu canal',
+      'We talk the terms through with you. They aren’t published today: we’d rather agree on them than give you a number that changes later.',
+    grupoCampos: 'About your channel',
     campos: [
       {
         name: 'canal',
-        etiqueta: 'Web, canal o comunidad donde nos recomendarías',
+        etiqueta: 'Website, channel or community where you’d recommend us',
         pista: 'https://',
         requerido: true,
         tipo: 'url',
       },
-      { name: 'audiencia', etiqueta: 'A quién llegas', pista: 'Familias de EE. UU., buceadores, bodas…' },
+      { name: 'audiencia', etiqueta: 'Who you reach', pista: 'U.S. families, divers, weddings…' },
     ],
   },
 ]
@@ -122,10 +122,10 @@ export const PERFILES_TRABAJO: PerfilTrabajo[] = [
 // (data/nosotros.ts, los 6 catamaranes reales de about-hispaniola.php), para
 // que añadir o quitar uno allí no deje esta frase mintiendo.
 export const RESPALDO: string[] = [
-  'Flota propia — {barcos} catamaranes con nombre y tripulación fija.',
-  'La única empresa de excursiones de RD con cocina flotante.',
-  'Operando en Punta Cana desde 2012.',
-  '#1 en TripAdvisor 7 años seguidos.',
+  'Our own fleet — {barcos} catamarans with names and a fixed crew.',
+  'The only excursion company in the DR with a floating kitchen.',
+  'Operating in Punta Cana since 2012.',
+  '#1 on TripAdvisor 7 years in a row.',
 ]
 
 export const PERFIL_POR_DEFECTO: PerfilTrabajo['id'] = 'proveedor'

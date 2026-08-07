@@ -32,7 +32,7 @@ export function CabeceraArticulo({ articulo, autor }: { articulo: Articulo; auto
         <span aria-hidden="true">·</span>
         <span>{articulo.fecha}</span>
         <span aria-hidden="true">·</span>
-        <span>{articulo.minutos} min de lectura</span>
+        <span>{articulo.minutos} min read</span>
       </div>
     </div>
   )

@@ -99,7 +99,7 @@ function FilaMuro({
       }}
       {...manejadores}
       role="group"
-      aria-label={`Retratos del equipo, fila ${indice + 1}`}
+      aria-label={`Team portraits, row ${indice + 1}`}
     >
       <div ref={arrastreRef} className="muro-equipo-arrastre">
         <div
@@ -155,7 +155,7 @@ export function MuroTripulacion() {
     // salir de campo por el canto de la ventana. Dentro del max-w-contenido se
     // leería como un carrusel dentro de una caja, que es lo contrario de lo
     // que hace este bloque.
-    <section className="pb-seccion-sm sm:pb-seccion" aria-label="Retratos del equipo">
+    <section className="pb-seccion-sm sm:pb-seccion" aria-label="Team portraits">
       <div className="flex flex-col gap-muro-equipo-fila">
         {filas.map((gente, i) => (
           <FilaMuro

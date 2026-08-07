@@ -112,7 +112,7 @@ function GridMensual({ fecha, onSeleccionar }: { fecha: string | null; onSelecci
               disabled={deshabilitado}
               onClick={() => onSeleccionar(c.iso)}
               aria-pressed={elegido}
-              aria-label={`${diaSemanaLargo(c.iso)}${agotado ? ' — sin plazas' : ''}`}
+              aria-label={`${diaSemanaLargo(c.iso)}${agotado ? ' — sold out' : ''}`}
               // `dia-cal` no pinta nada por sí sola: es el asidero para que el
               // tema oscuro del widget pueda subir el contraste de los días
               // DISPONIBLES sin tocar el tema claro (componentes.css).
@@ -212,8 +212,8 @@ export function CalendarioWidget({
         // pantalla tiene que oír la misma información que se ve.
         aria-label={
           fecha && hora
-            ? `Fecha y hora del tour: ${formatoFechaCorta(fecha)}, salida ${hora}`
-            : 'Fecha del tour'
+            ? `Tour date and time: ${formatoFechaCorta(fecha)}, departure ${hora}`
+            : 'Tour date'
         }
         aria-expanded={abierto}
         className={`flex h-10 w-full items-center gap-2 rounded-10 border bg-bg-white-0 px-3 text-left text-paragraph-sm text-text-strong-950 transition ${
@@ -222,7 +222,7 @@ export function CalendarioWidget({
       >
         <CalendarDays className="size-5 shrink-0 text-aqua-dark" aria-hidden="true" />
         <span className={fecha ? '' : 'text-text-sub-600'}>
-          {fecha ? formatoFechaCorta(fecha) : 'Elige una fecha'}
+          {fecha ? formatoFechaCorta(fecha) : 'Choose a date'}
           {fecha && hora ? (
             <>
               <span className="mx-1.5 text-navy-soft/50" aria-hidden="true">

@@ -211,8 +211,8 @@ export function AntesDeReservar({ tour, ficha }: { tour: Tour; ficha: FichaTour 
                 ¿Vienen en grupo grande?
               </p>
               <p className="mt-0.5 text-sm text-white/70">
-                Para celebraciones, bodas y eventos de empresa tenemos paquetes cerrados con menú,
-                barra libre y el barco entero para ustedes.
+                For celebrations, weddings and corporate events we have fixed packages with menu,
+                open bar and the whole boat to yourselves.
               </p>
             </div>
           </div>
@@ -220,7 +220,7 @@ export function AntesDeReservar({ tour, ficha }: { tour: Tour; ficha: FichaTour 
             to="/events/party-boat"
             className="shrink-0 self-start rounded-full bg-coral px-6 py-3 text-center text-sm font-semibold text-white transition hover:brightness-110 sm:self-auto"
           >
-            Ver los paquetes para grupos
+            See the group packages
           </Link>
         </div>
       ) : null}

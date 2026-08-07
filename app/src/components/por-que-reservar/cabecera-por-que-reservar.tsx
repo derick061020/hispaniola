@@ -33,16 +33,16 @@ export function CabeceraPorQueReservar() {
     // ir debajo, a ancho de contenido.
     <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-12">
       <div>
-        <Etiqueta sobreOscuro>Por qué reservar con nosotros</Etiqueta>
+        <Etiqueta sobreOscuro>Why book with us</Etiqueta>
 
         <h1 className="mt-3 max-w-2xl text-balance font-display text-h2 font-semibold text-white">
-          Reserva directo. Recibe más.
+          Book direct. Get more.
         </h1>
 
         <p className="mt-4 max-w-xl text-lead text-white/85">
-          Somos el <strong className="font-semibold text-aqua-claro">propietario</strong>, no un
-          intermediario. Eso significa mejor servicio y mejor precio — sin comisiones que se coman tu
-          experiencia.
+          We’re the <strong className="font-semibold text-aqua-claro">owner</strong>, not a
+          middleman. That means better service and a better price — with no commissions eating into
+          your experience.
         </p>
 
       {/* Los KPIs + el sello en una sola fila, separados por hairlines: la
@@ -72,10 +72,10 @@ export function CabeceraPorQueReservar() {
           hacía que el CTA pareciera llevar una coletilla. */}
       <div className="flex flex-col items-start gap-3 lg:border-l lg:border-white/20 lg:pl-12">
         <Boton to="/#tours" tamaño="lg">
-          Reservar mi tour
+          Book my tour
         </Boton>
         <p className="max-w-[15rem] text-xs leading-relaxed text-white/70">
-          Cancela gratis · Reserva ahora, paga después
+          Free cancellation · Book now, pay later
         </p>
       </div>
     </div>

@@ -73,7 +73,7 @@ export function ComentariosArticulo({ slug }: { slug: string }) {
     e.preventDefault()
     if (!nombre.trim() || !texto.trim()) return
     setComentarios((prev) => [
-      { autor: nombre.trim(), fecha: 'Ahora mismo', texto: texto.trim(), likes: 0, dislikes: 0 },
+      { autor: nombre.trim(), fecha: 'Just now', texto: texto.trim(), likes: 0, dislikes: 0 },
       ...prev,
     ])
     setNombre('')
@@ -108,7 +108,7 @@ export function ComentariosArticulo({ slug }: { slug: string }) {
               ...c,
               respuestas: [
                 ...(c.respuestas ?? []),
-                { autor: nombreResp.trim(), fecha: 'Ahora mismo', texto: textoResp.trim() },
+                { autor: nombreResp.trim(), fecha: 'Just now', texto: textoResp.trim() },
               ],
             }
           : c,
@@ -123,24 +123,24 @@ export function ComentariosArticulo({ slug }: { slug: string }) {
     <section>
       <h2 className="flex items-center gap-2 font-display text-h3 font-semibold text-navy">
         <MessageCircle className="size-5 text-aqua-dark" aria-hidden="true" />
-        Comentarios ({comentarios.length})
+        Comments ({comentarios.length})
       </h2>
 
       <form onSubmit={enviar} className="mt-5 rounded-card-grande bg-papel-hueso p-5 sm:p-6">
-        <p className="text-sm font-semibold text-navy">Deja tu comentario</p>
+        <p className="text-sm font-semibold text-navy">Leave a comment</p>
         <input
           type="text"
           required
           value={nombre}
           onChange={(e) => setNombre(e.target.value)}
-          placeholder="Tu nombre"
+          placeholder="Your name"
           className="mt-3 w-full rounded-btn border border-linea bg-papel px-4 py-2.5 text-sm text-navy placeholder:text-navy-soft focus:border-aqua focus:outline-none focus:ring-2 focus:ring-aqua/20"
         />
         <textarea
           required
           value={texto}
           onChange={(e) => setTexto(e.target.value)}
-          placeholder="Escribe tu comentario..."
+          placeholder="Write your comment..."
           rows={3}
           className="mt-3 w-full resize-none rounded-btn border border-linea bg-papel px-4 py-2.5 text-sm text-navy placeholder:text-navy-soft focus:border-aqua focus:outline-none focus:ring-2 focus:ring-aqua/20"
         />
@@ -148,7 +148,7 @@ export function ComentariosArticulo({ slug }: { slug: string }) {
           type="submit"
           className="mt-3 rounded-btn bg-coral px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-coral-dark"
         >
-          Publicar comentario
+          Post comment
         </button>
       </form>
 
@@ -192,7 +192,7 @@ export function ComentariosArticulo({ slug }: { slug: string }) {
                   className="inline-flex items-center gap-1.5 transition-colors hover:text-navy"
                 >
                   <Reply className="size-3.5" aria-hidden="true" />
-                  Responder
+                  Reply
                 </button>
               </div>
 
@@ -206,14 +206,14 @@ export function ComentariosArticulo({ slug }: { slug: string }) {
                     required
                     value={nombreResp}
                     onChange={(e) => setNombreResp(e.target.value)}
-                    placeholder="Tu nombre"
+                    placeholder="Your name"
                     className="rounded-btn border border-linea bg-papel px-3 py-2 text-sm text-navy placeholder:text-navy-soft focus:border-aqua focus:outline-none focus:ring-2 focus:ring-aqua/20"
                   />
                   <textarea
                     required
                     value={textoResp}
                     onChange={(e) => setTextoResp(e.target.value)}
-                    placeholder="Escribe tu respuesta..."
+                    placeholder="Write your reply..."
                     rows={2}
                     className="resize-none rounded-btn border border-linea bg-papel px-3 py-2 text-sm text-navy placeholder:text-navy-soft focus:border-aqua focus:outline-none focus:ring-2 focus:ring-aqua/20"
                   />
@@ -223,13 +223,13 @@ export function ComentariosArticulo({ slug }: { slug: string }) {
                       onClick={() => setRespondiendoA(null)}
                       className="text-xs font-semibold text-navy-soft hover:text-navy"
                     >
-                      Cancelar
+                      Cancel
                     </button>
                     <button
                       type="submit"
                       className="rounded-btn bg-coral px-4 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-coral-dark"
                     >
-                      Responder
+                      Reply
                     </button>
                   </div>
                 </form>

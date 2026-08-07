@@ -69,7 +69,7 @@ export function ChecksTicker({ lineas }: Props) {
   return (
     <div
       role="group"
-      aria-label="Garantías de la reserva"
+      aria-label="Booking guarantees"
       className={`widget-checks-wrapper ${reducirMovimiento ? 'widget-checks-wrapper--estatico' : ''}`}
     >
       <div className={`widget-checks-pista ${pausado ? 'widget-checks-pista--pausada' : ''}`}>

@@ -34,7 +34,7 @@ import { guardarReserva, generarCodigoReserva, type Reserva } from '@/lib/reserv
 // veces»), prohibida por revision-wireframes.md §2.7. `noindex`.
 
 // Orden de las secciones (2026-07-17, Samuel): contacto primero, luego el menú.
-const PASOS = ['Contacto', 'Tu menú', 'Recogida', 'Pago']
+const PASOS = ['Contact', 'Your menu', 'Pickup', 'Payment']
 
 export function ReservarPage() {
   const { slug } = useParams()
@@ -204,8 +204,8 @@ function FlujoReserva({
   // La FECHA ya la pinta el propio campo de calendario del resumen (con su hora
   // de salida), así que esta línea solo añade lo que allí no cabe: el regreso.
   const horarioTxt = horario
-    ? `Salida ${horario.hora}${horario.regreso ? ` · regreso ${horario.regreso}` : ''}`
-    : 'Horario por confirmar'
+    ? `Departure ${horario.hora}${horario.regreso ? ` · back at ${horario.regreso}` : ''}`
+    : 'Schedule to be confirmed'
 
   const cambiarPlato = (persona: number, plato: string) =>
     setPlatos((prev) => prev.map((p, i) => (i === persona ? plato : p)))
@@ -218,8 +218,8 @@ function FlujoReserva({
     // la derecha sigue funcionando.
     <div className="flex min-h-screen flex-col overflow-x-clip bg-papel">
       <Meta
-        titulo={`Reservar — ${tour.nombre}`}
-        descripcion={`Configura tu ${tour.nombre}: elige el menú de cada persona, la recogida y confirma con solo el 25% de depósito.`}
+        titulo={`Book — ${tour.nombre}`}
+        descripcion={`Set up your ${tour.nombre}: pick each guest’s dish, the pickup and confirm with just a 25% deposit.`}
         ruta={`/book/${tour.slug}`}
         indexable={false}
       />
@@ -227,7 +227,7 @@ function FlujoReserva({
       {/* Header MÍNIMO estilo Viator: logo (a la home) + selector de moneda. */}
       <header className="border-b border-linea">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-3 sm:px-8">
-          <Link to="/" aria-label="Inicio de Hispaniola Aquatic Adventures">
+          <Link to="/" aria-label="Hispaniola Aquatic Adventures home">
             <Logo compacto />
           </Link>
           {/* Selector de moneda visual (Samuel) — como el «USD» de Viator. Los
@@ -252,7 +252,7 @@ function FlujoReserva({
         <div className="mx-auto grid max-w-6xl grid-cols-1 lg:grid-cols-[minmax(0,1fr)_var(--spacing-ficha-widget)]">
           {/* IZQUIERDA (blanca): cabecera + secciones */}
           <div className="px-5 py-8 sm:px-8 sm:py-10">
-            <h1 className="sr-only">Completa tu reserva — {tour.nombre}</h1>
+            <h1 className="sr-only">Complete your booking — {tour.nombre}</h1>
 
             <div className="flex flex-col gap-4">
               <SeccionPaso
@@ -307,7 +307,7 @@ function FlujoReserva({
                         {p ? (
                           <span className="font-medium text-navy">{p}</span>
                         ) : (
-                          <span className="text-navy-soft">por confirmar por correo</span>
+                          <span className="text-navy-soft">to be confirmed by email</span>
                         )}
                       </li>
                     ))}
@@ -325,7 +325,7 @@ function FlujoReserva({
                     nadie avance creyendo que ya eligió. */}
                 <Continuar
                   habilitado
-                  texto={platos.every((p) => p) ? 'Continuar' : 'Continuar y elegir el menú luego'}
+                  texto={platos.every((p) => p) ? 'Continue' : 'Continue and pick the menu later'}
                   onClick={() => setPaso(2)}
                 />
               </SeccionPaso>
@@ -406,7 +406,7 @@ function FlujoReserva({
       </main>
 
       <footer className="border-t border-linea py-6 text-center text-xs text-navy-soft">
-        Hispaniola Aquatic Adventures · Reserva directa segura · Cancela gratis hasta 7 días antes
+        Hispaniola Aquatic Adventures · Secure direct booking · Free cancellation up to 7 days before
       </footer>
     </div>
   )
@@ -458,7 +458,7 @@ function SeccionPaso({
             onClick={onEditar}
             className="shrink-0 text-sm font-medium text-aqua-dark transition-colors hover:text-aqua"
           >
-            Editar
+            Edit
           </button>
         ) : null}
       </header>
@@ -473,7 +473,7 @@ function SeccionPaso({
 
 function Continuar({
   habilitado,
-  texto = 'Continuar',
+  texto = 'Continue',
   onClick,
 }: {
   habilitado: boolean

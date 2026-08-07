@@ -67,7 +67,7 @@ function CardArticulo({ articulo }: { articulo: Articulo }) {
             start: pedido de Samuel de que el botón "abarque el 100%
             posible" del ancho de la card. */}
         <span className="mt-4 flex w-full items-center justify-center gap-1.5 rounded-btn bg-coral px-4 py-2.5 text-sm font-semibold text-white transition-colors group-hover:bg-coral-dark">
-          Leer el artículo
+          Read the article
           <ArrowRight className="size-4" aria-hidden="true" />
         </span>
       </div>
@@ -166,10 +166,10 @@ export function ListaArticulos() {
             página FAQ — un solo idioma de filtro en todo el sitio. */}
         <div
           role="group"
-          aria-label="Filtrar artículos por categoría"
+          aria-label="Filter articles by category"
           className="flex flex-wrap gap-2"
         >
-          {[{ id: null as CategoriaBlog | null, nombre: 'Todos' }, ...CATEGORIAS_BLOG.map((c) => ({ id: c, nombre: c }))].map(
+          {[{ id: null as CategoriaBlog | null, nombre: 'All' }, ...CATEGORIAS_BLOG.map((c) => ({ id: c, nombre: c }))].map(
             (chip) => {
               const seleccionado = activa === chip.id
               return (
@@ -255,11 +255,11 @@ export function Newsletter() {
         <div>
           <Etiqueta sobreOscuro>Newsletter</Etiqueta>
           <h2 className="mt-2 text-balance font-display text-h3 font-semibold text-white sm:text-h2">
-            No te pierdas nada
+            Don’t miss a thing
           </h2>
           <p className="mt-2 max-w-md text-sm text-white/80 sm:text-base">
-            Guías, historias del mar y ofertas para tu viaje a Punta Cana — directo a tu correo, sin
-            spam.
+            Guides, stories from the sea and deals for your trip to Punta Cana — straight to your
+            inbox, no spam.
           </p>
 
           <div className="mt-3 flex items-center gap-2.5">
@@ -278,7 +278,7 @@ export function Newsletter() {
               <span className="font-semibold text-white">
                 {RESENAS_AGREGADO.total.toLocaleString('es-ES')}+
               </span>{' '}
-              viajeros ya confían en nosotros
+              travelers already trust us
             </p>
           </div>
         </div>
@@ -291,30 +291,30 @@ export function Newsletter() {
           className="w-full lg:w-[28rem]"
         >
           <label htmlFor="newsletter-email" className="text-xs font-medium text-white/70">
-            Mantente al día
+            Stay in the loop
           </label>
           <div className="mt-1.5 flex flex-col gap-2 sm:flex-row">
             <input
               id="newsletter-email"
               type="email"
               required
-              placeholder="tu@email.com"
+              placeholder="you@email.com"
               className="min-w-0 flex-1 rounded-btn border border-white/20 bg-white/10 px-4 py-2.5 text-sm text-white placeholder:text-white/50 focus:border-white/40 focus:outline-none focus:ring-2 focus:ring-white/20"
             />
             <button
               type="submit"
               className="shrink-0 rounded-btn bg-coral px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-coral-dark"
             >
-              Suscribirme
+              Subscribe
             </button>
           </div>
           {enviado ? (
             <p role="status" className="mt-2 text-xs font-medium text-aqua-claro">
-              ¡Gracias! Te escribiremos cuando publiquemos algo que valga la pena.
+              Thanks! We’ll write to you when we publish something worth reading.
             </p>
           ) : (
             <p className="mt-2 text-xs text-white/50">
-              Aceptas recibir novedades de Hispaniola. Puedes darte de baja cuando quieras.
+              You agree to receive news from Hispaniola. You can unsubscribe whenever you want.
             </p>
           )}
         </form>

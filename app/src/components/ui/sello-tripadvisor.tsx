@@ -146,14 +146,14 @@ export function SelloTripAdvisor({
           quien navega con lector de pantalla vería un adorno donde el resto ve
           el premio. */}
       {sinTexto ? (
-        <span className="sr-only">#1 en TripAdvisor, 7 años seguidos</span>
+        <span className="sr-only">#1 on TripAdvisor, 7 years running</span>
       ) : (
         <span className="leading-tight">
           <span className="block text-sm font-bold tracking-[0.06em] text-white/85 transition-colors duration-300 group-hover:text-white">
-            #1 en TripAdvisor
+            #1 on TripAdvisor
           </span>
           <span className="block text-xs tracking-[0.06em] text-white/55 transition-colors duration-300 group-hover:text-white/80">
-            7 años seguidos
+            7 years running
           </span>
         </span>
       )}

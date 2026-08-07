@@ -17,101 +17,101 @@ export type CategoriaFaq = { id: string; nombre: string; preguntas: PreguntaFaq[
 export const FAQ_CATEGORIAS: CategoriaFaq[] = [
   {
     id: 'reservas',
-    nombre: 'Reservas y pagos',
+    nombre: 'Bookings & payments',
     preguntas: [
       {
-        p: '¿Puedo pagar solo una parte ahora?',
-        r: 'Sí. Confirmas con el 25% y pagas el resto el día del tour, en efectivo (con 5% de descuento) o con tarjeta desde Mi Reserva.',
+        p: 'Can I pay only part of it now?',
+        r: 'Yes. You confirm with 25% and pay the rest on the day of the tour, in cash (with a 5% discount) or by card from My Booking.',
       },
       {
-        p: '¿Qué pasa si cancelo?',
-        r: 'Cancelación gratis hasta 7 días antes del tour. Después de esa fecha aplica la política de cancelación.',
+        p: 'What happens if I cancel?',
+        r: 'Free cancellation up to 7 days before the tour. After that date, the cancellation policy applies.',
       },
       {
-        p: '¿Puedo cambiar la fecha?',
-        r: 'Sí, escríbenos por WhatsApp con tu código de reserva y te ayudamos a reprogramar.',
+        p: 'Can I change the date?',
+        r: 'Yes, message us on WhatsApp with your booking code and we’ll help you reschedule.',
       },
       {
-        p: '¿Cuánto efectivo debo llevar?',
-        r: 'Si elegiste depósito del 25%, el saldo restante — con 5% de descuento si pagas en efectivo a bordo.',
+        p: 'How much cash should I bring?',
+        r: 'If you chose the 25% deposit, the remaining balance — with a 5% discount if you pay in cash on board.',
       },
       {
-        p: '¿Aceptan tarjeta? ¿Puedo pagar en el hotel?',
-        r: 'Aceptamos Visa, Mastercard, American Express y PayPal desde Mi Reserva. El saldo también puedes pagarlo el día del tour, en efectivo, con 5% de descuento.',
+        p: 'Do you accept cards? Can I pay at the hotel?',
+        r: 'We accept Visa, Mastercard, American Express and PayPal from My Booking. You can also pay the balance on the day of the tour, in cash, with a 5% discount.',
       },
     ],
   },
   {
     id: 'antes',
-    nombre: 'Antes del tour',
+    nombre: 'Before the tour',
     preguntas: [
       {
-        p: '¿A qué hora me recogen?',
-        r: 'Te confirmamos la hora exacta de recogida por WhatsApp la tarde anterior a tu tour.',
+        p: 'What time will you pick me up?',
+        r: 'We confirm the exact pickup time by WhatsApp the afternoon before your tour.',
       },
       {
-        p: '¿Qué debo llevar?',
-        r: 'Traje de baño, toalla, protector solar biodegradable y el efectivo del saldo si aplica.',
+        p: 'What should I bring?',
+        r: 'Swimsuit, towel, biodegradable sunscreen and the cash for the balance if it applies.',
       },
       {
-        p: '¿Dónde y a qué hora es la salida?',
-        r: 'Te confirmamos la hora exacta de recogida por WhatsApp la tarde anterior a tu tour. Salvo en los charters con punto de encuentro propio, pasamos a buscarte por tu hotel.',
+        p: 'Where and at what time does the tour depart?',
+        r: 'We confirm the exact pickup time by WhatsApp the afternoon before your tour. Except on charters with their own meeting point, we pick you up at your hotel.',
       },
     ],
   },
   {
     id: 'abordo',
-    nombre: 'A bordo',
+    nombre: 'On board',
     preguntas: [
-      { p: '¿Hay baño a bordo?', r: 'Sí, todos nuestros barcos tienen baño.' },
+      { p: 'Is there a restroom on board?', r: 'Yes, every one of our boats has a restroom.' },
       {
-        p: '¿Puedo ir si no sé nadar?',
-        r: 'Sí, el snorkel es en aguas poco profundas y con chaleco salvavidas disponible.',
+        p: 'Can I come if I cannot swim?',
+        r: 'Yes — the snorkeling is in shallow water and life jackets are available.',
       },
     ],
   },
   {
     id: 'comida',
-    nombre: 'Comida',
+    nombre: 'Food',
     preguntas: [
       {
-        p: '¿Puedo elegir mi plato?',
-        r: 'Sí, cada persona elige su plato al reservar: Mariscos, Carne, Surf & Turf o Vegetariano.',
+        p: 'Can I choose my dish?',
+        r: 'Yes, each guest chooses their dish when booking: Seafood, Meat, Surf & Turf or Vegetarian.',
       },
-      { p: '¿Puedo cambiar mi plato después de reservar?', r: 'Sí, desde Mi Reserva, hasta 24 horas antes del tour.' },
+      { p: 'Can I change my dish after booking?', r: 'Yes, from My Booking, up to 24 hours before the tour.' },
     ],
   },
   {
     id: 'clima',
-    nombre: 'Clima y cancelaciones',
+    nombre: 'Weather & cancellations',
     preguntas: [
-      { p: '¿Y si llueve el día de mi tour?', r: 'Reembolso total o cambio de fecha, sin costo.' },
+      { p: 'What if it rains on the day of my tour?', r: 'Full refund or a date change, at no cost.' },
       {
-        p: '¿Se cancela por mar picado?',
-        r: 'Solo si las condiciones no son seguras — en ese caso, reembolso total o reprogramación.',
+        p: 'Do you cancel for rough seas?',
+        r: 'Only if conditions are not safe — in that case, a full refund or a reschedule.',
       },
     ],
   },
   {
     id: 'ninos',
-    nombre: 'Niños y accesibilidad',
+    nombre: 'Children & accessibility',
     preguntas: [
       {
-        p: '¿Los niños pueden ir en todos los tours?',
-        r: 'En Snorkel Lovers sí; Semi-Privado Premium es solo para adultos (18+).',
+        p: 'Can children come on every tour?',
+        r: 'On Snorkel Lovers yes; Semi-Private Premium is adults only (18+).',
       },
-      { p: '¿Tienen chalecos infantiles?', r: 'Sí, todas las tallas disponibles.' },
+      { p: 'Do you have child life jackets?', r: 'Yes, in every size.' },
       {
-        p: '¿Es apto para embarazadas o personas mayores?',
-        r: 'Depende del tour y de cómo esté el mar ese día. Escríbenos por WhatsApp antes de reservar y te decimos cuál te conviene.',
+        p: 'Is it suitable for pregnant women or older guests?',
+        r: 'It depends on the tour and on how the sea is that day. Message us on WhatsApp before booking and we’ll tell you which one suits you.',
       },
     ],
   },
 ]
 
 export const FAQ_HERO = {
-  eyebrow: 'Ayuda',
-  titulo: 'Preguntas frecuentes',
-  sub: '17 preguntas sobre reservas, pagos, comida, clima y niños. Si no está aquí, escríbenos por WhatsApp.',
+  eyebrow: 'Help',
+  titulo: 'Frequently asked questions',
+  sub: '17 questions about bookings, payments, food, weather and children. If it’s not here, message us on WhatsApp.',
   galeria: ['galeria-semi-privado-2', 'hero-catamaran-2'],
 }

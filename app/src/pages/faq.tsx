@@ -11,8 +11,8 @@ export function FaqPage() {
   return (
     <div>
       <Meta
-        titulo="Preguntas frecuentes"
-        descripcion="Reservas y pagos, qué llevar, comida, clima y niños — las 17 preguntas más frecuentes sobre los tours de Hispaniola."
+        titulo="Frequently asked questions"
+        descripcion="Bookings and payments, what to bring, food, weather and children — the 17 most frequently asked questions about Hispaniola’s tours."
         ruta="/faq"
       />
       <HeroInterna ctaHref="/#tours">

@@ -313,10 +313,10 @@ export function Reviews() {
         <div className="text-center">
           <Etiqueta>Reseñas verificadas</Etiqueta>
           <h2 className="mt-3 font-display text-h2 font-semibold text-navy">
-            Lo que dicen nuestros viajeros
+            What our travelers say
           </h2>
           <p className="mx-auto mt-3 max-w-2xl text-lead text-navy-sub">
-            Miles de familias, parejas y grupos de amigos ya vivieron su día en el Caribe con
+            Thousands of families, couples and groups of friends have already had their Caribbean day with
             nosotros.
           </p>
         </div>
@@ -365,7 +365,7 @@ export function Reviews() {
             Ver las {RESENAS_AGREGADO.total.toLocaleString('es-ES')} reseñas
           </EnlacePrototipo>
           <EnlacePrototipo className="inline-flex items-center justify-center rounded-btn bg-coral px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-coral-dark">
-            Déjanos tu reseña
+            Leave us a review
           </EnlacePrototipo>
         </div>
       </div>

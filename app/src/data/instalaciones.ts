@@ -101,18 +101,18 @@ export const INSTALACIONES = {
   videoTitulo: 'One tap. One minute.',
   videoLead: 'A complete look behind the scenes of Hispaniola Aquatic Adventures.',
 
-  seccionEyebrow: 'Un complejo, no solo un muelle',
-  seccionTitulo: 'Todo lo que hay detrás de tu experiencia',
+  seccionEyebrow: 'A complex, not just a dock',
+  seccionTitulo: 'Everything behind your experience',
   seccionLead:
-    'Cocinas propias, laboratorio de biología marina, museo al aire libre, tienda y oficinas. Recórrelo zona por zona, en video y en fotos.',
+    'Our own kitchens, a marine biology lab, an open-air museum, a shop and our offices. Walk through it zone by zone, in video and photos.',
   /** Enlace discreto al pie de cada zona (slides 46-49). */
-  zonaCta: 'Reserva tu tour',
+  zonaCta: 'Book your tour',
 
   cierreEyebrow: 'Te esperamos en Punta Cana',
   cierreTitulo: 'Ven a conocernos en persona',
   cierreTexto:
-    'Todo esto te espera antes y después de tu tour. Reserva tu día y descubre por qué somos mucho más que una excursión.',
-  cierreCta: 'Reserva tu tour',
+    'All of this is waiting for you before and after your tour. Book your day and see why we are far more than an excursion.',
+  cierreCta: 'Book your tour',
   // [v2 2026-07-28] Huéspedes en la orilla junto al catamarán: la llegada, que
   // es lo que promete el titular. Se eligió `events-5` primero (la cenital de la
   // flota fondeada decía mejor «el sitio») y hubo que descartarla — mide 368px
@@ -175,11 +175,11 @@ export const ZONAS: ZonaInstalacion[] = [
       // y a media pantalla de distancia se vería dos veces.
       {
         src: 'galeria-isla-saona-2',
-        alt: 'Huéspedes embarcando en el catamarán desde la orilla',
+        alt: 'Guests boarding the catamaran from the shore',
       },
       {
         src: 'galeria-semi-privado-3',
-        alt: 'Foto de grupo del pasaje al completo en la playa',
+        alt: 'Group photo of all the guests on the beach',
       },
     ],
   },
@@ -204,15 +204,15 @@ export const ZONAS: ZonaInstalacion[] = [
       'Interactive coral museum',
     ],
     cierre: 'Real conservation. Real scientists. Real impact.',
-    vertical: { ...V_CATAMARAN, titulo: 'Dentro del laboratorio' },
+    vertical: { ...V_CATAMARAN, titulo: 'Inside the lab' },
     fotos: [
       {
         src: 'galeria-snorkel-lovers-9',
-        alt: 'El equipo manipulando fragmentos de coral sobre la mesa de trabajo',
+        alt: 'The team handling coral fragments on the work bench',
       },
       {
         src: 'galeria-semi-privado-1',
-        alt: 'Visitantes alrededor del tanque de cultivo de coral',
+        alt: 'Visitors around the coral growing tank',
       },
     ],
   },
@@ -229,7 +229,7 @@ export const ZONAS: ZonaInstalacion[] = [
       'Large cold-storage facilities',
       'Daily quality control',
     ],
-    vertical: { ...V_OCEANO, titulo: 'La cocina en acción' },
+    vertical: { ...V_OCEANO, titulo: 'The kitchen in action' },
     fotos: [
       // ⚠️ NI cocina-flotante NI plato-mariscos, que eran los candidatos
       // obvios: la primera es la cocina A BORDO (otra cosa distinta de las
@@ -241,11 +241,11 @@ export const ZONAS: ZonaInstalacion[] = [
       // que es de lo que habla la zona.
       {
         src: 'mice-3',
-        alt: 'Aperitivos preparados y alineados en la mesa de servicio antes de un evento',
+        alt: 'Appetizers prepared and lined up on the service table before an event',
       },
       {
         src: 'galeria-charter-privado-1',
-        alt: 'Un miembro del equipo sirviendo el buffet a los huéspedes',
+        alt: 'A team member serving the buffet to guests',
       },
     ],
   },
@@ -263,15 +263,15 @@ export const ZONAS: ZonaInstalacion[] = [
       'Every purchase supports conservation',
     ],
     cierre: 'Your souvenir helps protect the ocean you came to enjoy.',
-    vertical: { ...V_CATAMARAN, titulo: 'Un paseo por la tienda' },
+    vertical: { ...V_CATAMARAN, titulo: 'A walk through the shop' },
     fotos: [
       {
         src: 'bar-flotante',
-        alt: 'El bar flotante de Hispaniola con huéspedes alrededor',
+        alt: 'The Hispaniola floating bar with guests around it',
       },
       {
         src: 'events-1',
-        alt: 'Huéspedes brindando con cócteles de la casa dentro del agua',
+        alt: 'Guests toasting with house cocktails in the water',
       },
     ],
   },
@@ -289,15 +289,15 @@ export const ZONAS: ZonaInstalacion[] = [
       'Sales & Foundation offices',
     ],
     cierre: 'What you experience as a perfect day is the result of hundreds of details working together behind the scenes.',
-    vertical: { ...V_OCEANO, titulo: 'Un día en oficinas' },
+    vertical: { ...V_OCEANO, titulo: 'A day at the offices' },
     fotos: [
       {
         src: 'mice-2',
-        alt: 'Personal de Hispaniola atendiendo a un grupo en el espacio cubierto del complejo',
+        alt: 'Hispaniola staff looking after a group in the covered area of the complex',
       },
       {
         src: 'mice-1',
-        alt: 'Equipo y huéspedes durante la preparación de un evento',
+        alt: 'Team and guests during the setup of an event',
       },
     ],
   },

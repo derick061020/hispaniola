@@ -51,8 +51,8 @@ export function PorQueReservarPage() {
   return (
     <div>
       <Meta
-        titulo="¿Por qué reservar con nosotros?"
-        descripcion="Somos el propietario, no un intermediario. Lo que pagarías suelto por cada pieza del tour, la comparación con los demás y las 19 razones para reservar directo."
+        titulo="Why book direct?"
+        descripcion="We are the owner, not a middleman. What each piece of the tour would cost separately, how we compare with the rest, and the 19 reasons to book direct."
         ruta="/why-book-direct"
       />
       {/* anchoCompleto: el CTA vive en una columna derecha (pedido de Samuel),

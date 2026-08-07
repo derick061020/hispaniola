@@ -154,7 +154,7 @@ export function ArticuloPage() {
           ) : (
             <div className="mt-10 rounded-card-grande bg-papel-hueso p-6 text-center sm:p-8">
               <p className="text-lead text-navy-sub">
-                Estamos terminando de escribir este artículo — vuelve pronto para leerlo completo.
+                We’re still finishing this article — come back soon to read it in full.
               </p>
             </div>
           )}
@@ -163,20 +163,20 @@ export function ArticuloPage() {
               ofreciendo el producto del que habla — sin disfrazarlo de párrafo. */}
           <div className="mt-12 rounded-card-grande bg-papel-hueso p-6 text-center sm:p-8">
             <p className="font-display text-h3 font-semibold text-navy">
-              ¿Quieres verlo con tus propios ojos?
+              Want to see it with your own eyes?
             </p>
             <p className="mx-auto mt-2 max-w-md text-sm text-navy-sub">
-              Nuestros tours salen cada día desde Punta Cana, en grupos pequeños.
+              Our tours leave from Punta Cana every day, in small groups.
             </p>
             <Boton to="/#tours" className="mt-5">
-              Ver disponibilidad
+              See availability
             </Boton>
           </div>
         </div>
 
         {relacionados.length > 0 ? (
           <div className="mx-auto mt-14 max-w-3xl">
-            <h2 className="font-display text-h3 font-semibold text-navy">Sigue leyendo</h2>
+            <h2 className="font-display text-h3 font-semibold text-navy">Keep reading</h2>
             <ul className="mt-4 flex flex-col gap-3">
               {relacionados.map((r) => (
                 <li key={r.slug}>

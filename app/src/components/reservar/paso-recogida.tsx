@@ -19,24 +19,24 @@ export function PasoRecogida({
   return (
     <div className="flex flex-col gap-5">
       <div>
-        <h2 className="font-display text-h3 font-semibold text-navy">¿Dónde te recogemos?</h2>
+        <h2 className="font-display text-h3 font-semibold text-navy">Where do we pick you up?</h2>
         <p className="mt-1 text-sm text-navy-sub">
-          Recogida gratis en hoteles de Bávaro y Punta Cana{horaSalida ? ` para la salida de las ${horaSalida}` : ''}. La
-          hora exacta la confirmamos por WhatsApp según tu hotel.
+          Free pick-up at hotels in Bávaro and Punta Cana{horaSalida ? ` for the ${horaSalida} departure` : ''}. We
+          confirm the exact time over WhatsApp depending on your hotel.
         </p>
       </div>
 
       <div className="flex flex-col gap-4">
         <Campo
-          etiqueta="Hotel o punto de recogida"
-          placeholder="Ej. Meliá Caribe Beach"
+          etiqueta="Hotel or pick-up point"
+          placeholder="E.g. Meliá Caribe Beach"
           value={datos.hotel}
           onChange={(e) => onCambio({ hotel: e.target.value })}
         />
         <Campo
-          etiqueta="Notas para la recogida (opcional)"
+          etiqueta="Pick-up notes (optional)"
           textarea
-          placeholder="Alergias, movilidad reducida, si vais con niños…"
+          placeholder="Allergies, reduced mobility, if you’re coming with kids…"
           value={datos.notas}
           onChange={(e) => onCambio({ notas: e.target.value })}
         />

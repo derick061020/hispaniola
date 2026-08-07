@@ -6,16 +6,16 @@ import { Etiqueta } from '@/components/ui/etiqueta'
 export function CabeceraTrabaja() {
   return (
     <div>
-      <Etiqueta sobreOscuro>Trabaja con nosotros</Etiqueta>
+      <Etiqueta sobreOscuro>Work with us</Etiqueta>
 
       <h1 className="mt-3 max-w-2xl text-balance font-display text-h2 font-semibold text-white">
-        Hay sitio a bordo para más de un oficio
+        There’s room on board for more than one trade
       </h1>
 
       <p className="mt-4 max-w-2xl text-lead text-white/85">
-        Proveedores que operan en Punta Cana, creadores que cuentan el mar como es y afiliados con
-        una comunidad viajera. Dinos cuál eres y hablamos — respondemos por WhatsApp, no por
-        formulario automático.
+        Providers operating in Punta Cana, creators who tell the sea as it is, and affiliates with a
+        community of travelers. Tell us which one you are and let’s talk — we answer on WhatsApp, not
+        with an automated form.
       </p>
     </div>
   )

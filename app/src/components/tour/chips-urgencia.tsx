@@ -53,7 +53,7 @@ export function ChipsUrgencia() {
           {/* size-4 en la clase y no en el SVG: el icono se dimensiona con
               el texto del chip, como los de lucide que lo rodean. */}
           <IconoFuego className="size-4 shrink-0" />
-          Lo más reservado
+          Most booked
         </Chip>
       ) : null}
 

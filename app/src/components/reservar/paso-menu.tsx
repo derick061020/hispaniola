@@ -59,8 +59,8 @@ export function PasoMenu({
   return (
     <div className="flex flex-col gap-4">
       <p className="text-sm text-navy-sub">
-        Menú {nombrePaquete} · cada persona elige su plato, recién hecho a bordo en la cocina flotante. Puedes cambiarlo
-        hasta 48 h antes del tour.
+        {nombrePaquete} menu · each person picks their dish, cooked fresh on board in the floating kitchen. You can
+        change it up to 48 h before the tour.
       </p>
 
       {/* La salida sin fricción, ARRIBA y no escondida al pie: quien no lo tiene
@@ -68,8 +68,8 @@ export function PasoMenu({
       <p className="flex items-start gap-2.5 rounded-card border border-linea bg-papel-hueso px-4 py-3 text-sm text-navy-sub">
         <Mail className="mt-0.5 size-4 shrink-0 text-aqua-dark" aria-hidden="true" />
         <span>
-          <strong className="font-semibold text-navy">No hace falta decidirlo ahora.</strong> Te enviamos un correo para
-          confirmar las comidas — puedes elegir allí, o desde «Mi reserva», hasta 48 h antes del tour.
+          <strong className="font-semibold text-navy">You don’t have to decide now.</strong> We’ll email you to confirm
+          the meals — you can choose there, or from “My booking”, up to 48 h before the tour.
         </span>
       </p>
 
@@ -93,16 +93,16 @@ export function PasoMenu({
                     {elegido ? <Check className="size-4" aria-hidden="true" /> : i + 1}
                   </span>
                   <div className="min-w-0">
-                    <p className="font-display text-sm font-semibold text-navy">Persona {i + 1}</p>
+                    <p className="font-display text-sm font-semibold text-navy">Person {i + 1}</p>
                     {elegido ? (
-                      <p className="truncate text-xs font-medium text-menta-texto">Listo · {elegido}</p>
+                      <p className="truncate text-xs font-medium text-menta-texto">Done · {elegido}</p>
                     ) : (
-                      <p className="text-xs text-navy-soft">Elige tu plato (opcional)</p>
+                      <p className="text-xs text-navy-soft">Choose your dish (optional)</p>
                     )}
                   </div>
                 </div>
                 {elegido && !abierta ? (
-                  <span className="shrink-0 text-sm font-medium text-aqua-dark">Cambiar</span>
+                  <span className="shrink-0 text-sm font-medium text-aqua-dark">Change</span>
                 ) : (
                   <ChevronDown
                     className={`size-5 shrink-0 text-navy-soft transition-transform ${abierta ? 'rotate-180' : ''}`}
@@ -167,10 +167,10 @@ export function PasoMenu({
                     <p className="text-xs text-navy-soft">
                       {elegido ? (
                         <>
-                          Seleccionado: <span className="font-semibold text-navy">{elegido}</span>
+                          Selected: <span className="font-semibold text-navy">{elegido}</span>
                         </>
                       ) : (
-                        'Sin elegir — lo confirmamos por correo'
+                        'Not chosen yet — we’ll confirm it by email'
                       )}
                     </p>
                     <button
@@ -178,7 +178,7 @@ export function PasoMenu({
                       onClick={() => avanzar(i)}
                       className="inline-flex items-center justify-center gap-2 rounded-btn border-2 border-aqua-dark bg-white px-4 py-2.5 text-sm font-semibold text-aqua-dark transition hover:bg-aqua-tint focus:outline-none focus-visible:ring-2 focus-visible:ring-aqua focus-visible:ring-offset-2 motion-safe:hover:-translate-y-0.5"
                     >
-                      {elegido ? 'Siguiente' : 'Lo decido luego'}
+                      {elegido ? 'Next' : 'I’ll decide later'}
                       <ArrowRight className="size-4" aria-hidden="true" />
                     </button>
                   </div>

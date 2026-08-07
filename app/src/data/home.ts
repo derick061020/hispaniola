@@ -178,10 +178,10 @@ export const bookingCta: Record<Tour['booking'], string> = {
 export type Plato = { id: string; nombre: string; desc: string; foto: string }
 
 export const PLATOS: Plato[] = [
-  { id: 'mariscos', nombre: 'Mariscos', desc: 'Langosta, pulpo, camarón', foto: 'plato-mariscos' },
-  { id: 'carne', nombre: 'Carne', desc: 'Angus certificado', foto: 'plato-carne' },
-  { id: 'surf-turf', nombre: 'Surf & Turf', desc: 'Langosta + Angus', foto: 'plato-surf-turf' },
-  { id: 'vegetariano', nombre: 'Vegetariano', desc: 'Ceviche de zucchini', foto: 'plato-vegetariano' },
+  { id: 'mariscos', nombre: 'Seafood', desc: 'Lobster, octopus, shrimp', foto: 'plato-mariscos' },
+  { id: 'carne', nombre: 'Beef', desc: 'Certified Angus', foto: 'plato-carne' },
+  { id: 'surf-turf', nombre: 'Surf & Turf', desc: 'Lobster + Angus', foto: 'plato-surf-turf' },
+  { id: 'vegetariano', nombre: 'Vegetarian', desc: 'Zucchini ceviche', foto: 'plato-vegetariano' },
 ]
 
 export type Ocasion = {
@@ -672,7 +672,7 @@ export type VideoExperiencia = { src: string; poster: string; alt: string }
 export const EXPERIENCIA_VIDEO: VideoExperiencia = {
   src: '/video/experiencia-presentadora.mp4',
   poster: '/fotos/experiencia-presentadora-poster.webp',
-  alt: 'Presentadora de Hispaniola explicando cómo elegir la excursión correcta en Punta Cana',
+  alt: 'Hispaniola host explaining how to choose the right excursion in Punta Cana',
 }
 
 /** Card del ticker del hero. Son DOS especies, no una: el tour se compra (tiene
@@ -826,52 +826,52 @@ export type Review = {
 export const QUOTES: Review[] = [
   {
     id: 'ny',
-    lugar: 'Familia de Nueva York',
+    lugar: 'Family from New York',
     texto:
-      'El vivero de coral fue lo mejor del viaje — la bióloga nos explicó todo, y la comida a bordo, increíble.',
+      'The coral nursery was the best part of the trip — the biologist explained everything to us, and the food on board was incredible.',
     autor: 'Jessica M.',
     plataforma: 'Viator',
-    fecha: 'jun 2026',
+    fecha: 'Jun 2026',
     estrellas: 5,
   },
   {
     id: 'tx',
-    lugar: 'Pareja desde Texas',
+    lugar: 'Couple from Texas',
     texto:
-      'Trato excelente, grupo pequeño como prometían — no como otros catamaranes llenos de gente. Parecía que el barco era solo nuestro.',
+      'Excellent service, a small group just as promised — not like other catamarans packed with people. It felt like the boat was ours alone.',
     autor: 'Carlos R.',
     plataforma: 'TripAdvisor',
-    fecha: 'may 2026',
+    fecha: 'May 2026',
     estrellas: 5,
   },
   {
     id: 'cdmx',
-    lugar: 'Familia de Ciudad de México',
+    lugar: 'Family from Mexico City',
     texto:
-      'Reservamos directo por WhatsApp y nos resolvieron todo en minutos. La recogida fue puntual y el barco impecable. Repetiríamos sin dudar.',
+      'We booked direct on WhatsApp and they sorted everything out in minutes. The pick-up was on time and the boat spotless. We’d do it again without hesitating.',
     autor: 'Ana P.',
     plataforma: 'Facebook',
-    fecha: 'may 2026',
+    fecha: 'May 2026',
     estrellas: 5,
   },
   {
     id: 'lhr',
-    lugar: 'Luna de miel desde Londres',
+    lugar: 'Honeymoon from London',
     texto:
-      'Un día perfecto de luna de miel. Snorkel privado, almuerzo romántico en una playa desierta, tripulación atenta. Vale cada euro.',
+      'A perfect honeymoon day. Private snorkeling, a romantic lunch on a deserted beach, an attentive crew. Worth every euro.',
     autor: 'Sophie L.',
     plataforma: 'TripAdvisor',
-    fecha: 'abr 2026',
+    fecha: 'Apr 2026',
     estrellas: 5,
   },
   {
     id: 'bcn',
-    lugar: 'Familia de Barcelona',
+    lugar: 'Family from Barcelona',
     texto:
-      'Los niños disfrutaron muchísimo del snorkel con la bióloga marina. El equipo súper atento con ellos. Una experiencia para repetir.',
+      'The kids absolutely loved snorkeling with the marine biologist. The team was so attentive with them. An experience worth repeating.',
     autor: 'Marta V.',
     plataforma: 'Google',
-    fecha: 'mar 2026',
+    fecha: 'Mar 2026',
     estrellas: 5,
   },
 ]
@@ -898,132 +898,132 @@ export const QUOTES: Review[] = [
 export const QUOTES_RELLENO: Review[] = [
   {
     id: 'r-mia',
-    lugar: 'Familia de Miami',
+    lugar: 'Family from Miami',
     texto:
-      'Nos recogieron en el hotel a la hora exacta y volvimos con los niños dormidos de tanto nadar. Día redondo.',
+      'They picked us up at the hotel right on time and we came back with the kids asleep from so much swimming. A perfect day.',
     autor: 'Laura G.',
     plataforma: 'Google',
-    fecha: 'jun 2026',
+    fecha: 'Jun 2026',
     estrellas: 5,
   },
   {
     id: 'r-tor',
-    lugar: 'Pareja desde Toronto',
+    lugar: 'Couple from Toronto',
     texto:
-      'Reservamos el catamarán privado para nuestro aniversario. La tripulación nos dejó el barco decorado sin que lo pidiéramos.',
+      'We booked the private catamaran for our anniversary. The crew had the boat decorated for us without us even asking.',
     autor: 'Daniel & Erin',
     plataforma: 'TripAdvisor',
-    fecha: 'jun 2026',
+    fecha: 'Jun 2026',
     estrellas: 5,
   },
   {
     id: 'r-mad',
-    lugar: 'Grupo de amigos desde Madrid',
+    lugar: 'Group of friends from Madrid',
     texto:
-      'Éramos doce y no nos sentimos un número. Música, piscina natural y langosta a bordo. Repetimos fijo.',
+      'There were twelve of us and we never felt like a number. Music, natural pool and lobster on board. We’re definitely coming back.',
     autor: 'Javier S.',
     plataforma: 'Viator',
-    fecha: 'may 2026',
+    fecha: 'May 2026',
     estrellas: 5,
   },
   {
     id: 'r-chi',
-    lugar: 'Familia de Chicago',
+    lugar: 'Family from Chicago',
     texto:
-      'Mi madre tiene 71 años y pudo bajar al agua sin problema: la tripulación estuvo pendiente de ella todo el rato.',
+      'My mother is 71 and she got into the water with no trouble: the crew kept an eye on her the whole time.',
     autor: 'Michelle T.',
     plataforma: 'Google',
-    fecha: 'may 2026',
+    fecha: 'May 2026',
     estrellas: 5,
   },
   {
     id: 'r-bog',
-    lugar: 'Pareja desde Bogotá',
+    lugar: 'Couple from Bogotá',
     texto:
-      'La piscina natural de Saona es otro nivel. Y el almuerzo, muy por encima de lo que esperábamos de un tour.',
+      'The natural pool at Saona is on another level. And lunch was way above what we expected from a tour.',
     autor: 'Andrés M.',
     plataforma: 'TripAdvisor',
-    fecha: 'may 2026',
+    fecha: 'May 2026',
     estrellas: 5,
   },
   {
     id: 'r-bos',
-    lugar: 'Luna de miel desde Boston',
+    lugar: 'Honeymoon from Boston',
     texto:
-      'Nos cambiaron la fecha por lluvia sin discutir ni cobrar nada. Ese detalle vale más que cualquier descuento.',
+      'They moved our date because of rain without arguing or charging a thing. That detail is worth more than any discount.',
     autor: 'Nicole R.',
     plataforma: 'Google',
-    fecha: 'abr 2026',
+    fecha: 'Apr 2026',
     estrellas: 5,
   },
   {
     id: 'r-buenosaires',
-    lugar: 'Familia de Buenos Aires',
+    lugar: 'Family from Buenos Aires',
     texto:
-      'Contratamos directo por WhatsApp y salió más barato que por la agencia del hotel. Cero intermediarios.',
+      'We booked direct on WhatsApp and it came out cheaper than through the hotel agency. Zero middlemen.',
     autor: 'Gustavo P.',
     plataforma: 'Facebook',
-    fecha: 'abr 2026',
+    fecha: 'Apr 2026',
     estrellas: 5,
   },
   {
     id: 'r-par',
-    lugar: 'Pareja desde París',
+    lugar: 'Couple from Paris',
     texto:
-      'El equipo habla español, inglés y se hizo entender en francés. Nos explicaron cada parada del recorrido.',
+      'The team speaks Spanish and English, and made themselves understood in French. They explained every stop on the route.',
     autor: 'Camille D.',
     plataforma: 'TripAdvisor',
-    fecha: 'abr 2026',
+    fecha: 'Apr 2026',
     estrellas: 5,
   },
   {
     id: 'r-sto',
-    lugar: 'Grupo de trabajo desde Santo Domingo',
+    lugar: 'Work group from Santo Domingo',
     texto:
-      'Organizamos la integración de la empresa a bordo. Todo salió en hora y el equipo se encargó de absolutamente todo.',
+      'We organized our company team-building on board. Everything ran on time and the team took care of absolutely everything.',
     autor: 'Rosanna C.',
     plataforma: 'Google',
-    fecha: 'mar 2026',
+    fecha: 'Mar 2026',
     estrellas: 5,
   },
   {
     id: 'r-den',
-    lugar: 'Familia de Denver',
+    lugar: 'Family from Denver',
     texto:
-      'Barco impecable, chalecos para los niños y hielo hasta el final. Se nota que el barco es suyo y lo cuidan.',
+      'Spotless boat, life vests for the kids and ice until the very end. You can tell the boat is theirs and they look after it.',
     autor: 'Brian K.',
     plataforma: 'Viator',
-    fecha: 'mar 2026',
+    fecha: 'Mar 2026',
     estrellas: 5,
   },
   {
     id: 'r-mil',
-    lugar: 'Pareja desde Milán',
+    lugar: 'Couple from Milan',
     texto:
-      'Escogimos el menú por persona al reservar: langosta para mí, vegetariano para ella. Ninguna otra agencia lo permitía.',
+      'We each chose our menu when booking: lobster for me, vegetarian for her. No other agency allowed that.',
     autor: 'Elena F.',
     plataforma: 'TripAdvisor',
-    fecha: 'feb 2026',
+    fecha: 'Feb 2026',
     estrellas: 5,
   },
   {
     id: 'r-hou',
-    lugar: 'Familia de Houston',
+    lugar: 'Family from Houston',
     texto:
-      'Salimos temprano y evitamos la multitud de otros catamaranes. Estuvimos casi solos en la primera parada.',
+      'We left early and avoided the crowd of other catamarans. We were almost alone at the first stop.',
     autor: 'Sarah W.',
     plataforma: 'Google',
-    fecha: 'feb 2026',
+    fecha: 'Feb 2026',
     estrellas: 5,
   },
   {
     id: 'r-lim',
-    lugar: 'Familia de Lima',
+    lugar: 'Family from Lima',
     texto:
-      'Nos explicaron el vivero de coral y los niños ayudaron a sembrar. Volvieron hablando de eso toda la semana.',
+      'They explained the coral nursery to us and the kids helped plant. They talked about it all week afterwards.',
     autor: 'Patricia N.',
     plataforma: 'Facebook',
-    fecha: 'ene 2026',
+    fecha: 'Jan 2026',
     estrellas: 5,
   },
 ]
@@ -1083,34 +1083,34 @@ export const PLATAFORMAS_RESENAS: PlataformaResena[] = [
   {
     id: 'google',
     nombre: 'Google',
-    rating: '4,9',
+    rating: '4.9',
     ratingNumero: 4.9,
-    distincion: 'Más de 900 reseñas',
+    distincion: 'More than 900 reviews',
     porConfirmar: true,
     url: null,
   },
   {
     id: 'tripadvisor',
     nombre: 'TripAdvisor',
-    rating: '4,9',
+    rating: '4.9',
     ratingNumero: 4.9,
-    distincion: '#1 en actividades acuáticas 7 años',
+    distincion: '#1 in water activities for 7 years',
     porConfirmar: true,
     url: null,
   },
   {
     id: 'viator',
     nombre: 'Viator',
-    rating: '4,8',
+    rating: '4.8',
     ratingNumero: 4.8,
-    distincion: 'Premier · premios 2022 · 2023 · 2024',
+    distincion: 'Premier · awards 2022 · 2023 · 2024',
     porConfirmar: true,
     url: null,
   },
 ]
 
 /** Agregado real, el mismo número que usa el hero y el footer. */
-export const RESENAS_AGREGADO = { rating: '4,9', total: 1782 }
+export const RESENAS_AGREGADO = { rating: '4.9', total: 1782 }
 
 // Los 2 VIDEO-TESTIMONIOS de la cabecera de la sección (2026-07-22).
 // Sustituyen al antiguo `FUNDADOR` —un solo video, con la frase de los
@@ -1144,18 +1144,18 @@ export type VideoTestimonio = {
 export const VIDEO_TESTIMONIOS: VideoTestimonio[] = [
   {
     id: 'aniversario',
-    frase: 'Celebramos nuestro aniversario y fue mágico.',
+    frase: 'We celebrated our anniversary and it was magical.',
     quienes: 'Marisol & Pedro',
-    procedencia: 'nos visitaron desde Santo Domingo',
+    procedencia: 'visited us from Santo Domingo',
     plataforma: 'Google',
     videoSrc: '/video/hero.mp4',
     videoPoster: '/fotos/hero-video-poster.webp',
   },
   {
     id: 'amigos',
-    frase: 'Grupo de amigos, cero estrés. Repetiríamos sin pensarlo.',
+    frase: 'A group of friends, zero stress. We’d do it again without thinking twice.',
     quienes: 'Emily & friends',
-    procedencia: 'nos visitaron desde Chicago',
+    procedencia: 'visited us from Chicago',
     plataforma: 'TripAdvisor',
     videoSrc: '/video/experiencia-presentadora.mp4',
     videoPoster: '/fotos/experiencia-presentadora-poster.webp',
@@ -1322,41 +1322,41 @@ export type Reel = {
 export const REELS: Reel[] = [
   {
     id: 'martes-a-bordo',
-    titulo: 'Un martes cualquiera a bordo',
+    titulo: 'Just another Tuesday on board',
     foto: 'galeria-charter-privado-2',
-    fotoAlt: 'Grupo disfrutando en la cubierta del catamarán',
+    fotoAlt: 'Group enjoying the catamaran deck',
     video: null,
     red: 'instagram',
   },
   {
     id: 'piscina-natural',
-    titulo: 'La piscina natural, desde el agua',
+    titulo: 'The natural pool, from the water',
     foto: 'galeria-isla-saona-4',
-    fotoAlt: 'Aguas turquesa poco profundas de la piscina natural',
+    fotoAlt: 'Shallow turquoise water of the natural pool',
     video: null,
     red: 'tiktok',
   },
   {
     id: 'cocina-flotante',
-    titulo: 'Así se cocina en medio del mar',
+    titulo: 'This is how we cook in the middle of the sea',
     foto: 'cocina-flotante',
-    fotoAlt: 'La tripulación cocinando a la parrilla en la cocina flotante',
+    fotoAlt: 'The crew grilling in the floating kitchen',
     video: null,
     red: 'instagram',
   },
   {
     id: 'snorkel-coral',
-    titulo: 'Snorkel en el vivero de coral',
+    titulo: 'Snorkeling over the coral nursery',
     foto: 'galeria-semi-privado-1',
-    fotoAlt: 'Huéspedes haciendo snorkel sobre el vivero de coral',
+    fotoAlt: 'Guests snorkeling over the coral nursery',
     video: null,
     red: 'tiktok',
   },
   {
     id: 'sunset',
-    titulo: 'El sunset a vela, el favorito de las parejas',
+    titulo: 'Sunset under sail, the couples’ favorite',
     foto: 'flota-maite',
-    fotoAlt: 'El velero Maite navegando con la vela desplegada al atardecer',
+    fotoAlt: 'The sailing catamaran Maite under full sail at sunset',
     video: null,
     red: 'instagram',
   },
@@ -1459,48 +1459,48 @@ export type FaqItem = { p: string; r: string }
 
 export const FAQ_HOME: FaqItem[] = [
   {
-    p: '¿Qué pasa si llueve el día de mi tour?',
-    r: 'Reembolso total o cambio de fecha, sin costo. Solo cancelamos si las condiciones no son seguras.',
+    p: 'What happens if it rains on the day of my tour?',
+    r: 'Full refund or a date change, at no cost. We only cancel if conditions are not safe.',
   },
   {
-    p: '¿Puedo cancelar mi reserva?',
-    r: 'Cancelación gratis hasta 7 días antes del tour. Después de esa fecha aplica la política de cancelación.',
+    p: 'Can I cancel my booking?',
+    r: 'Free cancellation up to 7 days before the tour. After that, the cancellation policy applies.',
   },
   {
-    p: '¿Puedo pagar solo el depósito?',
-    r: 'Sí, confirmas con el 25% y pagas el resto el día del tour.',
+    p: 'Can I pay just the deposit?',
+    r: 'Yes — you confirm with 25% and pay the rest on the day of the tour.',
   },
   {
     p: '¿Incluye recogida en mi hotel?',
-    r: 'Sí, en todos los tours (excepto charters con punto de encuentro propio).',
+    r: 'Yes, on every tour (except charters with their own meeting point).',
   },
   {
-    p: '¿Dónde y a qué hora es la salida?',
-    r: 'Te confirmamos la hora exacta de recogida por WhatsApp la tarde anterior a tu tour. Salvo en los charters con punto de encuentro propio, pasamos a buscarte por tu hotel.',
+    p: 'Where and what time do we depart?',
+    r: 'We confirm the exact pickup time by WhatsApp the afternoon before your tour. Except on charters with their own meeting point, we pick you up at your hotel.',
   },
   {
     p: '¿Puedo elegir mi plato?',
-    r: 'Sí, cada persona elige su plato al reservar: Mariscos, Carne, Surf & Turf o Vegetariano. Puedes cambiarlo desde Mi Reserva hasta 24 horas antes.',
+    r: 'Yes — each person picks their dish when booking: Seafood, Meat, Surf & Turf or Vegetarian. You can change it from My Booking up to 24 hours before.',
   },
   { p: '¿Hay baño a bordo?', r: 'Sí, todos nuestros barcos tienen baño.' },
   {
-    p: '¿Qué debo llevar?',
-    r: 'Traje de baño, toalla, protector solar biodegradable y el efectivo del saldo si aplica.',
+    p: 'What should I bring?',
+    r: 'Swimsuit, towel, biodegradable sunscreen and cash for the balance if it applies.',
   },
   {
-    p: '¿Puedo ir si no sé nadar?',
-    r: 'Sí, el snorkel es en aguas poco profundas y con chaleco salvavidas disponible.',
+    p: 'Can I come if I cannot swim?',
+    r: 'Yes — the snorkeling is in shallow water and life jackets are available.',
   },
   {
-    p: '¿Es apto para embarazadas o personas mayores?',
-    r: 'Depende del tour y de cómo esté el mar ese día. Escríbenos por WhatsApp antes de reservar y te decimos cuál te conviene.',
+    p: 'Is it suitable for pregnant women or older guests?',
+    r: 'It depends on the tour and on the sea that day. Write to us on WhatsApp before booking and we’ll tell you which one suits you.',
   },
   {
-    p: '¿Los niños pueden ir en todos los tours?',
-    r: 'En Snorkel Lovers sí; Semi-Privado Premium es solo para adultos (18+). Tenemos chalecos infantiles de todas las tallas.',
+    p: 'Can children join every tour?',
+    r: 'On Snorkel Lovers, yes; Semi-Private Premium is adults only (18+). We carry child life jackets in every size.',
   },
   {
-    p: '¿Aceptan tarjeta? ¿Puedo pagar en el hotel?',
-    r: 'Aceptamos Visa, Mastercard, American Express y PayPal desde Mi Reserva. El saldo también puedes pagarlo el día del tour, en efectivo, con 5% de descuento.',
+    p: 'Do you take cards? Can I pay at the hotel?',
+    r: 'We accept Visa, Mastercard, American Express and PayPal from My Booking. You can also pay the balance on the day of the tour, in cash, with a 5% discount.',
   },
 ]

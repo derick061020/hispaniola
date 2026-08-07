@@ -211,7 +211,7 @@ function StepperPersonas({
           type="button"
           variant="stroke"
           fullRadius
-          aria-label="Quitar una persona"
+          aria-label="Remove one guest"
           disabled={value <= min}
           onClick={() => onChange(Math.max(min, value - 1))}
           className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
@@ -222,7 +222,7 @@ function StepperPersonas({
           type="button"
           variant="stroke"
           fullRadius
-          aria-label="Añadir una persona"
+          aria-label="Add one guest"
           disabled={value >= max}
           onClick={() => onChange(Math.min(max, value + 1))}
           className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
@@ -265,7 +265,7 @@ export function WidgetEvento({ evento, colapsable = false }: Props) {
       if (evento.tipoFijo === -1) setTipoIdx(0)
       setFecha('2026-12-15')
       setPersonas(40)
-      setMensaje('Quisiera cotizar para un cumpleaños con cena y barra libre.')
+      setMensaje('I’d like a quote for a birthday with dinner and open bar.')
     }
   })
 
@@ -317,7 +317,7 @@ export function WidgetEvento({ evento, colapsable = false }: Props) {
           required
           value={nombre}
           onChange={setNombre}
-          placeholder="Tu nombre"
+          placeholder="Your name"
           autoComplete="name"
         />
         <Campo
@@ -347,7 +347,7 @@ export function WidgetEvento({ evento, colapsable = false }: Props) {
             elige: YA eligió al entrar a esta landing. */}
         {evento.tiposEvento.length === 1 ? (
           <div>
-            <label className="mb-1 block text-xs font-medium text-navy-sub">Tipo de evento</label>
+            <label className="mb-1 block text-xs font-medium text-navy-sub">Event type</label>
             <div className="flex h-10 items-center rounded-10 border border-stroke-soft-200 bg-bg-weak-50 px-3 text-paragraph-sm text-text-strong-950">
               {evento.tiposEvento[0]}
             </div>
@@ -378,7 +378,7 @@ export function WidgetEvento({ evento, colapsable = false }: Props) {
                 // El Select de AlignUI gestiona `data-placeholder` cuando el
                 // value no matchea ninguna opción. tipoIdx === -1 → placeholder.
               >
-                <Select.Value placeholder="Selecciona el tipo" />
+                <Select.Value placeholder="Choose the type" />
               </Select.Trigger>
               <Select.Content>
                 {evento.tiposEvento.map((tipo, i) => (
@@ -426,10 +426,10 @@ export function WidgetEvento({ evento, colapsable = false }: Props) {
         <div className="sm:col-span-2">
           <Textarea
             id="evento-mensaje"
-            label="Cuéntanos más"
+            label="Tell us more"
             value={mensaje}
             onChange={setMensaje}
-            placeholder="Detalles del evento, horario preferido, menú, etc."
+            placeholder="Event details, preferred time, menu, etc."
             filas={enModal ? 3 : 4}
           />
         </div>
@@ -460,7 +460,7 @@ export function WidgetEvento({ evento, colapsable = false }: Props) {
           directo, no por OTA. Aplica también a eventos. */}
       <div className="flex items-center justify-center gap-1.5 rounded-btn bg-menta px-3 py-1.5 text-center text-xs font-medium text-menta-texto">
         <Tag className="size-3.5 shrink-0" aria-hidden="true" />
-        Cotizando directo ahorras hasta 15%
+        Quote direct and save up to 15%
       </div>
 
       {/* 3 checks de reassurance — TICKER INFINITO horizontal, IGUAL
@@ -478,9 +478,9 @@ export function WidgetEvento({ evento, colapsable = false }: Props) {
       {enModal ? null : (
         <ChecksTicker
           lineas={[
-            'Respuesta en menos de 24 h',
-            'Sin compromiso — cotizamos gratis',
-            'WhatsApp directo con el equipo del barco',
+            'Reply within 24 h',
+            'No commitment — quotes are free',
+            'WhatsApp straight to the boat’s team',
           ]}
         />
       )}
@@ -511,7 +511,7 @@ export function WidgetEvento({ evento, colapsable = false }: Props) {
     <>
       <Caja>
         <p className="font-display text-base font-semibold text-navy">
-          {evento.cotizacionPlegada?.titulo ?? '¿Tu evento no encaja en un paquete?'}
+          {evento.cotizacionPlegada?.titulo ?? 'Doesn’t your event fit a package?'}
         </p>
         <p className="-mt-2 text-sm text-navy-sub">
           {evento.cotizacionPlegada?.sub ??
@@ -559,7 +559,7 @@ export function WidgetEvento({ evento, colapsable = false }: Props) {
                 {evento.ctaPrincipal}
               </Modal.Title>
               <p className="mt-1 text-sm text-navy-sub">
-                Cuéntanos qué tienes en mente y te respondemos en menos de 24 h — sin compromiso.
+                Tell us what you have in mind and we’ll reply within 24 h — no commitment.
               </p>
             </div>
 

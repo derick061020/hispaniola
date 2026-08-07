@@ -51,68 +51,68 @@ export type TipGuia = {
 
 export const TIPS_GUIAS: TipGuia[] = [
   {
-    categoria: 'Esnórquel',
-    pregunta: '¿Es Punta Cana una buena zona para hacer esnórquel?',
-    lead: 'Para bucear puro, hay mejores sitios en el Caribe. Pero para ver tortugas, pocos lo superan.',
+    categoria: 'Snorkeling',
+    pregunta: 'Is Punta Cana a good area for snorkeling?',
+    lead: 'For pure diving, there are better spots in the Caribbean. But for seeing turtles, few beat it.',
     respuesta:
-      'Seamos honestos: muchas zonas de la costa atlántica se dañaron con los años, y Catalina o Bayahibe, en la costa sur, tienen mejor visibilidad. Aun así, en nuestro recorrido hay casi un 100% de posibilidades de ver tortugas desde el catamarán, gracias a los arrecifes artificiales que plantamos desde 2016 con la Fundación de Arrecifes Ecológicos de Bávaro — un proyecto que el Ministerio de Medio Ambiente califica entre los 3 mayores de jardinería de coral del país.',
+      'Let’s be honest: much of the Atlantic coast has been damaged over the years, and Catalina or Bayahibe, on the south coast, have better visibility. Even so, on our route there’s an almost 100% chance of seeing turtles from the catamaran, thanks to the artificial reefs we’ve been planting since 2016 with the Fundación de Arrecifes Ecológicos de Bávaro — a project the Ministry of the Environment ranks among the 3 largest coral gardening efforts in the country.',
     foto: 'galeria-snorkel-lovers-4',
-    fotoAlt: 'Snorkelistas nadando sobre el arrecife junto al catamarán en Cabeza de Toro',
-    fotoPie: 'Snorkel Lovers · arrecife de Cabeza de Toro',
-    stat: { valor: '≈100%', texto: 'de nuestros recorridos ven tortugas · proyecto Top 3 de coral del país' },
-    ctaPrimario: { texto: 'Ver el Snorkel Lovers', to: '/tours/snorkel-lovers' },
-    ctaEnlace: { texto: 'La fundación completa', to: '/foundation' },
+    fotoAlt: 'Snorkelers swimming over the reef next to the catamaran in Cabeza de Toro',
+    fotoPie: 'Snorkel Lovers · Cabeza de Toro reef',
+    stat: { valor: '≈100%', texto: 'of our trips see turtles · Top 3 coral project in the country' },
+    ctaPrimario: { texto: 'See the Snorkel Lovers', to: '/tours/snorkel-lovers' },
+    ctaEnlace: { texto: 'The full foundation story', to: '/foundation' },
   },
   {
-    categoria: 'Navegación a vela',
-    pregunta: '¿Es la navegación a vela una opción en la zona de Bávaro?',
-    lead: 'No es vela pura — navegamos a motor buena parte del recorrido. Y aun así, compensa.',
+    categoria: 'Sailing',
+    pregunta: 'Is sailing an option in the Bávaro area?',
+    lead: 'It isn’t pure sailing — we run on engine for a good part of the route. And even so, it pays off.',
     respuesta:
-      'La ruta va dentro del arrecife, en aguas poco profundas, y con la dirección del viento el catamarán usa motor al menos la mitad del tiempo. No son condiciones ideales para vela pura, pero el esnórquel, la duración del recorrido y la comida recién hecha a bordo compensan de sobra el tramo motorizado.',
+      'The route runs inside the reef, in shallow water, and with the wind direction the catamaran uses the engine at least half the time. Not ideal conditions for pure sailing, but the snorkeling, the length of the trip and the food cooked fresh on board more than make up for the motoring stretch.',
     foto: 'flota-maite',
-    fotoAlt: 'El velero Maite navegando con la vela desplegada al atardecer',
-    fotoPie: 'Maite · el velero de nuestra flota',
-    stat: { valor: '50%', texto: 'del trayecto a motor, por el viento y las aguas poco profundas' },
-    ctaPrimario: { texto: 'Ver el Maite, nuestro velero', to: '/nosotros' },
+    fotoAlt: 'The sailboat Maite sailing with the sail up at sunset',
+    fotoPie: 'Maite · the sailboat in our fleet',
+    stat: { valor: '50%', texto: 'of the trip under engine, because of the wind and the shallow water' },
+    ctaPrimario: { texto: 'See the Maite, our sailboat', to: '/nosotros' },
   },
   {
-    categoria: 'Seguridad',
-    pregunta: '¿Las condiciones del mar en Punta Cana son seguras para el turismo acuático?',
-    lead: 'Sí, muy seguro. El recorrido va dentro de una laguna protegida por el arrecife.',
+    categoria: 'Safety',
+    pregunta: 'Are the sea conditions in Punta Cana safe for water tourism?',
+    lead: 'Yes, very safe. The route runs inside a lagoon protected by the reef.',
     respuesta:
-      'El lado atlántico de Punta Cana tiene aguas movidas, pero nuestra zona está cerca de Cabo Engaño, donde empieza el Mar Caribe. La barrera de coral protege la navegación, así que el viaje es tranquilo y no hacen falta pastillas para el mareo. Un plan seguro para toda la familia.',
+      'The Atlantic side of Punta Cana has rough water, but our area is close to Cabo Engaño, where the Caribbean Sea begins. The coral barrier protects the sailing, so the ride is calm and you don’t need seasickness pills. A safe plan for the whole family.',
     foto: 'hero-catamaran-2',
-    fotoAlt: 'Catamarán navegando en aguas tranquilas dentro de la laguna del arrecife',
-    fotoPie: 'Aguas protegidas cerca de Cabo Engaño',
-    stat: { valor: 'Sin mareo', texto: 'aguas protegidas por la barrera de coral · plan familiar' },
-    ctaPrimario: { texto: 'Ver nuestros tours', to: '/#tours' },
+    fotoAlt: 'Catamaran sailing in calm water inside the reef lagoon',
+    fotoPie: 'Protected water near Cabo Engaño',
+    stat: { valor: 'No seasickness', texto: 'water protected by the coral barrier · family plan' },
+    ctaPrimario: { texto: 'See our tours', to: '/#tours' },
   },
   {
-    categoria: 'Gastronomía',
-    pregunta: '¿Punta Cana es un buen lugar para probar los mariscos?',
-    lead: 'Sí — y de los pocos sitios con marisco recién capturado, no congelado.',
+    categoria: 'Food',
+    pregunta: 'Is Punta Cana a good place to try seafood?',
+    lead: 'Yes — and one of the few places with freshly caught seafood, not frozen.',
     respuesta:
-      'La mayoría de hoteles y restaurantes usan marisco congelado e importado. El nuestro es capturado localmente y lo sazonamos con hierbas frescas y aceite de oliva justo frente a ti, en la cocina flotante — con todos los permisos y por encima de los requisitos de higiene del Ministerio de Medio Ambiente.',
+      'Most hotels and restaurants use frozen, imported seafood. Ours is caught locally and we season it with fresh herbs and olive oil right in front of you, in the floating kitchen — fully permitted and above the hygiene requirements of the Ministry of the Environment.',
     foto: 'plato-coctel-mariscos',
-    fotoAlt: 'Cóctel de mariscos recién preparado a bordo en la cocina flotante',
-    fotoPie: 'Marisco local, sazonado frente a ti',
-    stat: { valor: 'Recién capturado', texto: 'local, no congelado ni importado · cocinado frente a ti' },
-    ctaPrimario: { texto: 'Conoce la cocina flotante', to: '/nosotros' },
+    fotoAlt: 'Seafood cocktail freshly prepared on board in the floating kitchen',
+    fotoPie: 'Local seafood, seasoned in front of you',
+    stat: { valor: 'Freshly caught', texto: 'local, not frozen or imported · cooked in front of you' },
+    ctaPrimario: { texto: 'Meet the floating kitchen', to: '/nosotros' },
   },
 ]
 
 // Bloque de cierre — "Más guías en camino" (maqueta del cliente, correcciones
 // v1). El numeral "05" fantasma insinúa que la serie sigue.
 export const GUIAS_CIERRE = {
-  titulo: 'Más guías en camino',
+  titulo: 'More guides on the way',
   texto:
-    'Seguimos respondiendo lo que de verdad importa antes de reservar: mejor época para viajar, qué llevar, ir con niños y más.',
+    'We keep answering what really matters before you book: the best time to travel, what to bring, going with kids and more.',
   cta: { texto: 'See availability', to: '/#tours' },
 }
 
 export const GUIAS_HERO = {
-  eyebrow: 'Guías',
-  titulo: 'Guías de Punta Cana',
-  sub: 'Lo que sabemos después de más de una década navegando esta costa — para que decidas con información real, no con marketing.',
+  eyebrow: 'Guides',
+  titulo: 'Punta Cana guides',
+  sub: 'What we know after more than a decade sailing this coast — so you can decide with real information, not marketing.',
   galeria: ['galeria-snorkel-lovers-4', 'galeria-semi-privado-2'],
 }

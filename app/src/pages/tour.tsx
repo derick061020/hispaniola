@@ -93,10 +93,10 @@ export function TourPage() {
   const promesa =
     ficha.promesa ??
     (tour.booking === 'cotizacion'
-      ? 'Un día de mar a tu medida'
-      : ficha.audiencia === 'Solo adultos'
-        ? 'Un día de mar en grupo pequeño'
-        : 'Un día de mar')
+      ? 'A day at sea, tailored to you'
+      : ficha.audiencia === 'Adults only'
+        ? 'A day at sea in a small group'
+        : 'A day at sea')
 
   return (
     // pb-[calc(4rem+env(safe-area-inset-bottom))] (auditoría móvil 2026-07-17):

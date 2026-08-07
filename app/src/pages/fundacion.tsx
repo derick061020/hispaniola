@@ -52,8 +52,8 @@ export function FundacionPage() {
   return (
     <div>
       <Meta
-        titulo="La Fundación"
-        descripcion="Fundación Ecológica Arrecifes de Bávaro: restauración coralina y arrecifes artificiales desde 2016, en colaboración con el Ministerio de Medio Ambiente."
+        titulo="The Foundation"
+        descripcion="Fundación Ecológica Arrecifes de Bávaro: coral restoration and artificial reefs since 2016, in partnership with the Ministry of the Environment."
         ruta="/foundation"
       />
 
@@ -72,7 +72,7 @@ export function FundacionPage() {
         ctaHref="/competitive-advantage"
         imagen={{
           src: '/fotos/arrecife-fondo-cenital.webp',
-          alt: 'Vista cenital del agua turquesa de Playa Bávaro',
+          alt: 'Overhead view of the turquoise water at Playa Bávaro',
         }}
       >
         <div className="max-w-3xl">

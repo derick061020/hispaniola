@@ -69,7 +69,7 @@ export function BarcoCard({
   const media = MEDIA_FLOTA[barco.nombre] ?? []
   const video = media.find((m) => m.tipo === 'video')
   const destino = barco.cta === 'charter' ? '/tours/private-charter' : '/events/weddings'
-  const etiquetaCta = barco.cta === 'charter' ? 'Ver tours con este barco' : 'Cotizar para tu evento'
+  const etiquetaCta = barco.cta === 'charter' ? 'See tours on this boat' : 'Get a quote for your event'
 
   const specs = [
     { icono: Ruler, valor: barco.eslora },

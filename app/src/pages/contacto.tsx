@@ -26,8 +26,8 @@ export function ContactoPage() {
   return (
     <div>
       <Meta
-        titulo="Contacto"
-        descripcion="Escríbenos, llama o manda WhatsApp — hablas directo con el equipo del barco. Oficina en Punta Cana, respuesta en menos de 24 h."
+        titulo="Contact"
+        descripcion="Write to us, call or send a WhatsApp — you talk straight to the boat crew. Office in Punta Cana, reply in under 24 h."
         ruta="/contact"
       />
       <HeroInterna ctaHref="/#tours">

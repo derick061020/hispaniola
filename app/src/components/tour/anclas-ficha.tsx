@@ -120,7 +120,7 @@ export function AnclasFicha({ tour }: { tour: Tour }) {
 
   return (
     <nav
-      aria-label="Secciones de esta página"
+      aria-label="Sections on this page"
       className="sticky top-0 z-30 hidden border-b border-linea bg-papel/90 backdrop-blur-sm md:block"
     >
       <div

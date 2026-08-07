@@ -34,15 +34,15 @@ import { DEPARTAMENTOS, contarPorDepartamento, type DepartamentoId } from '@/dat
 // mueven: los rótulos miden ~180×48px y a poco que se acerquen se pisan (pasó
 // en la 1ª versión, con 82% y 76%).
 const A_BORDO: { id: DepartamentoId; x: string; y: string; zona: string }[] = [
-  { id: 'playa', x: '16%', y: '93%', zona: 'Cubierta y proa' },
-  { id: 'cocina', x: '52%', y: '70%', zona: 'Cocina flotante' },
+  { id: 'playa', x: '16%', y: '93%', zona: 'Deck and bow' },
+  { id: 'cocina', x: '52%', y: '70%', zona: 'Floating kitchen' },
 ]
 
 const EN_TIERRA: { id: DepartamentoId; zona: string }[] = [
-  { id: 'oficina', zona: 'Oficinas' },
-  { id: 'marketing', zona: 'Oficinas' },
-  { id: 'administracion', zona: 'Administración' },
-  { id: 'fundacion', zona: 'Laboratorio marino' },
+  { id: 'oficina', zona: 'Offices' },
+  { id: 'marketing', zona: 'Offices' },
+  { id: 'administracion', zona: 'Administration' },
+  { id: 'fundacion', zona: 'Marine lab' },
 ]
 
 function Punto({
@@ -112,12 +112,12 @@ export function PlanoBarco({
   return (
     <section className="relative overflow-hidden rounded-card-grande bg-linear-to-b from-papel-hueso to-aqua-tint px-6 py-10 sm:px-10 sm:py-12">
       <div className="text-center">
-        <Etiqueta>El equipo, por dónde vive</Etiqueta>
+        <Etiqueta>The team, by where they are based</Etiqueta>
         <h2 className="mt-3 font-display text-h2 font-semibold text-navy">
-          Unos navegan, otros sostienen el barco
+          Some sail, others keep the ship afloat
         </h2>
         <p className="mx-auto mt-2 max-w-2xl text-navy-sub">
-          Toca una zona para ver a su gente. Vuelve a tocarla para verlos a todos.
+          Tap an area to see its people. Tap it again to see them all.
         </p>
       </div>
 
@@ -161,7 +161,7 @@ export function PlanoBarco({
           <div className="relative">
             <img
               src="/fotos/catamaran-recorte.webp"
-              alt="Uno de los catamaranes de Hispaniola, visto desde el costado"
+              alt="One of the Hispaniola catamarans, seen from the side"
               className="w-full"
               loading="lazy"
             />
