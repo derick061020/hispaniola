@@ -1,5 +1,32 @@
 # PLAN — Lanzamiento (de "fuente para Figma" a frontend real)
 
+> ## ⚠️ Leer antes de usar este documento (revisado 2026-08-10)
+>
+> **Los Bloques 0/A/B/D/G/H/K siguen siendo el backlog válido** y sus rótulos se citan
+> desde ~20 sitios, varios en producción (`index.html`, `robots.txt`, `sitemap.xml`,
+> `data/legal.ts`, `seo/meta.tsx`, `lib/reservas.ts`). **No renumerar ni borrar bloques.**
+>
+> **Pero la sección «Inventario del hueco» de más abajo ya NO es cierta.** Se escribió
+> el 2026-07-17 y el sitio la ha dejado atrás; de sus 11 viñetas, 6 son falsas hoy:
+>
+> | Dice | Realidad |
+> |---|---|
+> | «Solo 4 rutas» | 33 `<Route>`, 25 páginas |
+> | «Sin ruta comodín/404» | existe |
+> | «Cero SEO, sin robots.txt ni sitemap.xml» | los dos existen, más JSON-LD y meta por ruta |
+> | «Sin favicon ni manifest» | existen |
+> | «Sin páginas legales» | `/legal/:slug`, con texto placeholder |
+> | «21 archivos usan EnlacePrototipo» | son 9 importadores, y la mayoría son ramas muertas |
+>
+> Lo que **sí sigue siendo cierto** de ese inventario: cero llamadas de red y cero
+> variables de entorno.
+>
+> Además, el **Bloque H (i18n) está derogado**: manda crear diccionarios y dice que el
+> selector de idioma «se retiró del topbar» — las dos cosas son falsas. La spec vigente
+> es `docs/proceso/correcciones-v3-cliente/planes/01-idioma-ingles.md`.
+>
+> **Para el estado real del proyecto, el [README de la raíz](../README.md).**
+
 ## Contexto
 
 `app/` se construyó bajo un principio explícito (`PLAN.md` §Principios no negociables,
