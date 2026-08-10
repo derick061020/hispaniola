@@ -6,6 +6,10 @@ conectar el motor de reservas y terminar el multi-idioma.
 
 > **Todo el producto vive en [`app/`](app/).** El resto de carpetas es material de apoyo.
 
+> 👥 **Somos dos trabajando a la vez sobre este código.** Antes de tu primer commit, lee
+> [`CONTRIBUTING.md`](CONTRIBUTING.md): ramas, quién es dueño de qué archivos, y las tres
+> cosas que ya costaron trabajo perdido aquí.
+
 ---
 
 ## Arrancar
