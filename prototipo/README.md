@@ -1,6 +1,6 @@
 # Prototipo navegable — Hispaniola
 
-Versión clickeable de los wireframes (`wireframes/wireframes-completos.html`): mismo
+Versión clickeable de los wireframes (`docs/proceso/wireframes/wireframes-completos.html`): mismo
 contenido y estructura, pero navegable de punta a punta en vez de ser un documento de
 referencia. Estética wireframe intacta (grises, placeholders) — el diseño visual sigue
 siendo trabajo de Figma.
@@ -59,7 +59,7 @@ confiable en vanilla JS sin librería, y aquí el costo de rendimiento es irrele
 Todo el contenido (precios, textos, preguntas de FAQ, artículos del blog) vive en
 `datos.js` — la mayoría de cambios de copy no tocan `app.js`. Para cambios de
 estructura o de una página nueva, dile a Claude Code qué pantalla del wireframe o del
-prototipo quieres ajustar; el archivo `wireframes/wireframes-completos.html` sigue
+prototipo quieres ajustar; el archivo `docs/proceso/wireframes/wireframes-completos.html` sigue
 siendo la referencia anotada de por qué cada bloque está donde está.
 
 ## Decisiones de alcance (F7)

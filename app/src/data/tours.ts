@@ -23,7 +23,7 @@ export type PasoItinerario = {
 /** Horario publicado del tour. SIN `quedan N` a propósito: el aforo restante
  *  depende de que el motor (xpotours) lo exponga por API — decisión pendiente
  *  del cliente. Prometer "quedan 9" sin dato real es urgencia inventada
- *  (analisis/revision-wireframes.md §2.7). El dato vive en el paso 1 del
+ *  (docs/proceso/analisis/revision-wireframes.md §2.7). El dato vive en el paso 1 del
  *  funnel, que no es parte de este build. */
 export type Horario = { hora: string; regreso: string }
 

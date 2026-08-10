@@ -9,7 +9,7 @@ luego se traslada a Figma vía MCP — mismo flujo probado en Eventus/Synexia.
 - **Todo pasa por tokens** (`app/src/styles/tokens.css`, `@theme` de Tailwind v4). Cero
   hex o valores mágicos en componentes — esos tokens serán las variables de Figma en
   el traspaso. Si un color/tamaño/radio no existe como token, se añade el token primero.
-- **Dirección visual = B "Charter Premium"** (`analisis/direccion-visual.md`). El aqua
+- **Dirección visual = B "Charter Premium"** (`docs/proceso/analisis/direccion-visual.md`). El aqua
   es acento con cuentagotas (marca/links/badges), nunca fondo grande de sección.
 - **Un componente React = un futuro componente Figma**: nombres claros en
   `src/components/ui/` (piezas reusables) y `src/components/home/` (una por sección).

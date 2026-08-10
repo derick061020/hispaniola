@@ -61,7 +61,7 @@
 //      de las iniciales en círculo de antes.
 //   3. ANTES de publicar esto en producción hay que sustituir estos 5
 //      archivos por fotos reales (pedido ya anotado en
-//      correcciones-v1-cliente/EJECUTADO.md) — mostrar una cara de stock bajo
+//      docs/proceso/correcciones-v1-cliente/EJECUTADO.md) — mostrar una cara de stock bajo
 //      el nombre de una persona real y con cargo real sería publicar un
 //      engaño, no un placeholder. Cambiar solo `foto` aquí — el componente no
 //      se toca.

@@ -5,7 +5,7 @@ import { BLOQUE_FICHA } from '@/components/tour/bloque-ficha'
 import { useDevFlag } from '@/dev/use-dev-flag'
 import { QUOTES, type Review, type Tour } from '@/data/home'
 
-// Opiniones (wireframe A5 · fix 1.2 de analisis/revision-wireframes.md).
+// Opiniones (wireframe A5 · fix 1.2 de docs/proceso/analisis/revision-wireframes.md).
 //
 // FORMATO: DOS TICKERS EN DIRECCIONES OPUESTAS (Samuel, 2026-07-22: «las
 // reseñas que sean solo 2 filas, una ticker infinita hacia la izquierda y

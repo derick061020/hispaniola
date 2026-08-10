@@ -276,7 +276,7 @@ export function Newsletter() {
             </div>
             <p className="text-xs text-white/70">
               <span className="font-semibold text-white">
-                {RESENAS_AGREGADO.total.toLocaleString('es-ES')}+
+                {RESENAS_AGREGADO.total.toLocaleString('en-US')}+
               </span>{' '}
               travelers already trust us
             </p>

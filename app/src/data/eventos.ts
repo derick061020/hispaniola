@@ -83,7 +83,7 @@ export type PaqueteEvento = {
  *  ⚠️ NO es el mismo motor que los tours. Charter y Saona usan SUSTITUCIÓN de
  *  tramo (el tramo que contiene al total se aplica entero) — está en
  *  lib/tarifas.ts. Son dos modelos y el sitio necesita los dos; mezclarlos
- *  cobra mal. Ver correcciones-v2-cliente/TARIFARIO-WEB-ORIGINAL.md.
+ *  cobra mal. Ver docs/proceso/correcciones-v2-cliente/TARIFARIO-WEB-ORIGINAL.md.
  *
  *  Devuelve null si el paquete no tiene precio publicado. */
 /** [v3 2026-08-06, WEBSITE-EVENTOS pag. 5 + PowerPoint slide 79] A partir de
@@ -240,7 +240,7 @@ export type FichaEvento = {
 //
 // `events-party-boat-puntacana.php` y `weddings.php` publican EXACTAMENTE
 // los mismos 4 paquetes con los mismos precios y los mismos menús
-// (verificado en correcciones-v2-cliente/TARIFARIO-WEB-ORIGINAL.md §3, y
+// (verificado en docs/proceso/correcciones-v2-cliente/TARIFARIO-WEB-ORIGINAL.md §3, y
 // así lo pedía ya el plan 03-eventos.md: «un solo array de paquetes
 // consumido por las dos landings»). La ÚNICA diferencia entre las dos
 // ocasiones es que bodas suma «Champagne toast» a los incluidos comunes

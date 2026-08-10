@@ -19,12 +19,12 @@ decide. Todo el research de conversión del proyecto apunta a esta pantalla.
 
 | Fuente | Qué aporta | Autoridad |
 |---|---|---|
-| `wireframes/wireframes-completos.html` — **Parte 2** (anclas `#ficha`, notas A1–A5) | La estructura aprobada de la página y el racional de cada bloque | Estructura |
+| `docs/proceso/wireframes/wireframes-completos.html` — **Parte 2** (anclas `#ficha`, notas A1–A5) | La estructura aprobada de la página y el racional de cada bloque | Estructura |
 | `prototipo/app.js` — `renderFicha()` y auxiliares (líneas ~560–780) | La **implementación canónica**: qué chips van por modo de booking, las 3 variantes del widget, el copy exacto que evolucionó después del wireframe | **Manda sobre el wireframe** donde difieren (es posterior y revisado) |
 | `prototipo/datos.js` — `TOURS` completo (itinerario, incluye, faqTour…), `PLATOS` | El contenido. **Ni una frase se inventa** | Copy |
-| `analisis/revision-wireframes.md` | Los fixes de conversión P1 que esta página DEBE respetar (§2 de este plan) | Conversión |
+| `docs/proceso/analisis/revision-wireframes.md` | Los fixes de conversión P1 que esta página DEBE respetar (§2 de este plan) | Conversión |
 | `app/src/` (home actual) | La piel: tokens, componentes reusables, patrones ya resueltos | Visual |
-| `analisis/direccion-visual.md` §6 | Guardarraíles de la dirección B (aqua con cuentagotas, el color lo ponen las fotos) | Visual |
+| `docs/proceso/analisis/direccion-visual.md` §6 | Guardarraíles de la dirección B (aqua con cuentagotas, el color lo ponen las fotos) | Visual |
 
 ⚠️ Donde wireframe y prototipo difieren, **gana el prototipo**. Ejemplos ya
 detectados: el chip «WiFi a bordo» del wireframe no existe en el prototipo (WiFi

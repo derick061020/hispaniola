@@ -43,7 +43,7 @@ producto con precio y CTA) → en v3 la baraja se sustituye por el ticker. Las
 cards del ticker son más pequeñas (sin botón de CTA propio), así que **deben
 conservar el precio** ("desde US$ 99") y navegar a su ficha. Se conservan
 intactos: el CTA primario «Ver disponibilidad» (ahora centrado), el CTA sticky
-de móvil y el grid de tours. Esto se anota en `analisis/direccion-visual.md`
+de móvil y el grid de tours. Esto se anota en `docs/proceso/analisis/direccion-visual.md`
 (nuevo §8) durante F6.
 
 ---
@@ -215,7 +215,7 @@ falta, se crea `--spacing-hero-min` como token, nunca un `min-h-[…]` suelto.
 
 - Añadir `foto: string` al tipo `Ocasion`. Las 6 ocasiones no tienen foto propia
   (no existe shooting de eventos): elegir **mirando las fotos** (Read sobre
-  `app/public/fotos/`, o `analisis/fotos-contacto.html`) entre las galerías
+  `app/public/fotos/`, o `docs/proceso/analisis/fotos-contacto.html`) entre las galerías
   existentes — las `galeria-charter-privado-*` (7) son las candidatas naturales
   (grupos/celebración a bordo). Dejar comentario en `home.ts`: *fotos
   provisionales de galería real; pendiente shooting de eventos — avisar a
@@ -319,7 +319,7 @@ Con Playwright, en `/` y `/fundaciones`, a **390 / 768 / 1440 px**:
 
 **Docs del cierre:**
 
-- `analisis/direccion-visual.md` → nuevo §8 (v3): qué se cambió, la nota de
+- `docs/proceso/analisis/direccion-visual.md` → nuevo §8 (v3): qué se cambió, la nota de
   conversión de §1, y que el video es el asset del cliente auto-hosteado.
 - `dev-registry.ts`: de paso corregir la description de «Tokens y type scale»,
   que aún dice «Lora + Inter» (misma clase de mentira que ya corregimos en

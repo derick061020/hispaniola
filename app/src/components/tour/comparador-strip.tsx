@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import * as Button from '@/components/alignui/button'
 
-// Comparador anti-OTA (fix 1.6 de analisis/revision-wireframes.md).
+// Comparador anti-OTA (fix 1.6 de docs/proceso/analisis/revision-wireframes.md).
 //
 // Por qué está AQUÍ y no solo en la página /por-que-reservar: quien duda entre
 // reservar aquí o en Viator está mirando ESTE precio en ESTE momento. La

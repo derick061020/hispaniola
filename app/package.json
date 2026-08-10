@@ -3,11 +3,18 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "engines": {
+    "node": ">=20.19"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "typecheck": "tsc -b",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "qa:rutas": "node qa/qa_rutas.mjs",
+    "qa:funnel": "node qa/qa_funnel.mjs",
+    "qa:a11y": "node qa/qa_a11y.mjs"
   },
   "dependencies": {
     "@fontsource/poppins": "^5.2.7",

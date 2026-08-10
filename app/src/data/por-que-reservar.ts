@@ -4,7 +4,7 @@ import { TOURS, STATS, RESENAS_AGREGADO } from './home'
 //  Contenido de /por-que-reservar — la página que el cliente pidió detrás de
 //  su insignia amarilla «¿POR QUÉ RESERVAR CON NOSOTROS? PRESIONE AQUÍ»
 //  (correcciones v2, slides 50-56 del PDF; plan en
-//  correcciones-v2-cliente/planes/07-por-que-reservar.md).
+//  docs/proceso/correcciones-v2-cliente/planes/07-por-que-reservar.md).
 //
 //  SUSTITUYE a la vieja /reserva-directa, que eran 30 líneas de hero + dos
 //  boletos y se retiró entera (2026-07-28, Samuel: «está horrible»).
@@ -48,7 +48,7 @@ export const KPIS: Kpi[] = [
   // «1782» y el resto del sitio dice «1.782» (footer, flota, reseñas).
   {
     valor: RESENAS_AGREGADO.rating,
-    label: `${RESENAS_AGREGADO.total.toLocaleString('es-ES', { useGrouping: 'always' })} reviews`,
+    label: `${RESENAS_AGREGADO.total.toLocaleString('en-US', { useGrouping: 'always' })} reviews`,
   },
 ]
 

@@ -1,7 +1,7 @@
 # PLAN — Prototipo navegable de los wireframes
 
 > Escrito 2026-07-13 (Fable 5) para ser ejecutado por Sonnet. Convierte los wireframes
-> estáticos (`wireframes/wireframes-completos.html`) en un **sitio navegable** donde se
+> estáticos (`docs/proceso/wireframes/wireframes-completos.html`) en un **sitio navegable** donde se
 > puede recorrer el funnel completo de reserva y sentir el uso real.
 > Decisiones ya tomadas con Samuel: **uso local (doble click, sin servidor)** ·
 > **toggle de notas de diseño** · **páginas de soporte completas**.
@@ -17,9 +17,9 @@
   código de producción, no lleva imágenes reales ni pagos reales.
 - **Principio rector:** velocidad de iteración. Cada decisión técnica se subordina a
   "Samuel pide un cambio → se edita un archivo → F5".
-- La fuente de verdad del contenido/copy es `wireframes/wireframes-completos.html`
+- La fuente de verdad del contenido/copy es `docs/proceso/wireframes/wireframes-completos.html`
   (leerlo ANTES de construir cada página) y la arquitectura es
-  `analisis/arquitectura-nueva.md` (menú, jerarquía, qué página vive dónde).
+  `docs/proceso/analisis/arquitectura-nueva.md` (menú, jerarquía, qué página vive dónde).
 
 ## 1. Restricciones técnicas (no negociables)
 
@@ -236,7 +236,7 @@ Al cerrar F7: actualizar la nota del proyecto en el cerebro
   gris + comentario `<!-- COPY PENDIENTE -->`.
 - No inventar el precio de Saona ni el mínimo de pax del charter (datos pendientes del
   cliente — mostrarlos como pendientes, igual que en los wireframes).
-- No tocar `wireframes/wireframes-completos.html` (sigue siendo el documento anotado de
+- No tocar `docs/proceso/wireframes/wireframes-completos.html` (sigue siendo el documento anotado de
   referencia) ni los análisis.
 - No `alert()`/`confirm()` nativos — siempre UI propia.
 - No urgencia fake: los "quedan N" del prototipo son datos demo fijos y el modo notas

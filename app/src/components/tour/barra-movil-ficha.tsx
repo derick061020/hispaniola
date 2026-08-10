@@ -23,27 +23,27 @@ export function BarraMovilFicha({ tour }: { tour: Tour }) {
     <div className="fixed inset-x-0 bottom-0 z-30 flex items-center justify-between gap-3 border-t border-linea bg-papel px-5 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] md:hidden">
       <div className="min-w-0">
         <p className="font-display text-base font-semibold text-navy">
-          {tour.precioLight !== null ? formatoDinero(tour.precioLight) : 'Consultar'}
-          {tour.precioLight !== null ? <span className="text-xs font-normal text-navy-soft"> /pers</span> : null}
+          {tour.precioLight !== null ? formatoDinero(tour.precioLight) : 'On request'}
+          {tour.precioLight !== null ? <span className="text-xs font-normal text-navy-soft"> /person</span> : null}
         </p>
         <p className="truncate text-xs text-navy-soft">
           ★ {tour.rating}
-          {tour.booking !== 'consulta' ? ' · Cancela gratis' : ''}
+          {tour.booking !== 'consulta' ? ' · Free cancellation' : ''}
         </p>
       </div>
 
       {tour.booking === 'completo' ? (
         <FancyButton.Root variant="primary" className="shrink-0" onClick={irAlWidget}>
-          Elegir fecha
+          Pick a date
         </FancyButton.Root>
       ) : tour.booking === 'cotizacion' ? (
         <FancyButton.Root variant="primary" className="shrink-0" asChild>
-          <EnlacePrototipo>Cotizar</EnlacePrototipo>
+          <EnlacePrototipo>Get a quote</EnlacePrototipo>
         </FancyButton.Root>
       ) : (
         <FancyButton.Root variant="primary" className="shrink-0" asChild>
           <a href={WHATSAPP_URL} target="_blank" rel="noopener">
-            Consultar
+            Enquire
           </a>
         </FancyButton.Root>
       )}

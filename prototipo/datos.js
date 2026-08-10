@@ -1,6 +1,6 @@
 /* ============================================================
    Hispaniola — Prototipo. Datos y contenido (copy exacto de
-   wireframes/wireframes-completos.html). Ver prototipo/PLAN.md.
+   docs/proceso/wireframes/wireframes-completos.html). Ver prototipo/PLAN.md.
    Script clásico (NO type=module) — se abre con file://.
    ============================================================ */
 

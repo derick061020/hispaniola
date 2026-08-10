@@ -53,7 +53,7 @@ export function FundacionesPage() {
       </h1>
       <p className="mt-2 max-w-prose text-navy-sub">
         Tokens de <code className="text-sm">src/styles/tokens.css</code>. El aqua se usa con
-        cuentagotas (ver guardarraíles en <code className="text-sm">analisis/direccion-visual.md</code>) —
+        cuentagotas (ver guardarraíles en <code className="text-sm">docs/proceso/analisis/direccion-visual.md</code>) —
         aquí se ve grande solo para validar el tono, no como referencia de proporción real.
       </p>
 

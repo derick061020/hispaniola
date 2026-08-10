@@ -37,7 +37,7 @@ import { schemaOrganizacion } from '@/lib/seo/schema'
 // confianza (reseñas) del bloque de conversión/cierre (contacto + FAQ +
 // footer).
 //
-// CORRECCIONES v1 DEL CLIENTE (2026-07-20, correcciones-v1-cliente/planes/
+// CORRECCIONES v1 DEL CLIENTE (2026-07-20, docs/proceso/correcciones-v1-cliente/planes/
 // 01-home.md): el ModalBienvenida (popup de video al entrar) se ELIMINA —
 // slide 2, «Eliminar popup». El video NO se tira: es el mismo asset que ya
 // usa el hero de fondo, y ahora protagoniza también la sección Experiencia

@@ -9,7 +9,7 @@
 // relanzado en 2026.
 //
 // CORRECCIONES v1 DEL CLIENTE (2026-07-22, "Guías de Punta Cana - Ajustes web"
-// .pdf en correcciones-v1-cliente/). El cliente entregó una maqueta: cada
+// .pdf en docs/proceso/correcciones-v1-cliente/). El cliente entregó una maqueta: cada
 // guía es una FILA con su foto al lado (foto/texto que ALTERNAN de lado), un
 // eyebrow de categoría, la pregunta, una frase-resumen en negrita (`lead`),
 // el cuerpo, un dato destacado (`stat`) y sus CTAs, cerrando con un bloque

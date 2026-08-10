@@ -245,7 +245,7 @@ export function Footer({ cta = 'Ready for an unforgettable day?' }: { cta?: stri
           <p className="text-sm font-semibold text-white">How guests rate us</p>
           <p className="mt-1 text-sm text-white/70">
             <span className="font-semibold text-white">★ {RESENAS_AGREGADO.rating}</span> ·{' '}
-            {RESENAS_AGREGADO.total.toLocaleString('es-ES')} reviews · #1 on TripAdvisor for 7 years
+            {RESENAS_AGREGADO.total.toLocaleString('en-US')} reviews · #1 on TripAdvisor for 7 years
           </p>
           <ul className="mt-3 flex flex-wrap items-center gap-2">
             {REDES.map((red) => {

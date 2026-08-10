@@ -36,7 +36,7 @@ import { PasajerosPopover, FilaPasajero } from '@/components/tour/pasajeros-popo
 //    ticker del hero, el megamenú y el <meta> de SEO prometen «desde US$ 99», y
 //    arrancar en Premium significa que quien entró por el 99 ve 114 sin haberlo
 //    pedido. Eso es bait-and-switch, y era una de las 7 correcciones P1 de
-//    analisis/revision-wireframes.md §1.1.
+//    docs/proceso/analisis/revision-wireframes.md §1.1.
 //  - El cliente lo pidió igual y explícitamente (slide 4 del PDF de
 //    correcciones v2: «poner aquí por defecto el premium»), y en la reunión del
 //    07-24 (17:40) dejó claro el porqué: «jugando con ese sesgo de que por 15

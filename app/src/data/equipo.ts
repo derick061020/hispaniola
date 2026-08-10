@@ -9,7 +9,7 @@
 // DERIVAN del array (nunca se escriben a mano), así que el día que llegue la
 // plantilla real la página se ajusta sola.
 //
-// Escalera de contenido aplicada (ver correcciones-v2-cliente/planes/00-INDICE.md):
+// Escalera de contenido aplicada (ver docs/proceso/correcciones-v2-cliente/planes/00-INDICE.md):
 //   1. Web original → los 6 nombres de departamento y sus descripciones son
 //      REALES: los escribió el cliente en su PowerPoint.
 //   2. Assets repetidos → los retratos rotan entre las fotos de equipo que ya

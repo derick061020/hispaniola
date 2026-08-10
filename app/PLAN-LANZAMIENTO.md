@@ -96,7 +96,7 @@ con Derick/el cliente antes de o en paralelo a la Fase 1.
 ## Bloque B — Funnel de reserva (la pieza central que falta)
 
 - Los 4 pasos + estado "sin disponibilidad" + "Mi reserva" ya están diseñados en
-  `wireframes/wireframes-completos.html` y validados en `prototipo/` — es puerto,
+  `docs/proceso/wireframes/wireframes-completos.html` y validados en `prototipo/` — es puerto,
   no invención.
 - El widget de la ficha (`widget-reserva.tsx`) ya calcula el total real
   (Light/Premium × personas) — es el punto de entrada natural al paso 1.
@@ -190,7 +190,7 @@ comida a bordo) — hoy nada de eso está estructurado para buscadores.
 - Ruta 404 real (falta hoy).
 - Error boundaries de React para fallos de red una vez exista el Bloque A.
 - Estados vacíos (sin resultados, sin disponibilidad) — ya diseñados en
-  wireframes/prototipo, faltan en React.
+  docs/proceso/wireframes/prototipo, faltan en React.
 - Pase de accesibilidad más allá de lo verificado por fase (contraste, foco,
   lectores de pantalla) con una herramienta tipo axe.
 

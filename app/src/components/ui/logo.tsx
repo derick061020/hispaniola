@@ -1,5 +1,5 @@
 // Logo real del cliente (langosta pirata + wordmark), descargado de la web actual —
-// no se rediseña (analisis/direccion-visual.md §1). Dos variantes porque el lockup
+// no se rediseña (docs/proceso/analisis/direccion-visual.md §1). Dos variantes porque el lockup
 // original lleva el texto en oscuro y es ilegible sobre el video del hero:
 //   - sobreOscuro: variante reversed (langosta a color + texto blanco) que aporta Samuel.
 //   - por defecto: lockup original tal cual sale de la web actual.

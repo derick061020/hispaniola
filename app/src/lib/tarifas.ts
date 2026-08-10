@@ -4,7 +4,7 @@ import type { FichaTour, TramoPrecio } from '@/data/tours'
  *
  *  Existen DOS modelos de precio en el negocio y el widget tiene que soportar
  *  los dos. Salen del tarifario real de la web del cliente, extraído y
- *  verificado en `correcciones-v2-cliente/TARIFARIO-WEB-ORIGINAL.md`:
+ *  verificado en `docs/proceso/correcciones-v2-cliente/TARIFARIO-WEB-ORIGINAL.md`:
  *
  *  1. TOURS (charter privado, Saona) → SUSTITUCIÓN DE TRAMO.
  *     Según en qué tramo caiga el TOTAL de personas se aplica ese y solo ese:

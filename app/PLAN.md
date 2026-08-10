@@ -13,13 +13,13 @@ proceso código-primero → Figma probado en Eventus y Synexia.
    sus reglas de oro (el código NUNCA se importa a Figma; tokens siempre).
 2. `C:\Users\kevin\OneDrive\Desktop\Cerebro\playbooks\dev-mode-glosario-prototipo.md` —
    el Dev Mode que se monta en F0.
-3. `analisis/direccion-visual.md` — dirección elegida por Samuel (2026-07-13):
+3. `docs/proceso/analisis/direccion-visual.md` — dirección elegida por Samuel (2026-07-13):
    **B — Charter Premium** (blanco + navy `#0B2545` + aqua `#0E8C9C` + coral CTA
    `#EF5B44` + menta precios; Lora titulares + Inter UI; esquinas 10-12px, cards con
    sombra suave). Leer especialmente sus **guardarraíles** (§6): aqua con cuentagotas
    y la diferenciación anti-OTA cargada al contenido. Especimen:
-   `analisis/direccion-visual.html`.
-4. La sección home del wireframe (`wireframes/wireframes-completos.html`, sección 01)
+   `docs/proceso/analisis/direccion-visual.html`.
+4. La sección home del wireframe (`docs/proceso/wireframes/wireframes-completos.html`, sección 01)
    y su implementación navegable (`prototipo/app.js`, funciones `seccion*` +
    `prototipo/datos.js`) — estructura y contenido canónicos.
 
@@ -119,7 +119,7 @@ estructura ni el orden (ya validados en la revisión de conversión):
 
 ### F1 — Assets reales
 - Extraer las fotos de la web actual (playbook `extraer-recursos-visuales`; URLs de
-  páginas en `analisis/mapa-del-sitio.md`; incluir banners de tours
+  páginas en `docs/proceso/analisis/mapa-del-sitio.md`; incluir banners de tours
   `images/excursions/*/banners/`, `images/bg/`, galería "Memories" del index y
   TODAS las fotos de platos `images/food/`).
 - Optimizar (máx ~1920px, WebP) a `public/fotos/`, con hoja de contacto
@@ -179,7 +179,7 @@ estructura ni el orden (ya validados en la revisión de conversión):
   **funnel de booking** (4 pasos) y el **listado `/tours`** NO se construyen,
   porque dependen de la decisión del motor xpotours (reemplazar / re-skinear),
   que sigue pendiente del cliente.
-- NO tocar `prototipo/` ni `wireframes/` (siguen siendo la referencia del resto del sitio).
+- NO tocar `prototipo/` ni `docs/proceso/wireframes/` (siguen siendo la referencia del resto del sitio).
 - NO valores sueltos: si un color/tamaño no existe como token, se añade el token primero.
 
 ## Criterios de éxito

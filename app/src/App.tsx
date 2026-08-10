@@ -63,8 +63,18 @@ function TourPorSlug() {
   return <TourPage key={slug} />
 }
 
+// [2026-08-10] Mismo tratamiento que TourPorSlug y LegalPorSlug — le FALTABA, y
+// ese hueco mandaba a la HOME dos rutas del cliente. La traza: el 301 del host
+// convierte `/eventos/bodas` en `/events/bodas`; aquí no se consultaba
+// SLUGS_VIEJOS, así que `evento.tsx` no encontraba la clave (las reales son
+// party-boat/weddings/corporate) y remataba con un <Navigate to="/">. No se
+// veía en `npm run dev` porque ahí gana la ruta de la SPA: solo se reproduce
+// en el deploy o con `npm run preview`.
 function EventoPorSlug() {
   const { slug } = useParams()
+  if (slug && slug in SLUGS_VIEJOS) {
+    return <Navigate to={`/events/${SLUGS_VIEJOS[slug]}`} replace />
+  }
   return <EventoPage key={slug} />
 }
 

@@ -495,7 +495,7 @@ export type Premio = {
 // Los 7 premios reales de la web actual (imágenes descargadas de
 // hispaniolaaquaticadventures.com/images/awards/, no stock ni recreaciones).
 //
-// La auditoría (analisis/auditoria-web-actual.md §"Señales de confianza") los
+// La auditoría (docs/proceso/analisis/auditoria-web-actual.md §"Señales de confianza") los
 // marcó como ACTIVO DESAPROVECHADO: en la web actual viven frente al hero en
 // imágenes pequeñas de baja resolución, sin números que los acompañen. Aquí
 // suben a la cinta de stats, que es justo la sección de "demostrar" — los
@@ -598,7 +598,7 @@ export const PREMIOS: Premio[] = [
 // segmentos `fuerte` y no se rompe el ritmo gris/negro.
 // ⚠️ La bióloga marina no se repite aquí: ya vive en el chip y la descripción
 // de las cards de tour, y en la reseña de Jessica M.
-// ⚠️ La auditoría (analisis/auditoria-web-actual.md §7) añade que el proyecto
+// ⚠️ La auditoría (docs/proceso/analisis/auditoria-web-actual.md §7) añade que el proyecto
 // está "avalado por Ministerio de Medio Ambiente" — dato fuerte, pero NO está
 // en datos.js y no se inventa. Pendiente confirmarlo con el cliente
 // (app/PLAN-v3.md §9); si se confirma, su sitio natural es esta misma frase.
@@ -668,7 +668,7 @@ export const EXPERIENCIA_NARRATIVA: SegmentoNarrativa[][] = [
 // fondo del hero (/video/hero.mp4) — Samuel aclaró que NO: el video del popup
 // es uno distinto, de YouTube (id K65cchLFwRs, canal propio del cliente), con
 // la presentadora hablando a cámara — confirmado también en
-// analisis/direccion-visual.md §del hero (ahí se descartó ESE MISMO id para
+// docs/proceso/analisis/direccion-visual.md §del hero (ahí se descartó ESE MISMO id para
 // el fondo del hero por llevar subtítulos incrustados en todo el metraje sin
 // tramo limpio; aquí sí es el uso correcto, es justamente el video del popup).
 // Se extrajo con yt-dlp (contenido propio del cliente, mismo trato que
@@ -778,7 +778,7 @@ export const BOLETO_TOUR = TOURS[0]
 //
 // El link "ver más" sí enlaza a TripAdvisor y Facebook, donde el cliente
 // tiene presencia propia y verificable (la auditoría del sitio
-// —analisis/auditoria-web-actual.md— los marcó como los 2 canales
+// —docs/proceso/analisis/auditoria-web-actual.md— los marcó como los 2 canales
 // principales de prueba social del cliente).
 //
 // v7 (2026-07-22, pedido de Samuel sobre la maqueta del cliente): la sección
@@ -1113,7 +1113,7 @@ export const RESENAS_AGREGADO = { rating: '4.9', total: 1782 }
 // (el catamarán navegando y la presentadora de la sección Experiencia), no
 // clientes hablando a cámara. Están para poder montar y evaluar el bloque —
 // «2 video-testimonios reales» lleva pedido al cliente desde
-// correcciones-v1-cliente/planes/01-home.md. Cuando lleguen, se cambia solo
+// docs/proceso/correcciones-v1-cliente/planes/01-home.md. Cuando lleguen, se cambia solo
 // el `videoSrc`/`videoPoster` de cada uno.
 export type VideoTestimonio = {
   id: string

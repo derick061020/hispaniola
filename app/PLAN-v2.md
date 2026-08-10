@@ -14,7 +14,7 @@ cualquier momento. Esta v2 se construye encima, en el mismo `app/`.
 1. `app/PLAN.md` — cómo se construyó la v1 (estructura, principios, qué NO hacer).
    **Todos sus principios siguen vigentes**: tokens primero, contenido no inventado,
    fotos reales, un componente React = un futuro componente Figma, Dev Mode obligatorio.
-2. `analisis/direccion-visual.md` §7 — el registro de este cambio de dirección.
+2. `docs/proceso/analisis/direccion-visual.md` §7 — el registro de este cambio de dirección.
 3. `C:\Users\kevin\OneDrive\Desktop\Cerebro\playbooks\animaciones-a-figma.md` — **nuevo
    en esta fase**: la rotación de cards es una animación en loop y hay que construirla
    sabiendo que después va a Figma (loops = componentes interactivos; cada estado debe
@@ -25,7 +25,7 @@ cualquier momento. Esta v2 se construye encima, en el mismo `app/`.
 ## 1. Las referencias (lo que Samuel dijo, literal)
 
 Las 4 imágenes viven en el chat del 2026-07-13. **Antes de ejecutar, guardarlas en
-`analisis/referencias-visuales/v2/`** (no pude escribirlas a disco desde el chat).
+`docs/proceso/analisis/referencias-visuales/v2/`** (no pude escribirlas a disco desde el chat).
 
 | # | Referencia | Qué dijo Samuel | Qué extraemos |
 |---|---|---|---|

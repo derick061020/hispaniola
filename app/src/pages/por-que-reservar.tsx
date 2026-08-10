@@ -10,7 +10,7 @@ import { Meta } from '@/components/seo/meta'
 
 // Página «Por qué reservar con nosotros» (/por-que-reservar) — correcciones v2
 // del cliente, slides 50-56 (plan en
-// correcciones-v2-cliente/planes/07-por-que-reservar.md).
+// docs/proceso/correcciones-v2-cliente/planes/07-por-que-reservar.md).
 //
 // SUSTITUYE a /reserva-directa, que se retiró entera (2026-07-28, Samuel:
 // «esa página de reserva directa la vamos a quitar, está horrible»). Aquella
