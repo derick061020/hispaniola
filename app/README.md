@@ -1,5 +1,21 @@
 # Hispaniola — Diseño final en React (home + ficha de tour)
 
+> ## ⚠️ Este documento es un REGISTRO HISTÓRICO, no el estado actual
+>
+> Cuenta cómo se construyeron la home y la ficha de tour, y sigue siendo la mejor
+> explicación del *porqué* de esas dos páginas. Pero se escribió cuando el proyecto
+> tenía dos páginas, y el sitio ha crecido mucho desde entonces.
+>
+> **Para el estado real —stack, rutas, qué falta, la frontera con el backend—
+> ve al [README de la raíz](../README.md).**
+>
+> Lo que este documento afirma y hoy es **falso**: que hay «dos páginas reales»
+> (hay 25), que el funnel de reserva no está construido (lo está, y tiene un bug
+> de precios documentado en el README de la raíz), que esto «no es código de
+> producción para Derick» (es exactamente lo que se entrega) y que hace falta
+> Node 18 (hace falta ≥ 20.19).
+> Lo único de esa lista que **sigue siendo cierto**: el listado `/tours` no existe.
+
 Diseño visual final de Hispaniola Aquatic Adventures, construido en React para
 trasladarse después a Figma vía MCP (mismo flujo que Eventus y Synexia — ver
 playbook `codigo-a-figma` del cerebro).
@@ -29,7 +45,7 @@ playbook `codigo-a-figma` del cerebro).
   no solo junto a la descripción. En desktop no hay barra móvil — si el widget
   se fuera, el visitante leería el menú y el itinerario (donde se convence) sin
   un CTA a la vista.
-- **Los 4 fixes de conversión que cablea** (`analisis/revision-wireframes.md`):
+- **Los 4 fixes de conversión que cablea** (`docs/proceso/analisis/revision-wireframes.md`):
   el precio ancla es siempre Light y Premium solo aparece como delta «+US$ 15»
   (1.1, anti bait-and-switch) · las reseñas enlazan **solo a TripAdvisor**,
   jamás a Viator (1.2) · la franja anti-OTA va bajo el widget, donde ocurre la
@@ -90,7 +106,8 @@ npm install
 npm run dev
 ```
 
-Abre `http://localhost:5173` (o el puerto que indique Vite). Requiere Node 18+.
+Abre `http://localhost:5173` (o el puerto que indique Vite). Requiere Node ≥ 20.19
+(lo exige vite 8; ver `.nvmrc`).
 
 - `npm run build` — build de producción (`dist/`).
 - `npm run dev` — servidor de desarrollo con HMR.
@@ -100,7 +117,7 @@ Abre `http://localhost:5173` (o el puerto que indique Vite). Requiere Node 18+.
 - **Es**: el diseño visual final de la **home + la ficha de tour**, con el copy
   y los datos exactos del wireframe/prototipo aprobado (`prototipo/`), fotos
   reales de la web actual (nada de stock ni IA), y la Dirección visual B —
-  "Charter Premium" (`analisis/direccion-visual.md`).
+  "Charter Premium" (`docs/proceso/analisis/direccion-visual.md`).
 - **No es**: el resto del sitio (eso sigue viviendo en `prototipo/`, la SPA
   vanilla navegable), ni el traspaso a Figma (fase posterior), ni código de
   producción para Derick — es la base visual desde la que se construye el
@@ -168,7 +185,7 @@ app/
   no debería encontrar nada fuera de `fundaciones.tsx` (esos hex son texto de
   documentación, no estilos) y `src/dev/` (tooling excluido del traspaso).
 - **El aqua es acento con cuentagotas** — nunca fondo grande de sección (ver
-  guardarraíles en `analisis/direccion-visual.md` §6).
+  guardarraíles en `docs/proceso/analisis/direccion-visual.md` §6).
 - **Contenido real, nunca inventado**: precios, copy y fotos vienen del
   wireframe aprobado o de la web actual. Donde falta un dato real (precio de
   Isla Saona, foto de Surf & Turf en alta resolución) se omite o se marca
@@ -186,5 +203,5 @@ registro completo. Nada de `src/dev/` se traslada a Figma.
 El contenido (precios, copy, tours) vive en `src/data/home.ts` — la mayoría
 de cambios de texto no tocan los componentes. Para cambios de estructura o
 una sección nueva, indica qué bloque del wireframe/prototipo quieres ajustar;
-`prototipo/wireframes-completos.html` y `prototipo/app.js` siguen siendo la
-referencia de contenido y orden aprobados.
+`docs/proceso/wireframes/wireframes-completos.html` y `prototipo/app.js` siguen
+siendo la referencia de contenido y orden aprobados.
