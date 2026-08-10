@@ -12,12 +12,20 @@ export function PasoPago({
   saldo,
   fechaElegida,
   onPagar,
+  procesando = false,
+  error = null,
 }: {
   deposito: number
   saldo: number
   /** Sin fecha no se puede pagar — ver el aviso de abajo. */
   fechaElegida: boolean
   onPagar: () => void
+  /** [2026-08-10] El pago dejó de ser instantáneo: viaja a Odoo y a la
+   *  pasarela. Sin esto se puede pulsar dos veces. */
+  procesando?: boolean
+  /** Mensaje si el cobro no se pudo iniciar. La reserva NO se pierde: sigue
+   *  registrada como pendiente en el CRM. */
+  error?: string | null
 }) {
   return (
     <div className="flex flex-col gap-4">
@@ -38,9 +46,21 @@ export function PasoPago({
         </p>
       ) : null}
 
-      <FancyButton.Root variant="primary" className="w-full" disabled={!fechaElegida} onClick={onPagar}>
-        Pay deposit · {formatoDinero(deposito)}
+      <FancyButton.Root
+        variant="primary"
+        className="w-full"
+        disabled={!fechaElegida || procesando}
+        onClick={onPagar}
+      >
+        {procesando ? 'Processing…' : `Pay deposit · ${formatoDinero(deposito)}`}
       </FancyButton.Root>
+
+      {error ? (
+        <p role="alert" className="rounded-lg border border-coral/40 bg-coral/5 px-3 py-2 text-xs leading-relaxed text-navy-sub">
+          We could not start the payment. <strong className="text-navy">Your booking is saved</strong> and our
+          team will contact you to complete it — or call us and we will finish it with you.
+        </p>
+      ) : null}
 
       <p className="flex items-center justify-center gap-1.5 text-xs text-navy-soft">
         <Lock className="size-3.5" aria-hidden="true" /> Secure payment · Free cancellation up to 7 days before

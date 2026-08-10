@@ -60,6 +60,7 @@ export function ResumenReserva({
   conceptoBase,
   precioBase,
   upgrade,
+  lineas,
   total,
   deposito,
   saldo,
@@ -88,6 +89,10 @@ export function ResumenReserva({
   precioBase: number
   /** Sobrecoste por persona del Premium; 0 si la reserva es Light. */
   upgrade: number
+  /** Desglose que devuelve Odoo. Cuando llega, sustituye al cálculo local: es
+   *  el único que sabe explicar un tramo de grupo («Catamaran — flat rate»),
+   *  que no es una multiplicación y no se puede escribir como tal. */
+  lineas?: { label: string; quantity: number; unit_price: number; amount: number }[]
   total: number
   deposito: number
   saldo: number
@@ -238,30 +243,60 @@ export function ResumenReserva({
             que la calculadora de eventos). El upgrade Premium va en su propia
             línea porque es la decisión que se puede deshacer. */}
         <div className="border-t border-linea p-4 text-sm">
-          <FilaPrecio
-            concepto={
-              <>
-                {conceptoBase}{' '}
-                <span className="text-navy-soft">
-                  {formatoDinero(precioBase)} × {personas}
-                </span>
-              </>
-            }
-            importe={precioBase * personas}
-          />
-          {upgrade > 0 ? (
-            <FilaPrecio
-              concepto={
-                <>
-                  Upgrade to Premium{' '}
-                  <span className="text-navy-soft">
-                    {formatoDinero(upgrade)} × {personas}
-                  </span>
-                </>
-              }
-              importe={upgrade * personas}
-            />
-          ) : null}
+          {/* [2026-08-10] El desglose lo manda el SERVIDOR cuando ya ha
+              contestado (`lineas`). Antes se componía aquí con
+              `precioBase × personas`, y en los tours que se venden por tramos
+              eso imprimía una fórmula que no existe: «US$ 184 × 30» encima de
+              un total de US$ 1.950, porque 184 es un ancla «desde» y 1.950 es
+              el precio plano del catamarán. Explicar mal de dónde sale el
+              dinero es peor que no explicarlo: es justo lo que hace dudar y
+              abandonar. Mientras la primera respuesta viaja se pinta la
+              estimación local, que en el caso de tarifa única sí es correcta. */}
+          {lineas && lineas.length > 0 ? (
+            lineas.map((linea, i) => (
+              <FilaPrecio
+                key={i}
+                concepto={
+                  <>
+                    {linea.label}{' '}
+                    {linea.quantity > 1 ? (
+                      <span className="text-navy-soft">
+                        {formatoDinero(linea.unit_price)} × {linea.quantity}
+                      </span>
+                    ) : null}
+                  </>
+                }
+                importe={linea.amount}
+              />
+            ))
+          ) : (
+            <>
+              <FilaPrecio
+                concepto={
+                  <>
+                    {conceptoBase}{' '}
+                    <span className="text-navy-soft">
+                      {formatoDinero(precioBase)} × {personas}
+                    </span>
+                  </>
+                }
+                importe={precioBase * personas}
+              />
+              {upgrade > 0 ? (
+                <FilaPrecio
+                  concepto={
+                    <>
+                      Upgrade to Premium{' '}
+                      <span className="text-navy-soft">
+                        {formatoDinero(upgrade)} × {personas}
+                      </span>
+                    </>
+                  }
+                  importe={upgrade * personas}
+                />
+              ) : null}
+            </>
+          )}
           <div className="mt-3 flex items-center justify-between border-t border-linea pt-3">
             <span className="font-semibold text-navy">Total</span>
             <span className="font-display text-precio font-semibold text-navy">{formatoDinero(total)}</span>

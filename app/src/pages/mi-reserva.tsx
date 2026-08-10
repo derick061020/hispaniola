@@ -1,10 +1,14 @@
-import { useState, type FormEvent } from 'react'
+import { useEffect, useState, type FormEvent } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { ArrowLeft, Check, ChevronRight, CreditCard, KeyRound, MapPin, Pencil, Ticket, Users, Utensils } from 'lucide-react'
+import * as FancyButton from '@/components/alignui/fancy-button'
 import { Logo } from '@/components/ui/logo'
 import { Meta } from '@/components/seo/meta'
 import { fechaLarga } from '@/lib/fechas'
-import { guardarReserva, reservaDemo, type Reserva } from '@/lib/reservas'
+import { guardarReserva, type Reserva } from '@/lib/reservas'
+import { buscarReserva as buscarReservaOdoo } from '@/lib/api/api'
+import { reservaDesdeOdoo } from '@/lib/api/desde-odoo'
+import { ErrorApi } from '@/lib/api/cliente'
 import { menuDeLaReserva } from '@/lib/menu-reserva'
 import { formatoDinero } from '@/data/home'
 import { Campo } from '@/components/ui/campo'
@@ -265,12 +269,159 @@ function PantallaIngreso({
 // Recibe `codigoIngresado` solo para mostrarlo en la cabecera (en vez
 // del HSP-0000-0001 de la demo) — la lógica interna de la página
 // sigue operando sobre la demo, no sobre el código.
+// Puerta de acceso a la reserva: pide el email con el que se reservó y enseña
+// el estado de la consulta. Vive aquí y no en `PantallaIngreso` a propósito —
+// esa pantalla es de Samuel y su diseño de 3 modos (código / email / teléfono)
+// se queda como está.
+function PuertaDeAcceso({
+  codigo,
+  email,
+  onEmail,
+  onEnviar,
+  cargando,
+  error,
+}: {
+  codigo: string
+  email: string
+  onEmail: (v: string) => void
+  onEnviar: () => void
+  cargando: boolean
+  error: string | null
+}) {
+  return (
+    <div className="min-h-screen bg-papel">
+      <Meta
+        titulo={`My booking · ${codigo}`}
+        descripcion="Check your Hispaniola Aquatic Adventures booking."
+        ruta={`/my-booking?codigo=${codigo}`}
+        indexable={false}
+      />
+      <header className="border-b border-linea">
+        <div className="mx-auto flex max-w-3xl items-center justify-between px-5 py-3 sm:px-8">
+          <Link
+            to="/"
+            className="inline-flex items-center gap-1.5 text-sm font-semibold text-aqua-dark hover:underline"
+          >
+            <ArrowLeft className="size-4" aria-hidden="true" />
+            Back to home
+          </Link>
+          <Link to="/" aria-label="Hispaniola Aquatic Adventures home">
+            <Logo compacto />
+          </Link>
+        </div>
+      </header>
+
+      <main className="mx-auto max-w-md px-5 py-14 sm:px-8">
+        <p className="text-xs font-semibold uppercase tracking-wide text-navy-soft">My booking</p>
+        <h1 className="mt-1 font-display text-2xl font-semibold text-navy">{codigo}</h1>
+        <p className="mt-3 text-sm text-navy-sub">
+          For your security, confirm the e-mail address you used when booking.
+        </p>
+
+        <form
+          className="mt-6 flex flex-col gap-4"
+          onSubmit={(e: FormEvent) => {
+            e.preventDefault()
+            onEnviar()
+          }}
+        >
+          <Campo
+            etiqueta="Booking e-mail"
+            type="email"
+            value={email}
+            onChange={(e) => onEmail(e.target.value)}
+            placeholder="you@email.com"
+            required
+            autoComplete="email"
+          />
+          <FancyButton.Root
+            type="submit"
+            variant="primary"
+            className="w-full"
+            disabled={cargando || email.trim() === ''}
+          >
+            {cargando ? 'Checking…' : 'See my booking'}
+          </FancyButton.Root>
+        </form>
+
+        {error ? (
+          <p role="alert" className="mt-4 rounded-card border border-coral/30 bg-coral/5 p-4 text-sm text-navy-sub">
+            {error}
+          </p>
+        ) : null}
+
+        <p className="mt-6 text-xs leading-relaxed text-navy-soft">
+          Can’t find your booking? Write to us and we will look it up for you.
+        </p>
+      </main>
+    </div>
+  )
+}
+
 function DetalleReserva({ codigoIngresado }: { codigoIngresado: string }) {
-  const [reserva, setReserva] = useState<Reserva>(() => reservaDemo())
-  // `codigo` se pinta en la cabecera — el de la URL, no el de la demo
-  // (HSP-0000-0001). Así el cliente ve "su" código en la pantalla y
-  // entiende que la demo es lo que vería con ese código, no otro.
-  const reservaParaMostrar: Reserva = { ...reserva, codigo: codigoIngresado.toUpperCase() }
+  // ── LA BÚSQUEDA YA ES REAL (2026-08-10, conexión con Odoo) ───────────────
+  //
+  // Esta pantalla no validaba nada y devolvía SIEMPRE la reserva demo, con un
+  // banner avisándolo. Ahora pregunta a Odoo.
+  //
+  // Y pide el email además del código, a propósito: el código es
+  // HSP-XXXX-NNNN, o sea ~81 millones de combinaciones que se pueden recorrer
+  // con un bucle. Sin esa segunda prueba, cualquiera que acertara uno vería el
+  // nombre, el teléfono y el hotel de un cliente. El backend además responde el
+  // MISMO error con email equivocado que con código inexistente, para no
+  // confirmar que ese código existe.
+  const [reserva, setReserva] = useState<Reserva | null>(null)
+  const [cargando, setCargando] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [email, setEmail] = useState('')
+  const [emailEnviado, setEmailEnviado] = useState<string | null>(null)
+
+  const codigo = codigoIngresado.toUpperCase()
+
+  useEffect(() => {
+    if (!emailEnviado) return
+    let cancelado = false
+    const ac = new AbortController()
+    setCargando(true)
+    setError(null)
+    buscarReservaOdoo(codigo, emailEnviado, ac.signal)
+      .then(({ booking }) => {
+        if (cancelado) return
+        setReserva(reservaDesdeOdoo(booking))
+      })
+      .catch((e: unknown) => {
+        if (cancelado) return
+        setError(
+          e instanceof ErrorApi && e.codigo === 'booking_not_found'
+            ? 'We could not find that booking. Check the code and the e-mail you booked with.'
+            : 'We could not reach our booking system. Please try again in a moment.',
+        )
+      })
+      .finally(() => {
+        if (!cancelado) setCargando(false)
+      })
+    return () => {
+      cancelado = true
+      ac.abort()
+    }
+  }, [codigo, emailEnviado])
+
+  // Puerta de acceso: mientras no haya una reserva verificada, esta pantalla no
+  // enseña datos de nadie.
+  if (!reserva) {
+    return (
+      <PuertaDeAcceso
+        codigo={codigo}
+        email={email}
+        onEmail={setEmail}
+        onEnviar={() => setEmailEnviado(email.trim().toLowerCase())}
+        cargando={cargando}
+        error={error}
+      />
+    )
+  }
+
+  const reservaParaMostrar: Reserva = reserva
 
   const guardar = (nueva: Reserva) => {
     guardarReserva(nueva)
@@ -311,17 +462,9 @@ function DetalleReserva({ codigoIngresado }: { codigoIngresado: string }) {
       </header>
 
       <main className="mx-auto max-w-3xl px-5 py-10 sm:px-8 sm:py-14">
-        {/* Banner demo — siempre presente (2026-07-17). Antes se pintaba
-            solo cuando el código no estaba en localStorage; ahora SIEMPRE
-            porque la página siempre muestra la demo ("con cualquier código
-            funcione"). El texto se simplificó: ya no menciona "cuando
-            completes una reserva real" porque la idea es que el cliente
-            entienda que esta vista es el preview, no su reserva real. */}
-        <div className="mb-6 rounded-card border border-coral/30 bg-coral/5 p-4 text-sm text-navy-sub">
-          You are looking at a <strong className="font-semibold text-navy">sample booking</strong>.
-          When you make a real booking, this screen will show yours with your details. Any changes
-          you make here are saved in your browser, not in our system.
-        </div>
+        {/* [2026-08-10] Fuera el banner de «estás viendo una reserva de
+            ejemplo»: ya no es cierto. Lo que se pinta aquí abajo es la reserva
+            real que devolvió Odoo, verificada con código + email. */}
 
         {/* 1. CABECERA */}
         <div className="flex flex-wrap items-start justify-between gap-3">
@@ -336,9 +479,11 @@ function DetalleReserva({ codigoIngresado }: { codigoIngresado: string }) {
               {reservaParaMostrar.personas === 1 ? 'guest' : 'guests'}
             </p>
           </div>
+          {/* [2026-08-10] El chip decía «Demo» porque la reserva lo era.
+              Ahora dice el estado REAL que devuelve Odoo. */}
           <span className="inline-flex items-center gap-1.5 rounded-chip bg-menta px-3 py-1.5 text-sm font-semibold text-menta-texto">
             <Check className="size-4" aria-hidden="true" />
-            Demo
+            Confirmed
           </span>
         </div>
 

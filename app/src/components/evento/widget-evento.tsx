@@ -257,6 +257,13 @@ export function WidgetEvento({ evento, colapsable = false }: Props) {
   const [fecha, setFecha] = useState('')
   const [personas, setPersonas] = useState(20) // default del prototipo: 20
   const [mensaje, setMensaje] = useState('')
+  // [2026-08-10, conexión con Odoo] El envío dejó de ser instantáneo: ahora
+  // viaja al CRM. Estos dos estados son el mínimo para no mentirle a nadie —
+  // sin ellos se puede pulsar dos veces (dos cotizaciones duplicadas) y un
+  // fallo de red terminaría en la pantalla de «pronto te contactamos» sin que
+  // el mensaje haya salido del navegador.
+  const [enviando, setEnviando] = useState(false)
+  const [errorEnvio, setErrorEnvio] = useState<string | null>(null)
 
   // [dev-mode] deep-link del Glosario Dev — ver src/dev/dev-registry.ts.
   // 'lleno' pre-rellena los 7 campos para mostrar el frame "form lleno"
@@ -283,14 +290,17 @@ export function WidgetEvento({ evento, colapsable = false }: Props) {
     if (v === 'abierta') setAbierto(true)
   })
 
-  function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault()
     // Si el tipo es el placeholder (-1), el `required` del Select ya
     // bloqueó el submit — pero por si el navegador es permisivo, no
     // navegamos con tipo inválido.
     if (tipoIdx < 0 || tipoIdx >= evento.tiposEvento.length) return
+    if (enviando) return
 
-    const cotizacion = guardarCotizacion({
+    setEnviando(true)
+    setErrorEnvio(null)
+    const cotizacion = await guardarCotizacion({
       slug: evento.slug,
       contacto: { nombre, email, whatsapp },
       tipoEvento: evento.tiposEvento[tipoIdx],
@@ -298,6 +308,15 @@ export function WidgetEvento({ evento, colapsable = false }: Props) {
       personas,
       mensaje,
     })
+    setEnviando(false)
+
+    // Si no llegó al CRM no se navega a «pronto nos pondremos en contacto»:
+    // se queda aquí, con el formulario intacto y el error a la vista, para que
+    // pueda reintentar o irse por WhatsApp (el CTA de al lado).
+    if (cotizacion.error) {
+      setErrorEnvio(cotizacion.error)
+      return
+    }
 
     // Navega a la página de gracias. El `replace: true` evita que el
     // back del navegador vuelva al form con datos sensibles ya enviados.
@@ -441,9 +460,20 @@ export function WidgetEvento({ evento, colapsable = false }: Props) {
           />
         </div>
 
-        <FancyButton.Root type="submit" variant="primary" className="w-full sm:col-span-2">
-          {evento.ctaPrincipal}
+        <FancyButton.Root
+          type="submit"
+          variant="primary"
+          className="w-full sm:col-span-2"
+          disabled={enviando}
+        >
+          {enviando ? 'Sending…' : evento.ctaPrincipal}
         </FancyButton.Root>
+
+        {errorEnvio ? (
+          <p role="alert" className="text-sm text-coral sm:col-span-2">
+            We could not send your request. Please try again, or reach us on WhatsApp.
+          </p>
+        ) : null}
 
         {/* CTA secundario opcional — solo empresas tiene "Dossier
             corporativo (PDF)" en data. Va como link a WhatsApp

@@ -14,8 +14,9 @@ import { etiquetaOcasion, type DatosCelebracion, type DatosContacto, type DatosR
 import { maxPersonasDe } from '@/components/tour/widget-reserva'
 import { TOURS, type Tour } from '@/data/home'
 import { FICHAS, type FichaTour } from '@/data/tours'
-import { guardarReserva, generarCodigoReserva, type Reserva } from '@/lib/reservas'
+import { guardarReserva, type Reserva } from '@/lib/reservas'
 import { menuDeLaReserva } from '@/lib/menu-reserva'
+import { useCheckout } from '@/lib/api/use-checkout'
 
 // Funnel de reserva (/reservar/:slug, Fase C). El widget de la ficha es el
 // CONFIGURADOR (paquete · fecha · hora · personas); «Continuar» abre aquí, con
@@ -69,6 +70,15 @@ export function ReservarPage() {
   const paquete: Paquete = params.get('paquete') === 'premium' ? 'premium' : 'light'
   const horarioIdx = Number(params.get('horario')) || 0
   const fechaISO = params.get('fecha')
+  // [2026-08-10, conexión con Odoo] El widget manda `adultos`/`ninos`/`bebes`
+  // en la URL desde la v3 y este funnel los IGNORABA: solo leía `personas`.
+  // Resultado documentado en el README: los bebés que la tripulación necesita
+  // para los chalecos no se guardaban en ningún sitio, y en Snorkel Lovers
+  // (tarifa dual adulto 114 / niño 65) se cobraba todo a precio de adulto.
+  // Ahora el desglose viaja entero al CRM y es Odoo quien pone el precio.
+  const adultosUrl = Number(params.get('adultos')) || 0
+  const ninosUrl = Number(params.get('ninos')) || 0
+  const bebesUrl = Number(params.get('bebes')) || 0
   // La SUB-VARIANTE (el bote, en Saona y en el charter). El widget la manda
   // desde siempre; hasta hoy el funnel la ignoraba. Ahora hace falta: es lo que
   // decide qué carta del charter se come (3 h, 4 h o buffet de pinchos).
@@ -90,6 +100,11 @@ export function ReservarPage() {
       maxPersonas={maxPersonas}
       horarioInicial={horarioIdx}
       fechaInicialISO={fechaISO}
+      // Si el widget no mandó desglose (el caso normal, tarifa única), todas
+      // las personas son adultos: es lo que este funnel ha asumido siempre.
+      adultosIniciales={adultosUrl || personas}
+      ninosIniciales={ninosUrl}
+      bebesIniciales={bebesUrl}
     />
   )
 }
@@ -107,6 +122,9 @@ function FlujoReserva({
   maxPersonas,
   horarioInicial,
   fechaInicialISO,
+  adultosIniciales,
+  ninosIniciales,
+  bebesIniciales,
 }: {
   tour: Tour
   ficha: FichaTour
@@ -118,6 +136,11 @@ function FlujoReserva({
   maxPersonas: number
   horarioInicial: number
   fechaInicialISO: string | null
+  /** Desglose por rol que manda el widget. Solo Snorkel Lovers (tarifa dual)
+   *  lo usa de verdad; en el resto, `adultos` es el total. */
+  adultosIniciales: number
+  ninosIniciales: number
+  bebesIniciales: number
 }) {
   const navigate = useNavigate()
 
@@ -145,10 +168,37 @@ function FlujoReserva({
   })
   const [celebracion, setCelebracion] = useState<DatosCelebracion>({ ocasion: null, nota: '' })
 
+  // ── EL PRECIO YA NO SE CALCULA AQUÍ (2026-08-10, conexión con Odoo) ──────
+  //
+  // Esta era la línea marcada en rojo en el README:
+  //   const total = (precioLight + upgrade) * personas
+  // Los cuatro tours son `booking: 'completo'`, así que los cuatro pasaban por
+  // ahí, y `precioLight` del charter (75) y de Saona (184) son anclas «desde»,
+  // NO tarifas por cabeza. Saona en catamarán con 30 pax: la ficha cobraba
+  // US$ 1.950 (tramo de grupo) y este checkout US$ 5.520. El resumen imprimía
+  // además la fórmula falsa, y ese número era el que iba a ir a Odoo.
+  //
+  // La decisión (que el CONTRIBUTING pedía tomar antes del primer endpoint):
+  // **el cálculo pasa al backend**. Odoo implementa los cuatro modelos del
+  // tarifario y es la única autoridad de precio; el front pinta lo que le
+  // devuelve. Así el desvío no puede volver: no hay dos fórmulas que
+  // desincronizar, hay una.
+  const checkout = useCheckout({
+    tour: tour.slug,
+    variante: varianteInicial,
+    paquete: paqueteInicial,
+    pax: { adults: adultosIniciales, children: ninosIniciales, infants: bebesIniciales },
+    fecha: fechaInicialISO,
+    scheduleIndex: horarioInicial,
+  })
+
   const upgrade = paquete === 'premium' && ficha.upgradePremium !== null ? ficha.upgradePremium : 0
-  const total = (precioLight + upgrade) * personas
-  const deposito = Math.round(total * 0.25)
-  const saldo = total - deposito
+  // Mientras la primera respuesta viaja, se pinta la estimación local para que
+  // el resumen no parpadee en cero. En cuanto Odoo contesta, manda Odoo.
+  const estimacionLocal = (precioLight + upgrade) * personas
+  const total = checkout.pedido?.amounts.total ?? estimacionLocal
+  const deposito = checkout.pedido?.amounts.deposit ?? Math.round(estimacionLocal * 0.25)
+  const saldo = checkout.pedido?.amounts.balance ?? total - deposito
 
   // QUÉ COME ESTE GRUPO. Resuelto en un solo sitio (lib/menu-reserva.ts) a
   // partir del paquete, del bote y del aforo — los tres datos que pueden
@@ -178,6 +228,12 @@ function FlujoReserva({
   const cambiarPersonas = (n: number) => {
     setPersonas(n)
     setPlatos((prev) => Array.from({ length: n }, (_, i) => prev[i] ?? ''))
+    // El stepper de esta pantalla es un único número, así que el cambio va a
+    // adultos y se conserva el desglose de niños/bebés que trajo el widget.
+    checkout.sincronizar({
+      pax: { adults: Math.max(n - ninosIniciales - bebesIniciales, 1),
+             children: ninosIniciales, infants: bebesIniciales },
+    })
     // Se recalcula con el aforo NUEVO: en el charter, crecer hasta 21 elimina
     // el paso del menú (pasa a buffet), así que devolver el flujo ahí sería
     // mandarlo a una sección que ya no existe.
@@ -196,16 +252,70 @@ function FlujoReserva({
   const subirAPremium = () => {
     setPaquete('premium')
     setPlatos((prev) => prev.map(() => ''))
+    checkout.sincronizar({ package: 'premium', dishes: [] })
   }
 
-  // "Pagar" — persiste la reserva en localStorage y navega a la pantalla
-  // de confirmación. No hay backend todavía (PLAN-LANZAMIENTO Bloque A),
-  // así que la "reserva" vive en el navegador del cliente hasta que se
-  // conecte Odoo/xpotours. Cuando exista backend, este handler será
-  // `onClick={async () => await api.createReserva(reserva)}` y la nav
-  // se hace con el codigo que devuelva el server.
-  const handlePagar = () => {
-    const codigo = generarCodigoReserva()
+  // "Pagar" (2026-08-10: ya hay backend).
+  //
+  // El comentario que había aquí anticipaba exactamente esto:
+  // «cuando exista backend, este handler será `await api.createReserva(...)` y
+  //  la nav se hace con el código que devuelva el server». Es lo que hace.
+  //
+  // Con un matiz que es EL REQUISITO del proyecto: la reserva no se crea aquí.
+  // Ya existe en Odoo desde que se abrió esta pantalla, en estado *Pending*, y
+  // este handler solo la cierra. Por eso una reserva que no se termina, o un
+  // pago que se rechaza, no desaparecen: quedan registrados como pendientes y
+  // el equipo los ve en «Web Orders → Unpaid / abandoned».
+  const [pagando, setPagando] = useState(false)
+  const [errorPago, setErrorPago] = useState<string | null>(null)
+
+  const handlePagar = async () => {
+    if (pagando) return
+    setPagando(true)
+    setErrorPago(null)
+
+    const codigo = checkout.codigo ?? ''
+    try {
+      // Vuelca lo último del formulario y crea el intento de cobro. El importe
+      // NO viaja: lo pone el servidor a partir de lo que ya tiene guardado.
+      await checkout.sincronizar(datosDelFormulario(), true)
+      await checkout.pagar({ proveedor: 'stripe' })
+    } catch (error) {
+      // Falta configurar la pasarela en Odoo (503) o el cobro no se pudo
+      // iniciar. La reserva SIGUE registrada como pendiente, así que se avisa
+      // sin perderla y el equipo puede rematarla por teléfono.
+      setErrorPago(error instanceof Error ? error.message : 'Payment could not be started.')
+      setPagando(false)
+      return
+    }
+
+    guardarReserva(reservaLocal(codigo))
+    navigate(`/book/${tour.slug}/thank-you?codigo=${codigo}`)
+  }
+
+  /** Todo lo que el visitante ha rellenado, en el formato de la API. */
+  const datosDelFormulario = () => ({
+    step: 'payment' as const,
+    date: fechaISO,
+    schedule_index: horarioIdx,
+    package: paquete,
+    contact: {
+      first_name: contacto.nombre.trim(),
+      last_name: contacto.apellidos.trim(),
+      email: contacto.email.trim(),
+      phone: contacto.telefono.trim(),
+    },
+    pickup: { hotel: recogida.hotel.trim(), notes: recogida.notas.trim() },
+    dishes: hayPasoMenu ? platos : [],
+    ...(celebracion.ocasion && celebracion.ocasion !== 'ninguna'
+      ? { occasion: celebracion.ocasion, occasion_note: celebracion.nota.trim() }
+      : {}),
+  })
+
+  // Copia local de la reserva. Ya NO es el almacén —la buena está en Odoo— pero
+  // se conserva como caché para que «Gracias» pinte al instante, sin esperar a
+  // la red, con el menú y los horarios que solo existen en `data/tours.ts`.
+  const reservaLocal = (codigo: string): Reserva => {
     const reserva: Reserva = {
       codigo,
       slug: tour.slug,
@@ -256,8 +366,7 @@ function FlujoReserva({
       saldo,
       fechaCreacionISO: new Date().toISOString(),
     }
-    guardarReserva(reserva)
-    navigate(`/book/${tour.slug}/thank-you?codigo=${codigo}`)
+    return reserva
   }
 
   // La FECHA ya la pinta el propio campo de calendario del resumen (con su hora
@@ -343,7 +452,21 @@ function FlujoReserva({
                 />
                 <Continuar
                   habilitado={contacto.nombre.trim() !== '' && contacto.email.trim() !== ''}
-                  onClick={() => setPaso(siguienteDe('contacto'))}
+                  onClick={() => {
+                    checkout.sincronizar({
+                      step: 'contact',
+                      contact: {
+                        first_name: contacto.nombre.trim(),
+                        last_name: contacto.apellidos.trim(),
+                        email: contacto.email.trim(),
+                        phone: contacto.telefono.trim(),
+                      },
+                      ...(celebracion.ocasion && celebracion.ocasion !== 'ninguna'
+                        ? { occasion: celebracion.ocasion, occasion_note: celebracion.nota.trim() }
+                        : {}),
+                    })
+                    setPaso(siguienteDe('contacto'))
+                  }}
                 />
               </SeccionPaso>
 
@@ -379,7 +502,13 @@ function FlujoReserva({
                   <Continuar
                     habilitado
                     texto={platos.every((p) => p) ? 'Continue' : 'Continue and pick the menu later'}
-                    onClick={() => setPaso(siguienteDe('menu'))}
+                    onClick={() => {
+                      // Los platos van POR COMENSAL, no agregados: la cocina no
+                      // necesita «3 mariscos», necesita saber que el invitado 2
+                      // come marisco.
+                      checkout.sincronizar({ step: 'menu', dishes: platos })
+                      setPaso(siguienteDe('menu'))
+                    }}
                   />
                 </SeccionPaso>
               ) : null}
@@ -402,7 +531,13 @@ function FlujoReserva({
                 />
                 <Continuar
                   habilitado={recogida.hotel.trim() !== ''}
-                  onClick={() => setPaso(siguienteDe('recogida'))}
+                  onClick={() => {
+                    checkout.sincronizar({
+                      step: 'pickup',
+                      pickup: { hotel: recogida.hotel.trim(), notes: recogida.notas.trim() },
+                    })
+                    setPaso(siguienteDe('recogida'))
+                  }}
                 />
               </SeccionPaso>
 
@@ -412,6 +547,8 @@ function FlujoReserva({
                   saldo={saldo}
                   fechaElegida={fechaISO !== null}
                   onPagar={handlePagar}
+                  procesando={pagando}
+                  error={errorPago}
                 />
               </SeccionPaso>
             </div>
@@ -458,6 +595,7 @@ function FlujoReserva({
                 }
                 precioBase={precioLight}
                 upgrade={upgrade}
+                lineas={checkout.pedido?.quote?.lines}
                 total={total}
                 deposito={deposito}
                 saldo={saldo}
