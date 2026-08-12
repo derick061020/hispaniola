@@ -82,15 +82,28 @@ export type PilarSost = {
  * a anclas LOCALES porque los slides 63 y 64 ya viven también en esta página
  * (Samuel: «la info del slide 63 parece que no está… y el slide 64 tampoco»).
  * Los 7 chips son ahora 7 secciones de aquí, en el orden real de lectura.
+ *
+ * [2026-08-12] Y VUELVEN A SER ENLACES los tres últimos. El tramo de la
+ * fundación sale de /competitive-advantage y se queda solo en /foundation (ver
+ * la cabecera de pages/ventaja-competitiva.tsx), así que sus secciones ya no
+ * existen aquí: con `id` local seguirían dibujándose pero no llevarían a
+ * ninguna parte. Los 7 chips del slide 58 se mantienen —el cliente pidió esa
+ * lista, no «los chips que quepan»—, cuatro como anclas de esta página y tres
+ * como enlaces a la otra. `to` existe exactamente para esto.
+ *
+ * ⚠️ Los `id` de esos tres tienen que existir en pages/fundacion.tsx
+ * (`fundacion`, `proyectos`, `membresias`). El aviso de consola de
+ * NavAnclasChips NO los vigila: solo comprueba los chips SIN `to`, porque un
+ * ancla de otra página no se puede verificar desde ésta.
  */
 export const ANCLAS_VENTAJA = [
   { id: 'conservacion', label: 'Conservation' },
   { id: 'comunidades', label: 'Community' },
   { id: 'ancla-impacto', label: 'Impact per guest' },
   { id: 'ancla-videos', label: 'On video' },
-  { id: 'ancla-fundacion', label: 'The foundation' },
-  { id: 'ancla-proyectos', label: 'Projects' },
-  { id: 'ancla-membresias', label: 'Memberships' },
+  { id: 'fundacion', label: 'The foundation', to: '/foundation#fundacion' },
+  { id: 'proyectos', label: 'Projects', to: '/foundation#proyectos' },
+  { id: 'membresias', label: 'Memberships', to: '/foundation#membresias' },
 ]
 
 export type VideoSost = {

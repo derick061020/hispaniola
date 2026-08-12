@@ -4,6 +4,26 @@ import { FUNDACION } from '@/data/fundacion'
 import { useEntradaProyectos } from './use-entrada-proyectos'
 import { useProgresoProyectos } from './use-progreso-proyectos'
 
+// ⚠️⚠️ FUERA DE LA WEB DESDE EL 2026-08-12 — ESTE COMPONENTE NO TIENE
+// CONSUMIDORES. Se conserva sin montar (criterio de la casa: no se borra
+// mientras otra rama pueda estar montando encima; igual que
+// CronologiaFundacion aquí al lado o CocinaYParadas en /fleet). Con él quedan
+// sin uso sus dos hooks (use-progreso-proyectos.ts, use-entrada-proyectos.ts)
+// y los tokens --proyecto-entrada-* y --spacing-sost-proyecto-foto.
+//
+// POR QUÉ SALE: al mudarse el tramo de la fundación de /competitive-advantage
+// a /foundation (Samuel, 2026-08-12), esta línea de tiempo habría aterrizado
+// en la misma página que fundacion/frentes-fundacion.tsx — que pinta los
+// MISMOS 6 `FUNDACION.frentes`, con las mismas fotos y el mismo copy, en el
+// barrido horizontal. Se decidió que sobrevive el barrido. No se pierde
+// ninguna imagen ni una línea de copy; sí el efecto de barra + puntos que el
+// cliente pidió para esta vista en el slide 81. Si vuelve a hacer falta, es
+// montarlo tal cual — solo hay que darle un `id` que no choque con
+// `#proyectos` y decidir de dónde sale su prop `activo` (en su página de
+// origen venía del flag ?dev-sost=estatico).
+//
+// ══════════════════════════════════════════════════════════════════════════
+//
 // Los 6 frentes de la fundación en /ventaja-competitiva (slide 63) —
 // 2026-07-28, pedido de Samuel: «la info del slide 63 parece que no está,
 // agrégalo pero no así con box, puede ser con una barra de progreso vertical

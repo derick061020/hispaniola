@@ -8,9 +8,6 @@ import { RecorridoSostenibilidad } from '@/components/sostenibilidad/recorrido-s
 import { ImpactoSostenibilidad } from '@/components/sostenibilidad/impacto-sostenibilidad'
 import { AporteSostenibilidad } from '@/components/sostenibilidad/aporte-sostenibilidad'
 import { VideosSostenibilidad } from '@/components/sostenibilidad/videos-sostenibilidad'
-import { FundacionTeaser } from '@/components/sostenibilidad/fundacion-teaser'
-import { ProyectosSostenibilidad } from '@/components/sostenibilidad/proyectos-sostenibilidad'
-import { CierreDoble } from '@/components/sostenibilidad/cierre-doble'
 import { Meta } from '@/components/seo/meta'
 import { ANCLAS_VENTAJA, SOSTENIBILIDAD } from '@/data/sostenibilidad'
 import { useDevFlag } from '@/dev/use-dev-flag'
@@ -35,26 +32,46 @@ import { useSostenibilidadReveal } from '@/components/sostenibilidad/use-sosteni
 // mantiene ese tab, slide 20), lo que cambió es cómo se vende. Renombrar 8
 // componentes y una constante que consumen blog/guías/flota no compra nada.
 //
-// Orden del contenido: misión + video → EL RECORRIDO de los 3 pilares (zigzag
-// con la curva y el catamarán) → banda de impacto (las 4 cifras) → A DÓNDE VA
-// TU APORTE (los 2 importes por huésped) → los 7 videos → teaser de la
-// fundación → los 5 proyectos → membresías → cierre. La banda de impacto va
-// justo DESPUÉS del recorrido a propósito (3ª vuelta, 2026-07-22): los
-// pilares cuentan QUÉ se hace y las cifras rematan CUÁNTO — separarlas con
-// los videos en medio rompía el remate. El aporte va pegado a las cifras
-// porque es el mecanismo que las financia: resultado → de dónde sale. Y los
-// tres últimos bloques son el tramo de la fundación, en el orden de los
-// slides 62-64: quién es → en qué trabaja → cómo apoyarla.
+// Orden del contenido: misión + video → la historia y la letanía → EL
+// RECORRIDO de los 3 pilares (zigzag con la curva y el catamarán) → banda de
+// impacto (las 4 cifras) → A DÓNDE VA TU APORTE (los 2 importes por huésped)
+// → los 7 videos. La banda de impacto va justo DESPUÉS del recorrido a
+// propósito (3ª vuelta, 2026-07-22): los pilares cuentan QUÉ se hace y las
+// cifras rematan CUÁNTO — separarlas con los videos en medio rompía el
+// remate. El aporte va pegado a las cifras porque es el mecanismo que las
+// financia: resultado → de dónde sale.
 //
-// Ese orden es también el de los 7 chips (ANCLAS_VENTAJA) — y no por
+// Ese orden es también el de los chips (ANCLAS_VENTAJA) — y no por
 // casualidad: un índice que no sigue el orden de lectura desincroniza el
 // resaltado al scrollear.
 //
-// ⚠️ [v2 2026-07-28] Los slides 63 (los 5 proyectos) y 64 (membresías) se
-// traen AQUÍ además de a /fundacion, por pedido de Samuel. El copy no se
-// duplica —los dos sitios leen data/fundacion.ts— pero el TEXTO sí se ve en
-// dos páginas. Si eso acaba molestando, la decisión es cuál de las dos lo
-// cuenta, no retocar uno de los dos textos para «diferenciarlos».
+// ══ ✅ RESUELTA LA DUPLICACIÓN CON /foundation (2026-08-12, Samuel: «desde
+// "our foundation" hasta las 2 cards finales las quitamos de
+// competitive-advantage y las ponemos en foundation después de la sección de
+// scroll horizontal») ══
+//
+// Desde el 2026-07-28 el tramo de la fundación (slides 62-64) vivía en ESTA
+// página Y en /foundation: el copy no se duplicaba —los dos sitios leen
+// data/fundacion.ts— pero el TEXTO sí se veía en dos páginas, y este mismo
+// archivo dejó escrito que lo que había que decidir era CUÁL de las dos lo
+// cuenta. Decidido: lo cuenta /foundation. Salen de aquí los tres bloques del
+// tramo:
+//   · FundacionTeaser  → se muda a /foundation, detrás del barrido horizontal.
+//   · ProyectosSostenibilidad → NO se muda: /foundation ya pinta esos mismos
+//     6 `FUNDACION.frentes` en el barrido horizontal, así que la línea de
+//     tiempo se retira sin sustituto. El componente y sus dos hooks se
+//     conservan sin montar (criterio de la casa, igual que CronologiaFundacion
+//     o CocinaYParadas). ⚠️ Con ella se va de la web la versión con FOTOS de
+//     los proyectos que estrenó el slide 81 el 2026-08-07 — el barrido de
+//     /foundation lleva las mismas fotos, así que no se pierde ninguna imagen,
+//     pero sí el efecto de barra + puntos que el cliente pidió allí.
+//   · CierreDoble → no se muda porque /foundation YA lo monta (es el mismo
+//     componente desde el 2026-07-28). Aquí simplemente deja de pintarse.
+//
+// La página se queda SIN tarjetas de cierre propias: el remate es ahora la
+// banda del Footer con el CTA del cliente (ver abajo). Los 3 chips del tramo
+// pasan a ser enlaces a /foundation, que es para lo que existe `to` en
+// AnclaChip (ver data/sostenibilidad.ts §ANCLAS_VENTAJA).
 //
 // PLAN-INTERNAS-V2.md (2026-07-17, Samuel): adopta el HERO COMPARTIDO con la
 // home, la ficha de tour y las landings de evento (internas/hero-interna.tsx)
@@ -138,9 +155,6 @@ export function VentajaCompetitivaPage() {
           <ImpactoSostenibilidad />
           <AporteSostenibilidad />
           <VideosSostenibilidad />
-          <FundacionTeaser />
-          <ProyectosSostenibilidad activo={!estatico} /> {/* [dev-mode] gate */}
-          <CierreDoble />
         </div>
       </div>
 

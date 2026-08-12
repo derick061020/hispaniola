@@ -4,6 +4,7 @@ import { Etiqueta } from '@/components/ui/etiqueta'
 import { Meta } from '@/components/seo/meta'
 import { FrentesFundacion } from '@/components/fundacion/frentes-fundacion'
 import { FundadoresFundacion } from '@/components/fundacion/fundadores-fundacion'
+import { FundacionTeaser } from '@/components/sostenibilidad/fundacion-teaser'
 import { CierreDoble } from '@/components/sostenibilidad/cierre-doble'
 import { FUNDACION } from '@/data/fundacion'
 
@@ -17,11 +18,14 @@ import { FUNDACION } from '@/data/fundacion'
 // decisión de Samuel del 2026-07-26 para no perder esa herramienta. Ver el
 // aviso cruzado en App.tsx.
 //
-// [v2 2026-07-28] Las secciones estrenan `id` (`proyectos`, `membresias`):
-// son el destino de dos de los 7 chips de anclas de /ventaja-competitiva
-// (slide 58) — ese contenido vive aquí, así que esos chips son enlaces con
-// hash, no anclas locales. Si se renombra un id, hay que tocar
-// ANCLAS_VENTAJA en data/sostenibilidad.ts.
+// [v2 2026-07-28 · ampliado el 2026-08-12] Tres secciones llevan `id`
+// (`fundacion`, `proyectos`, `membresias`): son el destino de tres de los 7
+// chips de anclas de /competitive-advantage (slide 58) — ese contenido vive
+// aquí, así que esos chips son enlaces con hash, no anclas locales. Si se
+// renombra un id, hay que tocar ANCLAS_VENTAJA en data/sostenibilidad.ts.
+// ⚠️ Y hay que tocarlo A MANO: el aviso de consola de NavAnclasChips solo
+// vigila los chips SIN `to` (no puede comprobar un ancla de otra página), así
+// que estos tres se rompen en silencio.
 //
 // ══ REDISEÑO 2026-07-28, 2ª vuelta (Samuel: «a la página de /fundacion hay
 // que darle un rediseño al contenido urgente, me parece aburrido, genérico,
@@ -130,9 +134,33 @@ export function FundacionPage() {
           que la separación con el cierre la pone este contenedor. */}
       <div className="mx-auto max-w-contenido px-5 pb-12 pt-16 sm:px-10 lg:pb-16 lg:pt-24">
         <div className="flex flex-col gap-16 lg:gap-24">
-          {/* El cierre es el MISMO bloque de dos tarjetas que remata
+          {/* [2026-08-12] «OUR FOUNDATION» LLEGA DESDE /competitive-advantage
+              (Samuel: «desde "our foundation" hasta las 2 cards finales las
+              quitamos de competitive-advantage y las ponemos en foundation
+              después de la sección de scroll horizontal»). Allí era el teaser
+              que resumía la fundación y enlazaba aquí; aquí es lo contrario —
+              el bloque institucional que a esta página le faltaba en el
+              cuerpo: por qué nació, el credo y los 4 hitos. Llega SIN los tres
+              fundadores (ya están arriba, tras el hero) y SIN el botón «Meet
+              the Foundation» (sería un enlace a esta misma página). Ver la
+              cabecera del componente.
+              VA DESPUÉS DEL BARRIDO, no antes: el orden de la página pasa a
+              ser quién trabaja → EN QUÉ trabaja → quién es y qué ha
+              conseguido → cómo apoyarla. Lo que se lleva el peso visual sigue
+              siendo el barrido; esto es el remate argumental antes del CTA.
+              ⚠️ NO llega su compañera de tramo, la línea de tiempo de los 6
+              proyectos: son los MISMOS `FUNDACION.frentes` que acaba de barrer
+              FrentesFundacion aquí arriba. Se retira sin sustituto (decisión
+              de Samuel el 2026-08-12) y el componente queda sin montar. */}
+          <FundacionTeaser />
+
+          {/* El cierre es el MISMO bloque de dos tarjetas que remataba
               /ventaja-competitiva (Samuel: «ese está mejor»), no una copia:
-              sustituye a la banda de membresías con foto, que se retira. */}
+              sustituyó a la banda de membresías con foto, que se retiró.
+              [2026-08-12] Y desde hoy esta página es su ÚNICO consumidor: al
+              mudarse el tramo, /competitive-advantage habría enseñado las dos
+              mismas tarjetas («ya que las 2 cards finales estarían duplicadas
+              quita una») — así que allí deja de pintarse. */}
           <CierreDoble id="membresias" anclaClase="scroll-mt-header-alto" />
         </div>
       </div>
