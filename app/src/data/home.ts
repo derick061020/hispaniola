@@ -555,6 +555,36 @@ export const PREMIOS: Premio[] = [
     alto: 128,
     fondo: 'macizo',
   },
+  // [2026-08-12, Samuel] EL PREMIO NUEVO. Va PEGADO al LTG de 2021/22 porque
+  // es el mismo galardón cuatro años después: juntos se leen como una racha,
+  // repartidos por la fila parecen dos marcas distintas.
+  //
+  // El sello es OTRA pieza, no una versión nueva de la anterior: aquél es el
+  // lockup ancho sobre navy y con la categoría escrita («Aquatic Tour Operator
+  // of the Year, Dominican Republic»); éste es el sello cuadrado sobre blanco
+  // y NO nombra categoría. Por eso el `nombre` —que es el `alt`— dice solo lo
+  // que el sello dice. La categoría de 2025/26 no se copia de la de 2021/22:
+  // sería inventarle al cliente un premio que su propio sello no declara.
+  //
+  // `fondo: 'aire'`: la escala corta (0.88) es para los badges que traen un
+  // rectángulo de color a sangre y por eso pesan de más (el LTG navy de
+  // arriba, WeddingWire, los Viator). Éste llega sobre blanco puro y la
+  // sección es --color-papel (#ffffff), así que no se ve ninguna caja: lo que
+  // pesa es su tipografía, como en TripAdvisor o Luxury Travel Guide.
+  //
+  // ⚠️ EL ORIGINAL VINO EN JPEG y con un 14% de margen blanco. Se recortó a ras
+  // de tinta antes de convertir: los 7 badges anteriores tienen margen vertical
+  // CERO (medido), y la tira los normaliza por ALTURA — sin recortar, éste se
+  // habría visto un 14% más bajo que sus vecinos a la misma altura nominal.
+  // El .jpeg de origen se conserva en /premios junto al .webp.
+  {
+    id: 'ltg-2025',
+    nombre: 'LTG Global Awards 2025/26, Winner',
+    foto: 'premio-ltg-2025-26',
+    ancho: 119,
+    alto: 128,
+    fondo: 'aire',
+  },
   // TripAdvisor y los Viator: nativo 82px / 109px de alto — no llegan a 128
   // (2× de --spacing-premio-alto), así que se exportan a su nativo y NO se
   // upscalean (PLAN-v3.md §14.4, Trampa №11). Pendiente pedirle al cliente

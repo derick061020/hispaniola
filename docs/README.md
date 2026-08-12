@@ -31,6 +31,7 @@ fecha y con quién lo pidió.
 | [`proceso/correcciones-v1-cliente/`](proceso/correcciones-v1-cliente/) | 1ª tanda de correcciones: 8 PDF + 9 planes + `EJECUTADO.md`. |
 | [`proceso/correcciones-v2-cliente/`](proceso/correcciones-v2-cliente/) | 2ª tanda: 2 PDF + 9 planes + **el tarifario canónico**. |
 | [`proceso/correcciones-v3-cliente/`](proceso/correcciones-v3-cliente/) | 3ª tanda: 7 PDF + 8 planes. Incluye el paso a inglés y el copy aprobado (`WEBSITE-*`). |
+| [`proceso/assets-cliente/`](proceso/assets-cliente/) | Assets ORIGINALES que manda el cliente, en el formato y tamaño en que llegan. Lo que se despliega es la versión derivada de `app/public/` — aquí queda el original por si hace falta reexportar. |
 
 ---
 
