@@ -357,7 +357,9 @@ export const ARTICULOS: Articulo[] = [
   },
   {
     slug: 'snorkel-lovers-que-esperar',
-    titulo: 'Snorkel Lovers: what to expect from our most popular tour',
+    // [2026-08-12] Renombre del tour. El SLUG del artículo se queda: es una URL
+    // del blog y el renombre no toca URLs (ver la tabla en data/home.ts).
+    titulo: 'Coral Quest: what to expect from our most popular tour',
     extracto: 'What it includes, who it suits and what you’ll find underwater.',
     categoria: 'Things to do',
     autorId: 'eva',

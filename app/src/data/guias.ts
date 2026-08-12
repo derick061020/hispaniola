@@ -58,9 +58,11 @@ export const TIPS_GUIAS: TipGuia[] = [
       'Let’s be honest: much of the Atlantic coast has been damaged over the years, and Catalina or Bayahibe, on the south coast, have better visibility. Even so, on our route there’s an almost 100% chance of seeing turtles from the catamaran, thanks to the artificial reefs we’ve been planting since 2016 with the Fundación de Arrecifes Ecológicos de Bávaro, a project the Ministry of the Environment ranks among the 3 largest coral gardening efforts in the country.',
     foto: 'galeria-snorkel-lovers-4',
     fotoAlt: 'Snorkelers swimming over the reef next to the catamaran in Cabeza de Toro',
-    fotoPie: 'Snorkel Lovers · Cabeza de Toro reef',
+    fotoPie: 'Coral Quest · Cabeza de Toro reef',
     stat: { valor: '≈100%', texto: 'of our trips see turtles · Top 3 coral project in the country' },
-    ctaPrimario: { texto: 'See the Snorkel Lovers', to: '/tours/snorkel-lovers' },
+    // ⚠️ El `to` conserva el slug viejo a propósito: el renombre del 2026-08-12
+    // no toca URLs (ver la tabla en data/home.ts).
+    ctaPrimario: { texto: 'See Coral Quest', to: '/tours/snorkel-lovers' },
     ctaEnlace: { texto: 'The full foundation story', to: '/foundation' },
   },
   {

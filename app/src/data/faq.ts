@@ -98,7 +98,13 @@ export const FAQ_CATEGORIAS: CategoriaFaq[] = [
     preguntas: [
       {
         p: 'Can children come on every tour?',
-        r: 'On Snorkel Lovers yes; Semi-Private Premium is adults only (18+).',
+        // ⚠️ [2026-08-12] EL 18+ PASA A 15+, decisión de Samuel al renombrar.
+        // La ficha del tour publica «Ages 15+» desde la v3 (es la regla que el
+        // cliente dio en la reunión: «los niños de 15 en adelante») y el nombre
+        // nuevo del producto lo lleva dentro, así que este 18+ era el último
+        // sitio de la web que decía otra cosa. Mismo cambio en el FAQ de la
+        // home (data/home.ts).
+        r: 'On Coral Quest yes; Caribbean Escape is adults only (15+).',
       },
       { p: 'Do you have child life jackets?', r: 'Yes, in every size.' },
       {

@@ -112,7 +112,7 @@ export function reservaDemo(): Reserva {
     codigo: 'HSP-0000-0001',
     slug: 'semi-private-premium',
     tour: {
-      nombre: 'Semi-Private Premium',
+      nombre: 'Caribbean Escape',
       audienciaChip: 'Adults only',
       duracionCorta: '4 h',
       maxPax: 25,

@@ -389,7 +389,13 @@ const MENU_PREMIUM_CASA: PlatoMenu[] = [
 
 export const FICHAS: Record<string, FichaTour> = {
   'semi-private-premium': {
-    tituloLargo: 'Semi-Private Premium · adults-only catamaran',
+    // [2026-08-12, Samuel] EL NOMBRE NUEVO, LITERAL. Sustituye a
+    // «Semi-Private Premium · adults-only catamaran», que era construcción
+    // nuestra (nombre del producto + coletilla). Éste lo da el cliente entero
+    // y por eso ocupa el H1 tal cual, con su «(15+)» incluido. El corto
+    // —«Caribbean Escape»— vive en TOURS de data/home.ts; ahí está la tabla
+    // que traduce los dos nombres viejos.
+    tituloLargo: 'Caribbean Escape: An Adults-Only Ocean Experience (15+)',
     // [v3 2026-08-06, WEBSITE-TOURS pág. 2] Título APROBADO del bloque de
     // descripción, literal. Convive con el H1 del hero, que sigue siendo el
     // NOMBRE del producto (el que usan el ticker, el grid y el megamenú): uno
@@ -562,7 +568,9 @@ export const FICHAS: Record<string, FichaTour> = {
   },
 
   'snorkel-lovers': {
-    tituloLargo: 'Snorkel Lovers · a catamaran for all ages',
+    // [2026-08-12, Samuel] El nombre nuevo, literal — ver el gemelo del
+    // semi-privado y la tabla de renombres en data/home.ts.
+    tituloLargo: 'Coral Quest: A Marine Conservation Experience (All Ages)',
     // [v3 2026-08-06, WEBSITE-TOURS pág. 11] Título APROBADO del bloque de
     // descripción.
     promesa: 'Discover the Caribbean Beneath the Surface',
@@ -583,7 +591,12 @@ export const FICHAS: Record<string, FichaTour> = {
     // nombres para el mismo sitio. Se porta el de este documento, que es el
     // que lo describe en detalle, y se le pide elegir uno.
     descripcionLarga: [
-      "Snorkel Lovers is more than a catamaran tour, it's an immersive marine conservation experience designed for families, ocean lovers and curious explorers of all ages.",
+      // ⚠️ [2026-08-12] SEGUNDO retoque al copy aprobado de este párrafo: el
+      // documento abre con «Snorkel Lovers is more than a catamaran tour» y el
+      // producto ya no se llama así. Se sustituye el nombre y nada más — el
+      // resto es literal. Cuando llegue copy v4, este párrafo es el primero que
+      // hay que contrastar.
+      "Coral Quest is more than a catamaran tour, it's an immersive marine conservation experience designed for families, ocean lovers and curious explorers of all ages.",
       "Departing from Bávaro, you'll sail to our exclusive Marine Park, where you'll snorkel among vibrant coral reefs, tropical fish, artificial reefs and the Underwater Museum, all within one of the Dominican Republic's leading coral restoration projects.",
       "Before boarding, you'll visit our Marine Interpretation Center, where our Foundation team will introduce you to the reef ecosystem, explain how coral restoration works and show how these projects are helping protect Punta Cana's marine life for future generations.",
       "On board, you'll take part in a symbolic coral planting activity, becoming part of the restoration effort and creating a meaningful connection with the ocean you'll soon explore.",

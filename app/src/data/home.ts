@@ -40,10 +40,36 @@ export type Tour = {
   destacados?: string[]
 }
 
+// ══ RENOMBRE DE LAS DOS EXPERIENCIAS COMPARTIDAS (2026-08-12, Samuel) ══
+//
+//   Semi-Private Premium → Caribbean Escape
+//                          «Caribbean Escape: An Adults-Only Ocean Experience (15+)»
+//   Snorkel Lovers       → Coral Quest
+//                          «Coral Quest: A Marine Conservation Experience (All Ages)»
+//
+// El nombre que dio Samuel es el LARGO (el de arriba, literal, en
+// `FICHAS[].tituloLargo` → H1 de la ficha). Aquí va el CORTO, que es su primera
+// mitad: `nombre` alimenta nav, ticker, cards del grid, footer, menú móvil y el
+// resumen de reserva, y a 54-56 caracteres el nombre entero se va a dos y tres
+// líneas en todos ellos. Es el reparto que este dato ya tenía —`nombre` es el
+// producto, `tituloLargo` es cómo se presenta— así que el renombre no inventa
+// nada: parte el nombre nuevo por donde el propio nombre se parte.
+//
+// ⚠️ LOS SLUGS NO CAMBIAN (`semi-private-premium`, `snorkel-lovers`). Son URLs
+// indexadas y enlazadas desde fuera, y cambiarlas es tocar App.tsx +
+// public/sitemap.xml + vercel.json con sus 301 — otro encargo, no éste.
+// Samuel no lo pidió. Mientras no se haga, las rutas siguen diciendo el nombre
+// viejo: /tours/semi-private-premium y /tours/snorkel-lovers.
+//
+// ⚠️ Y LOS COMENTARIOS ANTIGUOS DEL PROYECTO SIGUEN DICIENDO «Snorkel Lovers» y
+// «semi-privado» (menu-tour.tsx, widget-reserva.tsx, tokens, nombres de foto
+// `galeria-snorkel-lovers-*`, `tour-semi-privado`). No se tocan: son el registro
+// fechado de por qué se hizo cada cosa y reescribirlos borraría la pista. Esta
+// tabla es la que los traduce.
 export const TOURS: Tour[] = [
   {
     slug: 'semi-private-premium',
-    nombre: 'Semi-Private Premium',
+    nombre: 'Caribbean Escape',
     audienciaChip: 'Adults only',
     duracionCorta: '4 h',
     rating: 4.9,
@@ -69,7 +95,7 @@ export const TOURS: Tour[] = [
   },
   {
     slug: 'snorkel-lovers',
-    nombre: 'Snorkel Lovers',
+    nombre: 'Coral Quest',
     audienciaChip: 'All ages',
     duracionCorta: '4 h',
     rating: 4.9,
@@ -1488,7 +1514,10 @@ export const FAQ_HOME: FaqItem[] = [
   },
   {
     p: 'Can children join every tour?',
-    r: 'On Snorkel Lovers, yes; Semi-Private Premium is adults only (18+). We carry child life jackets in every size.',
+    // ⚠️ [2026-08-12] 18+ → 15+ (ver el gemelo en data/faq.ts, que lleva el
+    // porqué completo): la ficha ya publicaba «Ages 15+» y el nombre nuevo del
+    // tour lo lleva dentro.
+    r: 'On Coral Quest, yes; Caribbean Escape is adults only (15+). We carry child life jackets in every size.',
   },
   {
     p: 'Do you take cards? Can I pay at the hotel?',
