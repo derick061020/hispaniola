@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Mantenido a mano — el sitio es pequeño y cambia poco. Regla: cada ruta nueva
+  que se añada a App.tsx (ver PLAN-LANZAMIENTO.md Bloque C) se añade aquí
+  también en el mismo commit.
+  Fuente de los slugs: src/data/home.ts (TOURS) y src/data/eventos.ts (EVENTOS).
+  Dominio asumido = hispaniolaaquaticadventures.com (mismo criterio que robots.txt).
+
+  [v3 2026-08-06] Rutas EN INGLÉS (plan 01 §4). Las viejas en español NO van
+  aquí: son 301 (netlify.toml / app/vercel.json), y un sitemap no debe listar
+  URLs que redirigen. De paso se completan las que faltaban (party-boat, las
+  3 internas de Nosotros, FAQ, blog, guides, why-book-direct, travel-agents).
+  NO se listan: /my-booking y /book/* (privadas/transaccionales), /legal/*
+  (sin valor de búsqueda), /fundaciones y /crew-boat (internas).
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://hispaniolaaquaticadventures.com/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://hispaniolaaquaticadventures.com/tours/semi-private-premium</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://hispaniolaaquaticadventures.com/tours/snorkel-lovers</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://hispaniolaaquaticadventures.com/tours/private-charter</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://hispaniolaaquaticadventures.com/tours/saona-island</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://hispaniolaaquaticadventures.com/events/party-boat</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://hispaniolaaquaticadventures.com/events/weddings</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://hispaniolaaquaticadventures.com/events/corporate</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://hispaniolaaquaticadventures.com/competitive-advantage</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://hispaniolaaquaticadventures.com/foundation</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://hispaniolaaquaticadventures.com/crew</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://hispaniolaaquaticadventures.com/facilities</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://hispaniolaaquaticadventures.com/fleet</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://hispaniolaaquaticadventures.com/why-book-direct</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://hispaniolaaquaticadventures.com/faq</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://hispaniolaaquaticadventures.com/guides</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://hispaniolaaquaticadventures.com/blog</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://hispaniolaaquaticadventures.com/contact</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://hispaniolaaquaticadventures.com/travel-agents</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://hispaniolaaquaticadventures.com/careers</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <!-- [v3 F8 · QA 2026-08-07] Faltaban 5 URLs indexables que sí existen en el
+       router: /marine-park (página nueva de la fase F5) y las 4 legales, que
+       el footer enlaza desde todas las pantallas. Sin ellas, el buscador solo
+       llega por rastreo interno. Las legales van con prioridad baja y
+       changefreq yearly: son obligatorias, no comerciales. -->
+  <url>
+    <loc>https://hispaniolaaquaticadventures.com/marine-park</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://hispaniolaaquaticadventures.com/legal/cancellation-policy</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://hispaniolaaquaticadventures.com/legal/privacy</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  <url>
+    <loc>https://hispaniolaaquaticadventures.com/legal/terms</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  <url>
+    <loc>https://hispaniolaaquaticadventures.com/legal/cookies</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.2</priority>
+  </url>
+</urlset>

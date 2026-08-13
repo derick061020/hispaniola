@@ -1,0 +1,9 @@
+# Dominio asumido = el de la web actual del cliente (hispaniolaaquaticadventures.com),
+# a confirmar como parte de PLAN-LANZAMIENTO.md Bloque 0.5 (hosting/dominio de destino).
+# Si el dominio final es otro, actualizar la línea Sitemap de abajo.
+
+User-agent: *
+Allow: /
+Disallow: /fundaciones
+
+Sitemap: https://hispaniolaaquaticadventures.com/sitemap.xml

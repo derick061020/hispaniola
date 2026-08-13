@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0b2545" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <!--
+      Sin <title> estático a propósito: src/components/seo/meta.tsx renderiza
+      uno en CADA página (React 19 lo eleva a <head> nativamente) y un
+      segundo <title> aquí quedaría duplicado sin que React lo retire (React
+      solo gestiona los <title> que él mismo renderiza, no toca los del HTML
+      estático). El único costo es la pestaña en blanco durante los ~100ms
+      antes de que el bundle cargue — estándar en cualquier SPA client-only.
+    -->
+
+    <!--
+      Fallback ESTÁTICO, no tocado por React (ver src/components/seo/meta.tsx):
+      es lo único que ven los scrapers de vista previa social que NO ejecutan
+      JS (WhatsApp, Facebook y similares) para CUALQUIER ruta, porque una SPA
+      client-side sirve el mismo index.html en todas — solo representa la
+      home. PLAN-LANZAMIENTO.md Bloque E documenta el límite: previews de
+      tour/evento específicos requieren SSR/prerender (Bloque 0.3, pendiente).
+      Dominio asumido = hispaniolaaquaticadventures.com (mismo criterio que
+      robots.txt/sitemap.xml, a confirmar en Bloque 0.5).
+    -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Hispaniola Aquatic Adventures" />
+    <meta property="og:locale" content="en_US" />
+    <meta
+      property="og:title"
+      content="Redefining the Caribbean Catamaran Experience · Hispaniola Aquatic Adventures"
+    />
+    <meta
+      property="og:description"
+      content="Snorkeling in a real coral nursery, a secluded beach and food cooked on board. Small groups, 4.9★ from 1,782 reviews and #1 on TripAdvisor 7 years running."
+    />
+    <meta property="og:url" content="https://hispaniolaaquaticadventures.com/" />
+    <meta property="og:image" content="https://hispaniolaaquaticadventures.com/fotos/hero-catamaran-1.webp" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Redefining the Caribbean Catamaran Experience · Hispaniola Aquatic Adventures"
+    />
+    <meta
+      name="twitter:description"
+      content="Snorkeling in a real coral nursery, a secluded beach and food cooked on board. Small groups, 4.9★ from 1,782 reviews."
+    />
+    <meta name="twitter:image" content="https://hispaniolaaquaticadventures.com/fotos/hero-catamaran-1.webp" />
+    <script type="module" crossorigin src="/assets/index-CO8EUdRA.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-CJefQdRL.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
