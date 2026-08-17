@@ -82,6 +82,17 @@ def aire(alto=28):
     return '<tr><td style="height:%dpx;font-size:0;line-height:0;">&nbsp;</td></tr>' % alto
 
 
+# [2026-08-17, Samuel: «que no se vea que es una hoja larga única, así separamos
+# más visualmente los elementos y la importancia de las cosas»]
+# Marcador que parte el correo en cajas blancas independientes. Un correo sin
+# CORTE sigue saliendo como una sola caja, así que los otros diez no se enteran.
+CORTE = "\x00CORTE\x00"
+
+# Hueco entre cajas. Los mismos 12px del aire lateral de la foto y del pie: en
+# este sistema las superficies respiran a 12 y el texto sangra a 32.
+HUECO_BLOQUES = 12
+
+
 # ── Cabecera y pie ───────────────────────────────────────────────────────────
 
 def cabecera(etiqueta_ref=None, ref=None):
@@ -429,7 +440,7 @@ def boton(texto, href, tono="suave", pad="22px 32px 0"):
     )
 
 
-def enlace_icono(texto, href, icono="icono-calendario.png"):
+def enlace_icono(texto, href, icono="icono-calendario.png", pad="0 32px 0"):
     """Enlace centrado con icono PNG.
 
     ⚠️ PNG y no SVG: Gmail elimina el SVG. Y no emoji, que es el tic que se
@@ -442,7 +453,7 @@ def enlace_icono(texto, href, icono="icono-calendario.png"):
         '<img src="%s/%s" width="16" height="16" alt="" style="width:16px;height:16px;border:0;'
         'vertical-align:-3px;margin-right:7px;">%s</a></td></tr></table>'
         % (_f("font-size:13.5px;line-height:1.5;"), href, T["aqua_dark"], HOST, icono, texto),
-        pad="0 32px 0",
+        pad=pad,
     )
 
 
@@ -641,23 +652,55 @@ DOC = """<!DOCTYPE html>
   <!-- Preheader: se ve en la bandeja, nunca dentro del email -->
   <div style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;color:{fondo};">{preheader}&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;</div>
 
-  <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" class="m-full" style="width:600px;max-width:600px;background:{papel};border-radius:16px;overflow:hidden;">
 {cuerpo}
-  </table>
 </td></tr>
 </table>
 </body>
 </html>
 """
 
+CAJA_INI = ('  <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" '
+            'class="m-full" style="width:600px;max-width:600px;background:%s;border-radius:16px;'
+            'overflow:hidden;">' % T["papel"])
+CAJA_FIN = "  </table>"
+
+# Separador entre cajas. Va en su propia tabla y no en un <div>: Outlook colapsa
+# los divs sueltos entre tablas y el hueco desaparece justo donde mas se nota.
+HUECO = ('  <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" '
+         'class="m-full" style="width:600px;max-width:600px;"><tr>'
+         '<td height="%d" style="height:%dpx;font-size:0;line-height:0;">&nbsp;</td>'
+         "</tr></table>" % (HUECO_BLOQUES, HUECO_BLOQUES))
+
 
 def documento(idioma, asunto, preheader, filas):
+    """Monta el documento. Si `filas` trae marcadores CORTE, el correo sale
+    partido en varias cajas blancas con hueco entre ellas; si no, en una sola."""
+    bloques, actual = [], []
+    for f in filas:
+        if f == CORTE:
+            bloques.append(actual)
+            actual = []
+        else:
+            actual.append(f)
+    bloques.append(actual)
+
+    partes = []
+    for i, bloque in enumerate(bloques):
+        if i:
+            partes.append(HUECO)
+        partes.append(CAJA_INI)
+        partes += ["    " + f for f in bloque]
+        # Cada caja se cierra con su propio aire: antes ese hueco lo daba el
+        # bloque siguiente, y al partir el correo se quedaria pegado al borde.
+        if i < len(bloques) - 1:
+            partes.append("    " + aire(22))
+        partes.append(CAJA_FIN)
+
     return DOC.format(
         idioma=idioma,
         asunto=asunto,
         preheader=preheader,
         cabeza=CABEZA,
         fondo=T["fondo"],
-        papel=T["papel"],
-        cuerpo="\n".join("    " + f for f in filas),
+        cuerpo="\n".join(partes),
     )
