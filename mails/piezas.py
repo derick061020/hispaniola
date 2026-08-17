@@ -123,7 +123,7 @@ def foto(archivo):
     )
 
 
-def pie(texto_ayuda, telefono, direccion, baja=None, variante="claro"):
+def pie(texto_ayuda, telefono, direccion, confianza=None, baja=None, variante="claro"):
     """El pie del correo. Dos variantes mientras se decide cuál se queda.
 
     `claro` (2026-08-17, pedido de Samuel: «que no toque los extremos, que tenga
@@ -141,7 +141,19 @@ def pie(texto_ayuda, telefono, direccion, baja=None, variante="claro"):
     --color-alerta-ticket da 4,56:1, que pasa la AA con poco margen. Si algún
     día se oscurece este fondo, hay que oscurecer también ese texto.
     """
+    # [2026-08-17, Samuel: «lo de la cancelación gratuita se repite mucho y tiene
+    # su propio banner; que esté en el footer y no sea tan protagonista»] La
+    # franja de confianza baja aquí y pierde su caja. Es una garantía, no un
+    # mensaje: repetida en los once correos con banner propio pesaba más que el
+    # contenido de cada uno. Va delante de la dirección porque le importa más al
+    # lector, y a 12px para que se lea como letra pequeña.
     if variante == "claro":
+        antes = ""
+        if confianza:
+            antes = '<p style="%s">%s</p>' % (
+                _f("margin:0 0 8px;font-size:12px;line-height:1.6;color:%s;" % T["navy_soft"]),
+                confianza,
+            )
         extra = ""
         if baja:
             extra = '<p style="%s">%s</p>' % (
@@ -156,6 +168,7 @@ def pie(texto_ayuda, telefono, direccion, baja=None, variante="claro"):
             '<p style="%s">%s<br><a href="{{whatsapp_link}}" style="color:%s;text-decoration:none;'
             'font-weight:600;">WhatsApp %s</a></p>'
             '<div style="height:1px;background:%s;font-size:0;line-height:0;margin:0 0 12px;">&nbsp;</div>'
+            "%s"
             '<p style="%s">%s</p>%s'
             "</td></tr></table></td></tr>"
             % (
@@ -165,6 +178,7 @@ def pie(texto_ayuda, telefono, direccion, baja=None, variante="claro"):
                 T["aqua_dark"],
                 telefono,
                 T["linea_fuerte"],
+                antes,
                 _f("margin:0;font-size:11.5px;line-height:1.65;color:%s;" % T["navy_soft"]),
                 direccion,
                 extra,
@@ -558,15 +572,19 @@ def filas_producto(titulo, subtitulo, items, enlace_texto, enlace_href, pad="24p
     )
 
 
-def franja(texto):
-    """Perfilada, no rellena: si fuera el unico bloque con fondo del email se
-    leeria como un descuido."""
+def aviso_ok(texto):
+    """La nota tranquilizadora del email 7 («si el cambio lo hiciste tu, no
+    tienes que hacer nada»).
+
+    Nace al retirar franja(): ese componente existia para la banda de confianza,
+    que desde 2026-08-17 vive dentro del pie. Este texto NO es lo mismo —es una
+    frase propia de un solo correo, no una garantia repetida— asi que se queda
+    con su propia pieza en vez de heredar una caja que ya no significa nada.
+    """
     return seccion(
-        '<table role="presentation" width="100%%" cellpadding="0" cellspacing="0" border="0" '
-        'style="background:%s;border:1px solid %s;border-radius:10px;">'
-        '<tr><td align="left" style="padding:13px 18px;%s">%s</td></tr></table>'
-        % (T["papel"], T["linea"], _f("font-size:12.5px;line-height:1.6;color:%s;" % T["navy_soft"]), texto),
-        pad="26px 32px 0",
+        '<p style="%s">%s</p>'
+        % (_f("margin:0;font-size:13px;line-height:1.6;color:%s;" % T["navy_soft"]), texto),
+        pad="22px 32px 0",
     )
 
 

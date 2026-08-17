@@ -137,7 +137,6 @@ def m01(t, c, idioma):
         ]),
         p.filete(pad="24px 32px 0"),
         p.filas_producto(t["x_titulo"], t["x_sub"], EXTRAS[idioma], t["x_enlace"], "{{manage_link}}"),
-        p.franja(c["franja"]),
     ]
 
 
@@ -151,7 +150,6 @@ def m02(t, c, idioma):
             (t["l_fecha"], "{{tour_date}}"),
             (t["l_personas"], "{{pax}}"),
         ])),
-        p.franja(c["franja"]),
     ]
 
 
@@ -161,7 +159,6 @@ def m03(t, c, idioma):
         p.aviso(t["av_titulo"], t["av_cuerpo"], None, None, tono="ambar", pad="6px 32px 0"),
         p.boton(t["cta"], "{{menu_link}}"),
         p.enlace(t["alt"], "{{whatsapp_link}}"),
-        p.franja(c["franja"]),
     ]
 
 
@@ -175,7 +172,6 @@ def m04(t, c, idioma):
         p.boton(c["ver_reserva"], "{{manage_link}}"),
         p.filete(pad="26px 32px 0"),
         p.filas_producto(t["x_titulo"], t["x_sub"], EXTRAS[idioma][:2], t["x_enlace"], "{{manage_link}}"),
-        p.franja(c["franja"]),
     ]
 
 
@@ -199,7 +195,6 @@ def m05(t, c, idioma):
         p.lista(t["q_titulo"], [
             (t["q1"], t["q1d"]), (t["q2"], t["q2d"]), (t["q3"], t["q3d"]), (t["q4"], t["q4d"]),
         ], pad="24px 32px 0"),
-        p.franja(c["franja"]),
     ]
 
 
@@ -218,7 +213,6 @@ def m06(t, c, idioma):
         ),
         p.boton(c["ver_reserva"], "{{manage_link}}"),
         p.aviso(t["av_titulo"], t["av_cuerpo"], (t["av_enlace"], "{{whatsapp_link}}"), None, tono="coral"),
-        p.franja(c["franja"]),
     ]
 
 
@@ -227,7 +221,7 @@ def m07(t, c, idioma):
         p.intro(t["etiqueta"], t["titular"], t["entradilla"]),
         p.tarjeta(p.filas_datos([(t["l_antes"], "{{old_value}}"), (t["l_ahora"], "{{new_value}}")])),
         p.aviso(t["av_titulo"], t["av_cuerpo"], (t["av_enlace"], "{{whatsapp_link}}"), None, tono="coral"),
-        p.franja(t["ok"]),
+        p.aviso_ok(t["ok"]),
     ]
 
 
@@ -241,7 +235,6 @@ def m08(t, c, idioma):
             ),
         ),
         p.boton(t["cta"], "{{rebook_link}}", tono="coral"),
-        p.franja(c["franja"]),
     ]
 
 
@@ -252,7 +245,6 @@ def m09(t, c, idioma):
         p.aviso(t["o2_t"], t["o2_c"], None, None, tono="neutro", pad="10px 32px 0"),
         p.dos_botones((t["cta1"], "{{reschedule_link}}"), (t["cta2"], "{{refund_link}}")),
         p.enlace(t["alt"], "{{whatsapp_link}}"),
-        p.franja(c["franja"]),
     ]
 
 
@@ -263,7 +255,6 @@ def m10(t, c, idioma):
         p.filete(pad="28px 32px 0"),
         p.aviso(t["fo_titulo"], t["fo_cuerpo"], (t["fo_enlace"], "{{photos_link}}"), None),
         p.aviso(t["re_titulo"], t["re_cuerpo"], (t["re_enlace"], "{{referral_link}}"), None, pad="10px 32px 0"),
-        p.franja(c["franja"]),
     ]
 
 
@@ -277,7 +268,6 @@ def m11(t, c, idioma):
         ])),
         p.boton(t["cta"], "{{resume_link}}", tono="coral"),
         p.enlace(t["alt"], "{{whatsapp_link}}"),
-        p.franja(c["franja"]),
     ]
 
 

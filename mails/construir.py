@@ -57,7 +57,7 @@ def construye(email, idioma):
     # ningun efecto, porque este get() lo pisaba.
     extra = {"variante": email["pie"]} if "pie" in email else {}
     filas.append(
-        p.pie(c["ayuda"], C.TELEFONO, c["direccion"],
+        p.pie(c["ayuda"], C.TELEFONO, c["direccion"], confianza=c["franja"],
               baja="{{unsubscribe_block}}" if email.get("baja") else None, **extra)
     )
     return p.documento(idioma, t["asunto"], t["preheader"], filas)
