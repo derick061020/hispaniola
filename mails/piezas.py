@@ -389,6 +389,12 @@ def aviso(titulo, cuerpo, enlace=None, pie_texto=None, tono="aqua", pad="22px 32
             _f("margin:0;font-size:12.5px;line-height:1.5;color:%s;" % T["navy_soft"]),
             pie_texto,
         )
+    # [2026-08-17, Samuel] `ninguno` = sin borde ni filete de acento. Es para el
+    # aviso que vive SOLO en su propia caja blanca: ahi la separacion ya la hace
+    # la caja, y dibujarle ademas un recuadro dentro de otro recuadro es repetir
+    # el mismo trabajo dos veces.
+    if tono == "ninguno":
+        return seccion('<div style="%s">%s</div>' % (_f(), html), pad=pad)
     return seccion(
         '<table role="presentation" width="100%%" cellpadding="0" cellspacing="0" border="0" '
         'style="border:1px solid %s;border-left:3px solid %s;border-radius:0 10px 10px 0;">'

@@ -129,16 +129,19 @@ def m01(t, c, idioma):
             ),
         ),
         p.boton(c["gestionar"], "{{manage_link}}"),
+        p.enlace_icono(c["calendario"], "{{calendar_link}}"),
         # [2026-08-17, Samuel] Este correo es el largo de los once, y en una sola
         # caja blanca se leia como una hoja continua donde todo pesa igual. Se
-        # parte en tres: lo que ES la reserva (arriba), la accion opcional de
-        # calendario (sola, para que se vea que es opcional) y lo que viene
-        # DESPUES. De momento solo aqui, a la espera de que Samuel lo apruebe.
-        p.CORTE,
-        p.enlace_icono(c["calendario"], "{{calendar_link}}", pad="8px 32px 8px"),
+        # parte en tres: lo que ES la reserva (con sus dos acciones), el menu
+        # pendiente SOLO en medio, y lo que viene DESPUES.
+        # El aviso del menu va sin borde: al quedarse solo en su caja, la
+        # separacion ya la hace la caja. De momento solo en este correo, a la
+        # espera de que Samuel lo apruebe.
         p.CORTE,
         # Condicional: solo si el menu quedo aplazado.
-        p.aviso(t["av_titulo"], t["av_cuerpo"], (t["av_enlace"], "{{menu_link}}"), t["av_pie"]),
+        p.aviso(t["av_titulo"], t["av_cuerpo"], (t["av_enlace"], "{{menu_link}}"), t["av_pie"],
+                tono="ninguno"),
+        p.CORTE,
         p.timeline(t["t_titulo"], [
             (t["t1_cuando"], t["t1_que"]), (t["t2_cuando"], t["t2_que"]), (t["t3_cuando"], t["t3_que"]),
         ]),
