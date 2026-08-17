@@ -293,7 +293,13 @@ def tarjeta(*mitades):
                 '<div style="height:1px;background:%s;font-size:0;line-height:0;">&nbsp;</div></td></tr>'
                 % T["fondo"]
             )
-        pad = "20px 22px 4px" if i == 0 else "18px 22px 20px"
+        # ⚠️ El sangrado inferior depende de si es la ULTIMA mitad, no de si es
+        # la primera. Los 4px de abajo existen para que la mitad de arriba se
+        # acerque al filete que la separa de la siguiente; en una tarjeta de una
+        # sola mitad no hay filete ni siguiente, y el contenido quedaba a 4px del
+        # borde. Pasaba en los correos 2, 3, 7 y 11.
+        ultima = i == len(mitades) - 1
+        pad = "%s 22px %s" % ("20px" if i == 0 else "18px", "20px" if ultima else "4px")
         dentro += '<tr><td style="padding:%s;" class="m-pad-card">%s</td></tr>' % (pad, m)
     return seccion(
         '<table role="presentation" width="100%%" cellpadding="0" cellspacing="0" border="0" '
