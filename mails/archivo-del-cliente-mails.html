@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plantillas de email · Hispaniola</title>
+<style>
+  body{margin:0;background:#E4E8EB;font-family:Arial,Helvetica,sans-serif}
+  .pgwrap{max-width:680px;margin:0 auto;padding:26px 16px 60px}
+  .legend{background:#fff;border:1px solid #D9E0E4;border-radius:12px;padding:20px 22px;margin-bottom:28px;color:#16283A}
+  .legend h1{font-size:20px;margin:0 0 8px}
+  .legend p{font-size:13.5px;color:#5B6B7A;line-height:1.6;margin:0 0 8px}
+  .legend code{background:#F1F4F6;color:#0F6E56;padding:1px 6px;border-radius:5px;font-size:12.5px}
+  .lbl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:30px 0 4px}
+  .lbl .chip{background:#16283A;color:#fff;font-size:12px;font-weight:bold;padding:5px 12px;border-radius:999px}
+  .lbl .mvp{background:#1AA179}
+  .meta{background:#FBFCFC;border:1px dashed #CDD6DB;border-radius:9px;padding:10px 13px;margin:8px 0 12px;font-size:12.5px;color:#5B6B7A;line-height:1.6}
+  .meta b{color:#16283A}
+  /* la etiqueta gris es SOLO para previsualizar — no forma parte del email */
+</style>
+</head>
+<body>
+<div class="pgwrap">
+
+  <div class="legend">
+    <h1>Plantillas de email · Hispaniola Aquatic Adventures</h1>
+    <p>Este archivo es una <b>previsualización</b> de todas las plantillas. Cada email es HTML "email-safe" (tablas + estilos en línea) para pegar en tu plataforma (Brevo, Mailchimp, Klaviyo, etc.).</p>
+    <p>Las variables van entre dobles llaves — ej. <code>{{first_name}}</code>, <code>{{deposit_paid}}</code>. El glosario completo está en el documento de especificación.</p>
+    <p>Para cada email, <b>copia solo lo que está entre</b> <code>&lt;!-- EMAIL START --&gt;</code> <b>y</b> <code>&lt;!-- EMAIL END --&gt;</code>. La etiqueta gris y el asunto de arriba son solo para orientarte.</p>
+    <p style="margin:0"><b>Sustituir antes de publicar:</b> logo (hoy es texto), dirección de la empresa, enlaces reales de reseñas y el bloque de "darse de baja" en los emails de marketing.</p>
+  </div>
+
+  <!-- =========================================================
+       EMAIL 1 — CONFIRMACIÓN DE RESERVA + DEPÓSITO  (MVP)
+       ========================================================= -->
+  <div class="lbl"><span class="chip mvp">MVP</span><span class="chip">1 · Confirmación + depósito</span></div>
+  <div class="meta"><b>Trigger:</b> pago del depósito completado &nbsp;·&nbsp; <b>Asunto:</b> ✅ ¡Reserva confirmada, {{first_name}}! · {{tour_date}} &nbsp;·&nbsp; <b>Preheader:</b> Aquí tienes tu resumen, el saldo y lo que sigue.</div>
+  <!-- EMAIL START -->
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#eef1f3;">
+    <tr><td align="center" style="padding:24px 12px;">
+      <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:600px;max-width:600px;background:#ffffff;border-radius:14px;overflow:hidden;">
+        <tr><td style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;color:#ffffff;">Aquí tienes tu resumen, el saldo y lo que sigue.&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;</td></tr>
+        <!-- header (sustituir por logo <img>) -->
+        <tr><td style="background:#16283A;padding:20px 28px;" align="left"><span style="font-family:Arial,Helvetica,sans-serif;color:#ffffff;font-size:19px;font-weight:bold;">Hispaniola <span style="color:#E8654A;">Aquatic Adventures</span></span></td></tr>
+        <!-- hero -->
+        <tr><td style="padding:34px 28px 8px;" align="center">
+          <div style="width:56px;height:56px;line-height:56px;border-radius:50%;background:#E9F6EF;color:#1AA179;font-size:30px;font-family:Arial;margin:0 auto 14px;">&#10003;</div>
+          <h1 style="margin:0 0 8px;font-family:Arial,Helvetica,sans-serif;font-size:24px;color:#16283A;">¡Reserva confirmada, {{first_name}}!</h1>
+          <p style="margin:0;font-family:Arial;font-size:15px;color:#5B6B7A;line-height:1.6;">Te esperamos a bordo. Aquí tienes todos los detalles de tu día en el mar.</p>
+        </td></tr>
+        <!-- resumen -->
+        <tr><td style="padding:22px 28px 6px;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F6F8F9;border-radius:12px;">
+            <tr><td style="padding:16px 20px 4px;font-family:Arial;font-size:12px;color:#98A6B2;text-transform:uppercase;letter-spacing:.5px;">Reserva #{{booking_id}}</td></tr>
+            <tr><td style="padding:0 20px 12px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                <tr><td style="padding:6px 0;font-family:Arial;font-size:13px;color:#5B6B7A;">Experiencia</td><td align="right" style="padding:6px 0;font-family:Arial;font-size:13px;color:#16283A;font-weight:bold;">{{boat_name}} · {{menu_label}}</td></tr>
+                <tr><td style="padding:6px 0;font-family:Arial;font-size:13px;color:#5B6B7A;">Fecha</td><td align="right" style="padding:6px 0;font-family:Arial;font-size:13px;color:#16283A;font-weight:bold;">{{tour_date}}</td></tr>
+                <tr><td style="padding:6px 0;font-family:Arial;font-size:13px;color:#5B6B7A;">Horario</td><td align="right" style="padding:6px 0;font-family:Arial;font-size:13px;color:#16283A;font-weight:bold;">Recogida {{pickup_time}} · regreso {{return_time}}</td></tr>
+                <tr><td style="padding:6px 0;font-family:Arial;font-size:13px;color:#5B6B7A;">Personas</td><td align="right" style="padding:6px 0;font-family:Arial;font-size:13px;color:#16283A;font-weight:bold;">{{pax}}</td></tr>
+                <tr><td style="padding:6px 0;font-family:Arial;font-size:13px;color:#5B6B7A;">Extras</td><td align="right" style="padding:6px 0;font-family:Arial;font-size:13px;color:#16283A;font-weight:bold;">{{extras_list}}</td></tr>
+              </table>
+            </td></tr>
+          </table>
+        </td></tr>
+        <!-- pago -->
+        <tr><td style="padding:12px 28px 6px;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#E9F6EF;border-radius:12px;">
+            <tr><td style="padding:16px 20px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                <tr><td style="font-family:Arial;font-size:13px;color:#1E7A54;">Total</td><td align="right" style="font-family:Arial;font-size:13px;color:#16283A;font-weight:bold;">{{total}}</td></tr>
+                <tr><td style="padding-top:6px;font-family:Arial;font-size:13px;color:#1E7A54;">Depósito pagado hoy</td><td align="right" style="padding-top:6px;font-family:Arial;font-size:15px;color:#1E7A54;font-weight:bold;">{{deposit_paid}}</td></tr>
+                <tr><td style="padding-top:6px;font-family:Arial;font-size:13px;color:#1E7A54;">Saldo el día del tour</td><td align="right" style="padding-top:6px;font-family:Arial;font-size:13px;color:#16283A;font-weight:bold;">{{balance_due}}</td></tr>
+              </table>
+              <p style="margin:10px 0 0;font-family:Arial;font-size:12px;color:#1E7A54;">Paga el saldo en efectivo el día del tour y ahorra un 5% ({{cash_discount}}).</p>
+            </td></tr>
+          </table>
+        </td></tr>
+        <!-- nota menú (mostrar solo si el menú quedó aplazado) -->
+        <tr><td style="padding:12px 28px 6px;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#E6F4F3;border-radius:12px;"><tr><td style="padding:14px 18px;font-family:Arial;font-size:13px;color:#0F6E56;line-height:1.5;">🍽️ <b>Falta elegir el menú.</b> Te enviaremos un email aparte para que cada persona elija su plato, hasta 48 h antes del tour.</td></tr></table>
+        </td></tr>
+        <!-- CTA -->
+        <tr><td align="center" style="padding:20px 28px 6px;">
+          <table role="presentation" cellpadding="0" cellspacing="0"><tr><td style="border-radius:9px;background:#E8654A;"><a href="{{manage_link}}" style="display:inline-block;padding:14px 30px;font-family:Arial;font-size:15px;font-weight:bold;color:#ffffff;text-decoration:none;">Gestionar mi reserva &rarr;</a></td></tr></table>
+          <p style="margin:12px 0 0;font-family:Arial;font-size:12px;color:#98A6B2;"><a href="{{calendar_link}}" style="color:#159C96;text-decoration:none;">+ Añadir a mi calendario</a></p>
+        </td></tr>
+        <!-- upsell post-compra -->
+        <tr><td style="padding:22px 28px 6px;">
+          <div style="border-top:1px solid #E6EAED;padding-top:20px;">
+            <p style="margin:0 0 12px;font-family:Arial;font-size:15px;font-weight:bold;color:#16283A;">✨ ¿Le sumamos algo especial?</p>
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+              <tr><td style="padding:8px 0;font-family:Arial;font-size:13px;color:#5B6B7A;">🎂 <b style="color:#16283A;">Pack celebración</b> — tarta, espumante y decoración a bordo</td><td align="right" style="font-family:Arial;font-size:13px;color:#16283A;font-weight:bold;">+US$ 59</td></tr>
+              <tr><td style="padding:8px 0;font-family:Arial;font-size:13px;color:#5B6B7A;">👑 <b style="color:#16283A;">Barco 100% privado</b> — solo tu grupo, sin desconocidos</td><td align="right" style="font-family:Arial;font-size:13px;color:#16283A;font-weight:bold;">+US$ 150</td></tr>
+              <tr><td style="padding:8px 0;font-family:Arial;font-size:13px;color:#5B6B7A;">📸 <b style="color:#16283A;">Fotos y video editado</b> — tus mejores momentos</td><td align="right" style="font-family:Arial;font-size:13px;color:#16283A;font-weight:bold;">+US$ 39</td></tr>
+            </table>
+            <p style="margin:12px 0 0;"><a href="{{manage_link}}" style="font-family:Arial;font-size:13px;font-weight:bold;color:#E8654A;text-decoration:none;">Añadir a mi reserva &rarr;</a></p>
+          </div>
+        </td></tr>
+        <!-- footer -->
+        <tr><td style="background:#F6F8F9;padding:22px 28px;border-top:1px solid #E6EAED;">
+          <p style="margin:0 0 8px;font-family:Arial;font-size:13px;line-height:1.5;color:#5B6B7A;">¿Alguna duda? Habla directo con el equipo del barco por WhatsApp: <a href="{{whatsapp_link}}" style="color:#159C96;text-decoration:none;font-weight:bold;">+1 829 305 2804</a></p>
+          <p style="margin:0 0 10px;font-family:Arial;font-size:12px;color:#98A6B2;">✓ Cancela gratis hasta 7 días antes &nbsp;·&nbsp; Reserva directa, sin intermediarios</p>
+          <p style="margin:0;font-family:Arial;font-size:11px;line-height:1.5;color:#B4BEC6;">Hispaniola Aquatic Adventures · Punta Cana, República Dominicana · {{company_address}}</p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+  <!-- EMAIL END -->
+
+  <!-- =========================================================
+       EMAIL 2 — ELIGE TU MENÚ  (MVP)
+       ========================================================= -->
+  <div class="lbl"><span class="chip mvp">MVP</span><span class="chip">2 · Elige tu menú</span></div>
+  <div class="meta"><b>Trigger:</b> tras la confirmación, si el menú quedó aplazado (3+ personas o "más tarde") &nbsp;·&nbsp; <b>Asunto:</b> 🍽️ {{first_name}}, elige tu menú a bordo &nbsp;·&nbsp; <b>Preheader:</b> Un paso rápido para que todo esté fresco y listo.</div>
+  <!-- EMAIL START -->
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#eef1f3;">
+    <tr><td align="center" style="padding:24px 12px;">
+      <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:600px;max-width:600px;background:#ffffff;border-radius:14px;overflow:hidden;">
+        <tr><td style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;color:#ffffff;">Un paso rápido para que todo esté fresco y listo.&nbsp;&zwnj;&nbsp;&zwnj;</td></tr>
+        <tr><td style="background:#16283A;padding:20px 28px;"><span style="font-family:Arial;color:#ffffff;font-size:19px;font-weight:bold;">Hispaniola <span style="color:#E8654A;">Aquatic Adventures</span></span></td></tr>
+        <tr><td style="padding:34px 28px 8px;" align="center">
+          <div style="font-size:40px;margin-bottom:8px;">🍽️</div>
+          <h1 style="margin:0 0 8px;font-family:Arial;font-size:23px;color:#16283A;">Ya casi está, {{first_name}} — elige tu menú</h1>
+          <p style="margin:0;font-family:Arial;font-size:15px;color:#5B6B7A;line-height:1.6;">Para que todo esté fresco y listo a bordo, dinos qué va a comer cada persona. Cada quien elige su plato — con calma.</p>
+        </td></tr>
+        <tr><td align="center" style="padding:22px 28px 6px;">
+          <table role="presentation" cellpadding="0" cellspacing="0"><tr><td style="border-radius:9px;background:#E8654A;"><a href="{{menu_link}}" style="display:inline-block;padding:15px 32px;font-family:Arial;font-size:15px;font-weight:bold;color:#ffffff;text-decoration:none;">Elegir mi menú &rarr;</a></td></tr></table>
+        </td></tr>
+        <tr><td style="padding:14px 28px 8px;" align="center">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#FFF4E1;border-radius:10px;"><tr><td style="padding:13px 18px;font-family:Arial;font-size:13px;color:#8A5A00;text-align:center;">⏰ Tienes hasta <b>{{menu_deadline}}</b> (48 h antes de tu tour) para elegir.</td></tr></table>
+        </td></tr>
+        <tr><td style="padding:8px 28px 18px;" align="center"><p style="margin:0;font-family:Arial;font-size:12.5px;color:#98A6B2;">¿Sois {{pax}}? Puedes elegir por todo el grupo desde el mismo enlace.</p></td></tr>
+        <tr><td style="background:#F6F8F9;padding:22px 28px;border-top:1px solid #E6EAED;">
+          <p style="margin:0 0 8px;font-family:Arial;font-size:13px;line-height:1.5;color:#5B6B7A;">¿Dudas con el menú? Escríbenos por WhatsApp: <a href="{{whatsapp_link}}" style="color:#159C96;text-decoration:none;font-weight:bold;">+1 829 305 2804</a></p>
+          <p style="margin:0;font-family:Arial;font-size:11px;color:#B4BEC6;">Hispaniola Aquatic Adventures · Punta Cana, RD · {{company_address}}</p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+  <!-- EMAIL END -->
+
+  <!-- =========================================================
+       EMAIL 3 — ÚLTIMA LLAMADA DE MENÚ  (MVP)
+       ========================================================= -->
+  <div class="lbl"><span class="chip mvp">MVP</span><span class="chip">3 · Última llamada de menú</span></div>
+  <div class="meta"><b>Trigger:</b> ~50-54 h antes del tour si el menú sigue sin completar &nbsp;·&nbsp; <b>Asunto:</b> ⏰ {{first_name}}, últimas horas para elegir tu menú &nbsp;·&nbsp; <b>Preheader:</b> Si no eliges, preparamos la selección Premium más popular.</div>
+  <!-- EMAIL START -->
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#eef1f3;">
+    <tr><td align="center" style="padding:24px 12px;">
+      <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:600px;max-width:600px;background:#ffffff;border-radius:14px;overflow:hidden;">
+        <tr><td style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;color:#ffffff;">Si no eliges, preparamos la selección Premium más popular.&nbsp;&zwnj;&nbsp;&zwnj;</td></tr>
+        <tr><td style="background:#16283A;padding:20px 28px;"><span style="font-family:Arial;color:#ffffff;font-size:19px;font-weight:bold;">Hispaniola <span style="color:#E8654A;">Aquatic Adventures</span></span></td></tr>
+        <tr><td style="padding:34px 28px 8px;" align="center">
+          <h1 style="margin:0 0 8px;font-family:Arial;font-size:23px;color:#16283A;">⏰ {{first_name}}, últimas horas para tu menú</h1>
+          <p style="margin:0;font-family:Arial;font-size:15px;color:#5B6B7A;line-height:1.6;">Tu tour es el <b style="color:#16283A;">{{tour_date}}</b>. La elección del menú se cierra <b style="color:#16283A;">{{menu_deadline}}</b>.</p>
+        </td></tr>
+        <tr><td style="padding:20px 28px 6px;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#FFF4E1;border-radius:12px;"><tr><td style="padding:16px 20px;font-family:Arial;font-size:13.5px;color:#8A5A00;line-height:1.55;">Si no eliges antes de esa hora, <b>prepararemos por ti la selección Premium más popular</b> para que nunca te quedes sin tu plato. Pero preferimos que comas justo lo que te apetece 😉</td></tr></table>
+        </td></tr>
+        <tr><td align="center" style="padding:18px 28px 22px;">
+          <table role="presentation" cellpadding="0" cellspacing="0"><tr><td style="border-radius:9px;background:#E8654A;"><a href="{{menu_link}}" style="display:inline-block;padding:15px 34px;font-family:Arial;font-size:15px;font-weight:bold;color:#ffffff;text-decoration:none;">Elegir mi menú ahora &rarr;</a></td></tr></table>
+        </td></tr>
+        <tr><td style="background:#F6F8F9;padding:22px 28px;border-top:1px solid #E6EAED;">
+          <p style="margin:0 0 8px;font-family:Arial;font-size:13px;color:#5B6B7A;">¿Prefieres decírnoslo por WhatsApp? <a href="{{whatsapp_link}}" style="color:#159C96;text-decoration:none;font-weight:bold;">+1 829 305 2804</a></p>
+          <p style="margin:0;font-family:Arial;font-size:11px;color:#B4BEC6;">Hispaniola Aquatic Adventures · Punta Cana, RD · {{company_address}}</p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+  <!-- EMAIL END -->
+
+  <!-- =========================================================
+       EMAIL 4 — MENÚ CONFIRMADO  (MVP)
+       ========================================================= -->
+  <div class="lbl"><span class="chip mvp">MVP</span><span class="chip">4 · Menú confirmado</span></div>
+  <div class="meta"><b>Trigger:</b> el cliente completa la elección de menú &nbsp;·&nbsp; <b>Asunto:</b> ✅ ¡Menú confirmado! Todo listo, {{first_name}} &nbsp;·&nbsp; <b>Preheader:</b> Ya sabemos qué cocinar para ti.</div>
+  <!-- EMAIL START -->
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#eef1f3;">
+    <tr><td align="center" style="padding:24px 12px;">
+      <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:600px;max-width:600px;background:#ffffff;border-radius:14px;overflow:hidden;">
+        <tr><td style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;color:#ffffff;">Ya sabemos qué cocinar para ti.&nbsp;&zwnj;&nbsp;&zwnj;</td></tr>
+        <tr><td style="background:#16283A;padding:20px 28px;"><span style="font-family:Arial;color:#ffffff;font-size:19px;font-weight:bold;">Hispaniola <span style="color:#E8654A;">Aquatic Adventures</span></span></td></tr>
+        <tr><td style="padding:34px 28px 8px;" align="center">
+          <div style="width:56px;height:56px;line-height:56px;border-radius:50%;background:#E9F6EF;color:#1AA179;font-size:30px;margin:0 auto 14px;">&#10003;</div>
+          <h1 style="margin:0 0 8px;font-family:Arial;font-size:23px;color:#16283A;">¡Menú confirmado, {{first_name}}!</h1>
+          <p style="margin:0;font-family:Arial;font-size:15px;color:#5B6B7A;line-height:1.6;">Ya sabemos qué preparar para tu grupo. Lo tendremos fresco y listo, cocinado a bordo en la cocina flotante.</p>
+        </td></tr>
+        <tr><td style="padding:20px 28px 6px;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F6F8F9;border-radius:12px;"><tr><td style="padding:16px 20px;font-family:Arial;font-size:13px;color:#16283A;line-height:1.7;">{{menu_summary}}</td></tr></table>
+        </td></tr>
+        <!-- segundo upsell -->
+        <tr><td style="padding:20px 28px 6px;">
+          <div style="border-top:1px solid #E6EAED;padding-top:18px;">
+            <p style="margin:0 0 6px;font-family:Arial;font-size:15px;font-weight:bold;color:#16283A;">Ya que estás aquí…</p>
+            <p style="margin:0 0 12px;font-family:Arial;font-size:13.5px;color:#5B6B7A;line-height:1.55;">🥥 Un <b>Coco Loco de bienvenida</b> al subir a bordo, o el <b>Pack celebración</b> para brindar en medio del mar.</p>
+            <a href="{{manage_link}}" style="font-family:Arial;font-size:13px;font-weight:bold;color:#E8654A;text-decoration:none;">Añadir a mi reserva &rarr;</a>
+          </div>
+        </td></tr>
+        <tr><td style="padding:20px 28px 22px;" align="center"><p style="margin:0;font-family:Arial;font-size:13px;color:#98A6B2;">Nos vemos el {{tour_date}} · recogida {{pickup_time}}</p></td></tr>
+        <tr><td style="background:#F6F8F9;padding:22px 28px;border-top:1px solid #E6EAED;">
+          <p style="margin:0 0 8px;font-family:Arial;font-size:13px;color:#5B6B7A;">¿Necesitas cambiar algo? <a href="{{whatsapp_link}}" style="color:#159C96;text-decoration:none;font-weight:bold;">WhatsApp: +1 829 305 2804</a></p>
+          <p style="margin:0;font-family:Arial;font-size:11px;color:#B4BEC6;">Hispaniola Aquatic Adventures · Punta Cana, RD · {{company_address}}</p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+  <!-- EMAIL END -->
+
+  <!-- =========================================================
+       EMAIL 5 — RECORDATORIO + RECOGIDA  (MVP)
+       ========================================================= -->
+  <div class="lbl"><span class="chip mvp">MVP</span><span class="chip">5 · Recordatorio + recogida</span></div>
+  <div class="meta"><b>Trigger:</b> ~48 h antes del tour &nbsp;·&nbsp; <b>Asunto:</b> 🌊 ¡Casi es hora, {{first_name}}! Tu recogida y qué llevar &nbsp;·&nbsp; <b>Preheader:</b> Punto y hora de recogida + saldo a pagar.</div>
+  <!-- EMAIL START -->
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#eef1f3;">
+    <tr><td align="center" style="padding:24px 12px;">
+      <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:600px;max-width:600px;background:#ffffff;border-radius:14px;overflow:hidden;">
+        <tr><td style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;color:#ffffff;">Punto y hora de recogida + saldo a pagar.&nbsp;&zwnj;&nbsp;&zwnj;</td></tr>
+        <tr><td style="background:#16283A;padding:20px 28px;"><span style="font-family:Arial;color:#ffffff;font-size:19px;font-weight:bold;">Hispaniola <span style="color:#E8654A;">Aquatic Adventures</span></span></td></tr>
+        <tr><td style="padding:34px 28px 8px;" align="center">
+          <div style="font-size:40px;margin-bottom:6px;">🌊</div>
+          <h1 style="margin:0 0 8px;font-family:Arial;font-size:23px;color:#16283A;">¡Casi es hora, {{first_name}}!</h1>
+          <p style="margin:0;font-family:Arial;font-size:15px;color:#5B6B7A;line-height:1.6;">Tu tour es el <b style="color:#16283A;">{{tour_date}}</b>. Esto es todo lo que necesitas.</p>
+        </td></tr>
+        <tr><td style="padding:20px 28px 6px;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F6F8F9;border-radius:12px;"><tr><td style="padding:16px 20px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+              <tr><td style="padding:6px 0;font-family:Arial;font-size:13px;color:#5B6B7A;">📍 Recogida</td><td align="right" style="padding:6px 0;font-family:Arial;font-size:13px;color:#16283A;font-weight:bold;">{{pickup_point}}</td></tr>
+              <tr><td style="padding:6px 0;font-family:Arial;font-size:13px;color:#5B6B7A;">⏰ Hora</td><td align="right" style="padding:6px 0;font-family:Arial;font-size:13px;color:#16283A;font-weight:bold;">{{pickup_time}}</td></tr>
+              <tr><td style="padding:6px 0;font-family:Arial;font-size:13px;color:#5B6B7A;">↩️ Regreso aprox.</td><td align="right" style="padding:6px 0;font-family:Arial;font-size:13px;color:#16283A;font-weight:bold;">{{return_time}}</td></tr>
+              <tr><td style="padding:6px 0;font-family:Arial;font-size:13px;color:#5B6B7A;">💵 Saldo a pagar</td><td align="right" style="padding:6px 0;font-family:Arial;font-size:13px;color:#16283A;font-weight:bold;">{{balance_due}} <span style="color:#1AA179;font-weight:normal;">(−5% en efectivo)</span></td></tr>
+            </table>
+          </td></tr></table>
+        </td></tr>
+        <tr><td style="padding:16px 28px 6px;">
+          <p style="margin:0 0 8px;font-family:Arial;font-size:14px;font-weight:bold;color:#16283A;">Qué llevar</p>
+          <p style="margin:0;font-family:Arial;font-size:13.5px;color:#5B6B7A;line-height:1.7;">☀️ Protector solar biodegradable &nbsp;·&nbsp; 🩱 Traje de baño y toalla &nbsp;·&nbsp; 💵 Efectivo para el saldo &nbsp;·&nbsp; 😎 Ganas de pasarla bien</p>
+        </td></tr>
+        <tr><td align="center" style="padding:18px 28px 22px;">
+          <table role="presentation" cellpadding="0" cellspacing="0"><tr><td style="border-radius:9px;background:#E8654A;"><a href="{{manage_link}}" style="display:inline-block;padding:14px 30px;font-family:Arial;font-size:15px;font-weight:bold;color:#ffffff;text-decoration:none;">Ver mi reserva &rarr;</a></td></tr></table>
+        </td></tr>
+        <tr><td style="background:#F6F8F9;padding:22px 28px;border-top:1px solid #E6EAED;">
+          <p style="margin:0 0 8px;font-family:Arial;font-size:13px;color:#5B6B7A;">¿Un cambio de última hora? Escríbenos ya por WhatsApp: <a href="{{whatsapp_link}}" style="color:#159C96;text-decoration:none;font-weight:bold;">+1 829 305 2804</a></p>
+          <p style="margin:0;font-family:Arial;font-size:11px;color:#B4BEC6;">Hispaniola Aquatic Adventures · Punta Cana, RD · {{company_address}}</p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+  <!-- EMAIL END -->
+
+  <!-- =========================================================
+       EMAIL 6 — CONFIRMACIÓN DE MODIFICACIÓN
+       ========================================================= -->
+  <div class="lbl"><span class="chip">6 · Modificación de reserva</span></div>
+  <div class="meta"><b>Trigger:</b> cambio en la reserva (fecha, personas, menú, extras) &nbsp;·&nbsp; <b>Asunto:</b> Hemos actualizado tu reserva #{{booking_id}} &nbsp;·&nbsp; <b>Preheader:</b> Aquí tienes el antes y el después.</div>
+  <!-- EMAIL START -->
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#eef1f3;">
+    <tr><td align="center" style="padding:24px 12px;">
+      <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:600px;max-width:600px;background:#ffffff;border-radius:14px;overflow:hidden;">
+        <tr><td style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;color:#ffffff;">Aquí tienes el antes y el después.&nbsp;&zwnj;&nbsp;&zwnj;</td></tr>
+        <tr><td style="background:#16283A;padding:20px 28px;"><span style="font-family:Arial;color:#ffffff;font-size:19px;font-weight:bold;">Hispaniola <span style="color:#E8654A;">Aquatic Adventures</span></span></td></tr>
+        <tr><td style="padding:32px 28px 8px;">
+          <h1 style="margin:0 0 8px;font-family:Arial;font-size:22px;color:#16283A;">Tu reserva se ha actualizado</h1>
+          <p style="margin:0;font-family:Arial;font-size:14.5px;color:#5B6B7A;line-height:1.6;">Hola {{first_name}}, hemos aplicado los siguientes cambios a tu reserva <b style="color:#16283A;">#{{booking_id}}</b>:</p>
+        </td></tr>
+        <tr><td style="padding:18px 28px 6px;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F6F8F9;border-radius:12px;"><tr><td style="padding:16px 20px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+              <tr><td style="padding:6px 0;font-family:Arial;font-size:13px;color:#5B6B7A;">{{changed_field}}</td>
+                  <td align="right" style="padding:6px 0;font-family:Arial;font-size:13px;color:#16283A;"><span style="color:#98A6B2;text-decoration:line-through;">{{old_value}}</span> &nbsp;→&nbsp; <b>{{new_value}}</b></td></tr>
+              <tr><td colspan="2" style="border-top:1px solid #E6EAED;padding-top:10px;"></td></tr>
+              <tr><td style="padding:4px 0;font-family:Arial;font-size:13px;color:#5B6B7A;">Nuevo total</td><td align="right" style="padding:4px 0;font-family:Arial;font-size:13px;color:#16283A;font-weight:bold;">{{total}}</td></tr>
+              <tr><td style="padding:4px 0;font-family:Arial;font-size:13px;color:#5B6B7A;">Saldo a pagar el día del tour</td><td align="right" style="padding:4px 0;font-family:Arial;font-size:13px;color:#16283A;font-weight:bold;">{{balance_due}}</td></tr>
+            </table>
+          </td></tr></table>
+        </td></tr>
+        <tr><td align="center" style="padding:20px 28px 8px;">
+          <table role="presentation" cellpadding="0" cellspacing="0"><tr><td style="border-radius:9px;background:#E8654A;"><a href="{{manage_link}}" style="display:inline-block;padding:14px 30px;font-family:Arial;font-size:15px;font-weight:bold;color:#ffffff;text-decoration:none;">Ver mi reserva &rarr;</a></td></tr></table>
+        </td></tr>
+        <tr><td style="padding:6px 28px 20px;" align="center"><p style="margin:0;font-family:Arial;font-size:12.5px;color:#98A6B2;">¿No solicitaste este cambio? <a href="{{whatsapp_link}}" style="color:#159C96;text-decoration:none;">Avísanos de inmediato</a>.</p></td></tr>
+        <tr><td style="background:#F6F8F9;padding:22px 28px;border-top:1px solid #E6EAED;">
+          <p style="margin:0 0 8px;font-family:Arial;font-size:13px;color:#5B6B7A;">WhatsApp: <a href="{{whatsapp_link}}" style="color:#159C96;text-decoration:none;font-weight:bold;">+1 829 305 2804</a></p>
+          <p style="margin:0;font-family:Arial;font-size:11px;color:#B4BEC6;">Hispaniola Aquatic Adventures · Punta Cana, RD · {{company_address}}</p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+  <!-- EMAIL END -->
+
+  <!-- =========================================================
+       EMAIL 7 — NOTIFICACIÓN DE CAMBIO DE DATOS
+       ========================================================= -->
+  <div class="lbl"><span class="chip">7 · Cambio de datos de contacto</span></div>
+  <div class="meta"><b>Trigger:</b> cambio de email, teléfono o nombre &nbsp;·&nbsp; <b>Enviar también a la dirección anterior</b> &nbsp;·&nbsp; <b>Asunto:</b> Hemos actualizado tus datos de contacto &nbsp;·&nbsp; <b>Preheader:</b> Si no fuiste tú, contáctanos.</div>
+  <!-- EMAIL START -->
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#eef1f3;">
+    <tr><td align="center" style="padding:24px 12px;">
+      <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:600px;max-width:600px;background:#ffffff;border-radius:14px;overflow:hidden;">
+        <tr><td style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;color:#ffffff;">Si no fuiste tú, contáctanos.&nbsp;&zwnj;&nbsp;&zwnj;</td></tr>
+        <tr><td style="background:#16283A;padding:20px 28px;"><span style="font-family:Arial;color:#ffffff;font-size:19px;font-weight:bold;">Hispaniola <span style="color:#E8654A;">Aquatic Adventures</span></span></td></tr>
+        <tr><td style="padding:32px 28px 8px;">
+          <div style="font-size:34px;margin-bottom:6px;">🔒</div>
+          <h1 style="margin:0 0 8px;font-family:Arial;font-size:22px;color:#16283A;">Hemos actualizado tus datos</h1>
+          <p style="margin:0;font-family:Arial;font-size:14.5px;color:#5B6B7A;line-height:1.6;">Hola {{first_name}}, se ha cambiado tu <b style="color:#16283A;">{{changed_field}}</b> asociado a la reserva #{{booking_id}}.</p>
+        </td></tr>
+        <tr><td style="padding:18px 28px 6px;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F6F8F9;border-radius:12px;"><tr><td style="padding:16px 20px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+              <tr><td style="padding:5px 0;font-family:Arial;font-size:13px;color:#5B6B7A;">Antes</td><td align="right" style="padding:5px 0;font-family:Arial;font-size:13px;color:#98A6B2;">{{old_value}}</td></tr>
+              <tr><td style="padding:5px 0;font-family:Arial;font-size:13px;color:#5B6B7A;">Ahora</td><td align="right" style="padding:5px 0;font-family:Arial;font-size:13px;color:#16283A;font-weight:bold;">{{new_value}}</td></tr>
+            </table>
+          </td></tr></table>
+        </td></tr>
+        <tr><td style="padding:18px 28px 6px;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#FCECEA;border-radius:12px;"><tr><td style="padding:15px 18px;font-family:Arial;font-size:13.5px;color:#C0392B;line-height:1.55;">¿No fuiste tú? Escríbenos de inmediato a <a href="mailto:{{support_email}}" style="color:#C0392B;font-weight:bold;">{{support_email}}</a> o por <a href="{{whatsapp_link}}" style="color:#C0392B;font-weight:bold;">WhatsApp</a> para proteger tu reserva.</td></tr></table>
+        </td></tr>
+        <tr><td style="padding:20px 28px;"><p style="margin:0;font-family:Arial;font-size:12.5px;color:#98A6B2;">Si el cambio lo hiciste tú, no necesitas hacer nada.</p></td></tr>
+        <tr><td style="background:#F6F8F9;padding:22px 28px;border-top:1px solid #E6EAED;">
+          <p style="margin:0;font-family:Arial;font-size:11px;color:#B4BEC6;">Hispaniola Aquatic Adventures · Punta Cana, RD · {{company_address}}</p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+  <!-- EMAIL END -->
+
+  <!-- =========================================================
+       EMAIL 8 — CONFIRMACIÓN DE CANCELACIÓN (CLIENTE)  (MVP)
+       ========================================================= -->
+  <div class="lbl"><span class="chip mvp">MVP</span><span class="chip">8 · Cancelación (cliente)</span></div>
+  <div class="meta"><b>Trigger:</b> el cliente cancela &nbsp;·&nbsp; <b>Asunto:</b> Tu reserva #{{booking_id}} ha sido cancelada &nbsp;·&nbsp; <b>Preheader:</b> Detalles del reembolso y cómo volver a reservar.</div>
+  <!-- EMAIL START -->
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#eef1f3;">
+    <tr><td align="center" style="padding:24px 12px;">
+      <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:600px;max-width:600px;background:#ffffff;border-radius:14px;overflow:hidden;">
+        <tr><td style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;color:#ffffff;">Detalles del reembolso y cómo volver a reservar.&nbsp;&zwnj;&nbsp;&zwnj;</td></tr>
+        <tr><td style="background:#16283A;padding:20px 28px;"><span style="font-family:Arial;color:#ffffff;font-size:19px;font-weight:bold;">Hispaniola <span style="color:#E8654A;">Aquatic Adventures</span></span></td></tr>
+        <tr><td style="padding:32px 28px 8px;">
+          <h1 style="margin:0 0 8px;font-family:Arial;font-size:22px;color:#16283A;">Tu reserva ha sido cancelada</h1>
+          <p style="margin:0;font-family:Arial;font-size:14.5px;color:#5B6B7A;line-height:1.6;">Hola {{first_name}}, confirmamos la cancelación de tu reserva <b style="color:#16283A;">#{{booking_id}}</b> del {{tour_date}}. Lamentamos que esta vez no puedas acompañarnos.</p>
+        </td></tr>
+        <tr><td style="padding:18px 28px 6px;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F6F8F9;border-radius:12px;"><tr><td style="padding:16px 20px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+              <tr><td style="padding:5px 0;font-family:Arial;font-size:13px;color:#5B6B7A;">Estado</td><td align="right" style="padding:5px 0;font-family:Arial;font-size:13px;color:#C0392B;font-weight:bold;">Cancelada</td></tr>
+              <tr><td style="padding:5px 0;font-family:Arial;font-size:13px;color:#5B6B7A;">Reembolso</td><td align="right" style="padding:5px 0;font-family:Arial;font-size:13px;color:#16283A;font-weight:bold;">{{refund_amount}}</td></tr>
+              <tr><td style="padding:5px 0;font-family:Arial;font-size:13px;color:#5B6B7A;">Lo verás en</td><td align="right" style="padding:5px 0;font-family:Arial;font-size:13px;color:#16283A;font-weight:bold;">{{refund_eta}}</td></tr>
+            </table>
+          </td></tr></table>
+        </td></tr>
+        <tr><td style="padding:20px 28px 8px;" align="center">
+          <p style="margin:0 0 16px;font-family:Arial;font-size:14px;color:#5B6B7A;">Nos encantaría verte a bordo en otra ocasión 🌊</p>
+          <table role="presentation" cellpadding="0" cellspacing="0"><tr><td style="border-radius:9px;background:#E8654A;"><a href="{{rebook_link}}" style="display:inline-block;padding:14px 30px;font-family:Arial;font-size:15px;font-weight:bold;color:#ffffff;text-decoration:none;">Reservar otra fecha &rarr;</a></td></tr></table>
+        </td></tr>
+        <tr><td style="background:#F6F8F9;padding:22px 28px;border-top:1px solid #E6EAED;">
+          <p style="margin:0 0 8px;font-family:Arial;font-size:13px;color:#5B6B7A;">¿Alguna duda con tu reembolso? <a href="{{whatsapp_link}}" style="color:#159C96;text-decoration:none;font-weight:bold;">WhatsApp: +1 829 305 2804</a></p>
+          <p style="margin:0;font-family:Arial;font-size:11px;color:#B4BEC6;">Hispaniola Aquatic Adventures · Punta Cana, RD · {{company_address}}</p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+  <!-- EMAIL END -->
+
+  <!-- =========================================================
+       EMAIL 9 — CAMBIO DE FECHA POR CLIMA (EMPRESA)
+       ========================================================= -->
+  <div class="lbl"><span class="chip">9 · Reprogramación por clima (empresa)</span></div>
+  <div class="meta"><b>Trigger:</b> la empresa mueve/cancela el tour (clima o fuerza mayor) &nbsp;·&nbsp; <b>Asunto:</b> Importante: hemos tenido que mover tu tour del {{old_date}} &nbsp;·&nbsp; <b>Preheader:</b> Reprograma sin coste o recibe reembolso total.</div>
+  <!-- EMAIL START -->
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#eef1f3;">
+    <tr><td align="center" style="padding:24px 12px;">
+      <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:600px;max-width:600px;background:#ffffff;border-radius:14px;overflow:hidden;">
+        <tr><td style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;color:#ffffff;">Reprograma sin coste o recibe reembolso total.&nbsp;&zwnj;&nbsp;&zwnj;</td></tr>
+        <tr><td style="background:#16283A;padding:20px 28px;"><span style="font-family:Arial;color:#ffffff;font-size:19px;font-weight:bold;">Hispaniola <span style="color:#E8654A;">Aquatic Adventures</span></span></td></tr>
+        <tr><td style="padding:32px 28px 8px;">
+          <div style="font-size:34px;margin-bottom:6px;">⛅</div>
+          <h1 style="margin:0 0 8px;font-family:Arial;font-size:22px;color:#16283A;">{{first_name}}, hemos tenido que mover tu tour</h1>
+          <p style="margin:0;font-family:Arial;font-size:14.5px;color:#5B6B7A;line-height:1.6;">Por tu seguridad y por las condiciones del clima, no podemos salir el <b style="color:#16283A;">{{old_date}}</b> como estaba previsto. Sentimos las molestias — tu experiencia y tu seguridad son lo primero.</p>
+        </td></tr>
+        <tr><td style="padding:20px 28px 6px;">
+          <p style="margin:0 0 12px;font-family:Arial;font-size:14px;color:#16283A;font-weight:bold;">Tienes dos opciones, sin coste:</p>
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+            <tr><td style="padding-bottom:10px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#E6F4F3;border-radius:10px;"><tr><td style="padding:14px 18px;font-family:Arial;font-size:13.5px;color:#0F6E56;line-height:1.5;">🔁 <b>Reprograma tu salida</b> a la fecha que mejor te venga.</td></tr></table>
+            </td></tr>
+            <tr><td>
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F6F8F9;border-radius:10px;"><tr><td style="padding:14px 18px;font-family:Arial;font-size:13.5px;color:#5B6B7A;line-height:1.5;">💵 <b style="color:#16283A;">Reembolso total</b> de lo pagado, si prefieres no reprogramar.</td></tr></table>
+            </td></tr>
+          </table>
+        </td></tr>
+        <tr><td align="center" style="padding:22px 28px 8px;">
+          <table role="presentation" cellpadding="0" cellspacing="0"><tr>
+            <td style="border-radius:9px;background:#E8654A;padding:0;"><a href="{{reschedule_link}}" style="display:inline-block;padding:14px 26px;font-family:Arial;font-size:14.5px;font-weight:bold;color:#ffffff;text-decoration:none;">Reprogramar &rarr;</a></td>
+            <td style="width:12px;">&nbsp;</td>
+            <td style="border-radius:9px;border:1.5px solid #CDD6DB;"><a href="{{refund_link}}" style="display:inline-block;padding:12px 24px;font-family:Arial;font-size:14.5px;font-weight:bold;color:#16283A;text-decoration:none;">Pedir reembolso</a></td>
+          </tr></table>
+        </td></tr>
+        <tr><td style="background:#F6F8F9;padding:22px 28px;border-top:1px solid #E6EAED;">
+          <p style="margin:0 0 8px;font-family:Arial;font-size:13px;color:#5B6B7A;">Hablemos directo — estamos para ayudarte: <a href="{{whatsapp_link}}" style="color:#159C96;text-decoration:none;font-weight:bold;">WhatsApp +1 829 305 2804</a></p>
+          <p style="margin:0;font-family:Arial;font-size:11px;color:#B4BEC6;">Hispaniola Aquatic Adventures · Punta Cana, RD · {{company_address}}</p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+  <!-- EMAIL END -->
+
+  <!-- =========================================================
+       EMAIL 10 — GRACIAS + RESEÑA  (MVP)
+       ========================================================= -->
+  <div class="lbl"><span class="chip mvp">MVP</span><span class="chip">10 · Gracias + reseña</span></div>
+  <div class="meta"><b>Trigger:</b> unas horas / al día siguiente del tour &nbsp;·&nbsp; <b>Asunto:</b> {{first_name}}, ¿cómo estuvo tu día en el mar? &nbsp;·&nbsp; <b>Preheader:</b> Tu opinión nos ayuda muchísimo (y tus fotos te esperan).</div>
+  <!-- EMAIL START -->
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#eef1f3;">
+    <tr><td align="center" style="padding:24px 12px;">
+      <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:600px;max-width:600px;background:#ffffff;border-radius:14px;overflow:hidden;">
+        <tr><td style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;color:#ffffff;">Tu opinión nos ayuda muchísimo (y tus fotos te esperan).&nbsp;&zwnj;&nbsp;&zwnj;</td></tr>
+        <tr><td style="background:#16283A;padding:20px 28px;"><span style="font-family:Arial;color:#ffffff;font-size:19px;font-weight:bold;">Hispaniola <span style="color:#E8654A;">Aquatic Adventures</span></span></td></tr>
+        <tr><td style="padding:34px 28px 8px;" align="center">
+          <div style="font-size:38px;margin-bottom:6px;">🐚</div>
+          <h1 style="margin:0 0 8px;font-family:Arial;font-size:23px;color:#16283A;">Gracias por navegar con nosotros, {{first_name}}</h1>
+          <p style="margin:0;font-family:Arial;font-size:15px;color:#5B6B7A;line-height:1.6;">Esperamos que tu día en el Caribe fuera inolvidable. Si te llevaste una buena experiencia, ¿nos regalas 30 segundos para contarlo?</p>
+        </td></tr>
+        <tr><td align="center" style="padding:22px 28px 6px;">
+          <table role="presentation" cellpadding="0" cellspacing="0"><tr>
+            <td style="border-radius:9px;background:#159C96;"><a href="{{review_tripadvisor_link}}" style="display:inline-block;padding:14px 24px;font-family:Arial;font-size:14.5px;font-weight:bold;color:#ffffff;text-decoration:none;">Reseña en TripAdvisor</a></td>
+            <td style="width:12px;">&nbsp;</td>
+            <td style="border-radius:9px;background:#E8654A;"><a href="{{review_google_link}}" style="display:inline-block;padding:14px 24px;font-family:Arial;font-size:14.5px;font-weight:bold;color:#ffffff;text-decoration:none;">Reseña en Google</a></td>
+          </tr></table>
+        </td></tr>
+        <!-- fotos (si compraron el pack) -->
+        <tr><td style="padding:22px 28px 6px;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F6F8F9;border-radius:12px;"><tr><td style="padding:16px 20px;font-family:Arial;font-size:13.5px;color:#16283A;line-height:1.5;">📸 <b>Tus fotos y video ya están listos.</b><br><a href="{{photos_link}}" style="color:#E8654A;font-weight:bold;text-decoration:none;">Descárgalos aquí &rarr;</a></td></tr></table>
+        </td></tr>
+        <tr><td style="padding:20px 28px 22px;" align="center">
+          <p style="margin:0;font-family:Arial;font-size:13px;color:#98A6B2;">¿Conoces a alguien que vendría? <a href="{{referral_link}}" style="color:#159C96;text-decoration:none;">Comparte y ambos ganan</a>.</p>
+        </td></tr>
+        <tr><td style="background:#F6F8F9;padding:22px 28px;border-top:1px solid #E6EAED;">
+          <p style="margin:0 0 8px;font-family:Arial;font-size:11px;color:#B4BEC6;">Hispaniola Aquatic Adventures · Punta Cana, RD · {{company_address}}</p>
+          <p style="margin:0;font-family:Arial;font-size:11px;color:#B4BEC6;">{{unsubscribe_block}}</p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+  <!-- EMAIL END -->
+
+  <!-- =========================================================
+       EMAIL 11 — CARRITO ABANDONADO (RECUPERACIÓN)
+       ========================================================= -->
+  <div class="lbl"><span class="chip">11 · Carrito abandonado</span></div>
+  <div class="meta"><b>Trigger:</b> ~1 h sin terminar la reserva (2º envío a las ~24 h) &nbsp;·&nbsp; <b>Asunto:</b> {{first_name}}, te guardamos tu plaza del {{tour_date}} &nbsp;·&nbsp; <b>Preheader:</b> Termina en 2 minutos — solo el 25% hoy.</div>
+  <!-- EMAIL START -->
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#eef1f3;">
+    <tr><td align="center" style="padding:24px 12px;">
+      <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:600px;max-width:600px;background:#ffffff;border-radius:14px;overflow:hidden;">
+        <tr><td style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;color:#ffffff;">Termina en 2 minutos — solo el 25% hoy.&nbsp;&zwnj;&nbsp;&zwnj;</td></tr>
+        <tr><td style="background:#16283A;padding:20px 28px;"><span style="font-family:Arial;color:#ffffff;font-size:19px;font-weight:bold;">Hispaniola <span style="color:#E8654A;">Aquatic Adventures</span></span></td></tr>
+        <tr><td style="padding:34px 28px 8px;" align="center">
+          <div style="font-size:38px;margin-bottom:6px;">⛵</div>
+          <h1 style="margin:0 0 8px;font-family:Arial;font-size:23px;color:#16283A;">¿Se te quedó algo pendiente, {{first_name}}?</h1>
+          <p style="margin:0;font-family:Arial;font-size:15px;color:#5B6B7A;line-height:1.6;">Aún tienes tu plaza del <b style="color:#16283A;">{{tour_date}}</b> guardada. Termina tu reserva antes de que se llene — te queda a un par de clics.</p>
+        </td></tr>
+        <tr><td style="padding:20px 28px 6px;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F6F8F9;border-radius:12px;"><tr><td style="padding:16px 20px;font-family:Arial;font-size:13.5px;color:#5B6B7A;line-height:1.7;">✓ Reserva hoy con solo el <b style="color:#16283A;">25% de depósito</b><br>✓ <b style="color:#16283A;">Cancela gratis</b> hasta 7 días antes<br>✓ Paga el resto el día del tour (−5% en efectivo)</td></tr></table>
+        </td></tr>
+        <tr><td align="center" style="padding:20px 28px 8px;">
+          <table role="presentation" cellpadding="0" cellspacing="0"><tr><td style="border-radius:9px;background:#E8654A;"><a href="{{resume_link}}" style="display:inline-block;padding:15px 34px;font-family:Arial;font-size:15px;font-weight:bold;color:#ffffff;text-decoration:none;">Terminar mi reserva &rarr;</a></td></tr></table>
+        </td></tr>
+        <tr><td style="padding:6px 28px 20px;" align="center"><p style="margin:0;font-family:Arial;font-size:12.5px;color:#98A6B2;">¿Prefieres reservar por WhatsApp? <a href="{{whatsapp_link}}" style="color:#159C96;text-decoration:none;">Escríbenos aquí</a>.</p></td></tr>
+        <tr><td style="background:#F6F8F9;padding:22px 28px;border-top:1px solid #E6EAED;">
+          <p style="margin:0 0 8px;font-family:Arial;font-size:11px;color:#B4BEC6;">Hispaniola Aquatic Adventures · Punta Cana, RD · {{company_address}}</p>
+          <p style="margin:0;font-family:Arial;font-size:11px;color:#B4BEC6;">{{unsubscribe_block}}</p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+  <!-- EMAIL END -->
+
+  <div class="legend" style="margin-top:36px;">
+    <p style="margin:0;"><b>Nota:</b> hay más emails en la secuencia completa (aviso interno al equipo, recordatorio de menú intermedio, reembolso procesado, pago del saldo, re-marketing…). Todos están listados en el documento de especificación, con su trigger, timing y campos. Estas 11 plantillas cubren los envíos con diseño propio; el resto son variantes que se pueden derivar de estas.</p>
+  </div>
+
+</div>
+</body>
+</html>

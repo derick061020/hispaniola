@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hispaniola · 1 · Reserva confirmada</title>
+<style>
+  /* ── Esta hoja es SOLO del previsualizador. No forma parte del email. ── */
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+  body{margin:0;background:#eef1f4;font-family:'Poppins','Segoe UI',Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+  .pg{max-width:760px;margin:0 auto;padding:28px 16px 72px}
+  .doc{background:#fff;border:1px solid #dfe6ea;border-radius:16px;padding:26px 28px;color:#0b2545}
+  .doc h1{font-size:19px;font-weight:600;margin:0 0 6px;letter-spacing:-.01em}
+  .doc .sub{font-size:13px;color:#5b6b78;margin:0 0 18px;line-height:1.6}
+  .doc h2{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#0b6f7c;margin:22px 0 10px}
+  .doc p,.doc li{font-size:13px;color:#42525f;line-height:1.65;margin:0 0 8px}
+  .doc ul{margin:0 0 8px;padding-left:18px}
+  .doc code{background:#f7f9fa;border:1px solid #dfe6ea;color:#0b6f7c;padding:1px 5px;border-radius:4px;font-size:12px;font-family:ui-monospace,Menlo,Consolas,monospace}
+  .doc b{color:#0b2545;font-weight:600}
+  .warn{border-left:3px solid #ef5b44;background:#fff;border:1px solid #dfe6ea;border-left:3px solid #ef5b44;border-radius:0 10px 10px 0;padding:12px 16px;margin:12px 0}
+  .warn p{margin:0;font-size:12.5px}
+  .swatches{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 12px}
+  .sw{font-size:10px;color:#5b6b78;text-align:center;width:64px}
+  .sw i{display:block;height:30px;border-radius:6px;border:1px solid rgba(11,37,69,.08);margin-bottom:3px}
+  .bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:30px 0 10px}
+  .chip{background:#0b2545;color:#fff;font-size:11.5px;font-weight:600;padding:6px 13px;border-radius:999px;letter-spacing:.02em}
+  .chip.mvp{background:#0c7a5e}
+  .chip.nu{background:#fff;color:#0b2545;border:1px solid #c3ced4}
+  button.tg{margin-left:auto;background:#ef5b44;color:#fff;border:0;font:600 12.5px/1 'Poppins',sans-serif;padding:10px 16px;border-radius:10px;cursor:pointer}
+  button.tg:active{transform:translateY(1px)}
+  .meta{background:#fff;border:1px solid #dfe6ea;border-radius:10px;padding:12px 16px;margin:0 0 16px;font-size:12.5px;color:#5b6b78;line-height:1.7}
+  .meta b{color:#0b2545;font-weight:600}
+</style>
+</head>
+<body>
+<div class="pg">
+
+  <div class="doc">
+    <h1>Email 1 · Reserva confirmada + depósito</h1>
+    <p class="sub">Rediseño de la plantilla del cliente. Este es el <b>email piloto</b>: fija la estética
+    y los componentes que después se aplican a los 10 restantes.</p>
+
+    <h2>Qué cambia y por qué</h2>
+    <ul>
+      <li><b>Fuera los emoji como iconografía.</b> Eran el delator nº 1 de «hecho con IA»: 🍽️ ✨ 🎂 👑 📸 ☀️ 💵 cambian de dibujo en cada sistema operativo y ninguna marca premium los usa como icono.</li>
+      <li><b>Fuera la pila de cajas de colores.</b> El original apilaba un recuadro verde, uno turquesa, uno gris y uno ámbar: cuatro acentos peleando. Aquí el contenido va sobre blanco y se separa con <b>filetes de 1px</b>. Es el patrón de recibo de Stripe.</li>
+      <li><b>Fuera el centrado total.</b> Todo pasa a alineación izquierda salvo el botón. El texto centrado en bloques largos es lento de leer y se lee a plantilla genérica.</li>
+      <li><b>Fuera el círculo verde con el check.</b> El cliché universal del email de confirmación. Lo sustituye un <b>eyebrow</b> en versalitas + un titular que no repite el asunto.</li>
+      <li><b>Entra la foto real.</b> La dirección visual del proyecto dice que <b>el color lo ponen las fotos</b>, no los rellenos. Una sola banda, sin texto encima.</li>
+      <li><b>Entra el logo real</b> (langosta pirata) en lugar del logotipo de texto.</li>
+      <li><b>Entra «Qué sigue ahora»</b>, el timeline que ya existe en la página <code>/gracias</code> de la web. Es lo que de verdad calma a quien acaba de pagar un depósito, y le da continuidad al producto.</li>
+      <li><b>La reserva y el pago son UN solo documento</b>, no dos tarjetas sueltas. El depósito se resta como en un libro de cuentas y el saldo es la única cifra grande.</li>
+    </ul>
+
+    <h2>Paleta — tokens reales del proyecto</h2>
+    <p style="margin-bottom:6px">Los colores del archivo del cliente eran aproximaciones (<code>#16283A</code>, <code>#E8654A</code>…).
+    Estos son los de <code>app/src/styles/tokens.css</code>, así que el email y la web ya son la misma marca — y en el traspaso a Figma son las mismas variables.</p>
+    <div class="swatches">
+      <div class="sw"><i style="background:#0b2545"></i>navy</div>
+      <div class="sw"><i style="background:#42525f"></i>navy-sub</div>
+      <div class="sw"><i style="background:#5b6b78"></i>navy-soft</div>
+      <div class="sw"><i style="background:#93a7bb"></i>s/navy-suave</div>
+      <div class="sw"><i style="background:#0e8c9c"></i>aqua</div>
+      <div class="sw"><i style="background:#0b6f7c"></i>aqua-dark</div>
+      <div class="sw"><i style="background:#eaf3f4"></i>aqua-tint</div>
+      <div class="sw"><i style="background:#ef5b44"></i>coral</div>
+      <div class="sw"><i style="background:#0c7a5e"></i>menta-texto</div>
+      <div class="sw"><i style="background:#dfe6ea"></i>linea</div>
+      <div class="sw"><i style="background:#f7f9fa"></i>hueso</div>
+      <div class="sw"><i style="background:#eef1f4"></i>fondo-ficha</div>
+    </div>
+    <p><b>Disciplina de acento:</b> el <b>coral</b> solo en el botón de acción. El <b>aqua</b> solo en eyebrows y enlaces.
+    El <b>verde menta</b> solo en la línea del ahorro en efectivo. Ningún otro color rellena nada.</p>
+
+    <h2>Componentes que se reutilizan en los otros 10</h2>
+    <ul>
+      <li><b>Cabecera</b> navy + logo + referencia de reserva — constante.</li>
+      <li><b>Banda de foto</b> 600×260 — opcional según el email.</li>
+      <li><b>Eyebrow + titular + entradilla</b> — constante.</li>
+      <li><b>Bloque de datos</b> (etiqueta/valor con filetes) — emails 1, 5, 6, 7, 8.</li>
+      <li><b>Bloque de dinero</b> (cuenta alineada a la derecha + saldo destacado) — emails 1, 5, 6, 8.</li>
+      <li><b>Aviso</b> (borde fino + filete de acento a la izquierda; 3 tonos: aqua / ámbar / coral) — emails 1, 2, 3, 7, 9.</li>
+      <li><b>Botón primario</b> coral con VML para Outlook + enlace secundario — constante.</li>
+      <li><b>Botón secundario</b> perfilado — email 9 (dos opciones).</li>
+      <li><b>Filas de producto</b> con miniatura — emails 1 y 4 (venta cruzada).</li>
+      <li><b>Franja de confianza</b> y <b>pie navy</b> — constantes.</li>
+    </ul>
+
+    <h2>Detalles técnicos que ya están resueltos</h2>
+    <ul>
+      <li><b>Las 117 fotos del proyecto son <code>.webp</code> y Outlook para Windows no las renderiza.</b> Los assets de este email se generaron en JPG/PNG en <code>app/public/mails/</code>, así que se sirven desde el propio dominio.</li>
+      <li><b>Botón en VML</b> (<code>v:roundrect</code>) para que Outlook lo pinte como botón y no como texto suelto.</li>
+      <li><b>Modo oscuro bloqueado</b> con <code>color-scheme: light</code>: sin eso, Apple Mail invierte los colores y rompe el contraste del pie navy.</li>
+      <li><b>Responsive real</b> con media queries: a 480px el email pasa a 100 % y el titular baja de 27 a 22px.</li>
+      <li><b>Poppins</b> (la tipografía de la web) carga en Apple Mail e iOS; Gmail y Outlook caen a Segoe UI / Arial con la maqueta intacta.</li>
+    </ul>
+
+    <h2>Decisiones que necesito de ti</h2>
+    <div class="warn"><p><b>1 · Idioma.</b> La web está <b>en inglés</b> (<code>/gracias</code> dice «Your booking», «Balance on board»)
+    y las plantillas del cliente llegaron <b>en español</b>. He mantenido el español del cliente sin tocarlo, pero un cliente que reservó en inglés
+    recibiría el email en español. Hay que decidirlo antes de aplicar el diseño a los 10 restantes.</p></div>
+    <div class="warn"><p><b>2 · Precios de los extras.</b> Los <code>+US$ 59 / 150 / 39</code> son del email del cliente y
+    <b>no aparecen en <code>TARIFARIO-WEB-ORIGINAL.md</code></b> (ahí los únicos add-ons documentados son el álbum en alta a US$ 20 por grupo
+    y la langosta de Saona a US$ 30 por persona). Los he dejado tal cual, sin inventar nada — hay que confirmarlos con Fernando.</p></div>
+    <div class="warn"><p><b>3 · Variable nueva.</b> He añadido <code>{{balance_cash}}</code> (el saldo ya con el −5 % aplicado).
+    El glosario del cliente solo tiene <code>{{cash_discount}}</code>, que es el ahorro; decirle a alguien cuánto se ahorra sin decirle cuánto paga
+    obliga a restar de cabeza. La web ya muestra esa cifra en <code>/gracias</code>.</p></div>
+
+    <p style="margin:16px 0 0"><b>Para publicar:</b> copiar únicamente lo que hay entre
+    <code>&lt;!-- EMAIL START --&gt;</code> y <code>&lt;!-- EMAIL END --&gt;</code>.</p>
+  </div>
+
+  <div class="bar">
+    <span class="chip mvp">MVP</span>
+    <span class="chip">1 · Reserva confirmada + depósito</span>
+    <span class="chip nu">600 px</span>
+    <button class="tg" id="tg" type="button">Ver con variables</button>
+  </div>
+  <div class="meta">
+    <b>Disparador:</b> pago del depósito completado &nbsp;·&nbsp;
+    <b>Asunto:</b> Reserva confirmada, {{first_name}} · {{tour_date}} &nbsp;·&nbsp;
+    <b>Preheader:</b> Tu resumen, el saldo y lo que pasa a partir de ahora.
+  </div>
+
+<!-- EMAIL START -->
+<!--[if mso]>
+<xml><o:OfficeDocumentSettings><o:AllowPNG/><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml>
+<![endif]-->
+<meta name="color-scheme" content="light">
+<meta name="supported-color-schemes" content="light">
+<style>
+  /* ⚠️ El @import va PRIMERO sí o sí: el CSS obliga a que preceda a cualquier
+     otra regla, así que con el :root delante se invalidaba en silencio y
+     Poppins no llegaba a cargar ni siquiera en Apple Mail. */
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+  /* Bloquea que Apple Mail/Outlook.com inviertan los colores por su cuenta.
+     El <meta name="supported-color-schemes"> de arriba cubre lo mismo en los
+     clientes viejos, así que aquí basta la propiedad estándar. */
+  :root{color-scheme:light}
+  /* Clientes que soportan media queries (Apple Mail, iOS, Gmail app, Outlook.com) */
+  @media only screen and (max-width:480px){
+    .m-full{width:100% !important;max-width:100% !important}
+    .m-pad{padding-left:20px !important;padding-right:20px !important}
+    .m-h1{font-size:22px !important;line-height:1.28 !important}
+    .m-hero{height:auto !important}
+    .m-label{display:block !important;width:100% !important;padding-bottom:2px !important}
+    .m-value{display:block !important;width:100% !important}
+    .m-btn{width:100% !important}
+  }
+</style>
+<!--[if mso]>
+<style>*{font-family:'Segoe UI',Arial,Helvetica,sans-serif !important}</style>
+<![endif]-->
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#eef1f4;margin:0;padding:0;">
+<tr><td align="center" style="padding:28px 12px 40px;">
+
+  <!-- Preheader: se ve en la bandeja, nunca dentro del email -->
+  <div style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;color:#eef1f4;">Tu resumen, el saldo y lo que pasa a partir de ahora.&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;</div>
+
+  <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" class="m-full" style="width:600px;max-width:600px;background:#ffffff;border-radius:16px;overflow:hidden;">
+
+    <!-- ════ CABECERA ════ -->
+    <tr><td style="background:#0b2545;padding:18px 32px;" class="m-pad">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+        <td align="left" valign="middle">
+          <img src="https://hispaniola-ten.vercel.app/mails/logo-hispaniola-blanco.png" width="132" height="62" alt="Hispaniola Aquatic Adventures" style="display:block;border:0;width:132px;height:62px;">
+        </td>
+        <td align="right" valign="middle" style="font-family:'Poppins','Segoe UI',Helvetica,Arial,sans-serif;font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#93a7bb;white-space:nowrap;">
+          Reserva {{booking_id}}
+        </td>
+      </tr></table>
+    </td></tr>
+
+    <!-- ════ BANDA DE FOTO ════ (sin texto encima: si el cliente bloquea imágenes no se pierde nada) -->
+    <tr><td style="padding:0;font-size:0;line-height:0;background:#0e8c9c;">
+      <img src="https://hispaniola-ten.vercel.app/mails/hero-catamaran.jpg" width="600" height="260" alt="" class="m-full m-hero" style="display:block;border:0;width:100%;max-width:600px;height:auto;">
+    </td></tr>
+
+    <!-- ════ CONFIRMACIÓN ════ -->
+    <tr><td style="padding:34px 32px 26px;" class="m-pad">
+      <p style="margin:0 0 10px;font-family:'Poppins','Segoe UI',Helvetica,Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#0b6f7c;">Reserva confirmada</p>
+      <h1 class="m-h1" style="margin:0 0 12px;font-family:'Poppins','Segoe UI',Helvetica,Arial,sans-serif;font-size:27px;line-height:1.25;font-weight:600;letter-spacing:-.01em;color:#0b2545;">Nos vemos a bordo, {{first_name}}.</h1>
+      <p style="margin:0;font-family:'Poppins','Segoe UI',Helvetica,Arial,sans-serif;font-size:15px;line-height:1.65;color:#42525f;">Tu depósito está cobrado y tu plaza en el <span style="color:#0b2545;font-weight:600;">{{boat_name}}</span> queda guardada para el <span style="color:#0b2545;font-weight:600;">{{tour_date}}</span>. Esto es todo lo que necesitas saber.</p>
+    </td></tr>
+
+    <tr><td style="padding:0 32px;" class="m-pad"><div style="height:1px;background:#dfe6ea;font-size:0;line-height:0;">&nbsp;</div></td></tr>
+
+    <!-- ════ BLOQUE DE DATOS ════ -->
+    <tr><td style="padding:26px 32px 4px;" class="m-pad">
+      <p style="margin:0 0 14px;font-family:'Poppins','Segoe UI',Helvetica,Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#5b6b78;">La reserva</p>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-family:'Poppins','Segoe UI',Helvetica,Arial,sans-serif;">
+        <tr>
+          <td class="m-label" width="118" valign="top" style="width:118px;padding:0 0 11px;font-size:13px;color:#5b6b78;">Experiencia</td>
+          <td class="m-value" valign="top" style="padding:0 0 11px;font-size:14px;font-weight:600;color:#0b2545;">{{boat_name}} · {{menu_label}}</td>
+        </tr>
+        <tr><td colspan="2" style="padding:0 0 11px;"><div style="height:1px;background:#eef1f4;font-size:0;line-height:0;">&nbsp;</div></td></tr>
+        <tr>
+          <td class="m-label" width="118" valign="top" style="width:118px;padding:0 0 11px;font-size:13px;color:#5b6b78;">Fecha</td>
+          <td class="m-value" valign="top" style="padding:0 0 11px;font-size:14px;font-weight:600;color:#0b2545;">{{tour_date}}</td>
+        </tr>
+        <tr><td colspan="2" style="padding:0 0 11px;"><div style="height:1px;background:#eef1f4;font-size:0;line-height:0;">&nbsp;</div></td></tr>
+        <tr>
+          <td class="m-label" width="118" valign="top" style="width:118px;padding:0 0 11px;font-size:13px;color:#5b6b78;">Horario</td>
+          <td class="m-value" valign="top" style="padding:0 0 11px;font-size:14px;font-weight:600;color:#0b2545;">Recogida {{pickup_time}} <span style="color:#5b6b78;font-weight:400;">·</span> regreso {{return_time}}</td>
+        </tr>
+        <tr><td colspan="2" style="padding:0 0 11px;"><div style="height:1px;background:#eef1f4;font-size:0;line-height:0;">&nbsp;</div></td></tr>
+        <tr>
+          <td class="m-label" width="118" valign="top" style="width:118px;padding:0 0 11px;font-size:13px;color:#5b6b78;">Personas</td>
+          <td class="m-value" valign="top" style="padding:0 0 11px;font-size:14px;font-weight:600;color:#0b2545;">{{pax}}</td>
+        </tr>
+        <tr><td colspan="2" style="padding:0 0 11px;"><div style="height:1px;background:#eef1f4;font-size:0;line-height:0;">&nbsp;</div></td></tr>
+        <!-- Fila condicional: ocultar entera si no hay extras contratados -->
+        <tr>
+          <td class="m-label" width="118" valign="top" style="width:118px;padding:0 0 4px;font-size:13px;color:#5b6b78;">Extras</td>
+          <td class="m-value" valign="top" style="padding:0 0 4px;font-size:14px;font-weight:600;color:#0b2545;">{{extras_list}}</td>
+        </tr>
+      </table>
+    </td></tr>
+
+    <tr><td style="padding:22px 32px 0;" class="m-pad"><div style="height:1px;background:#dfe6ea;font-size:0;line-height:0;">&nbsp;</div></td></tr>
+
+    <!-- ════ BLOQUE DE DINERO ════ -->
+    <tr><td style="padding:24px 32px 0;" class="m-pad">
+      <p style="margin:0 0 14px;font-family:'Poppins','Segoe UI',Helvetica,Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#5b6b78;">Pago</p>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-family:'Poppins','Segoe UI',Helvetica,Arial,sans-serif;">
+        <tr>
+          <td align="left" style="padding:0 0 9px;font-size:14px;color:#42525f;">Total de la experiencia</td>
+          <td align="right" style="padding:0 0 9px;font-size:14px;font-weight:600;color:#0b2545;white-space:nowrap;">{{total}}</td>
+        </tr>
+        <tr>
+          <td align="left" style="padding:0 0 14px;font-size:14px;color:#42525f;">Depósito pagado hoy</td>
+          <td align="right" style="padding:0 0 14px;font-size:14px;font-weight:600;color:#0b2545;white-space:nowrap;">&minus; {{deposit_paid}}</td>
+        </tr>
+        <tr><td colspan="2" style="padding:0 0 14px;"><div style="height:1px;background:#dfe6ea;font-size:0;line-height:0;">&nbsp;</div></td></tr>
+      </table>
+      <!-- El saldo es la única cifra grande del email -->
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f7f9fa;border-radius:10px;">
+        <tr><td style="padding:16px 18px;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-family:'Poppins','Segoe UI',Helvetica,Arial,sans-serif;">
+            <tr>
+              <td align="left" valign="middle" style="font-size:14px;font-weight:600;color:#0b2545;">Saldo el día del tour</td>
+              <td align="right" valign="middle" style="font-size:21px;font-weight:700;letter-spacing:-.01em;color:#0b2545;white-space:nowrap;">{{balance_due}}</td>
+            </tr>
+            <tr><td colspan="2" style="padding-top:7px;font-size:12.5px;line-height:1.55;color:#0c7a5e;">En efectivo a bordo son <span style="font-weight:600;">{{balance_cash}}</span> — te ahorras {{cash_discount}} (5 %).</td></tr>
+          </table>
+        </td></tr>
+      </table>
+    </td></tr>
+
+    <!-- ════ ACCIÓN ════ -->
+    <tr><td style="padding:24px 32px 0;" class="m-pad">
+      <!--[if mso]>
+      <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="{{manage_link}}" style="height:48px;v-text-anchor:middle;width:230px;" arcsize="21%" stroke="f" fillcolor="#ef5b44">
+        <w:anchorlock/>
+        <center style="color:#ffffff;font-family:'Segoe UI',Arial,sans-serif;font-size:15px;font-weight:bold;">Gestionar mi reserva</center>
+      </v:roundrect>
+      <![endif]-->
+      <!--[if !mso]><!-- -->
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" class="m-btn"><tr>
+        <td align="center" style="border-radius:10px;background:#ef5b44;">
+          <a href="{{manage_link}}" style="display:inline-block;padding:15px 30px;font-family:'Poppins','Segoe UI',Helvetica,Arial,sans-serif;font-size:15px;font-weight:600;line-height:1;color:#ffffff;text-decoration:none;border-radius:10px;">Gestionar mi reserva</a>
+        </td>
+      </tr></table>
+      <!--<![endif]-->
+      <p style="margin:14px 0 0;font-family:'Poppins','Segoe UI',Helvetica,Arial,sans-serif;font-size:13px;line-height:1.5;color:#5b6b78;">
+        <a href="{{calendar_link}}" style="color:#0b6f7c;text-decoration:none;font-weight:600;">Añadir a mi calendario</a>
+      </p>
+    </td></tr>
+
+    <!-- ════ AVISO ════ (bloque condicional: mostrar SOLO si el menú quedó aplazado) -->
+    <tr><td style="padding:24px 32px 0;" class="m-pad">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid #dfe6ea;border-left:3px solid #0e8c9c;border-radius:0 10px 10px 0;">
+        <tr><td style="padding:14px 18px;font-family:'Poppins','Segoe UI',Helvetica,Arial,sans-serif;font-size:13.5px;line-height:1.6;color:#42525f;">
+          <span style="font-weight:600;color:#0b2545;">Falta elegir el menú.</span> Te escribimos aparte para que cada persona elija su plato. Tienes hasta el <span style="font-weight:600;color:#0b2545;">{{menu_deadline}}</span>, 48 h antes del tour.
+        </td></tr>
+      </table>
+    </td></tr>
+
+    <tr><td style="padding:26px 32px 0;" class="m-pad"><div style="height:1px;background:#dfe6ea;font-size:0;line-height:0;">&nbsp;</div></td></tr>
+
+    <!-- ════ QUÉ SIGUE ════ (mismo timeline que la página /gracias de la web) -->
+    <tr><td style="padding:24px 32px 0;" class="m-pad">
+      <p style="margin:0 0 16px;font-family:'Poppins','Segoe UI',Helvetica,Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#5b6b78;">Qué sigue ahora</p>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-family:'Poppins','Segoe UI',Helvetica,Arial,sans-serif;">
+        <tr>
+          <td width="38" valign="top" style="width:38px;padding:0 0 16px;">
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td width="26" height="26" align="center" valign="middle" style="width:26px;height:26px;background:#eaf3f4;border-radius:999px;font-size:12px;font-weight:700;color:#0b6f7c;line-height:26px;">1</td></tr></table>
+          </td>
+          <td valign="top" style="padding:0 0 16px;">
+            <p style="margin:0 0 2px;font-size:13.5px;font-weight:600;color:#0b2545;line-height:1.45;">Hoy</p>
+            <p style="margin:0;font-size:13px;color:#5b6b78;line-height:1.6;">Guarda este email: es tu comprobante. Te lo enviamos también por WhatsApp.</p>
+          </td>
+        </tr>
+        <tr>
+          <td width="38" valign="top" style="width:38px;padding:0 0 16px;">
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td width="26" height="26" align="center" valign="middle" style="width:26px;height:26px;background:#eaf3f4;border-radius:999px;font-size:12px;font-weight:700;color:#0b6f7c;line-height:26px;">2</td></tr></table>
+          </td>
+          <td valign="top" style="padding:0 0 16px;">
+            <p style="margin:0 0 2px;font-size:13.5px;font-weight:600;color:#0b2545;line-height:1.45;">La víspera, por la tarde</p>
+            <p style="margin:0;font-size:13px;color:#5b6b78;line-height:1.6;">Te confirmamos el punto y la hora exactos de recogida por WhatsApp.</p>
+          </td>
+        </tr>
+        <tr>
+          <td width="38" valign="top" style="width:38px;padding:0 0 4px;">
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td width="26" height="26" align="center" valign="middle" style="width:26px;height:26px;background:#eaf3f4;border-radius:999px;font-size:12px;font-weight:700;color:#0b6f7c;line-height:26px;">3</td></tr></table>
+          </td>
+          <td valign="top" style="padding:0 0 4px;">
+            <p style="margin:0 0 2px;font-size:13.5px;font-weight:600;color:#0b2545;line-height:1.45;">El día del tour</p>
+            <p style="margin:0;font-size:13px;color:#5b6b78;line-height:1.6;">Trae bañador, toalla y protector solar biodegradable. El saldo se paga a bordo.</p>
+          </td>
+        </tr>
+      </table>
+    </td></tr>
+
+    <tr><td style="padding:24px 32px 0;" class="m-pad"><div style="height:1px;background:#dfe6ea;font-size:0;line-height:0;">&nbsp;</div></td></tr>
+
+    <!-- ════ VENTA CRUZADA ════ (filas con miniatura, no una lista de precios) -->
+    <tr><td style="padding:24px 32px 0;" class="m-pad">
+      <p style="margin:0 0 4px;font-family:'Poppins','Segoe UI',Helvetica,Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#5b6b78;">Súmale algo a bordo</p>
+      <p style="margin:0 0 16px;font-family:'Poppins','Segoe UI',Helvetica,Arial,sans-serif;font-size:13px;line-height:1.6;color:#5b6b78;">Se puede añadir hasta 48 h antes, sin volver a pagar el depósito.</p>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-family:'Poppins','Segoe UI',Helvetica,Arial,sans-serif;">
+        <tr>
+          <td width="86" valign="top" style="width:86px;padding:0 0 14px;">
+            <img src="https://hispaniola-ten.vercel.app/mails/extra-celebracion.jpg" width="72" height="72" alt="" style="display:block;border:0;width:72px;height:72px;border-radius:6px;">
+          </td>
+          <!-- Título y precio comparten fila, y la descripción va debajo a todo el ancho:
+               con el precio en su propia columna, en móvil la descripción se queda en ~100px
+               y se parte en cuatro líneas. -->
+          <td valign="top" style="padding:2px 0 14px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td align="left" style="padding:0 8px 3px 0;font-size:14px;font-weight:600;color:#0b2545;line-height:1.4;">Pack celebración</td>
+                <td align="right" valign="top" style="padding:0 0 3px;font-size:14px;font-weight:600;color:#0b2545;white-space:nowrap;">+US$ 59</td>
+              </tr>
+              <tr><td colspan="2" style="font-size:13px;color:#5b6b78;line-height:1.55;">Tarta, espumante y decoración a bordo.</td></tr>
+            </table>
+          </td>
+        </tr>
+        <tr><td colspan="2" style="padding:0 0 14px;"><div style="height:1px;background:#eef1f4;font-size:0;line-height:0;">&nbsp;</div></td></tr>
+        <tr>
+          <td width="86" valign="top" style="width:86px;padding:0 0 14px;">
+            <img src="https://hispaniola-ten.vercel.app/mails/extra-privado.jpg" width="72" height="72" alt="" style="display:block;border:0;width:72px;height:72px;border-radius:6px;">
+          </td>
+          <td valign="top" style="padding:2px 0 14px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td align="left" style="padding:0 8px 3px 0;font-size:14px;font-weight:600;color:#0b2545;line-height:1.4;">Barco 100 % privado</td>
+                <td align="right" valign="top" style="padding:0 0 3px;font-size:14px;font-weight:600;color:#0b2545;white-space:nowrap;">+US$ 150</td>
+              </tr>
+              <tr><td colspan="2" style="font-size:13px;color:#5b6b78;line-height:1.55;">Solo tu grupo, sin desconocidos a bordo.</td></tr>
+            </table>
+          </td>
+        </tr>
+        <tr><td colspan="2" style="padding:0 0 14px;"><div style="height:1px;background:#eef1f4;font-size:0;line-height:0;">&nbsp;</div></td></tr>
+        <tr>
+          <td width="86" valign="top" style="width:86px;padding:0 0 4px;">
+            <img src="https://hispaniola-ten.vercel.app/mails/extra-fotos.jpg" width="72" height="72" alt="" style="display:block;border:0;width:72px;height:72px;border-radius:6px;">
+          </td>
+          <td valign="top" style="padding:2px 0 4px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td align="left" style="padding:0 8px 3px 0;font-size:14px;font-weight:600;color:#0b2545;line-height:1.4;">Fotos y vídeo editado</td>
+                <td align="right" valign="top" style="padding:0 0 3px;font-size:14px;font-weight:600;color:#0b2545;white-space:nowrap;">+US$ 39</td>
+              </tr>
+              <tr><td colspan="2" style="font-size:13px;color:#5b6b78;line-height:1.55;">Tu día en el mar, grabado y montado.</td></tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+      <p style="margin:16px 0 0;font-family:'Poppins','Segoe UI',Helvetica,Arial,sans-serif;font-size:13px;">
+        <a href="{{manage_link}}" style="color:#0b6f7c;text-decoration:none;font-weight:600;">Añadir a mi reserva &rarr;</a>
+      </p>
+    </td></tr>
+
+    <!-- ════ FRANJA DE CONFIANZA ════ -->
+    <tr><td style="padding:26px 32px 0;" class="m-pad">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f7f9fa;border-radius:10px;">
+        <tr><td align="left" style="padding:13px 18px;font-family:'Poppins','Segoe UI',Helvetica,Arial,sans-serif;font-size:12.5px;line-height:1.6;color:#5b6b78;">
+          Cancelación gratuita hasta 7 días antes <span style="color:#c3ced4;">&nbsp;·&nbsp;</span> Reserva directa, sin intermediarios
+        </td></tr>
+      </table>
+    </td></tr>
+    <tr><td style="height:28px;font-size:0;line-height:0;">&nbsp;</td></tr>
+
+    <!-- ════ PIE ════ -->
+    <tr><td style="background:#0b2545;padding:26px 32px;" class="m-pad">
+      <p style="margin:0 0 12px;font-family:'Poppins','Segoe UI',Helvetica,Arial,sans-serif;font-size:13.5px;line-height:1.6;color:#93a7bb;">
+        ¿Alguna duda? Habla directo con el equipo del barco:<br>
+        <a href="{{whatsapp_link}}" style="color:#a9e5ee;text-decoration:none;font-weight:600;">WhatsApp +1 829 305 2804</a>
+      </p>
+      <div style="height:1px;background:rgba(255,255,255,.12);font-size:0;line-height:0;margin:0 0 12px;">&nbsp;</div>
+      <!-- ⚠️ Este texto va en --color-sobre-navy-suave (#93a7bb), NO en --color-navy-soft:
+           el gris de «texto secundario sobre papel» da 2.8:1 sobre el navy y no pasa la AA.
+           #93a7bb es el token que existe justamente para texto apagado sobre navy (6.2:1). -->
+      <p style="margin:0;font-family:'Poppins','Segoe UI',Helvetica,Arial,sans-serif;font-size:11.5px;line-height:1.65;color:#93a7bb;">
+        Hispaniola Aquatic Adventures · Punta Cana, República Dominicana<br>
+        {{company_address}}
+      </p>
+      <!-- Email transaccional: NO lleva bloque de baja. En los de marketing (10 y 11) va aquí {{unsubscribe_block}} -->
+    </td></tr>
+
+  </table>
+</td></tr>
+</table>
+<!-- EMAIL END -->
+
+</div>
+
+<script>
+/* ─────────────────────────────────────────────────────────────────────
+   SOLO PREVISUALIZACIÓN — nada de esto viaja dentro del email.
+   1) Alterna entre las {{variables}} tal cual se publican y unos datos
+      de ejemplo, para poder juzgar el diseño con texto real.
+      Las cifras salen del tarifario canónico: semi-privado Premium
+      US$ 114 × 6 = 684, + álbum en alta US$ 20 = 704. Depósito 25 % = 176.
+      Saldo 528; 5 % de 528 = 26,40 → 501,60 en efectivo.
+   2) Fuera del dominio de producción (disco o servidor local) reapunta
+      las imágenes al proyecto; ya publicado, se sirven del dominio real.
+   ───────────────────────────────────────────────────────────────────── */
+(function () {
+  var EJEMPLO = {
+    first_name: 'Marta', booking_id: 'HAA-2417', boat_name: 'Karaya',
+    menu_label: 'Menú Premium', tour_date: 'jueves 12 de marzo de 2026',
+    pickup_time: '08:15', return_time: '16:30', pax: '6 adultos',
+    extras_list: 'Álbum completo en alta', total: 'US$ 704.00',
+    deposit_paid: 'US$ 176.00', balance_due: 'US$ 528.00',
+    balance_cash: 'US$ 501.60', cash_discount: 'US$ 26.40',
+    menu_deadline: 'martes 10 de marzo, 08:15',
+    company_address: 'Calle El Cortecito 12, Bávaro 23000'
+  };
+
+  if (location.hostname.indexOf('hispaniolaaquaticadventures') === -1) {
+    document.querySelectorAll('img[src*="/mails/"]').forEach(function (img) {
+      img.src = '../app/public/mails/' + img.getAttribute('src').split('/mails/')[1];
+    });
+  }
+
+  var raiz = document.querySelector('.pg');
+  var nodos = [];
+  var it = document.createTreeWalker(raiz, NodeFilter.SHOW_TEXT);
+  var n;
+  while ((n = it.nextNode())) {
+    if (/\{\{\w+\}\}/.test(n.nodeValue)) nodos.push({ nodo: n, crudo: n.nodeValue });
+  }
+
+  var conDatos = false;
+  function pinta() {
+    nodos.forEach(function (r) {
+      r.nodo.nodeValue = conDatos
+        ? r.crudo.replace(/\{\{(\w+)\}\}/g, function (m, k) { return k in EJEMPLO ? EJEMPLO[k] : m; })
+        : r.crudo;
+    });
+    document.getElementById('tg').textContent = conDatos ? 'Ver con variables' : 'Ver con datos de ejemplo';
+  }
+  document.getElementById('tg').addEventListener('click', function () { conDatos = !conDatos; pinta(); });
+  conDatos = true; pinta();
+})();
+</script>
+</body>
+</html>
