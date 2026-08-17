@@ -419,7 +419,12 @@ def aviso(titulo, cuerpo, enlace=None, pie_texto=None, tono="aqua", pad="22px 32
             # en ~187px y el aviso crecia hasta tres veces su alto.
             return seccion(
                 '<table role="presentation" width="100%%" cellpadding="0" cellspacing="0" border="0"><tr>'
-                '<td class="m-stack" width="144" valign="top" style="width:144px;padding:0 16px 0 0;">'
+                # ⚠️ El width de la celda es el ancho de CONTENIDO, y el padding
+                # se suma ENCIMA. Con width=144 + padding 16 el hueco real eran
+                # 32px (16 de sobra dentro de la celda + 16 de padding), no 16.
+                # Ajustado el width al ancho exacto de la imagen, el padding es
+                # el hueco de verdad.
+                '<td class="m-stack" width="128" valign="top" style="width:128px;padding:0 18px 0 0;">'
                 '<img src="%s/%s" width="128" height="128" alt="" style="display:block;border:0;'
                 'width:128px;height:128px;border-radius:10px;"></td>'
                 '<td class="m-stack" valign="top" style="%s">%s</td>'
