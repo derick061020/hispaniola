@@ -123,14 +123,14 @@ def foto(archivo):
     )
 
 
-def pie(texto_ayuda, telefono, direccion, baja=None, variante="navy"):
+def pie(texto_ayuda, telefono, direccion, baja=None, variante="claro"):
     """El pie del correo. Dos variantes mientras se decide cuál se queda.
 
     `claro` (2026-08-17, pedido de Samuel: «que no toque los extremos, que tenga
     un ligero aire alrededor y sus 4 esquinas, y en vez de fondo azul potente un
-    ligero gris azulado, más sutil»). De momento SOLO lo usa el email 1: cuando
-    esté aprobado se cambia el `variante` por defecto de esta función y los once
-    correos y los dos idiomas se actualizan de una vez.
+    ligero gris azulado, más sutil»). Aprobado el mismo día sobre el email 1 y
+    puesto por defecto para los once. El `navy` se queda declarado por si algún
+    correo futuro pide cerrar en oscuro; hoy no lo usa ninguno.
 
     Los 12px de aire lateral son los mismos de la banda de foto, no un número
     nuevo: en este email las piezas de superficie van a 12px y el texto a 32px.

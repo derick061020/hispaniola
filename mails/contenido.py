@@ -288,10 +288,7 @@ def m11(t, c, idioma):
 EMAILS = [
     # ── 1 ────────────────────────────────────────────────────────────────
     dict(
-        # ⚠️ pie="claro" SOLO aquí, a la espera de que Samuel lo apruebe. Cuando
-        # lo dé por bueno se quita esta línea y se cambia el valor por defecto
-        # de piezas.pie(), y los 11 correos × 2 idiomas cambian de una vez.
-        id="01-reserva-confirmada", mvp=True, foto="hero-catamaran.jpg", ref=True, pie="claro",
+        id="01-reserva-confirmada", mvp=True, foto="hero-catamaran.jpg", ref=True,
         disparador={"es": "Pago del depósito completado", "en": "Deposit payment completed"},
         monta=m01,
         es=dict(
@@ -305,7 +302,7 @@ EMAILS = [
             l_personas="Personas", l_extras="Extras",
             l_pago="Pago", l_total="Total de la experiencia", l_deposito="Depósito pagado hoy",
             l_saldo="Saldo el día del tour",
-            nota_efectivo="En efectivo a bordo son <span style=\"font-weight:600;\">{{balance_cash}}</span> — te ahorras {{cash_discount}} (5 %).",
+            nota_efectivo="En efectivo a bordo son <span style=\"font-weight:600;\">{{balance_cash}}</span>. Te ahorras {{cash_discount}} (5 %).",
             av_titulo="Falta elegir el menú",
             av_cuerpo="Cada persona elige su plato. Puedes hacerlo ahora mismo, sin esperar a nada.",
             av_enlace="Elegir el menú",
@@ -328,7 +325,7 @@ EMAILS = [
             l_personas="Guests", l_extras="Extras",
             l_pago="Payment", l_total="Experience total", l_deposito="Deposit paid today",
             l_saldo="Balance on the day",
-            nota_efectivo="In cash on board it comes to <span style=\"font-weight:600;\">{{balance_cash}}</span> — you save {{cash_discount}} (5%).",
+            nota_efectivo="In cash on board it comes to <span style=\"font-weight:600;\">{{balance_cash}}</span>. You save {{cash_discount}} (5%).",
             av_titulo="Your menu is still open",
             av_cuerpo="Each guest picks their own dish. You can do it right now, no need to wait for anything.",
             av_enlace="Choose the menu",
@@ -412,7 +409,7 @@ EMAILS = [
                     "en": "The guest completes their menu selection"},
         monta=m04,
         es=dict(
-            asunto="Menú confirmado, {{first_name}} — todo listo",
+            asunto="Menú confirmado, {{first_name}} · todo listo",
             preheader="Ya sabemos qué cocinar para ti.",
             etiqueta="Menú confirmado", titular="Ya sabemos qué cocinar, {{first_name}}.",
             entradilla="Lo tendremos fresco y listo, cocinado a bordo en la cocina flotante.",
@@ -421,7 +418,7 @@ EMAILS = [
             x_enlace="Añadir a mi reserva",
         ),
         en=dict(
-            asunto="Menu confirmed, {{first_name}} — all set",
+            asunto="Menu confirmed, {{first_name}} · all set",
             preheader="We now know what to cook for you.",
             etiqueta="Menu confirmed", titular="We know what to cook, {{first_name}}.",
             entradilla="We will have it fresh and ready, cooked on board in the floating kitchen.",
@@ -436,13 +433,13 @@ EMAILS = [
         disparador={"es": "~48 h antes del tour", "en": "~48 h before the tour"},
         monta=m05,
         es=dict(
-            asunto="Casi es hora, {{first_name}} — tu recogida y qué llevar",
+            asunto="Casi es hora, {{first_name}} · tu recogida y qué llevar",
             preheader="Punto y hora de recogida, y el saldo a pagar.",
             etiqueta="Casi es hora", titular="Nos vemos el {{tour_date}}.",
             entradilla="Esto es todo lo que necesitas para el día. Guárdalo a mano.",
             l_recogida="Recogida", l_hora="Hora", l_regreso="Regreso aprox.",
             l_pago="Pago", l_saldo="Saldo a pagar a bordo",
-            nota_efectivo="En efectivo son <span style=\"font-weight:600;\">{{balance_cash}}</span> — te ahorras {{cash_discount}} (5 %).",
+            nota_efectivo="En efectivo son <span style=\"font-weight:600;\">{{balance_cash}}</span>. Te ahorras {{cash_discount}} (5 %).",
             q_titulo="Qué llevar",
             q1="Protector solar biodegradable", q1d="El normal daña el arrecife en el que vas a bucear.",
             q2="Traje de baño y toalla", q2d="Se cambia a bordo, hay sitio para dejar la ropa seca.",
@@ -450,13 +447,13 @@ EMAILS = [
             q4="Poco más", q4d="Las gafas, el snorkel y la comida van incluidos.",
         ),
         en=dict(
-            asunto="Almost time, {{first_name}} — your pickup and what to bring",
+            asunto="Almost time, {{first_name}} · your pickup and what to bring",
             preheader="Pickup point and time, and the balance to pay.",
             etiqueta="Almost time", titular="See you on {{tour_date}}.",
             entradilla="This is everything you need for the day. Keep it handy.",
             l_recogida="Pickup", l_hora="Time", l_regreso="Back at approx.",
             l_pago="Payment", l_saldo="Balance to pay on board",
-            nota_efectivo="In cash it comes to <span style=\"font-weight:600;\">{{balance_cash}}</span> — you save {{cash_discount}} (5%).",
+            nota_efectivo="In cash it comes to <span style=\"font-weight:600;\">{{balance_cash}}</span>. You save {{cash_discount}} (5%).",
             q_titulo="What to bring",
             q1="Biodegradable sunscreen", q1d="The regular kind damages the reef you are about to snorkel.",
             q2="Swimsuit and towel", q2d="You change on board, there is room to keep dry clothes.",
@@ -554,8 +551,8 @@ EMAILS = [
             asunto="Importante: hemos tenido que mover tu tour del {{old_date}}",
             preheader="Reprograma sin coste o recibe el reembolso total.",
             etiqueta="Cambio de fecha", titular="No podemos salir el {{old_date}}.",
-            entradilla="Por tu seguridad y por las condiciones del mar. Sentimos las molestias — "
-            "elige la opción que prefieras, las dos son sin coste.",
+            entradilla="Por tu seguridad y por las condiciones del mar. Sentimos las molestias. "
+            "Elige la opción que prefieras, las dos son sin coste.",
             o1_t="Reprograma tu salida", o1_c="A la fecha que mejor te venga, al mismo precio.",
             o2_t="O te devolvemos todo", o2_c="El importe íntegro de lo que has pagado, sin preguntas.",
             cta1="Reprogramar mi tour", cta2="Pedir el reembolso",
@@ -565,8 +562,8 @@ EMAILS = [
             asunto="Important: we had to move your tour on {{old_date}}",
             preheader="Reschedule at no cost or get a full refund.",
             etiqueta="Date change", titular="We cannot sail on {{old_date}}.",
-            entradilla="For your safety and because of sea conditions. Sorry for the trouble — "
-            "pick whichever option suits you, both are free of charge.",
+            entradilla="For your safety and because of sea conditions. Sorry for the trouble. "
+            "Pick whichever option suits you, both are free of charge.",
             o1_t="Reschedule your trip", o1_c="To whatever date suits you, at the same price.",
             o2_t="Or we refund everything", o2_c="The full amount you have paid, no questions asked.",
             cta1="Reschedule my tour", cta2="Request the refund",
@@ -616,7 +613,7 @@ EMAILS = [
         monta=m11,
         es=dict(
             asunto="{{first_name}}, te guardamos tu plaza del {{tour_date}}",
-            preheader="Termina en dos minutos — hoy solo pagas el 25 %.",
+            preheader="Termina en dos minutos. Hoy solo pagas el 25 %.",
             etiqueta="Tu plaza sigue guardada", titular="¿Se te quedó algo pendiente, {{first_name}}?",
             entradilla="Aún tienes tu plaza del " + p.fuerte("{{tour_date}}") + " reservada. "
             "Terminar la reserva te lleva un par de clics.",
@@ -628,7 +625,7 @@ EMAILS = [
         ),
         en=dict(
             asunto="{{first_name}}, we are holding your spot for {{tour_date}}",
-            preheader="Two minutes to finish — today you only pay 25%.",
+            preheader="Two minutes to finish. Today you only pay 25%.",
             etiqueta="Your spot is still held", titular="Did something come up, {{first_name}}?",
             entradilla="Your spot for " + p.fuerte("{{tour_date}}") + " is still held. "
             "Finishing the booking takes a couple of clicks.",

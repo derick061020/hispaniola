@@ -51,10 +51,14 @@ def construye(email, idioma):
         filas.append(p.foto(email["foto"]))
     filas += email["monta"](t, c, idioma)
     # `pie` se trae su propio aire por arriba, distinto en cada variante.
+    # ⚠️ La variante por defecto NO se repite aquí: si un correo no pide una en
+    # concreto, no se pasa el argumento y manda el de piezas.pie(). Tenerlo en
+    # los dos sitios ya hizo que cambiar el defecto en piezas.py no surtiera
+    # ningun efecto, porque este get() lo pisaba.
+    extra = {"variante": email["pie"]} if "pie" in email else {}
     filas.append(
         p.pie(c["ayuda"], C.TELEFONO, c["direccion"],
-              baja="{{unsubscribe_block}}" if email.get("baja") else None,
-              variante=email.get("pie", "navy"))
+              baja="{{unsubscribe_block}}" if email.get("baja") else None, **extra)
     )
     return p.documento(idioma, t["asunto"], t["preheader"], filas)
 
