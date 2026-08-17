@@ -107,11 +107,29 @@ EXTRAS = {
 }
 
 
+# Platos de ejemplo para el preview del email 4. En produccion estas filas las
+# genera el ESP repitiendo el bloque marcado, una vez por plato elegido.
+MENU_EJEMPLO = {
+    "es": [
+        ("plato-surf-turf.jpg", "Surf &amp; Turf", "× 2"),
+        ("plato-mariscos.jpg", "Mariscos", "× 2"),
+        ("plato-vegetariano.jpg", "Vegetariano", "× 1"),
+        ("plato-kids.jpg", "Kid’s Meal", "× 1"),
+    ],
+    "en": [
+        ("plato-surf-turf.jpg", "Surf &amp; Turf", "× 2"),
+        ("plato-mariscos.jpg", "Seafood", "× 2"),
+        ("plato-vegetariano.jpg", "Vegetarian", "× 1"),
+        ("plato-kids.jpg", "Kid’s Meal", "× 1"),
+    ],
+}
+
+
 # ═══════════════════════════════════════════════════════════════════════════
 #  MAQUETAS — el orden de los bloques de cada correo
 # ═══════════════════════════════════════════════════════════════════════════
 
-def m01(t, c, idioma):
+def m01(t, c, idioma, pv=False):
     return [
         p.intro(t["etiqueta"], t["titular"], t["entradilla"]),
         p.tarjeta(
@@ -151,7 +169,7 @@ def m01(t, c, idioma):
     ]
 
 
-def m02(t, c, idioma):
+def m02(t, c, idioma, pv=False):
     return [
         p.intro(t["etiqueta"], t["titular"], t["entradilla"]),
         p.boton(t["cta"], "{{menu_link}}"),
@@ -164,20 +182,39 @@ def m02(t, c, idioma):
     ]
 
 
-def m03(t, c, idioma):
+def m03(t, c, idioma, pv=False):
+    # [2026-08-17, Samuel: «que se vea con más urgencia»] Antes este correo se
+    # diferenciaba del 2 solo por el texto: mismo ámbar, mismo botón suave,
+    # misma jerarquía. Ahora la urgencia la dice el DISEÑO:
+    #   · la hora de cierre sube a dato grande, arriba del todo y en coral
+    #   · el acento pasa de ámbar (hay un plazo) a coral (reacciona ya), que es
+    #     lo que significan esos dos tonos en este sistema
+    #   · el botón deja de ser suave y se pone coral: aquí la acción SÍ es
+    #     convertir, igual que en el carrito abandonado
     return [
-        p.intro(t["etiqueta"], t["titular"], t["entradilla"], color_etiqueta=p.T["ambar"]),
-        p.aviso(t["av_titulo"], t["av_cuerpo"], None, None, tono="ambar", pad="6px 32px 0"),
-        p.boton(t["cta"], "{{menu_link}}"),
+        p.intro(t["etiqueta"], t["titular"], t["entradilla"], color_etiqueta=p.T["coral"]),
+        p.tarjeta(p.dato_grande(t["cierre_label"], "{{menu_deadline}}", color=p.T["coral"])),
+        p.boton(t["cta"], "{{menu_link}}", tono="coral"),
+        p.aviso(t["av_titulo"], t["av_cuerpo"], None, None, tono="coral"),
         p.enlace(t["alt"], "{{whatsapp_link}}"),
     ]
 
 
-def m04(t, c, idioma):
+def m04(t, c, idioma, pv=False):
+    # ⚠️ BLOQUE REPETIBLE. En el preview van las filas de ejemplo ya escritas;
+    # en la plantilla va UNA fila entre marcas <!-- REPETIR POR PLATO -->, que es
+    # lo que el ESP (o el backend) tiene que expandir una vez por plato elegido.
+    # Esto sustituye a {{menu_summary}}, que era una cadena con comas: hacen
+    # falta tres campos por plato —imagen, nombre y cantidad— en vez de uno.
+    platos = MENU_EJEMPLO[idioma] if pv else [("{{dish_image}}", "{{dish_name}}", "{{dish_qty}}")]
+    menu = p.filas_menu(t["l_menu"], platos)
+    if not pv:
+        menu = menu.replace("<tr><td width=\"64\"", "<!-- REPETIR POR PLATO --><tr><td width=\"64\"", 1)
+        menu = menu.rstrip() + "<!-- FIN REPETIR -->"
     return [
         p.intro(t["etiqueta"], t["titular"], t["entradilla"]),
         p.tarjeta(
-            p.etiqueta(t["l_menu"]) + p.parrafo("{{menu_summary}}", margen="0", tam="14px", color=p.T["navy"]),
+            menu,
             p.filas_datos([(t["l_fecha"], "{{tour_date}}"), (t["l_recogida"], "{{pickup_time}}")]),
         ),
         p.boton(c["ver_reserva"], "{{manage_link}}"),
@@ -186,7 +223,7 @@ def m04(t, c, idioma):
     ]
 
 
-def m05(t, c, idioma):
+def m05(t, c, idioma, pv=False):
     return [
         p.intro(t["etiqueta"], t["titular"], t["entradilla"]),
         p.tarjeta(
@@ -209,7 +246,7 @@ def m05(t, c, idioma):
     ]
 
 
-def m06(t, c, idioma):
+def m06(t, c, idioma, pv=False):
     return [
         p.intro(t["etiqueta"], t["titular"], t["entradilla"]),
         p.tarjeta(
@@ -227,7 +264,7 @@ def m06(t, c, idioma):
     ]
 
 
-def m07(t, c, idioma):
+def m07(t, c, idioma, pv=False):
     return [
         p.intro(t["etiqueta"], t["titular"], t["entradilla"]),
         p.tarjeta(p.filas_datos([(t["l_antes"], "{{old_value}}"), (t["l_ahora"], "{{new_value}}")])),
@@ -236,7 +273,7 @@ def m07(t, c, idioma):
     ]
 
 
-def m08(t, c, idioma):
+def m08(t, c, idioma, pv=False):
     return [
         p.intro(t["etiqueta"], t["titular"], t["entradilla"], color_etiqueta=p.T["navy_soft"]),
         p.tarjeta(
@@ -249,7 +286,7 @@ def m08(t, c, idioma):
     ]
 
 
-def m09(t, c, idioma):
+def m09(t, c, idioma, pv=False):
     return [
         p.intro(t["etiqueta"], t["titular"], t["entradilla"], color_etiqueta=p.T["ambar"]),
         p.aviso(t["o1_t"], t["o1_c"], None, None, tono="aqua", pad="6px 32px 0"),
@@ -259,7 +296,7 @@ def m09(t, c, idioma):
     ]
 
 
-def m10(t, c, idioma):
+def m10(t, c, idioma, pv=False):
     return [
         p.intro(t["etiqueta"], t["titular"], t["entradilla"]),
         p.dos_botones((t["cta1"], "{{review_google_link}}"), (t["cta2"], "{{review_tripadvisor_link}}")),
@@ -269,7 +306,7 @@ def m10(t, c, idioma):
     ]
 
 
-def m11(t, c, idioma):
+def m11(t, c, idioma, pv=False):
     return [
         p.intro(t["etiqueta"], t["titular"], t["entradilla"]),
         p.tarjeta(p.filas_datos([
@@ -341,7 +378,7 @@ EMAILS = [
     ),
     # ── 2 ────────────────────────────────────────────────────────────────
     dict(
-        id="02-elige-menu", mvp=True, foto=None, ref=True,
+        id="02-elige-menu", mvp=True, foto="hero-plato.jpg", ref=True,
         disparador={"es": "Tras la confirmación, si el menú quedó aplazado",
                     "en": "After confirmation, if the menu was deferred"},
         monta=m02,
@@ -374,7 +411,7 @@ EMAILS = [
     ),
     # ── 3 ────────────────────────────────────────────────────────────────
     dict(
-        id="03-ultima-llamada-menu", mvp=True, foto=None, ref=True,
+        id="03-ultima-llamada-menu", mvp=True, foto="hero-cocina.jpg", ref=True,
         disparador={"es": "~50-54 h antes del tour, si el menú sigue sin completar",
                     "en": "~50-54 h before the tour, if the menu is still incomplete"},
         monta=m03,
@@ -382,8 +419,9 @@ EMAILS = [
             asunto="{{first_name}}, últimas horas para elegir tu menú",
             preheader="Si no eliges, preparamos la selección Premium más popular.",
             etiqueta="Últimas horas", titular="Se cierra la cocina, {{first_name}}.",
-            entradilla="Tu tour es el " + p.fuerte("{{tour_date}}") + " y la elección del menú se cierra el "
-            + p.fuerte("{{menu_deadline}}") + ".",
+            cierre_label="La cocina cierra el",
+            entradilla="Tu tour es el " + p.fuerte("{{tour_date}}") + " y todavía no nos has dicho "
+            "qué va a comer cada persona.",
             av_titulo="Si no eliges, no te quedas sin comer",
             av_cuerpo="Prepararemos por ti la selección Premium más popular. Pero preferimos que comas "
             "justo lo que te apetece.",
@@ -394,8 +432,9 @@ EMAILS = [
             asunto="{{first_name}}, last hours to choose your menu",
             preheader="If you do not choose, we prepare the most popular Premium selection.",
             etiqueta="Last hours", titular="The kitchen is closing, {{first_name}}.",
-            entradilla="Your tour is on " + p.fuerte("{{tour_date}}") + " and menu selection closes on "
-            + p.fuerte("{{menu_deadline}}") + ".",
+            cierre_label="The kitchen closes on",
+            entradilla="Your tour is on " + p.fuerte("{{tour_date}}") + " and you still have not told us "
+            "what each guest will eat.",
             av_titulo="If you do not choose, you still eat",
             av_cuerpo="We will prepare the most popular Premium selection for you. But we would rather "
             "you eat exactly what you feel like.",
@@ -405,7 +444,7 @@ EMAILS = [
     ),
     # ── 4 ────────────────────────────────────────────────────────────────
     dict(
-        id="04-menu-confirmado", mvp=True, foto=None, ref=True,
+        id="04-menu-confirmado", mvp=True, foto="hero-cocina-barco.jpg", ref=True,
         disparador={"es": "El cliente completa la elección de menú",
                     "en": "The guest completes their menu selection"},
         monta=m04,
@@ -464,7 +503,7 @@ EMAILS = [
     ),
     # ── 6 ────────────────────────────────────────────────────────────────
     dict(
-        id="06-modificacion-reserva", mvp=False, foto=None, ref=True,
+        id="06-modificacion-reserva", mvp=False, foto="hero-snorkel.jpg", ref=True,
         disparador={"es": "Cambio en la reserva (fecha, personas, menú, extras)",
                     "en": "A change in the booking (date, guests, menu, extras)"},
         monta=m06,
@@ -491,7 +530,7 @@ EMAILS = [
     ),
     # ── 7 ────────────────────────────────────────────────────────────────
     dict(
-        id="07-cambio-datos", mvp=False, foto=None, ref=True,
+        id="07-cambio-datos", mvp=False, foto="hero-arrecife.jpg", ref=True,
         disparador={"es": "Cambio de email, teléfono o nombre. Enviar TAMBIÉN a la dirección anterior",
                     "en": "Email, phone or name changed. Send it to the OLD address as well"},
         monta=m07,
@@ -520,7 +559,7 @@ EMAILS = [
     ),
     # ── 8 ────────────────────────────────────────────────────────────────
     dict(
-        id="08-cancelacion", mvp=True, foto=None, ref=True,
+        id="08-cancelacion", mvp=True, foto="hero-oceano.jpg", ref=True,
         disparador={"es": "El cliente cancela", "en": "The guest cancels"},
         monta=m08,
         es=dict(
@@ -544,7 +583,7 @@ EMAILS = [
     ),
     # ── 9 ────────────────────────────────────────────────────────────────
     dict(
-        id="09-reprogramacion-clima", mvp=False, foto=None, ref=True,
+        id="09-reprogramacion-clima", mvp=False, foto="hero-mar.jpg", ref=True,
         disparador={"es": "La empresa mueve o cancela el tour (clima o fuerza mayor)",
                     "en": "The company moves or cancels the tour (weather or force majeure)"},
         monta=m09,
@@ -608,7 +647,7 @@ EMAILS = [
     ),
     # ── 11 ───────────────────────────────────────────────────────────────
     dict(
-        id="11-carrito-abandonado", mvp=False, foto="hero-catamaran.jpg", ref=False, baja=True,
+        id="11-carrito-abandonado", mvp=False, foto="hero-grupo.jpg", ref=False, baja=True,
         disparador={"es": "~1 h sin terminar la reserva; 2º envío a las ~24 h",
                     "en": "~1 h without finishing the booking; 2nd send at ~24 h"},
         monta=m11,

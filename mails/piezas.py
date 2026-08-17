@@ -558,6 +558,57 @@ def timeline(titulo, pasos, pad="34px 32px 0"):
     )
 
 
+def filas_menu(titulo, items, pad="20px 22px 4px"):
+    """Los platos elegidos, con foto y cantidad.
+
+    [2026-08-17, Samuel: «que lo de "vais a comer" se vea más visual, se vea una
+    imagen de lo que se eligió y cuánto de cada uno»] Antes era {{menu_summary}},
+    una cadena con comas: informaba, pero no dejaba ver la comida.
+
+    ⚠️ Los bodegones de plato vienen sobre fondo BLANCO (verificado a nivel de
+    pixel), asi que dentro de una tarjeta blanca el cuadrado no se leeria solo.
+    Por eso la miniatura lleva borde: es lo que dibuja el cuadrado, no el fondo.
+
+    `items` son tuplas (imagen, nombre, cantidad).
+    """
+    filas = []
+    for i, (img, nombre, cant) in enumerate(items):
+        ultimo = i == len(items) - 1
+        pb = "0" if ultimo else "12px"
+        filas.append(
+            '<tr><td width="64" valign="middle" style="width:64px;padding:0 14px %s 0;">'
+            '<img src="%s/%s" width="64" height="64" alt="" style="display:block;border:1px solid %s;'
+            'width:64px;height:64px;border-radius:8px;"></td>'
+            '<td valign="middle" style="padding:0 8px %s 0;font-size:14px;font-weight:600;color:%s;">%s</td>'
+            '<td align="right" valign="middle" style="padding:0 0 %s;font-size:14px;font-weight:700;'
+            'color:%s;white-space:nowrap;">%s</td></tr>'
+            % (pb, HOST, img, T["linea"], pb, T["navy"], nombre, pb, T["navy_soft"], cant)
+        )
+        if not ultimo:
+            filas.append(
+                '<tr><td colspan="3" style="padding:0 0 12px;"><div style="height:1px;background:%s;'
+                'font-size:0;line-height:0;">&nbsp;</div></td></tr>' % T["fondo"]
+            )
+    return (
+        etiqueta(titulo)
+        + '<table role="presentation" width="100%%" cellpadding="0" cellspacing="0" border="0" '
+        'style="%s">%s</table>' % (_f(), "".join(filas))
+    )
+
+
+def dato_grande(label, valor, color=None):
+    """Un solo dato, en grande. Para cuando el mensaje ES ese dato — la hora a la
+    que cierra la cocina, por ejemplo. 19px y no 22 como el saldo: aqui el valor
+    es texto largo, no una cifra, y a 22 se parte en dos lineas."""
+    return (
+        '<table role="presentation" width="100%%" cellpadding="0" cellspacing="0" border="0" style="%s">'
+        '<tr><td align="left" style="padding:0 0 4px;font-size:13px;color:%s;">%s</td></tr>'
+        '<tr><td align="left" style="font-size:19px;font-weight:700;letter-spacing:-.01em;'
+        'line-height:1.25;color:%s;">%s</td></tr></table>'
+        % (_f(), T["navy_soft"], label, color or T["navy"], valor)
+    )
+
+
 def lista(titulo, items, pad="24px 32px 0"):
     """Items que NO son una secuencia — qué llevar, qué incluye, qué opciones hay.
 

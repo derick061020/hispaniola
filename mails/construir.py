@@ -43,13 +43,13 @@ def limpia(carpeta):
     carpeta.mkdir(parents=True, exist_ok=True)
 
 
-def construye(email, idioma):
+def construye(email, idioma, pv=False):
     t = email[idioma]
     c = C.COMUN[idioma]
     filas = [p.cabecera(c["ref"], "{{booking_id}}" if email.get("ref") else None)]
     if email.get("foto"):
         filas.append(p.foto(email["foto"]))
-    filas += email["monta"](t, c, idioma)
+    filas += email["monta"](t, c, idioma, pv)
     # `pie` se trae su propio aire por arriba, distinto en cada variante.
     # ⚠️ La variante por defecto NO se repite aquí: si un correo no pide una en
     # concreto, no se pasa el argumento y manda el de piezas.pie(). Tenerlo en
@@ -85,8 +85,12 @@ def main():
     for email in C.EMAILS:
         linea = "  %-26s" % email["id"]
         for idioma in IDIOMAS:
-            html = construye(email, idioma)
-            pv = rellena(html, idioma)
+            # Se monta DOS veces: la plantilla lleva bloques repetibles que el
+            # ESP expande, y el preview lleva sus filas ya escritas. Sustituir
+            # variables sobre el mismo HTML no bastaba: la diferencia es de
+            # estructura, no de valores.
+            html = construye(email, idioma, pv=False)
+            pv = rellena(construye(email, idioma, pv=True), idioma)
 
             # 1) variables sin dato de ejemplo (solo las que se ven)
             sueltas = sorted(set(re.findall(r"\{\{(\w+)\}\}", visible(pv))))
