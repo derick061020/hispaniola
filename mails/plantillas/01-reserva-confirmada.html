@@ -12,10 +12,13 @@
   <meta name="color-scheme" content="light">
   <meta name="supported-color-schemes" content="light">
   <style>
-    /* ⚠️ El @import va PRIMERO sí o sí: el CSS obliga a que preceda a cualquier
-       otra regla, así que con el :root delante se invalidaba en silencio y
-       Poppins no llegaba a cargar ni siquiera en Apple Mail. */
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+    /* [2026-08-17, Samuel: «fuera poppins, usa una tipografía que sí acepte y se
+       use en gmail»] Se retira el @import de Poppins. Gmail elimina @font-face y
+       @import sin excepción, así que la webfont solo llegaba a Apple Mail e iOS:
+       se estaba diseñando sobre una tipografía que la mayoría no iba a ver nunca.
+       Ahora la pila es 'Helvetica Neue' → Helvetica → Arial, que son
+       métricamente compatibles: la maqueta mide IGUAL en los tres, así que no hay
+       un cliente «bueno» y otro «degradado». */
     /* Bloquea que Apple Mail/Outlook.com inviertan los colores por su cuenta.
        El <meta name="supported-color-schemes"> de arriba cubre lo mismo en los
        clientes viejos, así que aquí basta la propiedad estándar. */
@@ -24,6 +27,9 @@
     @media only screen and (max-width:480px){
       .m-full{width:100% !important;max-width:100% !important}
       .m-pad{padding-left:20px !important;padding-right:20px !important}
+      /* La tarjeta va anidada: sin esto se suman 20+22px de sangrado por lado y
+         en 375px la columna de contenido se queda en 291px. */
+      .m-pad-card{padding-left:14px !important;padding-right:14px !important}
       .m-h1{font-size:22px !important;line-height:1.28 !important}
       .m-hero{height:auto !important}
       .m-label{display:block !important;width:100% !important;padding-bottom:2px !important}
@@ -32,7 +38,7 @@
     }
   </style>
   <!--[if mso]>
-  <style>*{font-family:'Segoe UI',Arial,Helvetica,sans-serif !important}</style>
+  <style>*{font-family:Arial,Helvetica,sans-serif !important}</style>
   <![endif]-->
 </head>
 <body style="margin:0;padding:0;background:#eef1f4;">
@@ -44,36 +50,53 @@
 
   <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" class="m-full" style="width:600px;max-width:600px;background:#ffffff;border-radius:16px;overflow:hidden;">
 
-    <!-- ════ CABECERA ════ -->
-    <tr><td style="background:#0b2545;padding:18px 32px;" class="m-pad">
+    <!-- ════ CABECERA ════
+         Blanca (2026-08-17, pedido de Samuel). Al perder el fondo navy, el logo
+         pasa al de tinta oscura — logo.png, el mismo que usa la web sobre papel. -->
+    <tr><td style="background:#ffffff;padding:20px 32px 14px;" class="m-pad">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
         <td align="left" valign="middle">
-          <img src="https://hispaniola-ten.vercel.app/mails/logo-hispaniola-blanco.png" width="132" height="62" alt="Hispaniola Aquatic Adventures" style="display:block;border:0;width:132px;height:62px;">
+          <img src="https://hispaniola-ten.vercel.app/mails/logo-hispaniola-navy.png" width="125" height="55" alt="Hispaniola Aquatic Adventures" style="display:block;border:0;width:125px;height:55px;">
         </td>
-        <td align="right" valign="middle" style="font-family:'Poppins','Segoe UI',Helvetica,Arial,sans-serif;font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#93a7bb;white-space:nowrap;">
-          Reserva {{booking_id}}
+        <td align="right" valign="middle" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:12px;font-weight:400;color:#5b6b78;white-space:nowrap;">
+          Reserva <span style="font-weight:700;color:#0b2545;">{{booking_id}}</span>
         </td>
       </tr></table>
     </td></tr>
 
-    <!-- ════ BANDA DE FOTO ════ (sin texto encima: si el cliente bloquea imágenes no se pierde nada) -->
-    <tr><td style="padding:0;font-size:0;line-height:0;background:#0e8c9c;">
-      <img src="https://hispaniola-ten.vercel.app/mails/hero-catamaran.jpg" width="600" height="260" alt="" class="m-full m-hero" style="display:block;border:0;width:100%;max-width:600px;height:auto;">
+    <!-- ════ BANDA DE FOTO ════
+         Con aire a los lados y las 4 esquinas redondeadas (2026-08-17, Samuel).
+         ⚠️ Outlook para Windows ignora border-radius en imágenes: ahí sale con
+         esquinas rectas. El aire sí lo respeta, que es lo que más se nota.
+         Sin texto encima a propósito: si el cliente bloquea imágenes, no se
+         pierde ninguna información. -->
+    <tr><td style="padding:0 12px 4px;font-size:0;line-height:0;">
+      <img src="https://hispaniola-ten.vercel.app/mails/hero-catamaran.jpg" width="576" height="250" alt="" class="m-full m-hero" style="display:block;border:0;width:100%;max-width:576px;height:auto;border-radius:16px;">
     </td></tr>
 
     <!-- ════ CONFIRMACIÓN ════ -->
     <tr><td style="padding:34px 32px 26px;" class="m-pad">
-      <p style="margin:0 0 10px;font-family:'Poppins','Segoe UI',Helvetica,Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#0b6f7c;">Reserva confirmada</p>
-      <h1 class="m-h1" style="margin:0 0 12px;font-family:'Poppins','Segoe UI',Helvetica,Arial,sans-serif;font-size:27px;line-height:1.25;font-weight:600;letter-spacing:-.01em;color:#0b2545;">Nos vemos a bordo, {{first_name}}.</h1>
-      <p style="margin:0;font-family:'Poppins','Segoe UI',Helvetica,Arial,sans-serif;font-size:15px;line-height:1.65;color:#42525f;">Tu depósito está cobrado y tu plaza en el <span style="color:#0b2545;font-weight:600;">{{boat_name}}</span> queda guardada para el <span style="color:#0b2545;font-weight:600;">{{tour_date}}</span>. Esto es todo lo que necesitas saber.</p>
+      <p style="margin:0 0 10px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:12px;font-weight:700;letter-spacing:0;color:#0b6f7c;">Reserva confirmada</p>
+      <h1 class="m-h1" style="margin:0 0 12px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:27px;line-height:1.25;font-weight:600;letter-spacing:-.01em;color:#0b2545;">Nos vemos a bordo, {{first_name}}.</h1>
+      <p style="margin:0;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:15px;line-height:1.65;color:#42525f;">Tu depósito está cobrado y tu plaza en el <span style="color:#0b2545;font-weight:600;">{{boat_name}}</span> queda guardada para el <span style="color:#0b2545;font-weight:600;">{{tour_date}}</span>. Esto es todo lo que necesitas saber.</p>
     </td></tr>
 
-    <tr><td style="padding:0 32px;" class="m-pad"><div style="height:1px;background:#dfe6ea;font-size:0;line-height:0;">&nbsp;</div></td></tr>
+    <!-- ════ TARJETA: RESERVA + PAGO ════
+         [2026-08-17, Samuel: «los datos de la reserva que estén dentro de una
+         tarjeta, no que se diferencie con fondo de otro color sino con un borde
+         gris sutil»]
+         UNA sola tarjeta para las dos mitades, no dos: son el mismo documento
+         —qué reservaste y qué debes—, y dos tarjetas pegadas se leerían como
+         dos asuntos sin relación. Por dentro se separan con un filete.
+         ⚠️ Cero rellenos aquí: el saldo destaca por tamaño y peso, no por fondo
+         (antes iba sobre --color-papel-hueso). -->
+    <tr><td style="padding:22px 32px 0;" class="m-pad">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#ffffff;border:1px solid #dfe6ea;border-radius:16px;">
 
-    <!-- ════ BLOQUE DE DATOS ════ -->
-    <tr><td style="padding:26px 32px 4px;" class="m-pad">
-      <p style="margin:0 0 14px;font-family:'Poppins','Segoe UI',Helvetica,Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#5b6b78;">La reserva</p>
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-family:'Poppins','Segoe UI',Helvetica,Arial,sans-serif;">
+        <!-- ── mitad 1: la reserva ── -->
+        <tr><td style="padding:20px 22px 4px;" class="m-pad-card">
+      <p style="margin:0 0 14px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:12px;font-weight:700;letter-spacing:0;color:#5b6b78;">La reserva</p>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
         <tr>
           <td class="m-label" width="118" valign="top" style="width:118px;padding:0 0 11px;font-size:13px;color:#5b6b78;">Experiencia</td>
           <td class="m-value" valign="top" style="padding:0 0 11px;font-size:14px;font-weight:600;color:#0b2545;">{{boat_name}} · {{menu_label}}</td>
@@ -100,14 +123,15 @@
           <td class="m-value" valign="top" style="padding:0 0 4px;font-size:14px;font-weight:600;color:#0b2545;">{{extras_list}}</td>
         </tr>
       </table>
-    </td></tr>
+        </td></tr>
 
-    <tr><td style="padding:22px 32px 0;" class="m-pad"><div style="height:1px;background:#dfe6ea;font-size:0;line-height:0;">&nbsp;</div></td></tr>
+        <!-- filete interno: separa las dos mitades sin partir la tarjeta -->
+        <tr><td style="padding:16px 22px 0;" class="m-pad-card"><div style="height:1px;background:#eef1f4;font-size:0;line-height:0;">&nbsp;</div></td></tr>
 
-    <!-- ════ BLOQUE DE DINERO ════ -->
-    <tr><td style="padding:24px 32px 0;" class="m-pad">
-      <p style="margin:0 0 14px;font-family:'Poppins','Segoe UI',Helvetica,Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#5b6b78;">Pago</p>
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-family:'Poppins','Segoe UI',Helvetica,Arial,sans-serif;">
+        <!-- ── mitad 2: el pago ── -->
+        <tr><td style="padding:18px 22px 20px;" class="m-pad-card">
+      <p style="margin:0 0 14px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:12px;font-weight:700;letter-spacing:0;color:#5b6b78;">Pago</p>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
         <tr>
           <td align="left" style="padding:0 0 9px;font-size:14px;color:#42525f;">Total de la experiencia</td>
           <td align="right" style="padding:0 0 9px;font-size:14px;font-weight:600;color:#0b2545;white-space:nowrap;">{{total}}</td>
@@ -116,18 +140,16 @@
           <td align="left" style="padding:0 0 14px;font-size:14px;color:#42525f;">Depósito pagado hoy</td>
           <td align="right" style="padding:0 0 14px;font-size:14px;font-weight:600;color:#0b2545;white-space:nowrap;">&minus; {{deposit_paid}}</td>
         </tr>
-        <tr><td colspan="2" style="padding:0 0 14px;"><div style="height:1px;background:#dfe6ea;font-size:0;line-height:0;">&nbsp;</div></td></tr>
+        <!-- Filete algo más marcado que los de arriba: aquí se cierra la cuenta
+             y empieza lo que se debe. Es lo único que jerarquiza el saldo ahora
+             que no hay relleno detrás. -->
+        <tr><td colspan="2" style="padding:2px 0 13px;"><div style="height:1px;background:#dfe6ea;font-size:0;line-height:0;">&nbsp;</div></td></tr>
+        <tr>
+          <td align="left" valign="middle" style="font-size:14px;font-weight:600;color:#0b2545;">Saldo el día del tour</td>
+          <td align="right" valign="middle" style="font-size:22px;font-weight:700;letter-spacing:-.015em;color:#0b2545;white-space:nowrap;">{{balance_due}}</td>
+        </tr>
+        <tr><td colspan="2" style="padding-top:7px;font-size:12.5px;line-height:1.55;color:#0c7a5e;">En efectivo a bordo son <span style="font-weight:600;">{{balance_cash}}</span> — te ahorras {{cash_discount}} (5 %).</td></tr>
       </table>
-      <!-- El saldo es la única cifra grande del email -->
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f7f9fa;border-radius:10px;">
-        <tr><td style="padding:16px 18px;">
-          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-family:'Poppins','Segoe UI',Helvetica,Arial,sans-serif;">
-            <tr>
-              <td align="left" valign="middle" style="font-size:14px;font-weight:600;color:#0b2545;">Saldo el día del tour</td>
-              <td align="right" valign="middle" style="font-size:21px;font-weight:700;letter-spacing:-.01em;color:#0b2545;white-space:nowrap;">{{balance_due}}</td>
-            </tr>
-            <tr><td colspan="2" style="padding-top:7px;font-size:12.5px;line-height:1.55;color:#0c7a5e;">En efectivo a bordo son <span style="font-weight:600;">{{balance_cash}}</span> — te ahorras {{cash_discount}} (5 %).</td></tr>
-          </table>
         </td></tr>
       </table>
     </td></tr>
@@ -137,17 +159,17 @@
       <!--[if mso]>
       <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="{{manage_link}}" style="height:48px;v-text-anchor:middle;width:230px;" arcsize="21%" stroke="f" fillcolor="#ef5b44">
         <w:anchorlock/>
-        <center style="color:#ffffff;font-family:'Segoe UI',Arial,sans-serif;font-size:15px;font-weight:bold;">Gestionar mi reserva</center>
+        <center style="color:#ffffff;font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:bold;">Gestionar mi reserva</center>
       </v:roundrect>
       <![endif]-->
       <!--[if !mso]><!-- -->
       <table role="presentation" cellpadding="0" cellspacing="0" border="0" class="m-btn"><tr>
         <td align="center" style="border-radius:10px;background:#ef5b44;">
-          <a href="{{manage_link}}" style="display:inline-block;padding:15px 30px;font-family:'Poppins','Segoe UI',Helvetica,Arial,sans-serif;font-size:15px;font-weight:600;line-height:1;color:#ffffff;text-decoration:none;border-radius:10px;">Gestionar mi reserva</a>
+          <a href="{{manage_link}}" style="display:inline-block;padding:15px 30px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:15px;font-weight:600;line-height:1;color:#ffffff;text-decoration:none;border-radius:10px;">Gestionar mi reserva</a>
         </td>
       </tr></table>
       <!--<![endif]-->
-      <p style="margin:14px 0 0;font-family:'Poppins','Segoe UI',Helvetica,Arial,sans-serif;font-size:13px;line-height:1.5;color:#5b6b78;">
+      <p style="margin:14px 0 0;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:13px;line-height:1.5;color:#5b6b78;">
         <a href="{{calendar_link}}" style="color:#0b6f7c;text-decoration:none;font-weight:600;">Añadir a mi calendario</a>
       </p>
     </td></tr>
@@ -155,7 +177,7 @@
     <!-- ════ AVISO ════ (bloque condicional: mostrar SOLO si el menú quedó aplazado) -->
     <tr><td style="padding:24px 32px 0;" class="m-pad">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid #dfe6ea;border-left:3px solid #0e8c9c;border-radius:0 10px 10px 0;">
-        <tr><td style="padding:14px 18px;font-family:'Poppins','Segoe UI',Helvetica,Arial,sans-serif;font-size:13.5px;line-height:1.6;color:#42525f;">
+        <tr><td style="padding:14px 18px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:13.5px;line-height:1.6;color:#42525f;">
           <span style="font-weight:600;color:#0b2545;">Falta elegir el menú.</span> Te escribimos aparte para que cada persona elija su plato. Tienes hasta el <span style="font-weight:600;color:#0b2545;">{{menu_deadline}}</span>, 48 h antes del tour.
         </td></tr>
       </table>
@@ -165,8 +187,8 @@
 
     <!-- ════ QUÉ SIGUE ════ (mismo timeline que la página /gracias de la web) -->
     <tr><td style="padding:24px 32px 0;" class="m-pad">
-      <p style="margin:0 0 16px;font-family:'Poppins','Segoe UI',Helvetica,Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#5b6b78;">Qué sigue ahora</p>
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-family:'Poppins','Segoe UI',Helvetica,Arial,sans-serif;">
+      <p style="margin:0 0 16px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:12px;font-weight:700;letter-spacing:0;color:#5b6b78;">Qué sigue ahora</p>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
         <tr>
           <td width="38" valign="top" style="width:38px;padding:0 0 16px;">
             <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td width="26" height="26" align="center" valign="middle" style="width:26px;height:26px;background:#eaf3f4;border-radius:999px;font-size:12px;font-weight:700;color:#0b6f7c;line-height:26px;">1</td></tr></table>
@@ -201,9 +223,9 @@
 
     <!-- ════ VENTA CRUZADA ════ (filas con miniatura, no una lista de precios) -->
     <tr><td style="padding:24px 32px 0;" class="m-pad">
-      <p style="margin:0 0 4px;font-family:'Poppins','Segoe UI',Helvetica,Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#5b6b78;">Súmale algo a bordo</p>
-      <p style="margin:0 0 16px;font-family:'Poppins','Segoe UI',Helvetica,Arial,sans-serif;font-size:13px;line-height:1.6;color:#5b6b78;">Se puede añadir hasta 48 h antes, sin volver a pagar el depósito.</p>
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-family:'Poppins','Segoe UI',Helvetica,Arial,sans-serif;">
+      <p style="margin:0 0 4px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:12px;font-weight:700;letter-spacing:0;color:#5b6b78;">Súmale algo a bordo</p>
+      <p style="margin:0 0 16px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:13px;line-height:1.6;color:#5b6b78;">Se puede añadir hasta 48 h antes, sin volver a pagar el depósito.</p>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
         <tr>
           <td width="86" valign="top" style="width:86px;padding:0 0 14px;">
             <img src="https://hispaniola-ten.vercel.app/mails/extra-celebracion.jpg" width="72" height="72" alt="" style="display:block;border:0;width:72px;height:72px;border-radius:6px;">
@@ -252,15 +274,17 @@
           </td>
         </tr>
       </table>
-      <p style="margin:16px 0 0;font-family:'Poppins','Segoe UI',Helvetica,Arial,sans-serif;font-size:13px;">
+      <p style="margin:16px 0 0;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:13px;">
         <a href="{{manage_link}}" style="color:#0b6f7c;text-decoration:none;font-weight:600;">Añadir a mi reserva &rarr;</a>
       </p>
     </td></tr>
 
     <!-- ════ FRANJA DE CONFIANZA ════ -->
     <tr><td style="padding:26px 32px 0;" class="m-pad">
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f7f9fa;border-radius:10px;">
-        <tr><td align="left" style="padding:13px 18px;font-family:'Poppins','Segoe UI',Helvetica,Arial,sans-serif;font-size:12.5px;line-height:1.6;color:#5b6b78;">
+      <!-- Perfilada, no rellena: misma regla que la tarjeta de arriba, para que
+           no quede un solo bloque con fondo suelto en todo el email. -->
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#ffffff;border:1px solid #dfe6ea;border-radius:10px;">
+        <tr><td align="left" style="padding:13px 18px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:12.5px;line-height:1.6;color:#5b6b78;">
           Cancelación gratuita hasta 7 días antes <span style="color:#c3ced4;">&nbsp;·&nbsp;</span> Reserva directa, sin intermediarios
         </td></tr>
       </table>
@@ -269,7 +293,7 @@
 
     <!-- ════ PIE ════ -->
     <tr><td style="background:#0b2545;padding:26px 32px;" class="m-pad">
-      <p style="margin:0 0 12px;font-family:'Poppins','Segoe UI',Helvetica,Arial,sans-serif;font-size:13.5px;line-height:1.6;color:#93a7bb;">
+      <p style="margin:0 0 12px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:13.5px;line-height:1.6;color:#93a7bb;">
         ¿Alguna duda? Habla directo con el equipo del barco:<br>
         <a href="{{whatsapp_link}}" style="color:#a9e5ee;text-decoration:none;font-weight:600;">WhatsApp +1 829 305 2804</a>
       </p>
@@ -277,7 +301,7 @@
       <!-- ⚠️ Este texto va en --color-sobre-navy-suave (#93a7bb), NO en --color-navy-soft:
            el gris de «texto secundario sobre papel» da 2.8:1 sobre el navy y no pasa la AA.
            #93a7bb es el token que existe justamente para texto apagado sobre navy (6.2:1). -->
-      <p style="margin:0;font-family:'Poppins','Segoe UI',Helvetica,Arial,sans-serif;font-size:11.5px;line-height:1.65;color:#93a7bb;">
+      <p style="margin:0;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:11.5px;line-height:1.65;color:#93a7bb;">
         Hispaniola Aquatic Adventures · Punta Cana, República Dominicana<br>
         {{company_address}}
       </p>
