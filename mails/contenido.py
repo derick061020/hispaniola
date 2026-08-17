@@ -320,19 +320,27 @@ def m11(t, c, idioma, pv=False):
 
 
 # PROCEDENCIA DE LAS FOTOS DE CABECERA
-#   Capturas reales del cliente, solo recortadas:
-#     01 hero-catamaran   05 hero-recogida    06 hero-snorkel
-#     07 hero-arrecife    10 hero-gracias     11 hero-grupo
-#   Compuestas con Magnific (2026-08-17, decision de Samuel) A PARTIR de fotos
-#   reales del cliente pasadas como referencia, no desde cero:
-#     02 hero-menu         <- plato-surf-turf + plato-mariscos + cocina-flotante
-#     03 hero-cocina       <- cocina-flotante + plato-surf-turf
-#     08 hero-barco-vacio  <- hero-catamaran-2 + flota-karaya
-#     09 hero-clima        <- hero-catamaran-2
-#     04 hero-cocina-barco <- escalado 2x de cocina-flotante-plataforma
-#   ⚠️ Las compuestas muestran ESCENAS plausibles del producto, no momentos que
-#   ocurrieran. Ninguna promete nada que el cliente no ofrezca: son los mismos
-#   platos, el mismo barco y la misma cocina de sus propias fotos.
+# Las once estan COMPUESTAS con Magnific (seedream-5-pro) a partir de fotos
+# reales del cliente pasadas como referencia. Decision de Samuel, 2026-08-17.
+#
+# Dos reglas que las gobiernan y que hay que mantener si se regenera alguna:
+#   1. NINGUNA muestra la cara de un cliente. Las capturas originales del 10 y
+#      del 11 salian personas identificables que fueron clientes de verdad;
+#      usarlas en un correo automatico es exponerlas sin haberlo pedido.
+#   2. Cada una DICE lo que dice su correo. Una foto bonita que no significa
+#      nada es peor que ninguna: ocupa la mitad del alto y no informa.
+#
+#   01 hero-catamaran    el barco navegando, aereo. «Nos vemos a bordo»
+#   02 hero-menu         cinco platos en la encimera. «Elige»
+#   03 hero-cocina       el cocinero emplatando. «Se cierra la cocina»
+#   04 hero-plancha      langosta y brochetas en la plancha. «Ya sabemos que cocinar»
+#   05 hero-muelle       el barco atracado al amanecer, pasarela bajada. «Casi es hora»
+#   06 hero-timon        el timon. Se ajusto el rumbo — y es el timon del propio logo
+#   07 hero-cabo         cabo amarrado a la cornamusa. «Tu reserva sigue segura»
+#   08 hero-barco-vacio  el barco alejandose al anochecer. Esta vez zarpa sin ti
+#   09 hero-clima        amarrado bajo tormenta. «Hoy no se sale»
+#   10 hero-gracias      dos cocos en la baranda al atardecer. El dia que tuvieron
+#   11 hero-grupo        un asiento vacio con toalla y gafas. «Te guardamos tu plaza»
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -460,7 +468,7 @@ EMAILS = [
     ),
     # ── 4 ────────────────────────────────────────────────────────────────
     dict(
-        id="04-menu-confirmado", mvp=True, foto="hero-cocina-barco.jpg", ref=True,
+        id="04-menu-confirmado", mvp=True, foto="hero-plancha.jpg", ref=True,
         disparador={"es": "El cliente completa la elección de menú",
                     "en": "The guest completes their menu selection"},
         monta=m04,
@@ -485,7 +493,7 @@ EMAILS = [
     ),
     # ── 5 ────────────────────────────────────────────────────────────────
     dict(
-        id="05-recordatorio-recogida", mvp=True, foto="hero-recogida.jpg", ref=True,
+        id="05-recordatorio-recogida", mvp=True, foto="hero-muelle.jpg", ref=True,
         disparador={"es": "~48 h antes del tour", "en": "~48 h before the tour"},
         monta=m05,
         es=dict(
@@ -519,7 +527,7 @@ EMAILS = [
     ),
     # ── 6 ────────────────────────────────────────────────────────────────
     dict(
-        id="06-modificacion-reserva", mvp=False, foto="hero-snorkel.jpg", ref=True,
+        id="06-modificacion-reserva", mvp=False, foto="hero-timon.jpg", ref=True,
         disparador={"es": "Cambio en la reserva (fecha, personas, menú, extras)",
                     "en": "A change in the booking (date, guests, menu, extras)"},
         monta=m06,
@@ -546,7 +554,7 @@ EMAILS = [
     ),
     # ── 7 ────────────────────────────────────────────────────────────────
     dict(
-        id="07-cambio-datos", mvp=False, foto="hero-arrecife.jpg", ref=True,
+        id="07-cambio-datos", mvp=False, foto="hero-cabo.jpg", ref=True,
         disparador={"es": "Cambio de email, teléfono o nombre. Enviar TAMBIÉN a la dirección anterior",
                     "en": "Email, phone or name changed. Send it to the OLD address as well"},
         monta=m07,
