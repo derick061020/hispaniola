@@ -170,10 +170,15 @@
     <!-- ════ CABECERA ════
          Blanca (2026-08-17, pedido de Samuel). Al perder el fondo navy, el logo
          pasa al de tinta oscura — logo.png, el mismo que usa la web sobre papel. -->
-    <tr><td style="background:#ffffff;padding:20px 32px 14px;" class="m-pad">
+    <tr><td style="background:#ffffff;padding:18px 32px 12px;" class="m-pad">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
         <td align="left" valign="middle">
-          <img src="https://hispaniola-ten.vercel.app/mails/logo-hispaniola-navy.png" width="125" height="55" alt="Hispaniola Aquatic Adventures" style="display:block;border:0;width:125px;height:55px;">
+          <!-- [2026-08-17, Samuel: «un poco más pequeño, para que el header sea
+               menos alto»] 125→100px, y el aire de la cabecera de 20/14 a 18/12.
+               El PNG NO se toca: se sigue sirviendo a 250px, así que a 100
+               mostrados van 2,5x y no hay pérdida en retina. Por eso este cambio
+               no necesita despliegue. -->
+          <img src="https://hispaniola-ten.vercel.app/mails/logo-hispaniola-navy.png" width="100" height="44" alt="Hispaniola Aquatic Adventures" style="display:block;border:0;width:100px;height:44px;">
         </td>
         <td align="right" valign="middle" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:12px;font-weight:400;color:#5b6b78;white-space:nowrap;">
           Reserva <span style="font-weight:700;color:#0b2545;">{{booking_id}}</span>
