@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hemos actualizado tu reserva {{booking_id}}</title>
+<!--[if mso]>
+  <xml><o:OfficeDocumentSettings><o:AllowPNG/><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml>
+  <![endif]-->
+  <meta name="color-scheme" content="light">
+  <meta name="supported-color-schemes" content="light">
+  <style>
+    /* Bloquea que Apple Mail/Outlook.com inviertan los colores por su cuenta. */
+    :root{color-scheme:light}
+    /* Lo unico que respetan los clientes modernos y los viejos ignoran sin romper. */
+    @media only screen and (max-width:480px){
+      .m-full{width:100%% !important;max-width:100%% !important}
+      .m-pad{padding-left:20px !important;padding-right:20px !important}
+      /* La tarjeta va anidada: sin esto se suman 20+22px por lado y en 375px la
+         columna de contenido se queda en 291px. */
+      .m-pad-card{padding-left:14px !important;padding-right:14px !important}
+      .m-h1{font-size:22px !important;line-height:1.28 !important}
+      .m-hero{height:auto !important}
+      .m-label{display:block !important;width:100%% !important;padding-bottom:2px !important}
+      .m-value{display:block !important;width:100%% !important}
+    }
+  </style>
+  <!--[if mso]>
+  <style>*{font-family:Arial,Helvetica,sans-serif !important}</style>
+  <![endif]-->
+</head>
+<body style="margin:0;padding:0;background:#eef1f4;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#eef1f4;margin:0;padding:0;">
+<tr><td align="center" style="padding:28px 12px 40px;">
+
+  <!-- Preheader: se ve en la bandeja, nunca dentro del email -->
+  <div style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;color:#eef1f4;">Aquí tienes el antes y el después.&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;</div>
+
+  <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" class="m-full" style="width:600px;max-width:600px;background:#ffffff;border-radius:16px;overflow:hidden;">
+    <tr><td style="background:#ffffff;padding:18px 32px 12px;" class="m-pad"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td align="left" valign="middle"><img src="https://hispaniola-ten.vercel.app/mails/logo-hispaniola-navy.png" width="100" height="44" alt="Hispaniola Aquatic Adventures" style="display:block;border:0;width:100px;height:44px;"></td><td align="right" valign="middle" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:12px;font-weight:400;color:#5b6b78;white-space:nowrap;">Reserva <span style="font-weight:700;color:#0b2545;">{{booking_id}}</span></td></tr></table></td></tr>
+    <tr><td style="padding:34px 32px 18px;" class="m-pad"><p style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;margin:0 0 10px;font-size:12px;font-weight:700;letter-spacing:0;color:#0b6f7c;">Reserva actualizada</p><h1 class="m-h1" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;margin:0 0 12px;font-size:27px;line-height:1.25;font-weight:600;letter-spacing:-.01em;color:#0b2545;">Hecho, {{first_name}}.</h1><p style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;margin:0;font-size:15px;line-height:1.65;color:#42525f;">Hemos aplicado el cambio que pediste. Esto es lo que ha quedado.</p></td></tr>
+    <tr><td style="padding:10px 32px 0;" class="m-pad"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#ffffff;border:1px solid #dfe6ea;border-radius:16px;"><tr><td style="padding:20px 22px 4px;" class="m-pad-card"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;"><tr><td class="m-label" width="118" valign="top" style="width:118px;padding:0 0 4px;font-size:13px;color:#5b6b78;">{{changed_field}}</td><td class="m-value" valign="top" style="padding:0 0 4px;font-size:14px;font-weight:600;color:#0b2545;"><span style="color:#5b6b78;text-decoration:line-through;font-weight:400;">{{old_value}}</span>&nbsp;&rarr;&nbsp;{{new_value}}</td></tr></table></td></tr><tr><td style="padding:16px 22px 0;" class="m-pad-card"><div style="height:1px;background:#eef1f4;font-size:0;line-height:0;">&nbsp;</div></td></tr><tr><td style="padding:18px 22px 20px;" class="m-pad-card"><p style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;margin:0 0 14px;font-size:12px;font-weight:700;letter-spacing:0;color:#5b6b78;">Pago</p><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;"><tr><td align="left" style="padding:0 0 9px;font-size:14px;color:#42525f;">Nuevo total</td><td align="right" style="padding:0 0 9px;font-size:14px;font-weight:600;color:#0b2545;white-space:nowrap;">{{total}}</td></tr><tr><td colspan="2" style="padding:5px 0 13px;"><div style="height:1px;background:#dfe6ea;font-size:0;line-height:0;">&nbsp;</div></td></tr><tr><td align="left" valign="middle" style="font-size:14px;font-weight:600;color:#0b2545;">Saldo el día del tour</td><td align="right" valign="middle" style="font-size:22px;font-weight:700;letter-spacing:-.015em;color:#0b2545;white-space:nowrap;">{{balance_due}}</td></tr></table></td></tr></table></td></tr>
+    <tr><td style="padding:22px 32px 0;" class="m-pad"><!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="{{manage_link}}" style="height:48px;v-text-anchor:middle;width:536px;" arcsize="21%" strokecolor="#cfe3e6" strokeweight="1px" fillcolor="#eaf3f4"><w:anchorlock/><center style="color:#0b6f7c;font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:bold;">Ver mi reserva</center></v:roundrect><![endif]--><!--[if !mso]><!-- --><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td align="center" style="border-radius:10px;background:#eaf3f4;border:1px solid #cfe3e6;"><a href="{{manage_link}}" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;display:block;padding:15px 20px;font-size:15px;font-weight:600;line-height:1;color:#0b6f7c;text-decoration:none;border-radius:10px;">Ver mi reserva</a></td></tr></table><!--<![endif]--></td></tr>
+    <tr><td style="padding:22px 32px 0;" class="m-pad"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid #dfe6ea;border-left:3px solid #ef5b44;border-radius:0 10px 10px 0;"><tr><td style="padding:16px 18px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;"><p style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;margin:0 0 5px;font-size:14px;font-weight:600;line-height:1.4;color:#0b2545;">¿No pediste tú este cambio?</p><p style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;margin:0 0 11px;font-size:13.5px;line-height:1.6;color:#42525f;">Escríbenos de inmediato y lo revertimos antes de que afecte a tu salida.</p><p style="margin:0 0 9px;"><a href="{{whatsapp_link}}" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:13.5px;font-weight:600;color:#0b6f7c;text-decoration:none;">Avisar por WhatsApp &rarr;</a></p></td></tr></table></td></tr>
+    <tr><td style="padding:26px 32px 0;" class="m-pad"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#ffffff;border:1px solid #dfe6ea;border-radius:10px;"><tr><td align="left" style="padding:13px 18px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:12.5px;line-height:1.6;color:#5b6b78;">Cancelación gratuita hasta 7 días antes<span style="color:#93a7bb;">&nbsp;&middot;&nbsp;</span>Reserva directa, sin intermediarios</td></tr></table></td></tr>
+    <tr><td style="height:28px;font-size:0;line-height:0;">&nbsp;</td></tr>
+    <tr><td style="background:#0b2545;padding:26px 32px;" class="m-pad"><p style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;margin:0 0 12px;font-size:13.5px;line-height:1.6;color:#93a7bb;">¿Alguna duda? Habla directo con el equipo del barco:<br><a href="{{whatsapp_link}}" style="color:#a9e5ee;text-decoration:none;font-weight:600;">WhatsApp +1 829 305 2804</a></p><div style="height:1px;background:rgba(255,255,255,.12);font-size:0;line-height:0;margin:0 0 12px;">&nbsp;</div><p style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;margin:0;font-size:11.5px;line-height:1.65;color:#93a7bb;">Hispaniola Aquatic Adventures · Punta Cana, República Dominicana<br>{{company_address}}</p></td></tr>
+  </table>
+</td></tr>
+</table>
+</body>
+</html>
