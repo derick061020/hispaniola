@@ -444,15 +444,21 @@
       las imágenes al proyecto; ya publicado, se sirven del dominio real.
    ───────────────────────────────────────────────────────────────────── */
 (function () {
+  /* ⚠️ ÚNICA definición de los datos de ejemplo de todo el proyecto.
+     `mails/extraer.py` la LEE de aquí con json.loads para generar el archivo
+     .preview.html, así que tiene que seguir siendo JSON válido: comillas
+     dobles, sin comas colgando y sin comentarios dentro del objeto.
+     Si se duplicara en el script, los dos se desincronizarían a la primera. */
   var EJEMPLO = {
-    first_name: 'Marta', booking_id: 'HAA-2417', boat_name: 'Karaya',
-    menu_label: 'Menú Premium', tour_date: 'jueves 12 de marzo de 2026',
-    pickup_time: '08:15', return_time: '16:30', pax: '6 adultos',
-    extras_list: 'Álbum completo en alta', total: 'US$ 704.00',
-    deposit_paid: 'US$ 176.00', balance_due: 'US$ 528.00',
-    balance_cash: 'US$ 501.60', cash_discount: 'US$ 26.40',
-    menu_deadline: 'martes 10 de marzo, 08:15',
-    company_address: 'Calle El Cortecito 12, Bávaro 23000'
+    "first_name": "Marta", "booking_id": "HAA-2417", "boat_name": "Karaya",
+    "menu_label": "Menú Premium", "tour_date": "jueves 12 de marzo de 2026",
+    "pickup_time": "08:15", "return_time": "16:30", "pax": "6 adultos",
+    "extras_list": "Álbum completo en alta", "total": "US$ 704.00",
+    "deposit_paid": "US$ 176.00", "balance_due": "US$ 528.00",
+    "balance_cash": "US$ 501.60", "cash_discount": "US$ 26.40",
+    "menu_deadline": "martes 10 de marzo, 08:15",
+    "company_address": "Calle El Cortecito 12, Bávaro 23000",
+    "manage_link": "#", "calendar_link": "#", "whatsapp_link": "#"
   };
 
   if (location.hostname.indexOf('hispaniolaaquaticadventures') === -1) {
