@@ -361,7 +361,7 @@ def filas_dinero(lineas, destacado=None, nota=None):
 TONOS = {"aqua": T["aqua"], "ambar": T["ambar_borde"], "coral": T["coral"], "neutro": T["linea_fuerte"]}
 
 
-def aviso(titulo, cuerpo, enlace=None, pie_texto=None, tono="aqua", pad="22px 32px 0"):
+def aviso(titulo, cuerpo, enlace=None, pie_texto=None, tono="aqua", pad="22px 32px 0", imagen=None):
     """Bloque perfilado con filete de acento a la izquierda. Sin relleno.
 
     Si lleva `enlace`, el aviso trae su propia salida — que es la diferencia
@@ -394,6 +394,19 @@ def aviso(titulo, cuerpo, enlace=None, pie_texto=None, tono="aqua", pad="22px 32
     # la caja, y dibujarle ademas un recuadro dentro de otro recuadro es repetir
     # el mismo trabajo dos veces.
     if tono == "ninguno":
+        if imagen:
+            # Cuadrado a la izquierda y texto a la derecha. En movil la columna
+            # de la imagen se apila (.m-stack): a 375px dejaria el texto en
+            # ~187px y el aviso crecia hasta tres veces su alto.
+            return seccion(
+                '<table role="presentation" width="100%%" cellpadding="0" cellspacing="0" border="0"><tr>'
+                '<td class="m-stack" width="120" valign="top" style="width:120px;padding:0 16px 0 0;">'
+                '<img src="%s/%s" width="104" height="104" alt="" style="display:block;border:0;'
+                'width:104px;height:104px;border-radius:10px;"></td>'
+                '<td class="m-stack" valign="top" style="%s">%s</td>'
+                "</tr></table>" % (HOST, imagen, _f(), html),
+                pad=pad,
+            )
         return seccion('<div style="%s">%s</div>' % (_f(), html), pad=pad)
     return seccion(
         '<table role="presentation" width="100%%" cellpadding="0" cellspacing="0" border="0" '
@@ -635,6 +648,7 @@ CABEZA = """<!--[if mso]>
       .m-hero{height:auto !important}
       .m-label{display:block !important;width:100%% !important;padding-bottom:2px !important}
       .m-value{display:block !important;width:100%% !important}
+      .m-stack{display:block !important;width:100%% !important;padding:0 0 12px 0 !important}
     }
   </style>
   <!--[if mso]>
