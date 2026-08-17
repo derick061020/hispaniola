@@ -221,10 +221,17 @@
       </table>
     </td></tr>
 
-    <tr><td style="padding:26px 32px 0;" class="m-pad"><div style="height:1px;background:#dfe6ea;font-size:0;line-height:0;">&nbsp;</div></td></tr>
-
-    <!-- ════ QUÉ SIGUE ════ (mismo timeline que la página /gracias de la web) -->
-    <tr><td style="padding:24px 32px 0;" class="m-pad">
+    <!-- ════ QUÉ SIGUE ════ (mismo timeline que la página /gracias de la web)
+         [2026-08-17, Samuel: «quita la línea divisoria de luego, es
+         innecesaria»] Aquí había un filete que ya no está: el aviso del menú
+         cierra con su propio borde, así que la línea caía a 26px de otra línea
+         y se leía como un doble filete mal calculado. Un objeto perfilado no
+         necesita que además lo subrayen.
+         El filete de más abajo (antes de «Súmale algo a bordo») SÍ se queda:
+         ese separa dos bloques de texto suelto, que no traen borde propio.
+         Los 26px del filete retirado se suman aquí para que las dos secciones
+         sigan separándose — ahora con aire en vez de con una raya. -->
+    <tr><td style="padding:34px 32px 0;" class="m-pad">
       <p style="margin:0 0 16px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:12px;font-weight:700;letter-spacing:0;color:#5b6b78;">Qué sigue ahora</p>
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
         <tr>
