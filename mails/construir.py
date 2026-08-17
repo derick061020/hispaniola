@@ -50,10 +50,11 @@ def construye(email, idioma):
     if email.get("foto"):
         filas.append(p.foto(email["foto"]))
     filas += email["monta"](t, c, idioma)
-    filas.append(p.aire(28))
+    # `pie` se trae su propio aire por arriba, distinto en cada variante.
     filas.append(
         p.pie(c["ayuda"], C.TELEFONO, c["direccion"],
-              baja="{{unsubscribe_block}}" if email.get("baja") else None)
+              baja="{{unsubscribe_block}}" if email.get("baja") else None,
+              variante=email.get("pie", "navy"))
     )
     return p.documento(idioma, t["asunto"], t["preheader"], filas)
 

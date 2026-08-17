@@ -288,7 +288,10 @@ def m11(t, c, idioma):
 EMAILS = [
     # ── 1 ────────────────────────────────────────────────────────────────
     dict(
-        id="01-reserva-confirmada", mvp=True, foto="hero-catamaran.jpg", ref=True,
+        # ⚠️ pie="claro" SOLO aquí, a la espera de que Samuel lo apruebe. Cuando
+        # lo dé por bueno se quita esta línea y se cambia el valor por defecto
+        # de piezas.pie(), y los 11 correos × 2 idiomas cambian de una vez.
+        id="01-reserva-confirmada", mvp=True, foto="hero-catamaran.jpg", ref=True, pie="claro",
         disparador={"es": "Pago del depósito completado", "en": "Deposit payment completed"},
         monta=m01,
         es=dict(

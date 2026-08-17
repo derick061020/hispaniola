@@ -26,6 +26,11 @@ T = {
     "papel": "#ffffff",
     "hueso": "#f7f9fa",
     "fondo": "#eef1f4",
+    # Cuarto escalon de la familia fria (papel -> hueso -> fondo-ficha -> este).
+    # Se usa como superficie del pie claro: un escalon POR DEBAJO del fondo de
+    # la pagina, para que el panel se lea como panel y no como un agujero en la
+    # tarjeta blanca.
+    "alerta_ticket": "#e6ebf0",
     "navy": "#0b2545",
     "navy_sub": "#42525f",
     "navy_soft": "#5b6b78",
@@ -118,14 +123,61 @@ def foto(archivo):
     )
 
 
-def pie(texto_ayuda, telefono, direccion, baja=None):
+def pie(texto_ayuda, telefono, direccion, baja=None, variante="navy"):
+    """El pie del correo. Dos variantes mientras se decide cuál se queda.
+
+    `claro` (2026-08-17, pedido de Samuel: «que no toque los extremos, que tenga
+    un ligero aire alrededor y sus 4 esquinas, y en vez de fondo azul potente un
+    ligero gris azulado, más sutil»). De momento SOLO lo usa el email 1: cuando
+    esté aprobado se cambia el `variante` por defecto de esta función y los once
+    correos y los dos idiomas se actualizan de una vez.
+
+    Los 12px de aire lateral son los mismos de la banda de foto, no un número
+    nuevo: en este email las piezas de superficie van a 12px y el texto a 32px.
+
+    ⚠️ Al pasar a fondo claro TODA la tinta del pie cambia — el gris de «texto
+    sobre navy» (#93a7bb) sobre un gris claro es ilegible. El par que se usa
+    aquí ya está medido en tokens.css: --color-navy-soft sobre
+    --color-alerta-ticket da 4,56:1, que pasa la AA con poco margen. Si algún
+    día se oscurece este fondo, hay que oscurecer también ese texto.
+    """
+    if variante == "claro":
+        extra = ""
+        if baja:
+            extra = '<p style="%s">%s</p>' % (
+                _f("margin:10px 0 0;font-size:11.5px;line-height:1.65;color:%s;" % T["navy_soft"]),
+                baja,
+            )
+        return (
+            '<tr><td style="padding:30px 12px 12px;">'
+            '<table role="presentation" width="100%%" cellpadding="0" cellspacing="0" border="0" '
+            'style="background:%s;border-radius:16px;">'
+            '<tr><td style="padding:22px 24px;" class="m-pad-card">'
+            '<p style="%s">%s<br><a href="{{whatsapp_link}}" style="color:%s;text-decoration:none;'
+            'font-weight:600;">WhatsApp %s</a></p>'
+            '<div style="height:1px;background:%s;font-size:0;line-height:0;margin:0 0 12px;">&nbsp;</div>'
+            '<p style="%s">%s</p>%s'
+            "</td></tr></table></td></tr>"
+            % (
+                T["alerta_ticket"],
+                _f("margin:0 0 12px;font-size:13.5px;line-height:1.6;color:%s;" % T["navy_sub"]),
+                texto_ayuda,
+                T["aqua_dark"],
+                telefono,
+                T["linea_fuerte"],
+                _f("margin:0;font-size:11.5px;line-height:1.65;color:%s;" % T["navy_soft"]),
+                direccion,
+                extra,
+            )
+        )
+
     extra = ""
     if baja:
         extra = (
             '<p style="%s">%s</p>'
             % (_f("margin:10px 0 0;font-size:11.5px;line-height:1.65;color:%s;" % T["sobre_navy"]), baja)
         )
-    return (
+    return aire(28) + (
         '<tr><td style="background:%s;padding:26px 32px;" class="m-pad">'
         '<p style="%s">%s<br><a href="{{whatsapp_link}}" style="color:%s;text-decoration:none;'
         'font-weight:600;">WhatsApp %s</a></p>'
