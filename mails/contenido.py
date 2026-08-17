@@ -319,6 +319,22 @@ def m11(t, c, idioma, pv=False):
     ]
 
 
+# PROCEDENCIA DE LAS FOTOS DE CABECERA
+#   Capturas reales del cliente, solo recortadas:
+#     01 hero-catamaran   05 hero-recogida    06 hero-snorkel
+#     07 hero-arrecife    10 hero-gracias     11 hero-grupo
+#   Compuestas con Magnific (2026-08-17, decision de Samuel) A PARTIR de fotos
+#   reales del cliente pasadas como referencia, no desde cero:
+#     02 hero-menu         <- plato-surf-turf + plato-mariscos + cocina-flotante
+#     03 hero-cocina       <- cocina-flotante + plato-surf-turf
+#     08 hero-barco-vacio  <- hero-catamaran-2 + flota-karaya
+#     09 hero-clima        <- hero-catamaran-2
+#     04 hero-cocina-barco <- escalado 2x de cocina-flotante-plataforma
+#   ⚠️ Las compuestas muestran ESCENAS plausibles del producto, no momentos que
+#   ocurrieran. Ninguna promete nada que el cliente no ofrezca: son los mismos
+#   platos, el mismo barco y la misma cocina de sus propias fotos.
+
+
 # ═══════════════════════════════════════════════════════════════════════════
 #  LOS 11 CORREOS
 # ═══════════════════════════════════════════════════════════════════════════
@@ -378,7 +394,7 @@ EMAILS = [
     ),
     # ── 2 ────────────────────────────────────────────────────────────────
     dict(
-        id="02-elige-menu", mvp=True, foto="hero-plato.jpg", ref=True,
+        id="02-elige-menu", mvp=True, foto="hero-menu.jpg", ref=True,
         disparador={"es": "Tras la confirmación, si el menú quedó aplazado",
                     "en": "After confirmation, if the menu was deferred"},
         monta=m02,
@@ -559,7 +575,7 @@ EMAILS = [
     ),
     # ── 8 ────────────────────────────────────────────────────────────────
     dict(
-        id="08-cancelacion", mvp=True, foto="hero-oceano.jpg", ref=True,
+        id="08-cancelacion", mvp=True, foto="hero-barco-vacio.jpg", ref=True,
         disparador={"es": "El cliente cancela", "en": "The guest cancels"},
         monta=m08,
         es=dict(
@@ -583,7 +599,7 @@ EMAILS = [
     ),
     # ── 9 ────────────────────────────────────────────────────────────────
     dict(
-        id="09-reprogramacion-clima", mvp=False, foto="hero-mar.jpg", ref=True,
+        id="09-reprogramacion-clima", mvp=False, foto="hero-clima.jpg", ref=True,
         disparador={"es": "La empresa mueve o cancela el tour (clima o fuerza mayor)",
                     "en": "The company moves or cancels the tour (weather or force majeure)"},
         monta=m09,
