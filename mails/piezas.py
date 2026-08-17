@@ -110,7 +110,20 @@ HUECO_BLOQUES = 12
 
 def cabecera(etiqueta_ref=None, ref=None):
     """Blanca, con el logo de tinta oscura. La referencia de reserva es
-    opcional: los correos de marketing (11) no tienen ninguna que ensenar."""
+    opcional: los correos de marketing (10 y 11) no tienen ninguna que ensenar.
+
+    [2026-08-17, Samuel] Sin referencia, el logo se CENTRA. A la izquierda solo
+    tiene sentido cuando equilibra algo al otro lado; solo, dejaba media cabecera
+    vacia y parecia que faltaba un dato.
+    """
+    if not ref:
+        return (
+            '<tr><td style="background:%s;padding:18px 32px 12px;" class="m-pad" align="center">'
+            '<img src="%s/logo-hispaniola-navy.png" width="100" height="44" '
+            'alt="Hispaniola Aquatic Adventures" '
+            'style="display:block;margin:0 auto;border:0;width:100px;height:44px;">'
+            "</td></tr>" % (T["papel"], HOST)
+        )
     derecha = ""
     if ref:
         derecha = (

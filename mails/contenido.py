@@ -218,7 +218,10 @@ def m04(t, c, idioma, pv=False):
             p.filas_datos([(t["l_fecha"], "{{tour_date}}"), (t["l_recogida"], "{{pickup_time}}")]),
         ),
         p.boton(c["ver_reserva"], "{{manage_link}}"),
-        p.filete(pad="26px 32px 0"),
+        # [2026-08-17, Samuel] Dos cajas: lo que VAS A COMER y su reserva por un
+        # lado, y la venta cruzada por otro. Son dos asuntos distintos y el
+        # filete que los separaba ya no hace falta: lo dice el hueco entre cajas.
+        p.CORTE,
         p.filas_producto(t["x_titulo"], t["x_sub"], EXTRAS[idioma][:2], t["x_enlace"], "{{manage_link}}"),
     ]
 
@@ -237,7 +240,10 @@ def m05(t, c, idioma, pv=False):
             ),
         ),
         p.boton(c["ver_reserva"], "{{manage_link}}"),
-        p.filete(pad="26px 32px 0"),
+        # [2026-08-17, Samuel] Dos cajas: la logística del día (dónde, cuándo,
+        # cuánto) y la lista de lo que hay que meter en la mochila. La segunda se
+        # lee de pie con el móvil en la mano, así que gana estando aparte.
+        p.CORTE,
         # `lista` y no `timeline`: qué llevar no es una secuencia, y numerarlo
         # diría que el protector solar es «el paso 1 de 4».
         p.lista(t["q_titulo"], [
