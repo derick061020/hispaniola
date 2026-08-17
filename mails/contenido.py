@@ -139,9 +139,10 @@ def m01(t, c, idioma):
         # espera de que Samuel lo apruebe.
         p.CORTE,
         # Condicional: solo si el menu quedo aplazado.
+        # 14px arriba y a la izquierda; el mismo 14 abajo lo pone el corte.
         p.aviso(t["av_titulo"], t["av_cuerpo"], (t["av_enlace"], "{{menu_link}}"), t["av_pie"],
-                tono="ninguno", imagen="menu-plato.jpg"),
-        p.CORTE,
+                tono="ninguno", imagen="menu-plato.jpg", pad="14px 28px 0 14px"),
+        p.corte(14),
         p.timeline(t["t_titulo"], [
             (t["t1_cuando"], t["t1_que"]), (t["t2_cuando"], t["t2_que"]), (t["t3_cuando"], t["t3_que"]),
         ]),

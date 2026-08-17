@@ -18,6 +18,8 @@ Reglas que NO se rompen aqui:
     romper nada.
 """
 
+import re
+
 HOST = "https://hispaniola-ten.vercel.app/mails"
 
 # Espejo de app/src/styles/tokens.css. Mismos nombres para que el traspaso a
@@ -86,7 +88,18 @@ def aire(alto=28):
 # más visualmente los elementos y la importancia de las cosas»]
 # Marcador que parte el correo en cajas blancas independientes. Un correo sin
 # CORTE sigue saliendo como una sola caja, así que los otros diez no se enteran.
-CORTE = "\x00CORTE\x00"
+CORTE = "\x00CORTE:22\x00"
+
+
+def corte(aire_final=22):
+    """Corte con aire de cierre a medida.
+
+    El aire va al FINAL de la caja que se acaba de cerrar. Hace falta poder
+    ajustarlo cuando el contenido de una caja pide un sangrado propio: el aviso
+    del menu lleva 14px arriba y a la izquierda, asi que su caja tiene que
+    cerrar con esos mismos 14 y no con los 22 de las demas.
+    """
+    return "\x00CORTE:%d\x00" % aire_final
 
 # Hueco entre cajas. Los mismos 12px del aire lateral de la foto y del pie: en
 # este sistema las superficies respiran a 12 y el texto sangra a 32.
@@ -395,14 +408,20 @@ def aviso(titulo, cuerpo, enlace=None, pie_texto=None, tono="aqua", pad="22px 32
     # el mismo trabajo dos veces.
     if tono == "ninguno":
         if imagen:
-            # Cuadrado a la izquierda y texto a la derecha. En movil la columna
-            # de la imagen se apila (.m-stack): a 375px dejaria el texto en
-            # ~187px y el aviso crecia hasta tres veces su alto.
+            # [2026-08-17, Samuel: «menos aire alrededor, más cerca de los
+            # extremos, que abarque lo máximo en altura manteniendo el cuadrado,
+            # y el mismo padding arriba, abajo y a la izquierda»]
+            # 128px es la altura del bloque de texto de al lado, asi que el
+            # cuadrado llena la caja de arriba abajo sin estirar la maqueta. Los
+            # 14px de sangrado arriba/izquierda los pone `pad`, y los de abajo
+            # el corte que cierra esta caja: los tres tienen que moverse juntos.
+            # En movil la columna se apila (.m-stack): a 375px dejaba el texto
+            # en ~187px y el aviso crecia hasta tres veces su alto.
             return seccion(
                 '<table role="presentation" width="100%%" cellpadding="0" cellspacing="0" border="0"><tr>'
-                '<td class="m-stack" width="120" valign="top" style="width:120px;padding:0 16px 0 0;">'
-                '<img src="%s/%s" width="104" height="104" alt="" style="display:block;border:0;'
-                'width:104px;height:104px;border-radius:10px;"></td>'
+                '<td class="m-stack" width="144" valign="top" style="width:144px;padding:0 16px 0 0;">'
+                '<img src="%s/%s" width="128" height="128" alt="" style="display:block;border:0;'
+                'width:128px;height:128px;border-radius:10px;"></td>'
                 '<td class="m-stack" valign="top" style="%s">%s</td>'
                 "</tr></table>" % (HOST, imagen, _f(), html),
                 pad=pad,
@@ -695,10 +714,12 @@ HUECO = ('  <table role="presentation" width="600" cellpadding="0" cellspacing="
 def documento(idioma, asunto, preheader, filas):
     """Monta el documento. Si `filas` trae marcadores CORTE, el correo sale
     partido en varias cajas blancas con hueco entre ellas; si no, en una sola."""
-    bloques, actual = [], []
+    bloques, actual, cierres = [], [], []
     for f in filas:
-        if f == CORTE:
+        m = re.match(r"^\x00CORTE:(\d+)\x00$", f)
+        if m:
             bloques.append(actual)
+            cierres.append(int(m.group(1)))
             actual = []
         else:
             actual.append(f)
@@ -712,8 +733,8 @@ def documento(idioma, asunto, preheader, filas):
         partes += ["    " + f for f in bloque]
         # Cada caja se cierra con su propio aire: antes ese hueco lo daba el
         # bloque siguiente, y al partir el correo se quedaria pegado al borde.
-        if i < len(bloques) - 1:
-            partes.append("    " + aire(22))
+        if i < len(bloques) - 1 and cierres[i]:
+            partes.append("    " + aire(cierres[i]))
         partes.append(CAJA_FIN)
 
     return DOC.format(
