@@ -8,6 +8,7 @@ import { PasoMenu } from '@/components/reservar/paso-menu'
 import { PasoRecogida } from '@/components/reservar/paso-recogida'
 import { BannerPremium } from '@/components/reservar/banner-premium'
 import { PasoContacto } from '@/components/reservar/paso-contacto'
+import { idiomaDelNavegador } from '@/lib/idioma'
 import { PasoPago, type DatosPago } from '@/components/reservar/paso-pago'
 import { ResumenReserva } from '@/components/reservar/resumen-reserva'
 import { etiquetaOcasion, type DatosCelebracion, type DatosContacto, type DatosRecogida, type Paquete } from '@/components/reservar/tipos'
@@ -176,6 +177,10 @@ function FlujoReserva({
     apellidos: '',
     email: '',
     telefono: '',
+    // Se propone el idioma del navegador; el cliente lo cambia en el paso de
+    // contacto si prefiere otro. Es lo que decide en que lengua le llegan sus
+    // correos, no el idioma de esta pantalla.
+    idioma: idiomaDelNavegador(),
   })
   const [celebracion, setCelebracion] = useState<DatosCelebracion>({ ocasion: null, nota: '' })
 
@@ -366,6 +371,7 @@ function FlujoReserva({
       last_name: contacto.apellidos.trim(),
       email: contacto.email.trim(),
       phone: contacto.telefono.trim(),
+      language: contacto.idioma,
     },
     pickup: { hotel: recogida.hotel.trim(), notes: recogida.notas.trim() },
     dishes: hayPasoMenu ? platos : [],
@@ -418,6 +424,7 @@ function FlujoReserva({
         apellidos: contacto.apellidos.trim(),
         email: contacto.email.trim(),
         telefono: contacto.telefono.trim(),
+        idioma: contacto.idioma,
       },
       // Solo viaja si hay algo que celebrar: `ninguna` es una respuesta válida
       // en pantalla, pero guardarla no aporta nada a la tripulación.
@@ -550,6 +557,7 @@ function FlujoReserva({
                         last_name: contacto.apellidos.trim(),
                         email: contacto.email.trim(),
                         phone: contacto.telefono.trim(),
+                        language: contacto.idioma,
                       },
                       ...(celebracion.ocasion && celebracion.ocasion !== 'ninguna'
                         ? { occasion: celebracion.ocasion, occasion_note: celebracion.nota.trim() }

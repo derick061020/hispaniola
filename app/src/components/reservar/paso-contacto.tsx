@@ -1,6 +1,7 @@
 import { Sparkles } from 'lucide-react'
 import { Campo } from '@/components/ui/campo'
 import { OCASIONES, type DatosCelebracion, type DatosContacto } from '@/components/reservar/tipos'
+import { IDIOMAS, type IdiomaCliente } from '@/lib/idioma'
 
 // Paso «Contacto» del funnel. Como Viator (2026-07-17, Samuel: "Viator dice para
 // qué se usará la información, hagámoslo también"): un subtítulo general + una
@@ -79,6 +80,32 @@ export function PasoContacto({
           />
           <p className="mt-1.5 text-xs text-navy-soft">
             Only to let you know about last-minute changes, for example if the weather forces us to move the tour.
+          </p>
+        </div>
+
+        {/* [2026-08-18] IDIOMA DE LOS CORREOS. La web está en inglés y así se
+            queda; esto no la traduce. Lo que elige es en qué lengua le llegan a
+            este cliente sus correos de reserva, que en Odoo existen en español
+            y en inglés. Arranca en el idioma de su navegador —la mayoría no
+            tocará nada— y se pregunta aquí, junto al email, porque es el mismo
+            asunto: a dónde y cómo le escribimos. */}
+        <div>
+          <label className="flex flex-col gap-1.5">
+            <span className="text-sm font-medium text-navy">Language for your booking emails</span>
+            <select
+              className="h-11 w-full rounded-input border border-linea bg-white px-3 text-sm text-navy outline-none transition-colors focus-visible:border-aqua focus-visible:ring-2 focus-visible:ring-aqua/30"
+              value={datos.idioma}
+              onChange={(e) => onCambio({ idioma: e.target.value as IdiomaCliente })}
+            >
+              {IDIOMAS.map((i) => (
+                <option key={i.id} value={i.id}>
+                  {i.etiqueta}
+                </option>
+              ))}
+            </select>
+          </label>
+          <p className="mt-1.5 text-xs text-navy-soft">
+            The website stays in English. This is only the language of the emails we send you.
           </p>
         </div>
       </div>

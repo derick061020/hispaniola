@@ -1,3 +1,4 @@
+import type { IdiomaCliente } from '@/lib/idioma'
 // Tipos compartidos del funnel de reserva (/reservar/:slug, Fase C). Viven
 // aparte para que los pasos y la página los importen sin ciclos (la página
 // importa los pasos; los pasos importan solo estos tipos).
@@ -6,7 +7,16 @@ export type Paquete = 'light' | 'premium'
 
 export type DatosRecogida = { hotel: string; notas: string }
 
-export type DatosContacto = { nombre: string; apellidos: string; email: string; telefono: string }
+// `idioma` decide en que lengua le escribe Odoo (los once correos existen en
+// espanol y en ingles). Arranca en el del navegador y el cliente puede
+// cambiarlo — ver `lib/idioma.ts`.
+export type DatosContacto = {
+  nombre: string
+  apellidos: string
+  email: string
+  telefono: string
+  idioma: IdiomaCliente
+}
 
 // «¿Celebras algo especial?» — dato OPCIONAL del paso de contacto (2026-08-07,
 // pedido de Samuel). No es marketing: la pantalla de gracias ya invitaba a

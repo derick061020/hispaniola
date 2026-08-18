@@ -1,3 +1,4 @@
+import { idiomaDelNavegador } from '@/lib/idioma'
 import type { Reserva as ReservaLocal } from '@/lib/reservas'
 import type { Reserva as ReservaOdoo } from './tipos'
 import { FICHAS } from '@/data/tours'
@@ -60,7 +61,13 @@ export function reservaDesdeOdoo(odoo: ReservaOdoo): ReservaLocal {
       hotel: odoo.pickup.hotel,
       notas: odoo.pickup.room ? `Room ${odoo.pickup.room}` : '',
     },
-    contacto: partirNombre(odoo.contact.name, odoo.contact.email, odoo.contact.phone),
+    // El idioma no viaja en la reserva que devuelve Odoo (vive en la ficha del
+    // cliente, que es privada). Para pintar la pantalla da igual; se repone el
+    // del navegador para que el tipo cuadre y un reenvio no lo pise.
+    contacto: {
+      ...partirNombre(odoo.contact.name, odoo.contact.email, odoo.contact.phone),
+      idioma: idiomaDelNavegador(),
+    },
     total: odoo.amounts.total,
     deposito: odoo.amounts.deposit,
     saldo: odoo.amounts.balance,

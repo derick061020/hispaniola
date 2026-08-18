@@ -1,4 +1,5 @@
 import { llamar, llamarSobre, enviarBaliza } from './cliente'
+import { idiomaDelNavegador } from '@/lib/idioma'
 import type {
   ConfigPublica, Cotizacion, Disponibilidad, IntencionPago, ParcheCheckout,
   Paquete, Pax, Pedido, Reserva, Tour,
@@ -302,7 +303,10 @@ export function metaOrigen() {
     utm_source: params.get('utm_source') ?? undefined,
     utm_medium: params.get('utm_medium') ?? undefined,
     utm_campaign: params.get('utm_campaign') ?? undefined,
-    language: document.documentElement.lang || undefined,
+    // El idioma REAL del visitante, no el `lang` del <html> (que es fijo:
+    // el sitio está en inglés). Es lo que decide en qué lengua recibe sus
+    // correos si no elige otra cosa en el paso de contacto.
+    language: idiomaDelNavegador(),
   }
 }
 

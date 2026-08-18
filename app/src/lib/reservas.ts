@@ -145,6 +145,7 @@ export function reservaDemo(): Reserva {
       notas: 'Room 1245, lobby at 8:30',
     },
     contacto: {
+      idioma: 'spanish',
       nombre: 'María',
       apellidos: 'González',
       email: 'maria@example.com',
