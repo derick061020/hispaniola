@@ -17,7 +17,8 @@
     "qa:a11y": "node qa/qa_a11y.mjs",
     "qa:pago": "node qa/qa_pago.mjs",
     "qa:degradado": "node qa/qa_degradado.mjs",
-    "qa:catalogo": "node qa/qa_paridad_catalogo.mjs"
+    "qa:catalogo": "node qa/qa_paridad_catalogo.mjs",
+    "postbuild": "node scripts/genera-htaccess.mjs"
   },
   "dependencies": {
     "@fontsource/poppins": "^5.2.7",
