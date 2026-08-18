@@ -9,7 +9,7 @@ El fuente vive en la rama `main`.
 
 | | |
 |---|---|
-| Commit de origen | `88277c3` — *El idioma del cliente vuelve a existir* |
+| Commit de origen | `91dc311` — *Las tarjetas de tours tambien salen del catalogo de Odoo* |
 | Comando | `npm run build` en `app/` (= `tsc -b && vite build`) |
 | `VITE_API_URL` compilada | `https://sistemashispaniola.com` (de `app/.env.production`) |
 
