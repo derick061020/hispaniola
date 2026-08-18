@@ -1,0 +1,65 @@
+# Equivalente en Apache/LiteSpeed de app/vercel.json. Este sitio tambien se
+# sirve desde hosting compartido (hispaniola.botizate.com), donde vercel.json
+# no lo lee nadie. Si se anade un redirect alli, se anade aqui.
+
+Options -MultiViews
+RewriteEngine On
+
+# --- Redirecciones permanentes de las URLs viejas en espanol ---
+RewriteRule "^tours/semi-privado/?$" "/tours/semi-private-premium" [R=301,L]
+RewriteRule "^tours/charter-privado/?$" "/tours/private-charter" [R=301,L]
+RewriteRule "^tours/isla-saona/?$" "/tours/saona-island" [R=301,L]
+RewriteRule "^eventos/bodas/gracias/?$" "/events/weddings/thank-you" [R=301,L]
+RewriteRule "^eventos/empresas/gracias/?$" "/events/corporate/thank-you" [R=301,L]
+RewriteRule "^eventos/bodas/?$" "/events/weddings" [R=301,L]
+RewriteRule "^eventos/empresas/?$" "/events/corporate" [R=301,L]
+RewriteRule "^reservar/semi-privado/gracias/?$" "/book/semi-private-premium/thank-you" [R=301,L]
+RewriteRule "^reservar/charter-privado/gracias/?$" "/book/private-charter/thank-you" [R=301,L]
+RewriteRule "^reservar/isla-saona/gracias/?$" "/book/saona-island/thank-you" [R=301,L]
+RewriteRule "^reservar/semi-privado/?$" "/book/semi-private-premium" [R=301,L]
+RewriteRule "^reservar/charter-privado/?$" "/book/private-charter" [R=301,L]
+RewriteRule "^reservar/isla-saona/?$" "/book/saona-island" [R=301,L]
+RewriteRule "^legal/politica-de-cancelacion/?$" "/legal/cancellation-policy" [R=301,L]
+RewriteRule "^legal/privacidad/?$" "/legal/privacy" [R=301,L]
+RewriteRule "^legal/terminos/?$" "/legal/terms" [R=301,L]
+RewriteRule "^sostenibilidad/?$" "/competitive-advantage" [R=301,L]
+RewriteRule "^ventaja-competitiva/?$" "/competitive-advantage" [R=301,L]
+RewriteRule "^nosotros/?$" "/crew" [R=301,L]
+RewriteRule "^tripulacion/?$" "/crew" [R=301,L]
+RewriteRule "^instalaciones/?$" "/facilities" [R=301,L]
+RewriteRule "^flota/?$" "/fleet" [R=301,L]
+RewriteRule "^fundacion/?$" "/foundation" [R=301,L]
+RewriteRule "^guias/?$" "/guides" [R=301,L]
+RewriteRule "^agentes-de-viaje/?$" "/travel-agents" [R=301,L]
+RewriteRule "^trabaja-con-nosotros/?$" "/careers" [R=301,L]
+RewriteRule "^por-que-reservar/?$" "/why-book-direct" [R=301,L]
+RewriteRule "^reserva-directa/?$" "/why-book-direct" [R=301,L]
+RewriteRule "^contacto/?$" "/contact" [R=301,L]
+RewriteRule "^mi-reserva/?$" "/my-booking" [R=301,L]
+RewriteRule "^reservar/:slug/gracias/?$" "/book/:slug/thank-you" [R=301,L]
+RewriteRule "^reservar/:slug/?$" "/book/:slug" [R=301,L]
+RewriteRule "^eventos/:slug/gracias/?$" "/events/:slug/thank-you" [R=301,L]
+RewriteRule "^eventos/:slug/?$" "/events/:slug" [R=301,L]
+
+# --- SPA: cualquier ruta que no sea un fichero real la pinta React ---
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule "^" "/index.html" [L]
+
+# --- Cache ---
+# Los ficheros de /assets llevan hash en el nombre: cachearlos un ano es
+# seguro y es lo que hacia Vercel. index.html NUNCA se cachea, o el navegador
+# seguiria pidiendo el JS viejo despues de un despliegue.
+<IfModule mod_expires.c>
+  ExpiresActive On
+  <FilesMatch "\.(js|css|woff2?|jpg|jpeg|png|webp|svg|mp4)$">
+    ExpiresDefault "access plus 1 year"
+  </FilesMatch>
+</IfModule>
+<FilesMatch "^index\.html$">
+  <IfModule mod_headers.c>
+    Header set Cache-Control "no-cache, must-revalidate"
+  </IfModule>
+</FilesMatch>
+
+ErrorDocument 404 /index.html

@@ -9,7 +9,7 @@ El fuente vive en la rama `main`.
 
 | | |
 |---|---|
-| Commit de origen | `b0c6f61` — *Conectar el front con Odoo: el precio y las reservas dejan de vivir en el navegador* |
+| Commit de origen | `c00cce6` — *Las imagenes de los 11 correos, servidas desde el front en /mails* |
 | Comando | `npm run build` en `app/` (= `tsc -b && vite build`) |
 | `VITE_API_URL` compilada | `https://sistemashispaniola.com` (de `app/.env.production`) |
 
@@ -21,8 +21,15 @@ Allowed origins), o el navegador bloquea todas las llamadas por CORS.
 ## Cómo servirlo
 
 Es una SPA: **cualquier ruta que no sea un archivo real tiene que devolver
-`index.html`**, o `/tours/saona-island` da 404. Hay un `404.html` idéntico al
-`index.html` para los hostings estáticos que usan esa convención (GitHub Pages).
+`index.html`**, o `/tours/saona-island` da 404 — y también `/my-booking`, que es
+a donde llevan los correos de Odoo.
+
+Desde el 2026-08-18 la rama trae un **`.htaccess`** con la reescritura de la SPA,
+las 34 redirecciones de las URLs viejas en español y el cacheo de `/assets`:
+es el equivalente de `app/vercel.json` para el hosting compartido, que no lee
+ese archivo. **Si se añade un redirect en `vercel.json`, se añade también ahí.**
+
+En Vercel manda `vercel.json` y el `.htaccess` se ignora; conviven sin estorbarse.
 
 ```nginx
 # nginx
@@ -30,21 +37,11 @@ root /ruta/a/esta/carpeta;
 location / { try_files $uri $uri/ /index.html; }
 ```
 
-```apache
-# Apache — .htaccess
-RewriteEngine On
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule . /index.html [L]
-```
+Hay además un `404.html` idéntico al `index.html` para los hostings estáticos
+que usan esa convención (GitHub Pages).
 
-Para una prueba rápida: `npx serve -s .` o `python3 -m http.server`
-(este último **no** hace el fallback de SPA — solo sirve para ver la home).
+## Las imágenes de los correos
 
-## Lo que este build NO trae
-
-`app/vercel.json` define **33 redirects 301** de las URLs viejas en español
-(`/tours/isla-saona` → `/tours/saona-island`, `/reservar/…` → `/book/…`) y las
-cabeceras de caché de `/assets/`. Eso lo aplica Vercel en su capa, **no está
-dentro del build**. Si esto se sirve fuera de Vercel hay que traducir esos
-redirects a la config del servidor, o las URLs indexadas en Google se pierden.
+`mails/` son las 17 fotos + los platos que piden las plantillas de correo del
+módulo `hispaniola_web`. No se tocan a mano aquí: salen de `app/public/mails/`
+en la rama `main`.
