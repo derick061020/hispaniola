@@ -9,7 +9,7 @@ El fuente vive en la rama `main`.
 
 | | |
 |---|---|
-| Commit de origen | `c00cce6` — *Las imagenes de los 11 correos, servidas desde el front en /mails* |
+| Commit de origen | `ffe9e9a` — *La ficha deja de tener su propia tabla de precios: los números los pone Odoo* |
 | Comando | `npm run build` en `app/` (= `tsc -b && vite build`) |
 | `VITE_API_URL` compilada | `https://sistemashispaniola.com` (de `app/.env.production`) |
 
@@ -24,10 +24,10 @@ Es una SPA: **cualquier ruta que no sea un archivo real tiene que devolver
 `index.html`**, o `/tours/saona-island` da 404 — y también `/my-booking`, que es
 a donde llevan los correos de Odoo.
 
-Desde el 2026-08-18 la rama trae un **`.htaccess`** con la reescritura de la SPA,
-las 34 redirecciones de las URLs viejas en español y el cacheo de `/assets`:
-es el equivalente de `app/vercel.json` para el hosting compartido, que no lee
-ese archivo. **Si se añade un redirect en `vercel.json`, se añade también ahí.**
+La rama trae un **`.htaccess`** con la reescritura de la SPA, las 34
+redirecciones de las URLs viejas en español y el cacheo de `/assets`: es el
+equivalente de `app/vercel.json` para el hosting compartido, que no lee ese
+archivo. **Si se añade un redirect en `vercel.json`, se añade también ahí.**
 
 En Vercel manda `vercel.json` y el `.htaccess` se ignora; conviven sin estorbarse.
 
@@ -40,8 +40,14 @@ location / { try_files $uri $uri/ /index.html; }
 Hay además un `404.html` idéntico al `index.html` para los hostings estáticos
 que usan esa convención (GitHub Pages).
 
+## Qué pide este build a Odoo
+
+Al abrir una ficha de tour ya no se pinta la tarifa del código: se pide
+`GET /api/web/v1/tours/<slug>` y de ahí salen precios, tramos, aforo, horarios
+y add-ons. Si Odoo no contesta, se pinta lo estático y la venta sigue viva.
+
 ## Las imágenes de los correos
 
-`mails/` son las 17 fotos + los platos que piden las plantillas de correo del
-módulo `hispaniola_web`. No se tocan a mano aquí: salen de `app/public/mails/`
-en la rama `main`.
+`mails/` son las fotos que piden las plantillas de correo del módulo
+`hispaniola_web`. No se tocan a mano aquí: salen de `app/public/mails/` en la
+rama `main`.
