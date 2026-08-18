@@ -1,12 +1,15 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
-import { ArrowLeft, Check, ChevronRight, CreditCard, KeyRound, MapPin, Pencil, Ticket, Users, Utensils } from 'lucide-react'
+import { ArrowLeft, CalendarPlus, Check, ChevronRight, CreditCard, KeyRound, MapPin, Pencil, Ticket, Users, Utensils } from 'lucide-react'
 import * as FancyButton from '@/components/alignui/fancy-button'
 import { Logo } from '@/components/ui/logo'
 import { Meta } from '@/components/seo/meta'
 import { fechaLarga } from '@/lib/fechas'
 import { guardarReserva, type Reserva } from '@/lib/reservas'
-import { buscarReserva as buscarReservaOdoo } from '@/lib/api/api'
+import {
+  actualizarReserva, buscarReserva as buscarReservaOdoo, urlCalendario,
+} from '@/lib/api/api'
+import { PagoSaldo } from '@/components/mi-reserva/pago-saldo'
 import { reservaDesdeOdoo } from '@/lib/api/desde-odoo'
 import { ErrorApi } from '@/lib/api/cliente'
 import { menuDeLaReserva } from '@/lib/menu-reserva'
@@ -375,6 +378,11 @@ function DetalleReserva({ codigoIngresado }: { codigoIngresado: string }) {
   const [error, setError] = useState<string | null>(null)
   const [email, setEmail] = useState('')
   const [emailEnviado, setEmailEnviado] = useState<string | null>(null)
+  // [2026-08-18] El token que devuelve `lookup` SE GUARDA. Antes se tiraba, y
+  // por eso todo lo de esta pantalla acababa en localStorage: sin él no se
+  // puede ni cobrar el saldo ni escribir un cambio en Odoo.
+  const [token, setToken] = useState<string | null>(null)
+  const [recargas, setRecargas] = useState(0)
 
   const codigo = codigoIngresado.toUpperCase()
 
@@ -385,8 +393,9 @@ function DetalleReserva({ codigoIngresado }: { codigoIngresado: string }) {
     setCargando(true)
     setError(null)
     buscarReservaOdoo(codigo, emailEnviado, ac.signal)
-      .then(({ booking }) => {
+      .then(({ booking, token: acceso }) => {
         if (cancelado) return
+        setToken(acceso)
         setReserva(reservaDesdeOdoo(booking))
       })
       .catch((e: unknown) => {
@@ -404,7 +413,7 @@ function DetalleReserva({ codigoIngresado }: { codigoIngresado: string }) {
       cancelado = true
       ac.abort()
     }
-  }, [codigo, emailEnviado])
+  }, [codigo, emailEnviado, recargas])
 
   // Puerta de acceso: mientras no haya una reserva verificada, esta pantalla no
   // enseña datos de nadie.
@@ -423,9 +432,21 @@ function DetalleReserva({ codigoIngresado }: { codigoIngresado: string }) {
 
   const reservaParaMostrar: Reserva = reserva
 
-  const guardar = (nueva: Reserva) => {
-    guardarReserva(nueva)
-    setReserva(nueva)
+  // [2026-08-18] LOS CAMBIOS VAN A ODOO. Hasta hoy `guardar` llamaba solo a
+  // `guardarReserva()`, o sea al localStorage de este navegador: el cliente
+  // cambiaba su plato o su hotel, veía «guardado», y ni la cocina ni la
+  // tripulación se enteraban nunca. `/checkout/:code/sync` no vale para esto
+  // —rechaza los pedidos ya cerrados, que es lo que es una reserva pagada— así
+  // que va por `/bookings/:code/update`, que además deja nota en la ficha.
+  //
+  // localStorage se mantiene, pero como CACHÉ: la copia buena es la que
+  // devuelve Odoo, y es la que se pinta.
+  const guardarEnOdoo = async (cambios: Parameters<typeof actualizarReserva>[2]) => {
+    if (!token) throw new Error('This session expired. Look your booking up again.')
+    const { booking } = await actualizarReserva(codigo, token, cambios)
+    const actualizada = reservaDesdeOdoo(booking)
+    guardarReserva(actualizada)
+    setReserva(actualizada)
   }
 
   const horario = reservaParaMostrar.ficha.horarios[reservaParaMostrar.horarioIdx]
@@ -488,16 +509,38 @@ function DetalleReserva({ codigoIngresado }: { codigoIngresado: string }) {
         </div>
 
         {/* 2. RESUMEN + PAGO DE SALDO */}
-        <BloqueReserva reserva={reservaParaMostrar} />
+        <BloqueReserva
+          reserva={reservaParaMostrar}
+          token={token}
+          email={emailEnviado}
+          onPagado={() => setRecargas((n) => n + 1)}
+        />
+
+        {/* Los tres bloques llevan `key` con lo que editan: al guardar, la
+            copia buena vuelve de Odoo y el bloque se remonta con ella. Sin
+            esto, el formulario conservaría el estado local de antes del envío y
+            al reabrirlo enseñaría lo tecleado en vez de lo guardado. */}
 
         {/* 3. MENÚ POR PERSONA */}
-        <BloqueMenu reserva={reservaParaMostrar} guardar={guardar} />
+        <BloqueMenu
+          key={`menu-${reservaParaMostrar.platos.join('|')}`}
+          reserva={reservaParaMostrar}
+          guardar={guardarEnOdoo}
+        />
 
         {/* 4. RECOGIDA */}
-        <BloqueRecogida reserva={reservaParaMostrar} guardar={guardar} />
+        <BloqueRecogida
+          key={`recogida-${reservaParaMostrar.recogida.hotel}-${reservaParaMostrar.recogida.notas}`}
+          reserva={reservaParaMostrar}
+          guardar={guardarEnOdoo}
+        />
 
         {/* 5. CONTACTO */}
-        <BloqueContacto reserva={reservaParaMostrar} guardar={guardar} />
+        <BloqueContacto
+          key={`contacto-${reservaParaMostrar.contacto.nombre}-${reservaParaMostrar.contacto.telefono}`}
+          reserva={reservaParaMostrar}
+          guardar={guardarEnOdoo}
+        />
 
         {/* 6. FOOTER */}
         <div className="mt-10 flex flex-wrap items-center justify-between gap-3 border-t border-linea pt-6 text-sm text-navy-soft">
@@ -520,9 +563,17 @@ function DetalleReserva({ codigoIngresado }: { codigoIngresado: string }) {
 // Sub-componentes
 // ────────────────────────────────────────────────────────────────────────
 
-function BloqueReserva({ reserva }: { reserva: Reserva }) {
-  const [pagado, setPagado] = useState(false)
-
+function BloqueReserva({
+  reserva,
+  token,
+  email,
+  onPagado,
+}: {
+  reserva: Reserva
+  token: string | null
+  email: string | null
+  onPagado: () => void
+}) {
   return (
     <section className="mt-8 rounded-card-grande border border-linea bg-papel p-5 sm:p-6">
       <div className="flex items-center gap-2">
@@ -537,27 +588,105 @@ function BloqueReserva({ reserva }: { reserva: Reserva }) {
           <dd className="text-base font-semibold text-navy">{formatoDinero(reserva.saldo)}</dd>
         </div>
       </dl>
-      {reserva.saldo > 0 && !pagado && (
-        <div className="mt-4">
-          <button
-            type="button"
-            onClick={() => setPagado(true)}
-            className="w-full rounded-btn bg-coral px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-coral-dark"
-          >
-            Pay the balance online · {formatoDinero(reserva.saldo)}
-          </button>
-          <p className="mt-2 text-center text-xs text-navy-soft">
-            Or pay in cash on board, nothing to do here.
-          </p>
-        </div>
-      )}
-      {pagado && (
+      {reserva.saldo > 0 ? (
+        token ? (
+          <PagoSaldo
+            codigo={reserva.codigo}
+            token={token}
+            saldo={reserva.saldo}
+            onPagado={onPagado}
+          />
+        ) : null
+      ) : (
         <p className="mt-4 inline-flex items-center gap-1.5 rounded-chip bg-menta px-3 py-1.5 text-sm font-semibold text-menta-texto">
           <Check className="size-4" aria-hidden="true" />
           Balance paid, nothing left to settle.
         </p>
       )}
+
+      {/* «Añadir al calendario». El .ics lo sirve Odoo con la fecha, la hora de
+          recogida y el hotel ya dentro — es lo mismo que enseña esta pantalla,
+          así que no puede desincronizarse. */}
+      <a
+        href={urlCalendario(reserva.codigo, { email: email ?? undefined, token: token ?? undefined })}
+        className="mt-4 inline-flex items-center gap-2 rounded-btn border border-linea bg-papel px-4 py-2 text-sm font-semibold text-navy transition-colors hover:bg-papel-hueso"
+      >
+        <CalendarPlus className="size-4" aria-hidden="true" />
+        Add to calendar
+      </a>
     </section>
+  )
+}
+
+// Guardar contra Odoo desde un bloque editable. Los tres bloques necesitan lo
+// mismo —«guardando…», el error si falla y NO cerrar el formulario cuando no se
+// pudo guardar— y repetirlo tres veces es la forma de que acaben divergiendo.
+function useGuardado(guardar: (cambios: Parameters<typeof actualizarReserva>[2]) => Promise<void>) {
+  const [guardando, setGuardando] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const enviar = async (cambios: Parameters<typeof actualizarReserva>[2], alTerminar: () => void) => {
+    setGuardando(true)
+    setError(null)
+    try {
+      await guardar(cambios)
+      alTerminar()
+    } catch (e: unknown) {
+      // El formulario se queda ABIERTO con lo tecleado dentro: cerrarlo aquí
+      // perdería el cambio y encima daría a entender que se guardó.
+      setError(
+        e instanceof ErrorApi && e.codigo === 'too_late_to_change'
+          ? 'Changes close 48 h before the tour. Message us and we’ll sort it out with you.'
+          : 'We could not save that. Check your connection and try again.',
+      )
+    } finally {
+      setGuardando(false)
+    }
+  }
+
+  return { guardando, error, enviar }
+}
+
+/** Botones «Guardar / Cancelar» + el error, iguales en los tres bloques. */
+function AccionesEdicion({
+  guardando,
+  error,
+  onGuardar,
+  onCancelar,
+  texto = 'Save',
+}: {
+  guardando: boolean
+  error: string | null
+  onGuardar: () => void
+  onCancelar: () => void
+  texto?: string
+}) {
+  return (
+    <>
+      {error ? (
+        <p role="alert" className="rounded-btn border border-coral/40 bg-coral/5 px-3 py-2 text-xs leading-relaxed text-navy-sub">
+          {error}
+        </p>
+      ) : null}
+      <div className="flex gap-2 pt-2">
+        <button
+          type="button"
+          onClick={onGuardar}
+          disabled={guardando}
+          className="rounded-btn bg-coral px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-coral-dark disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {guardando ? 'Saving…' : texto}
+        </button>
+        <button
+          type="button"
+          onClick={onCancelar}
+          disabled={guardando}
+          className="rounded-btn border border-linea bg-papel px-4 py-2 text-sm font-medium text-navy transition-colors hover:bg-papel-hueso disabled:opacity-50"
+        >
+          Cancel
+        </button>
+      </div>
+    </>
   )
 }
 
@@ -576,9 +705,16 @@ function Fila({ label, valor }: { label: string; valor: string }) {
 // una sola opción y la lista decía «Guest 1 · Not chosen» para siempre, de una
 // comida que nunca se elige. Con buffet este bloque cambia de trabajo — enseña
 // lo que se sirve y no ofrece editar nada.
-function BloqueMenu({ reserva, guardar }: { reserva: Reserva; guardar: (r: Reserva) => void }) {
+function BloqueMenu({
+  reserva,
+  guardar,
+}: {
+  reserva: Reserva
+  guardar: (cambios: Parameters<typeof actualizarReserva>[2]) => Promise<void>
+}) {
   const [edit, setEdit] = useState(false)
   const [platos, setPlatos] = useState(reserva.platos)
+  const { guardando, error, enviar } = useGuardado(guardar)
   const menuReserva = menuDeLaReserva({
     ficha: reserva.ficha,
     paquete: reserva.paquete,
@@ -588,10 +724,10 @@ function BloqueMenu({ reserva, guardar }: { reserva: Reserva; guardar: (r: Reser
   const menu = menuReserva?.platos ?? []
   const seElige = menuReserva?.modo === 'eleccion'
 
-  const guardarCambios = () => {
-    guardar({ ...reserva, platos })
-    setEdit(false)
-  }
+  // Los platos van POR COMENSAL y se manda el array entero, huecos incluidos:
+  // el servidor descarta los vacíos, que es lo que quiere decir «este todavía
+  // no lo ha elegido».
+  const guardarCambios = () => void enviar({ dishes: platos }, () => setEdit(false))
   const cancelar = () => {
     setPlatos(reserva.platos)
     setEdit(false)
@@ -635,22 +771,13 @@ function BloqueMenu({ reserva, guardar }: { reserva: Reserva; guardar: (r: Reser
               </select>
             </div>
           ))}
-          <div className="flex gap-2 pt-2">
-            <button
-              type="button"
-              onClick={guardarCambios}
-              className="rounded-btn bg-coral px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-coral-dark"
-            >
-              Save menu
-            </button>
-            <button
-              type="button"
-              onClick={cancelar}
-              className="rounded-btn border border-linea bg-papel px-4 py-2 text-sm font-medium text-navy transition-colors hover:bg-papel-hueso"
-            >
-              Cancel
-            </button>
-          </div>
+          <AccionesEdicion
+            guardando={guardando}
+            error={error}
+            onGuardar={guardarCambios}
+            onCancelar={cancelar}
+            texto="Save menu"
+          />
         </div>
       ) : seElige ? (
         <ul className="mt-4 space-y-1.5 text-sm">
@@ -687,15 +814,20 @@ function BloqueMenu({ reserva, guardar }: { reserva: Reserva; guardar: (r: Reser
   )
 }
 
-function BloqueRecogida({ reserva, guardar }: { reserva: Reserva; guardar: (r: Reserva) => void }) {
+function BloqueRecogida({
+  reserva,
+  guardar,
+}: {
+  reserva: Reserva
+  guardar: (cambios: Parameters<typeof actualizarReserva>[2]) => Promise<void>
+}) {
   const [edit, setEdit] = useState(false)
   const [hotel, setHotel] = useState(reserva.recogida.hotel)
   const [notas, setNotas] = useState(reserva.recogida.notas)
+  const { guardando, error, enviar } = useGuardado(guardar)
 
-  const guardarCambios = () => {
-    guardar({ ...reserva, recogida: { hotel: hotel.trim(), notas: notas.trim() } })
-    setEdit(false)
-  }
+  const guardarCambios = () =>
+    void enviar({ pickup: { hotel: hotel.trim(), notes: notas.trim() } }, () => setEdit(false))
   const cancelar = () => {
     setHotel(reserva.recogida.hotel)
     setNotas(reserva.recogida.notas)
@@ -727,22 +859,12 @@ function BloqueRecogida({ reserva, guardar }: { reserva: Reserva; guardar: (r: R
             onChange={(e) => setNotas(e.target.value)}
             placeholder="Room number, preferred time, etc."
           />
-          <div className="flex gap-2 pt-2">
-            <button
-              type="button"
-              onClick={guardarCambios}
-              className="rounded-btn bg-coral px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-coral-dark"
-            >
-              Save
-            </button>
-            <button
-              type="button"
-              onClick={cancelar}
-              className="rounded-btn border border-linea bg-papel px-4 py-2 text-sm font-medium text-navy transition-colors hover:bg-papel-hueso"
-            >
-              Cancel
-            </button>
-          </div>
+          <AccionesEdicion
+            guardando={guardando}
+            error={error}
+            onGuardar={guardarCambios}
+            onCancelar={cancelar}
+          />
         </div>
       ) : (
         <div className="mt-4 space-y-1 text-sm">
@@ -754,24 +876,41 @@ function BloqueRecogida({ reserva, guardar }: { reserva: Reserva; guardar: (r: R
   )
 }
 
-function BloqueContacto({ reserva, guardar }: { reserva: Reserva; guardar: (r: Reserva) => void }) {
+function BloqueContacto({
+  reserva,
+  guardar,
+}: {
+  reserva: Reserva
+  guardar: (cambios: Parameters<typeof actualizarReserva>[2]) => Promise<void>
+}) {
   const [edit, setEdit] = useState(false)
   const [contacto, setContacto] = useState({
     nombre: reserva.contacto.nombre,
     apellidos: reserva.contacto.apellidos,
-    email: reserva.contacto.email,
     telefono: reserva.contacto.telefono,
   })
+  const { guardando, error, enviar } = useGuardado(guardar)
 
-  const guardarCambios = () => {
-    guardar({ ...reserva, contacto: { ...contacto, nombre: contacto.nombre.trim(), apellidos: contacto.apellidos.trim() } })
-    setEdit(false)
-  }
+  // El EMAIL no se edita aquí (2026-08-18). Es la credencial con la que se
+  // entra a esta pantalla —código + email— y la dirección a la que fue el
+  // voucher: dejar cambiarlo desde aquí sería dejar que alguien con el enlace
+  // se quede la reserva y que el cliente de verdad pierda el acceso. Se cambia
+  // escribiéndonos, que es lo que dice la nota de abajo.
+  const guardarCambios = () =>
+    void enviar(
+      {
+        contact: {
+          first_name: contacto.nombre.trim(),
+          last_name: contacto.apellidos.trim(),
+          phone: contacto.telefono.trim(),
+        },
+      },
+      () => setEdit(false),
+    )
   const cancelar = () => {
     setContacto({
       nombre: reserva.contacto.nombre,
       apellidos: reserva.contacto.apellidos,
-      email: reserva.contacto.email,
       telefono: reserva.contacto.telefono,
     })
     setEdit(false)
@@ -792,25 +931,18 @@ function BloqueContacto({ reserva, guardar }: { reserva: Reserva; guardar: (r: R
           <div className="grid gap-3 sm:grid-cols-2">
             <Campo etiqueta="First name" value={contacto.nombre} onChange={(e) => setContacto((c) => ({ ...c, nombre: e.target.value }))} required />
             <Campo etiqueta="Last name" value={contacto.apellidos} onChange={(e) => setContacto((c) => ({ ...c, apellidos: e.target.value }))} />
-            <Campo etiqueta="Email" type="email" value={contacto.email} onChange={(e) => setContacto((c) => ({ ...c, email: e.target.value }))} required />
             <Campo etiqueta="Phone" type="tel" value={contacto.telefono} onChange={(e) => setContacto((c) => ({ ...c, telefono: e.target.value }))} />
           </div>
-          <div className="flex gap-2 pt-2">
-            <button
-              type="button"
-              onClick={guardarCambios}
-              className="rounded-btn bg-coral px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-coral-dark"
-            >
-              Save
-            </button>
-            <button
-              type="button"
-              onClick={cancelar}
-              className="rounded-btn border border-linea bg-papel px-4 py-2 text-sm font-medium text-navy transition-colors hover:bg-papel-hueso"
-            >
-              Cancel
-            </button>
-          </div>
+          <p className="text-xs text-navy-soft">
+            Your e-mail is how you get into this page and where the voucher went, so we don&rsquo;t change it
+            from here — message us and we&rsquo;ll do it.
+          </p>
+          <AccionesEdicion
+            guardando={guardando}
+            error={error}
+            onGuardar={guardarCambios}
+            onCancelar={cancelar}
+          />
         </div>
       ) : (
         <dl className="mt-4 space-y-1 text-sm">

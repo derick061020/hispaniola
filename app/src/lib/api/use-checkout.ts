@@ -33,6 +33,19 @@ function leerGuardado(): Guardado | null {
   }
 }
 
+/** La sesión de checkout de esta pestaña, para las pantallas que NO montan el
+ *  hook. La usa «Gracias» al volver de PayPal: la captura necesita el código y
+ *  el token, y esa página no abre ningún checkout. */
+export function sesionCheckoutGuardada(): { codigo: string; token: string; tour: string } | null {
+  const dato = leerGuardado()
+  return dato ? { codigo: dato.codigo, token: dato.token, tour: dato.tour } : null
+}
+
+/** Cierra la sesión: el pedido ya está pagado o cancelado y no se retoma. */
+export function olvidarSesionCheckout(): void {
+  escribirGuardado(null)
+}
+
 function escribirGuardado(dato: Guardado | null): void {
   if (typeof window === 'undefined') return
   try {
@@ -61,6 +74,8 @@ export function useCheckout(inicio: InicioCheckout) {
   const sesion = useRef<Guardado | null>(null)
   const pendiente = useRef<ParcheCheckout | null>(null)
   const temporizador = useRef<ReturnType<typeof setTimeout> | null>(null)
+  /** El `sync` que esta ahora mismo en vuelo, si lo hay. `pagar` lo espera. */
+  const envio = useRef<Promise<void> | null>(null)
 
   // ---- Apertura ----
   useEffect(() => {
@@ -113,6 +128,14 @@ export function useCheckout(inicio: InicioCheckout) {
   }, [inicio.tour])
 
   // ---- Guardado con debounce ----
+  //
+  // [2026-08-18] `enviar` publica su promesa en `envio` y `sincronizar` la
+  // DEVUELVE. Antes no: `sincronizar` era `void`, asi que el `await` del
+  // handler de pago no esperaba a nada, y `pagar` miraba `pendiente.current`
+  // —que `enviar` ya habia vaciado de forma sincrona— y salia disparado. El
+  // guardado y el cobro volaban a la vez: si `/pay` llegaba primero, Odoo
+  // cobraba con los datos de ANTES del ultimo cambio, o contestaba
+  // `missing_date` con una fecha que el visitante acababa de elegir.
   const enviar = useCallback(async () => {
     const sesionActual = sesion.current
     const parche = pendiente.current
@@ -120,8 +143,10 @@ export function useCheckout(inicio: InicioCheckout) {
     pendiente.current = null
     setEstado((s) => ({ ...s, guardando: true }))
     try {
-      const respuesta = await sincronizarCheckout(sesionActual.codigo, sesionActual.token, parche)
-      setEstado((s) => ({ ...s, pedido: respuesta, guardando: false, error: null }))
+      const { pedido, aforoOk } = await sincronizarCheckout(
+        sesionActual.codigo, sesionActual.token, parche,
+      )
+      setEstado((s) => ({ ...s, pedido, aforoOk, guardando: false, error: null }))
     } catch (error) {
       setEstado((s) => ({
         ...s, guardando: false,
@@ -130,17 +155,24 @@ export function useCheckout(inicio: InicioCheckout) {
     }
   }, [])
 
-  const sincronizar = useCallback((parche: ParcheCheckout, inmediato = false) => {
+  /** Arranca un envio y deja su promesa a la vista de `pagar`. */
+  const arrancarEnvio = useCallback(() => {
+    const promesa = enviar().finally(() => {
+      if (envio.current === promesa) envio.current = null
+    })
+    envio.current = promesa
+    return promesa
+  }, [enviar])
+
+  const sincronizar = useCallback((parche: ParcheCheckout, inmediato = false): Promise<void> => {
     // Los parches se ACUMULAN: escribir el email mientras aun no ha salido el
     // del nombre no puede perder el nombre.
     pendiente.current = { ...(pendiente.current ?? {}), ...parche }
     if (temporizador.current) clearTimeout(temporizador.current)
-    if (inmediato) {
-      void enviar()
-      return
-    }
-    temporizador.current = setTimeout(() => void enviar(), 600)
-  }, [enviar])
+    if (inmediato) return arrancarEnvio()
+    temporizador.current = setTimeout(() => void arrancarEnvio(), 600)
+    return Promise.resolve()
+  }, [arrancarEnvio])
 
   // ---- Abandono ----
   useEffect(() => {
@@ -163,10 +195,18 @@ export function useCheckout(inicio: InicioCheckout) {
   ) => {
     const sesionActual = sesion.current
     if (!sesionActual) throw new ErrorApi('no_session', 'El checkout no esta abierto.', 0)
-    // Antes de cobrar se fuerza el guardado de lo que quede pendiente.
-    if (pendiente.current) await enviar()
+    // Antes de cobrar, el servidor tiene que tener TODO lo que se ha
+    // rellenado: primero se espera al `sync` que pueda estar en vuelo y
+    // despues se manda lo que aun no ha salido. El importe lo pone Odoo con lo
+    // que tenga guardado, asi que adelantarse aqui es cobrar de menos o de mas.
+    if (temporizador.current) {
+      clearTimeout(temporizador.current)
+      temporizador.current = null
+    }
+    if (envio.current) await envio.current
+    if (pendiente.current) await arrancarEnvio()
     return crearPago(sesionActual.codigo, sesionActual.token, opciones)
-  }, [enviar])
+  }, [arrancarEnvio])
 
   const confirmar = useCallback(async (ids: { paymentIntentId?: string; paypalOrderId?: string }) => {
     const sesionActual = sesion.current

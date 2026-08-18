@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
-import { Calendar, Check, Download, MessageCircle, Sparkles } from 'lucide-react'
+import { Calendar, Check, MessageCircle, Sparkles } from 'lucide-react'
 import { Logo } from '@/components/ui/logo'
 import { Meta } from '@/components/seo/meta'
 import { etiquetaOcasion } from '@/components/reservar/tipos'
@@ -8,6 +8,8 @@ import { sumarDias, fechaLarga } from '@/lib/fechas'
 import { buscarReserva, type Reserva } from '@/lib/reservas'
 import { menuDeLaReserva } from '@/lib/menu-reserva'
 import { dispararConfetti } from '@/lib/celebracion'
+import { confirmarPago, enviarFormulario, urlCalendario } from '@/lib/api/api'
+import { olvidarSesionCheckout, sesionCheckoutGuardada } from '@/lib/api/use-checkout'
 import { formatoDinero } from '@/data/home'
 
 // «¡Nos vemos a bordo!» — pantalla post-checkout (2026-07-17, pedido de
@@ -41,6 +43,12 @@ export function GraciasPage() {
 
   const [reserva, setReserva] = useState<Reserva | null>(null)
   const [origen, setOrigen] = useState<string | null>(null)
+  // [2026-08-18] true = hay código pero no hay copia local de la reserva. Antes
+  // esto era un `navigate('/')`: volver de PayPal en otro navegador, abrir el
+  // enlace en el móvil o tener el almacenamiento limpio echaba a la home a
+  // alguien que acababa de pagar. La reserva existe en Odoo; lo que falta aquí
+  // es la caché, así que se enseña el código y el camino para verla entera.
+  const [sinCopiaLocal, setSinCopiaLocal] = useState(false)
 
   useEffect(() => {
     if (!codigo) {
@@ -49,12 +57,74 @@ export function GraciasPage() {
     }
     const r = buscarReserva(codigo)
     if (!r || r.slug !== slug) {
-      navigate('/', { replace: true })
+      setSinCopiaLocal(true)
       return
     }
     setReserva(r)
     setOrigen(r.comoNosConociste ?? null)
   }, [codigo, slug, navigate])
+
+  // ── Vuelta de PayPal ────────────────────────────────────────────────────
+  // [2026-08-14] Con PayPal el navegador SE VA del sitio, así que el cobro no
+  // se puede rematar en el funnel: se remata aquí. PayPal devuelve al
+  // `return_url` que arma `hispaniola_web` (…/thank-you?codigo=…) y le añade
+  // `token`, que es el id de su orden. Ese id es lo que Odoo necesita para
+  // capturar el dinero — sin esta llamada la orden se queda aprobada pero sin
+  // cobrar, y caduca a las 3 horas.
+  //
+  // Si algo falla NO se echa al visitante de la pantalla: la reserva existe en
+  // Odoo desde que abrió el checkout, y el webhook de PayPal cierra el estado
+  // por su cuenta. Solo se avisa.
+  const ordenPaypal = params.get('token')
+  const [capturando, setCapturando] = useState(false)
+  const [avisoPago, setAvisoPago] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!ordenPaypal || !codigo) return
+    const sesion = sesionCheckoutGuardada()
+    // Sin la sesión no hay token de reserva y la API no autoriza la captura.
+    // Pasa si vuelve en otro navegador o tras limpiar el almacenamiento.
+    if (!sesion || sesion.codigo !== codigo) {
+      setAvisoPago('We could not confirm the PayPal payment from this browser. Our team will check it and email you.')
+      return
+    }
+    let vivo = true
+    setCapturando(true)
+    confirmarPago(codigo, sesion.token, { paypalOrderId: ordenPaypal })
+      .then((resultado) => {
+        if (!vivo) return
+        olvidarSesionCheckout()
+        if (!['paid', 'confirmed'].includes(resultado.state)) {
+          setAvisoPago('PayPal is still processing the payment. We’ll email you as soon as it clears.')
+        }
+      })
+      .catch(() => {
+        if (!vivo) return
+        setAvisoPago('We could not confirm the PayPal payment right now. Our team will check it and email you.')
+      })
+      .finally(() => {
+        if (vivo) setCapturando(false)
+      })
+    return () => {
+      vivo = false
+    }
+  }, [ordenPaypal, codigo])
+
+  // «¿Cómo nos encontraste?» — la respuesta VIAJA (2026-08-18). Estos chips
+  // cambiaban un color y ya: ni al CRM ni a localStorage, pese a lo que decía
+  // la cabecera de este archivo. Es la única pregunta de atribución que el
+  // sitio hace, y sin ella «¿de dónde salen las reservas?» no tiene respuesta.
+  // Se manda sin bloquear ni avisar de un fallo: quien acaba de pagar no tiene
+  // que enterarse de un problema con una encuesta opcional.
+  const elegirOrigen = (valor: string) => {
+    setOrigen(valor)
+    void enviarFormulario('how_found', {
+      name: `${reserva?.contacto.nombre ?? ''} ${reserva?.contacto.apellidos ?? ''}`.trim(),
+      email: reserva?.contacto.email,
+      booking_code: reserva?.codigo,
+      answer: valor,
+    }).catch(() => {})
+  }
 
   // Celebración one-shot al confirmar la reserva. Deps []: se dispara
   // una sola vez al montar la página, no en cada re-render ni al
@@ -65,7 +135,46 @@ export function GraciasPage() {
     if (reserva) dispararConfetti()
   }, [reserva])
 
-  if (!reserva) return null
+  if (!reserva) {
+    if (!sinCopiaLocal || !codigo) return null
+    return (
+      <div className="min-h-screen bg-papel">
+        <Meta
+          titulo={`Booking ${codigo}`}
+          descripcion={`Your booking ${codigo} is saved. Look it up in My booking with your code and e-mail.`}
+          ruta={`/book/${slug}/thank-you`}
+          indexable={false}
+        />
+        <header className="border-b border-linea">
+          <div className="mx-auto flex max-w-3xl items-center px-5 py-3 sm:px-8">
+            <Link to="/" aria-label="Inicio de Hispaniola Aquatic Adventures">
+              <Logo compacto />
+            </Link>
+          </div>
+        </header>
+        <main className="mx-auto max-w-xl px-5 py-16 text-center sm:px-8">
+          <div className="mx-auto grid size-16 place-items-center rounded-full bg-menta text-menta-texto">
+            <Check className="size-8" strokeWidth={2.5} aria-hidden="true" />
+          </div>
+          <h1 className="mt-6 font-display text-3xl font-semibold text-navy">Your booking is in.</h1>
+          <p className="mt-3 text-base text-navy-sub">
+            {avisoPago
+              ? avisoPago
+              : 'We don’t have the details on this device, but the booking is saved under this code and the voucher is on its way to your e-mail.'}
+          </p>
+          <div className="mt-8 flex flex-col items-center gap-2 rounded-card-grande border-2 border-linea-fuerte bg-papel-hueso px-6 py-5">
+            <p className="text-xs font-semibold uppercase tracking-wide text-navy-soft">Your booking code</p>
+            <p className="font-mono text-2xl font-semibold tracking-wider text-navy sm:text-3xl">{codigo}</p>
+          </div>
+          <p className="mt-6 text-sm">
+            <Link to={`/my-booking?codigo=${codigo}`} className="font-semibold text-aqua-dark hover:underline">
+              See it in My booking (code + e-mail) →
+            </Link>
+          </p>
+        </main>
+      </div>
+    )
+  }
 
   // Ocasión que el visitante contó en el funnel, si la contó (2026-08-07).
   const celebra = etiquetaOcasion(reserva.celebracion?.ocasion)
@@ -124,6 +233,18 @@ export function GraciasPage() {
       </header>
 
       <main className="mx-auto max-w-3xl px-5 py-12 sm:px-8 sm:py-16">
+        {/* Estado del cobro de PayPal, si se vuelve de allí. Va ARRIBA del
+            todo: es lo único de esta pantalla que puede no estar cerrado. */}
+        {capturando ? (
+          <p role="status" className="mb-6 rounded-lg border border-linea bg-papel-hueso px-4 py-3 text-sm text-navy-sub">
+            Confirming your PayPal payment…
+          </p>
+        ) : avisoPago ? (
+          <p role="alert" className="mb-6 rounded-lg border border-coral/40 bg-coral/5 px-4 py-3 text-sm leading-relaxed text-navy-sub">
+            {avisoPago} <strong className="text-navy">Your booking is saved</strong> under the code below.
+          </p>
+        ) : null}
+
         {/* 1. HERO — check + nombre + mensaje */}
         <div className="text-center">
           <div className="mx-auto grid size-16 place-items-center rounded-full bg-menta text-menta-texto">
@@ -148,21 +269,20 @@ export function GraciasPage() {
         </div>
 
         {/* 3. CTAs — voucher / calendario / WhatsApp */}
+        {/* [2026-08-18] Fuera «PDF voucher». Era un <button> sin onClick: no
+            descargaba nada y no hay endpoint público que lo sirva (el voucher
+            en PDF existe en Odoo, pero solo se adjunta al correo). El correo ya
+            se promete tres líneas más arriba, así que el botón sobraba y solo
+            podía decepcionar. «Add to calendar» sí es real ahora: el .ics lo
+            sirve Odoo con la fecha, la recogida y el hotel dentro. */}
         <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
-          <button
-            type="button"
-            className="inline-flex items-center gap-2 rounded-btn border border-linea bg-papel px-4 py-2.5 text-sm font-semibold text-navy transition-colors hover:bg-papel-hueso"
-          >
-            <Download className="size-4" aria-hidden="true" />
-            PDF voucher
-          </button>
-          <button
-            type="button"
+          <a
+            href={urlCalendario(reserva.codigo, { email: reserva.contacto.email })}
             className="inline-flex items-center gap-2 rounded-btn border border-linea bg-papel px-4 py-2.5 text-sm font-semibold text-navy transition-colors hover:bg-papel-hueso"
           >
             <Calendar className="size-4" aria-hidden="true" />
             Add to calendar
-          </button>
+          </a>
           <a
             href="https://wa.me/18293052804"
             target="_blank"
@@ -333,7 +453,7 @@ export function GraciasPage() {
               <button
                 key={o}
                 type="button"
-                onClick={() => setOrigen(o)}
+                onClick={() => elegirOrigen(o)}
                 className={`rounded-chip border px-3 py-1.5 text-sm font-medium transition-colors ${
                   origen === o
                     ? 'border-aqua bg-aqua-tint text-aqua-dark'

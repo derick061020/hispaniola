@@ -1,11 +1,17 @@
 import { useState, type FormEvent } from 'react'
-import { MessageCircle, Reply, ThumbsDown, ThumbsUp } from 'lucide-react'
+import { Clock, MessageCircle, Reply, ThumbsDown, ThumbsUp } from 'lucide-react'
+import { enviarFormulario } from '@/lib/api/api'
+import { ERROR_ENVIO } from '@/lib/use-envio-formulario'
 import { COMENTARIOS_POOL, type Comentario } from '@/data/comentarios'
 
-// Comentarios del artículo (correcciones v1, pedido de Samuel 2026-07-22):
-// SOLO PROTOTIPO (sin backend) — el formulario añade el comentario al
-// estado local del componente, mismo criterio que el resto de formularios
-// del sitio (home/contacto.tsx, Newsletter en blog/lista-articulos.tsx).
+// Comentarios del artículo (correcciones v1, pedido de Samuel 2026-07-22).
+//
+// [2026-08-18] YA SE ENVÍAN. El formulario solo añadía el comentario al estado
+// local: se veía publicado en la pantalla de quien escribía y desaparecía al
+// recargar, sin llegar a nadie. Ahora viaja a Odoo como `haa.web.lead` de tipo
+// `comment` y el comentario se pinta con el chip «Awaiting review» — que es la
+// verdad: entra en una cola de moderación, no se publica solo. Enseñarlo sin
+// el chip sería el mismo engaño de antes con más pasos.
 // 2ª vuelta, mismo día ("los comentarios publicados deben tener like,
 // dislike y contestar comentario"): cada comentario gana 3 acciones —
 // like/dislike (mutuamente excluyentes, un clic sobre el ya activo lo
@@ -68,16 +74,38 @@ export function ComentariosArticulo({ slug }: { slug: string }) {
 
   const [nombre, setNombre] = useState('')
   const [texto, setTexto] = useState('')
+  const [enviando, setEnviando] = useState(false)
+  const [errorEnvio, setErrorEnvio] = useState<string | null>(null)
+  /** Índices de los comentarios que ha escrito esta visita: llevan el chip de
+   *  moderación mientras el equipo no los aprueba. */
+  const [pendientes, setPendientes] = useState<number[]>([])
 
-  const enviar = (e: FormEvent) => {
+  const enviar = async (e: FormEvent) => {
     e.preventDefault()
-    if (!nombre.trim() || !texto.trim()) return
+    if (!nombre.trim() || !texto.trim() || enviando) return
+    setEnviando(true)
+    setErrorEnvio(null)
+    try {
+      await enviarFormulario('comment', {
+        name: nombre.trim(),
+        message: texto.trim(),
+        article: slug,
+      })
+    } catch {
+      setErrorEnvio(ERROR_ENVIO)
+      setEnviando(false)
+      return
+    }
     setComentarios((prev) => [
       { autor: nombre.trim(), fecha: 'Just now', texto: texto.trim(), likes: 0, dislikes: 0 },
       ...prev,
     ])
+    // Se añade ARRIBA, así que el nuevo es el índice 0 y los pendientes que ya
+    // hubiera se desplazan uno.
+    setPendientes((prev) => [0, ...prev.map((i) => i + 1)])
     setNombre('')
     setTexto('')
+    setEnviando(false)
   }
 
   const reaccionar = (indice: number, tipo: Reaccion) => {
@@ -98,9 +126,21 @@ export function ComentariosArticulo({ slug }: { slug: string }) {
     setReacciones((prev) => ({ ...prev, [indice]: siguiente }))
   }
 
-  const enviarRespuesta = (e: FormEvent, indice: number) => {
+  const enviarRespuesta = async (e: FormEvent, indice: number) => {
     e.preventDefault()
     if (!nombreResp.trim() || !textoResp.trim()) return
+    // Igual que el comentario principal: primero viaja, después se pinta.
+    try {
+      await enviarFormulario('comment', {
+        name: nombreResp.trim(),
+        message: textoResp.trim(),
+        article: slug,
+        replying_to: comentarios[indice]?.autor,
+      })
+    } catch {
+      setErrorEnvio(ERROR_ENVIO)
+      return
+    }
     setComentarios((prev) =>
       prev.map((c, i) =>
         i === indice
@@ -126,7 +166,7 @@ export function ComentariosArticulo({ slug }: { slug: string }) {
         Comments ({comentarios.length})
       </h2>
 
-      <form onSubmit={enviar} className="mt-5 rounded-card-grande bg-papel-hueso p-5 sm:p-6">
+      <form onSubmit={(e) => void enviar(e)} className="mt-5 rounded-card-grande bg-papel-hueso p-5 sm:p-6">
         <p className="text-sm font-semibold text-navy">Leave a comment</p>
         <input
           type="text"
@@ -146,10 +186,16 @@ export function ComentariosArticulo({ slug }: { slug: string }) {
         />
         <button
           type="submit"
-          className="mt-3 rounded-btn bg-coral px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-coral-dark"
+          disabled={enviando}
+          className="mt-3 rounded-btn bg-coral px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-coral-dark disabled:cursor-not-allowed disabled:opacity-60"
         >
-          Post comment
+          {enviando ? 'Sending…' : 'Post comment'}
         </button>
+        {errorEnvio ? (
+          <p role="alert" className="mt-3 rounded-btn border border-coral/40 bg-coral/5 p-3 text-xs leading-relaxed text-navy-sub">
+            {errorEnvio}
+          </p>
+        ) : null}
       </form>
 
       <ul className="mt-6 flex flex-col gap-5">
@@ -160,6 +206,12 @@ export function ComentariosArticulo({ slug }: { slug: string }) {
               <div className="flex flex-wrap items-baseline gap-x-2">
                 <span className="text-sm font-semibold text-navy">{c.autor}</span>
                 <span className="text-xs text-navy-soft">{c.fecha}</span>
+                {pendientes.includes(i) ? (
+                  <span className="inline-flex items-center gap-1 rounded-chip bg-papel-hueso px-2 py-0.5 text-xs font-medium text-navy-soft">
+                    <Clock className="size-3" aria-hidden="true" />
+                    Awaiting review
+                  </span>
+                ) : null}
               </div>
               <p className="mt-1 text-sm text-navy-sub">{c.texto}</p>
 
@@ -198,7 +250,7 @@ export function ComentariosArticulo({ slug }: { slug: string }) {
 
               {respondiendoA === i ? (
                 <form
-                  onSubmit={(e) => enviarRespuesta(e, i)}
+                  onSubmit={(e) => void enviarRespuesta(e, i)}
                   className="mt-3 flex flex-col gap-2 rounded-card bg-papel-hueso p-3"
                 >
                   <input

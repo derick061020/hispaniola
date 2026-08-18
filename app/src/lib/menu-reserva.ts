@@ -66,13 +66,20 @@ export function cartaCharterDe(
   variante?: string | null,
   personas?: number | null,
 ): CartaCharter {
-  const duracionBarco = subVariantes?.find((sv) => sv.id === variante)?.duracion
+  const barco = subVariantes?.find((sv) => sv.id === variante)
+  // [2026-08-18] Las horas salen de `duracionHoras`, un NÚMERO del dato, y ya
+  // no de leer el texto que se pinta (`duracion.startsWith('3')`). Aquello se
+  // rompía con «3.5 hours» y bloqueaba el multi-idioma: en cuanto la etiqueta
+  // se tradujera, ningún barco empezaría por «3» y todos los grupos comerían la
+  // carta de 4 h. El texto se sigue mirando como último recurso, para que un
+  // barco al que todavía no se le haya puesto el número no se quede sin carta.
+  const horas = barco?.duracionHoras ?? (barco?.duracion?.startsWith('3') ? 3 : undefined)
   const id: CartaCharter['id'] | null =
     personas != null && personas >= 21
       ? '21+'
-      : duracionBarco?.startsWith('3')
+      : horas === 3
         ? '3h'
-        : duracionBarco
+        : barco
           ? '4h'
           : null
   return menu.cartas.find((c) => c.id === id) ?? menu.cartas[0]

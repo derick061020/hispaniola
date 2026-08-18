@@ -1,4 +1,4 @@
-import type { Respuesta } from './tipos'
+import type { Respuesta, RespuestaOk } from './tipos'
 
 // Cliente HTTP de la API de Odoo. Un solo sitio para la base URL, los
 // timeouts, los reintentos y el desempaquetado del sobre `{ok, data}`.
@@ -45,7 +45,16 @@ type Opciones = {
   signal?: AbortSignal
 }
 
-export async function llamar<T>(ruta: string, opciones: Opciones = {}): Promise<T> {
+/** Igual que `llamar`, pero devuelve el SOBRE entero en vez de solo `data`.
+ *
+ *  Existe porque algunos endpoints cuelgan datos fuera de `data`: `/sync`
+ *  manda `capacity_ok` al lado, y `/checkout/start` manda `reused`. Con solo
+ *  `data` esos campos se perdian en silencio — el aviso de «ya no quedan
+ *  plazas» del funnel llevaba desde el primer dia sin poder aparecer. */
+export async function llamarSobre<T>(
+  ruta: string,
+  opciones: Opciones = {},
+): Promise<RespuestaOk<T>> {
   const {
     metodo = 'GET',
     cuerpo,
@@ -92,7 +101,7 @@ export async function llamar<T>(ruta: string, opciones: Opciones = {}): Promise<
       if (!json.ok) {
         throw new ErrorApi(json.error, json.message ?? json.error, respuesta.status, json)
       }
-      return json.data as T
+      return json
     } catch (error) {
       if (error instanceof ErrorApi) {
         if (!error.esReintentable || intento === reintentos) throw error
@@ -115,6 +124,12 @@ export async function llamar<T>(ruta: string, opciones: Opciones = {}): Promise<
   }
 
   throw ultimoError ?? new ErrorApi('unknown', 'Error desconocido.', 0)
+}
+
+/** El caso normal: solo `data`. */
+export async function llamar<T>(ruta: string, opciones: Opciones = {}): Promise<T> {
+  const sobre = await llamarSobre<T>(ruta, opciones)
+  return sobre.data
 }
 
 /** Envio «al cerrar la pestana». `sendBeacon` sobrevive a la navegacion, que

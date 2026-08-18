@@ -117,43 +117,54 @@ el Open Graph de la home.
 
 ## La frontera con el backend
 
-**No hay una sola llamada de red en todo `app/src`.** Ni `fetch`, ni cliente HTTP, ni variables
-de entorno (los 3 hits de `import.meta.env` son `.DEV`, para el Dev Mode). No existe `.env`
-ni `.env.example`. Tampoco hay estados de carga, error o vacío en ningún componente: nunca ha
-habido nada asíncrono. **Esa capa hay que introducirla, no sustituirla.**
+**Actualizado el 2026-08-18.** Esta sección decía que no había «una sola llamada de red en todo
+`app/src`». Ya no es cierto: el front habla con Odoo (módulo `hispaniola_web`) a través de
+[`lib/api/`](app/src/lib/api/), y la mayoría de los puntos que fingían backend están conectados.
 
-Todo se persiste en tres claves de `localStorage`:
+Una sola variable de entorno: `VITE_API_URL` (ver [`app/.env.example`](app/.env.example)).
+El cliente HTTP centraliza timeout, reintentos, `ErrorApi` tipado y el desempaquetado del
+sobre `{ok, data}` — los estados de carga y error se añaden una vez, no componente a componente.
 
-| Clave | Dónde |
+### Qué está conectado
+
+| Momento | Endpoint | Estado |
+|---|---|---|
+| Catálogo de tours | `data/home.ts` + `data/tours.ts` | **local a propósito** — menús, fotos y copy son de Samuel, no de Odoo |
+| Días disponibles | `GET /availability` | conectado ([`use-disponibilidad.ts`](app/src/components/tour/use-disponibilidad.ts)) |
+| Precio de la ficha | `POST /quote` | conectado ([`use-cotizacion.ts`](app/src/components/tour/use-cotizacion.ts)) |
+| Alta de la reserva | `POST /checkout/start` | **al ENTRAR en `/book/:slug`**, no al pagar |
+| Cada paso del funnel | `POST /checkout/:code/sync` | conectado, con debounce |
+| Salida sin terminar | `POST /checkout/:code/abandon` | `sendBeacon` en `pagehide` |
+| Cobro del depósito | `POST /checkout/:code/pay` + Stripe.js / PayPal | conectado |
+| Confirmación del cobro | `POST /checkout/:code/confirm` | conectado (el webhook es la fuente autoritativa) |
+| Consulta de reserva | `POST /bookings/lookup` | conectado — pide código **y** email |
+| Cobro del saldo | `POST /bookings/:code/pay-balance` | conectado ([`pago-saldo.tsx`](app/src/components/mi-reserva/pago-saldo.tsx)) |
+| Cambios post-venta | `POST /bookings/:code/update` | conectado — menú, recogida, nombre y teléfono |
+| Añadir al calendario | `GET /bookings/:code/calendar.ics` | conectado |
+| Cotización de evento | `POST /event-quotes` | conectado |
+| Contacto · agentes · empleo · comentarios | `POST /leads` | conectado |
+| «¿Cómo nos encontraste?» | `POST /leads` (`how_found`) | conectado |
+
+`localStorage` sigue ahí pero **cambió de papel**: era el almacén y ahora es caché para pintar
+sin esperar a la red. La copia buena vive en Odoo.
+
+| Clave | Para qué |
 |---|---|
-| `hsp:reservas:v1` | [`lib/reservas.ts`](app/src/lib/reservas.ts) |
-| `hsp:cotizaciones-evento:v1` | [`lib/cotizacion-evento.ts`](app/src/lib/cotizacion-evento.ts) |
+| `hsp:checkout:v1` | la sesión de checkout (código + token), para retomarla al recargar y capturar el pago al volver de PayPal |
+| `hsp:reservas:v1` | caché de la reserva pagada, para que «Gracias» pinte al instante |
+| `hsp:cotizaciones-evento:v1` | caché de la cotización de evento |
 | `hispaniola:deseos` | lista de deseos del widget |
 
-### El contrato
+### Lo que sigue sin backend
 
-[`lib/reservas.ts`](app/src/lib/reservas.ts) se autodeclara el shape que la API tendrá que
-respetar. El tipo `Reserva` guarda una **copia denormalizada** del catálogo dentro de cada reserva
-(`tour`, `ficha`) para que la pantalla de confirmación siga funcionando sin red.
-
-**Le faltan tres cosas que Odoo va a necesitar:** add-ons/extras, desglose adultos/niños/bebés
-(hoy solo hay `personas: number`) y estado + datos de pago.
-
-### Nueve puntos que fingen backend
-
-1. **Pago del depósito** — `pages/reservar.tsx`: genera un código, escribe en localStorage y navega. No hay formulario de tarjeta.
-2. **Pago del saldo** — `pages/mi-reserva.tsx`: `setPagado(true)`, no persiste.
-3. **Reservas** → `lib/reservas.ts`.
-4. **Cotizaciones de evento** → `lib/cotizacion-evento.ts` (su cabecera marca el único punto que cambia para hacer el POST real).
-5. **Búsqueda por código** — `mi-reserva.tsx`: no valida nada y **siempre devuelve la reserva demo**. Hay banner avisando.
-6. **Voucher PDF** — botón sin `onClick`.
-7. **Añadir al calendario** — botón sin `onClick`. Es lo único de la lista que se resuelve sin backend (un `.ics`).
-8. **Email / WhatsApp** — no existe nada, aunque la pantalla de gracias diga «We're sending the voucher…».
-9. **Disponibilidad** — `calendario-widget.tsx`: las fechas agotadas están hardcodeadas y ningún horario publica aforo.
-
-Además, **siete formularios** hacen `preventDefault()` + mensaje de éxito sin enviar nada
-(contacto ×2, agentes, careers, newsletter, comentarios, «cómo nos encontraste»). Sin captcha,
-sin honeypot, sin validación más allá del `required` nativo.
+- **Voucher PDF**: no hay endpoint público. Existe en Odoo pero solo se adjunta al correo, así
+  que el botón se quitó de «Gracias» en vez de dejarlo sin `onClick`.
+- **Cancelar desde «Mi reserva»**: el endpoint existe (`POST /bookings/:code/cancel`, con
+  revisión manual si hay dinero de por medio) pero no hay interfaz. Hoy se pide por WhatsApp.
+- **Cambiar fecha, personas o barco después de pagar**: deliberado. Mueve precio y aforo, y eso
+  no lo decide un formulario — se pide al equipo.
+- **Newsletter**: `POST /newsletter` está listo, pero el sitio no tiene formulario de suscripción.
+- **Idioma y moneda**: los dos selectores siguen siendo decorativos (ver más abajo).
 
 ### Precios: cuatro modelos incompatibles
 
@@ -164,34 +175,49 @@ sin honeypot, sin validación más allá del `required` nativo.
 
 Depósito 25% · saldo el día del tour · −5% pagando en efectivo.
 Fuente canónica de tarifas: [`docs/proceso/correcciones-v2-cliente/TARIFARIO-WEB-ORIGINAL.md`](docs/proceso/correcciones-v2-cliente/TARIFARIO-WEB-ORIGINAL.md).
+Los cuatro están implementados **en el servidor** (`services/pricing.py` del módulo), que es la
+única autoridad de precio. El motor local (`calcularTotalTour()`) se conserva para pintar
+mientras la respuesta viaja y como red si Odoo no contesta; en ese caso el total sale rotulado
+como estimación.
 
 ---
 
-## 🔴 Lo primero: el checkout cobra distinto que la ficha
+## ✅ Resuelto: el checkout ya no cobra distinto que la ficha
 
-[`pages/reservar.tsx`](app/src/pages/reservar.tsx) calcula
-`total = (precioLight + upgrade) * personas` y **no llama a `calcularTotalTour()`**
-([`data/tours.ts`](app/src/data/tours.ts)), que es lo que sí usa el widget de la ficha. Los cuatro
-tours son `booking: 'completo'`, así que los cuatro pasan por ahí. Los `precioLight` del charter
-(75) y de Saona (184) son anclas «desde», **no tarifas por cabeza**:
+Aquí había un aviso en rojo: `pages/reservar.tsx` calculaba
+`total = (precioLight + upgrade) * personas` y no llamaba a `calcularTotalTour()`, con desvíos
+de hasta **+3.570 USD** en Saona con 30 pax. Los `precioLight` del charter (75) y de Saona (184)
+son anclas «desde», no tarifas por cabeza.
 
-| Caso | Ficha (tramo real) | Checkout | Desvío |
-|---|---|---|---|
-| Saona · Catamarán 30 pax | US$ 1.950 | US$ 5.520 | **+3.570** |
-| Saona · Speedboat 2 pax *(default del funnel)* | US$ 1.100 | US$ 368 | **−732** |
-| Charter · Forever Teresa 10 pax | US$ 1.600 | US$ 750 | **−850** |
+**La decisión fue pasar el cálculo al servidor.** Ficha y checkout preguntan los dos a Odoo, así
+que no hay dos fórmulas que puedan desincronizarse: hay una. El desglose que pinta el resumen
+también viene del servidor (`quote.lines`), así que ya no imprime una fórmula que no existe.
 
-El resumen **imprime la fórmula falsa** («Tour fare US$ 184 × 30»), y ese número es el que iría a
-Odoo. El QA del funnel no lo cazó porque solo prueba `semi-private-premium`, el único tour cuya
-fórmula sí es correcta.
+El checkout tampoco tira ya los add-ons ni el desglose por rol: `adultos`/`ninos`/`bebes` viajan
+desde el widget hasta el CRM, que es lo que la tripulación necesita para los chalecos y lo que
+hace que Snorkel Lovers cobre la tarifa de niño.
 
-**Se ha dejado sin arreglar a propósito:** cambia importes en pantalla y hay que decidir si el
-cálculo se queda en el front o pasa al backend. Es la primera decisión del proyecto.
+---
 
-Relacionado: el checkout **tira los add-ons y el desglose por rol**. El widget manda
-`adultos`/`ninos`/`bebes` en la URL y `reservar.tsx` no los lee; no hay ninguna clave de add-ons.
-Resultado: el álbum de US$ 20 y la langosta de US$ 30/pax desaparecen entre dos pantallas, y los
-bebés que la tripulación necesita para los chalecos no se guardan en ningún sitio.
+## ⚠️ Lo que hay que configurar en Odoo (no se arregla desde el código)
+
+Comprobado contra producción el 2026-08-18:
+
+1. **El catálogo está vacío.** `GET /health` devuelve `published_tours: 0` y `/catalog` una lista
+   vacía, así que `/checkout/start` contesta `tour_not_found` para los cuatro tours y **ninguna
+   reserva llega al CRM**. Se arregla ejecutando `scripts/seed_catalog.py` del módulo con
+   `odoo shell` contra la base de producción (es idempotente y no toca reservas).
+2. **CORS admite un solo origen** (`hispaniola.botizate.com`). Cualquier otro dominio —el
+   definitivo, las previews de Vercel, local— recibe respuesta y el navegador la descarta. Se
+   añaden en *Ajustes › Hispaniola Web › Allowed origins*.
+3. **`site_url`** apunta a `hispaniola.botizate.com`. Es el que construye la URL de vuelta de
+   PayPal: si el dominio bueno es otro, hay que cambiarlo ahí.
+4. **PayPal está apagado** (`payments.paypal.enabled: false`) y Stripe está en `live`. Hoy solo
+   hay tarjeta; el paso de pago se adapta solo y no pinta un método que iba a fallar.
+
+Mientras 1 y 2 sigan así, el funnel **lo dice en pantalla** (banda de aviso arriba, paso de pago
+bloqueado, total rotulado como estimación) en vez de dejar rellenar todo y fallar al pulsar
+«Pay». Verificable con `npm run qa:degradado`.
 
 ---
 
@@ -215,13 +241,17 @@ bebés que la tripulación necesita para los chalecos no se guardan en ningún s
   cliente que nunca existió en español.
   **No renombrar ni reordenar claves de `data/*.ts` antes de extraer el español**, o se pierde esa propiedad.
 
-### ⚠️ Precondición: hay lógica que decide por el texto visible
+### ✅ Resuelto (2026-08-18): la lógica de producto ya no lee el texto visible
 
-Y **ya está rota**. `incluye-evento.tsx` elige iconos comparando substrings en español mientras
+[`lib/menu-reserva.ts`](app/src/lib/menu-reserva.ts) decidía **qué carta del charter se muestra**
+—en la ficha y en el checkout— con `duracionBarco?.startsWith('3')`. Ahora lo decide
+`subVariante.duracionHoras`, un número del dato. El texto se mira solo como último recurso, por si
+a algún barco nuevo no le han puesto el número. Sin esto, traducir la etiqueta «3 hours» habría
+mandado a todos los grupos a la carta de 4 h.
+
+Queda el caso menor: `incluye-evento.tsx` elige iconos comparando substrings en español mientras
 `data/eventos.ts` ya está en inglés → varios ítems de «What's Included» caen al icono genérico.
-Más grave: [`lib/menu-reserva.ts`](app/src/lib/menu-reserva.ts) decide **qué carta del charter se
-muestra** con `duracionBarco?.startsWith('3')`, en la ficha y en el checkout. Eso no se arregla
-con un campo `icono`: necesita un `duracionHoras` numérico.
+Es cosmético (un icono, no un menú) y se arregla con un campo `icono` en el dato.
 
 También sin preparar: cero `hreflang`, `meta.tsx` no acepta idioma, sitemap sin alternates. Y las
 18 reglas 301 ES→EN ya desplegadas condicionan cualquier esquema de rutas por idioma.
@@ -254,7 +284,10 @@ Los `// [dev-mode]` en componentes marcan líneas que existen por esa herramient
 **Pendiente de decisión de Samuel** — `/crew-boat` es una página de comparación que se autodescribe
 como borrable, y hoy es contenido duplicado **indexable**. Los 19 slugs del blog siguen en español
 (uno con ñ) pese a que `App.tsx` afirma lo contrario. Y `ALBUM_UPSELL.porDefecto = true` premarca
-un add-on de US$ 20: hoy es inocuo porque no llega al checkout, deja de serlo cuando Odoo cobre.
+un add-on de US$ 20: 🔴 **ya no es inocuo** — desde el 2026-08-18 los add-ons viajan a la
+cotización y al checkout, así que ese extra se cobra salvo que el visitante lo desmarque.
+Contraviene la Directiva 2011/83/UE art. 22 (consentimiento expreso para todo pago adicional).
+Está aislado en un booleano —en el front y en `seed_catalog.py`— para poder apagarlo en una línea.
 
 **Rendimiento** — un único chunk de 1,2 MB (380 kB gzip): no hay ni un `React.lazy`. `public/`
 pesa 31 MB, de los que **24 MB son 3 vídeos** (uno es el fondo del hero y entra en el LCP).

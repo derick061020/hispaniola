@@ -61,9 +61,12 @@ export function ResumenReserva({
   precioBase,
   upgrade,
   lineas,
+  lineasAddOns,
   total,
   deposito,
   saldo,
+  precioProvisional = false,
+  variante = null,
 }: {
   tour: Tour
   fechaISO: string | null
@@ -93,9 +96,22 @@ export function ResumenReserva({
    *  el único que sabe explicar un tramo de grupo («Catamaran — flat rate»),
    *  que no es una multiplicación y no se puede escribir como tal. */
   lineas?: { label: string; quantity: number; unit_price: number; amount: number }[]
+  /** [2026-08-18] Extras elegidos en la ficha, con su importe. Van en línea
+   *  aparte del tour, nunca fundidos en el precio base: el visitante tiene que
+   *  ver qué parte del total eligió añadir — y poder reconocer el álbum que
+   *  viene premarcado. */
+  lineasAddOns?: { label: string; quantity: number; amount: number }[]
   total: number
   deposito: number
-  saldo: number
+  saldo: number  /** [2026-08-18] true = Odoo todavía no ha contestado (o no contesta) y el
+   *  número de arriba es una ESTIMACIÓN local. Se dice en pantalla: el precio
+   *  bueno lo pone el servidor y en los tours por tramos la estimación puede
+   *  quedarse muy corta o muy larga. */
+  precioProvisional?: boolean
+  /** Sub-variante (el barco) elegida en el widget. El aforo es por barco, así
+   *  que el calendario la necesita para preguntar por el que toca. */
+  variante?: string | null
+
 }) {
   const enEfectivo = Math.round(saldo * 0.95)
   const ahorro = saldo - enEfectivo
@@ -158,7 +174,14 @@ export function ResumenReserva({
             CalendarioWidget, mismo stepper h-10 de AlignUI), no una versión
             parecida: quien viene de configurar allí reconoce el control. */}
         <div className="flex flex-col gap-2 border-t border-linea p-4">
-          <CalendarioWidget fecha={fechaISO} onSeleccionar={onFecha} hora={horaSalida} />
+          <CalendarioWidget
+            fecha={fechaISO}
+            onSeleccionar={onFecha}
+            hora={horaSalida}
+            tour={tour.slug}
+            variante={variante}
+            personas={personas}
+          />
 
           <div
             role="group"
@@ -297,10 +320,29 @@ export function ResumenReserva({
               ) : null}
             </>
           )}
+          {lineasAddOns?.map((extra) => (
+            <FilaPrecio
+              key={extra.label}
+              concepto={
+                <>
+                  {extra.label}{' '}
+                  {extra.quantity > 1 ? (
+                    <span className="text-navy-soft">× {extra.quantity}</span>
+                  ) : null}
+                </>
+              }
+              importe={extra.amount}
+            />
+          ))}
           <div className="mt-3 flex items-center justify-between border-t border-linea pt-3">
             <span className="font-semibold text-navy">Total</span>
             <span className="font-display text-precio font-semibold text-navy">{formatoDinero(total)}</span>
           </div>
+          {precioProvisional ? (
+            <p className="mt-2 text-xs leading-relaxed text-navy-soft">
+              Estimated price — we confirm the final amount before you pay.
+            </p>
+          ) : null}
         </div>
 
         {/* CÓMO SE PAGA. Dos líneas que suman el total de arriba, y la frase que

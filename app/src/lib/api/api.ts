@@ -1,4 +1,4 @@
-import { llamar, enviarBaliza } from './cliente'
+import { llamar, llamarSobre, enviarBaliza } from './cliente'
 import type {
   ConfigPublica, Cotizacion, Disponibilidad, IntencionPago, ParcheCheckout,
   Paquete, Pax, Pedido, Reserva, Tour,
@@ -76,6 +76,8 @@ export type InicioCheckout = {
   pax?: Pax
   fecha?: string | null
   scheduleIndex?: number
+  /** Extras elegidos en la ficha. Odoo descarta los que ese barco no ofrece. */
+  addons?: string[]
 }
 
 /** Abre el pedido. **Llamar al ENTRAR en /book/:slug, no al pagar.**
@@ -97,6 +99,7 @@ export function abrirCheckout(inicio: InicioCheckout, idempotencia?: string) {
       pax: inicio.pax ?? { adults: 2 },
       date: inicio.fecha ?? null,
       schedule_index: inicio.scheduleIndex ?? 0,
+      addons: inicio.addons ?? [],
       step: 'start',
       meta: metaOrigen(),
     },
@@ -105,12 +108,20 @@ export function abrirCheckout(inicio: InicioCheckout, idempotencia?: string) {
 
 /** Guardado parcial. Se puede llamar en cada paso o con un debounce: es
  *  idempotente y hace merge, no reemplazo. */
-export function sincronizarCheckout(codigo: string, token: string, parche: ParcheCheckout) {
-  return llamar<Pedido>(`/checkout/${encodeURIComponent(codigo)}/sync`, {
+export async function sincronizarCheckout(
+  codigo: string,
+  token: string,
+  parche: ParcheCheckout,
+): Promise<{ pedido: Pedido; aforoOk: boolean }> {
+  // `capacity_ok` viaja FUERA de `data` (ver `llamarSobre`), asi que aqui se
+  // usa el sobre entero. Es un aviso, no un bloqueo: el corte de verdad lo
+  // hace `/pay` con un 409.
+  const sobre = await llamarSobre<Pedido>(`/checkout/${encodeURIComponent(codigo)}/sync`, {
     metodo: 'POST',
     token,
     cuerpo: { ...parche, meta: parche.meta ?? metaOrigen() },
   })
+  return { pedido: sobre.data, aforoOk: sobre.capacity_ok !== false }
 }
 
 export function leerCheckout(codigo: string, token: string, signal?: AbortSignal) {
@@ -181,6 +192,29 @@ export function buscarReserva(codigo: string, email: string, signal?: AbortSigna
     signal,
     cuerpo: { code: codigo.trim().toUpperCase(), email: email.trim().toLowerCase() },
   })
+}
+
+/** Cambios del cliente sobre una reserva YA EMITIDA (menu y recogida).
+ *
+ *  No vale `/checkout/:code/sync` para esto: ese endpoint rechaza los pedidos
+ *  cerrados con `order_closed`, que es justo lo que es una reserva pagada. Va
+ *  contra el pedido igualmente —es la fuente— y Odoo vuelca el cambio a la
+ *  reserva, que es lo que ve la tripulacion. */
+export function actualizarReserva(
+  codigo: string,
+  token: string,
+  cambios: {
+    dishes?: string[]
+    pickup?: { hotel?: string; room?: string; notes?: string }
+    /** Nombre y teléfono. El EMAIL no se puede cambiar por aquí: es la
+     *  credencial con la que se entra a «Mi reserva». */
+    contact?: { first_name?: string; last_name?: string; phone?: string }
+  },
+) {
+  return llamar<{ booking: Reserva; changed: string[] }>(
+    `/bookings/${encodeURIComponent(codigo)}/update`,
+    { metodo: 'POST', token, cuerpo: cambios },
+  )
 }
 
 export function cancelarReserva(codigo: string, opciones: { email?: string; token?: string; motivo?: string }) {

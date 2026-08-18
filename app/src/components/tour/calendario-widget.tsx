@@ -12,6 +12,7 @@ import {
   sumarDias,
 } from '@/lib/fechas'
 import { useDevFlag } from '@/dev/use-dev-flag'
+import { useDisponibilidad } from '@/components/tour/use-disponibilidad'
 
 // Ventana de reserva del demo: 3 meses hacia delante desde el mes actual —
 // mismo criterio que el DIAS_VISIBLES=14 que este calendario reemplaza (un
@@ -19,10 +20,15 @@ import { useDevFlag } from '@/dev/use-dev-flag'
 // sigue pendiente del cliente, ver widget-reserva.tsx).
 const MESES_ADELANTE = 3
 
-// 2 fechas agotadas de ejemplo (mismo criterio que antes: hoy+3 y hoy+10) —
-// el estado «sin plazas» tiene que existir en pantalla, es un frame de Figma
-// y la realidad de un tour que se llena.
-function fechasAgotadas(hoy: string): string[] {
+// [2026-08-18] Aquí vivían dos fechas agotadas INVENTADAS (hoy+3 y hoy+10),
+// iguales para los cuatro tours. Ahora los días sin plazas los dice Odoo
+// —ventana de reserva + bloqueos del back-office + aforo vendido— y llegan por
+// `useDisponibilidad`. El estado «sin plazas» sigue existiendo en pantalla, que
+// era lo que justificaba el invento; lo que cambia es que ahora es verdad.
+//
+// `?dev-calendario=agotado` recupera el frame de días bloqueados para Figma sin
+// depender de que Odoo tenga uno lleno ese día.
+function fechasAgotadasDemo(hoy: string): string[] {
   return [sumarDias(hoy, 3), sumarDias(hoy, 10)]
 }
 
@@ -41,10 +47,18 @@ type Celda = { iso: string; dia: number }
 // el widget entero quepa en pantallas de laptop, y el grid solo aparezca al
 // abrirlo — mismo criterio que Horario/Personas, que ya son campos de una
 // fila.
-function GridMensual({ fecha, onSeleccionar }: { fecha: string | null; onSeleccionar: (iso: string) => void }) {
+function GridMensual({
+  fecha,
+  onSeleccionar,
+  agotados,
+}: {
+  fecha: string | null
+  onSeleccionar: (iso: string) => void
+  /** Días sin plazas, tal y como los devuelve Odoo. */
+  agotados: Set<string>
+}) {
   const hoy = hoyISO()
   const hoyDate = parseFechaISO(hoy)
-  const agotados = fechasAgotadas(hoy)
 
   const mesActual = new Date(hoyDate.getFullYear(), hoyDate.getMonth(), 1)
   const mesMaximo = new Date(hoyDate.getFullYear(), hoyDate.getMonth() + MESES_ADELANTE, 1)
@@ -101,7 +115,7 @@ function GridMensual({ fecha, onSeleccionar }: { fecha: string | null; onSelecci
         ))}
         {celdas.map((c, i) => {
           if (c === null) return <span key={`vacio-${i}`} aria-hidden="true" />
-          const agotado = agotados.includes(c.iso)
+          const agotado = agotados.has(c.iso)
           const pasado = c.iso < hoy
           const deshabilitado = agotado || pasado
           const elegido = fecha === c.iso
@@ -152,9 +166,22 @@ export function CalendarioWidget({
   fecha,
   onSeleccionar,
   hora = null,
+  tour = null,
+  variante = null,
+  personas,
 }: {
   fecha: string | null
   onSeleccionar: (iso: string) => void
+  /** [2026-08-18] Slug del tour: lo que permite preguntarle a Odoo qué días
+   *  quedan. Sin él el calendario no bloquea ningún día — es lo que pasa en el
+   *  showcase de `/fundaciones`, donde no hay tour del que hablar. */
+  tour?: string | null
+  /** Sub-variante (el barco). El aforo es POR BARCO: el mismo día puede estar
+   *  lleno en el catamarán y libre en el speedboat. */
+  variante?: string | null
+  /** Tamaño del grupo. Un día con 4 plazas libres está disponible para 2
+   *  personas y agotado para 6. */
+  personas?: number
   /** [v2 2026-07-28] Hora de salida elegida, para mostrarla junto a la fecha
    *  (pedido de Samuel: «que quede súper claro fecha y hora que se está
    *  escogiendo»). Al haber pasado el horario a píldoras de una línea, el
@@ -165,6 +192,15 @@ export function CalendarioWidget({
 }) {
   const [abierto, setAbierto] = useState(false)
   const wrapRef = useRef<HTMLDivElement>(null)
+  const disponibilidad = useDisponibilidad(tour, variante, personas)
+
+  // [dev-mode] ?dev-calendario=agotado — el frame de «sin plazas» para Figma,
+  // sin depender de que ese día esté lleno de verdad en Odoo.
+  const [agotadosDemo, setAgotadosDemo] = useState<string[] | null>(null)
+  useDevFlag('dev-calendario', (v) => {
+    if (v === 'agotado') setAgotadosDemo(fechasAgotadasDemo(hoyISO()))
+  }) // [dev-mode]
+  const agotados = agotadosDemo ? new Set(agotadosDemo) : disponibilidad.agotados
 
   // [dev-mode] deep-link del Glosario Dev — ver src/dev/dev-registry.ts.
   // ?dev-widget=calendario fuerza el popover abierto → frame limpio para
@@ -242,11 +278,20 @@ export function CalendarioWidget({
         <div className="absolute left-0 top-full z-20 mt-2 w-full min-w-[19rem] sm:w-[22rem]">
           <GridMensual
             fecha={fecha}
+            agotados={agotados}
             onSeleccionar={(iso) => {
               onSeleccionar(iso)
               setAbierto(false)
             }}
           />
+          {/* Solo se avisa cuando la consulta FALLÓ. Mientras carga no se dice
+              nada: el calendario ya es usable y un «cargando» que parpadea en
+              cada apertura es más ruido que información. */}
+          {!disponibilidad.cargando && !disponibilidad.consultada && tour ? (
+            <p className="mt-1.5 px-1 text-xs text-navy-soft">
+              We couldn&rsquo;t check live availability — we&rsquo;ll confirm your date by e-mail.
+            </p>
+          ) : null}
         </div>
       ) : null}
     </div>

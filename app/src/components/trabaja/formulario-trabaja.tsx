@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { Camera, Check, ChevronRight, Handshake, Megaphone } from 'lucide-react'
 import { Boton } from '@/components/ui/boton'
+import { ERROR_ENVIO, useEnvioFormulario } from '@/lib/use-envio-formulario'
 import { Campo } from '@/components/ui/campo'
 import { IconoWhatsApp } from '@/components/ui/iconos-redes'
 import { PERFILES_TRABAJO, PERFIL_POR_DEFECTO, RESPALDO, esPerfilValido } from '@/data/trabaja'
@@ -249,6 +250,11 @@ export function FormularioTrabaja() {
   // vivo tras enviar (se puede cambiar de perfil), y con un booleano el acuse
   // de recibo se reescribiría solo al tocar el carril, diciendo que mandaste
   // algo que no mandaste.
+  // [2026-08-18] YA ENVÍA. Era `setEnviadoComo(perfilId)` y nada más: la
+  // candidatura entera —perfil, datos y los campos propios de cada perfil— se
+  // perdía en el navegador. Ahora entra en Odoo como `haa.web.lead` de tipo
+  // `careers`, con el perfil elegido en `subject` para poder filtrarlas.
+  const { estado, enviar, enviando } = useEnvioFormulario('careers')
   const [enviadoComo, setEnviadoComo] = useState<PerfilTrabajo['id'] | null>(null)
 
   // Los tres enlaces del footer apuntan a esta MISMA ruta con distinto
@@ -275,10 +281,16 @@ export function FormularioTrabaja() {
       {/* El <form> envuelve LAS DOS columnas: los radios del perfil viven en
           el carril y los campos en la otra, pero son un solo envío. */}
       <form
-        onSubmit={(e) => {
-          e.preventDefault()
-          setEnviadoComo(perfilId)
-        }}
+        onSubmit={(e) =>
+          void enviar(e, { subject: perfil.titulo, profile: perfilId }).then(
+            (ok) => {
+              // Solo se pasa a la confirmación si el envío salió: enseñar
+              // «te contestamos en 24 h» sobre una candidatura que no ha
+              // llegado es exactamente lo que había que arreglar.
+              if (ok) setEnviadoComo(perfilId)
+            },
+          )
+        }
         className="overflow-hidden rounded-card-grande bg-papel ring-1 ring-linea"
       >
         {/* EL CARRIL SE PARTE EN DOS PIEZAS, y no es un capricho de layout:
@@ -351,10 +363,10 @@ export function FormularioTrabaja() {
                   <p className="text-eyebrow font-semibold uppercase tracking-[0.08em] text-navy-soft">
                     Tus datos
                   </p>
-                  <Campo etiqueta="Nombre y apellido" name="nombre" required />
+                  <Campo etiqueta="Full name" name="name" required />
                   <div className="grid gap-4 sm:grid-cols-2">
                     <Campo etiqueta="Email" name="email" type="email" required />
-                    <Campo etiqueta="Teléfono / WhatsApp" name="telefono" type="tel" required />
+                    <Campo etiqueta="Phone / WhatsApp" name="phone" type="tel" required />
                   </div>
                 </div>
 
@@ -387,19 +399,29 @@ export function FormularioTrabaja() {
 
                   <Campo
                     etiqueta="Tell us a bit more (optional)"
-                    name="mensaje"
+                    name="message"
                     textarea
                     rows={4}
                     placeholder="Anything you think we should know before we reply."
                   />
                 </div>
 
-                <Boton type="submit" className="mt-7 w-full sm:w-auto">
-                  Send application
+                <Boton
+                  type="submit"
+                  className="mt-7 w-full disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+                  disabled={enviando}
+                >
+                  {enviando ? 'Sending…' : 'Send application'}
                 </Boton>
-                <p className="mt-3 text-xs text-navy-soft">
-                  We reply within 24 h. We won’t add you to any mailing list.
-                </p>
+                {estado === 'error' ? (
+                  <p role="alert" className="mt-3 rounded-btn border border-coral/40 bg-coral/5 p-3 text-xs leading-relaxed text-navy-sub">
+                    {ERROR_ENVIO}
+                  </p>
+                ) : (
+                  <p className="mt-3 text-xs text-navy-soft">
+                    We reply within 24 h. We won’t add you to any mailing list.
+                  </p>
+                )}
               </>
             )}
           </div>

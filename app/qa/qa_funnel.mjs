@@ -1,9 +1,17 @@
 // F8 — el funnel de reserva de punta a punta, ya en inglés y con los cambios
 // del 2026-08-07 (personas/fecha/horario editables, menú opcional, banner
 // Premium). Comprueba el CAMINO COMPLETO, no una pantalla suelta.
+//
+// ⚠️ Para llegar hasta el cobro hace falta ODOO levantado con el catálogo
+// sembrado: desde el 2026-08-18 el paso de pago se bloquea si no hay pedido
+// abierto en el servidor. Sin Odoo el script llega igual hasta el paso 9 y
+// comprueba que el bloqueo y su aviso están donde tienen que estar; el camino
+// degradado completo lo cubre `npm run qa:degradado`.
+//
+//   BASE=http://localhost:4173 node qa/qa_funnel.mjs   (contra el build)
 import { chromium } from 'playwright'
 
-const BASE = 'http://localhost:5173'
+const BASE = process.env.BASE || 'http://localhost:5173'
 const navegador = await chromium.launch()
 const ctx = await navegador.newContext({ viewport: { width: 1440, height: 900 } })
 const page = await ctx.newPage()
@@ -98,13 +106,32 @@ await page.getByRole('button', { name: /^Continue/ }).click()
 await page.waitForTimeout(400)
 
 // 9. Pago
+//
+// [2026-08-18] Este script daba por hecho que «Pay deposit» siempre se puede
+// pulsar, porque cuando se escribió el pago era simulado. Ya no: sin un pedido
+// abierto en Odoo el botón queda BLOQUEADO a propósito —no hay importe que
+// cobrar y la reserva no está registrada—, así que aquí se bifurca en vez de
+// quedarse 30 s esperando a un botón que nunca se habilita.
+//
+// El camino sin backend tiene su propio script: `npm run qa:degradado`.
 const botonPagar = page.getByRole('button', { name: /Pay deposit|Pagar depósito/ })
-paso('botón de pago habilitado con fecha: ' + (await botonPagar.isEnabled()))
-await botonPagar.click()
-await page.waitForTimeout(900)
-paso('URL final: ' + page.url())
-paso('acuse de cumpleaños: ' + (await page.getByText(/Noted: birthday/i).count()))
-paso('menú por confirmar: ' + (await page.getByText(/To be confirmed by email/).count()))
+const puedePagar = await botonPagar.isEnabled()
+paso('botón de pago habilitado: ' + puedePagar)
+
+if (!puedePagar) {
+  const sinBackend = await page.getByText(/can.t open your booking right now/i).count()
+  paso(
+    sinBackend
+      ? 'CORRECTO: sin Odoo el funnel avisa y no deja pagar (ver npm run qa:degradado)'
+      : '⚠️ el botón está bloqueado pero NO sale el aviso — revisar BandaEstado',
+  )
+} else {
+  await botonPagar.click()
+  await page.waitForTimeout(900)
+  paso('URL final: ' + page.url())
+  paso('acuse de cumpleaños: ' + (await page.getByText(/Noted: birthday/i).count()))
+  paso('menú por confirmar: ' + (await page.getByText(/To be confirmed by email/).count()))
+}
 
 console.log('\nERRORES DE CONSOLA:', errores.length ? errores : 'ninguno')
 await navegador.close()

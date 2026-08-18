@@ -8,7 +8,7 @@ import { PasoMenu } from '@/components/reservar/paso-menu'
 import { PasoRecogida } from '@/components/reservar/paso-recogida'
 import { BannerPremium } from '@/components/reservar/banner-premium'
 import { PasoContacto } from '@/components/reservar/paso-contacto'
-import { PasoPago } from '@/components/reservar/paso-pago'
+import { PasoPago, type DatosPago } from '@/components/reservar/paso-pago'
 import { ResumenReserva } from '@/components/reservar/resumen-reserva'
 import { etiquetaOcasion, type DatosCelebracion, type DatosContacto, type DatosRecogida, type Paquete } from '@/components/reservar/tipos'
 import { maxPersonasDe } from '@/components/tour/widget-reserva'
@@ -17,6 +17,8 @@ import { FICHAS, type FichaTour } from '@/data/tours'
 import { guardarReserva, type Reserva } from '@/lib/reservas'
 import { menuDeLaReserva } from '@/lib/menu-reserva'
 import { useCheckout } from '@/lib/api/use-checkout'
+import type { ErrorApi } from '@/lib/api/cliente'
+import { cargarStripe, mensajeDeError } from '@/lib/pagos/stripe'
 
 // Funnel de reserva (/reservar/:slug, Fase C). El widget de la ficha es el
 // CONFIGURADOR (paquete · fecha · hora · personas); «Continuar» abre aquí, con
@@ -83,6 +85,11 @@ export function ReservarPage() {
   // desde siempre; hasta hoy el funnel la ignoraba. Ahora hace falta: es lo que
   // decide qué carta del charter se come (3 h, 4 h o buffet de pinchos).
   const variante = params.get('variante')
+  // [2026-08-18] Extras elegidos en la ficha (álbum, langosta). Llegan como
+  // lista separada por comas y viajan al pedido desde el primer momento: son
+  // parte del precio, así que si no llegan, la ficha y el checkout dicen
+  // números distintos. Odoo los valida contra los que ofrece ESE barco.
+  const addons = (params.get('addons') ?? '').split(',').filter(Boolean)
   // Mismo tope que el stepper del widget de la ficha, con la misma fórmula
   // (maxPersonasDe): antes aquí había una copia que topaba en 6 salvo tarifa
   // dual, así que un charter de 30 personas entraba al checkout como uno de 6.
@@ -100,6 +107,7 @@ export function ReservarPage() {
       maxPersonas={maxPersonas}
       horarioInicial={horarioIdx}
       fechaInicialISO={fechaISO}
+      addonsIniciales={addons}
       // Si el widget no mandó desglose (el caso normal, tarifa única), todas
       // las personas son adultos: es lo que este funnel ha asumido siempre.
       adultosIniciales={adultosUrl || personas}
@@ -125,6 +133,7 @@ function FlujoReserva({
   adultosIniciales,
   ninosIniciales,
   bebesIniciales,
+  addonsIniciales,
 }: {
   tour: Tour
   ficha: FichaTour
@@ -141,6 +150,8 @@ function FlujoReserva({
   adultosIniciales: number
   ninosIniciales: number
   bebesIniciales: number
+  /** Slugs de los extras elegidos en la ficha. */
+  addonsIniciales: string[]
 }) {
   const navigate = useNavigate()
 
@@ -190,6 +201,7 @@ function FlujoReserva({
     pax: { adults: adultosIniciales, children: ninosIniciales, infants: bebesIniciales },
     fecha: fechaInicialISO,
     scheduleIndex: horarioInicial,
+    addons: addonsIniciales,
   })
 
   const upgrade = paquete === 'premium' && ficha.upgradePremium !== null ? ficha.upgradePremium : 0
@@ -269,21 +281,71 @@ function FlujoReserva({
   const [pagando, setPagando] = useState(false)
   const [errorPago, setErrorPago] = useState<string | null>(null)
 
-  const handlePagar = async () => {
+  // [2026-08-14] AQUÍ SE COBRA DE VERDAD. Lo que había antes creaba el intento
+  // de cobro en Stripe y navegaba a «Gracias» sin confirmarlo nunca: el
+  // PaymentIntent se quedaba en `requires_payment_method`, o sea que la pantalla
+  // decía «reserva confirmada» y no se había movido un dólar. Ahora se replican
+  // los dos caminos del checkout de Eclipse (form_checkout.html):
+  //
+  //   TARJETA → crear intento · confirmarlo con Stripe.js · avisar a Odoo.
+  //   PAYPAL  → crear la orden · irse a PayPal. La captura ocurre al volver, en
+  //             «Gracias», porque el navegador se va de esta página.
+  //
+  // El importe no viaja en ningún caso: lo pone el servidor.
+  const handlePagar = async (datos: DatosPago) => {
     if (pagando) return
     setPagando(true)
     setErrorPago(null)
 
     const codigo = checkout.codigo ?? ''
     try {
-      // Vuelca lo último del formulario y crea el intento de cobro. El importe
-      // NO viaja: lo pone el servidor a partir de lo que ya tiene guardado.
+      // Se ESPERA de verdad: `sincronizar` devuelve promesa desde el 2026-08-18
+      // (antes era void y este `await` no esperaba a nada, así que el guardado
+      // y el cobro salían a la vez). Odoo cobra con lo que tenga guardado.
       await checkout.sincronizar(datosDelFormulario(), true)
-      await checkout.pagar({ proveedor: 'stripe' })
+
+      if (datos.metodo === 'paypal') {
+        const intento = await checkout.pagar({ proveedor: 'paypal' })
+        if (!intento.approve_url) throw new Error('PayPal did not return an approval link.')
+        // La copia local se guarda ANTES de salir del sitio: al volver, la
+        // pantalla de gracias pinta al instante mientras se captura el cobro.
+        guardarReserva(reservaLocal(codigo))
+        window.location.assign(intento.approve_url)
+        return
+      }
+
+      const intento = await checkout.pagar({ proveedor: 'stripe' })
+      if (!intento.client_secret) throw new Error('Stripe did not return a payment secret.')
+      if (!datos.tarjeta) throw new Error('The card form is not ready. Reload the page and try again.')
+
+      const stripe = await cargarStripe(intento.publishable_key || datos.clavePublicable)
+      const { error, paymentIntent } = await stripe.confirmCardPayment(intento.client_secret, {
+        payment_method: {
+          card: datos.tarjeta,
+          billing_details: {
+            name: datos.titular,
+            email: contacto.email.trim() || undefined,
+            phone: contacto.telefono.trim() || undefined,
+          },
+        },
+      })
+      // Tarjeta rechazada: NO es un error de la aplicación. El pedido queda en
+      // Odoo como «Payment failed» con el motivo real (lo escribe el webhook) y
+      // el visitante puede reintentar con otra tarjeta sin perder nada.
+      if (error) throw new Error(mensajeDeError(error))
+
+      // Odoo vuelve a preguntarle a Stripe: no se fía de lo que diga el
+      // navegador. Si esto falla, el pago está hecho igual y el webhook lo
+      // cerrará — por eso no se trata como un fallo de cobro.
+      try {
+        await checkout.confirmar({ paymentIntentId: paymentIntent?.id })
+      } catch {
+        // Sin ruido: el estado real llega por webhook.
+      }
     } catch (error) {
-      // Falta configurar la pasarela en Odoo (503) o el cobro no se pudo
-      // iniciar. La reserva SIGUE registrada como pendiente, así que se avisa
-      // sin perderla y el equipo puede rematarla por teléfono.
+      // Falta configurar la pasarela en Odoo (503), el cobro no se pudo iniciar
+      // o la tarjeta se rechazó. La reserva SIGUE registrada como pendiente, así
+      // que se avisa sin perderla y el equipo puede rematarla por teléfono.
       setErrorPago(error instanceof Error ? error.message : 'Payment could not be started.')
       setPagando(false)
       return
@@ -307,6 +369,7 @@ function FlujoReserva({
     },
     pickup: { hotel: recogida.hotel.trim(), notes: recogida.notas.trim() },
     dishes: hayPasoMenu ? platos : [],
+    addons: addonsIniciales,
     ...(celebracion.ocasion && celebracion.ocasion !== 'ninguna'
       ? { occasion: celebracion.ocasion, occasion_note: celebracion.nota.trim() }
       : {}),
@@ -378,6 +441,20 @@ function FlujoReserva({
   const cambiarPlato = (persona: number, plato: string) =>
     setPlatos((prev) => prev.map((p, i) => (i === persona ? plato : p)))
 
+  // [2026-08-18] La fecha y el horario también se guardan al cambiarlos. Antes
+  // solo viajaban en el volcado final del pago, así que el total de la tarjeta
+  // se quedaba con el de la fecha vieja (los descuentos por anticipación
+  // dependen del día) y el aviso de aforo no se enteraba de nada hasta pagar.
+  const cambiarFecha = (iso: string | null) => {
+    setFechaISO(iso)
+    checkout.sincronizar({ date: iso })
+  }
+
+  const cambiarHorario = (idx: number) => {
+    setHorarioIdx(idx)
+    checkout.sincronizar({ schedule_index: idx })
+  }
+
   return (
     // overflow-x-clip: recorta el ::after w-screen de la zona gris sin volverse
     // contenedor de scroll (a diferencia de overflow-hidden), así el sticky de
@@ -419,6 +496,19 @@ function FlujoReserva({
           {/* IZQUIERDA (blanca): cabecera + secciones */}
           <div className="px-5 py-8 sm:px-8 sm:py-10">
             <h1 className="sr-only">Complete your booking: {tour.nombre}</h1>
+
+            {/* [2026-08-18] ESTADO DE LA CONEXIÓN CON ODOO. Hasta hoy el funnel
+                solo leía `checkout.pedido` y se pintaba idéntico con el backend
+                caído: se rellenaba todo, se veía un precio estimado y el fallo
+                aparecía al pulsar «Pay deposit», con un mensaje genérico. Peor
+                aún, sin pedido en Odoo la reserva NO queda registrada, que es
+                justo lo que el proyecto promete que no puede pasar. Ahora se
+                dice arriba del todo, antes de escribir el primer campo. */}
+            <BandaEstado
+              cargando={checkout.cargando}
+              error={checkout.error}
+              aforoOk={checkout.aforoOk}
+            />
 
             <div className="flex flex-col gap-4">
               <SeccionPaso
@@ -545,6 +635,7 @@ function FlujoReserva({
                 <PasoPago
                   deposito={deposito}
                   saldo={saldo}
+                  pedidoListo={checkout.pedido !== null}
                   fechaElegida={fechaISO !== null}
                   onPagar={handlePagar}
                   procesando={pagando}
@@ -577,10 +668,10 @@ function FlujoReserva({
               <ResumenReserva
                 tour={tour}
                 fechaISO={fechaISO}
-                onFecha={setFechaISO}
+                onFecha={cambiarFecha}
                 horarios={ficha.horarios}
                 horarioIdx={horarioIdx}
-                onHorario={setHorarioIdx}
+                onHorario={cambiarHorario}
                 horarioTxt={horarioTxt}
                 horaSalida={horario?.hora ?? null}
                 menu={menu}
@@ -596,9 +687,12 @@ function FlujoReserva({
                 precioBase={precioLight}
                 upgrade={upgrade}
                 lineas={checkout.pedido?.quote?.lines}
+                lineasAddOns={checkout.pedido?.quote?.addons}
                 total={total}
                 deposito={deposito}
                 saldo={saldo}
+                precioProvisional={checkout.pedido === null}
+                variante={varianteInicial}
               />
             </div>
           </div>
@@ -610,6 +704,57 @@ function FlujoReserva({
       </footer>
     </div>
   )
+}
+
+/** El estado de la conexión con Odoo, en una línea, arriba del formulario.
+ *
+ *  Tres casos y ninguno miente: abriendo la reserva · no se pudo abrir · el día
+ *  se ha quedado sin plazas mientras se rellenaba (aviso, no bloqueo — el corte
+ *  de verdad lo hace `/pay` con un 409). */
+function BandaEstado({
+  cargando,
+  error,
+  aforoOk,
+}: {
+  cargando: boolean
+  error: ErrorApi | null
+  aforoOk: boolean
+}) {
+  if (cargando) {
+    return (
+      <p role="status" className="rounded-card border border-linea bg-papel-hueso px-4 py-3 text-sm text-navy-sub">
+        Opening your booking…
+      </p>
+    )
+  }
+
+  if (error) {
+    // `tour_not_found` es el síntoma de un catálogo sin publicar en Odoo, y
+    // `network_error` el de CORS o el servidor caído. Al visitante le da igual
+    // cuál: lo que necesita saber es que puede terminar por WhatsApp.
+    return (
+      <p role="alert" className="rounded-card border border-coral/40 bg-coral/5 px-4 py-3 text-sm leading-relaxed text-navy-sub">
+        <strong className="text-navy">We can&rsquo;t open your booking right now.</strong> Our booking system is
+        not answering, so we can&rsquo;t confirm prices or take the payment. You can fill this in and try again in a
+        moment, or{' '}
+        <a className="font-semibold text-aqua-dark underline" href="https://wa.me/18293052804" target="_blank" rel="noopener">
+          book it with us on WhatsApp
+        </a>{' '}
+        and we&rsquo;ll do it for you.
+      </p>
+    )
+  }
+
+  if (!aforoOk) {
+    return (
+      <p role="status" className="rounded-card border border-coral/40 bg-coral/5 px-4 py-3 text-sm leading-relaxed text-navy-sub">
+        <strong className="text-navy">That day just filled up for this group size.</strong> Pick another date or
+        fewer guests on the right — otherwise the payment will be declined at the last step.
+      </p>
+    )
+  }
+
+  return null
 }
 
 type EstadoSeccion = 'done' | 'activo' | 'pendiente'

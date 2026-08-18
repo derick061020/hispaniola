@@ -80,6 +80,14 @@ export type SubVarianteTour = {
    *    — es solo info, según pedido de Samuel el 2026-07-17 (charter).
    *    El cálculo del precio usa solo la tabla de tramos. */
   duracion?: string
+  /** [2026-08-18] Las horas, como NÚMERO. Existe porque qué carta del charter
+   *  se come lo decidía `duracion.startsWith('3')`, o sea leyendo el texto que
+   *  se pinta en pantalla: se rompía con «3.5 hours» y, sobre todo, con el
+   *  multi-idioma —el día que esa etiqueta se traduzca («3 horas» sigue
+   *  funcionando por casualidad, «drei Stunden» no) todos los grupos caerían
+   *  en la carta de 4 h—. La lógica de producto no puede colgar de un rótulo.
+   *  Si falta, `cartaCharterDe` vuelve a leer `duracion` como antes. */
+  duracionHoras?: number
 }
 
 /** Plato del menú BUFFET (Saona) — distinto del PlatoMenu de los paquetes
@@ -880,6 +888,7 @@ export const FICHAS: Record<string, FichaTour> = {
         // su propia web y era el techo del tramo por persona.
         capacidad: 'Up to 15 guests',
         duracion: '4 hours',
+        duracionHoras: 4,
         foto: 'flota-maite',
         horarios: [
           { hora: '9:00 AM', regreso: '1:00 PM' },
@@ -922,6 +931,7 @@ export const FICHAS: Record<string, FichaTour> = {
         descripcion: 'Agile cruise · 3h · up to 50 guests',
         capacidad: 'Up to 50 guests',
         duracion: '3 hours',
+        duracionHoras: 3,
         foto: 'flota-grandma',
         horarios: [
           { hora: '9:00 AM', regreso: '11:55 AM' },
@@ -944,6 +954,7 @@ export const FICHAS: Record<string, FichaTour> = {
         descripcion: 'Premium cruise · 4h · up to 45 guests',
         capacidad: 'Up to 45 guests (plated up to 20, skewers from 21)',
         duracion: '4 hours',
+        duracionHoras: 4,
         foto: 'flota-santa-maria',
         horarios: [
           { hora: '9:00 AM', regreso: '12:55 PM' },
@@ -971,6 +982,7 @@ export const FICHAS: Record<string, FichaTour> = {
         descripcion: 'Large catamaran · 3h · up to 85 guests',
         capacidad: 'Up to 85 guests (tiered pricing)',
         duracion: '3 hours',
+        duracionHoras: 3,
         foto: 'flota-forever-teresa',
         horarios: [
           { hora: '9:00 AM', regreso: '12:00 PM' },
@@ -996,6 +1008,7 @@ export const FICHAS: Record<string, FichaTour> = {
         descripcion: 'Large catamaran · 4h · up to 85 guests',
         capacidad: 'Up to 85 guests (tiered pricing)',
         duracion: '4 hours',
+        duracionHoras: 4,
         foto: 'flota-forever-teresa',
         horarios: [
           { hora: '9:00 AM', regreso: '12:55 PM' },

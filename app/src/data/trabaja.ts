@@ -53,7 +53,7 @@ export const PERFILES_TRABAJO: PerfilTrabajo[] = [
       'If it fits, we coordinate directly, no middlemen between your team and ours.',
     grupoCampos: 'About your operation',
     campos: [
-      { name: 'empresa', etiqueta: 'Company or operation', requerido: true },
+      { name: 'company', etiqueta: 'Company or operation', requerido: true },
       {
         name: 'actividad',
         etiqueta: 'What do you offer?',

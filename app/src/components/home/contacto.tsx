@@ -5,6 +5,7 @@ import { Etiqueta } from '@/components/ui/etiqueta'
 import { Boton } from '@/components/ui/boton'
 import { Campo } from '@/components/ui/campo'
 import { IconoWhatsApp } from '@/components/ui/iconos-redes'
+import { ERROR_ENVIO, useEnvioFormulario } from '@/lib/use-envio-formulario'
 import { CONTACTO, type ContactoCard } from '@/data/home'
 import { WHATSAPP_URL } from '@/data/tours'
 import { EQUIPO } from '@/data/nosotros'
@@ -457,12 +458,17 @@ function MapaInteractivo() {
 // repetirlo aquí sería el mismo titular dos veces en la misma página. La
 // home (donde este bloque no vive bajo ningún hero) lo deja en su default.
 export function Contacto({ mostrarEncabezado = true }: { mostrarEncabezado?: boolean }) {
-  const [enviado, setEnviado] = useState(false)
+  // [2026-08-18] YA ENVÍA. Este formulario hacía `preventDefault()` y pintaba
+  // «Mensaje enviado»: el mensaje no salía del navegador y nadie lo leía nunca.
+  // Ahora entra en Odoo como `haa.web.lead` de tipo `contact`.
+  const { estado, enviar, enviando } = useEnvioFormulario('contact')
+  const [forzado, setForzado] = useState(false)
+  const enviado = estado === 'enviado' || forzado
 
   // [dev-mode] ?dev-contacto=enviado congela la confirmación del formulario
   // sin tener que enviarlo a mano → frame limpio para Figma.
   useDevFlag('dev-contacto', (v) => {
-    if (v === 'enviado') setEnviado(true)
+    if (v === 'enviado') setForzado(true)
   }) // [dev-mode]
 
   return (
@@ -535,7 +541,7 @@ export function Contacto({ mostrarEncabezado = true }: { mostrarEncabezado?: boo
                 desbordan el flex en vez de encogerse. */}
             <div className="p-6 sm:p-8 lg:min-w-0 lg:flex-1 lg:p-10">
               {enviado ? (
-                <Confirmacion onReset={() => setEnviado(false)} />
+                <Confirmacion onReset={() => setForzado(false)} />
               ) : (
                 // h-full + flex-col: el carril de al lado (persona + filas +
                 // mapa) es más alto que el formulario, así que sin esto el
@@ -544,10 +550,7 @@ export function Contacto({ mostrarEncabezado = true }: { mostrarEncabezado?: boo
                 // hueco se lo queda el TEXTAREA (ver `claseContenedor` abajo):
                 // el campo más útil del formulario es el que crece.
                 <form
-                  onSubmit={(e) => {
-                    e.preventDefault()
-                    setEnviado(true)
-                  }}
+                  onSubmit={(e) => void enviar(e)}
                   className="flex h-full flex-col"
                 >
                   {/* [v3 2026-08-06, WEBSITE - INICIO pág. 6] Título y bajada
@@ -569,8 +572,8 @@ export function Contacto({ mostrarEncabezado = true }: { mostrarEncabezado?: boo
                         directos. El componente se borra con el selector. */}
 
                     <div className="grid gap-4 sm:grid-cols-2">
-                      <Campo etiqueta="Name" name="nombre" required />
-                      <Campo etiqueta="WhatsApp / Phone" name="telefono" type="tel" />
+                      <Campo etiqueta="Name" name="name" required />
+                      <Campo etiqueta="WhatsApp / Phone" name="phone" type="tel" />
                     </div>
 
                     <div className="grid gap-4 sm:grid-cols-2">
@@ -586,7 +589,7 @@ export function Contacto({ mostrarEncabezado = true }: { mostrarEncabezado?: boo
                         <div className="relative mt-1.5">
                           <select
                             id="contacto-asunto"
-                            name="asunto"
+                            name="subject"
                             className="w-full appearance-none rounded-btn bg-papel py-3 pl-4 pr-10 text-sm text-navy ring-1 ring-linea focus:outline-none focus:ring-2 focus:ring-aqua"
                           >
                             {CONTACTO.asuntos.map((a) => (
@@ -610,7 +613,7 @@ export function Contacto({ mostrarEncabezado = true }: { mostrarEncabezado?: boo
                         corto desbordaría el panel en vez de adaptarse. */}
                     <Campo
                       etiqueta="Message"
-                      name="mensaje"
+                      name="message"
                       textarea
                       required
                       claseContenedor="flex min-h-0 flex-1 flex-col"
@@ -618,12 +621,22 @@ export function Contacto({ mostrarEncabezado = true }: { mostrarEncabezado?: boo
                     />
                   </div>
 
-                  <Boton type="submit" className="mt-6 w-full">
-                    Send message
+                  <Boton
+                    type="submit"
+                    className="mt-6 w-full disabled:cursor-not-allowed disabled:opacity-60"
+                    disabled={enviando}
+                  >
+                    {enviando ? 'Sending…' : 'Send message'}
                   </Boton>
-                  <p className="mt-3 text-center text-xs text-navy-soft">
-                    We reply within 24 hours. No mailing lists, no sales calls.
-                  </p>
+                  {estado === 'error' ? (
+                    <p role="alert" className="mt-3 rounded-btn border border-coral/40 bg-coral/5 p-3 text-xs leading-relaxed text-navy-sub">
+                      {ERROR_ENVIO}
+                    </p>
+                  ) : (
+                    <p className="mt-3 text-center text-xs text-navy-soft">
+                      We reply within 24 hours. No mailing lists, no sales calls.
+                    </p>
+                  )}
                 </form>
               )}
             </div>

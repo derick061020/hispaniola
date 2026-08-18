@@ -68,12 +68,21 @@ las reglas de trabajo.
 - **Deploy = Vercel** con Root Directory `app`. `app/vercel.json` es la única config
   (el `netlify.toml` se borró el 2026-08-10). Una ruta nueva se toca en
   `App.tsx` + `public/sitemap.xml` + `vercel.json`, en el mismo commit.
-- 🔴 **El checkout cobra con otra fórmula que la ficha.** `pages/reservar.tsx` usa
-  `precioLight × personas` y no llama a `calcularTotalTour()`. Desvíos de hasta
-  +3.570 USD. Sin arreglar a propósito — es decisión de negocio. Detalle en el README.
-- **Hay lógica de producto que decide por el TEXTO visible** (iconos por substring,
-  y la carta del charter por `duracionBarco.startsWith('3')`). Ya está parcialmente
-  rota y bloquea el i18n. Ver el README.
+- ✅ **RESUELTO (2026-08-18): el precio lo pone Odoo, y solo Odoo.** Había dos
+  motores —la ficha calculaba en el navegador con `calcularTotalTour()` y el
+  checkout usaba `precioLight × personas`, con desvíos de hasta +3.570 USD—.
+  Ahora los dos preguntan al servidor (`/quote` en la ficha vía
+  `use-cotizacion.ts`, `/checkout/sync` en el funnel). El cálculo local se queda
+  como lo que se pinta mientras la respuesta viaja y como red si Odoo no
+  contesta; en ese caso el total sale rotulado como estimación, no como precio.
+- ✅ **RESUELTO (2026-08-18): la lógica de producto ya no lee el texto visible.**
+  La carta del charter sale de `subVariante.duracionHoras` (un número) y no de
+  `duracion.startsWith('3')`, que se rompía con «3.5 hours» y habría mandado a
+  todos los grupos a la carta de 4 h en cuanto esa etiqueta se tradujera.
+- ⚠️ **Lo que NO se puede arreglar desde el código**: el Odoo de producción
+  tiene que tener el catálogo sembrado (`scripts/seed_catalog.py`) y los
+  dominios reales en `cors_origins`. Sin eso el funnel no crea la reserva —
+  ahora al menos lo dice en pantalla en vez de fallar al pulsar «Pay».
 
 ## Trabajo en paralelo
 

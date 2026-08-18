@@ -20,6 +20,7 @@ import {
   saltoDeTramo,
 } from '@/lib/tarifas'
 import { AddOnsWidget } from '@/components/tour/add-ons-widget'
+import { useCotizacion } from '@/components/tour/use-cotizacion'
 import { PistaInfo } from '@/components/ui/pista-info'
 import { NumeroEditable } from '@/components/ui/numero-editable'
 import { PasajerosPopover, FilaPasajero } from '@/components/tour/pasajeros-popover'
@@ -412,6 +413,43 @@ export function WidgetReserva({
   // Para Snorkel Lovers (dual), adultos + niños no puede superar maxPax.
   const totalPersonas = esDual ? adultos + ninos : personas
 
+  // Los extras que ofrece ESTE barco. Vive aquí arriba —y no junto al cálculo
+  // del total, que es donde se usa— porque más abajo hay dos `return`
+  // tempranos y la cotización de Odoo, que es un hook, tiene que quedar por
+  // encima de ellos.
+  // [v3 2026-08-06] Los add-ons pueden estar atados a sub-variantes concretas
+  // (`soloSubVariantes`): la langosta del charter solo existe en los barcos de
+  // 4 h, que son los que navegan con la cocina flotante. El filtro vive en
+  // `addOnsDisponibles` (lib/tarifas) porque la franja de la langosta del
+  // bloque de menú aplica EXACTAMENTE la misma regla — si no, el panel, el
+  // desglose, el total y la franja podrían discrepar sobre si aplica.
+  const addOns = addOnsDisponibles(ficha, variante)
+
+  // [2026-08-18] EL PRECIO BUENO LO PONE ODOO (ver use-cotizacion.ts). Hasta
+  // hoy la ficha calculaba en el navegador y el checkout preguntaba a Odoo:
+  // dos motores, y por tanto dos números que podían no coincidir. El cálculo
+  // local se queda como lo que se pinta mientras la respuesta viaja y como red
+  // si el servidor no contesta —una ficha sin precio no vende nada—, pero
+  // cuando Odoo contesta, gana Odoo.
+  //
+  // La cotización YA incluye los add-ons, así que sustituye al total entero,
+  // no solo a la parte del tour.
+  const cotizacion = useCotizacion(
+    tour.precioLight === null
+      ? null
+      : {
+          tour: tour.slug,
+          // Misma resolución que `subActiva` más abajo: el barco elegido, o el
+          // primero si todavía no se ha tocado.
+          variante: variante ?? varianteInicial,
+          pax: esDual
+            ? { adults: adultos, children: ninos, infants: 0 }
+            : { adults: personas, children: 0, infants: 0 },
+          paquete,
+          addons: addOnsElegidos.filter((id) => addOns.some((a) => a.id === id)),
+        },
+  )
+
   // [dev-mode] deep-link del Glosario Dev — ver src/dev/dev-registry.ts.
   // 'fecha' elige mañana (nunca cae en uno de los 2 días agotados de ejemplo
   // del calendario, hoy+3/hoy+10 — ver calendario-widget.tsx); 'premium'
@@ -562,21 +600,16 @@ export function WidgetReserva({
   // muestran como línea aparte en el desglose, nunca fundidos en el precio
   // base — así el visitante siempre ve qué parte del total es el tour y qué
   // parte eligió añadir.
-  // [v3 2026-08-06] Los add-ons pueden estar atados a sub-variantes concretas
-  // (`soloSubVariantes`): la langosta del charter solo existe en los barcos de
-  // 4 h, que son los que navegan con la cocina flotante. El filtro estaba
-  // escrito aquí; desde el 2026-08-07 vive en `addOnsDisponibles` (lib/tarifas)
-  // porque la franja de la langosta del bloque de menú también marca add-ons y
-  // tiene que aplicar EXACTAMENTE la misma regla — si no, el panel, el desglose,
-  // el total y la franja podrían discrepar sobre si la langosta aplica.
-  const addOns = addOnsDisponibles(ficha, variante)
+  // (La lista de add-ons de este barco se calcula arriba, con la cotización.)
   // ¿Hay algún extra que el visitante haya PEDIDO, en vez de venir marcado de
   // fábrica? Decide si el panel de upsells se adelanta a la fecha — ver la
   // puerta más abajo.
   const hayAddOnPedido = addOns.some((a) => addOnsElegidos.includes(a.id) && !a.porDefecto)
   const paxParaAddOns = esDual ? totalPersonas : personas
   const importeAddOns = totalAddOns(addOns, addOnsElegidos, paxParaAddOns)
-  const total = totalTour === null ? null : totalTour + importeAddOns
+  const totalLocal = totalTour === null ? null : totalTour + importeAddOns
+  // Odoo si ha contestado; el cálculo local mientras tanto.
+  const total = cotizacion.total ?? totalLocal
   // Ancla del widget: el "desde" que se ve en la cabecera. Con
   // subVariantes, es el precio del TRAMO ACTIVO de la variante activa
   // (charter: cambia al cambiar de bote o de pax — antes era el tramo
@@ -829,7 +862,18 @@ export function WidgetReserva({
         </div>
       ) : null}
 
-      <CalendarioWidget fecha={fecha} onSeleccionar={setFecha} hora={horaElegida} />
+      {/* [2026-08-18] El calendario pregunta a Odoo qué días quedan, y lo hace
+          con el barco y el tamaño del grupo que están elegidos AHORA: el aforo
+          es por barco y por número de personas, así que cambiar cualquiera de
+          los dos puede abrir o cerrar días. */}
+      <CalendarioWidget
+        fecha={fecha}
+        onSeleccionar={setFecha}
+        hora={horaElegida}
+        tour={tour.slug}
+        variante={subActiva?.id ?? null}
+        personas={paxActuales}
+      />
 
       {/* Horario: aparece SOLO tras elegir fecha (2ª vuelta 2026-07-17, pedido
           de Samuel — el flujo tiene que ser obvio: "qué tocar primero y
@@ -1336,6 +1380,15 @@ export function WidgetReserva({
                       personas: String(totalPersonas),
                     }
                   : { personas: String(personas) }),
+                // [2026-08-18] LOS ADD-ONS VIAJAN. No lo hacían: el álbum de
+                // US$ 20 y la langosta de US$ 30/pax se elegían aquí y
+                // desaparecían entre dos pantallas. Desde que la ficha cotiza
+                // contra Odoo eso además descuadraba el precio — la ficha los
+                // sumaba y el checkout no—, así que ya no es solo una compra
+                // perdida: son dos números distintos para la misma reserva.
+                ...(addOnsElegidos.length > 0
+                  ? { addons: addOnsElegidos.filter((id) => addOns.some((a) => a.id === id)).join(',') }
+                  : {}),
               }).toString()}`}
             >
               Continuar · {formatoDinero(total)}

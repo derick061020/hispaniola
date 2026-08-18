@@ -86,6 +86,12 @@ export function BentoZona({ zona, espejo = false }: { zona: ZonaInstalacion; esp
           foto.abrirDesde(e.currentTarget)
           setLightbox(indice)
         }}
+        // [2026-08-18] El nombre accesible dice la ACCIÓN, no solo la foto. El
+        // `alt` de la imagen de dentro ya nombraba el botón para un lector de
+        // pantalla, pero describe lo que se ve, no que al pulsar se abre el
+        // visor — y el barrido de QA lo contaba como botón sin nombre. Con
+        // esto, «Open photo: …» dice las dos cosas.
+        aria-label={`Open photo: ${f.alt}`}
         className="group relative min-h-0 overflow-hidden rounded-card bg-papel-hueso"
       >
         <img
