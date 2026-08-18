@@ -16,7 +16,8 @@
     "qa:funnel": "node qa/qa_funnel.mjs",
     "qa:a11y": "node qa/qa_a11y.mjs",
     "qa:pago": "node qa/qa_pago.mjs",
-    "qa:degradado": "node qa/qa_degradado.mjs"
+    "qa:degradado": "node qa/qa_degradado.mjs",
+    "qa:catalogo": "node qa/qa_paridad_catalogo.mjs"
   },
   "dependencies": {
     "@fontsource/poppins": "^5.2.7",

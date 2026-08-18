@@ -1,5 +1,7 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Navigate, useParams } from 'react-router-dom'
+import { useFichaOdoo } from '@/components/tour/use-ficha-odoo'
+import { fusionarFicha, fusionarTarjeta } from '@/lib/api/fusion-catalogo'
 import { Footer } from '@/components/home/footer'
 import { HeroInterna } from '@/components/internas/hero-interna'
 import { CabeceraFicha } from '@/components/tour/cabecera-ficha'
@@ -46,8 +48,24 @@ import { schemaTour, schemaFaq } from '@/lib/seo/schema'
 // pero no navega (EnlacePrototipo).
 export function TourPage() {
   const { slug } = useParams()
-  const tour = TOURS.find((t) => t.slug === slug)
-  const ficha = slug ? FICHAS[slug] : undefined
+  const tourEstatico = TOURS.find((t) => t.slug === slug)
+  const fichaEstatica = slug ? FICHAS[slug] : undefined
+
+  // [2026-08-18] Los números de la ficha —tabla de tarifas, horarios, aforo,
+  // add-ons y upgrade de menú— los pone Odoo; las fotos y el copy siguen
+  // saliendo de `data/`. Ver `lib/api/fusion-catalogo.ts`, que también explica
+  // por qué, si Odoo no contesta, se pinta lo estático en vez de una ficha
+  // vacía. Mientras carga (`odoo === null`) se ve exactamente lo de antes, así
+  // que no hay salto visual.
+  const odoo = useFichaOdoo(slug)
+  const tour = useMemo(
+    () => (tourEstatico ? fusionarTarjeta(tourEstatico, odoo) : undefined),
+    [tourEstatico, odoo],
+  )
+  const ficha = useMemo(
+    () => (fichaEstatica ? fusionarFicha(fichaEstatica, odoo) : undefined),
+    [fichaEstatica, odoo],
+  )
 
   // v3 (2026-07-17, charter): la sub-variante (bote) vive en `tour.tsx` y
   // se pasa ABAJO a `WidgetReserva` y a `TablaPreciosCharter` — antes vivía
