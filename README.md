@@ -9,7 +9,7 @@ El fuente vive en la rama `main`.
 
 | | |
 |---|---|
-| Commit de origen | `ffe9e9a` — *La ficha deja de tener su propia tabla de precios: los números los pone Odoo* |
+| Commit de origen | `fd09d85` — *El .htaccess se genera en cada build* |
 | Comando | `npm run build` en `app/` (= `tsc -b && vite build`) |
 | `VITE_API_URL` compilada | `https://sistemashispaniola.com` (de `app/.env.production`) |
 
