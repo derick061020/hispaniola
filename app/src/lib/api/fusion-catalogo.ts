@@ -159,3 +159,32 @@ function precioMasBajo(odoo: TourOdoo): number | null {
   if (porPersona.length) return Math.min(...porPersona)
   return Math.min(...tramos.map((t) => t.price))
 }
+
+/** La lista de tarjetas del sitio (home, menú y pie) contra el catálogo
+ *  publicado en Odoo.
+ *
+ *  Hace dos cosas y ninguna más:
+ *
+ *  1. **Quita lo que Odoo ya no publica.** Despublicar un tour en el
+ *     back-office lo saca de la web sin tocar código. Al revés no: un tour
+ *     publicado en Odoo que no tenga tarjeta aquí NO aparece solo, porque la
+ *     tarjeta necesita foto, copy y ficha, y eso no vive en Odoo. Sale
+ *     avisado en `npm run qa:catalogo` para que nadie lo dé por publicado.
+ *  2. **Pone el «desde US$» de verdad**, pero solo donde ya había precio: los
+ *     productos que se cotizan (bodas, corporativo) enseñan su CTA sin cifra a
+ *     propósito, y no se les inventa una.
+ *
+ *  Si Odoo no contesta (`catalogo === null`) devuelve la lista intacta. */
+export function fusionarLista(tarjetas: TarjetaTour[], catalogo: TourOdoo[] | null): TarjetaTour[] {
+  if (!catalogo) return tarjetas
+  const porSlug = new Map(catalogo.map((t) => [t.slug, t]))
+  return tarjetas
+    .filter((t) => porSlug.has(t.slug))
+    .map((t) => {
+      const odoo = porSlug.get(t.slug)!
+      const fusionada = fusionarTarjeta(t, odoo)
+      // Los que se cotizan siguen sin precio: `precioLight: null` es una
+      // decisión de producto, no un dato que falte.
+      return t.precioLight === null ? { ...fusionada, precioLight: null } : fusionada
+    })
+}

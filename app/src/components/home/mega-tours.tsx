@@ -1,4 +1,6 @@
 import { Link } from 'react-router-dom'
+import { useCatalogo } from '@/lib/api/use-catalogo'
+import { fusionarLista } from '@/lib/api/fusion-catalogo'
 import { TOURS, bookingCta, formatoDinero } from '@/data/home'
 
 // Megamenú Tours — el escaparate: los 4 productos, camino directo al dinero
@@ -24,6 +26,10 @@ import { TOURS, bookingCta, formatoDinero } from '@/data/home'
 // mismo que el megamenú de Eventos (zoom de foto + título en aqua): los dos
 // menús hablan por fin el mismo lenguaje.
 export function MegaTours() {
+  // [2026-08-18] La lista sale de Odoo: un tour despublicado desaparece de aquí
+  // sin tocar código, y el «desde US$» es el del catálogo, no el que quedó
+  // escrito en `data/home.ts`. Si Odoo no contesta se pinta la lista estática.
+  const tours = fusionarLista(TOURS, useCatalogo())
   return (
     // Ancho AUTOAJUSTADO (2026-07-17, pedido de Samuel): ya no un rem fijo
     // por breakpoint — el panel es `w-fit`, así que mide exactamente lo que
@@ -35,7 +41,7 @@ export function MegaTours() {
     // valor salía de esta misma cuenta).
     <div className="w-fit max-w-[92vw] p-4">
       <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
-        {TOURS.map((t) => (
+        {tours.map((t) => (
           // data-mega-item: ver el comentario en item-menu.tsx — marcador
           // que TabsConPaneles (nav-tabs.tsx) anima con stagger al abrir.
           <Link key={t.slug} to={`/tours/${t.slug}`} className="group block w-mega-card-ancho" data-mega-item>

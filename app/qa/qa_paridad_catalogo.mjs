@@ -10,7 +10,8 @@
 import { build } from 'rolldown'
 
 const API = 'https://sistemashispaniola.com/api/web/v1'
-const raiz = '/home/kira/Escritorio/projects/eclipse/hispaniola/app/src'
+const raiz = new URL('../src', import.meta.url).pathname
+let dif = 0
 
 // Rolldown es el bundler que ya usa Vite en este proyecto: se reutiliza para
 // leer el TypeScript de `data/tours.ts` sin depender de nada nuevo.
@@ -22,8 +23,38 @@ const paquete = await build({
 })
 const { FICHAS } = await import(`/tmp/tours-bundle.mjs?t=${Date.now()}`)
 
+// --- Las TARJETAS del sitio (home, menu movil y pie) contra lo publicado ---
+const paqueteHome = await build({
+  input: `${raiz}/data/home.ts`,
+  resolve: { alias: { '@': raiz } },
+  output: { file: '/tmp/home-bundle.mjs', format: 'esm' },
+  logLevel: 'silent',
+})
+const { TOURS } = await import(`/tmp/home-bundle.mjs?t=${Date.now()}`)
+const catalogo = (await (await fetch(`${API}/catalog`)).json()).data.tours
+const publicados = new Set(catalogo.map((t) => t.slug))
+
+console.log('TARJETAS')
+for (const t of TOURS) {
+  const odoo = catalogo.find((x) => x.slug === t.slug)
+  if (!odoo) { console.log(`  ${t.slug}: NO publicado en Odoo -> desaparece de la web`); dif++; continue }
+  const avisos = []
+  // El precio solo se compara donde la tarjeta anuncia uno: los que se cotizan
+  // van sin cifra a proposito.
+  if (t.precioLight !== null && odoo.adult_price !== null && t.precioLight !== odoo.adult_price)
+    avisos.push(`desde US$ ${t.precioLight} en el front vs ${odoo.adult_price} en Odoo`)
+  if (t.maxPax !== null && odoo.max_pax !== null && t.maxPax !== odoo.max_pax)
+    avisos.push(`aforo ${t.maxPax} vs ${odoo.max_pax}`)
+  console.log(`  ${t.slug}: ${avisos.length ? avisos.join(' · ') : 'coincide'}`)
+  dif += avisos.length
+}
+for (const t of catalogo)
+  if (!TOURS.find((x) => x.slug === t.slug))
+    console.log(`  ${t.slug}: publicado en Odoo y sin tarjeta en el grid de tours` +
+      ` (normal si es un producto de eventos: bodas, corporativo y party boat tienen su propia landing)`)
+
+console.log('\nFICHAS')
 const slugs = ['saona-island', 'private-charter', 'snorkel-lovers', 'semi-private-premium']
-let dif = 0
 for (const slug of slugs) {
   const r = await fetch(`${API}/tours/${slug}`)
   const odoo = (await r.json()).data

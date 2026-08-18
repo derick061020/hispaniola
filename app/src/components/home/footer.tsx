@@ -1,4 +1,6 @@
 import { Link } from 'react-router-dom'
+import { useCatalogo } from '@/lib/api/use-catalogo'
+import { fusionarLista } from '@/lib/api/fusion-catalogo'
 import { TOURS, MEDIOS_PAGO, REDES, MONEDAS, RESENAS_AGREGADO } from '@/data/home'
 import { WHATSAPP_URL } from '@/data/tours'
 import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
@@ -40,6 +42,10 @@ const ICONO_RED: Record<string, (p: { className?: string }) => React.ReactElemen
 // y el footer es único para toda la web. Prop con el de la home por defecto —
 // las páginas que no lo pasen siguen igual que hasta ahora.
 export function Footer({ cta = 'Ready for an unforgettable day?' }: { cta?: string }) {
+  // [2026-08-18] La lista sale de Odoo: un tour despublicado desaparece de aquí
+  // sin tocar código, y el «desde US$» es el del catálogo, no el que quedó
+  // escrito en `data/home.ts`. Si Odoo no contesta se pinta la lista estática.
+  const tours = fusionarLista(TOURS, useCatalogo())
   return (
     <footer
       className="relative overflow-hidden bg-oceano-footer px-5 pb-6 text-white
@@ -89,7 +95,7 @@ export function Footer({ cta = 'Ready for an unforgettable day?' }: { cta?: stri
         <div>
           <h5 className="text-sm font-semibold uppercase tracking-wide text-white/50">Tours</h5>
           <ul className="mt-3 flex flex-col gap-2 text-sm text-white/80">
-            {TOURS.map((t) => (
+            {tours.map((t) => (
               <li key={t.slug}>
                 <Link to={`/tours/${t.slug}`} className="hover:text-white">
                   {t.nombre}

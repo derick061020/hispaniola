@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Link } from 'react-router-dom'
 import { X } from 'lucide-react'
+import { useCatalogo } from '@/lib/api/use-catalogo'
+import { fusionarLista } from '@/lib/api/fusion-catalogo'
 import { TOURS, OCASIONES, NAV_NOSOTROS, NAV_SOSTENIBILIDAD, NAV_AYUDA, bookingCta, formatoDinero } from '@/data/home'
 import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
 import { Boton } from '@/components/ui/boton'
@@ -35,6 +37,10 @@ export function MenuMovil({
    *  está (en la ficha, #tours no existe). */
   ctaHref?: string
 }) {
+  // [2026-08-18] La lista sale de Odoo: un tour despublicado desaparece de aquí
+  // sin tocar código, y el «desde US$» es el del catálogo, no el que quedó
+  // escrito en `data/home.ts`. Si Odoo no contesta se pinta la lista estática.
+  const tours = fusionarLista(TOURS, useCatalogo())
   const [expandida, setExpandida] = useState<Seccion | null>('tours')
   const hojaRef = useRef<HTMLDivElement>(null)
   const cerrarBtnRef = useRef<HTMLButtonElement>(null)
@@ -164,7 +170,7 @@ export function MenuMovil({
                           fichas React Router NO desmonta la página, así que la
                           hoja se quedaría abierta encima, con el scroll del
                           fondo aún bloqueado. */}
-                      {TOURS.map((t) => (
+                      {tours.map((t) => (
                         <Link
                           key={t.slug}
                           to={`/tours/${t.slug}`}
