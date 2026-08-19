@@ -187,11 +187,47 @@ export function pagarSaldo(codigo: string, token: string) {
  *  cualquiera que adivinara un HSP-XXXX-NNNN veria el nombre, el telefono y el
  *  hotel de un cliente. La pantalla actual del front no valida nada y siempre
  *  devuelve la reserva demo. */
-export function buscarReserva(codigo: string, email: string, signal?: AbortSignal) {
+export function buscarReserva(
+  codigo: string,
+  email: string,
+  signal?: AbortSignal,
+  token?: string | null,
+) {
   return llamar<{ booking: Reserva; token: string }>('/bookings/lookup', {
     metodo: 'POST',
     signal,
-    cuerpo: { code: codigo.trim().toUpperCase(), email: email.trim().toLowerCase() },
+    // El `token` es la otra llave que acepta el backend, y la unica que sirve
+    // cuando se llego aqui por telefono: esa reserva puede no tener email con
+    // el que comprobar nada, y sin llave no habria forma de RECARGARLA
+    // despues de pagar el saldo.
+    cuerpo: {
+      code: codigo.trim().toUpperCase(),
+      email: email.trim().toLowerCase(),
+      ...(token ? { token } : {}),
+    },
+  })
+}
+
+/** Busca la reserva SOLO con el email o SOLO con el telefono.
+ *
+ *  ⚠️ Sin segunda prueba: el dato que se teclea ES la credencial. Es una
+ *  decision explicita del cliente (2026-08-19) para que nadie tenga que ir a
+ *  buscar su codigo al correo; lo que implica esta escrito en el endpoint
+ *  (`/bookings/find` en hispaniola_web). `buscarReserva` de aqui arriba, la de
+ *  los enlaces del voucher, sigue exigiendo codigo + email.
+ *
+ *  Devuelve UNA reserva —la proxima que navega— y cuantas tiene esa persona,
+ *  para poder mandarla al area privada si son varias. */
+export function buscarReservaPorContacto(
+  contacto: { email: string } | { phone: string },
+  signal?: AbortSignal,
+) {
+  return llamar<{ booking: Reserva; token: string; total: number }>('/bookings/find', {
+    metodo: 'POST',
+    signal,
+    cuerpo: 'email' in contacto
+      ? { email: contacto.email.trim().toLowerCase() }
+      : { phone: contacto.phone.trim() },
   })
 }
 

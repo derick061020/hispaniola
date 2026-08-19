@@ -7,7 +7,8 @@ import { Meta } from '@/components/seo/meta'
 import { fechaLarga } from '@/lib/fechas'
 import { guardarReserva, type Reserva } from '@/lib/reservas'
 import {
-  actualizarReserva, buscarReserva as buscarReservaOdoo, urlCalendario,
+  actualizarReserva, buscarReserva as buscarReservaOdoo,
+  buscarReservaPorContacto as buscarPorContacto, urlCalendario,
 } from '@/lib/api/api'
 import { PagoSaldo } from '@/components/mi-reserva/pago-saldo'
 import { reservaDesdeOdoo } from '@/lib/api/desde-odoo'
@@ -15,7 +16,7 @@ import { ErrorApi } from '@/lib/api/cliente'
 import { menuDeLaReserva } from '@/lib/menu-reserva'
 import { formatoDinero } from '@/data/home'
 import { Campo } from '@/components/ui/campo'
-import { crudo, t, traducible } from '@/lib/i18n'
+import { crudo, t, tp, traducible } from '@/lib/i18n'
 
 // «Mi reserva» — vista de la reserva ya pagada con edición local (2026-07-17,
 // pedido de Pedro). El usuario pidió que las ediciones se guarden en
@@ -66,11 +67,20 @@ function nombrePlato(id: string, menu: { nombre: string }[]) {
   return plato?.nombre ?? NOMBRES_PLATO[id] ?? id
 }
 
-// [v3 2026-08-06, slide 67] Los 3 modos de acceso. El `id` viaja en la URL
+// [v3 2026-08-06, slide 67] Los modos de acceso. El `id` viaja en la URL
 // (`?modo=`) para que el cajón de la home (home/contacto.tsx) pueda mandar
 // aquí a alguien que ya escribió su dato, con la pestaña correcta abierta.
+//
+// ── [2026-08-19] SE CAE LA PESTAÑA DEL CÓDIGO (decisión de Derick) ────────
+// Eran tres y solo una funcionaba: «Email» y «Teléfono» no llamaban a ningún
+// sitio —el `q` que escribían acababa yendo a Odoo COMO SI FUERA el código— y
+// la única que servía, la del código, obligaba al cliente a ir a buscarlo al
+// correo. Ahora entra con lo que se sabe de memoria.
+//
+// El código NO desaparece: sigue siendo la forma en que entran los enlaces de
+// los vouchers ya enviados (`?codigo=HSP-…`, y ahí sí se pide el email como
+// segunda prueba). Lo que desaparece es la pestaña que le pedía teclearlo.
 const MODOS = traducible([
-  { id: 'codigo', etiqueta: 'Booking code', campo: 'Booking code', placeholder: 'HSP-XXXX-NNNN' },
   { id: 'email', etiqueta: 'Email', campo: 'Booking email', placeholder: 'you@email.com' },
   { id: 'telefono', etiqueta: 'Phone', campo: 'Booking phone number', placeholder: '+1 829 000 0000' },
 ] as const)
@@ -78,9 +88,8 @@ const MODOS = traducible([
 type Modo = (typeof MODOS)[number]['id']
 
 const AYUDA_MODO: Record<Modo, string> = traducible({
-  codigo: 'Find it in your Hispaniola confirmation email. It starts with HSP.',
-  email: "We'll send an access link to the email you booked with.",
-  telefono: "We'll text an access link to the number you booked with.",
+  email: 'The address you gave us when you booked.',
+  telefono: 'The number you gave us when you booked, with or without the country code.',
 })
 
 export function MiReservaPage() {
@@ -90,11 +99,10 @@ export function MiReservaPage() {
   // nuevo, que acompaña a `modo`. Cualquiera de los dos abre el DETALLE.
   const consulta = params.get('q') ?? params.get('codigo')
   const modoUrl = params.get('modo')
-  const modoInicial: Modo = MODOS.some((m) => m.id === modoUrl) ? (modoUrl as Modo) : 'codigo'
+  const modoInicial: Modo = MODOS.some((m) => m.id === modoUrl) ? (modoUrl as Modo) : 'email'
 
-  // 2 estados: INGRESO (input) o DETALLE (la demo). Sin dato en la URL
-  // siempre arranca en INGRESO — ni siquiera se monta la página de detalle,
-  // que es la parte pesada.
+  // 2 estados: INGRESO (input) o DETALLE. Sin dato en la URL siempre arranca
+  // en INGRESO — ni siquiera se monta la página de detalle, que es la pesada.
   if (!consulta) {
     return (
       <PantallaIngreso
@@ -102,6 +110,15 @@ export function MiReservaPage() {
         onSubmit={(modo, valor) => navigate(`/my-booking?modo=${modo}&q=${encodeURIComponent(valor)}`)}
       />
     )
+  }
+
+  // Dos caminos distintos, y la diferencia importa:
+  //   · con `modo` de contacto, el dato ES la credencial y Odoo resuelve la
+  //     reserva de una vez (`/bookings/find`);
+  //   · sin él, lo que llega es un CÓDIGO —los enlaces de los vouchers ya
+  //     enviados— y ahí se sigue pidiendo el email como segunda prueba.
+  if (modoUrl === 'email' || modoUrl === 'telefono') {
+    return <ReservaPorContacto tipo={modoUrl} valor={consulta} />
   }
 
   return <DetalleReserva codigoIngresado={consulta} />
@@ -147,7 +164,7 @@ function PantallaIngreso({
     <div className="min-h-screen bg-papel-hueso">
       <Meta
         titulo={t('My booking')}
-        descripcion={t('Manage your booking: change the menu, the pickup or your details, or pay the balance. Enter your HSP-XXXX-NNNN code.')}
+        descripcion={t('Manage your booking: change the menu, the pickup or your details, or pay the balance. Enter the email or phone you booked with.')}
         ruta="/my-booking"
       />
       <header className="border-b border-linea">
@@ -178,14 +195,14 @@ function PantallaIngreso({
               {t('Manage your booking')}
             </h1>
             <p className="mt-3 text-sm text-navy-sub">
-              {t('Access it with your booking code, or with the email or phone number you booked with. You’ll be able to see your itinerary, your pick-up time and make changes.')}
+              {t('Enter with the email or the phone number you booked with. You’ll be able to see your itinerary, your pick-up time and make changes.')}
             </p>
           </div>
 
-          {/* Toggle código / email / teléfono. Mismo lenguaje visual que el
-              selector de paquete del widget de reserva (pista gris + thumb
-              blanco). El thumb se mueve por ÍNDICE, no por comparación con un
-              valor concreto: con 3 opciones ya no vale un booleano, y así
+          {/* Toggle email / teléfono. Mismo lenguaje visual que el selector
+              de paquete del widget de reserva (pista gris + thumb blanco). El
+              thumb se mueve por ÍNDICE, no por comparación con un valor
+              concreto: sirve igual con dos que con tres opciones, y así
               añadir una cuarta no volvería a tocar esta fórmula. */}
           <div
             role="group"
@@ -229,11 +246,9 @@ function PantallaIngreso({
               // el campo en :invalid al pasar a teléfono).
               key={activo.id}
               etiqueta={activo.campo}
-              type={activo.id === 'email' ? 'email' : activo.id === 'telefono' ? 'tel' : undefined}
+              type={activo.id === 'email' ? 'email' : 'tel'}
               value={valor}
-              // Solo el código se pasa a mayúsculas: así se emite. Hacerlo con
-              // un email o un teléfono no aporta y en el email molesta.
-              onChange={(e) => setValor(activo.id === 'codigo' ? e.target.value.toUpperCase() : e.target.value)}
+              onChange={(e) => setValor(e.target.value)}
               placeholder={activo.placeholder}
               required
             />
@@ -378,7 +393,106 @@ function PuertaDeAcceso({
   )
 }
 
-function DetalleReserva({ codigoIngresado }: { codigoIngresado: string }) {
+/** Resuelve la reserva con lo que el visitante escribió —su email o su
+ *  teléfono— y la entrega ya montada a `DetalleReserva`.
+ *
+ *  ⚠️ Aquí NO hay segunda prueba: el dato tecleado es la credencial. Es la
+ *  decisión de Derick del 2026-08-19 (el porqué, y lo que implica, está en el
+ *  endpoint `/bookings/find` de hispaniola_web). El camino del código, el que
+ *  usan los enlaces de los vouchers, sigue pidiendo el email aparte. */
+function ReservaPorContacto({ tipo, valor }: { tipo: 'email' | 'telefono'; valor: string }) {
+  const [datos, setDatos] = useState<{ reserva: Reserva; token: string; total: number } | null>(null)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    let cancelado = false
+    const ac = new AbortController()
+    setError(null)
+    buscarPorContacto(tipo === 'email' ? { email: valor } : { phone: valor }, ac.signal)
+      .then(({ booking, token, total }) => {
+        if (cancelado) return
+        setDatos({ reserva: reservaDesdeOdoo(booking), token, total })
+      })
+      .catch((e: unknown) => {
+        if (cancelado) return
+        setError(
+          e instanceof ErrorApi && e.codigo === 'booking_not_found'
+            ? t('We could not find a booking with that. Check what you typed, or write to us.')
+            : t('We could not reach our booking system. Please try again in a moment.'),
+        )
+      })
+    return () => {
+      cancelado = true
+      ac.abort()
+    }
+  }, [tipo, valor])
+
+  if (error) return <BusquedaFallida mensaje={error} />
+  if (!datos) return <BuscandoReserva />
+
+  return (
+    <DetalleReserva
+      codigoIngresado={datos.reserva.codigo}
+      accesoInicial={{ reserva: datos.reserva, token: datos.token }}
+      otrasReservas={datos.total}
+    />
+  )
+}
+
+/** Mientras Odoo contesta. Es una pantalla y no un spinner suelto porque la
+ *  reserva llega de una llamada de red: en un móvil en el muelle eso puede ser
+ *  un segundo largo, y una página en blanco se lee como «no funciona». */
+function BuscandoReserva() {
+  return (
+    <div className="grid min-h-screen place-items-center bg-papel px-5">
+      <p className="text-sm text-navy-sub">{t('Opening your booking…')}</p>
+    </div>
+  )
+}
+
+function BusquedaFallida({ mensaje }: { mensaje: string }) {
+  return (
+    <div className="min-h-screen bg-papel">
+      <header className="border-b border-linea">
+        <div className="mx-auto flex max-w-3xl items-center justify-between px-5 py-3 sm:px-8">
+          <Link to="/" className="inline-flex items-center gap-1.5 text-sm font-semibold text-aqua-dark hover:underline">
+            <ArrowLeft className="size-4" aria-hidden="true" />
+            {t('Back to home')}
+          </Link>
+          <Link to="/" aria-label={t('Hispaniola Aquatic Adventures home')}>
+            <Logo compacto />
+          </Link>
+        </div>
+      </header>
+      <main className="mx-auto max-w-md px-5 py-14 sm:px-8">
+        <p role="alert" className="rounded-card border border-coral/30 bg-coral/5 p-4 text-sm text-navy-sub">
+          {mensaje}
+        </p>
+        <Link
+          to="/my-booking"
+          className="mt-5 inline-flex w-full items-center justify-center rounded-btn bg-coral px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-coral-dark"
+        >
+          {t('Try again')}
+        </Link>
+        <p className="mt-6 text-xs leading-relaxed text-navy-soft">
+          {t('Can’t find your booking? Write to us and we will look it up for you.')}
+        </p>
+      </main>
+    </div>
+  )
+}
+
+function DetalleReserva({
+  codigoIngresado,
+  accesoInicial,
+  otrasReservas = 0,
+}: {
+  codigoIngresado: string
+  /** Reserva YA resuelta (se llegó por email o por teléfono, no por código). */
+  accesoInicial?: { reserva: Reserva; token: string }
+  /** Cuántas reservas tiene esa persona en total, para avisar si hay más. */
+  otrasReservas?: number
+}) {
   // [2026-08-18] Si el email llega en la URL, la consulta se hace sola. Es el
   // camino desde el area privada: alli el cliente YA entro con su contraseña,
   // asi que volver a pedirle el correo seria pedirle dos veces lo mismo. Sigue
@@ -397,7 +511,7 @@ function DetalleReserva({ codigoIngresado }: { codigoIngresado: string }) {
   // nombre, el teléfono y el hotel de un cliente. El backend además responde el
   // MISMO error con email equivocado que con código inexistente, para no
   // confirmar que ese código existe.
-  const [reserva, setReserva] = useState<Reserva | null>(null)
+  const [reserva, setReserva] = useState<Reserva | null>(accesoInicial?.reserva ?? null)
   const [cargando, setCargando] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [email, setEmail] = useState(emailUrl)
@@ -405,18 +519,21 @@ function DetalleReserva({ codigoIngresado }: { codigoIngresado: string }) {
   // [2026-08-18] El token que devuelve `lookup` SE GUARDA. Antes se tiraba, y
   // por eso todo lo de esta pantalla acababa en localStorage: sin él no se
   // puede ni cobrar el saldo ni escribir un cambio en Odoo.
-  const [token, setToken] = useState<string | null>(null)
+  const [token, setToken] = useState<string | null>(accesoInicial?.token ?? null)
   const [recargas, setRecargas] = useState(0)
 
   const codigo = codigoIngresado.toUpperCase()
 
+  // Con `token` basta: es la llave que devuelve la búsqueda por contacto y la
+  // única que sirve para recargar una reserva sin email (las que entran por
+  // teléfono). Sin ninguna de las dos no hay nada que pedir.
   useEffect(() => {
-    if (!emailEnviado) return
+    if (!emailEnviado && !token) return
     let cancelado = false
     const ac = new AbortController()
     setCargando(true)
     setError(null)
-    buscarReservaOdoo(codigo, emailEnviado, ac.signal)
+    buscarReservaOdoo(codigo, emailEnviado ?? '', ac.signal, token)
       .then(({ booking, token: acceso }) => {
         if (cancelado) return
         setToken(acceso)
@@ -437,6 +554,9 @@ function DetalleReserva({ codigoIngresado }: { codigoIngresado: string }) {
       cancelado = true
       ac.abort()
     }
+    // `token` fuera de las dependencias a propósito: la respuesta lo vuelve a
+    // escribir y volver a lanzar la consulta con cada escritura sería un bucle.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [codigo, emailEnviado, recargas])
 
   // Puerta de acceso: mientras no haya una reserva verificada, esta pantalla no
@@ -501,7 +621,7 @@ function DetalleReserva({ codigoIngresado }: { codigoIngresado: string }) {
             className="inline-flex items-center gap-1.5 justify-self-end rounded-btn border border-linea bg-papel px-3 py-1.5 text-sm font-medium text-navy transition-colors hover:bg-papel-hueso"
           >
             <KeyRound className="size-3.5" aria-hidden="true" />
-            {t('Use another code')}
+            {t('Look up another booking')}
           </Link>
         </div>
       </header>
@@ -509,7 +629,20 @@ function DetalleReserva({ codigoIngresado }: { codigoIngresado: string }) {
       <main className="mx-auto max-w-3xl px-5 py-10 sm:px-8 sm:py-14">
         {/* [2026-08-10] Fuera el banner de «estás viendo una reserva de
             ejemplo»: ya no es cierto. Lo que se pinta aquí abajo es la reserva
-            real que devolvió Odoo, verificada con código + email. */}
+            real que devolvió Odoo. */}
+
+        {/* [2026-08-19] Buscando por email o por teléfono solo se abre UNA
+            reserva —la próxima que navega—, así que a quien tiene varias hay
+            que decírselo: si no, se va creyendo que las demás se han perdido. */}
+        {otrasReservas > 1 ? (
+          <p className="mb-6 rounded-card border border-linea bg-papel-hueso p-4 text-sm text-navy-sub">
+            {tp('You have {n} bookings with us. This is the next one.', { n: otrasReservas })}{' '}
+            <Link to="/account" className="font-semibold text-aqua-dark hover:underline">
+              {t('Sign in to your account')}
+            </Link>{' '}
+            {t('to see them all.')}
+          </p>
+        ) : null}
 
         {/* 1. CABECERA */}
         <div className="flex flex-wrap items-start justify-between gap-3">
