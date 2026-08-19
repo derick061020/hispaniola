@@ -136,7 +136,7 @@ export function CuentaPage() {
               </p>
             ) : null}
 
-            <Reservas reservas={reservas} />
+            <Reservas reservas={reservas} perfilEmail={perfil.email} />
             <DatosPersonales
               perfil={perfil}
               token={sesion.token}
@@ -284,7 +284,7 @@ function Acceso({
 }
 
 // ── Dentro: sus reservas ───────────────────────────────────────────────────
-function Reservas({ reservas }: { reservas: ReservaDeCuenta[] }) {
+function Reservas({ reservas, perfilEmail }: { reservas: ReservaDeCuenta[]; perfilEmail: string }) {
   if (!reservas.length) {
     return (
       <section className="rounded-card-grande bg-papel p-6 ring-1 ring-linea sm:p-8">
@@ -331,7 +331,9 @@ function Reservas({ reservas }: { reservas: ReservaDeCuenta[] }) {
                 </span>
                 {r.status !== 'cancelled' ? (
                   <Link
-                    to={`/my-booking?codigo=${encodeURIComponent(r.code)}`}
+                    // El email va en el enlace para que no se lo pidan otra
+                    // vez: ya entró con su contraseña hace un momento.
+                    to={`/my-booking?codigo=${encodeURIComponent(r.code)}&email=${encodeURIComponent(perfilEmail)}`}
                     className="text-sm font-semibold text-aqua-dark hover:underline"
                   >
                     Menu, pickup and changes &rarr;

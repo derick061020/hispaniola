@@ -374,6 +374,13 @@ function PuertaDeAcceso({
 }
 
 function DetalleReserva({ codigoIngresado }: { codigoIngresado: string }) {
+  // [2026-08-18] Si el email llega en la URL, la consulta se hace sola. Es el
+  // camino desde el area privada: alli el cliente YA entro con su contraseña,
+  // asi que volver a pedirle el correo seria pedirle dos veces lo mismo. Sigue
+  // siendo el mismo backend y la misma comprobacion de siempre — el email no
+  // se cree, se manda a Odoo y Odoo decide.
+  const [paramsDetalle] = useSearchParams()
+  const emailUrl = (paramsDetalle.get('email') ?? '').trim()
   // ── LA BÚSQUEDA YA ES REAL (2026-08-10, conexión con Odoo) ───────────────
   //
   // Esta pantalla no validaba nada y devolvía SIEMPRE la reserva demo, con un
@@ -388,8 +395,8 @@ function DetalleReserva({ codigoIngresado }: { codigoIngresado: string }) {
   const [reserva, setReserva] = useState<Reserva | null>(null)
   const [cargando, setCargando] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [email, setEmail] = useState('')
-  const [emailEnviado, setEmailEnviado] = useState<string | null>(null)
+  const [email, setEmail] = useState(emailUrl)
+  const [emailEnviado, setEmailEnviado] = useState<string | null>(emailUrl || null)
   // [2026-08-18] El token que devuelve `lookup` SE GUARDA. Antes se tiraba, y
   // por eso todo lo de esta pantalla acababa en localStorage: sin él no se
   // puede ni cobrar el saldo ni escribir un cambio en Odoo.
