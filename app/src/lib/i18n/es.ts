@@ -726,7 +726,7 @@ export const ES: Record<string, string> = {
   "Eco-friendly · Zero plastic · Since 2010.": "Eco-friendly · Cero plástico · Desde 2010.",
   "Eco-friendly seal, zero plastic on board": "Sello eco-friendly, cero plástico a bordo",
   "Edit": "Editar",
-  "Edit your menu, pickup or details with your HSP-XXXX-NNNN code.": "Edita tu menú, recogida o datos con tu código HSP-XXXX-NNNN.",
+  "Edit your menu, pickup or details with the email or phone you booked with.": "Edita tu menú, recogida o datos con el correo o el teléfono con el que reservaste.",
   "Education": "Educación",
   "Electric windlass with 50 m of calibrated chain": "Molinete eléctrico con 50 m de cadena calibrada",
   "Electrical system": "Sistema eléctrico",

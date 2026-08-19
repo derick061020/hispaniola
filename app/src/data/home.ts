@@ -438,7 +438,7 @@ export const NAV_AYUDA: ItemNav[] = traducible([
   {
     id: 'mi-reserva',
     nombre: 'Manage my booking',
-    descripcion: 'Edit your menu, pickup or details with your HSP-XXXX-NNNN code.',
+    descripcion: 'Edit your menu, pickup or details with the email or phone you booked with.',
     to: '/my-booking',
   },
   // [v2 2026-07-27] Blog baja aquí desde «Nosotros» (reunión 07-24, 27:00:
