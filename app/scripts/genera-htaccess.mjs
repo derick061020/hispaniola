@@ -1,5 +1,5 @@
-/** Genera `dist/.htaccess` a partir de `vercel.json`. Se ejecuta solo, como
- *  `postbuild`, en cada `npm run build`.
+/** Genera `dist/.htaccess` (a partir de `vercel.json`) y `dist/404.html`. Se
+ *  ejecuta solo, como `postbuild`, en cada `npm run build`.
  *
  *  [2026-08-18] Existe porque el sitio se sirve en DOS sitios: Vercel, que lee
  *  `vercel.json`, y un hosting compartido (hispaniola.botizate.com), que no lo
@@ -9,7 +9,7 @@
  *  es lo que garantiza que las dos configuraciones no se separen nunca: si se
  *  añade un redirect en `vercel.json`, aparece solo en el `.htaccess`.
  */
-import { readFileSync, writeFileSync } from 'node:fs'
+import { copyFileSync, readFileSync, writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
 
@@ -60,4 +60,14 @@ lineas.push(
 )
 
 writeFileSync(join(raiz, 'dist', '.htaccess'), lineas.join('\n'))
-console.log(`.htaccess generado: ${vercel.redirects.length} redirecciones + SPA + cache`)
+
+// [2026-08-19] 404.html sale de aqui por la MISMA razon que el .htaccess: es
+// un fichero que solo existe en el hosting compartido, no lo genera Vite, y
+// vivia en la rama `build` copiado a mano. Un `rsync --delete` lo borraba y el
+// 404 del host se quedaba sin pagina — que es exactamente el susto que ya dio
+// el .htaccess. Es una copia literal del index (la SPA resuelve la ruta en el
+// navegador), asi que tiene que regenerarse en CADA build o serviria el JS
+// viejo a quien caiga en una URL inexistente.
+copyFileSync(join(raiz, 'dist', 'index.html'), join(raiz, 'dist', '404.html'))
+
+console.log(`.htaccess + 404.html generados: ${vercel.redirects.length} redirecciones + SPA + cache`)
