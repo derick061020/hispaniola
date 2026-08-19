@@ -347,6 +347,18 @@ function PuertaDeAcceso({
           </FancyButton.Root>
         </form>
 
+        {/* [2026-08-18] Quien viene a CAMBIAR algo tiene un camino mejor: el
+            area privada, donde estan todas sus reservas y sus datos. Se ofrece
+            aqui, no en vez de esto: consultar con el codigo sigue siendo lo
+            mas rapido y no pide contraseña. */}
+        <p className="mt-5 text-center text-sm text-navy-sub">
+          Booked more than once?{' '}
+          <Link to="/account" className="font-semibold text-aqua-dark hover:underline">
+            Sign in to your account
+          </Link>{' '}
+          to see them all.
+        </p>
+
         {error ? (
           <p role="alert" className="mt-4 rounded-card border border-coral/30 bg-coral/5 p-4 text-sm text-navy-sub">
             {error}

@@ -3,6 +3,7 @@ import { HomePage } from '@/pages/home'
 import { TourPage } from '@/pages/tour'
 import { ReservarPage } from '@/pages/reservar'
 import { GraciasPage } from '@/pages/gracias'
+import { CuentaPage } from '@/pages/cuenta'
 import { MiReservaPage } from '@/pages/mi-reserva'
 import { EventoPage } from '@/pages/evento'
 import { GraciasEventoPage } from '@/pages/gracias-evento'
@@ -108,6 +109,7 @@ const REDIRECCIONES_ES_EN: [string, string][] = [
   ['/reservar/:slug', '/book/:slug'],
   ['/reservar/:slug/gracias', '/book/:slug/thank-you'],
   ['/mi-reserva', '/my-booking'],
+  ['/mi-cuenta', '/account'],
   ['/eventos/:slug', '/events/:slug'],
   ['/eventos/:slug/gracias', '/events/:slug/thank-you'],
   ['/ventaja-competitiva', '/competitive-advantage'],
@@ -161,6 +163,9 @@ function App() {
         <Route path="/book/:slug" element={<ReservarPage />} />
         <Route path="/book/:slug/thank-you" element={<GraciasPage />} />
         <Route path="/my-booking" element={<MiReservaPage />} />
+        {/* [2026-08-18] El área privada. `/mi-cuenta` queda como alias en
+            español, igual que /mi-reserva → /my-booking. */}
+        <Route path="/account" element={<CuentaPage />} />
         <Route path="/events/:slug" element={<EventoPorSlug />} />
         <Route path="/events/:slug/thank-you" element={<GraciasEventoPage />} />
         {/* [v2 2026-07-28] `/sostenibilidad` → `/competitive-advantage`: el

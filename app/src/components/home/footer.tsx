@@ -224,6 +224,15 @@ export function Footer({ cta = 'Ready for an unforgettable day?' }: { cta?: stri
               </Link>
             </li>
             <li>
+              {/* [2026-08-18] El área privada. Va justo debajo porque es la
+                  misma tarea vista de otra manera: «My booking» abre UNA
+                  reserva con su código; esto abre TODAS las tuyas con la
+                  contraseña que recibiste al reservar. */}
+              <Link to="/account" className="hover:text-white">
+                My account
+              </Link>
+            </li>
+            <li>
               <Link to="/contact" className="hover:text-white">
                 Contact
               </Link>

@@ -8,7 +8,7 @@ import { sumarDias, fechaLarga } from '@/lib/fechas'
 import { buscarReserva, type Reserva } from '@/lib/reservas'
 import { menuDeLaReserva } from '@/lib/menu-reserva'
 import { dispararConfetti } from '@/lib/celebracion'
-import { confirmarPago, enviarFormulario, urlCalendario } from '@/lib/api/api'
+import { confirmarPago, enviarFormulario, leerCheckout, urlCalendario } from '@/lib/api/api'
 import { olvidarSesionCheckout, sesionCheckoutGuardada } from '@/lib/api/use-checkout'
 import { formatoDinero } from '@/data/home'
 
@@ -75,6 +75,37 @@ export function GraciasPage() {
   // Si algo falla NO se echa al visitante de la pantalla: la reserva existe en
   // Odoo desde que abrió el checkout, y el webhook de PayPal cierra el estado
   // por su cuenta. Solo se avisa.
+  // [2026-08-18] LO PAGADO SE PREGUNTA, NO SE SUPONE.
+  //
+  // Esta pantalla pintaba «Already paid (deposit) US$ 62» leyendo la copia
+  // LOCAL del navegador, que guarda lo que costaba la reserva — no lo que se
+  // llego a cobrar. Asi que quien abandonaba en la pasarela, o pagaba con una
+  // tarjeta rechazada, veia igualmente su deposito como cobrado. Un cliente
+  // que cree que ya pago y aparece en el muelle sin haber pagado es un
+  // problema del muelle, y de los peores.
+  //
+  // Ahora se lee del pedido en Odoo (`amounts.paid` y su estado). Sin sesion
+  // —volver de PayPal en otro navegador— no se afirma nada: se pinta el
+  // importe como pendiente, que es lo unico seguro.
+  const [cobro, setCobro] = useState<{ pagado: number; estado: string } | null>(null)
+  const [recargas, setRecargas] = useState(0)
+
+  useEffect(() => {
+    const sesion = sesionCheckoutGuardada()
+    if (!codigo || !sesion || sesion.codigo !== codigo) return
+    let vivo = true
+    leerCheckout(codigo, sesion.token)
+      .then((pedido) => {
+        if (vivo) setCobro({ pagado: pedido.amounts.paid, estado: pedido.state })
+      })
+      .catch(() => {
+        /* Silencio: sin dato no se afirma que este pagado. */
+      })
+    return () => {
+      vivo = false
+    }
+  }, [codigo, recargas])
+
   const ordenPaypal = params.get('token')
   const [capturando, setCapturando] = useState(false)
   const [avisoPago, setAvisoPago] = useState<string | null>(null)
@@ -93,6 +124,9 @@ export function GraciasPage() {
     confirmarPago(codigo, sesion.token, { paypalOrderId: ordenPaypal })
       .then((resultado) => {
         if (!vivo) return
+        // Se vuelve a preguntar por el cobro ANTES de olvidar la sesión: la
+        // captura de PayPal acaba de cambiar el estado del pedido.
+        setRecargas((n) => n + 1)
         olvidarSesionCheckout()
         if (!['paid', 'confirmed'].includes(resultado.state)) {
           setAvisoPago('PayPal is still processing the payment. We’ll email you as soon as it clears.')
@@ -381,9 +415,20 @@ export function GraciasPage() {
             <FilaResumen label="Menu" valor={resumenMenu} />
             <FilaResumen label="Pickup" valor={reserva.recogida.hotel || '—'} />
             <div className="!mt-3 flex items-center justify-between border-t border-linea pt-3 text-sm">
-              <span className="text-navy-soft">Already paid (deposit)</span>
-              <span className="font-semibold text-navy">{formatoDinero(reserva.deposito)}</span>
+              <span className="text-navy-soft">{cobro && cobro.pagado > 0 ? 'Already paid (deposit)' : 'Deposit — pending'}</span>
+              <span className="font-semibold text-navy">
+                {formatoDinero(cobro && cobro.pagado > 0 ? cobro.pagado : reserva.deposito)}
+              </span>
             </div>
+            {cobro && cobro.pagado <= 0 ? (
+              <p className="!mt-1 text-xs text-navy-soft">
+                We haven’t received the deposit yet. Your spot is held and you can pay it any time from{' '}
+                <Link to={`/my-booking?codigo=${reserva.codigo}`} className="font-semibold text-aqua-dark hover:underline">
+                  My booking
+                </Link>
+                .
+              </p>
+            ) : null}
             <div className="flex items-center justify-between text-sm">
               <span className="text-navy-soft">Balance on board (cash, −5%)</span>
               <span className="font-semibold text-navy">{formatoDinero(totalCon5Pct)}</span>

@@ -38,6 +38,10 @@ type Opciones = {
   metodo?: 'GET' | 'POST' | 'PATCH' | 'DELETE'
   cuerpo?: unknown
   token?: string | null
+  /** Sesión del área privada. Va en su propia cabecera porque NO es lo mismo
+   *  que el token de una reserva: este identifica a la persona (entró con
+   *  contraseña) y aquel a una reserva concreta. */
+  tokenCuenta?: string | null
   idempotencia?: string
   /** Reintentos SOLO para GET y para fallos de red. Un POST que ya llego al
    *  servidor no se repite a ciegas: para eso esta `idempotencia`. */
@@ -59,6 +63,7 @@ export async function llamarSobre<T>(
     metodo = 'GET',
     cuerpo,
     token,
+    tokenCuenta,
     idempotencia,
     reintentos = metodo === 'GET' ? 2 : 0,
     signal,
@@ -67,6 +72,7 @@ export async function llamarSobre<T>(
   const cabeceras: Record<string, string> = { Accept: 'application/json' }
   if (cuerpo !== undefined) cabeceras['Content-Type'] = 'application/json'
   if (token) cabeceras['X-Booking-Token'] = token
+  if (tokenCuenta) cabeceras['X-Account-Token'] = tokenCuenta
   if (idempotencia) cabeceras['Idempotency-Key'] = idempotencia
 
   let ultimoError: ErrorApi | null = null
