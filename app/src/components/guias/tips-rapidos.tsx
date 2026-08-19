@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { Etiqueta } from '@/components/ui/etiqueta'
 import { Boton } from '@/components/ui/boton'
 import { TIPS_GUIAS, GUIAS_CIERRE } from '@/data/guias'
+import { t } from '@/lib/i18n'
 
 // El contenido REAL de la página — portado de tips-for-punta-cana-
 // snorkeling-and-sailing.php?lang=es, la página que este /guias reemplaza.
@@ -26,18 +27,18 @@ import { TIPS_GUIAS, GUIAS_CIERRE } from '@/data/guias'
 export function TipsRapidos() {
   return (
     <section>
-      <Etiqueta className="guias-reveal">Before you book</Etiqueta>
+      <Etiqueta className="guias-reveal">{t('Before you book')}</Etiqueta>
       <h2 className="guias-reveal mt-3 max-w-2xl text-balance font-display text-h3 font-semibold text-navy">
-        What people ask us most about snorkeling and sailing in Punta Cana
+        {t('What people ask us most about snorkeling and sailing in Punta Cana')}
       </h2>
 
       <div className="mt-14 flex flex-col gap-16 sm:mt-16 sm:gap-24">
-        {TIPS_GUIAS.map((t, i) => {
+        {TIPS_GUIAS.map((tip, i) => {
           const numero = String(i + 1).padStart(2, '0')
           const fotoDerecha = i % 2 === 1 // filas pares (02, 04): foto a la derecha en desktop
           return (
             <article
-              key={t.pregunta}
+              key={tip.pregunta}
               className="guias-reveal grid items-center gap-8 lg:grid-cols-2 lg:gap-16"
             >
               {/* Foto — en el DOM va primero; en desktop se manda a la columna
@@ -45,8 +46,8 @@ export function TipsRapidos() {
               <figure className={`relative m-0 ${fotoDerecha ? 'lg:order-2' : ''}`}>
                 <div className="relative aspect-[4/3] overflow-hidden rounded-card-grande shadow-card ring-1 ring-navy/5">
                   <img
-                    src={`/fotos/${t.foto}.webp`}
-                    alt={t.fotoAlt}
+                    src={`/fotos/${tip.foto}.webp`}
+                    alt={tip.fotoAlt}
                     loading="lazy"
                     className="size-full object-cover"
                   />
@@ -63,37 +64,37 @@ export function TipsRapidos() {
                     <span className="font-display text-h2 font-semibold leading-none text-white/90" aria-hidden="true">
                       {numero}
                     </span>
-                    <span className="pb-0.5 text-sm font-medium text-white/85">{t.fotoPie}</span>
+                    <span className="pb-0.5 text-sm font-medium text-white/85">{tip.fotoPie}</span>
                   </figcaption>
                 </div>
               </figure>
 
               {/* Texto */}
               <div className="lg:max-w-xl">
-                <Etiqueta>{t.categoria}</Etiqueta>
+                <Etiqueta>{tip.categoria}</Etiqueta>
                 <h3 className="mt-3 text-balance font-display text-h3 font-semibold text-navy">
-                  {t.pregunta}
+                  {tip.pregunta}
                 </h3>
-                <p className="mt-3 text-lead font-semibold text-navy">{t.lead}</p>
-                <p className="mt-3 text-base leading-relaxed text-navy-sub">{t.respuesta}</p>
+                <p className="mt-3 text-lead font-semibold text-navy">{tip.lead}</p>
+                <p className="mt-3 text-base leading-relaxed text-navy-sub">{tip.respuesta}</p>
 
                 {/* Dato destacado — pull-stat sobre hairline, no píldora. */}
                 <div className="mt-6 flex items-baseline gap-4 border-t border-linea pt-5">
                   <span className="shrink-0 font-display text-stat font-semibold text-aqua-dark">
-                    {t.stat.valor}
+                    {tip.stat.valor}
                   </span>
-                  <span className="text-sm text-navy-sub">{t.stat.texto}</span>
+                  <span className="text-sm text-navy-sub">{tip.stat.texto}</span>
                 </div>
 
                 {/* CTAs */}
                 <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3">
-                  <Boton to={t.ctaPrimario.to}>{t.ctaPrimario.texto}</Boton>
-                  {t.ctaEnlace ? (
+                  <Boton to={tip.ctaPrimario.to}>{tip.ctaPrimario.texto}</Boton>
+                  {tip.ctaEnlace ? (
                     <Link
-                      to={t.ctaEnlace.to}
+                      to={tip.ctaEnlace.to}
                       className="text-sm font-semibold text-aqua-dark hover:underline"
                     >
-                      {t.ctaEnlace.texto} →
+                      {tip.ctaEnlace.texto} →
                     </Link>
                   ) : null}
                 </div>
@@ -132,7 +133,7 @@ export function TipsRapidos() {
 
         <div className="relative grid grid-cols-1 items-center gap-6 lg:grid-cols-[1fr_auto] lg:gap-12">
           <div>
-            <Etiqueta sobreOscuro>Guides</Etiqueta>
+            <Etiqueta sobreOscuro>{t('Guides')}</Etiqueta>
             <h2 className="mt-2 text-balance font-display text-h3 font-semibold text-white sm:text-h2">
               {GUIAS_CIERRE.titulo}
             </h2>

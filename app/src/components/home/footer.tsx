@@ -15,6 +15,7 @@ import {
   IconoTikTok,
   IconoYouTube,
 } from '@/components/ui/iconos-redes'
+import { numero, t } from '@/lib/i18n'
 
 // Iconos de red: propios (ui/iconos-redes.tsx) — esta versión de lucide-react
 // ya no exporta iconos de marca, ver el porqué en ese archivo.
@@ -41,7 +42,7 @@ const ICONO_RED: Record<string, (p: { className?: string }) => React.ReactElemen
 // MISMA banda en la tanda v3 («Your Caribbean story starts here», plan 07 §5),
 // y el footer es único para toda la web. Prop con el de la home por defecto —
 // las páginas que no lo pasen siguen igual que hasta ahora.
-export function Footer({ cta = 'Ready for an unforgettable day?' }: { cta?: string }) {
+export function Footer({ cta = t('Ready for an unforgettable day?') }: { cta?: string }) {
   // [2026-08-18] La lista sale de Odoo: un tour despublicado desaparece de aquí
   // sin tocar código, y el «desde US$» es el del catálogo, no el que quedó
   // escrito en `data/home.ts`. Si Odoo no contesta se pinta la lista estática.
@@ -68,7 +69,7 @@ export function Footer({ cta = 'Ready for an unforgettable day?' }: { cta?: stri
 
       <div className="relative z-10 mx-auto flex max-w-contenido flex-col items-center gap-4 text-center">
         <h2 className="font-display text-h2 font-semibold text-white">{cta}</h2>
-        <Boton to="/#tours">See availability</Boton>
+        <Boton to="/#tours">{t('See availability')}</Boton>
       </div>
 
       {/* [v2 2026-07-28] De 4 a 5 columnas al sacar «Trabaja con nosotros» de
@@ -85,74 +86,74 @@ export function Footer({ cta = 'Ready for an unforgettable day?' }: { cta?: stri
               usa el header sobre fondos oscuros. */}
           <Logo sobreOscuro />
           <p className="mt-3 text-sm text-white/70">
-            C. P.º del Sol, Punta Cana 23500, Dominican Republic.
+            {t('C. P.º del Sol, Punta Cana 23500, Dominican Republic.')}
             <br />
-            Eco-friendly · Zero plastic · Since 2010.
+            {t('Eco-friendly · Zero plastic · Since 2010.')}
           </p>
-          <p className="mt-3 text-xs text-white/50">★ 4.9 · 1,782 reviews · #1 on TripAdvisor for 7 years</p>
+          <p className="mt-3 text-xs text-white/50">{t('★ 4.9 · 1,782 reviews · #1 on TripAdvisor for 7 years')}</p>
         </div>
 
         <div>
-          <h5 className="text-sm font-semibold uppercase tracking-wide text-white/50">Tours</h5>
+          <h5 className="text-sm font-semibold uppercase tracking-wide text-white/50">{t('Tours')}</h5>
           <ul className="mt-3 flex flex-col gap-2 text-sm text-white/80">
-            {tours.map((t) => (
-              <li key={t.slug}>
-                <Link to={`/tours/${t.slug}`} className="hover:text-white">
-                  {t.nombre}
+            {tours.map((tour) => (
+              <li key={tour.slug}>
+                <Link to={`/tours/${tour.slug}`} className="hover:text-white">
+                  {tour.nombre}
                 </Link>
               </li>
             ))}
             <li>
-              <EnlacePrototipo className="hover:text-white">Events</EnlacePrototipo>
+              <EnlacePrototipo className="hover:text-white">{t('Events')}</EnlacePrototipo>
             </li>
           </ul>
         </div>
 
         <div>
-          <h5 className="text-sm font-semibold uppercase tracking-wide text-white/50">Company</h5>
+          <h5 className="text-sm font-semibold uppercase tracking-wide text-white/50">{t('Company')}</h5>
           <ul className="mt-3 flex flex-col gap-2 text-sm text-white/80">
             {/* [v2 2026-07-27] `/nosotros` se partió en tres páginas; el footer
                 tiene que repetir la arquitectura del menú nuevo, no seguir
                 apuntando a una ruta que ahora solo redirige. */}
             <li>
               <Link to="/crew" className="hover:text-white">
-                Crew
+                {t('Crew')}
               </Link>
             </li>
             <li>
               <Link to="/facilities" className="hover:text-white">
-                Facilities
+                {t('Facilities')}
               </Link>
             </li>
             <li>
               <Link to="/fleet" className="hover:text-white">
-                Fleet
+                {t('Fleet')}
               </Link>
             </li>
             <li>
               <Link to="/competitive-advantage" className="hover:text-white">
-                Sustainability
+                {t('Sustainability')}
               </Link>
             </li>
             <li>
               <Link to="/foundation" className="hover:text-white">
-                The Foundation
+                {t('The Foundation')}
               </Link>
             </li>
             <li>
               <Link to="/guides" className="hover:text-white">
-                Punta Cana guides
+                {t('Punta Cana guides')}
               </Link>
             </li>
             <li>
               {/* Correcciones v1 del cliente (planes/06-blog.md): página nueva. */}
               <Link to="/blog" className="hover:text-white">
-                Blog
+                {t('Blog')}
               </Link>
             </li>
             <li>
               <Link to="/travel-agents" className="font-semibold hover:text-white">
-                Travel agents
+                {t('Travel agents')}
               </Link>
             </li>
           </ul>
@@ -173,7 +174,7 @@ export function Footer({ cta = 'Ready for an unforgettable day?' }: { cta?: stri
             misma altura. */}
         <div>
           <h5 className="text-sm font-semibold uppercase tracking-wide text-white/50">
-            Work with us
+            {t('Work with us')}
           </h5>
           <ul className="mt-3 flex flex-col gap-2 text-sm text-white/80">
             {/* Los tres van a la MISMA página con distinto `?perfil=`; la
@@ -190,7 +191,7 @@ export function Footer({ cta = 'Ready for an unforgettable day?' }: { cta?: stri
         </div>
 
         <div>
-          <h5 className="text-sm font-semibold uppercase tracking-wide text-white/50">Bookings & help</h5>
+          <h5 className="text-sm font-semibold uppercase tracking-wide text-white/50">{t('Bookings & help')}</h5>
           <ul className="mt-3 flex flex-col gap-2 text-sm text-white/80">
             <li>
               {/* `/#tours` y no `#tours`: el footer también vive en la ficha,
@@ -198,19 +199,19 @@ export function Footer({ cta = 'Ready for an unforgettable day?' }: { cta?: stri
                   ruta delante vuelve a la home y ScrollAlNavegar (hash-aware)
                   baja al grid de tours. */}
               <Link to="/#tours" className="hover:text-white">
-                Book now
+                {t('Book now')}
               </Link>
             </li>
             <li>
               {/* [v2 2026-07-28] /reserva-directa → /por-que-reservar: la
                   página se rehízo entera con los slides 50-56 del cliente. */}
               <Link to="/why-book-direct" className="font-semibold hover:text-white">
-                Why book direct?
+                {t('Why book direct?')}
               </Link>
             </li>
             <li>
               <Link to="/#faq" className="hover:text-white">
-                FAQ
+                {t('FAQ')}
               </Link>
             </li>
             <li>
@@ -220,7 +221,7 @@ export function Footer({ cta = 'Ready for an unforgettable day?' }: { cta?: stri
                   contactarnos por WhatsApp (fricción). Va entre FAQ y
                   Contacto: misma columna semántica (gestión + ayuda). */}
               <Link to="/my-booking" className="font-semibold hover:text-white">
-                Manage my booking
+                {t('Manage my booking')}
               </Link>
             </li>
             <li>
@@ -229,17 +230,17 @@ export function Footer({ cta = 'Ready for an unforgettable day?' }: { cta?: stri
                   reserva con su código; esto abre TODAS las tuyas con la
                   contraseña que recibiste al reservar. */}
               <Link to="/account" className="hover:text-white">
-                My account
+                {t('My account')}
               </Link>
             </li>
             <li>
               <Link to="/contact" className="hover:text-white">
-                Contact
+                {t('Contact')}
               </Link>
             </li>
             <li>
               <a href={WHATSAPP_URL} target="_blank" rel="noopener" className="hover:text-white">
-                WhatsApp +1 829 305 2804
+                {t('WhatsApp +1 829 305 2804')}
               </a>
             </li>
           </ul>
@@ -257,10 +258,10 @@ export function Footer({ cta = 'Ready for an unforgettable day?' }: { cta?: stri
           el agua que costó generar). */}
       <div className="relative z-10 mx-auto mt-12 grid max-w-contenido gap-6 border-t border-white/10 pt-8 lg:grid-cols-[auto_1fr_auto] lg:items-start">
         <div>
-          <p className="text-sm font-semibold text-white">How guests rate us</p>
+          <p className="text-sm font-semibold text-white">{t('How guests rate us')}</p>
           <p className="mt-1 text-sm text-white/70">
             <span className="font-semibold text-white">★ {RESENAS_AGREGADO.rating}</span> ·{' '}
-            {RESENAS_AGREGADO.total.toLocaleString('en-US')} reviews · #1 on TripAdvisor for 7 years
+            {numero(RESENAS_AGREGADO.total)} {t('reviews · #1 on TripAdvisor for 7 years')}
           </p>
           <ul className="mt-3 flex flex-wrap items-center gap-2">
             {REDES.map((red) => {
@@ -287,7 +288,7 @@ export function Footer({ cta = 'Ready for an unforgettable day?' }: { cta?: stri
         </div>
 
         <div className="lg:px-8">
-          <p className="text-sm font-semibold text-white">Payment methods</p>
+          <p className="text-sm font-semibold text-white">{t('Payment methods')}</p>
           {/* 2026-07-22 (pedido de Samuel): cajitas de tamaño fijo con el logo
               dentro, no chips de texto que se ensanchaban con el nombre. El
               detalle de por qué así y de dónde salen los logos, en
@@ -306,18 +307,18 @@ export function Footer({ cta = 'Ready for an unforgettable day?' }: { cta?: stri
               se conserva — es el ÚNICO medio de pago que el proyecto tiene
               confirmado. */}
           <p className="mt-3 text-xs text-white/50">
-            Confirm with 25% online. The rest on the day of the tour. Cash on board works too.
+            {t('Confirm with 25% online. The rest on the day of the tour. Cash on board works too.')}
           </p>
         </div>
 
         <div className="flex flex-col gap-3">
           <div>
-            <p className="mb-2 text-sm font-semibold text-white">Language</p>
+            <p className="mb-2 text-sm font-semibold text-white">{t('Language')}</p>
             <SelectorIdioma />
           </div>
           <div>
             <label htmlFor="footer-moneda" className="mb-2 block text-sm font-semibold text-white">
-              Currency
+              {t('Currency')}
             </label>
             {/* Visual, como el idioma: el sitio publica en USD y no hay
                 conversión real todavía (ver MONEDAS en data/home.ts). */}
@@ -337,26 +338,26 @@ export function Footer({ cta = 'Ready for an unforgettable day?' }: { cta?: stri
       </div>
 
       <div className="relative z-10 mx-auto mt-10 flex max-w-contenido flex-col items-center gap-3 border-t border-white/10 pt-5 text-xs text-white/40 sm:flex-row sm:justify-between">
-        <p>© {new Date().getFullYear()} Hispaniola Aquatic Adventures.</p>
+        <p>© {new Date().getFullYear()} {t('Hispaniola Aquatic Adventures.')}</p>
         <ul className="flex flex-wrap items-center gap-x-4 gap-y-1">
           <li>
             <Link to="/legal/cancellation-policy" className="hover:text-white/70">
-              Cancellation policy
+              {t('Cancellation policy')}
             </Link>
           </li>
           <li>
             <Link to="/legal/privacy" className="hover:text-white/70">
-              Privacy
+              {t('Privacy')}
             </Link>
           </li>
           <li>
             <Link to="/legal/terms" className="hover:text-white/70">
-              Terms
+              {t('Terms')}
             </Link>
           </li>
           <li>
             <Link to="/legal/cookies" className="hover:text-white/70">
-              Cookies
+              {t('Cookies')}
             </Link>
           </li>
         </ul>

@@ -4,6 +4,7 @@ import { CalendarioWidget } from '@/components/tour/calendario-widget'
 import { NumeroEditable } from '@/components/ui/numero-editable'
 import { formatoDinero, type Tour } from '@/data/home'
 import type { MenuReserva } from '@/lib/menu-reserva'
+import { t } from '@/lib/i18n'
 
 // Columna DERECHA del funnel (Fase C, layout Viator): «qué estás comprando»,
 // sticky, siempre visible mientras se rellena el formulario de la izquierda.
@@ -149,8 +150,8 @@ export function ResumenReserva({
             <summary className="flex cursor-pointer list-none items-center gap-2 p-4 text-sm">
               <UtensilsCrossed className="size-4 shrink-0 text-aqua-dark" aria-hidden="true" />
               <span className="font-semibold text-navy">{menu.titulo}</span>
-              <span className="ml-auto text-xs font-medium text-aqua-dark group-open:hidden">See what’s served</span>
-              <span className="ml-auto hidden text-xs font-medium text-aqua-dark group-open:inline">Hide</span>
+              <span className="ml-auto text-xs font-medium text-aqua-dark group-open:hidden">{t('See what’s served')}</span>
+              <span className="ml-auto hidden text-xs font-medium text-aqua-dark group-open:inline">{t('Hide')}</span>
             </summary>
             <div className="px-4 pb-4">
               {menu.texto ? <p className="text-xs text-navy-soft">{menu.texto}</p> : null}
@@ -185,7 +186,7 @@ export function ResumenReserva({
 
           <div
             role="group"
-            aria-label="Number of people"
+            aria-label={t('Number of people')}
             className="flex h-10 items-center justify-between rounded-10 border border-stroke-soft-200 bg-bg-white-0 pl-3 pr-1.5"
           >
             <span className="flex items-center gap-1 text-paragraph-sm text-text-strong-950">
@@ -195,7 +196,7 @@ export function ResumenReserva({
                 min={minPersonas}
                 max={maxPersonas}
                 onCambio={onPersonas}
-                etiqueta="Number of people"
+                etiqueta={t('Number of people')}
                 className="tabular-nums"
               />
               {personas === 1 ? 'person' : 'people'}
@@ -205,7 +206,7 @@ export function ResumenReserva({
                 type="button"
                 variant="stroke"
                 fullRadius
-                aria-label="Remove one person"
+                aria-label={t('Remove one person')}
                 disabled={personas <= minPersonas}
                 onClick={() => onPersonas(Math.max(minPersonas, personas - 1))}
                 className="size-9 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
@@ -216,7 +217,7 @@ export function ResumenReserva({
                 type="button"
                 variant="stroke"
                 fullRadius
-                aria-label="Add one person"
+                aria-label={t('Add one person')}
                 disabled={personas >= maxPersonas}
                 onClick={() => onPersonas(Math.min(maxPersonas, personas + 1))}
                 className="size-9 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
@@ -257,7 +258,7 @@ export function ResumenReserva({
           ) : null}
 
           <p className="text-xs text-navy-soft">
-            {fechaISO ? horarioTxt : 'Choose the date to confirm your spot.'}
+            {fechaISO ? horarioTxt : t('Choose the date to confirm your spot.')}
           </p>
         </div>
 
@@ -309,7 +310,7 @@ export function ResumenReserva({
                 <FilaPrecio
                   concepto={
                     <>
-                      Upgrade to Premium{' '}
+                      {t('Upgrade to Premium')}{' '}
                       <span className="text-navy-soft">
                         {formatoDinero(upgrade)} × {personas}
                       </span>
@@ -335,12 +336,12 @@ export function ResumenReserva({
             />
           ))}
           <div className="mt-3 flex items-center justify-between border-t border-linea pt-3">
-            <span className="font-semibold text-navy">Total</span>
+            <span className="font-semibold text-navy">{t('Total')}</span>
             <span className="font-display text-precio font-semibold text-navy">{formatoDinero(total)}</span>
           </div>
           {precioProvisional ? (
             <p className="mt-2 text-xs leading-relaxed text-navy-soft">
-              Estimated price — we confirm the final amount before you pay.
+              {t('Estimated price — we confirm the final amount before you pay.')}
             </p>
           ) : null}
         </div>
@@ -349,40 +350,38 @@ export function ResumenReserva({
             evita la duda de siempre: el depósito no se suma, se descuenta. */}
         <div className="rounded-b-card border-t border-linea bg-papel-hueso p-4 text-sm">
           <div className="flex items-center justify-between">
-            <span className="font-semibold text-navy">You pay today (25%)</span>
+            <span className="font-semibold text-navy">{t('You pay today (25%)')}</span>
             <span className="font-semibold text-navy">{formatoDinero(deposito)}</span>
           </div>
           <div className="mt-1.5 flex items-center justify-between">
-            <span className="text-navy-sub">On the day of the tour</span>
+            <span className="text-navy-sub">{t('On the day of the tour')}</span>
             <span className="text-navy">{formatoDinero(saldo)}</span>
           </div>
           <p className="mt-2.5 text-xs leading-relaxed text-navy-soft">
-            The deposit is not an extra charge: it comes off the total. Paying cash on board brings the balance down to{' '}
-            <span className="font-semibold text-navy">{formatoDinero(enEfectivo)}</span>. You save{' '}
+            {t('The deposit is not an extra charge: it comes off the total. Paying cash on board brings the balance down to')}{' '}
+            <span className="font-semibold text-navy">{formatoDinero(enEfectivo)}</span>{t('. You save')}{' '}
             {formatoDinero(ahorro)}.
           </p>
           <p className="mt-2 flex items-center gap-1.5 text-xs font-medium text-menta-texto">
             <Check className="size-3.5 shrink-0" aria-hidden="true" />
-            Free cancellation up to 7 days before
+            {t('Free cancellation up to 7 days before')}
           </p>
         </div>
       </div>
 
       <div className="mt-5 px-1">
-        <h2 className="font-display text-sm font-semibold text-navy">Book with confidence</h2>
+        <h2 className="font-display text-sm font-semibold text-navy">{t('Book with confidence')}</h2>
         <ul className="mt-3 flex flex-col gap-3 text-xs text-navy-sub">
           <li className="flex gap-2.5">
             <ShieldCheck className="size-4 shrink-0 text-aqua-dark" aria-hidden="true" />
             <span>
-              <strong className="font-semibold text-navy">Total flexibility.</strong> Free cancellation up to 7 days before
-              and a full refund for bad weather.
+              <strong className="font-semibold text-navy">{t('Total flexibility.')}</strong> {t('Free cancellation up to 7 days before and a full refund for bad weather.')}
             </span>
           </li>
           <li className="flex gap-2.5">
             <MessageCircle className="size-4 shrink-0 text-aqua-dark" aria-hidden="true" />
             <span>
-              <strong className="font-semibold text-navy">Talk to us directly.</strong> You chat on WhatsApp with the boat’s
-              team, not with a call center.
+              <strong className="font-semibold text-navy">{t('Talk to us directly.')}</strong> {t('You chat on WhatsApp with the boat’s team, not with a call center.')}
             </span>
           </li>
           {/* «Pago seguro» vivía al pie del paso 4 — se leía cuando ya habías
@@ -393,8 +392,7 @@ export function ResumenReserva({
           <li className="flex gap-2.5">
             <Lock className="size-4 shrink-0 text-aqua-dark" aria-hidden="true" />
             <span>
-              <strong className="font-semibold text-navy">Secure payment.</strong> Encrypted connection; your card details
-              are handled by the payment gateway and never stored on our site.
+              <strong className="font-semibold text-navy">{t('Secure payment.')}</strong> {t('Encrypted connection; your card details are handled by the payment gateway and never stored on our site.')}
             </span>
           </li>
         </ul>

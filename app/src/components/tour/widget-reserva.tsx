@@ -24,6 +24,7 @@ import { useCotizacion } from '@/components/tour/use-cotizacion'
 import { PistaInfo } from '@/components/ui/pista-info'
 import { NumeroEditable } from '@/components/ui/numero-editable'
 import { PasajerosPopover, FilaPasajero } from '@/components/tour/pasajeros-popover'
+import { numero, t } from '@/lib/i18n'
 
 // «El widget ES la página» (wireframe A2): sticky en desktop, con el precio en
 // el primer viewport — en la web actual ese precio está a 6 pantallas de
@@ -130,7 +131,7 @@ export function maxPersonasDe(tour: Tour, ficha: FichaTour): number {
   if (tour.precioNino != null) return tour.maxPax ?? 30
   // Sub-variantes (Saona, charter): el tramo más alto de cualquier bote.
   if (ficha.subVariantes) {
-    return Math.max(...ficha.subVariantes.flatMap((v) => v.tabla.map((t) => t.hasta ?? t.desde)))
+    return Math.max(...ficha.subVariantes.flatMap((v) => v.tabla.map((tramo) => tramo.hasta ?? tramo.desde)))
   }
   return MAX_PERSONAS_DEFAULT
 }
@@ -253,12 +254,12 @@ function Precio({
   unidad?: 'persona' | 'grupo' | 'desde'
 }) {
   if (precio === null) {
-    return <p className="font-display text-precio font-semibold text-navy">US$ —</p>
+    return <p className="font-display text-precio font-semibold text-navy">{t('US$ —')}</p>
   }
-  const sufijo = unidad === 'grupo' ? 'per group' : 'per person'
+  const sufijo = unidad === 'grupo' ? t('per group') : t('per person')
   return (
     <p className="text-navy">
-      {unidad === 'desde' ? <span className="text-sm text-navy-sub">From </span> : null}
+      {unidad === 'desde' ? <span className="text-sm text-navy-sub">{t('From')}{' '}</span> : null}
       <span className="font-display text-precio font-semibold">{formatoDinero(precio)}</span>
       <span className="text-sm text-navy-sub"> {sufijo}</span>
     </p>
@@ -541,15 +542,15 @@ export function WidgetReserva({
       <Caja premium={premiumDeBase}>
         <Precio precio={tour.precioLight} unidad="desde" />
         <p className="text-sm text-navy-sub">
-          This tour is quoted to fit you, based on the number of guests and the menu. Up to{' '}
-          {tour.maxPax} guests.
+          {t('This tour is quoted to fit you, based on the number of guests and the menu. Up to')}{' '}
+          {tour.maxPax} {t('guests.')}
         </p>
         <FancyButton.Root variant="primary" className="w-full" asChild>
-          <EnlacePrototipo>Request a quote</EnlacePrototipo>
+          <EnlacePrototipo>{t('Request a quote')}</EnlacePrototipo>
         </FancyButton.Root>
         <FancyButton.Root variant="basic" className="w-full" asChild>
           <a href={WHATSAPP_URL} target="_blank" rel="noopener">
-            WhatsApp us directly
+            {t('WhatsApp us directly')}
           </a>
         </FancyButton.Root>
       </Caja>
@@ -564,12 +565,11 @@ export function WidgetReserva({
             del cliente, ver PLAN-v3.md §9). Un precio inventado aquí sería el
             peor sitio posible para inventarlo. */}
         <p className="text-sm text-navy-sub">
-          <strong className="font-semibold text-navy">Price still to be confirmed with the client.</strong> Duration and
-          capacity are still to be defined too.
+          <strong className="font-semibold text-navy">{t('Price still to be confirmed with the client.')}</strong> {t('Duration and capacity are still to be defined too.')}
         </p>
         <FancyButton.Root variant="primary" className="w-full" asChild>
           <a href={WHATSAPP_URL} target="_blank" rel="noopener">
-            Ask on WhatsApp
+            {t('Ask on WhatsApp')}
           </a>
         </FancyButton.Root>
       </Caja>
@@ -713,7 +713,7 @@ export function WidgetReserva({
           ★
         </span>
         <span className="font-semibold text-navy">{tour.rating}</span>
-        <span>· {tour.resenas.toLocaleString('en-US')} verified reviews</span>
+        <span>· {numero(tour.resenas)} {t('verified reviews')}</span>
       </div>
 
       <Precio precio={precioAnclaNum} unidad={unidadAncla} />
@@ -731,15 +731,15 @@ export function WidgetReserva({
         <p className="-mt-2 text-xs text-navy-soft tabular-nums">
           {tramoActivo.tipo === 'persona' ? (
             <>
-              {formatoDinero(tramoActivo.precio)} × {paxActuales} {paxActuales === 1 ? 'guest' : 'guests'}
+              {formatoDinero(tramoActivo.precio)} × {paxActuales} {t(paxActuales === 1 ? 'guest' : 'guests')}
               {' · '}
-              <span className="text-navy-sub">tier {tramoActivo.desde}–{tramoActivo.hasta === null ? '120' : tramoActivo.hasta} pax</span>
+              <span className="text-navy-sub">{t('tier')}{' '}{tramoActivo.desde}–{tramoActivo.hasta === null ? '120' : tramoActivo.hasta} {t('pax')}</span>
             </>
           ) : (
             <>
-              Flat group price
+              {t('Flat group price')}
               {' · '}
-              <span className="text-navy-sub">tier {tramoActivo.desde}–{tramoActivo.hasta === null ? '120' : tramoActivo.hasta} pax</span>
+              <span className="text-navy-sub">{t('tier')}{' '}{tramoActivo.desde}–{tramoActivo.hasta === null ? '120' : tramoActivo.hasta} {t('pax')}</span>
             </>
           )}
         </p>
@@ -951,7 +951,7 @@ export function WidgetReserva({
             {horariosActivos[horario]?.regreso ? (
               <p className="mt-2 flex items-center gap-1.5 text-xs text-navy-soft">
                 <ArrowDown className="size-3 shrink-0 -rotate-90" aria-hidden="true" />
-                You’re back at{' '}
+                {t('You’re back at')}{' '}
                 <span className="font-semibold text-navy">{horariosActivos[horario].regreso}</span>
                 <span className="text-navy-soft/70">&middot; {ficha.duracion}</span>
               </p>
@@ -989,17 +989,17 @@ export function WidgetReserva({
                 niños 4-7, bebés 0-3. El tope de 7 sigue sin confirmar por
                 escrito con Fernando (salió de la reunión, donde el cliente no
                 recordaba el rango) — y ahora es copy visible. */}
-            <div role="group" aria-label="Passengers" className="divide-y divide-linea">
+            <div role="group" aria-label={t('Passengers')} className="divide-y divide-linea">
               <FilaPasajero
-                titulo="Adults"
+                titulo={t('Adults')}
                 edades="13-99"
                 minimo={1}
                 maximo={maxPersonas}
                 pista={
                   <PistaInfo
                     sobreOscuro={pielOscura}
-                    etiqueta="What counts as an adult"
-                    texto="From age 13 the full fare applies. At least one adult has to travel with the minors."
+                    etiqueta={t('What counts as an adult')}
+                    texto={t('From age 13 the full fare applies. At least one adult has to travel with the minors.')}
                   />
                 }
               >
@@ -1008,14 +1008,14 @@ export function WidgetReserva({
                     min={1}
                     max={maxPersonas - ninos}
                     onCambio={setAdultos}
-                    etiqueta="Number of adults"
+                    etiqueta={t('Number of adults')}
                     className="min-w-[1.5rem] font-semibold tabular-nums text-navy"
                   />
                   <CompactButton.Root
                     type="button"
                     variant="stroke"
                     fullRadius
-                    aria-label="Remove an adult"
+                    aria-label={t('Remove an adult')}
                     disabled={adultos <= 1}
                     onClick={() => setAdultos((a) => Math.max(1, a - 1))}
                     className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
@@ -1026,7 +1026,7 @@ export function WidgetReserva({
                     type="button"
                     variant="stroke"
                     fullRadius
-                    aria-label="Add an adult"
+                    aria-label={t('Add an adult')}
                     disabled={adultos + ninos >= maxPersonas}
                     onClick={() => setAdultos((a) => Math.min(maxPersonas - ninos, a + 1))}
                     className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
@@ -1036,15 +1036,15 @@ export function WidgetReserva({
               </FilaPasajero>
 
               <FilaPasajero
-                titulo="Children"
+                titulo={t('Children')}
                 edades="4-7"
                 minimo={0}
                 maximo={maxPersonas - 1}
                 pista={
                   <PistaInfo
                     sobreOscuro={pielOscura}
-                    etiqueta="What age counts as a child"
-                    texto="Ages 4 to 7 pay a reduced fare. Under 4s do not pay: add them as infants."
+                    etiqueta={t('What age counts as a child')}
+                    texto={t('Ages 4 to 7 pay a reduced fare. Under 4s do not pay: add them as infants.')}
                   />
                 }
               >
@@ -1053,14 +1053,14 @@ export function WidgetReserva({
                     min={0}
                     max={maxPersonas - adultos}
                     onCambio={setNinos}
-                    etiqueta="Number of children"
+                    etiqueta={t('Number of children')}
                     className="min-w-[1.5rem] font-semibold tabular-nums text-navy"
                   />
                   <CompactButton.Root
                     type="button"
                     variant="stroke"
                     fullRadius
-                    aria-label="Remove a child"
+                    aria-label={t('Remove a child')}
                     disabled={ninos <= 0}
                     onClick={() => setNinos((n) => Math.max(0, n - 1))}
                     className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
@@ -1071,7 +1071,7 @@ export function WidgetReserva({
                     type="button"
                     variant="stroke"
                     fullRadius
-                    aria-label="Add a child"
+                    aria-label={t('Add a child')}
                     disabled={adultos + ninos >= maxPersonas}
                     onClick={() => setNinos((n) => Math.min(maxPersonas - adultos, n + 1))}
                     className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
@@ -1084,15 +1084,15 @@ export function WidgetReserva({
                   «los bebés no suman»), por eso su máximo no depende de
                   `maxPersonas` ni deshabilita el «+». */}
               <FilaPasajero
-                titulo="Infants"
+                titulo={t('Infants')}
                 edades="0-3"
                 minimo={0}
                 maximo={maxPersonas}
                 pista={
                   <PistaInfo
                     sobreOscuro={pielOscura}
-                    etiqueta="What age counts as an infant"
-                    texto="Up to age 3 they travel free and do not take up a spot. From age 4 they pay the child fare."
+                    etiqueta={t('What age counts as an infant')}
+                    texto={t('Up to age 3 they travel free and do not take up a spot. From age 4 they pay the child fare.')}
                   />
                 }
               >
@@ -1104,14 +1104,14 @@ export function WidgetReserva({
                     min={0}
                     max={maxPersonas}
                     onCambio={setBebes}
-                    etiqueta="Number of infants"
+                    etiqueta={t('Number of infants')}
                     className="min-w-[1.5rem] font-semibold tabular-nums text-navy"
                   />
                   <CompactButton.Root
                     type="button"
                     variant="stroke"
                     fullRadius
-                    aria-label="Remove an infant"
+                    aria-label={t('Remove an infant')}
                     disabled={bebes <= 0}
                     onClick={() => setBebes((b) => Math.max(0, b - 1))}
                     className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
@@ -1122,7 +1122,7 @@ export function WidgetReserva({
                     type="button"
                     variant="stroke"
                     fullRadius
-                    aria-label="Add an infant"
+                    aria-label={t('Add an infant')}
                     disabled={false}
                     onClick={() => setBebes((b) => b + 1)}
                     className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
@@ -1146,17 +1146,17 @@ export function WidgetReserva({
               if (!ficha.subVariantes || !variante) return null
               const v = ficha.subVariantes.find((s) => s.id === variante)
               if (!v) return null
-              const min = Math.min(...v.tabla.map((t) => t.desde))
+              const min = Math.min(...v.tabla.map((tramo) => tramo.desde))
               if (personas >= min) return null
               return (
                 <p className="mb-1.5 text-xs text-navy-soft">
-                  {v.nombre} requires a minimum of {min} guests.
+                  {v.nombre} {t('requires a minimum of')}{' '}{min} {t('guests.')}
                 </p>
               )
             })()}
             <div
               role="group"
-              aria-label="Number of guests"
+              aria-label={t('Number of guests')}
               className="flex h-10 items-center justify-between rounded-10 border border-stroke-soft-200 bg-bg-white-0 pl-3 pr-1.5"
             >
               <span className="flex items-center gap-1 text-paragraph-sm text-text-strong-950">
@@ -1166,17 +1166,17 @@ export function WidgetReserva({
                   min={1}
                   max={maxPersonas}
                   onCambio={setPersonas}
-                  etiqueta="Number of guests"
+                  etiqueta={t('Number of guests')}
                   className="tabular-nums"
                 />
-                {personas === 1 ? 'guest' : 'guests'}
+                {t(personas === 1 ? 'guest' : 'guests')}
               </span>
               <div className="flex items-center gap-1">
                 <CompactButton.Root
                   type="button"
                   variant="stroke"
                   fullRadius
-                  aria-label="Remove a guest"
+                  aria-label={t('Remove a guest')}
                   disabled={personas <= 1}
                   onClick={() => setPersonas((p) => Math.max(1, p - 1))}
                   className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
@@ -1187,7 +1187,7 @@ export function WidgetReserva({
                   type="button"
                   variant="stroke"
                   fullRadius
-                  aria-label="Add a guest"
+                  aria-label={t('Add a guest')}
                   disabled={personas >= maxPersonas}
                   onClick={() => setPersonas((p) => Math.min(maxPersonas, p + 1))}
                   className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
@@ -1212,7 +1212,7 @@ export function WidgetReserva({
       {tienePaquetes && paquete === 'light' && ficha.ventajasPremium?.length ? (
         <div className="rounded-card bg-premium-fondo p-4">
           <p className="text-sm font-semibold text-premium-oro">
-            With Premium you add 4 things for {formatoDinero(upgrade ?? 0)}
+            {t('With Premium you add 4 things for')}{' '}{formatoDinero(upgrade ?? 0)}
           </p>
           <ul className="mt-2.5 flex flex-col gap-1.5">
             {ficha.ventajasPremium.map((v) => (
@@ -1242,7 +1242,7 @@ export function WidgetReserva({
             // mensaje.
             className="premium-thumb mt-3 w-full rounded-full px-4 py-2 text-xs font-bold text-premium-fondo transition hover:brightness-110"
           >
-            Switch to Premium
+            {t('Switch to Premium')}
           </button>
         </div>
       ) : null}
@@ -1258,9 +1258,7 @@ export function WidgetReserva({
           tripulación por normativa. */}
       {salto !== null ? (
         <p className="rounded-lg border border-linea bg-papel-hueso px-3 py-2 text-xs leading-relaxed text-navy-sub">
-          With <strong className="text-navy">{paxActuales + 1} guests</strong> the rate for this
-          boat changes: it goes to {formatoDinero(salto.hasta)}. Boating regulations require more
-          crew from that group size on.
+          {t('With')}{' '}<strong className="text-navy">{paxActuales + 1} {t('guests')}</strong> {t('the rate for this boat changes: it goes to')}{' '}{formatoDinero(salto.hasta)}{t('. Boating regulations require more crew from that group size on.')}
         </p>
       ) : null}
 
@@ -1299,7 +1297,7 @@ export function WidgetReserva({
           cifras pudieran separarse. */}
       <div className="flex items-center justify-center gap-1.5 rounded-btn bg-menta px-3 py-1.5 text-center text-xs font-medium text-menta-texto">
         <Tag className="size-3.5 shrink-0" aria-hidden="true" />
-        Book direct and save up to {DESCUENTO_MAXIMO}%
+        {t('Book direct and save up to')}{' '}{DESCUENTO_MAXIMO}%
       </div>
 
       {/* Sin fecha, el CTA está DESHABILITADO de verdad (no un botón gris que
@@ -1342,7 +1340,7 @@ export function WidgetReserva({
       <div className="widget-pie lg:sticky lg:bottom-0 lg:z-10 lg:-mx-5 lg:px-5 lg:pb-5 lg:pt-3">
         {fecha === null ? (
           <FancyButton.Root variant="primary" className="w-full" disabled>
-            Elige una fecha
+            {t('Pick a date')}
           </FancyButton.Root>
         ) : total === null ? (
           // v3 (2026-07-17, Saona): con subVariantes, hay un 2º estado disabled
@@ -1351,7 +1349,7 @@ export function WidgetReserva({
           // habilitado y "Continuar — —" (que no se ve bien) al cambiar
           // variante sin ajustar pax.
           <FancyButton.Root variant="primary" className="w-full" disabled>
-            Adjust the number of guests
+            {t('Adjust the number of guests')}
           </FancyButton.Root>
         ) : (
           <FancyButton.Root variant="primary" className="w-full" asChild>
@@ -1391,7 +1389,7 @@ export function WidgetReserva({
                   : {}),
               }).toString()}`}
             >
-              Continuar · {formatoDinero(total)}
+              {t('Continue ·')}{' '}{formatoDinero(total)}
             </Link>
           </FancyButton.Root>
         )}
@@ -1410,9 +1408,9 @@ export function WidgetReserva({
       <div className="border-t border-linea pt-3">
         <ChecksTicker
           lineas={[
-            'Book now, pay later: confirm with just 25%',
-            'Free cancellation up to 7 days before',
-            'Full refund for bad weather',
+            t('Book now, pay later: confirm with just 25%'),
+            t('Free cancellation up to 7 days before'),
+            t('Full refund for bad weather'),
           ]}
         />
       </div>
@@ -1435,7 +1433,7 @@ export function WidgetReserva({
         <figcaption className="flex items-center justify-between gap-2 text-xs font-medium text-menta-texto">
           <span className="flex min-w-0 items-center gap-1.5">
             <BadgeCheck className="size-3.5 shrink-0" aria-hidden="true" />
-            <span className="truncate">Reseña verificada en {resenaWidget.plataforma}</span>
+            <span className="truncate">{t('Verified review on')}{' '}{resenaWidget.plataforma}</span>
           </span>
           <span className="shrink-0 font-semibold text-navy">{resenaWidget.autor}</span>
         </figcaption>
@@ -1463,7 +1461,7 @@ export function WidgetReserva({
             className={`size-4 ${enDeseos ? 'fill-coral text-coral' : ''}`}
             aria-hidden="true"
           />
-          {enDeseos ? 'On your list' : 'Add to wishlist'}
+          {enDeseos ? t('On your list') : t('Add to wishlist')}
         </button>
         <button
           type="button"

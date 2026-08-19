@@ -14,6 +14,7 @@ import type {
   PlatoBuffet,
   PlatoMenu,
 } from '@/data/tours'
+import { t } from '@/lib/i18n'
 
 // «Tu menú, a tu elección» (wireframe A4) — el diferenciador estrella: fotos
 // reales de los platos, un activo que ningún competidor tiene. Solo en
@@ -107,7 +108,7 @@ function PlatoCard({ plato, piel = 'claro' }: { plato: PlatoMenu; piel?: 'claro'
           distingue sin sacarlo de su sitio. */}
       {plato.soloNinos ? (
         <span className="absolute left-3.5 top-3.5 rounded-full bg-navy px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-white">
-          Niños
+          {t('Kids')}
         </span>
       ) : null}
       <figcaption className="px-1.5 pb-1 pt-2.5">
@@ -186,7 +187,7 @@ function PaqueteMenu({
     <div className="rounded-card-grande bg-fondo-ficha p-4 sm:p-5">
       <div className="mb-4 flex items-baseline justify-between gap-3 border-b border-linea pb-3">
         <h3 className="flex min-w-0 items-center gap-2.5 font-display text-h3 font-semibold text-navy">
-          <span className="truncate">{nombre} menu</span>
+          <span className="truncate">{nombre} {t('menu')}</span>
           {/* Mismo metal que el badge del comparador y el thumb del selector:
               una sola pieza de oro en todo el sistema.
               [v3 2026-08-06, pedido de Samuel] `whitespace-nowrap` + `shrink-0`:
@@ -278,17 +279,17 @@ function MenuBuffet({
             </span>
             <figcaption>
               <span className="block font-display text-sm font-semibold text-navy sm:text-base">
-                The buffet, served on the island
+                {t('The buffet, served on the island')}
               </span>
               <span className="mt-0.5 block text-xs text-navy-soft">
-                Set up on Catuano beach, with the Natural Pool before and after.
+                {t('Set up on Catuano beach, with the Natural Pool before and after.')}
               </span>
             </figcaption>
           </figure>
 
           <div className="flex flex-col">
             <h3 className="border-b border-linea pb-3 font-display text-h3 font-semibold text-navy">
-              Traditional Dominican buffet
+              {t('Traditional Dominican buffet')}
             </h3>
             <ul className="mt-4 flex flex-col gap-2.5">
               {platos.map((p) => (
@@ -382,7 +383,7 @@ function CartasCharter({
     <div>
       {/* Pestanas. Tablist de verdad (roles + aria-selected) porque son dos
           vistas del mismo bloque, no dos enlaces. */}
-      <div role="tablist" aria-label="Menús del charter" className="flex flex-wrap gap-2">
+      <div role="tablist" aria-label={t('Charter menus')} className="flex flex-wrap gap-2">
         {menu.cartas.map((c) => {
           const sel = c.id === carta.id
           return (
@@ -479,15 +480,15 @@ export function MenuTour({
           no dos en data. Los otros dos formatos (buffet de Saona, menú a
           medida del charter) siguen en español hasta su commit de F3. */}
       <TituloSeccion>
-        {esBuffet ? 'The menu of the day' : esCharter ? 'Your menu, your way' : 'Your table comes with an ocean view'}
+        {esBuffet ? t('The menu of the day') : esCharter ? t('Your menu, your way') : t('Your table comes with an ocean view')}
       </TituloSeccion>
       {/* [v3 2026-08-07] Sin tope de ancho (ver comparador-premium.tsx). */}
       <p className="mt-3 text-sm text-navy-sub">
         {esBuffet
-          ? 'A traditional Dominican buffet served on the island itself, with a stop at the Natural Pool before and after.'
+          ? t('A traditional Dominican buffet served on the island itself, with a stop at the Natural Pool before and after.')
           : esCharter
             ? 'What we cook depends on how long you sail: 4-hour charters sail with the Floating Kitchen, 3-hour charters with our Taste of Hispaniola Menu.'
-            : 'Select your favorite dish when you book. Our chefs prepare every meal fresh on board, turning lunch into one of the highlights of your day.'}
+            : t('Select your favorite dish when you book. Our chefs prepare every meal fresh on board, turning lunch into one of the highlights of your day.')}
       </p>
 
       {esBuffet ? (
@@ -547,11 +548,11 @@ export function MenuTour({
             // Lovers, que tiene menú único, un bloque negro no diría nada —
             // no hay Light contra el que contrastar.
             piel={ficha.menuLight.length > 0 ? 'premium' : 'claro'}
-            badge={ficha.menuLight.length > 0 ? 'Most chosen' : undefined}
+            badge={ficha.menuLight.length > 0 ? t('Most chosen') : undefined}
           />
           {ficha.menuLight.length > 0 ? (
             <PaqueteMenu
-              nombre="Light"
+              nombre={t('Light')}
               precio={tour.precioLight !== null ? formatoDinero(tour.precioLight) : undefined}
               platos={ficha.menuLight}
               // Las celdas fantasma se GENERAN del dato: tantas como platos de
@@ -570,7 +571,7 @@ export function MenuTour({
           una advertencia sobre un plato que esa carta no sirve. */}
       {hayLangosta && !esCharter ? (
         <p className="mt-3 text-xs text-navy-soft">
-          * Lobster is replaced with wild jumbo shrimp from March to June (closed season).
+          {t('* Lobster is replaced with wild jumbo shrimp from March to June (closed season).')}
         </p>
       ) : null}
     </section>

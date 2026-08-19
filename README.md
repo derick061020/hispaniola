@@ -2,7 +2,7 @@
 
 Frontend del sitio nuevo de Hispaniola Aquatic Adventures. **React + Vite + TypeScript, SPA
 100% cliente, en inglés, sin backend.** Diseñado por Samuel; se entrega a desarrollo para
-conectar el motor de reservas y terminar el multi-idioma.
+conectar el motor de reservas y terminar el multi-idioma (hecho: ver «El idioma»).
 
 > **Todo el producto vive en [`app/`](app/).** El resto de carpetas es material de apoyo.
 
@@ -223,38 +223,49 @@ bloqueado, total rotulado como estimación) en vez de dejar rellenar todo y fall
 
 ## El idioma
 
-**Hoy el sitio es monolingüe en inglés.** `index.html` tiene `lang="en"` fijo.
+**Desde el 2026-08-19 el sitio es bilingüe EN/ES.** `index.html` sigue con `lang="en"` como
+idioma de arranque, pero el runtime lo reescribe al idioma que se esté leyendo.
 
-- **No hay librería de i18n**, ni contexto, ni `t()`, ni diccionarios, ni detección de idioma.
-- El selector (`components/ui/selector-idioma.tsx`) es **decorativo**: un `useState` sin efectos.
-  Se monta **dos veces con estado independiente** (topbar y footer). Al cablearlo, subir el estado
-  a un provider **por encima de `<Routes>`** — el Topbar se monta fuera de `<Routes>`.
-- El selector **no existe** en `/book/*`, `/my-booking`, el 404 ni por debajo de 640px.
-- **Dónde vive el copy:** 17 archivos en `src/data/` **más ~550-650 cadenas hardcodeadas** en
-  ~112-115 componentes. También hay copy en `lib/fechas.ts` (nombres de día y mes a mano, sin
-  punto de inyección de locale — el comentario explica por qué se evita `Intl`), `lib/reservas.ts`,
-  `lib/menu-reserva.ts` y `lib/seo/schema.ts`.
-- **El español está en git, no perdido:** el tag `v3-pre-en` congela el sitio antes de la
-  traducción. Ocho archivos de `data/` se recuperan 1:1 con `git diff v3-pre-en HEAD -- <archivo>`
-  (blog, comentarios, faq, guias, por-que-reservar, trabaja, legal, equipo). Otros son parciales, y
-  `tours.ts` y `marine-park.ts` **no son recuperables**: su inglés es copy nuevo aprobado por el
-  cliente que nunca existió en español.
-  **No renombrar ni reordenar claves de `data/*.ts` antes de extraer el español**, o se pierde esa propiedad.
+- **Motor propio en [`src/lib/i18n/`](app/src/lib/i18n/)**, sin librería. Tres piezas:
+  `nucleo.ts` (el store, `t()`, `tp()`, `numero()`, `traducible()`, `crudo()`), `proveedor.tsx`
+  (remonta el árbol al cambiar de idioma) y `es.ts` (**2.489 entradas**, generado).
+- **El diccionario se indexa por el TEXTO INGLÉS**, no por claves inventadas. Un texto sin
+  traducir sale en inglés y la página funciona; el porqué está en la cabecera de `nucleo.ts`.
+- **De dónde salió el español:** del tag `v3-pre-en`, emparejando por ruta de clave fichero a
+  fichero. 1.238 entradas son copy original del cliente; el resto está traducido de nuevo. Los
+  cruces que dejó la reordenación de los planes 02-07 (`Marine Operations` → «Marketing &
+  Ventas», `Since 2010` → «Desde 2012») se revisaron y corrigieron una a una.
+- **Los datos no se tocaron**: `data/*.ts` se exporta envuelto en `traducible()`, un Proxy que
+  traduce la cadena que se pide en el momento en que se pide. Por eso el `git diff` contra
+  `v3-pre-en` sigue leyéndose como «mismo esqueleto, valores en EN».
+- **Frontera dura entre lo que se pinta y lo que se guarda:** el plato elegido, el icono de los
+  beneficios de evento y cualquier dato que viaje a Odoo salen de `crudo()`, el objeto sin
+  traducir. Si no, una reserva hecha en español guardaría «Marisco» donde Odoo espera «Seafood»
+  y el correo del menú perdería la foto del plato.
+- **El selector ya no es decorativo.** Vive en el topbar, en el footer, en el menú móvil (nuevo:
+  antes en móvil no había forma de cambiar de idioma) y en el header del funnel `/book/*`.
+- **Fechas y números siguen al idioma:** los nombres de mes y día pasan por el diccionario y
+  `numero()` formatea `1,782` / `1.782` según toque.
+- **Se arregló de paso el castellano que sobrevivió a la traducción de la v3**: tres preguntas
+  del FAQ de la home, las fechas del blog y de los comentarios, y ~40 cadenas sueltas de
+  componentes (galería, calendario, popover de pasajeros, formularios).
 
-### ✅ Resuelto (2026-08-18): la lógica de producto ya no lee el texto visible
+### Cómo se comprueba
 
-[`lib/menu-reserva.ts`](app/src/lib/menu-reserva.ts) decidía **qué carta del charter se muestra**
-—en la ficha y en el checkout— con `duracionBarco?.startsWith('3')`. Ahora lo decide
-`subVariante.duracionHoras`, un número del dato. El texto se mira solo como último recurso, por si
-a algún barco nuevo no le han puesto el número. Sin esto, traducir la etiqueta «3 hours» habría
-mandado a todos los grupos a la carta de 4 h.
+- `npm run qa:i18n` — lee el código y lista lo que FALTA en el diccionario, lo que SOBRA y el
+  texto que ni siquiera pasa por `t()`. Hoy: **0 / 0 / 4** (los 4 son dos `&middot;` y los
+  códigos «EN»/«ES» del propio selector).
+- `npm run preview` + `npm run qa:idioma` — abre las 22 rutas en los dos idiomas y comprueba que
+  `<html lang>` cambia, que el texto cambia de verdad y que no queda inglés suelto. Hoy: **0/22
+  con algo que mirar**.
 
-Queda el caso menor: `incluye-evento.tsx` elige iconos comparando substrings en español mientras
-`data/eventos.ts` ya está en inglés → varios ítems de «What's Included» caen al icono genérico.
-Es cosmético (un icono, no un menú) y se arregla con un campo `icono` en el dato.
+### Lo que sigue sin hacerse
 
-También sin preparar: cero `hreflang`, `meta.tsx` no acepta idioma, sitemap sin alternates. Y las
-18 reglas 301 ES→EN ya desplegadas condicionan cualquier esquema de rutas por idioma.
+- **Cero `hreflang` y una sola URL por página.** El idioma es una preferencia del navegador, no
+  una ruta: Google indexa la versión inglesa y la española no tiene URL propia. Para posicionar
+  en español haría falta un esquema de rutas (`/es/...`) que hoy chocaría con las 18 reglas 301
+  ES→EN ya desplegadas — es una decisión de negocio, no un olvido.
+- El sitemap no lleva alternates, por lo mismo.
 
 ---
 

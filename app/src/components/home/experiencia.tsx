@@ -4,6 +4,7 @@ import { BotonSonido } from '@/components/ui/boton-sonido'
 import { useDevFlag } from '@/dev/use-dev-flag'
 import { useExperienciaScroll } from '@/components/home/use-experiencia-scroll'
 import { useExperienciaVideoEtapa } from '@/components/home/use-experiencia-video-etapa'
+import { t } from '@/lib/i18n'
 
 // "Experiencia" (v3-F18, pedido de Samuel) — sección editorial bajo la banda
 // de premios (que pierde su divider inferior para que fluyan como un bloque):
@@ -54,10 +55,10 @@ import { useExperienciaVideoEtapa } from '@/components/home/use-experiencia-vide
 // llevaran la misma clase, el párrafo se leería "todojunto". De paso el
 // stagger de la ola ya no gasta pasos en huecos invisibles.
 function palabras(texto: string): string[] {
-  return texto.split(/(\s+)/).filter((t) => t.length > 0)
+  return texto.split(/(\s+)/).filter((trozo) => trozo.length > 0)
 }
 
-const esEspacio = (t: string) => /^\s+$/.test(t)
+const esEspacio = (trozo: string) => /^\s+$/.test(trozo)
 
 // LA COMA NUNCA ABRE RENGLÓN (2026-08-07). Varios segmentos del copy EMPIEZAN
 // por signo («, exclusive access to our …», porque el signo va en gris y lo
@@ -74,17 +75,17 @@ const esEspacio = (t: string) => /^\s+$/.test(t)
 function pegarPuntuacion(frase: SegmentoNarrativa[]): SegmentoNarrativa[] {
   const salida: SegmentoNarrativa[] = []
   for (const seg of frase) {
-    const signo = seg.t.match(/^[,.;:!?)»…]+/)
+    const signo = seg.texto.match(/^[,.;:!?)»…]+/)
     const previo = salida[salida.length - 1]
     // Si el anterior ya termina en espacio, pegar ahí daría «museum ,»: se deja.
-    if (signo && previo && !/\s$/.test(previo.t)) {
-      salida[salida.length - 1] = { ...previo, t: previo.t + signo[0] }
-      salida.push({ ...seg, t: seg.t.slice(signo[0].length) })
+    if (signo && previo && !/\s$/.test(previo.texto)) {
+      salida[salida.length - 1] = { ...previo, texto: previo.texto + signo[0] }
+      salida.push({ ...seg, texto: seg.texto.slice(signo[0].length) })
     } else {
       salida.push({ ...seg })
     }
   }
-  return salida.filter((seg) => seg.t.length > 0)
+  return salida.filter((seg) => seg.texto.length > 0)
 }
 
 export function Experiencia() {
@@ -170,7 +171,7 @@ export function Experiencia() {
               >
                 {pegarPuntuacion(frase).map((seg, j) => (
                   <span key={j} className={seg.fuerte ? 'font-semibold text-navy' : undefined}>
-                    {palabras(seg.t).map((p, k) => (
+                    {palabras(seg.texto).map((p, k) => (
                       <span key={k} className={esEspacio(p) ? undefined : 'exp-palabra'}>
                         {p}
                       </span>
@@ -194,7 +195,7 @@ export function Experiencia() {
             href="#tours"
             className="exp-linea group mt-8 inline-flex items-center gap-1.5 text-lead font-semibold text-coral transition-colors hover:text-coral-dark"
           >
-            See availability
+            {t('See availability')}
             <span aria-hidden className="transition-transform duration-200 motion-safe:group-hover:translate-x-1">
               →
             </span>

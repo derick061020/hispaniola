@@ -3,6 +3,7 @@ import { HeroInterna } from '@/components/internas/hero-interna'
 import { CabeceraTrabaja } from '@/components/trabaja/cabecera-trabaja'
 import { FormularioTrabaja } from '@/components/trabaja/formulario-trabaja'
 import { Meta } from '@/components/seo/meta'
+import { t } from '@/lib/i18n'
 
 // Página «Trabaja con nosotros» (/trabaja-con-nosotros) — PÁGINA NUEVA de las
 // correcciones v1 del cliente (2026-07-22, pedido de Samuel con captura de
@@ -17,8 +18,8 @@ export function TrabajaConNosotrosPage() {
   return (
     <div>
       <Meta
-        titulo="Work with us"
-        descripcion="Activity providers, content creators and affiliates: tell us who you are and let’s talk. We reply on WhatsApp within 24 hours."
+        titulo={t('Work with us')}
+        descripcion={t('Activity providers, content creators and affiliates: tell us who you are and let’s talk. We reply on WhatsApp within 24 hours.')}
         ruta="/careers"
       />
       <HeroInterna ctaHref="/#tours">

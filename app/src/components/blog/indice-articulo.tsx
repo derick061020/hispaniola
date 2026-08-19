@@ -1,5 +1,6 @@
 import { Etiqueta } from '@/components/ui/etiqueta'
 import type { BloqueArticulo } from '@/data/blog'
+import { t } from '@/lib/i18n'
 
 // Índice del artículo (correcciones v1, pedido de Samuel 2026-07-22: "que al
 // principio haya index con link a los títulos de las secciones"). Enlaza a
@@ -37,8 +38,8 @@ export function IndiceArticulo({ bloques }: { bloques: BloqueArticulo[] }) {
   if (items.length === 0) return null
 
   return (
-    <nav aria-label="Article contents" className="rounded-card-grande bg-papel-hueso p-5 ring-1 ring-linea sm:p-6">
-      <Etiqueta>In this article</Etiqueta>
+    <nav aria-label={t('Article contents')} className="rounded-card-grande bg-papel-hueso p-5 ring-1 ring-linea sm:p-6">
+      <Etiqueta>{t('In this article')}</Etiqueta>
       <ul className="mt-3 flex flex-col border-l border-linea">
         {items.map((item) => (
           <li key={item.id}>

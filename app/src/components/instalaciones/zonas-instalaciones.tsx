@@ -15,6 +15,7 @@ import { Etiqueta } from '@/components/ui/etiqueta'
 import { irAlAncla, useAnclasActiva } from '@/components/ui/use-anclas-activa'
 import { BentoZona } from '@/components/instalaciones/bento-zona'
 import { INSTALACIONES, ZONAS, type IconoZona } from '@/data/instalaciones'
+import { t } from '@/lib/i18n'
 
 // «Todo lo que hay detrás de tu experiencia» — las 6 zonas del complejo
 // (correcciones v2, slides 46-49).
@@ -72,7 +73,7 @@ export function ZonasInstalaciones() {
       </div>
 
       <nav
-        aria-label="Zones of the complex"
+        aria-label={t('Zones of the complex')}
         className="mt-8 flex flex-wrap justify-center gap-2"
       >
         {ZONAS.map((z) => (

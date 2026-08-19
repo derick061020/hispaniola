@@ -19,7 +19,9 @@
     "qa:degradado": "node qa/qa_degradado.mjs",
     "qa:catalogo": "node qa/qa_paridad_catalogo.mjs",
     "postbuild": "node scripts/genera-htaccess.mjs",
-    "qa:menus": "node qa/qa_menus.mjs"
+    "qa:menus": "node qa/qa_menus.mjs",
+    "qa:i18n": "node qa/qa_i18n.mjs",
+    "qa:idioma": "node qa/qa_idioma.mjs"
   },
   "dependencies": {
     "@fontsource/poppins": "^5.2.7",

@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useAnclasActiva, irAlAncla } from '@/components/ui/use-anclas-activa'
+import { t } from '@/lib/i18n'
 
 export type AnclaChip = {
   /** id de la sección en ESTA página… */
@@ -68,7 +69,7 @@ export function NavAnclasChips({ anclas }: { anclas: AnclaChip[] }) {
 
   return (
     <nav
-      aria-label="Sections on this page"
+      aria-label={t('Sections on this page')}
       className="sticky top-0 z-40 hidden border-y border-linea bg-papel/90 py-2 backdrop-blur-sm md:block"
     >
       <div className="mx-auto flex max-w-contenido flex-wrap justify-center gap-2 px-5 sm:px-10">

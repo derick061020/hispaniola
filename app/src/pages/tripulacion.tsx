@@ -9,6 +9,7 @@ import { Meta } from '@/components/seo/meta'
 import { EQUIPO_PAGINA } from '@/data/equipo'
 import { EQUIPO } from '@/data/nosotros'
 import { BLOQUE_FICHA } from '@/components/tour/bloque-ficha'
+import { t } from '@/lib/i18n'
 
 // Página Tripulación / Equipo (/tripulacion) — correcciones v2, plan 05.
 //
@@ -54,8 +55,8 @@ export function TripulacionPage() {
   return (
     <div>
       <Meta
-        titulo="Crew"
-        descripcion="The people behind every Hispaniola Aquatic Adventures tour: captains, guides, kitchen, marine biology, office and the foundation."
+        titulo={t('Crew')}
+        descripcion={t('The people behind every Hispaniola Aquatic Adventures tour: captains, guides, kitchen, marine biology, office and the foundation.')}
         ruta="/crew"
       />
       <HeroInterna ctaHref="/#tours">
@@ -89,7 +90,7 @@ export function TripulacionPage() {
               viene despues (la historia del CEO y los seis departamentos) es
               el desarrollo de esa frase, no otra cosa. */}
           <p className="text-center font-display text-h3 font-semibold text-navy">
-            One company, six departments and one shared passion
+            {t('One company, six departments and one shared passion')}
           </p>
 
           {/* [v3 2026-08-06, WEBSITE - NOSOTROS pag. 2] LA HISTORIA DEL CEO.

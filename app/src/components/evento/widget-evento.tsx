@@ -10,6 +10,7 @@ import { NumeroEditable } from '@/components/ui/numero-editable'
 import { guardarCotizacion } from '@/lib/cotizacion-evento'
 import { useDevFlag } from '@/dev/use-dev-flag'
 import { WHATSAPP_URL, type FichaEvento } from '@/data/eventos'
+import { t } from '@/lib/i18n'
 
 // Widget de las landings de evento (PLAN-EVENTOS.md) — clon del `widget-reserva.tsx`
 // con 2 cambios:
@@ -208,17 +209,17 @@ function StepperPersonas({
           min={min}
           max={max}
           onCambio={onChange}
-          etiqueta="Number of guests"
+          etiqueta={t('Number of guests')}
           className="tabular-nums"
         />
-        {value === 1 ? 'guest' : 'guests'}
+        {t(value === 1 ? 'guest' : 'guests')}
       </span>
       <div className="flex items-center gap-1">
         <CompactButton.Root
           type="button"
           variant="stroke"
           fullRadius
-          aria-label="Remove one guest"
+          aria-label={t('Remove one guest')}
           disabled={value <= min}
           onClick={() => onChange(Math.max(min, value - 1))}
           className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
@@ -229,7 +230,7 @@ function StepperPersonas({
           type="button"
           variant="stroke"
           fullRadius
-          aria-label="Add one guest"
+          aria-label={t('Add one guest')}
           disabled={value >= max}
           onClick={() => onChange(Math.min(max, value + 1))}
           className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
@@ -273,13 +274,13 @@ export function WidgetEvento({ evento, colapsable = false }: Props) {
       // Un form lleno pero plegado no se ve: el frame de Figma lo necesita
       // abierto, aunque la landing lo pliegue por defecto.
       setAbierto(true)
-      setNombre('Ana Pérez')
+      setNombre(t('Ana Pérez'))
       setEmail('ana@email.com')
       setWhatsapp('+1 829 000 0000')
       if (evento.tipoFijo === -1) setTipoIdx(0)
       setFecha('2026-12-15')
       setPersonas(40)
-      setMensaje('I’d like a quote for a birthday with dinner and open bar.')
+      setMensaje(t('I’d like a quote for a birthday with dinner and open bar.'))
     }
   })
 
@@ -339,26 +340,26 @@ export function WidgetEvento({ evento, colapsable = false }: Props) {
       >
         <Campo
           id="evento-nombre"
-          label="Name"
+          label={t('Name')}
           required
           value={nombre}
           onChange={setNombre}
-          placeholder="Your name"
+          placeholder={t('Your name')}
           autoComplete="name"
         />
         <Campo
           id="evento-email"
-          label="Email"
+          label={t('Email')}
           type="email"
           required
           value={email}
           onChange={setEmail}
-          placeholder="you@email.com"
+          placeholder={t('you@email.com')}
           autoComplete="email"
         />
         <Campo
           id="evento-whatsapp"
-          label="WhatsApp"
+          label={t('WhatsApp')}
           type="tel"
           required
           value={whatsapp}
@@ -373,7 +374,7 @@ export function WidgetEvento({ evento, colapsable = false }: Props) {
             elige: YA eligió al entrar a esta landing. */}
         {evento.tiposEvento.length === 1 ? (
           <div>
-            <label className="mb-1 block text-xs font-medium text-navy-sub">Event type</label>
+            <label className="mb-1 block text-xs font-medium text-navy-sub">{t('Event type')}</label>
             <div className="flex h-10 items-center rounded-10 border border-stroke-soft-200 bg-bg-weak-50 px-3 text-paragraph-sm text-text-strong-950">
               {evento.tiposEvento[0]}
             </div>
@@ -381,7 +382,7 @@ export function WidgetEvento({ evento, colapsable = false }: Props) {
         ) : (
           <div>
             <label htmlFor="evento-tipo" className="mb-1 block text-xs font-medium text-navy-sub">
-              Event type
+              {t('Event type')}
               <span aria-hidden="true" className="ml-0.5 text-coral">
                 *
               </span>
@@ -404,7 +405,7 @@ export function WidgetEvento({ evento, colapsable = false }: Props) {
                 // El Select de AlignUI gestiona `data-placeholder` cuando el
                 // value no matchea ninguna opción. tipoIdx === -1 → placeholder.
               >
-                <Select.Value placeholder="Choose the type" />
+                <Select.Value placeholder={t('Choose the type')} />
               </Select.Trigger>
               <Select.Content>
                 {evento.tiposEvento.map((tipo, i) => (
@@ -432,7 +433,7 @@ export function WidgetEvento({ evento, colapsable = false }: Props) {
 
         <Campo
           id="evento-fecha"
-          label="Preferred date"
+          label={t('Preferred date')}
           type="date"
           value={fecha}
           onChange={setFecha}
@@ -440,7 +441,7 @@ export function WidgetEvento({ evento, colapsable = false }: Props) {
 
         <div>
           <span className="mb-1 block text-xs font-medium text-navy-sub" id="evento-label-personas">
-            No. of guests
+            {t('No. of guests')}
           </span>
           <div role="group" aria-labelledby="evento-label-personas">
             <StepperPersonas value={personas} onChange={setPersonas} />
@@ -452,10 +453,10 @@ export function WidgetEvento({ evento, colapsable = false }: Props) {
         <div className="sm:col-span-2">
           <Textarea
             id="evento-mensaje"
-            label="Tell us more"
+            label={t('Tell us more')}
             value={mensaje}
             onChange={setMensaje}
-            placeholder="Event details, preferred time, menu, etc."
+            placeholder={t('Event details, preferred time, menu, etc.')}
             filas={enModal ? 3 : 4}
           />
         </div>
@@ -471,7 +472,7 @@ export function WidgetEvento({ evento, colapsable = false }: Props) {
 
         {errorEnvio ? (
           <p role="alert" className="text-sm text-coral sm:col-span-2">
-            We could not send your request. Please try again, or reach us on WhatsApp.
+            {t('We could not send your request. Please try again, or reach us on WhatsApp.')}
           </p>
         ) : null}
 
@@ -497,7 +498,7 @@ export function WidgetEvento({ evento, colapsable = false }: Props) {
           directo, no por OTA. Aplica también a eventos. */}
       <div className="flex items-center justify-center gap-1.5 rounded-btn bg-menta px-3 py-1.5 text-center text-xs font-medium text-menta-texto">
         <Tag className="size-3.5 shrink-0" aria-hidden="true" />
-        Quote direct and save up to 15%
+        {t('Quote direct and save up to 15%')}
       </div>
 
       {/* 3 checks de reassurance — TICKER INFINITO horizontal, IGUAL
@@ -515,9 +516,9 @@ export function WidgetEvento({ evento, colapsable = false }: Props) {
       {enModal ? null : (
         <ChecksTicker
           lineas={[
-            'Reply within 24 h',
-            'No commitment, quotes are free',
-            'WhatsApp straight to the boat’s team',
+            t('Reply within 24 h'),
+            t('No commitment, quotes are free'),
+            t('WhatsApp straight to the boat’s team'),
           ]}
         />
       )}
@@ -548,7 +549,7 @@ export function WidgetEvento({ evento, colapsable = false }: Props) {
     <>
       <Caja>
         <p className="font-display text-base font-semibold text-navy">
-          {evento.cotizacionPlegada?.titulo ?? 'Doesn’t your event fit a package?'}
+          {evento.cotizacionPlegada?.titulo ?? t('Doesn’t your event fit a package?')}
         </p>
         <p className="-mt-2 text-sm text-navy-sub">
           {evento.cotizacionPlegada?.sub ??
@@ -596,7 +597,7 @@ export function WidgetEvento({ evento, colapsable = false }: Props) {
                 {evento.ctaPrincipal}
               </Modal.Title>
               <p className="mt-1 text-sm text-navy-sub">
-                Tell us what you have in mind and we’ll reply within 24 h. No commitment.
+                {t('Tell us what you have in mind and we’ll reply within 24 h. No commitment.')}
               </p>
             </div>
 

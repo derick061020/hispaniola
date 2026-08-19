@@ -11,6 +11,7 @@ import {
   totalPaqueteEvento,
   type PaqueteEvento,
 } from '@/data/eventos'
+import { t } from '@/lib/i18n'
 
 // Reserva online de eventos (correcciones v2, plan 03 §1 — slides 14 y 15:
 // «agregar reserva online y debajo el formulario de cotización»).
@@ -94,11 +95,11 @@ export function CalculadoraEvento({
     // de la caja y no hay overflow que pueda comérsela.
     <div className="flex flex-col gap-4 rounded-card-grande bg-papel p-4 widget-marco sm:p-5">
       <div>
-        <p className="font-display text-lg font-semibold text-navy">Book online</p>
+        <p className="font-display text-lg font-semibold text-navy">{t('Book online')}</p>
         {/* Una línea, no dos (2026-07-28): cada línea que se ahorra aquí es
             una línea que la card de «¿tu evento no encaja?» gana para entrar
             sin scroll en una ventana de portátil. */}
-        <p className="mt-0.5 text-sm text-navy-sub">Fixed price, no waiting for a quote.</p>
+        <p className="mt-0.5 text-sm text-navy-sub">{t('Fixed price, no waiting for a quote.')}</p>
       </div>
 
       {/* ── ELEGIR PAQUETE ───────────────────────────────────────────────
@@ -131,7 +132,7 @@ export function CalculadoraEvento({
           abreviatura nunca aparece sola. */}
       <div>
         <span className="mb-1 block text-xs font-medium text-navy-sub" id="calc-label-paquete">
-          Package
+          {t('Package')}
         </span>
         <div
           role="tablist"
@@ -215,7 +216,7 @@ export function CalculadoraEvento({
           número donde el paquete rinde más, y así el primer total que ve el
           visitante es el de la tarifa cerrada, sin extras. */}
       <div>
-        <span className="mb-1 block text-xs font-medium text-navy-sub">Guests</span>
+        <span className="mb-1 block text-xs font-medium text-navy-sub">{t('Guests')}</span>
         {/* [2026-08-07, Samuel] MISMO ORDEN que el stepper de la ficha de tour y
             que el del widget de evento: el número va pegado al icono y hace
             frase con él («12 guests»), con los −/+ solos a la derecha. Aquí
@@ -225,7 +226,7 @@ export function CalculadoraEvento({
             pieza, que es lo que tiene que llegar a Figma. */}
         <div
           role="group"
-          aria-label="Number of guests"
+          aria-label={t('Number of guests')}
           className="flex h-10 items-center justify-between rounded-10 border border-stroke-soft-200 bg-bg-white-0 pl-3 pr-1.5"
         >
           <span className="flex items-center gap-1 text-paragraph-sm text-text-strong-950">
@@ -239,17 +240,17 @@ export function CalculadoraEvento({
               min={1}
               max={Number.POSITIVE_INFINITY}
               onCambio={setPersonas}
-              etiqueta="Number of guests"
+              etiqueta={t('Number of guests')}
               className="tabular-nums"
             />
-            {personas === 1 ? 'guest' : 'guests'}
+            {t(personas === 1 ? 'guest' : 'guests')}
           </span>
           <div className="flex items-center gap-1">
             <CompactButton.Root
               type="button"
               variant="stroke"
               fullRadius
-              aria-label="Remove one guest"
+              aria-label={t('Remove one guest')}
               disabled={personas <= 1}
               onClick={() => setPersonas((n) => Math.max(1, n - 1))}
               className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
@@ -260,7 +261,7 @@ export function CalculadoraEvento({
               type="button"
               variant="stroke"
               fullRadius
-              aria-label="Add one guest"
+              aria-label={t('Add one guest')}
               onClick={() => setPersonas((n) => n + 1)}
               className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
             >
@@ -311,13 +312,13 @@ export function CalculadoraEvento({
       {total !== null ? (
         <div className="flex flex-col gap-1.5 border-t border-linea pt-3 text-sm">
           <div className="flex justify-between text-navy-sub">
-            <span>Package (up to {incluidas} guests)</span>
+            <span>{t('Package (up to')}{' '}{incluidas} {t('guests)')}</span>
             <span className="tabular-nums">{formatoDinero(paquete.precioBase!)}</span>
           </div>
           {extras > 0 ? (
             <div className="flex justify-between text-navy-sub">
               <span>
-                {extras} {extras === 1 ? 'extra guest' : 'extra guests'} ×{' '}
+                {extras} {extras === 1 ? t('extra guest') : t('extra guests')} ×{' '}
                 {formatoDinero(paquete.porPersonaExtra ?? 0)}
               </span>
               <span className="tabular-nums">
@@ -331,26 +332,25 @@ export function CalculadoraEvento({
               descuento del desglose, en el idioma de ahorro del sitio. */}
           {novios ? (
             <div className="flex justify-between font-medium text-menta-texto">
-              <span>Bride &amp; Groom sail free</span>
+              <span>{t('Bride & Groom sail free')}</span>
               <span className="tabular-nums">
                 −{formatoDinero(2 * (paquete.porPersonaExtra ?? 0))}
               </span>
             </div>
           ) : null}
           <div className="mt-1 flex justify-between border-t border-linea pt-2 font-display text-lg font-semibold text-navy">
-            <span>Total</span>
+            <span>{t('Total')}</span>
             <span className="tabular-nums">{formatoDinero(total)}</span>
           </div>
           <p className="text-xs text-navy-soft">
-            You book with {DEPOSITO * 100}% ({formatoDinero(Math.round(total * DEPOSITO))}) and pay
-            the rest on the day of the event.
+            {t('You book with')}{' '}{DEPOSITO * 100}% ({formatoDinero(Math.round(total * DEPOSITO))}{t(') and pay the rest on the day of the event.')}
           </p>
         </div>
       ) : null}
 
       <EnlacePrototipo>
         <FancyButton.Root variant="primary" className="w-full" asChild>
-          <span>Book this package</span>
+          <span>{t('Book this package')}</span>
         </FancyButton.Root>
       </EnlacePrototipo>
     </div>

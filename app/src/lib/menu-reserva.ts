@@ -1,5 +1,6 @@
 import type { CartaCharter, FichaTour, PlatoMenu } from '@/data/tours'
 import type { Paquete } from '@/components/reservar/tipos'
+import { t } from '@/lib/i18n'
 
 // QUÉ SE COME EN ESTA RESERVA — resolutor único del menú de un tour.
 //
@@ -119,8 +120,8 @@ export function menuDeLaReserva({
       nota: !hayBuffet
         ? undefined
         : carta.id === '21+'
-          ? 'Your group is 21 or more, so the menu is served as a buffet for everyone — there is no dish to pick per guest.'
-          : 'From 21 guests the menu changes: it is served as a skewer buffet for the whole group.',
+          ? t('Your group is 21 or more, so the menu is served as a buffet for everyone — there is no dish to pick per guest.')
+          : t('From 21 guests the menu changes: it is served as a skewer buffet for the whole group.'),
       platos: carta.platos,
     }
   }
@@ -129,9 +130,9 @@ export function menuDeLaReserva({
   if (ficha.menuBuffet) {
     return {
       modo: 'fijo',
-      etiqueta: 'Island buffet',
-      titulo: 'Island buffet',
-      texto: 'Served on the beach for the whole group. There is no dish to pick per guest.',
+      etiqueta: t('Island buffet'),
+      titulo: t('Island buffet'),
+      texto: t('Served on the beach for the whole group. There is no dish to pick per guest.'),
       platos: ficha.menuBuffet.platos,
     }
   }
@@ -144,7 +145,7 @@ export function menuDeLaReserva({
     modo: platos.length > 1 ? 'eleccion' : 'fijo',
     etiqueta,
     titulo: `${etiqueta} menu`,
-    texto: 'Cooked fresh on board in the floating kitchen. You can change it up to 48 h before the tour.',
+    texto: t('Cooked fresh on board in the floating kitchen. You can change it up to 48 h before the tour.'),
     platos,
   }
 }

@@ -3,6 +3,7 @@ import { Check, Minus, Sparkles, Package } from 'lucide-react'
 import { TituloSeccion } from '@/components/tour/titulo-seccion'
 import { BLOQUE_FICHA } from '@/components/tour/bloque-ficha'
 import type { FichaEvento, PaqueteEvento } from '@/data/eventos'
+import { t, tp } from '@/lib/i18n'
 
 // "Paquetes" de las landings de evento (PLAN-EVENTOS.md §3) — presente en
 // party-boat y en bodas, que comparten el MISMO array de 4 paquetes
@@ -156,7 +157,7 @@ function Card({
         {esPremium ? (
           <span className="mb-2 inline-flex w-fit items-center gap-1 rounded-chip bg-aqua-tint px-2 py-0.5 text-xs font-semibold text-aqua-dark">
             <Sparkles className="size-3" aria-hidden="true" />
-            Most complete
+            {t('Most complete')}
           </span>
         ) : null}
 
@@ -170,7 +171,7 @@ function Card({
         {/* El precio y su condición, juntos. `extraPrecio` es texto del
             cliente ("US$ 99.00 por persona extra") — se pinta tal cual. */}
         <p className="text-xs text-navy-soft">
-          {incluidas !== null ? `Up to ${incluidas} guests` : paquete.capacidad}
+          {incluidas !== null ? tp('Up to {n} guests', { n: incluidas }) : paquete.capacidad}
           {paquete.extraPrecio ? <> · +{paquete.extraPrecio}</> : null}
         </p>
         <p className="mt-0.5 text-xs text-navy-soft">{paquete.meta}</p>
@@ -212,7 +213,7 @@ function Card({
                   <span>
                     {/* Para lectores de pantalla el icono no dice nada: la
                         palabra sí. */}
-                    <span className="sr-only">{item ? 'Included: ' : 'Not included: '}</span>
+                    <span className="sr-only">{item ? t('Included: ') : t('Not included: ')}</span>
                     {plato}
                     {item?.texto ? <span className="text-navy-soft"> · {item.texto}</span> : null}
                   </span>
@@ -222,7 +223,7 @@ function Card({
           </ul>
         ) : (
           <p className="mt-4 flex-1 text-sm italic text-navy-soft">
-            Full menu on confirmation. Message us on WhatsApp and we’ll send it over.
+            {t('Full menu on confirmation. Message us on WhatsApp and we’ll send it over.')}
           </p>
         )}
 
@@ -243,10 +244,10 @@ function Card({
           {elegido ? (
             <span className="flex items-center justify-center gap-1.5">
               <Check className="size-4" aria-hidden="true" />
-              Selected
+              {t('Selected')}
             </span>
           ) : (
-            'Choose this package'
+            t('Choose this package')
           )}
         </button>
       </div>

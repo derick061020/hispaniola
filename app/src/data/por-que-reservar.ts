@@ -1,4 +1,5 @@
 import { TOURS, STATS, RESENAS_AGREGADO } from './home'
+import { numero, t, traducible } from '@/lib/i18n'
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  Contenido de /por-que-reservar — la página que el cliente pidió detrás de
@@ -40,17 +41,30 @@ export type Kpi = { valor: string; label: string }
 // todo el sitio hay UNA sola verdad. Poner 302.997 aquí mientras la home dice
 // 91.607 sería peor que cualquiera de las dos por separado. Si Fernando
 // confirma las grandes, se cambian en STATS y se propagan solas.
-export const KPIS: Kpi[] = [
-  { valor: STATS[0].valor, label: STATS[0].label },
-  { valor: STATS[1].valor, label: STATS[1].label },
+// [2026-08-19] Los tres van con GETTER, no con valor. Este módulo se evalúa
+// UNA vez, al importarse, y tanto `STATS` como el formato del número dependen
+// del idioma que se esté leyendo: resueltos aquí se congelarían en el idioma
+// con el que se cargó la página y cambiar al otro no movería estas tres cifras.
+// Con getter se resuelven en cada lectura, que es cuando se pintan.
+export const KPIS: Kpi[] = traducible([
+  {
+    get valor() { return STATS[0].valor },
+    get label() { return STATS[0].label },
+  },
+  {
+    get valor() { return STATS[1].valor },
+    get label() { return STATS[1].label },
+  },
   // useGrouping: 'always' — el español pone el separador de millares a partir
   // de 5 cifras (minimumGroupingDigits = 2), así que sin esto 1782 se pinta
   // «1782» y el resto del sitio dice «1.782» (footer, flota, reseñas).
   {
     valor: RESENAS_AGREGADO.rating,
-    label: `${RESENAS_AGREGADO.total.toLocaleString('en-US', { useGrouping: 'always' })} reviews`,
+    get label() {
+      return `${numero(RESENAS_AGREGADO.total, { useGrouping: 'always' })} ${t('reviews')}`
+    },
   },
-]
+])
 
 export type ConceptoSuelto = {
   id: string
@@ -79,7 +93,7 @@ export type ConceptoSuelto = {
 // La suma NO se escribe: se calcula en el componente. Si mañana cambia un
 // concepto, el total y el ahorro se recalculan solos y no pueden contradecir
 // a la lista de arriba.
-export const CONCEPTOS_SUELTOS: ConceptoSuelto[] = [
+export const CONCEPTOS_SUELTOS: ConceptoSuelto[] = traducible([
   {
     id: 'charter',
     nombre: '4-hour charter',
@@ -128,7 +142,7 @@ export const CONCEPTOS_SUELTOS: ConceptoSuelto[] = [
     foto: 'galeria-snorkel-lovers-9',
     fotoAlt: 'Family on deck during a tour activity',
   },
-]
+])
 
 export type FilaCaraACara = {
   concepto: string
@@ -149,7 +163,7 @@ export type FilaCaraACara = {
 // descuido de la IA con la que la hizo, y justo ahí está el argumento más
 // fuerte que tiene la empresa — la única cocina flotante de Punta Cana. Se
 // rellena, no se copia el hueco.
-export const CARA_A_CARA: FilaCaraACara[] = [
+export const CARA_A_CARA: FilaCaraACara[] = traducible([
   {
     concepto: 'Seafood',
     nosotros: 'Fresh, caught that day',
@@ -183,7 +197,7 @@ export const CARA_A_CARA: FilaCaraACara[] = [
   // huecos entre las fotos y parecer que faltan imágenes.
   { concepto: 'Hotel transfer', nosotros: 'Air-conditioned bus', otros: 'Open-air vehicle' },
   { concepto: 'Booking', nosotros: 'Direct with the owner', otros: 'Through a middleman' },
-]
+])
 
 export type GrupoRazones = {
   id: string
@@ -210,7 +224,7 @@ export type GrupoRazones = {
 // varias se solapaban en su propia maqueta («la mejor ubicación» y «en el
 // centro de la zona hotelera» son la misma; «sin mareos» es consecuencia de la
 // ubicación).
-export const RAZONES: GrupoRazones[] = [
+export const RAZONES: GrupoRazones[] = traducible([
   {
     id: 'comida',
     titulo: 'The food',
@@ -277,7 +291,7 @@ export const RAZONES: GrupoRazones[] = [
       'Multilingual team',
     ],
   },
-]
+])
 
 /** Las 19 se cuentan, no se escriben — si mañana se añade o se quita una, el
  *  titular de la sección no se queda mintiendo. */
@@ -291,7 +305,7 @@ export const TOTAL_RAZONES = RAZONES.reduce((s, g) => s + g.razones.length, 0)
 // El argumento de la ubicación como VENTAJA competitiva no estaba dicho en
 // ninguna parte del sitio, y «no pierdes hora y media en bus» es una objeción
 // real de comprador que hoy no contesta nadie.
-export const UBICACION = {
+export const UBICACION = traducible({
   eyebrow: 'Location, location, location',
   titulo: 'The best spot on the coast, with no endless drives',
   texto:
@@ -306,9 +320,9 @@ export const UBICACION = {
   ],
   foto: 'arrecife-fondo-cenital',
   fotoAlt: 'Aerial view of the Cabeza de Toro reef with the turquoise water of Cabo Engaño',
-} as const
+} as const)
 
-export const CIERRE = {
+export const CIERRE = traducible({
   eyebrow: 'Ready?',
   titulo: 'See you on the beach',
   texto:
@@ -316,4 +330,4 @@ export const CIERRE = {
   letraPequena: 'Legal, insured company · every tourism license in Punta Cana-Bávaro',
   foto: 'hero-catamaran-2',
   fotoAlt: 'Hispaniola catamaran at sunset off the coast of Punta Cana',
-} as const
+} as const)

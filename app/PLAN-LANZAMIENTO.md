@@ -21,9 +21,15 @@
 > Lo que **sí sigue siendo cierto** de ese inventario: cero llamadas de red y cero
 > variables de entorno.
 >
-> Además, el **Bloque H (i18n) está derogado**: manda crear diccionarios y dice que el
-> selector de idioma «se retiró del topbar» — las dos cosas son falsas. La spec vigente
-> es `docs/proceso/correcciones-v3-cliente/planes/01-idioma-ingles.md`.
+> Además, el **Bloque H (i18n) está derogado** en su redacción original: decía que el
+> selector de idioma «se retiró del topbar», que es falso. La spec que lo sustituyó fue
+> `docs/proceso/correcciones-v3-cliente/planes/01-idioma-ingles.md` («i18n preparado, EN
+> ahora»), y **el 2026-08-19 se ejecutó la otra mitad**: el sitio es bilingüe EN/ES con
+> motor propio en `app/src/lib/i18n/`. Ese plan acertó en lo importante —congelar el
+> español en el tag `v3-pre-en` y no renombrar claves de `data/*.ts`—: de ahí salieron
+> 1.238 de las 2.489 entradas del diccionario, con el copy original del cliente. Donde se
+> quedó corto fue en «NO se crea runtime de i18n»: sin él no había forma de cablearlo.
+> El estado real, en el [README de la raíz](../README.md) §El idioma.
 >
 > **Para el estado real del proyecto, el [README de la raíz](../README.md).**
 

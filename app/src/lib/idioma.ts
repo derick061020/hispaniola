@@ -1,3 +1,5 @@
+import { idiomaUI } from '@/lib/i18n'
+
 /** [2026-08-18] EN QUÉ IDIOMA LE ESCRIBE ODOO AL CLIENTE.
  *
  *  El sitio es monolingüe en inglés — eso no cambia aquí—, pero los once
@@ -36,10 +38,20 @@ const POR_CODIGO: Record<string, IdiomaCliente> = {
   ru: 'russian',
 }
 
-/** El idioma que trae el navegador, mapeado a lo que entiende Odoo.
+/** En qué idioma proponerle los correos a quien está reservando.
+ *
+ *  [2026-08-19] Manda lo que está LEYENDO, no lo que trae el navegador. Desde
+ *  que el selector funciona de verdad (lib/i18n), quien cambia la web a
+ *  español está diciendo en qué idioma se entiende, y ese es mejor dato que
+ *  la configuración del sistema — un turista con el móvil en inglés que pone
+ *  la web en español quiere el voucher en español. Si el sitio se está
+ *  leyendo en inglés se cae al idioma del navegador, que distingue entre un
+ *  francés y un alemán donde la web solo tiene dos idiomas.
+ *
  *  `es-DO`, `es-419` y `es` son todos español. Lo que no se reconozca cae en
- *  inglés, que es el idioma del sitio. */
+ *  inglés, que es el idioma principal del sitio. */
 export function idiomaDelNavegador(): IdiomaCliente {
+  if (idiomaUI() === 'es') return 'spanish'
   if (typeof navigator === 'undefined') return 'english'
   const candidatos = [...(navigator.languages ?? []), navigator.language].filter(Boolean)
   for (const codigo of candidatos) {

@@ -6,6 +6,7 @@ import { Campo } from '@/components/ui/campo'
 import { obtenerConfig } from '@/lib/api/api'
 import { cargarStripe, estiloCampoTarjeta, type CampoTarjeta } from '@/lib/pagos/stripe'
 import { formatoDinero } from '@/data/home'
+import { t } from '@/lib/i18n'
 
 // Sección 4 del funnel (Fase C, layout Viator): «Pago». El desglose completo
 // del precio vive en la columna derecha (ResumenReserva), así que aquí solo van
@@ -127,7 +128,7 @@ export function PasoPago({
         if (!vivo) return
         // Casi siempre un bloqueador de anuncios: js.stripe.com está en varias
         // listas. Se dice qué hacer en vez de dejar un hueco vacío.
-        setErrorSdk('We could not load the card form. Disable your ad blocker or pay with PayPal.')
+        setErrorSdk(t('We could not load the card form. Disable your ad blocker or pay with PayPal.'))
       })
 
     return () => {
@@ -156,9 +157,8 @@ export function PasoPago({
   return (
     <div className="flex flex-col gap-4">
       <p className="text-sm text-navy-sub">
-        Confirm your spot by paying only the <strong className="font-semibold text-navy">25% deposit</strong> today{' '}
-        ({formatoDinero(deposito)}). You pay the remaining {formatoDinero(saldo)} on the day of the tour, with a 5%
-        discount if you pay cash on board.
+        {t('Confirm your spot by paying only the')}{' '}<strong className="font-semibold text-navy">{t('25% deposit')}</strong> {t('today')}{' '}
+        ({formatoDinero(deposito)}{t('). You pay the remaining')}{' '}{formatoDinero(saldo)} {t('on the day of the tour, with a 5% discount if you pay cash on board.')}
       </p>
 
       {/* Entrando directo a /book/:slug (sin pasar por el widget) la reserva
@@ -167,8 +167,7 @@ export function PasoPago({
           derecha, en el resumen (en móvil, arriba del todo). */}
       {!fechaElegida ? (
         <p className="rounded-lg border border-linea bg-papel-hueso px-3 py-2 text-xs leading-relaxed text-navy-sub">
-          You haven’t chosen <strong className="text-navy">the date</strong> yet. Pick it in your booking summary so you
-          can confirm.
+          {t('You haven’t chosen')}{' '}<strong className="text-navy">{t('the date')}</strong> {t('yet. Pick it in your booking summary so you can confirm.')}
         </p>
       ) : null}
 
@@ -177,31 +176,29 @@ export function PasoPago({
         // de tarjeta aquí sería invitar a teclear un número para un cobro que
         // no puede salir. El aviso de arriba (reservar.tsx) dice qué hacer.
         <p role="status" className="rounded-lg border border-linea bg-papel-hueso px-3 py-2 text-xs leading-relaxed text-navy-sub">
-          We can&rsquo;t take the payment right now — our booking system is not answering.
-          Everything you filled in is still on this page: try again in a moment, or{' '}
+          {t('We can’t take the payment right now — our booking system is not answering. Everything you filled in is still on this page: try again in a moment, or')}{' '}
           <a className="font-semibold text-aqua-dark underline" href="https://wa.me/18293052804" target="_blank" rel="noopener">
-            book it with us on WhatsApp
+            {t('book it with us on WhatsApp')}
           </a>.
         </p>
       ) : medios === null ? (
-        <p className="text-xs text-navy-soft">Loading payment methods…</p>
+        <p className="text-xs text-navy-soft">{t('Loading payment methods…')}</p>
       ) : sinPasarela ? (
         // Ni Stripe ni PayPal configurados (o Odoo no responde). Se dice la
         // verdad: la reserva existe, lo que no se puede es cobrar ahora.
         <p role="status" className="rounded-lg border border-linea bg-papel-hueso px-3 py-2 text-xs leading-relaxed text-navy-sub">
-          Online payment is temporarily unavailable. <strong className="text-navy">Your booking is saved</strong> — our
-          team will call you to confirm it and take the deposit.
+          {t('Online payment is temporarily unavailable.')}{' '}<strong className="text-navy">{t('Your booking is saved')}</strong> {t('— our team will call you to confirm it and take the deposit.')}
         </p>
       ) : (
         <fieldset className="flex flex-col gap-2" disabled={procesando}>
-          <legend className="sr-only">Payment method</legend>
+          <legend className="sr-only">{t('Payment method')}</legend>
 
           {medios.tarjeta ? (
             <OpcionPago
               id="card"
               seleccionado={metodo === 'card'}
               onElegir={() => setMetodo('card')}
-              etiqueta="Credit or debit card"
+              etiqueta={t('Credit or debit card')}
               marcas={
                 <>
                   <RiVisaFill className="size-6 text-navy-soft" aria-hidden="true" />
@@ -210,14 +207,14 @@ export function PasoPago({
               }
             >
               <Campo
-                etiqueta="Name on card"
+                etiqueta={t('Name on card')}
                 autoComplete="cc-name"
-                placeholder="As printed on the card"
+                placeholder={t('As printed on the card')}
                 value={titular}
                 onChange={(e) => setTitular(e.target.value)}
               />
               <div className="mt-3">
-                <span className="text-sm font-medium text-navy">Card details</span>
+                <span className="text-sm font-medium text-navy">{t('Card details')}</span>
                 {/* El iframe de Stripe se monta AQUÍ. El recuadro y el foco son
                     nuestros (mismas clases que `Campo`); dentro no pintamos
                     nada. */}
@@ -239,11 +236,11 @@ export function PasoPago({
               id="paypal"
               seleccionado={metodo === 'paypal'}
               onElegir={() => setMetodo('paypal')}
-              etiqueta="PayPal"
+              etiqueta={t('PayPal')}
               marcas={<RiPaypalFill className="size-6 text-navy-soft" aria-hidden="true" />}
             >
               <p className="text-xs leading-relaxed text-navy-sub">
-                You’ll be taken to PayPal to approve the payment and brought straight back here.
+                {t('You’ll be taken to PayPal to approve the payment and brought straight back here.')}
               </p>
             </OpcionPago>
           ) : null}
@@ -260,13 +257,12 @@ export function PasoPago({
 
       {error ? (
         <p role="alert" className="rounded-lg border border-coral/40 bg-coral/5 px-3 py-2 text-xs leading-relaxed text-navy-sub">
-          {error} <strong className="text-navy">Your booking is saved</strong> — you can try again, or our team will
-          contact you to complete it.
+          {error} <strong className="text-navy">{t('Your booking is saved')}</strong> {t('— you can try again, or our team will contact you to complete it.')}
         </p>
       ) : null}
 
       <p className="flex items-center justify-center gap-1.5 text-xs text-navy-soft">
-        <Lock className="size-3.5" aria-hidden="true" /> Secure payment · Free cancellation up to 7 days before
+        <Lock className="size-3.5" aria-hidden="true" /> {t('Secure payment · Free cancellation up to 7 days before')}
       </p>
     </div>
   )

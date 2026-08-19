@@ -6,6 +6,7 @@ import { BLOQUE_FICHA } from '@/components/tour/bloque-ficha'
 import { TituloSeccion } from '@/components/tour/titulo-seccion'
 import { aforoDe, precioDeTramo, precioDesde, tramoDe } from '@/lib/tarifas'
 import { Visor360 } from '@/components/flota/visor-360'
+import { t, tp } from '@/lib/i18n'
 
 // EL TARIFARIO POR BARCO — «Price list by boat».
 //
@@ -51,10 +52,10 @@ import { Visor360 } from '@/components/flota/visor-360'
 // de barco— en vez de fingir una imagen. Pedidas al cliente.
 
 /** Etiqueta del tramo en el eje de personas. `hasta: null` = sin tope. */
-function rangoTramo(t: TramoPrecio, aforo: number): string {
-  const hasta = t.hasta ?? aforo
-  if (hasta === t.desde) return `${t.desde} guests`
-  return `${t.desde}–${hasta} guests`
+function rangoTramo(tramo: TramoPrecio, aforo: number): string {
+  const hasta = tramo.hasta ?? aforo
+  if (hasta === tramo.desde) return tp('{n} guests', { n: tramo.desde })
+  return tp('{desde}–{hasta} guests', { desde: tramo.desde, hasta })
 }
 
 export function TablaPreciosCharter({
@@ -77,7 +78,7 @@ export function TablaPreciosCharter({
 
   return (
     <section id="ancla-precios" className={`${BLOQUE_FICHA} scroll-mt-sticky-top`}>
-      <TituloSeccion>Price list by boat</TituloSeccion>
+      <TituloSeccion>{t('Price list by boat')}</TituloSeccion>
 
       {/* [v3] La leyenda de dos viñetas —«flat rate» vs «per person»— se
           retira de aquí. Explicaba una tabla que ya no está a la vista, y
@@ -87,8 +88,13 @@ export function TablaPreciosCharter({
       {/* [v3 2026-08-07] Sin tope de ancho (ver comparador-premium.tsx). */}
       <p className="mt-3 text-sm text-navy-sub">
         {personas
-          ? `Every price below is the total for your ${personas} ${personas === 1 ? 'guest' : 'guests'}. Change the number in the booking widget and they all follow.`
-          : 'Choose the number of guests in the booking widget and every boat shows your total.'}
+          ? tp(
+              personas === 1
+                ? 'Every price below is the total for your {n} guest. Change the number in the booking widget and they all follow.'
+                : 'Every price below is the total for your {n} guests. Change the number in the booking widget and they all follow.',
+              { n: personas },
+            )
+          : t('Choose the number of guests in the booking widget and every boat shows your total.')}
       </p>
 
       <div className="mt-5 flex flex-col gap-4">
@@ -98,8 +104,7 @@ export function TablaPreciosCharter({
       </div>
 
       <p className="mt-4 text-xs text-navy-soft">
-        * Premium lobster is an optional add-on at checkout (US$ 30 per person). * Prices may vary
-        with season and availability. Confirm with the team when you book.
+        {t('* Premium lobster is an optional add-on at checkout (US$ 30 per person). * Prices may vary with season and availability. Confirm with the team when you book.')}
       </p>
     </section>
   )
@@ -152,7 +157,7 @@ function CardBarco({
             >
               <Ship className="size-5" />
             </span>
-            <span className="text-xs text-navy-soft">Photo coming soon</span>
+            <span className="text-xs text-navy-soft">{t('Photo coming soon')}</span>
           </div>
         )}
 
@@ -164,13 +169,13 @@ function CardBarco({
           >
             <Rotate3d className="size-3.5" aria-hidden="true" />
             360º
-            <span className="sr-only">, view {s.nombre} in 360 degrees</span>
+            <span className="sr-only">{t(', view')}{' '}{s.nombre} {t('in 360 degrees')}</span>
           </button>
         ) : null}
 
         {esActivo ? (
           <span className="absolute left-3 top-3 rounded-full bg-aqua-dark px-2.5 py-1 text-xs font-semibold text-white">
-            Selected
+            {t('Selected')}
           </span>
         ) : null}
       </div>
@@ -189,11 +194,11 @@ function CardBarco({
           ) : null}
           <span className="inline-flex items-center gap-1.5">
             <Users className="size-4 text-aqua-dark" aria-hidden="true" />
-            Up to {aforo} guests
+            {t('Up to')}{' '}{aforo} {t('guests')}
           </span>
           <span className="inline-flex items-center gap-1.5">
             <Ship className="size-4 text-aqua-dark" aria-hidden="true" />
-            Private, just your group
+            {t('Private, just your group')}
           </span>
         </div>
 
@@ -203,20 +208,20 @@ function CardBarco({
           {total !== null && personas ? (
             <>
               <p className="text-sm text-navy-sub">
-                Your {personas} {personas === 1 ? 'guest' : 'guests'}
+                {tp(personas === 1 ? 'Your {n} guest' : 'Your {n} guests', { n: personas })}
               </p>
               <p className="font-display text-4xl font-semibold leading-none text-navy">
                 {formatoDinero(total)}
               </p>
               <p className="mt-1 text-sm text-navy-soft">
                 {tramo?.tipo === 'grupo'
-                  ? 'Flat price for the whole boat.'
+                  ? t('Flat price for the whole boat.')
                   : `${formatoDinero(tramo?.precio ?? 0)} per guest.`}
               </p>
             </>
           ) : (
             <>
-              <p className="text-sm text-navy-sub">From</p>
+              <p className="text-sm text-navy-sub">{t('From')}</p>
               <p className="font-display text-4xl font-semibold leading-none text-navy">
                 {formatoDinero(precioDesde(s.tabla))}
               </p>
@@ -235,7 +240,7 @@ function CardBarco({
                   : 'bg-coral text-white hover:brightness-110'
               }`}
             >
-              {esActivo ? 'Selected' : 'Choose this boat'}
+              {esActivo ? t('Selected') : t('Choose this boat')}
             </button>
           ) : null}
 
@@ -245,7 +250,7 @@ function CardBarco({
             aria-expanded={abierta}
             className="inline-flex items-center gap-1.5 text-sm font-semibold text-aqua-dark transition-colors hover:text-aqua"
           >
-            How pricing works
+            {t('How pricing works')}
             <ChevronDown
               className={`size-4 transition-transform ${abierta ? 'rotate-180' : ''}`}
               aria-hidden="true"
@@ -259,27 +264,27 @@ function CardBarco({
             el suyo sin buscarlo. */}
         {abierta ? (
           <ul className="mt-4 flex flex-col gap-2 rounded-card bg-papel-hueso p-4 text-sm">
-            {s.tabla.map((t) => {
-              const aplica = t === tramo
+            {s.tabla.map((tramo) => {
+              const aplica = tramo === tramo
               return (
                 <li
-                  key={`${t.desde}-${t.hasta ?? 'max'}`}
+                  key={`${tramo.desde}-${tramo.hasta ?? 'max'}`}
                   className={`flex items-baseline justify-between gap-4 ${
                     aplica ? 'font-semibold text-navy' : 'text-navy-sub'
                   }`}
                 >
                   <span>
-                    {rangoTramo(t, aforo)}
+                    {rangoTramo(tramo, aforo)}
                     {aplica ? (
                       <span className="ml-2 rounded-full bg-aqua-dark px-2 py-0.5 text-xs font-semibold text-white">
-                        your group
+                        {t('your group')}
                       </span>
                     ) : null}
                   </span>
                   <span className="whitespace-nowrap">
-                    {formatoDinero(t.precio)}
+                    {formatoDinero(tramo.precio)}
                     <span className="ml-1 text-xs font-normal text-navy-soft">
-                      {t.tipo === 'grupo' ? 'the whole boat' : 'per guest'}
+                      {tramo.tipo === 'grupo' ? t('the whole boat') : t('per guest')}
                     </span>
                   </span>
                 </li>
@@ -287,9 +292,9 @@ function CardBarco({
             })}
             {/* El extra de comida opcional, si el tramo lo trae. Va aquí y no
                 pegado al precio: es algo que PUEDES añadir, no un recargo. */}
-            {s.tabla.some((t) => t.extra) ? (
+            {s.tabla.some((tramo) => tramo.extra) ? (
               <li className="mt-1 border-t border-linea pt-2 text-xs text-navy-soft">
-                {s.tabla.find((t) => t.extra)?.extra}
+                {s.tabla.find((tramo) => tramo.extra)?.extra}
               </li>
             ) : null}
           </ul>

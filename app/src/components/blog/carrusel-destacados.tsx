@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import type { Articulo } from '@/data/blog'
 import { CardDestacado } from './card-destacado'
+import { t } from '@/lib/i18n'
 
 // Carrusel de destacados del índice del blog (pedido de Samuel 2026-07-22):
 // «un slider de al menos 4 cards... a los extremos se vea la card que viene y
@@ -221,7 +222,7 @@ export function CarruselDestacados({ articulos }: { articulos: Articulo[] }) {
         onPointerLeave={() => setPausado(false)}
         role="group"
         aria-roledescription="carousel"
-        aria-label="Featured articles"
+        aria-label={t('Featured articles')}
       >
         <div
           className="flex"
@@ -262,7 +263,7 @@ export function CarruselDestacados({ articulos }: { articulos: Articulo[] }) {
           <button
             type="button"
             onClick={() => setIndex((i) => i - 1)}
-            aria-label="Previous article"
+            aria-label={t('Previous article')}
             className="absolute left-2 top-1/2 z-20 grid size-10 -translate-y-1/2 place-items-center rounded-chip bg-papel/90 text-navy shadow-md backdrop-blur-sm transition hover:bg-aqua hover:text-white sm:left-4"
           >
             <ChevronLeft className="size-5" aria-hidden="true" />
@@ -270,7 +271,7 @@ export function CarruselDestacados({ articulos }: { articulos: Articulo[] }) {
           <button
             type="button"
             onClick={() => setIndex((i) => i + 1)}
-            aria-label="Next article"
+            aria-label={t('Next article')}
             className="absolute right-2 top-1/2 z-20 grid size-10 -translate-y-1/2 place-items-center rounded-chip bg-papel/90 text-navy shadow-md backdrop-blur-sm transition hover:bg-aqua hover:text-white sm:right-4"
           >
             <ChevronRight className="size-5" aria-hidden="true" />

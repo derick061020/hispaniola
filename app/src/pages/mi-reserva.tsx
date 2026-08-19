@@ -15,6 +15,7 @@ import { ErrorApi } from '@/lib/api/cliente'
 import { menuDeLaReserva } from '@/lib/menu-reserva'
 import { formatoDinero } from '@/data/home'
 import { Campo } from '@/components/ui/campo'
+import { crudo, t, traducible } from '@/lib/i18n'
 
 // «Mi reserva» — vista de la reserva ya pagada con edición local (2026-07-17,
 // pedido de Pedro). El usuario pidió que las ediciones se guarden en
@@ -56,26 +57,31 @@ const NOMBRES_PLATO: Record<string, string> = {
   wagyu: 'Wagyu', langosta: 'Langosta', mariscos: 'Mariscos', carne: 'Carne', vegetariano: 'Vegetariano',
 }
 
+// Lo GUARDADO es siempre el nombre canónico en inglés (así viaja a Odoo), y
+// lo que hay que PINTAR es ese mismo plato en el idioma que se está leyendo.
+// Por eso la búsqueda va contra `crudo(p).nombre` y lo que se devuelve es
+// `p.nombre`, que sale ya traducido del bloque de datos.
 function nombrePlato(id: string, menu: { nombre: string }[]) {
-  return menu.find((p) => p.nombre === id)?.nombre ?? NOMBRES_PLATO[id] ?? id
+  const plato = menu.find((p) => crudo(p).nombre === id)
+  return plato?.nombre ?? NOMBRES_PLATO[id] ?? id
 }
 
 // [v3 2026-08-06, slide 67] Los 3 modos de acceso. El `id` viaja en la URL
 // (`?modo=`) para que el cajón de la home (home/contacto.tsx) pueda mandar
 // aquí a alguien que ya escribió su dato, con la pestaña correcta abierta.
-const MODOS = [
+const MODOS = traducible([
   { id: 'codigo', etiqueta: 'Booking code', campo: 'Booking code', placeholder: 'HSP-XXXX-NNNN' },
   { id: 'email', etiqueta: 'Email', campo: 'Booking email', placeholder: 'you@email.com' },
   { id: 'telefono', etiqueta: 'Phone', campo: 'Booking phone number', placeholder: '+1 829 000 0000' },
-] as const
+] as const)
 
 type Modo = (typeof MODOS)[number]['id']
 
-const AYUDA_MODO: Record<Modo, string> = {
+const AYUDA_MODO: Record<Modo, string> = traducible({
   codigo: 'Find it in your Hispaniola confirmation email. It starts with HSP.',
   email: "We'll send an access link to the email you booked with.",
   telefono: "We'll text an access link to the number you booked with.",
-}
+})
 
 export function MiReservaPage() {
   const [params] = useSearchParams()
@@ -140,8 +146,8 @@ function PantallaIngreso({
   return (
     <div className="min-h-screen bg-papel-hueso">
       <Meta
-        titulo="My booking"
-        descripcion="Manage your booking: change the menu, the pickup or your details, or pay the balance. Enter your HSP-XXXX-NNNN code."
+        titulo={t('My booking')}
+        descripcion={t('Manage your booking: change the menu, the pickup or your details, or pay the balance. Enter your HSP-XXXX-NNNN code.')}
         ruta="/my-booking"
       />
       <header className="border-b border-linea">
@@ -151,9 +157,9 @@ function PantallaIngreso({
             className="inline-flex items-center gap-1.5 justify-self-start text-sm font-semibold text-aqua-dark hover:underline"
           >
             <ArrowLeft className="size-4" aria-hidden="true" />
-            Back to home
+            {t('Back to home')}
           </Link>
-          <Link to="/" aria-label="Inicio de Hispaniola Aquatic Adventures" className="justify-self-center">
+          <Link to="/" aria-label={t('Inicio de Hispaniola Aquatic Adventures')} className="justify-self-center">
             <Logo compacto />
           </Link>
           <div aria-hidden="true" className="justify-self-end" />
@@ -169,11 +175,10 @@ function PantallaIngreso({
               <Ticket className="size-7" aria-hidden="true" strokeWidth={2} />
             </div>
             <h1 className="mt-5 font-display text-2xl font-semibold text-navy sm:text-3xl">
-              Manage your booking
+              {t('Manage your booking')}
             </h1>
             <p className="mt-3 text-sm text-navy-sub">
-              Access it with your booking code, or with the email or phone number you booked with.
-              You&rsquo;ll be able to see your itinerary, your pick-up time and make changes.
+              {t('Access it with your booking code, or with the email or phone number you booked with. You’ll be able to see your itinerary, your pick-up time and make changes.')}
             </p>
           </div>
 
@@ -184,7 +189,7 @@ function PantallaIngreso({
               añadir una cuarta no volvería a tocar esta fórmula. */}
           <div
             role="group"
-            aria-label="How you want to access your booking"
+            aria-label={t('How you want to access your booking')}
             className="relative mt-6 grid grid-cols-3 gap-1 rounded-full bg-linea p-1"
           >
             <span
@@ -237,24 +242,24 @@ function PantallaIngreso({
               type="submit"
               className="inline-flex w-full items-center justify-center gap-2 rounded-btn bg-coral px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-coral-dark"
             >
-              View my booking
+              {t('View my booking')}
               <ChevronRight className="size-4" aria-hidden="true" />
             </button>
-            <p className="text-center text-xs text-navy-soft">Your booking is private and secure.</p>
+            <p className="text-center text-xs text-navy-soft">{t('Your booking is private and secure.')}</p>
           </form>
 
           <div className="mt-6 border-t border-linea pt-5">
             <p className="text-center text-xs text-navy-soft">
-              Still cannot find it? Message us on{' '}
+              {t('Still cannot find it? Message us on')}{' '}
               <a
                 href="https://wa.me/18293052804"
                 target="_blank"
                 rel="noopener"
                 className="font-semibold text-aqua-dark hover:underline"
               >
-                WhatsApp
+                {t('WhatsApp')}
               </a>{' '}
-              and we’ll look it up.
+              {t('and we’ll look it up.')}
             </p>
           </div>
         </div>
@@ -295,7 +300,7 @@ function PuertaDeAcceso({
     <div className="min-h-screen bg-papel">
       <Meta
         titulo={`My booking · ${codigo}`}
-        descripcion="Check your Hispaniola Aquatic Adventures booking."
+        descripcion={t('Check your Hispaniola Aquatic Adventures booking.')}
         ruta={`/my-booking?codigo=${codigo}`}
         indexable={false}
       />
@@ -306,19 +311,19 @@ function PuertaDeAcceso({
             className="inline-flex items-center gap-1.5 text-sm font-semibold text-aqua-dark hover:underline"
           >
             <ArrowLeft className="size-4" aria-hidden="true" />
-            Back to home
+            {t('Back to home')}
           </Link>
-          <Link to="/" aria-label="Hispaniola Aquatic Adventures home">
+          <Link to="/" aria-label={t('Hispaniola Aquatic Adventures home')}>
             <Logo compacto />
           </Link>
         </div>
       </header>
 
       <main className="mx-auto max-w-md px-5 py-14 sm:px-8">
-        <p className="text-xs font-semibold uppercase tracking-wide text-navy-soft">My booking</p>
+        <p className="text-xs font-semibold uppercase tracking-wide text-navy-soft">{t('My booking')}</p>
         <h1 className="mt-1 font-display text-2xl font-semibold text-navy">{codigo}</h1>
         <p className="mt-3 text-sm text-navy-sub">
-          For your security, confirm the e-mail address you used when booking.
+          {t('For your security, confirm the e-mail address you used when booking.')}
         </p>
 
         <form
@@ -329,11 +334,11 @@ function PuertaDeAcceso({
           }}
         >
           <Campo
-            etiqueta="Booking e-mail"
+            etiqueta={t('Booking e-mail')}
             type="email"
             value={email}
             onChange={(e) => onEmail(e.target.value)}
-            placeholder="you@email.com"
+            placeholder={t('you@email.com')}
             required
             autoComplete="email"
           />
@@ -343,7 +348,7 @@ function PuertaDeAcceso({
             className="w-full"
             disabled={cargando || email.trim() === ''}
           >
-            {cargando ? 'Checking…' : 'See my booking'}
+            {cargando ? 'Checking…' : t('See my booking')}
           </FancyButton.Root>
         </form>
 
@@ -352,11 +357,11 @@ function PuertaDeAcceso({
             aqui, no en vez de esto: consultar con el codigo sigue siendo lo
             mas rapido y no pide contraseña. */}
         <p className="mt-5 text-center text-sm text-navy-sub">
-          Booked more than once?{' '}
+          {t('Booked more than once?')}{' '}
           <Link to="/account" className="font-semibold text-aqua-dark hover:underline">
-            Sign in to your account
+            {t('Sign in to your account')}
           </Link>{' '}
-          to see them all.
+          {t('to see them all.')}
         </p>
 
         {error ? (
@@ -366,7 +371,7 @@ function PuertaDeAcceso({
         ) : null}
 
         <p className="mt-6 text-xs leading-relaxed text-navy-soft">
-          Can’t find your booking? Write to us and we will look it up for you.
+          {t('Can’t find your booking? Write to us and we will look it up for you.')}
         </p>
       </main>
     </div>
@@ -421,8 +426,8 @@ function DetalleReserva({ codigoIngresado }: { codigoIngresado: string }) {
         if (cancelado) return
         setError(
           e instanceof ErrorApi && e.codigo === 'booking_not_found'
-            ? 'We could not find that booking. Check the code and the e-mail you booked with.'
-            : 'We could not reach our booking system. Please try again in a moment.',
+            ? t('We could not find that booking. Check the code and the e-mail you booked with.')
+            : t('We could not reach our booking system. Please try again in a moment.'),
         )
       })
       .finally(() => {
@@ -461,7 +466,7 @@ function DetalleReserva({ codigoIngresado }: { codigoIngresado: string }) {
   // localStorage se mantiene, pero como CACHÉ: la copia buena es la que
   // devuelve Odoo, y es la que se pinta.
   const guardarEnOdoo = async (cambios: Parameters<typeof actualizarReserva>[2]) => {
-    if (!token) throw new Error('This session expired. Look your booking up again.')
+    if (!token) throw new Error(t('This session expired. Look your booking up again.'))
     const { booking } = await actualizarReserva(codigo, token, cambios)
     const actualizada = reservaDesdeOdoo(booking)
     guardarReserva(actualizada)
@@ -486,9 +491,9 @@ function DetalleReserva({ codigoIngresado }: { codigoIngresado: string }) {
             className="inline-flex items-center gap-1.5 justify-self-start text-sm font-semibold text-aqua-dark hover:underline"
           >
             <ArrowLeft className="size-4" aria-hidden="true" />
-            Back to home
+            {t('Back to home')}
           </Link>
-          <Link to="/" aria-label="Inicio de Hispaniola Aquatic Adventures" className="justify-self-center">
+          <Link to="/" aria-label={t('Inicio de Hispaniola Aquatic Adventures')} className="justify-self-center">
             <Logo compacto />
           </Link>
           <Link
@@ -496,7 +501,7 @@ function DetalleReserva({ codigoIngresado }: { codigoIngresado: string }) {
             className="inline-flex items-center gap-1.5 justify-self-end rounded-btn border border-linea bg-papel px-3 py-1.5 text-sm font-medium text-navy transition-colors hover:bg-papel-hueso"
           >
             <KeyRound className="size-3.5" aria-hidden="true" />
-            Use another code
+            {t('Use another code')}
           </Link>
         </div>
       </header>
@@ -509,21 +514,21 @@ function DetalleReserva({ codigoIngresado }: { codigoIngresado: string }) {
         {/* 1. CABECERA */}
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-navy-soft">My booking</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-navy-soft">{t('My booking')}</p>
             <h1 className="mt-1 font-display text-2xl font-semibold text-navy sm:text-3xl">
               {reservaParaMostrar.codigo}
               <span className="text-navy-soft"> · {reservaParaMostrar.tour.nombre}</span>
             </h1>
             <p className="mt-1 text-sm text-navy-sub">
               {fechaLarga(reservaParaMostrar.fechaISO)} · {horario?.hora ?? '—'} · {reservaParaMostrar.personas}{' '}
-              {reservaParaMostrar.personas === 1 ? 'guest' : 'guests'}
+              {t(reservaParaMostrar.personas === 1 ? 'guest' : 'guests')}
             </p>
           </div>
           {/* [2026-08-10] El chip decía «Demo» porque la reserva lo era.
               Ahora dice el estado REAL que devuelve Odoo. */}
           <span className="inline-flex items-center gap-1.5 rounded-chip bg-menta px-3 py-1.5 text-sm font-semibold text-menta-texto">
             <Check className="size-4" aria-hidden="true" />
-            Confirmed
+            {t('Confirmed')}
           </span>
         </div>
 
@@ -563,14 +568,14 @@ function DetalleReserva({ codigoIngresado }: { codigoIngresado: string }) {
 
         {/* 6. FOOTER */}
         <div className="mt-10 flex flex-wrap items-center justify-between gap-3 border-t border-linea pt-6 text-sm text-navy-soft">
-          <p>Something not right? Message us and we’ll fix it.</p>
+          <p>{t('Something not right? Message us and we’ll fix it.')}</p>
           <a
             href={`https://wa.me/18293052804?text=${encodeURIComponent(`Hi! My booking is ${reservaParaMostrar.codigo} and I need some help.`)}`}
             target="_blank"
             rel="noopener"
             className="font-semibold text-aqua-dark hover:underline"
           >
-            WhatsApp +1-829-305-2804 →
+            {t('WhatsApp +1-829-305-2804 →')}
           </a>
         </div>
       </main>
@@ -597,13 +602,13 @@ function BloqueReserva({
     <section className="mt-8 rounded-card-grande border border-linea bg-papel p-5 sm:p-6">
       <div className="flex items-center gap-2">
         <CreditCard className="size-5 text-aqua" aria-hidden="true" />
-        <h2 className="font-display text-lg font-semibold text-navy">Your booking</h2>
+        <h2 className="font-display text-lg font-semibold text-navy">{t('Your booking')}</h2>
       </div>
       <dl className="mt-4 space-y-2 text-sm">
-        <Fila label="Tour total" valor={formatoDinero(reserva.total)} />
-        <Fila label="Already paid" valor={formatoDinero(reserva.deposito)} />
+        <Fila label={t('Tour total')} valor={formatoDinero(reserva.total)} />
+        <Fila label={t('Already paid')} valor={formatoDinero(reserva.deposito)} />
         <div className="flex items-center justify-between border-t border-linea pt-3 text-sm">
-          <dt className="font-medium text-navy">Balance due</dt>
+          <dt className="font-medium text-navy">{t('Balance due')}</dt>
           <dd className="text-base font-semibold text-navy">{formatoDinero(reserva.saldo)}</dd>
         </div>
       </dl>
@@ -619,7 +624,7 @@ function BloqueReserva({
       ) : (
         <p className="mt-4 inline-flex items-center gap-1.5 rounded-chip bg-menta px-3 py-1.5 text-sm font-semibold text-menta-texto">
           <Check className="size-4" aria-hidden="true" />
-          Balance paid, nothing left to settle.
+          {t('Balance paid, nothing left to settle.')}
         </p>
       )}
 
@@ -631,7 +636,7 @@ function BloqueReserva({
         className="mt-4 inline-flex items-center gap-2 rounded-btn border border-linea bg-papel px-4 py-2 text-sm font-semibold text-navy transition-colors hover:bg-papel-hueso"
       >
         <CalendarPlus className="size-4" aria-hidden="true" />
-        Add to calendar
+        {t('Add to calendar')}
       </a>
     </section>
   )
@@ -655,8 +660,8 @@ function useGuardado(guardar: (cambios: Parameters<typeof actualizarReserva>[2])
       // perdería el cambio y encima daría a entender que se guardó.
       setError(
         e instanceof ErrorApi && e.codigo === 'too_late_to_change'
-          ? 'Changes close 48 h before the tour. Message us and we’ll sort it out with you.'
-          : 'We could not save that. Check your connection and try again.',
+          ? t('Changes close 48 h before the tour. Message us and we’ll sort it out with you.')
+          : t('We could not save that. Check your connection and try again.'),
       )
     } finally {
       setGuardando(false)
@@ -672,7 +677,7 @@ function AccionesEdicion({
   error,
   onGuardar,
   onCancelar,
-  texto = 'Save',
+  texto = t('Save'),
 }: {
   guardando: boolean
   error: string | null
@@ -702,7 +707,7 @@ function AccionesEdicion({
           disabled={guardando}
           className="rounded-btn border border-linea bg-papel px-4 py-2 text-sm font-medium text-navy transition-colors hover:bg-papel-hueso disabled:opacity-50"
         >
-          Cancel
+          {t('Cancel')}
         </button>
       </div>
     </>
@@ -758,7 +763,7 @@ function BloqueMenu({
         <div className="flex items-center gap-2">
           <Utensils className="size-5 text-aqua" aria-hidden="true" />
           <h2 className="font-display text-lg font-semibold text-navy">
-            {menuReserva && !seElige ? menuReserva.titulo : 'Your menu'}
+            {menuReserva && !seElige ? menuReserva.titulo : t('Your menu')}
           </h2>
         </div>
         {/* Solo se edita lo que se elige: con buffet no hay «Editar». */}
@@ -774,16 +779,19 @@ function BloqueMenu({
           {platos.map((p, i) => (
             <div key={i}>
               <label className="text-xs font-semibold uppercase tracking-wide text-navy-soft">
-                Guest {i + 1}
+                {t('Guest')}{' '}{i + 1}
               </label>
               <select
                 value={p}
                 onChange={(e) => setPlatos((prev) => prev.map((x, j) => (i === j ? e.target.value : x)))}
                 className="mt-1 w-full rounded-btn border border-linea bg-papel px-3 py-2 text-sm text-navy focus:border-aqua focus:outline-none focus:ring-2 focus:ring-aqua/20"
               >
-                <option value="">Not chosen, we’ll confirm by email</option>
+                <option value="">{t('Not chosen, we’ll confirm by email')}</option>
+                {/* Mismo criterio que el paso de menú del funnel: el
+                    `value` es el nombre canónico (sin traducir) porque es lo
+                    que se guarda en Odoo; el texto de la opción, el traducido. */}
                 {menu.map((plato) => (
-                  <option key={plato.nombre} value={plato.nombre}>
+                  <option key={crudo(plato).nombre} value={crudo(plato).nombre}>
                     {plato.nombre}
                   </option>
                 ))}
@@ -795,18 +803,18 @@ function BloqueMenu({
             error={error}
             onGuardar={guardarCambios}
             onCancelar={cancelar}
-            texto="Save menu"
+            texto={t('Save menu')}
           />
         </div>
       ) : seElige ? (
         <ul className="mt-4 space-y-1.5 text-sm">
           {reserva.platos.map((p, i) => (
             <li key={i} className="flex items-center justify-between">
-              <span className="text-navy-soft">Guest {i + 1}</span>
+              <span className="text-navy-soft">{t('Guest')}{' '}{i + 1}</span>
               {p ? (
                 <span className="font-medium text-navy">{nombrePlato(p, menu)}</span>
               ) : (
-                <span className="text-navy-soft">Not chosen</span>
+                <span className="text-navy-soft">{t('Not chosen')}</span>
               )}
             </li>
           ))}
@@ -858,7 +866,7 @@ function BloqueRecogida({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <MapPin className="size-5 text-aqua" aria-hidden="true" />
-          <h2 className="font-display text-lg font-semibold text-navy">Pickup</h2>
+          <h2 className="font-display text-lg font-semibold text-navy">{t('Pickup')}</h2>
         </div>
         {!edit && <BotonEditar onClick={() => setEdit(true)} />}
       </div>
@@ -866,17 +874,17 @@ function BloqueRecogida({
       {edit ? (
         <div className="mt-4 space-y-3">
           <Campo
-            etiqueta="Hotel"
+            etiqueta={t('Hotel')}
             value={hotel}
             onChange={(e) => setHotel(e.target.value)}
-            placeholder="Hotel name"
+            placeholder={t('Hotel name')}
             required
           />
           <Campo
-            etiqueta="Notes"
+            etiqueta={t('Notes')}
             value={notas}
             onChange={(e) => setNotas(e.target.value)}
-            placeholder="Room number, preferred time, etc."
+            placeholder={t('Room number, preferred time, etc.')}
           />
           <AccionesEdicion
             guardando={guardando}
@@ -940,7 +948,7 @@ function BloqueContacto({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Users className="size-5 text-aqua" aria-hidden="true" />
-          <h2 className="font-display text-lg font-semibold text-navy">Contact details</h2>
+          <h2 className="font-display text-lg font-semibold text-navy">{t('Contact details')}</h2>
         </div>
         {!edit && <BotonEditar onClick={() => setEdit(true)} />}
       </div>
@@ -948,13 +956,12 @@ function BloqueContacto({
       {edit ? (
         <div className="mt-4 space-y-3">
           <div className="grid gap-3 sm:grid-cols-2">
-            <Campo etiqueta="First name" value={contacto.nombre} onChange={(e) => setContacto((c) => ({ ...c, nombre: e.target.value }))} required />
-            <Campo etiqueta="Last name" value={contacto.apellidos} onChange={(e) => setContacto((c) => ({ ...c, apellidos: e.target.value }))} />
-            <Campo etiqueta="Phone" type="tel" value={contacto.telefono} onChange={(e) => setContacto((c) => ({ ...c, telefono: e.target.value }))} />
+            <Campo etiqueta={t('First name')} value={contacto.nombre} onChange={(e) => setContacto((c) => ({ ...c, nombre: e.target.value }))} required />
+            <Campo etiqueta={t('Last name')} value={contacto.apellidos} onChange={(e) => setContacto((c) => ({ ...c, apellidos: e.target.value }))} />
+            <Campo etiqueta={t('Phone')} type="tel" value={contacto.telefono} onChange={(e) => setContacto((c) => ({ ...c, telefono: e.target.value }))} />
           </div>
           <p className="text-xs text-navy-soft">
-            Your e-mail is how you get into this page and where the voucher went, so we don&rsquo;t change it
-            from here — message us and we&rsquo;ll do it.
+            {t('Your e-mail is how you get into this page and where the voucher went, so we don’t change it from here — message us and we’ll do it.')}
           </p>
           <AccionesEdicion
             guardando={guardando}
@@ -965,9 +972,9 @@ function BloqueContacto({
         </div>
       ) : (
         <dl className="mt-4 space-y-1 text-sm">
-          <Fila label="Name" valor={`${reserva.contacto.nombre} ${reserva.contacto.apellidos}`.trim()} />
-          <Fila label="Email" valor={reserva.contacto.email} />
-          <Fila label="Phone" valor={reserva.contacto.telefono} />
+          <Fila label={t('Name')} valor={`${reserva.contacto.nombre} ${reserva.contacto.apellidos}`.trim()} />
+          <Fila label={t('Email')} valor={reserva.contacto.email} />
+          <Fila label={t('Phone')} valor={reserva.contacto.telefono} />
         </dl>
       )}
     </section>
@@ -982,7 +989,7 @@ function BotonEditar({ onClick }: { onClick: () => void }) {
       className="inline-flex items-center gap-1.5 rounded-btn border border-linea bg-papel px-3 py-1.5 text-sm font-medium text-navy transition-colors hover:bg-papel-hueso"
     >
       <Pencil className="size-3.5" aria-hidden="true" />
-      Edit
+      {t('Edit')}
     </button>
   )
 }

@@ -1,6 +1,7 @@
 import { Check, X } from 'lucide-react'
 import { formatoDinero, type Tour } from '@/data/home'
 import type { FichaTour } from '@/data/tours'
+import { t } from '@/lib/i18n'
 
 // Comparador Light vs Premium (correcciones v2, plan 01 §2 — slides 16 y 17).
 //
@@ -52,19 +53,17 @@ export function ComparadorPremium({ tour, ficha }: { tour: Tour; ficha: FichaTou
           lo que de verdad cobra el widget. Si mañana el upgrade sube a $18,
           el texto aprobado no se queda mintiendo. */}
       <p className="text-eyebrow font-semibold uppercase tracking-[0.14em] text-aqua-dark">
-        Light or Premium
+        {t('Light or Premium')}
       </p>
       <h2 className="mt-3 font-display text-h3 font-semibold text-navy">
-        One unforgettable journey. One small upgrade.
+        {t('One unforgettable journey. One small upgrade.')}
       </h2>
       {/* [v3 2026-08-07] Sin tope de ancho — misma petición de Samuel que ya
           documenta descripcion-tour.tsx, ahora a TODAS las secciones de ficha y
           eventos: un `max-w` dentro de una card más ancha no es medida de
           lectura, es una franja blanca a la derecha. */}
       <p className="mt-3 text-navy-sub">
-        The same catamaran, the same route and the same incredible destinations. Upgrade to Premium
-        for just {formatoDinero(upgrade)} more and enjoy a freshly prepared gourmet lunch, seven
-        dishes to choose from and our signature Floating Kitchen experience.
+        {t('The same catamaran, the same route and the same incredible destinations. Upgrade to Premium for just')}{' '}{formatoDinero(upgrade)} {t('more and enjoy a freshly prepared gourmet lunch, seven dishes to choose from and our signature Floating Kitchen experience.')}
       </p>
 
       {/* [v3] Aquí vivía la píldora del delta («Toda la diferencia son $15 por
@@ -79,16 +78,16 @@ export function ComparadorPremium({ tour, ficha }: { tour: Tour; ficha: FichaTou
             — el ancla del sitio sigue siendo el Light. */}
         <div className="premium-card rounded-card p-6">
           <div className="flex items-baseline justify-between gap-3">
-            <h3 className="font-display text-xl font-semibold text-premium-texto">Premium</h3>
+            <h3 className="font-display text-xl font-semibold text-premium-texto">{t('Premium')}</h3>
             {/* Mismo metal que el thumb del selector: es LA MISMA pieza de oro
                 del sistema, no un badge dorado cualquiera. */}
             <span className="premium-metal rounded-full px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide text-premium-fondo">
-              Most chosen
+              {t('Most chosen')}
             </span>
           </div>
           <p className="mt-1 font-display text-2xl font-semibold">
             <span className="premium-cifra">{formatoDinero(precioLight + upgrade)}</span>
-            <span className="ml-1 text-sm font-normal text-premium-texto-suave">per person</span>
+            <span className="ml-1 text-sm font-normal text-premium-texto-suave">{t('per person')}</span>
           </p>
           <ul className="mt-5 flex flex-col gap-3">
             {ventajas.map((v) => (
@@ -112,14 +111,14 @@ export function ComparadorPremium({ tour, ficha }: { tour: Tour; ficha: FichaTou
             sobre una sección blanca, dos cards oscuras no comparan nada. */}
         <div className="rounded-card border border-linea bg-fondo-ficha p-6">
           <div className="flex items-baseline justify-between gap-3">
-            <h3 className="font-display text-xl font-semibold text-navy">Light</h3>
+            <h3 className="font-display text-xl font-semibold text-navy">{t('Light')}</h3>
           </div>
           <p className="mt-1 font-display text-2xl font-semibold text-navy">
             {formatoDinero(precioLight)}
-            <span className="ml-1 text-sm font-normal text-navy-soft">per person</span>
+            <span className="ml-1 text-sm font-normal text-navy-soft">{t('per person')}</span>
           </p>
           <p className="mt-5 text-[11px] font-semibold uppercase tracking-wide text-navy-soft">
-            Not included
+            {t('Not included')}
           </p>
           <ul className="mt-3 flex flex-col gap-3">
             {ventajas.map((v) => (

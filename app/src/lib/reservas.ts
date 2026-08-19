@@ -1,6 +1,7 @@
 import type { Tour } from '@/data/home'
 import type { FichaTour } from '@/data/tours'
 import type { DatosCelebracion, DatosContacto, DatosRecogida, Paquete } from '@/components/reservar/tipos'
+import { crudo, traducible } from '@/lib/i18n'
 
 // Capa de datos de la reserva completada. Como el proyecto no tiene
 // backend (Bloque A del PLAN-LANZAMIENTO), la reserva vive en
@@ -57,13 +58,19 @@ export function generarCodigoReserva(): string {
 
 // Lee TODAS las reservas guardadas en localStorage. Si la clave
 // no existe o el JSON está corrupto, devuelve [] (no lanza).
+//
+// [2026-08-19] Sale envuelto en `traducible()`. Lo GUARDADO es siempre el
+// inglés canónico —el que entiende Odoo, ver `crudo()` en lib/i18n— y esa es
+// la copia que sobrevive en el navegador; lo que se PINTA de ella tiene que
+// seguir el idioma que se esté leyendo ahora, que puede no ser el de la
+// tarde en que se hizo la reserva.
 export function leerReservas(): Reserva[] {
   if (typeof window === 'undefined') return []
   try {
     const bruto = window.localStorage.getItem(STORAGE_KEY)
     if (!bruto) return []
     const parsed = JSON.parse(bruto)
-    return Array.isArray(parsed) ? parsed : []
+    return Array.isArray(parsed) ? traducible(parsed as Reserva[]) : []
   } catch {
     return []
   }
@@ -73,7 +80,11 @@ export function leerReservas(): Reserva[] {
 export function escribirReservas(reservas: Reserva[]): void {
   if (typeof window === 'undefined') return
   try {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(reservas))
+    // `crudo()` antes de serializar: si se guardara lo traducido, una reserva
+    // hecha en español dejaría en el navegador «Marisco» donde el resto del
+    // sistema (y Odoo) escriben «Seafood», y al volver en inglés seguiría
+    // saliendo en español.
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(crudo(reservas)))
   } catch {
     // localStorage lleno o deshabilitado — silencioso: la UX no se rompe,
     // la reserva no se guarda y se advierte al cliente de guardar el email.

@@ -10,6 +10,7 @@ import { CocinaTiempos } from '@/components/flota/cocina-tiempos'
 import { useCascadaNosotros } from '@/components/nosotros/use-cascada-nosotros'
 import { useDevFlag } from '@/dev/use-dev-flag'
 import { Meta } from '@/components/seo/meta'
+import { t } from '@/lib/i18n'
 
 // Página Flota (/flota) — correcciones v2, plan 04.
 //
@@ -74,8 +75,8 @@ export function FlotaPage() {
   return (
     <div>
       <Meta
-        titulo="Our fleet"
-        descripcion="The Hispaniola Aquatic Adventures fleet: sailing and power catamarans, speedboats and the event catamaran, each with video, gallery and a full spec sheet."
+        titulo={t('Our fleet')}
+        descripcion={t('The Hispaniola Aquatic Adventures fleet: sailing and power catamarans, speedboats and the event catamaran, each with video, gallery and a full spec sheet.')}
         ruta="/fleet"
       />
       <HeroInterna ctaHref="/#tours">
@@ -83,9 +84,9 @@ export function FlotaPage() {
             cliente escribe «QUITAR LA FRASE DEBAJO Y PONER…», asi que el lead
             tambien es suyo, literal. */}
         <CabeceraInterna
-          eyebrow="Our fleet"
-          titulo="The fleet that brings every adventure to life"
-          lead="Every boat has a purpose. Each vessel in our fleet has been carefully selected and customized for the experience."
+          eyebrow={t('Our fleet')}
+          titulo={t('The fleet that brings every adventure to life')}
+          lead={t('Every boat has a purpose. Each vessel in our fleet has been carefully selected and customized for the experience.')}
         />
       </HeroInterna>
 

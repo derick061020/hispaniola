@@ -11,6 +11,7 @@ import { dispararConfetti } from '@/lib/celebracion'
 import { confirmarPago, enviarFormulario, leerCheckout, urlCalendario } from '@/lib/api/api'
 import { olvidarSesionCheckout, sesionCheckoutGuardada } from '@/lib/api/use-checkout'
 import { formatoDinero } from '@/data/home'
+import { t, traducible } from '@/lib/i18n'
 
 // «¡Nos vemos a bordo!» — pantalla post-checkout (2026-07-17, pedido de
 // Pedro). Se muestra DESPUÉS de que el funnel de reserva completa el
@@ -33,7 +34,7 @@ import { formatoDinero } from '@/data/home'
 // (reservar.tsx → paso-pago → guardarReserva). Esta página la lee por
 // código (query param ?codigo=…). Sin código, redirige a /.
 
-const ORIGENES = ['Google', 'Instagram', 'TikTok', 'Word of mouth', 'Other']
+const ORIGENES = traducible(['Google', 'Instagram', 'TikTok', 'Word of mouth', 'Other'])
 
 export function GraciasPage() {
   const { slug } = useParams()
@@ -116,7 +117,7 @@ export function GraciasPage() {
     // Sin la sesión no hay token de reserva y la API no autoriza la captura.
     // Pasa si vuelve en otro navegador o tras limpiar el almacenamiento.
     if (!sesion || sesion.codigo !== codigo) {
-      setAvisoPago('We could not confirm the PayPal payment from this browser. Our team will check it and email you.')
+      setAvisoPago(t('We could not confirm the PayPal payment from this browser. Our team will check it and email you.'))
       return
     }
     let vivo = true
@@ -129,12 +130,12 @@ export function GraciasPage() {
         setRecargas((n) => n + 1)
         olvidarSesionCheckout()
         if (!['paid', 'confirmed'].includes(resultado.state)) {
-          setAvisoPago('PayPal is still processing the payment. We’ll email you as soon as it clears.')
+          setAvisoPago(t('PayPal is still processing the payment. We’ll email you as soon as it clears.'))
         }
       })
       .catch(() => {
         if (!vivo) return
-        setAvisoPago('We could not confirm the PayPal payment right now. Our team will check it and email you.')
+        setAvisoPago(t('We could not confirm the PayPal payment right now. Our team will check it and email you.'))
       })
       .finally(() => {
         if (vivo) setCapturando(false)
@@ -181,7 +182,7 @@ export function GraciasPage() {
         />
         <header className="border-b border-linea">
           <div className="mx-auto flex max-w-3xl items-center px-5 py-3 sm:px-8">
-            <Link to="/" aria-label="Inicio de Hispaniola Aquatic Adventures">
+            <Link to="/" aria-label={t('Inicio de Hispaniola Aquatic Adventures')}>
               <Logo compacto />
             </Link>
           </div>
@@ -190,19 +191,19 @@ export function GraciasPage() {
           <div className="mx-auto grid size-16 place-items-center rounded-full bg-menta text-menta-texto">
             <Check className="size-8" strokeWidth={2.5} aria-hidden="true" />
           </div>
-          <h1 className="mt-6 font-display text-3xl font-semibold text-navy">Your booking is in.</h1>
+          <h1 className="mt-6 font-display text-3xl font-semibold text-navy">{t('Your booking is in.')}</h1>
           <p className="mt-3 text-base text-navy-sub">
             {avisoPago
               ? avisoPago
               : 'We don’t have the details on this device, but the booking is saved under this code and the voucher is on its way to your e-mail.'}
           </p>
           <div className="mt-8 flex flex-col items-center gap-2 rounded-card-grande border-2 border-linea-fuerte bg-papel-hueso px-6 py-5">
-            <p className="text-xs font-semibold uppercase tracking-wide text-navy-soft">Your booking code</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-navy-soft">{t('Your booking code')}</p>
             <p className="font-mono text-2xl font-semibold tracking-wider text-navy sm:text-3xl">{codigo}</p>
           </div>
           <p className="mt-6 text-sm">
             <Link to={`/my-booking?codigo=${codigo}`} className="font-semibold text-aqua-dark hover:underline">
-              See it in My booking (code + e-mail) →
+              {t('See it in My booking (code + e-mail) →')}
             </Link>
           </p>
         </main>
@@ -242,7 +243,7 @@ export function GraciasPage() {
   const resumenMenu = !seEligeMenu
     ? (menu?.titulo ?? '—')
     : platosElegidos.length === 0
-      ? 'To be confirmed by email'
+      ? t('To be confirmed by email')
       : faltanPlatos
         ? `${platosElegidos.map(nombrePlato).join(', ')} · the rest, by email`
         : platosElegidos.map(nombrePlato).join(', ')
@@ -260,7 +261,7 @@ export function GraciasPage() {
           invitamos a salir a mitad de una pantalla crítica). */}
       <header className="border-b border-linea">
         <div className="mx-auto flex max-w-3xl items-center px-5 py-3 sm:px-8">
-          <Link to="/" aria-label="Inicio de Hispaniola Aquatic Adventures">
+          <Link to="/" aria-label={t('Inicio de Hispaniola Aquatic Adventures')}>
             <Logo compacto />
           </Link>
         </div>
@@ -271,11 +272,11 @@ export function GraciasPage() {
             todo: es lo único de esta pantalla que puede no estar cerrado. */}
         {capturando ? (
           <p role="status" className="mb-6 rounded-lg border border-linea bg-papel-hueso px-4 py-3 text-sm text-navy-sub">
-            Confirming your PayPal payment…
+            {t('Confirming your PayPal payment…')}
           </p>
         ) : avisoPago ? (
           <p role="alert" className="mb-6 rounded-lg border border-coral/40 bg-coral/5 px-4 py-3 text-sm leading-relaxed text-navy-sub">
-            {avisoPago} <strong className="text-navy">Your booking is saved</strong> under the code below.
+            {avisoPago} <strong className="text-navy">{t('Your booking is saved')}</strong> {t('under the code below.')}
           </p>
         ) : null}
 
@@ -285,21 +286,21 @@ export function GraciasPage() {
             <Check className="size-8" strokeWidth={2.5} aria-hidden="true" />
           </div>
           <h1 className="mt-6 font-display text-3xl font-semibold text-navy sm:text-4xl">
-            See you on board, {reserva.contacto.nombre}!
+            {t('See you on board,')}{' '}{reserva.contacto.nombre}!
           </h1>
           <p className="mt-3 text-base text-navy-sub sm:text-lg">
-            Your booking is confirmed. We’re sending the voucher to{' '}
-            <span className="font-medium text-navy">{reserva.contacto.email}</span> and on WhatsApp.
+            {t('Your booking is confirmed. We’re sending the voucher to')}{' '}
+            <span className="font-medium text-navy">{reserva.contacto.email}</span> {t('and on WhatsApp.')}
           </p>
         </div>
 
         {/* 2. CÓDIGO — destacado */}
         <div className="mt-8 flex flex-col items-center gap-2 rounded-card-grande border-2 border-linea-fuerte bg-papel-hueso px-6 py-5 text-center">
-          <p className="text-xs font-semibold uppercase tracking-wide text-navy-soft">Your booking code</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-navy-soft">{t('Your booking code')}</p>
           <p className="font-mono text-2xl font-semibold tracking-wider text-navy sm:text-3xl">
             {reserva.codigo}
           </p>
-          <p className="text-xs text-navy-soft">You’ll need it to manage your booking, or on WhatsApp.</p>
+          <p className="text-xs text-navy-soft">{t('You’ll need it to manage your booking, or on WhatsApp.')}</p>
         </div>
 
         {/* 3. CTAs — voucher / calendario / WhatsApp */}
@@ -315,7 +316,7 @@ export function GraciasPage() {
             className="inline-flex items-center gap-2 rounded-btn border border-linea bg-papel px-4 py-2.5 text-sm font-semibold text-navy transition-colors hover:bg-papel-hueso"
           >
             <Calendar className="size-4" aria-hidden="true" />
-            Add to calendar
+            {t('Add to calendar')}
           </a>
           <a
             href="https://wa.me/18293052804"
@@ -324,7 +325,7 @@ export function GraciasPage() {
             className="inline-flex items-center gap-2 rounded-btn border border-linea bg-papel px-4 py-2.5 text-sm font-semibold text-navy transition-colors hover:bg-papel-hueso"
           >
             <MessageCircle className="size-4" aria-hidden="true" />
-            Save WhatsApp
+            {t('Save WhatsApp')}
           </a>
         </div>
 
@@ -333,30 +334,30 @@ export function GraciasPage() {
             to={`/my-booking?codigo=${reserva.codigo}`}
             className="font-semibold text-aqua-dark hover:underline"
           >
-            Manage my booking →
+            {t('Manage my booking →')}
           </Link>
         </p>
 
         {/* 4. TIMELINE «Qué sigue» */}
         <section className="mt-12">
-          <p className="font-display text-lg font-semibold text-navy">What happens next</p>
+          <p className="font-display text-lg font-semibold text-navy">{t('What happens next')}</p>
           <ol className="mt-4 space-y-4">
             <PasoTimeline
               numero={1}
-              cuando="Today"
+              cuando={t('Today')}
               descripcion={
                 <>
-                  You get the voucher + the receipt for your{' '}
+                  {t('You get the voucher + the receipt for your')}{' '}
                   <strong className="font-semibold text-navy">{formatoDinero(reserva.deposito)}</strong>{' '}
-                  deposit by email and on WhatsApp.
+                  {t('deposit by email and on WhatsApp.')}
                   {/* La promesa que sostiene el «puedes elegirlo luego» del
                       funnel: si quedó menú sin decidir, aquí se dice cuándo
                       llega el correo que lo resuelve. */}
                   {faltanPlatos ? (
                     <>
                       {' '}
-                      In that same email you pick the meals you left undecided, or you do it from{' '}
-                      <strong className="font-semibold text-navy">My booking</strong>, up to 48 h before.
+                      {t('In that same email you pick the meals you left undecided, or you do it from')}{' '}
+                      <strong className="font-semibold text-navy">{t('My booking')}</strong>{t(', up to 48 h before.')}
                     </>
                   ) : null}
                 </>
@@ -367,8 +368,8 @@ export function GraciasPage() {
               cuando={`${fechaLarga(fechaRecordatorioISO)} (the day before), in the afternoon`}
               descripcion={
                 <>
-                  We confirm your pickup on WhatsApp at{' '}
-                  <strong className="font-semibold text-navy">{reserva.recogida.hotel || 'your hotel'}</strong>
+                  {t('We confirm your pickup on WhatsApp at')}{' '}
+                  <strong className="font-semibold text-navy">{reserva.recogida.hotel || t('your hotel')}</strong>
                   {reserva.recogida.notas ? `, ${reserva.recogida.notas}` : ''}.
                 </>
               }
@@ -378,11 +379,9 @@ export function GraciasPage() {
               cuando={fechaLarga(reserva.fechaISO)}
               descripcion={
                 <>
-                  Bring a swimsuit, a towel and biodegradable sunscreen. You pay the balance of{' '}
-                  <strong className="font-semibold text-navy">{formatoDinero(reserva.saldo)}</strong> on
-                  board. In cash it comes to{' '}
-                  <strong className="font-semibold text-navy">{formatoDinero(totalCon5Pct)}</strong> with the 5%
-                  discount.
+                  {t('Bring a swimsuit, a towel and biodegradable sunscreen. You pay the balance of')}{' '}
+                  <strong className="font-semibold text-navy">{formatoDinero(reserva.saldo)}</strong> {t('on board. In cash it comes to')}{' '}
+                  <strong className="font-semibold text-navy">{formatoDinero(totalCon5Pct)}</strong> {t('with the 5% discount.')}
                 </>
               }
             />
@@ -391,12 +390,12 @@ export function GraciasPage() {
 
         {/* 5. RESUMEN */}
         <section className="mt-10 rounded-card-grande border border-linea bg-papel p-5 sm:p-6">
-          <p className="text-xs font-semibold uppercase tracking-wide text-navy-soft">Your booking</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-navy-soft">{t('Your booking')}</p>
           <p className="mt-1 font-display text-lg font-semibold text-navy">{reserva.tour.nombre}</p>
           <dl className="mt-4 space-y-2 text-sm">
-            <FilaResumen label="Date" valor={fechaLarga(reserva.fechaISO)} />
+            <FilaResumen label={t('Date')} valor={fechaLarga(reserva.fechaISO)} />
             <FilaResumen
-              label="Schedule"
+              label={t('Schedule')}
               valor={horario ? `${horario.hora}${horario.regreso ? ` · back at ${horario.regreso}` : ''}` : '—'}
             />
             {/* El nombre del menú solo acompaña al nº de personas cuando hay
@@ -405,32 +404,32 @@ export function GraciasPage() {
                 llama igual, y repetirlo dos veces seguidas se lee como un
                 error. */}
             <FilaResumen
-              label="Guests"
+              label={t('Guests')}
               valor={`${reserva.personas}${seEligeMenu && menu ? ` · ${menu.etiqueta}` : ''}`}
             />
             {/* Desde 2026-08-07 se puede reservar sin elegir plato: los huecos
                 se dicen, no se pintan como una lista con comas vacías. Y desde
                 la 2ª vuelta del mismo día, con buffet la fila nombra el menú
                 («Island buffet») en vez de prometer un correo que no existe. */}
-            <FilaResumen label="Menu" valor={resumenMenu} />
-            <FilaResumen label="Pickup" valor={reserva.recogida.hotel || '—'} />
+            <FilaResumen label={t('Menu')} valor={resumenMenu} />
+            <FilaResumen label={t('Pickup')} valor={reserva.recogida.hotel || '—'} />
             <div className="!mt-3 flex items-center justify-between border-t border-linea pt-3 text-sm">
-              <span className="text-navy-soft">{cobro && cobro.pagado > 0 ? 'Already paid (deposit)' : 'Deposit — pending'}</span>
+              <span className="text-navy-soft">{cobro && cobro.pagado > 0 ? t('Already paid (deposit)') : t('Deposit — pending')}</span>
               <span className="font-semibold text-navy">
                 {formatoDinero(cobro && cobro.pagado > 0 ? cobro.pagado : reserva.deposito)}
               </span>
             </div>
             {cobro && cobro.pagado <= 0 ? (
               <p className="!mt-1 text-xs text-navy-soft">
-                We haven’t received the deposit yet. Your spot is held and you can pay it any time from{' '}
+                {t('We haven’t received the deposit yet. Your spot is held and you can pay it any time from')}{' '}
                 <Link to={`/my-booking?codigo=${reserva.codigo}`} className="font-semibold text-aqua-dark hover:underline">
-                  My booking
+                  {t('My booking')}
                 </Link>
                 .
               </p>
             ) : null}
             <div className="flex items-center justify-between text-sm">
-              <span className="text-navy-soft">Balance on board (cash, −5%)</span>
+              <span className="text-navy-soft">{t('Balance on board (cash, −5%)')}</span>
               <span className="font-semibold text-navy">{formatoDinero(totalCon5Pct)}</span>
             </div>
           </dl>
@@ -438,7 +437,7 @@ export function GraciasPage() {
             to={`/my-booking?codigo=${reserva.codigo}`}
             className="mt-4 inline-block text-sm font-semibold text-aqua-dark hover:underline"
           >
-            {seEligeMenu ? 'Change the menu or the pickup' : 'Change your pickup'} →
+            {seEligeMenu ? t('Change the menu or the pickup') : t('Change your pickup')} →
           </Link>
         </section>
 
@@ -454,13 +453,13 @@ export function GraciasPage() {
             {celebra ? (
               <div>
                 <p className="font-display text-base font-semibold text-navy">
-                  Noted: {celebra.toLowerCase()}
+                  {t('Noted:')}{' '}{celebra.toLowerCase()}
                 </p>
                 <p className="mt-1 text-sm text-navy-sub">
                   {reserva.celebracion?.nota
                     ? `“${reserva.celebracion.nota}”. The crew will know before we set sail. `
                     : 'The crew will know before we set sail. '}
-                  If you want something specific (cake, decorations), we’ll arrange it here.
+                  {t('If you want something specific (cake, decorations), we’ll arrange it here.')}
                 </p>
                 <a
                   href={`https://wa.me/18293052804?text=${encodeURIComponent(`Hi! I’m ${reserva.contacto.nombre}, my booking is ${reserva.codigo} and I’d like to organize something for a ${celebra.toLowerCase()} 🎉`)}`}
@@ -468,14 +467,14 @@ export function GraciasPage() {
                   rel="noopener"
                   className="mt-2 inline-block text-sm font-semibold text-aqua-dark hover:underline"
                 >
-                  Arrange it on WhatsApp →
+                  {t('Arrange it on WhatsApp →')}
                 </a>
               </div>
             ) : (
               <div>
-                <p className="font-display text-base font-semibold text-navy">Celebrating something?</p>
+                <p className="font-display text-base font-semibold text-navy">{t('Celebrating something?')}</p>
                 <p className="mt-1 text-sm text-navy-sub">
-                  Birthday, anniversary, proposal… tell us on WhatsApp and we’ll set it up on board.
+                  {t('Birthday, anniversary, proposal… tell us on WhatsApp and we’ll set it up on board.')}
                 </p>
                 <a
                   href={`https://wa.me/18293052804?text=${encodeURIComponent(`Hi! I’m ${reserva.contacto.nombre}, my booking is ${reserva.codigo} and I’d like to talk about a special celebration 🎉`)}`}
@@ -483,7 +482,7 @@ export function GraciasPage() {
                   rel="noopener"
                   className="mt-2 inline-block text-sm font-semibold text-aqua-dark hover:underline"
                 >
-                  Message us on WhatsApp →
+                  {t('Message us on WhatsApp →')}
                 </a>
               </div>
             )}
@@ -492,7 +491,7 @@ export function GraciasPage() {
 
         {/* 7. Tracking — ¿cómo nos encontraste? */}
         <section className="mt-10 border-t border-linea pt-6">
-          <p className="text-sm text-navy-soft">Just curious: how did you find us?</p>
+          <p className="text-sm text-navy-soft">{t('Just curious: how did you find us?')}</p>
           <div className="mt-3 flex flex-wrap gap-2">
             {ORIGENES.map((o) => (
               <button
@@ -510,13 +509,13 @@ export function GraciasPage() {
             ))}
           </div>
           {origen && (
-            <p className="mt-3 text-sm text-aqua-dark">Thank you! It helps us improve.</p>
+            <p className="mt-3 text-sm text-aqua-dark">{t('Thank you! It helps us improve.')}</p>
           )}
         </section>
       </main>
 
       <footer className="mt-12 border-t border-linea py-6 text-center text-xs text-navy-soft">
-        Hispaniola Aquatic Adventures · Questions? WhatsApp +1-829-305-2804
+        {t('Hispaniola Aquatic Adventures · Questions? WhatsApp +1-829-305-2804')}
       </footer>
     </div>
   )

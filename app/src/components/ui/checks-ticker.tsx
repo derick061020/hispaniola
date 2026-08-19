@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useDevFlag } from '@/dev/use-dev-flag'
+import { t } from '@/lib/i18n'
 
 // «Checks en ticker» — extraído del widget de reserva de tour
 // (widget-reserva.tsx, función `Checks` local) a un componente
@@ -69,7 +70,7 @@ export function ChecksTicker({ lineas }: Props) {
   return (
     <div
       role="group"
-      aria-label="Booking guarantees"
+      aria-label={t('Booking guarantees')}
       className={`widget-checks-wrapper ${reducirMovimiento ? 'widget-checks-wrapper--estatico' : ''}`}
     >
       <div className={`widget-checks-pista ${pausado ? 'widget-checks-pista--pausada' : ''}`}>

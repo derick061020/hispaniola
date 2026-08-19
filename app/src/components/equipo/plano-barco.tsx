@@ -1,6 +1,7 @@
 import { iconoDepartamento, TODOS, type Filtro } from '@/components/equipo/grid-equipo'
 import { Etiqueta } from '@/components/ui/etiqueta'
 import { DEPARTAMENTOS, contarPorDepartamento, type DepartamentoId } from '@/data/equipo'
+import { t, traducible } from '@/lib/i18n'
 
 // EL BARCO COMO ÍNDICE — variante ARRIESGADA de /tripulacion, para comparar
 // ([v2 2026-07-28, Samuel: «me gusta tu idea del barco como índice, crea un
@@ -33,17 +34,17 @@ import { DEPARTAMENTOS, contarPorDepartamento, type DepartamentoId } from '@/dat
 // La separación VERTICAL entre los dos es lo que hay que respetar si se
 // mueven: los rótulos miden ~180×48px y a poco que se acerquen se pisan (pasó
 // en la 1ª versión, con 82% y 76%).
-const A_BORDO: { id: DepartamentoId; x: string; y: string; zona: string }[] = [
+const A_BORDO: { id: DepartamentoId; x: string; y: string; zona: string }[] = traducible([
   { id: 'playa', x: '16%', y: '93%', zona: 'Deck and bow' },
   { id: 'cocina', x: '52%', y: '70%', zona: 'Floating kitchen' },
-]
+])
 
-const EN_TIERRA: { id: DepartamentoId; zona: string }[] = [
+const EN_TIERRA: { id: DepartamentoId; zona: string }[] = traducible([
   { id: 'oficina', zona: 'Offices' },
   { id: 'marketing', zona: 'Offices' },
   { id: 'administracion', zona: 'Administration' },
   { id: 'fundacion', zona: 'Marine lab' },
-]
+])
 
 function Punto({
   id,
@@ -112,12 +113,12 @@ export function PlanoBarco({
   return (
     <section className="relative overflow-hidden rounded-card-grande bg-linear-to-b from-papel-hueso to-aqua-tint px-6 py-10 sm:px-10 sm:py-12">
       <div className="text-center">
-        <Etiqueta>The team, by where they are based</Etiqueta>
+        <Etiqueta>{t('The team, by where they are based')}</Etiqueta>
         <h2 className="mt-3 font-display text-h2 font-semibold text-navy">
-          Some sail, others keep the ship afloat
+          {t('Some sail, others keep the ship afloat')}
         </h2>
         <p className="mx-auto mt-2 max-w-2xl text-navy-sub">
-          Tap an area to see its people. Tap it again to see them all.
+          {t('Tap an area to see its people. Tap it again to see them all.')}
         </p>
       </div>
 
@@ -137,7 +138,7 @@ export function PlanoBarco({
             plano en vez de como dos cosas sueltas. */}
         <div className="flex w-full max-w-xs flex-col gap-3 lg:pb-6">
           <p className="text-eyebrow font-semibold uppercase tracking-[0.12em] text-navy-soft">
-            En tierra
+            {t('On land')}
           </p>
           {EN_TIERRA.map((p) => (
             <Punto
@@ -156,12 +157,12 @@ export function PlanoBarco({
             del panel hace el mismo trabajo. */}
         <div className="relative w-full max-w-sm">
           <p className="mb-2 text-center text-eyebrow font-semibold uppercase tracking-[0.12em] text-navy-soft">
-            A bordo
+            {t('On board')}
           </p>
           <div className="relative">
             <img
               src="/fotos/catamaran-recorte.webp"
-              alt="One of the Hispaniola catamarans, seen from the side"
+              alt={t('One of the Hispaniola catamarans, seen from the side')}
               className="w-full"
               loading="lazy"
             />

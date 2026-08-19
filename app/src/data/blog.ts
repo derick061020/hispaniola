@@ -1,3 +1,5 @@
+import { traducible } from '@/lib/i18n'
+
 // BLOG (/blog) — página NUEVA de las correcciones v1 del cliente
 // (2026-07-20, planes/06-blog.md). No existía nada de esto en el proyecto.
 //
@@ -33,13 +35,13 @@ export type CategoriaBlog =
   | 'Sustainability'
   | 'Things to do'
 
-export const CATEGORIAS_BLOG: CategoriaBlog[] = [
+export const CATEGORIAS_BLOG: CategoriaBlog[] = traducible([
   'Punta Cana guides',
   'Travel tips',
   'Life on board',
   'Sustainability',
   'Things to do',
-]
+])
 
 export type Articulo = {
   slug: string
@@ -75,7 +77,7 @@ export type BloqueArticulo =
   | { tipo: 'h3'; id: string; texto: string }
   | { tipo: 'h4'; id: string; texto: string }
 
-export const ARTICULOS: Articulo[] = [
+export const ARTICULOS: Articulo[] = traducible([
   {
     slug: 'esnorquel-punta-cana-honesto',
     titulo: 'Is Punta Cana good for snorkeling? The honest answer',
@@ -83,7 +85,7 @@ export const ARTICULOS: Articulo[] = [
       'For pure diving there are better spots in the Caribbean. For seeing turtles, few places beat it. Here’s why, with no marketing.',
     categoria: 'Punta Cana guides',
     autorId: 'omar',
-    fecha: '12 jul 2026',
+    fecha: 'Jul 12, 2026',
     minutos: 6,
     foto: 'galeria-semi-privado-1',
     fotoAlt: 'Guests snorkeling over the coral nursery',
@@ -160,7 +162,7 @@ export const ARTICULOS: Articulo[] = [
     extracto: 'What you really want to know to enjoy the day with no surprises.',
     categoria: 'Travel tips',
     autorId: 'eva',
-    fecha: '5 jul 2026',
+    fecha: 'Jul 5, 2026',
     minutos: 6,
     foto: 'galeria-charter-privado-2',
     fotoAlt: 'Group enjoying the deck of a catamaran',
@@ -173,7 +175,7 @@ export const ARTICULOS: Articulo[] = [
       'Inside the coral project the Ministry ranks among the 3 largest in the country.',
     categoria: 'Sustainability',
     autorId: 'omar',
-    fecha: '28 jun 2026',
+    fecha: 'Jun 28, 2026',
     minutos: 7,
     foto: 'arrecife-fondo-cenital',
     fotoAlt: 'Overhead view of the Caribbean Sea with turquoise water',
@@ -186,7 +188,7 @@ export const ARTICULOS: Articulo[] = [
     extracto: 'The path from the sea to your plate: freshly caught and cooked in front of you.',
     categoria: 'Life on board',
     autorId: 'lola',
-    fecha: '20 jun 2026',
+    fecha: 'Jun 20, 2026',
     minutos: 5,
     foto: 'cocina-flotante',
     fotoAlt: 'The crew cooking seafood in the floating kitchen',
@@ -199,7 +201,7 @@ export const ARTICULOS: Articulo[] = [
     extracto: 'We compare the two star experiences so you can pick yours.',
     categoria: 'Things to do',
     autorId: 'eva',
-    fecha: '14 jun 2026',
+    fecha: 'Jun 14, 2026',
     minutos: 6,
     foto: 'galeria-isla-saona-4',
     fotoAlt: 'Shallow turquoise water at the natural pool',
@@ -212,7 +214,7 @@ export const ARTICULOS: Articulo[] = [
     extracto: 'Weather, prices and crowds: what to expect in each month of the year.',
     categoria: 'Punta Cana guides',
     autorId: 'lola',
-    fecha: '6 jun 2026',
+    fecha: 'Jun 6, 2026',
     minutos: 9,
     foto: 'galeria-snorkel-lovers-2',
     fotoAlt: 'Catamaran anchored over turquoise water',
@@ -224,7 +226,7 @@ export const ARTICULOS: Articulo[] = [
     extracto: 'The short, honest list of what you do need, and what you don’t.',
     categoria: 'Travel tips',
     autorId: 'eva',
-    fecha: '30 may 2026',
+    fecha: 'May 30, 2026',
     minutos: 4,
     foto: 'galeria-charter-privado-6',
     fotoAlt: 'Family enjoying a deserted beach',
@@ -241,7 +243,7 @@ export const ARTICULOS: Articulo[] = [
     extracto: 'Two ways to reach the same island, with very different experiences. How they really differ.',
     categoria: 'Punta Cana guides',
     autorId: 'lola',
-    fecha: '24 may 2026',
+    fecha: 'May 24, 2026',
     minutos: 7,
     foto: 'galeria-isla-saona-6',
     fotoAlt: 'Speedboat and catamaran near the coast of Saona Island',
@@ -253,7 +255,7 @@ export const ARTICULOS: Articulo[] = [
     extracto: 'Group, budget and how much you want the day to be yours: the questions that really decide it.',
     categoria: 'Punta Cana guides',
     autorId: 'omar',
-    fecha: '10 may 2026',
+    fecha: 'May 10, 2026',
     minutos: 6,
     foto: 'galeria-charter-privado-5',
     fotoAlt: 'Small group celebrating on board a private charter',
@@ -265,7 +267,7 @@ export const ARTICULOS: Articulo[] = [
     extracto: 'Not all tours are the same with little ones on board. A quick guide to choosing with no surprises.',
     categoria: 'Punta Cana guides',
     autorId: 'eva',
-    fecha: '26 abr 2026',
+    fecha: 'Apr 26, 2026',
     minutos: 5,
     foto: 'galeria-charter-privado-3',
     fotoAlt: 'Family with children enjoying a catamaran tour',
@@ -277,7 +279,7 @@ export const ARTICULOS: Articulo[] = [
     extracto: 'Simple tricks (and one you weren’t expecting) to enjoy the sea even with a delicate stomach.',
     categoria: 'Travel tips',
     autorId: 'eva',
-    fecha: '18 may 2026',
+    fecha: 'May 18, 2026',
     minutos: 4,
     foto: 'galeria-snorkel-lovers-5',
     fotoAlt: 'Guests enjoying the bow of the catamaran',
@@ -289,7 +291,7 @@ export const ARTICULOS: Articulo[] = [
     extracto: 'Price, availability and room to maneuver: the pros and cons of each moment to book.',
     categoria: 'Travel tips',
     autorId: 'lola',
-    fecha: '3 may 2026',
+    fecha: 'May 3, 2026',
     minutos: 5,
     foto: 'tour-charter-privado',
     fotoAlt: 'Hispaniola catamaran ready to set sail',
@@ -301,7 +303,7 @@ export const ARTICULOS: Articulo[] = [
     extracto: 'How to put together a day at sea that feels tailor-made for two.',
     categoria: 'Travel tips',
     autorId: 'eva',
-    fecha: '19 abr 2026',
+    fecha: 'Apr 19, 2026',
     minutos: 6,
     foto: 'galeria-semi-privado-3',
     fotoAlt: 'Couple enjoying the sea view from the catamaran',
@@ -313,7 +315,7 @@ export const ARTICULOS: Articulo[] = [
     extracto: 'From sunrise until the last catamaran ties up: this is a normal day for the people who make the tour possible.',
     categoria: 'Life on board',
     autorId: 'lola',
-    fecha: '12 abr 2026',
+    fecha: 'Apr 12, 2026',
     minutos: 6,
     foto: 'galeria-semi-privado-5',
     fotoAlt: 'Crew preparing the catamaran before setting sail',
@@ -325,7 +327,7 @@ export const ARTICULOS: Articulo[] = [
     extracto: 'The music is part of the experience too. Here’s how we choose it.',
     categoria: 'Life on board',
     autorId: 'lola',
-    fecha: '29 mar 2026',
+    fecha: 'Mar 29, 2026',
     minutos: 4,
     foto: 'bar-flotante',
     fotoAlt: 'Floating bar next to the catamaran with background music',
@@ -337,7 +339,7 @@ export const ARTICULOS: Articulo[] = [
     extracto: 'The concrete changes we made to get single-use plastic off our catamarans.',
     categoria: 'Sustainability',
     autorId: 'omar',
-    fecha: '5 abr 2026',
+    fecha: 'Apr 5, 2026',
     minutos: 6,
     foto: 'cocina-flotante-plataforma',
     fotoAlt: 'Floating kitchen preparing food on board',
@@ -349,7 +351,7 @@ export const ARTICULOS: Articulo[] = [
     extracto: 'A frequent question on board, and the ecological reason behind our “no”.',
     categoria: 'Sustainability',
     autorId: 'omar',
-    fecha: '15 mar 2026',
+    fecha: 'Mar 15, 2026',
     minutos: 5,
     foto: 'galeria-snorkel-lovers-9',
     fotoAlt: 'Guest snorkeling next to tropical fish',
@@ -361,7 +363,7 @@ export const ARTICULOS: Articulo[] = [
     extracto: 'What it includes, who it suits and what you’ll find underwater.',
     categoria: 'Things to do',
     autorId: 'eva',
-    fecha: '22 mar 2026',
+    fecha: 'Mar 22, 2026',
     minutos: 6,
     foto: 'galeria-snorkel-lovers-11',
     fotoAlt: 'Group snorkeling in turquoise water',
@@ -373,18 +375,18 @@ export const ARTICULOS: Articulo[] = [
     extracto: 'Souvenir ideas that don’t involve taking a piece of the ecosystem home.',
     categoria: 'Things to do',
     autorId: 'lola',
-    fecha: '8 mar 2026',
+    fecha: 'Mar 8, 2026',
     minutos: 5,
     foto: 'galeria-isla-saona-9',
     fotoAlt: 'Close-up of sand and shells on the shore of Saona Island',
     cuerpo: null,
   },
-]
+])
 
-export const BLOG_HERO = {
+export const BLOG_HERO = traducible({
   eyebrow: 'Blog',
   titulo: 'The Caribbean, told by the people who sail it',
   sub: 'Honest guides, stories from the sea and real advice for your trip to Punta Cana. No empty marketing.',
   // Fotos del hero compartido (mismo patrón que el resto de internas).
   galeria: ['galeria-snorkel-lovers-2', 'galeria-charter-privado-2', 'galeria-semi-privado-1'],
-}
+})

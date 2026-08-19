@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { Etiqueta } from '@/components/ui/etiqueta'
 import { FotosFundido } from '@/components/ui/fotos-fundido'
 import { EVENTOS } from '@/data/eventos'
+import { t } from '@/lib/i18n'
 
 // "Otras ocasiones" (PLAN-EVENTOS.md) — mini-cards con los OTROS 2
 // eventos del catálogo. Misma estructura que `tambien-te-gusta.tsx`
@@ -24,7 +25,7 @@ export function OtrasOcasiones({ slugActual }: { slugActual: string }) {
 
   return (
     <section className="mx-auto max-w-contenido px-5 py-seccion-sm sm:px-10 sm:py-seccion">
-      <Etiqueta>Other occasions</Etiqueta>
+      <Etiqueta>{t('Other occasions')}</Etiqueta>
 
       <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
         {otras.map((e) => (

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { Camera, Check, ChevronRight, Handshake, Megaphone } from 'lucide-react'
 import { Boton } from '@/components/ui/boton'
-import { ERROR_ENVIO, useEnvioFormulario } from '@/lib/use-envio-formulario'
+import { errorEnvio, useEnvioFormulario } from '@/lib/use-envio-formulario'
 import { Campo } from '@/components/ui/campo'
 import { IconoWhatsApp } from '@/components/ui/iconos-redes'
 import { PERFILES_TRABAJO, PERFIL_POR_DEFECTO, RESPALDO, esPerfilValido } from '@/data/trabaja'
@@ -10,6 +10,7 @@ import type { PerfilTrabajo } from '@/data/trabaja'
 import { FLOTA } from '@/data/nosotros'
 import { WHATSAPP_URL } from '@/data/tours'
 import { useDevFlag } from '@/dev/use-dev-flag'
+import { t } from '@/lib/i18n'
 
 // Formulario de «Trabaja con nosotros» — el mismo formulario para los tres
 // perfiles, no tres páginas. El cliente pidió tres enlaces distintos en el
@@ -135,14 +136,14 @@ function FilaPerfil({
 // perfil, y no hay ningún dato nuevo inventado para construirla.
 function PasosDespues({ perfil }: { perfil: PerfilTrabajo }) {
   const pasos = [
-    'The team reads it. There’s no bot filtering here.',
-    'We write back within 24 hours, however you prefer.',
+    t('The team reads it. There’s no bot filtering here.'),
+    t('We write back within 24 hours, however you prefer.'),
     perfil.quePasa,
   ]
   return (
     <div className="border-t border-linea p-6 sm:p-7">
       <p className="text-eyebrow font-semibold uppercase tracking-[0.08em] text-navy-soft">
-        What happens next
+        {t('What happens next')}
       </p>
       <ol className="mt-3 flex flex-col gap-3">
         {pasos.map((paso, i) => (
@@ -169,7 +170,7 @@ function Respaldo() {
   return (
     <div className="border-t border-linea p-6 sm:p-7">
       <p className="text-eyebrow font-semibold uppercase tracking-[0.08em] text-navy-soft">
-        Who you’d be working with
+        {t('Who you’d be working with')}
       </p>
       <ul className="mt-3 flex flex-col gap-2.5">
         {RESPALDO.map((linea) => (
@@ -200,10 +201,10 @@ function AtajoWhatsApp() {
       <IconoWhatsApp className="size-4 shrink-0 text-aqua-dark" aria-hidden="true" />
       <span className="min-w-0 flex-1">
         <span className="block text-eyebrow font-semibold uppercase tracking-[0.08em] text-navy-soft">
-          Rather talk it through?
+          {t('Rather talk it through?')}
         </span>
         <span className="mt-0.5 block text-sm font-medium leading-snug text-navy">
-          Message us on WhatsApp
+          {t('Message us on WhatsApp')}
         </span>
       </span>
       <ChevronRight
@@ -224,17 +225,16 @@ function Confirmacion({ perfil, onReset }: { perfil: PerfilTrabajo; onReset: () 
       <div aria-hidden="true" className="grid size-12 place-items-center rounded-full bg-menta text-menta-texto">
         <Check className="size-6" strokeWidth={2.5} />
       </div>
-      <p className="mt-4 font-display text-h3 font-semibold text-navy">Application sent</p>
+      <p className="mt-4 font-display text-h3 font-semibold text-navy">{t('Application sent')}</p>
       <p className="mt-2 max-w-prose text-sm leading-relaxed text-navy-sub">
-        We received it as {perfil.titulo.toLowerCase()}. We’ll write to you within 24 h, and if you want
-        to get ahead in the meantime, our WhatsApp is right here.
+        {t('We received it as')}{' '}{perfil.titulo.toLowerCase()}{t('. We’ll write to you within 24 h, and if you want to get ahead in the meantime, our WhatsApp is right here.')}
       </p>
       <button
         type="button"
         onClick={onReset}
         className="mt-5 text-sm font-semibold text-aqua-dark hover:underline"
       >
-        Enviar otra solicitud
+        {t('Send another application')}
       </button>
     </div>
   )
@@ -312,7 +312,7 @@ export function FormularioTrabaja() {
           <div className="order-1 border-b border-linea bg-papel-hueso lg:col-start-1 lg:row-start-1 lg:w-trabaja-rail lg:border-b-0 lg:border-r">
             <fieldset>
               <legend className="px-6 pb-1 pt-6 text-sm font-semibold text-navy sm:px-7">
-                How would you like to work with us?
+                {t('How would you like to work with us?')}
               </legend>
               <div className="mt-2 border-t border-linea">
                 {PERFILES_TRABAJO.map((p, i) => (
@@ -353,20 +353,20 @@ export function FormularioTrabaja() {
                     formulario de la derecha se adaptó a lo que marcaste en el
                     carril de la izquierda. */}
                 <h2 className="font-display text-h3 font-semibold text-navy">
-                  Applying as {perfil.titulo.toLowerCase()}
+                  {t('Applying as')}{' '}{perfil.titulo.toLowerCase()}
                 </h2>
                 <p className="mt-2 text-sm text-navy-sub">
-                  Just enough for us to get back to you. No accounts, no passwords.
+                  {t('Just enough for us to get back to you. No accounts, no passwords.')}
                 </p>
 
                 <div className="mt-7 flex flex-col gap-5">
                   <p className="text-eyebrow font-semibold uppercase tracking-[0.08em] text-navy-soft">
-                    Tus datos
+                    {t('Your details')}
                   </p>
-                  <Campo etiqueta="Full name" name="name" required />
+                  <Campo etiqueta={t('Full name')} name="name" required />
                   <div className="grid gap-4 sm:grid-cols-2">
-                    <Campo etiqueta="Email" name="email" type="email" required />
-                    <Campo etiqueta="Phone / WhatsApp" name="phone" type="tel" required />
+                    <Campo etiqueta={t('Email')} name="email" type="email" required />
+                    <Campo etiqueta={t('Phone / WhatsApp')} name="phone" type="tel" required />
                   </div>
                 </div>
 
@@ -398,11 +398,11 @@ export function FormularioTrabaja() {
                   ))}
 
                   <Campo
-                    etiqueta="Tell us a bit more (optional)"
+                    etiqueta={t('Tell us a bit more (optional)')}
                     name="message"
                     textarea
                     rows={4}
-                    placeholder="Anything you think we should know before we reply."
+                    placeholder={t('Anything you think we should know before we reply.')}
                   />
                 </div>
 
@@ -411,15 +411,15 @@ export function FormularioTrabaja() {
                   className="mt-7 w-full disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
                   disabled={enviando}
                 >
-                  {enviando ? 'Sending…' : 'Send application'}
+                  {enviando ? 'Sending…' : t('Send application')}
                 </Boton>
                 {estado === 'error' ? (
                   <p role="alert" className="mt-3 rounded-btn border border-coral/40 bg-coral/5 p-3 text-xs leading-relaxed text-navy-sub">
-                    {ERROR_ENVIO}
+                    {errorEnvio()}
                   </p>
                 ) : (
                   <p className="mt-3 text-xs text-navy-soft">
-                    We reply within 24 h. We won’t add you to any mailing list.
+                    {t('We reply within 24 h. We won’t add you to any mailing list.')}
                   </p>
                 )}
               </>

@@ -6,6 +6,7 @@ import { Meta } from '@/components/seo/meta'
 import { buscarCotizacion, type CotizacionEvento } from '@/lib/cotizacion-evento'
 import { fechaLarga, sumarDias } from '@/lib/fechas'
 import { EVENTOS } from '@/data/eventos'
+import { t, tp } from '@/lib/i18n'
 
 // «¡Recibimos tu solicitud!» — pantalla post-envío del formulario de las
 // landings de eventos (PLAN-EVENTOS.md E5). Se muestra DESPUÉS de que
@@ -76,7 +77,7 @@ export function GraciasEventoPage() {
           la marca. */}
       <header className="border-b border-linea">
         <div className="mx-auto flex max-w-3xl items-center justify-center px-5 py-3 sm:px-8">
-          <Link to="/" aria-label="Inicio de Hispaniola Aquatic Adventures">
+          <Link to="/" aria-label={t('Inicio de Hispaniola Aquatic Adventures')}>
             <Logo compacto />
           </Link>
         </div>
@@ -89,64 +90,63 @@ export function GraciasEventoPage() {
             <Check className="size-8" strokeWidth={2.5} aria-hidden="true" />
           </div>
           <h1 className="mt-6 font-display text-3xl font-semibold text-navy sm:text-4xl">
-            We got your request, {nombreCorto}!
+            {t('We got your request,')}{' '}{nombreCorto}!
           </h1>
           <p className="mt-3 text-base text-navy-sub sm:text-lg">
-            {evento.cierreMeta}. We’ll reach out on WhatsApp or by email with the quote.
+            {evento.cierreMeta}{t('. We’ll reach out on WhatsApp or by email with the quote.')}
           </p>
         </div>
 
         {/* 2. CÓDIGO — destacado */}
         <div className="mt-8 flex flex-col items-center gap-2 rounded-card-grande border-2 border-linea-fuerte bg-papel-hueso px-6 py-5 text-center">
           <p className="text-xs font-semibold uppercase tracking-wide text-navy-soft">
-            Your request code
+            {t('Your request code')}
           </p>
           <p className="font-mono text-xl font-semibold tracking-wider text-navy sm:text-2xl">
             {codigo}
           </p>
           <p className="text-xs text-navy-soft">
-            You’ll need it if you write to us on WhatsApp or by email.
+            {t('You’ll need it if you write to us on WhatsApp or by email.')}
           </p>
         </div>
 
         {/* 3. RESUMEN del formulario enviado */}
         <section className="mt-8 rounded-card-grande border border-linea bg-papel p-5 sm:p-6">
           <p className="text-xs font-semibold uppercase tracking-wide text-navy-soft">
-            Your request
+            {t('Your request')}
           </p>
           <p className="mt-1 font-display text-lg font-semibold text-navy">
             {evento.nombre}
           </p>
           <dl className="mt-4 space-y-2 text-sm">
-            <FilaResumen label="Name" valor={cotizacion.contacto.nombre} />
-            <FilaResumen label="Email" valor={cotizacion.contacto.email} />
-            <FilaResumen label="WhatsApp" valor={cotizacion.contacto.whatsapp} />
-            <FilaResumen label="Event type" valor={cotizacion.tipoEvento} />
+            <FilaResumen label={t('Name')} valor={cotizacion.contacto.nombre} />
+            <FilaResumen label={t('Email')} valor={cotizacion.contacto.email} />
+            <FilaResumen label={t('WhatsApp')} valor={cotizacion.contacto.whatsapp} />
+            <FilaResumen label={t('Event type')} valor={cotizacion.tipoEvento} />
             <FilaResumen
-              label="Tentative date"
-              valor={cotizacion.fecha ? fechaLarga(cotizacion.fecha) : 'To be arranged'}
+              label={t('Tentative date')}
+              valor={cotizacion.fecha ? fechaLarga(cotizacion.fecha) : t('To be arranged')}
             />
             <FilaResumen
-              label="Number of guests"
-              valor={`${cotizacion.personas} ${cotizacion.personas === 1 ? 'guest' : 'guests'}`}
+              label={t('Number of guests')}
+              valor={tp(cotizacion.personas === 1 ? '{n} guest' : '{n} guests', { n: cotizacion.personas })}
             />
             {cotizacion.mensaje ? (
-              <FilaResumen label="Message" valor={cotizacion.mensaje} />
+              <FilaResumen label={t('Message')} valor={cotizacion.mensaje} />
             ) : null}
           </dl>
         </section>
 
         {/* 4. TIMELINE «Qué sigue» */}
         <section className="mt-10">
-          <p className="font-display text-lg font-semibold text-navy">What happens next</p>
+          <p className="font-display text-lg font-semibold text-navy">{t('What happens next')}</p>
           <ol className="mt-4 space-y-4">
             <PasoTimeline
               numero={1}
-              cuando="Today"
+              cuando={t('Today')}
               descripcion={
                 <>
-                  We confirm by email that your request arrived. The detailed quote
-                  reaches you within 24 h.
+                  {t('We confirm by email that your request arrived. The detailed quote reaches you within 24 h.')}
                 </>
               }
             />
@@ -155,12 +155,11 @@ export function GraciasEventoPage() {
               cuando={
                 fechaRecordatorioISO
                   ? `${fechaLarga(fechaRecordatorioISO)} (the day before the event)`
-                  : 'Once you confirm the date'
+                  : t('Once you confirm the date')
               }
               descripcion={
                 <>
-                  We reach out on WhatsApp to settle the last details: exact boarding
-                  time, menu, pickup and logistics.
+                  {t('We reach out on WhatsApp to settle the last details: exact boarding time, menu, pickup and logistics.')}
                 </>
               }
             />
@@ -172,9 +171,9 @@ export function GraciasEventoPage() {
           <div className="flex items-start gap-3">
             <MessageCircle className="size-6 shrink-0 text-menta-texto" aria-hidden="true" />
             <div className="flex-1">
-              <p className="font-display text-lg font-semibold text-navy">Want to get ahead?</p>
+              <p className="font-display text-lg font-semibold text-navy">{t('Want to get ahead?')}</p>
               <p className="mt-1 text-sm text-navy-sub">
-                Message us on WhatsApp with your request code and we’ll reply right away.
+                {t('Message us on WhatsApp with your request code and we’ll reply right away.')}
               </p>
               <a
                 href={`https://wa.me/18293052804?text=${encodeURIComponent(`Hi! I’m ${cotizacion.contacto.nombre}, I sent a ${evento.nombre.toLowerCase()} request with code ${codigo}.`)}`}
@@ -183,7 +182,7 @@ export function GraciasEventoPage() {
                 className="mt-4 inline-flex items-center gap-2 rounded-btn bg-menta-texto px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-menta-texto/90"
               >
                 <MessageCircle className="size-4" aria-hidden="true" />
-                Open WhatsApp with your code
+                {t('Open WhatsApp with your code')}
               </a>
             </div>
           </div>
@@ -196,7 +195,7 @@ export function GraciasEventoPage() {
             los de antes («corporativo», «incentivo», «convención»,
             «lanzamiento») el filtro no casaba con nada y a un lanzamiento de
             producto se le ofrecía tarta. */}
-        {cotizacion.tipoEvento !== 'Other' &&
+        {cotizacion.tipoEvento !== t('Other') &&
         !cotizacion.tipoEvento.toLowerCase().includes('corporate') &&
         !cotizacion.tipoEvento.toLowerCase().includes('incentive') &&
         !cotizacion.tipoEvento.toLowerCase().includes('team building') &&
@@ -206,10 +205,9 @@ export function GraciasEventoPage() {
             <div className="flex items-start gap-3">
               <Sparkles className="size-5 shrink-0 text-coral" aria-hidden="true" />
               <div>
-                <p className="font-display text-base font-semibold text-navy">Celebrating something?</p>
+                <p className="font-display text-base font-semibold text-navy">{t('Celebrating something?')}</p>
                 <p className="mt-1 text-sm text-navy-sub">
-                  If it is a special occasion, tell us on WhatsApp: decorations, cake,
-                  surprises on board. We’ll take care of it.
+                  {t('If it is a special occasion, tell us on WhatsApp: decorations, cake, surprises on board. We’ll take care of it.')}
                 </p>
               </div>
             </div>
@@ -222,13 +220,13 @@ export function GraciasEventoPage() {
             to={`/events/${slug}`}
             className="font-semibold text-aqua-dark hover:underline"
           >
-            ← Send another {evento.nombre.toLowerCase()} inquiry
+            {t('← Send another')}{' '}{evento.nombre.toLowerCase()} {t('inquiry')}
           </Link>
         </p>
       </main>
 
       <footer className="mt-12 border-t border-linea py-6 text-center text-xs text-navy-soft">
-        Hispaniola Aquatic Adventures · Questions? WhatsApp +1-829-305-2804
+        {t('Hispaniola Aquatic Adventures · Questions? WhatsApp +1-829-305-2804')}
       </footer>
     </div>
   )

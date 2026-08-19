@@ -5,6 +5,7 @@ import { Campo } from '@/components/ui/campo'
 import { confirmarPago, pagarSaldo } from '@/lib/api/api'
 import { cargarStripe, estiloCampoTarjeta, mensajeDeError, type CampoTarjeta } from '@/lib/pagos/stripe'
 import { formatoDinero } from '@/data/home'
+import { t } from '@/lib/i18n'
 
 // [2026-08-18] COBRO DEL SALDO DESDE «MI RESERVA».
 //
@@ -60,7 +61,7 @@ export function PagoSaldo({
     pagarSaldo(codigo, token)
       .then(async (intento) => {
         if (!vivo) return
-        if (!intento.client_secret) throw new Error('Stripe did not return a payment secret.')
+        if (!intento.client_secret) throw new Error(t('Stripe did not return a payment secret.'))
         secreto.current = intento.client_secret
         claveStripe.current = intento.publishable_key || ''
         const stripe = await cargarStripe(claveStripe.current)
@@ -81,7 +82,7 @@ export function PagoSaldo({
         setError(
           e instanceof Error && e.message
             ? e.message
-            : 'We could not open the card form. Try again in a moment.',
+            : t('We could not open the card form. Try again in a moment.'),
         )
       })
       .finally(() => {
@@ -114,7 +115,7 @@ export function PagoSaldo({
       }
       onPagado()
     } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : 'The payment could not be completed.')
+      setError(e instanceof Error ? e.message : t('The payment could not be completed.'))
       setProcesando(false)
     }
   }
@@ -127,10 +128,10 @@ export function PagoSaldo({
           onClick={() => setAbierto(true)}
           className="w-full rounded-btn bg-coral px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-coral-dark"
         >
-          Pay the balance online · {formatoDinero(saldo)}
+          {t('Pay the balance online ·')}{' '}{formatoDinero(saldo)}
         </button>
         <p className="mt-2 text-center text-xs text-navy-soft">
-          Or pay in cash on board — you save 5% and there&rsquo;s nothing to do here.
+          {t('Or pay in cash on board — you save 5% and there’s nothing to do here.')}
         </p>
       </div>
     )
@@ -139,7 +140,7 @@ export function PagoSaldo({
   return (
     <div className="mt-4 rounded-card border border-linea bg-papel-hueso p-4">
       <div className="flex items-center justify-between gap-3">
-        <p className="text-sm font-semibold text-navy">Pay {formatoDinero(saldo)} by card</p>
+        <p className="text-sm font-semibold text-navy">{t('Pay')}{' '}{formatoDinero(saldo)} {t('by card')}</p>
         <span className="flex items-center gap-1.5">
           <RiVisaFill className="size-6 text-navy-soft" aria-hidden="true" />
           <RiMastercardFill className="size-6 text-navy-soft" aria-hidden="true" />
@@ -147,29 +148,29 @@ export function PagoSaldo({
       </div>
 
       <fieldset className="mt-3 flex flex-col gap-3" disabled={procesando}>
-        <legend className="sr-only">Card details</legend>
+        <legend className="sr-only">{t('Card details')}</legend>
         <Campo
-          etiqueta="Name on card"
+          etiqueta={t('Name on card')}
           autoComplete="cc-name"
-          placeholder="As printed on the card"
+          placeholder={t('As printed on the card')}
           value={titular}
           onChange={(e) => setTitular(e.target.value)}
         />
         <div>
-          <span className="text-sm font-medium text-navy">Card details</span>
+          <span className="text-sm font-medium text-navy">{t('Card details')}</span>
           {/* El iframe de Stripe se monta aquí: el recuadro es nuestro, lo de
               dentro es suyo. */}
           <div
             ref={contenedor}
             className="mt-1.5 w-full rounded-btn bg-papel px-4 py-3 ring-1 ring-linea focus-within:ring-2 focus-within:ring-aqua"
           />
-          {preparando ? <p className="mt-1.5 text-xs text-navy-soft">Preparing the payment…</p> : null}
+          {preparando ? <p className="mt-1.5 text-xs text-navy-soft">{t('Preparing the payment…')}</p> : null}
         </div>
       </fieldset>
 
       {error ? (
         <p role="alert" className="mt-3 rounded-lg border border-coral/40 bg-coral/5 px-3 py-2 text-xs leading-relaxed text-navy-sub">
-          {error} <strong className="text-navy">Nothing was charged</strong> — your booking is untouched.
+          {error} <strong className="text-navy">{t('Nothing was charged')}</strong> {t('— your booking is untouched.')}
         </p>
       ) : null}
 
@@ -188,13 +189,13 @@ export function PagoSaldo({
           disabled={procesando}
           className="rounded-btn border border-linea bg-papel px-4 py-2.5 text-sm font-medium text-navy transition-colors hover:bg-papel-hueso disabled:opacity-50"
         >
-          Cancel
+          {t('Cancel')}
         </button>
       </div>
 
       <p className="mt-3 flex items-center justify-center gap-1.5 text-xs text-navy-soft">
         <Lock className="size-3.5" aria-hidden="true" />
-        Your card details never touch our servers.
+        {t('Your card details never touch our servers.')}
       </p>
     </div>
   )

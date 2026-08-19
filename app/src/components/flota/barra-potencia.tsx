@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Gauge } from 'lucide-react'
+import { t } from '@/lib/i18n'
 
 // LA POTENCIA, NAVEGADA (pedido de Samuel, 2026-07-28: «a lo de potencia dale
 // un estilo divertido y creativo, como que es una barra de progreso gruesa o
@@ -193,12 +194,12 @@ export function BarraPotencia({
         <p className="flex items-baseline gap-2">
           <span className="flex items-center gap-1.5 text-xs text-navy-soft">
             <Gauge className="size-3.5" aria-hidden="true" />
-            Power
+            {t('Power')}
           </span>
-          <span className="font-display text-lead font-semibold text-navy">{hp} hp</span>
-          <span className="text-xs text-navy-soft">total</span>
+          <span className="font-display text-lead font-semibold text-navy">{hp} {t('hp')}</span>
+          <span className="text-xs text-navy-soft">{t('total')}</span>
         </p>
-        <p className="text-xs text-navy-soft">Fleet maximum: {maximo} hp</p>
+        <p className="text-xs text-navy-soft">{t('Fleet maximum:')}{' '}{maximo} {t('hp')}</p>
       </div>
     </div>
   )

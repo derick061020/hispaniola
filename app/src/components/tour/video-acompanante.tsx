@@ -3,6 +3,7 @@ import { X, Maximize2 } from 'lucide-react'
 import { VideoLightbox } from '@/components/tour/video-lightbox'
 import { useDevFlag } from '@/dev/use-dev-flag'
 import { useOrigenExpansion } from '@/lib/use-expansion-flip'
+import { t } from '@/lib/i18n'
 
 // Video que acompaña el scroll de la ficha (correcciones v2, plan 01 §11 —
 // slide 10: «esto que vaya bajando según el cliente hace scroll»).
@@ -120,7 +121,7 @@ export function VideoAcompanante({
           <button
             type="button"
             onClick={() => setCerrado(true)}
-            aria-label="Cerrar el video"
+            aria-label={t('Close the video')}
             className="absolute right-1.5 top-1.5 grid size-6 place-items-center rounded-full bg-navy/70 text-white transition hover:bg-navy"
           >
             <X className="size-3.5" aria-hidden="true" />

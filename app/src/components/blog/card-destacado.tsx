@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { ArrowRight } from 'lucide-react'
 import { EQUIPO } from '@/data/nosotros'
 import type { Articulo, CategoriaBlog } from '@/data/blog'
+import { t } from '@/lib/i18n'
 
 // CardDestacado y sus piezas — en su propio archivo (y no en lista-articulos.tsx,
 // donde vivían antes) para que carrusel-destacados.tsx pueda importar
@@ -51,7 +52,7 @@ export function MetaArticulo({ articulo }: { articulo: Articulo }) {
       <span aria-hidden="true">·</span>
       <span>{articulo.fecha}</span>
       <span aria-hidden="true">·</span>
-      <span>{articulo.minutos} min</span>
+      <span>{articulo.minutos} {t('min')}</span>
     </p>
   )
 }
@@ -145,7 +146,7 @@ export function CardDestacado({ articulo }: { articulo: Articulo }) {
       <div className="flex flex-col justify-center pr-14">
         <div className="flex flex-wrap items-center gap-2">
           <span className="rounded-chip bg-navy px-3 py-1 text-xs font-semibold text-white">
-            Featured
+            {t('Featured')}
           </span>
           <ChipCategoria categoria={articulo.categoria} />
         </div>
@@ -160,7 +161,7 @@ export function CardDestacado({ articulo }: { articulo: Articulo }) {
             plantilla (pages/articulo.tsx) resuelve `cuerpo: null` con su
             propia nota honesta, así que ya no hace falta distinguir aquí. */}
         <span className="mt-5 inline-flex items-center gap-1.5 self-start rounded-btn bg-coral px-5 py-3 text-sm font-semibold text-white transition-colors group-hover:bg-coral-dark">
-          Read the article
+          {t('Read the article')}
           <ArrowRight className="size-4" aria-hidden="true" />
         </span>
       </div>

@@ -5,6 +5,7 @@ import type { Tour } from '@/data/home'
 import { formatoDinero } from '@/data/home'
 import { CarruselImagenes } from '@/components/ui/carrusel-imagenes'
 import { useTextoRecortado } from '@/lib/use-texto-recortado'
+import { t } from '@/lib/i18n'
 
 // Card de tour — el escaparate de "Nuestros tours". El CTA "View tour" navega a
 // la ficha REAL (/tours/:slug, PLAN-TOURS.md): era un EnlacePrototipo mientras
@@ -80,7 +81,7 @@ export function TourCard({
           <h3 className="font-display text-h3 font-semibold text-navy">{tour.nombre}</h3>
           {tour.precioLight !== null && (
             <p className="shrink-0 text-right leading-none">
-              <span className="mb-0.5 block text-xs text-navy-soft">from</span>
+              <span className="mb-0.5 block text-xs text-navy-soft">{t('from')}</span>
               <span className="font-display text-precio font-semibold text-navy">{formatoDinero(tour.precioLight)}</span>
             </p>
           )}
@@ -121,7 +122,7 @@ export function TourCard({
               }`}
             >
               {desplegada ? (
-                'See less'
+                t('See less')
               ) : (
                 <>
                   {/* Los puntos van en el color del PÁRRAFO y ocultos al lector
@@ -131,7 +132,7 @@ export function TourCard({
                   <span aria-hidden="true" className="text-navy-sub">
                     …
                   </span>{' '}
-                  See more
+                  {t('See more')}
                 </>
               )}
             </button>
@@ -150,7 +151,7 @@ export function TourCard({
           {tour.maxPax && (
             <span className="flex items-center gap-1.5">
               <Users className="size-4" aria-hidden="true" />
-              max. {tour.maxPax}
+              {t('max.')}{' '}{tour.maxPax}
             </span>
           )}
         </div>
@@ -187,7 +188,7 @@ export function TourCard({
             to={`/tours/${tour.slug}`}
             className="relative z-20 flex w-full items-center justify-center gap-2 rounded-chip bg-coral px-4 py-3 text-sm font-semibold text-white shadow-boton-fancy transition duration-200 ease-out before:pointer-events-none before:absolute before:inset-0 before:z-10 before:rounded-[inherit] before:bg-linear-to-b before:from-white/12 before:to-transparent before:p-px before:[mask-clip:content-box,border-box] before:[mask-composite:exclude] before:[mask-image:linear-gradient(#fff_0_0),linear-gradient(#fff_0_0)] after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:bg-linear-to-b after:from-white after:to-transparent after:opacity-[.16] after:transition after:duration-200 after:ease-out hover:after:opacity-[.24]"
           >
-            View tour
+            {t('View tour')}
             <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
           </Link>
         </div>

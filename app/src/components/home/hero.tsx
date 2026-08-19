@@ -7,6 +7,7 @@ import { Header } from './header'
 import { TickerHero } from './ticker-hero'
 import { useDevFlag } from '@/dev/use-dev-flag'
 import { STATS } from '@/data/home'
+import { t } from '@/lib/i18n'
 
 // Hero v3 — «inmersivo» (app/PLAN-v3.md). Cambios frente a v2: el Header pasa
 // a vivir DENTRO del box del hero (antes era una barra hermana sticky), y la
@@ -177,17 +178,17 @@ export function Hero() {
                     conservar las 2 líneas de desktop — ver el comentario del
                     contenedor, justo arriba. */}
                 <h1 className="text-balance font-display text-hero-movil font-semibold text-white sm:text-hero">
-                  Redefining the{' '}
+                  {t('Redefining the')}{' '}
                   <span className="titulo-subrayado">
                     <span className="titulo-palabra" style={{ '--i': 0 } as CSSProperties}>
-                      Caribbean
+                      {t('Caribbean')}
                     </span>{' '}
                     <span className="titulo-palabra" style={{ '--i': 1 } as CSSProperties}>
-                      Catamaran
+                      {t('Catamaran')}
                     </span>
                     <span className="titulo-ola" aria-hidden="true" />
                   </span>{' '}
-                  Experience. More than just a tour!
+                  {t('Experience. More than just a tour!')}
                 </h1>
                 {/* [v3] Esta lead NO viene en el documento del cliente (el
                     párrafo largo que él aprueba para la pág. 1 es el de la
@@ -198,8 +199,7 @@ export function Hero() {
                     piezas de la misma home se contradigan es peor que el dato
                     pendiente de confirmar (índice de planes, petición 8). */}
                 <p className="mx-auto mt-4 max-w-xl text-lead text-white/90">
-                  Snorkeling over a real coral nursery, a floating kitchen with the menu of your choice, and
-                  boats at half capacity. Since 2010.
+                  {t('Snorkeling over a real coral nursery, a floating kitchen with the menu of your choice, and boats at half capacity. Since 2010.')}
                 </p>
 
                 <div className="mt-6 flex flex-wrap items-start justify-center gap-x-10 gap-y-4">
@@ -266,15 +266,15 @@ export function Hero() {
                     {/* relative: ventana y olas están posicionadas y pintarían
                         encima del texto si éste no lo estuviera también. */}
                     <span className="relative inline-flex items-center gap-2">
-                      See availability
+                      {t('See availability')}
                       <ArrowRight className="size-5" aria-hidden="true" />
                     </span>
                   </Boton>
 
                   <div className="flex flex-col items-center gap-1.5 text-xs text-white/70 sm:flex-row sm:gap-3">
-                    <span>Free cancellation up to 7 days before</span>
+                    <span>{t('Free cancellation up to 7 days before')}</span>
                     <span className="hidden h-3 w-px bg-white/20 sm:block" aria-hidden="true" />
-                    <span>Confirm with just a 25% deposit</span>
+                    <span>{t('Confirm with just a 25% deposit')}</span>
                   </div>
 
                   {/* v3-F16/F17 (pedido de Samuel, 2026-07-14): las 3 insignias
@@ -294,9 +294,9 @@ export function Hero() {
                       real (4.9, con relleno fraccionario en la 5ª estrella)
                       es la de reseñas. */}
                   <div className="mt-2 flex flex-wrap items-start justify-center gap-x-8 gap-y-4">
-                    <InsigniaConfianza calificacion={4.9} titulo="4.9" subtitulo="1,782 reviews" />
-                    <InsigniaConfianza calificacion={5} titulo="#1 on TripAdvisor" subtitulo="7 years running" />
-                    <InsigniaConfianza calificacion={5} titulo="Viator Awards" subtitulo="2022 · 2023 · 2024" />
+                    <InsigniaConfianza calificacion={4.9} titulo="4.9" subtitulo={t('1,782 reviews')} />
+                    <InsigniaConfianza calificacion={5} titulo={t('#1 on TripAdvisor')} subtitulo={t('7 years running')} />
+                    <InsigniaConfianza calificacion={5} titulo={t('Viator Awards')} subtitulo="2022 · 2023 · 2024" />
                   </div>
                 </div>
               </div>
@@ -339,7 +339,7 @@ export function Hero() {
           gesto de swipe-to-home. */}
       <div className="fixed inset-x-0 bottom-0 z-30 border-t border-linea bg-papel px-3 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-card md:hidden">
         <Boton href="#tours" className="w-full">
-          See availability
+          {t('See availability')}
         </Boton>
       </div>
     </>

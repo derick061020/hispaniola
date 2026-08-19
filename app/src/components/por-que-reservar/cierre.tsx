@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { Boton } from '@/components/ui/boton'
 import { Etiqueta } from '@/components/ui/etiqueta'
 import { CIERRE } from '@/data/por-que-reservar'
+import { t } from '@/lib/i18n'
 
 // Cierre — slide 56, segunda mitad. «Nos vemos en la playa».
 //
@@ -45,7 +46,7 @@ export function Cierre() {
         <p className="text-lead text-white/85">{CIERRE.texto}</p>
 
         <Boton to="/#tours" tamaño="lg" className="mt-2">
-          Book my tour
+          {t('Book my tour')}
         </Boton>
 
         <p className="text-xs text-white/70">{CIERRE.letraPequena}</p>
@@ -57,9 +58,9 @@ export function Cierre() {
             página — duplicar copy entre dos páginas es malo para SEO y peor
             de mantener. */}
         <p className="text-xs text-white/60">
-          Interested in what we do for the reef?{' '}
+          {t('Interested in what we do for the reef?')}{' '}
           <Link to="/competitive-advantage" className="font-semibold text-aqua-claro hover:text-white">
-            Our sustainability →
+            {t('Our sustainability →')}
           </Link>
         </p>
       </div>

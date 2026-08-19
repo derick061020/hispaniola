@@ -1,3 +1,5 @@
+import { traducible } from '@/lib/i18n'
+
 // Página GUÍAS (/guias) — fuente única: TIPS_GUIAS, contenido REAL portado de
 // tips-for-punta-cana-snorkeling-and-sailing.php?lang=es de la web actual
 // (HTML descargado y leído línea a línea 2026-07-17). Son las 4 preguntas
@@ -49,7 +51,7 @@ export type TipGuia = {
   ctaEnlace?: CtaGuia
 }
 
-export const TIPS_GUIAS: TipGuia[] = [
+export const TIPS_GUIAS: TipGuia[] = traducible([
   {
     categoria: 'Snorkeling',
     pregunta: 'Is Punta Cana a good area for snorkeling?',
@@ -99,20 +101,20 @@ export const TIPS_GUIAS: TipGuia[] = [
     stat: { valor: 'Freshly caught', texto: 'local, not frozen or imported · cooked in front of you' },
     ctaPrimario: { texto: 'Meet the floating kitchen', to: '/nosotros' },
   },
-]
+])
 
 // Bloque de cierre — "Más guías en camino" (maqueta del cliente, correcciones
 // v1). El numeral "05" fantasma insinúa que la serie sigue.
-export const GUIAS_CIERRE = {
+export const GUIAS_CIERRE = traducible({
   titulo: 'More guides on the way',
   texto:
     'We keep answering what really matters before you book: the best time to travel, what to bring, going with kids and more.',
   cta: { texto: 'See availability', to: '/#tours' },
-}
+})
 
-export const GUIAS_HERO = {
+export const GUIAS_HERO = traducible({
   eyebrow: 'Guides',
   titulo: 'Punta Cana guides',
   sub: 'What we know after more than a decade sailing this coast, so you can decide with real information, not marketing.',
   galeria: ['galeria-snorkel-lovers-4', 'galeria-semi-privado-2'],
-}
+})

@@ -2,6 +2,7 @@ import { Check, X } from 'lucide-react'
 import { Boton } from '@/components/ui/boton'
 import { Etiqueta } from '@/components/ui/etiqueta'
 import { CARA_A_CARA } from '@/data/por-que-reservar'
+import { t } from '@/lib/i18n'
 
 // «Cara a cara» — slide 54, el duelo.
 //
@@ -32,12 +33,12 @@ export function Duelo() {
   return (
     <section>
       <div className="max-w-2xl">
-        <Etiqueta>Head to head</Etiqueta>
+        <Etiqueta>{t('Head to head')}</Etiqueta>
         <h2 className="mt-2 font-display text-h2 font-semibold text-navy">
-          The same thing, they say. Look at it side by side.
+          {t('The same thing, they say. Look at it side by side.')}
         </h2>
         <p className="mt-4 text-lead text-navy-sub">
-          What you don’t see in the price, but you feel all day.
+          {t('What you don’t see in the price, but you feel all day.')}
         </p>
       </div>
 
@@ -50,8 +51,8 @@ export function Duelo() {
         className="mt-10 grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-[10rem_minmax(0,1fr)_minmax(0,1fr)] lg:gap-8"
       >
         <p className="hidden lg:block" />
-        <p className="font-display text-lg font-semibold text-navy">With us</p>
-        <p className="font-display text-lg font-medium text-navy-soft">Other tours</p>
+        <p className="font-display text-lg font-semibold text-navy">{t('With us')}</p>
+        <p className="font-display text-lg font-medium text-navy-soft">{t('Other tours')}</p>
       </div>
 
       <ul className="mt-4 flex flex-col">
@@ -84,7 +85,7 @@ export function Duelo() {
                   aria-hidden="true"
                 />
                 <span className="font-display text-lg font-semibold leading-snug text-navy">
-                  <span className="sr-only">With us: </span>
+                  <span className="sr-only">{t('With us:')}{' '}</span>
                   {f.nosotros}
                 </span>
               </p>
@@ -102,7 +103,7 @@ export function Duelo() {
               <p className="flex items-start gap-2">
                 <X className="mt-1 size-4 shrink-0 text-linea-fuerte" aria-hidden="true" />
                 <span className="text-lg leading-snug text-navy-soft">
-                  <span className="sr-only">Other tours: </span>
+                  <span className="sr-only">{t('Other tours:')}{' '}</span>
                   {f.otros}
                 </span>
               </p>
@@ -113,10 +114,10 @@ export function Duelo() {
 
       <div className="mt-10 flex flex-col gap-4 border-t border-linea pt-8 sm:flex-row sm:items-center sm:justify-between">
         <p className="max-w-lg text-lead text-navy-sub">
-          None of these six things is an extra. They all come inside the same price.
+          {t('None of these six things is an extra. They all come inside the same price.')}
         </p>
         <Boton to="/#tours" className="shrink-0">
-          See availability
+          {t('See availability')}
         </Boton>
       </div>
     </section>

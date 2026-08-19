@@ -1,5 +1,6 @@
 import { Sparkles } from 'lucide-react'
 import type { FichaTour } from '@/data/tours'
+import { t } from '@/lib/i18n'
 
 // Banda «estás en la versión Premium» (correcciones v2, plan 01 §9 — slide 6).
 //
@@ -37,14 +38,14 @@ export function BandaPremium({ ficha }: { ficha: FichaTour }) {
     <div className="flex flex-wrap items-center gap-x-3 gap-y-2 rounded-card bg-gradient-to-br from-premium-oro-oscuro via-premium-oro-claro to-premium-oro px-4 py-3 ring-1 ring-premium-oro-oscuro/40">
       <p className="flex items-center gap-2 text-sm font-semibold text-premium-fondo">
         <Sparkles className="size-4 shrink-0" aria-hidden="true" />
-        You are viewing the Premium version
+        {t('You are viewing the Premium version')}
       </p>
       <p className="text-sm text-premium-fondo/75">
         {/* [v3 2026-08-06] Solo se minusculiza la PRIMERA letra, no la frase
             entera: las ventajas pasaron a ingles en F3.1 y un `toLowerCase()`
             completo dejaba «certified angus beef» y «surf & turf» — nombres
             propios de producto rotos a media frase. */}
-        Includes {ventajas[0].charAt(0).toLowerCase() + ventajas[0].slice(1)}.
+        {t('Includes')}{' '}{ventajas[0].charAt(0).toLowerCase() + ventajas[0].slice(1)}.
       </p>
     </div>
   )

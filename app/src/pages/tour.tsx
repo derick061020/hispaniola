@@ -32,6 +32,7 @@ import { FICHAS } from '@/data/tours'
 import { Meta } from '@/components/seo/meta'
 import { SchemaJsonLd } from '@/components/seo/schema-json-ld'
 import { schemaTour, schemaFaq } from '@/lib/seo/schema'
+import { t } from '@/lib/i18n'
 
 // Ficha de tour — UNA plantilla para los 4 productos (PLAN-TOURS.md).
 // Es la página de conversión del sitio: aquí el visitante tiene el precio
@@ -48,7 +49,7 @@ import { schemaTour, schemaFaq } from '@/lib/seo/schema'
 // pero no navega (EnlacePrototipo).
 export function TourPage() {
   const { slug } = useParams()
-  const tourEstatico = TOURS.find((t) => t.slug === slug)
+  const tourEstatico = TOURS.find((candidato) => candidato.slug === slug)
   const fichaEstatica = slug ? FICHAS[slug] : undefined
 
   // [2026-08-18] Los números de la ficha —tabla de tarifas, horarios, aforo,
@@ -120,13 +121,19 @@ export function TourPage() {
   // Catamaran Tour in Punta Cana»). La derivación de abajo se queda como
   // fallback de las fichas que todavía no lo traen — y deja de ser el
   // mecanismo principal, que era adivinar un titular a partir de `audiencia`.
+  // [2026-08-19] La rama que MIRABA EL TEXTO se cae. Comparaba
+  // `ficha.audiencia === 'Adults only'` y en los datos ponía «Solo adultos»
+  // (castellano que sobrevivió a la traducción de la v3), así que no acertaba
+  // nunca; con el i18n encima habría sido peor, porque en español ese campo
+  // vale «Solo adultos» otra vez y el titular dependería del idioma que esté
+  // leyendo el visitante. Misma lección que la carta del charter (CLAUDE.md):
+  // la lógica de producto no lee el texto visible. Las cuatro fichas traen
+  // `promesa` —el titular que aprobó el cliente—, así que lo único que hace
+  // falta debajo es una red por si mañana llega una ficha sin él, y esa red
+  // sí puede salir de un campo estructural.
   const promesa =
     ficha.promesa ??
-    (tour.booking === 'cotizacion'
-      ? 'A day at sea, tailored to you'
-      : ficha.audiencia === 'Adults only'
-        ? 'A day at sea in a small group'
-        : 'A day at sea')
+    (tour.booking === 'cotizacion' ? t('A day at sea, tailored to you') : t('A day at sea'))
 
   return (
     // pb-[calc(4rem+env(safe-area-inset-bottom))] (auditoría móvil 2026-07-17):
@@ -332,9 +339,9 @@ export function TourPage() {
                 <ReelsSociales
                   variante="bloque"
                   conHashtag={false}
-                  eyebrow="On video"
-                  titulo="This is what a day with us looks like"
-                  lead="Clips from on board and from our guests, the tour before the tour."
+                  eyebrow={t('On video')}
+                  titulo={t('This is what a day with us looks like')}
+                  lead={t('Clips from on board and from our guests, the tour before the tour.')}
                 />
               </div>
 

@@ -1,3 +1,5 @@
+import { traducible } from '@/lib/i18n'
+
 // Páginas legales (PLAN-LANZAMIENTO.md Bloque F) — la web actual NO tiene
 // ninguna (verificado en mapa-del-sitio.md: las 17 páginas inventariadas no
 // incluyen privacidad/términos/cookies). UNA plantilla data-driven
@@ -28,9 +30,11 @@ export type DocumentoLegal = {
   contenidoReal: boolean
 }
 
+// Se envuelve el propio literal y no la constante: `traducible()` solo sabe de
+// objetos, y esto es una cadena suelta que se repite en varias secciones.
 const PLACEHOLDER = 'To be drafted with legal counsel.'
 
-export const LEGAL: Record<string, DocumentoLegal> = {
+export const LEGAL: Record<string, DocumentoLegal> = traducible({
   'cancellation-policy': {
     slug: 'cancellation-policy',
     nombre: 'Cancellation Policy',
@@ -106,4 +110,4 @@ export const LEGAL: Record<string, DocumentoLegal> = {
       { titulo: 'How to disable them', texto: PLACEHOLDER },
     ],
   },
-}
+})

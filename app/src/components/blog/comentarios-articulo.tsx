@@ -1,8 +1,9 @@
 import { useState, type FormEvent } from 'react'
 import { Clock, MessageCircle, Reply, ThumbsDown, ThumbsUp } from 'lucide-react'
 import { enviarFormulario } from '@/lib/api/api'
-import { ERROR_ENVIO } from '@/lib/use-envio-formulario'
+import { errorEnvio as textoErrorEnvio } from '@/lib/use-envio-formulario'
 import { COMENTARIOS_POOL, type Comentario } from '@/data/comentarios'
+import { t } from '@/lib/i18n'
 
 // Comentarios del artículo (correcciones v1, pedido de Samuel 2026-07-22).
 //
@@ -92,12 +93,12 @@ export function ComentariosArticulo({ slug }: { slug: string }) {
         article: slug,
       })
     } catch {
-      setErrorEnvio(ERROR_ENVIO)
+      setErrorEnvio(textoErrorEnvio())
       setEnviando(false)
       return
     }
     setComentarios((prev) => [
-      { autor: nombre.trim(), fecha: 'Just now', texto: texto.trim(), likes: 0, dislikes: 0 },
+      { autor: nombre.trim(), fecha: t('Just now'), texto: texto.trim(), likes: 0, dislikes: 0 },
       ...prev,
     ])
     // Se añade ARRIBA, así que el nuevo es el índice 0 y los pendientes que ya
@@ -138,7 +139,7 @@ export function ComentariosArticulo({ slug }: { slug: string }) {
         replying_to: comentarios[indice]?.autor,
       })
     } catch {
-      setErrorEnvio(ERROR_ENVIO)
+      setErrorEnvio(textoErrorEnvio())
       return
     }
     setComentarios((prev) =>
@@ -148,7 +149,7 @@ export function ComentariosArticulo({ slug }: { slug: string }) {
               ...c,
               respuestas: [
                 ...(c.respuestas ?? []),
-                { autor: nombreResp.trim(), fecha: 'Just now', texto: textoResp.trim() },
+                { autor: nombreResp.trim(), fecha: t('Just now'), texto: textoResp.trim() },
               ],
             }
           : c,
@@ -163,24 +164,24 @@ export function ComentariosArticulo({ slug }: { slug: string }) {
     <section>
       <h2 className="flex items-center gap-2 font-display text-h3 font-semibold text-navy">
         <MessageCircle className="size-5 text-aqua-dark" aria-hidden="true" />
-        Comments ({comentarios.length})
+        {t('Comments (')}{comentarios.length})
       </h2>
 
       <form onSubmit={(e) => void enviar(e)} className="mt-5 rounded-card-grande bg-papel-hueso p-5 sm:p-6">
-        <p className="text-sm font-semibold text-navy">Leave a comment</p>
+        <p className="text-sm font-semibold text-navy">{t('Leave a comment')}</p>
         <input
           type="text"
           required
           value={nombre}
           onChange={(e) => setNombre(e.target.value)}
-          placeholder="Your name"
+          placeholder={t('Your name')}
           className="mt-3 w-full rounded-btn border border-linea bg-papel px-4 py-2.5 text-sm text-navy placeholder:text-navy-soft focus:border-aqua focus:outline-none focus:ring-2 focus:ring-aqua/20"
         />
         <textarea
           required
           value={texto}
           onChange={(e) => setTexto(e.target.value)}
-          placeholder="Write your comment..."
+          placeholder={t('Write your comment...')}
           rows={3}
           className="mt-3 w-full resize-none rounded-btn border border-linea bg-papel px-4 py-2.5 text-sm text-navy placeholder:text-navy-soft focus:border-aqua focus:outline-none focus:ring-2 focus:ring-aqua/20"
         />
@@ -189,7 +190,7 @@ export function ComentariosArticulo({ slug }: { slug: string }) {
           disabled={enviando}
           className="mt-3 rounded-btn bg-coral px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-coral-dark disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {enviando ? 'Sending…' : 'Post comment'}
+          {enviando ? 'Sending…' : t('Post comment')}
         </button>
         {errorEnvio ? (
           <p role="alert" className="mt-3 rounded-btn border border-coral/40 bg-coral/5 p-3 text-xs leading-relaxed text-navy-sub">
@@ -209,7 +210,7 @@ export function ComentariosArticulo({ slug }: { slug: string }) {
                 {pendientes.includes(i) ? (
                   <span className="inline-flex items-center gap-1 rounded-chip bg-papel-hueso px-2 py-0.5 text-xs font-medium text-navy-soft">
                     <Clock className="size-3" aria-hidden="true" />
-                    Awaiting review
+                    {t('Awaiting review')}
                   </span>
                 ) : null}
               </div>
@@ -244,7 +245,7 @@ export function ComentariosArticulo({ slug }: { slug: string }) {
                   className="inline-flex items-center gap-1.5 transition-colors hover:text-navy"
                 >
                   <Reply className="size-3.5" aria-hidden="true" />
-                  Reply
+                  {t('Reply')}
                 </button>
               </div>
 
@@ -258,14 +259,14 @@ export function ComentariosArticulo({ slug }: { slug: string }) {
                     required
                     value={nombreResp}
                     onChange={(e) => setNombreResp(e.target.value)}
-                    placeholder="Your name"
+                    placeholder={t('Your name')}
                     className="rounded-btn border border-linea bg-papel px-3 py-2 text-sm text-navy placeholder:text-navy-soft focus:border-aqua focus:outline-none focus:ring-2 focus:ring-aqua/20"
                   />
                   <textarea
                     required
                     value={textoResp}
                     onChange={(e) => setTextoResp(e.target.value)}
-                    placeholder="Write your reply..."
+                    placeholder={t('Write your reply...')}
                     rows={2}
                     className="resize-none rounded-btn border border-linea bg-papel px-3 py-2 text-sm text-navy placeholder:text-navy-soft focus:border-aqua focus:outline-none focus:ring-2 focus:ring-aqua/20"
                   />
@@ -275,13 +276,13 @@ export function ComentariosArticulo({ slug }: { slug: string }) {
                       onClick={() => setRespondiendoA(null)}
                       className="text-xs font-semibold text-navy-soft hover:text-navy"
                     >
-                      Cancel
+                      {t('Cancel')}
                     </button>
                     <button
                       type="submit"
                       className="rounded-btn bg-coral px-4 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-coral-dark"
                     >
-                      Reply
+                      {t('Reply')}
                     </button>
                   </div>
                 </form>

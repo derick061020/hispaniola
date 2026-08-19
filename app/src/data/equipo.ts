@@ -1,3 +1,5 @@
+import { traducible } from '@/lib/i18n'
+
 // Página de Tripulación / Equipo (correcciones v2, plan 05) — 2026-07-27.
 //
 // ⚠️ ESTA PÁGINA ES UN MOLDE CON PLACEHOLDERS. Léelo antes de tocar nada.
@@ -44,7 +46,7 @@ export type Departamento = {
 
 // Los 6 departamentos y sus descripciones son CONTENIDO REAL del cliente
 // (slides 37-42 del PDF v2 + confirmados de viva voz en la reunión, 27:46).
-export const DEPARTAMENTOS: Departamento[] = [
+export const DEPARTAMENTOS: Departamento[] = traducible([
   // [v3 2026-08-06, WEBSITE - NOSOTROS pags. 2-3] Los 6 departamentos con el
   // nombre y el parrafo APROBADOS. Mapean 1:1 con los 6 que ya habia —el
   // cliente no cambia la estructura, cambia el texto— salvo dos renombres que
@@ -99,7 +101,7 @@ export const DEPARTAMENTOS: Departamento[] = [
       'Our management and administrative team oversees every aspect of the business, ensuring smooth operations, financial responsibility, and full compliance with Dominican regulations.',
     plantilla: 8,
   },
-]
+])
 
 /** Roles por departamento — genéricos y verificables (son puestos, no
  *  personas). Se rotan para dar variedad al molde. */
@@ -172,7 +174,10 @@ function generarPlantilla(): MiembroEquipoV2[] {
   return gente
 }
 
-export const EQUIPO_COMPLETO: MiembroEquipoV2[] = generarPlantilla()
+// `traducible` va aquí y no dentro de `generarPlantilla`: la funcion arma los
+// objetos con cadenas crudas (ROLES, FRASE_PLACEHOLDER), asi que es el
+// resultado lo que hay que envolver.
+export const EQUIPO_COMPLETO: MiembroEquipoV2[] = traducible(generarPlantilla())
 
 /** El total se DERIVA del array, nunca se escribe a mano: el cliente no ha
  *  confirmado si son 37 o 70 y este número tiene que seguir al dato. */
@@ -182,7 +187,7 @@ export function contarPorDepartamento(id: DepartamentoId): number {
   return EQUIPO_COMPLETO.filter((m) => m.departamento === id).length
 }
 
-export const EQUIPO_PAGINA = {
+export const EQUIPO_PAGINA = traducible({
   // [v3 2026-08-06, WEBSITE - NOSOTROS pags. 1-2] Copy APROBADO. El cliente
   // escribe el titular en dos pisos («THE PEOPLE BEHIND THE SCENES» / «MORE
   // THAN A CREW, A TEAM DEDICATED TO YOU»): el primero es el H1 y el segundo
@@ -239,4 +244,4 @@ export const EQUIPO_PAGINA = {
   // no las da es la clase de promesa pequeña que este proyecto evita, así que
   // se usa la frase que el propio cliente escribió debajo.
   cierreCta: 'Tell us who you are',
-} as const
+} as const)

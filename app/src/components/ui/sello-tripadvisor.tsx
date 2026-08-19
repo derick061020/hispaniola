@@ -1,4 +1,5 @@
 import { useId } from 'react'
+import { t } from '@/lib/i18n'
 
 // Sello Travellers' Choice de TripAdvisor + el reclamo de «#1 durante 7 años».
 //
@@ -146,14 +147,14 @@ export function SelloTripAdvisor({
           quien navega con lector de pantalla vería un adorno donde el resto ve
           el premio. */}
       {sinTexto ? (
-        <span className="sr-only">#1 on TripAdvisor, 7 years running</span>
+        <span className="sr-only">{t('#1 on TripAdvisor, 7 years running')}</span>
       ) : (
         <span className="leading-tight">
           <span className="block text-sm font-bold tracking-[0.06em] text-white/85 transition-colors duration-300 group-hover:text-white">
-            #1 on TripAdvisor
+            {t('#1 on TripAdvisor')}
           </span>
           <span className="block text-xs tracking-[0.06em] text-white/55 transition-colors duration-300 group-hover:text-white/80">
-            7 years running
+            {t('7 years running')}
           </span>
         </span>
       )}

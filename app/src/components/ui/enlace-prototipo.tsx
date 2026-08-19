@@ -1,4 +1,5 @@
 import type { AnchorHTMLAttributes } from 'react'
+import { t } from '@/lib/i18n'
 
 // Enlace a una página que existe en prototipo/ (el wireframe navegable) pero
 // no en este build, que cubre la home + las fichas de tour (/tours/:slug —
@@ -19,7 +20,7 @@ export function EnlacePrototipo({
   return (
     <a
       href="#"
-      title="Lives in the clickable prototype (prototipo/), not part of this build"
+      title={t('Lives in the clickable prototype (prototipo/), not part of this build')}
       onClick={(e) => e.preventDefault()}
       className={className}
       {...props}

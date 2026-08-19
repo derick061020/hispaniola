@@ -1,4 +1,5 @@
 import type { FichaTour, TramoPrecio } from '@/data/tours'
+import { traducible } from '@/lib/i18n'
 
 /** Motor de tarifas (correcciones v2, 2026-07-27).
  *
@@ -146,7 +147,7 @@ export type Descuento = {
   autoAplicable: boolean
 }
 
-export const DESCUENTOS: Descuento[] = [
+export const DESCUENTOS: Descuento[] = traducible([
   {
     id: 'recurrente',
     etiqueta: 'Returning guests',
@@ -165,7 +166,7 @@ export const DESCUENTOS: Descuento[] = [
     porcentaje: 5,
     autoAplicable: true,
   },
-]
+])
 
 export const DESCUENTO_MAXIMO = DESCUENTOS.reduce((s, d) => s + d.porcentaje, 0)
 

@@ -1,3 +1,5 @@
+import { traducible } from '@/lib/i18n'
+
 // Página de Instalaciones (correcciones v2, plan 06) — 2026-07-27.
 //
 // El argumento de la página, en palabras del propio cliente: «Mucho más que una
@@ -85,7 +87,7 @@ export type ZonaInstalacion = {
   tour360?: string
 }
 
-export const INSTALACIONES = {
+export const INSTALACIONES = traducible({
   // [v3 2026-08-06, WEBSITE - NOSOTROS pags. 10-11] Copy APROBADO, literal.
   // El cliente remata el titular con ⭐⭐⭐: es su marca de enfasis en el
   // documento, no parte del texto — el enfasis lo pone la tipografia.
@@ -121,8 +123,8 @@ export const INSTALACIONES = {
   /** Enlace discreto al pie de cada zona (slides 46-49). */
   zonaCta: 'Book your tour',
 
-  cierreEyebrow: 'Te esperamos en Punta Cana',
-  cierreTitulo: 'Ven a conocernos en persona',
+  cierreEyebrow: 'We are waiting for you in Punta Cana',
+  cierreTitulo: 'Come and see it for yourself',
   cierreTexto:
     'All of this is waiting for you before and after your tour. Book your day and see why we are far more than an excursion.',
   cierreCta: 'Book your tour',
@@ -136,7 +138,7 @@ export const INSTALACIONES = {
   // dos bloques más abajo, en el propio footer, y las dos entrarían en cuadro de
   // una sola pasada.
   cierreFoto: 'hero-catamaran-1',
-} as const
+} as const)
 
 // Banda de CTA intercalada (slide 48). La maqueta pone TRES bandas a ancho
 // completo entre las zonas — coral («¿Listo para vivir todo esto?»), verde
@@ -167,7 +169,7 @@ export const INSTALACIONES = {
 const V_OCEANO = { video: '/video/incluye-oceano-cenital.mp4', poster: 'incluye-oceano-poster' }
 const V_CATAMARAN = { video: '/video/hero.mp4', poster: 'hero-video-poster' }
 
-export const ZONAS: ZonaInstalacion[] = [
+const ZONAS_EN: ZonaInstalacion[] = [
   {
     id: 'recibimiento',
     chip: 'Welcome',
@@ -181,7 +183,7 @@ export const ZONAS: ZonaInstalacion[] = [
       'Comfortable waiting areas & restrooms',
       'Tour briefing before departure',
     ],
-    vertical: { ...V_CATAMARAN, titulo: 'Así te recibimos' },
+    vertical: { ...V_CATAMARAN, titulo: 'This is how we welcome you' },
     fotos: [
       // No `hero-catamaran-1` aunque sea la foto de llegada más clara del repo:
       // se la queda el banner de cierre de esta misma página (ver `cierreFoto`),
@@ -316,6 +318,8 @@ export const ZONAS: ZonaInstalacion[] = [
   },
 ]
 
+export const ZONAS: ZonaInstalacion[] = traducible(ZONAS_EN)
+
 // El carril de verticales del slide 45, DERIVADO de las zonas: mismo video,
 // mismo pie y misma foto de portada que la celda grande del bento de más
 // abajo. Se deriva en vez de escribirse a mano para que no puedan divergir —
@@ -327,10 +331,13 @@ export const ZONAS: ZonaInstalacion[] = [
 // que se ve es el póster, y los 3 videos del repo darían 3 portadas repetidas
 // donde tiene que haber 6 zonas distintas. Es el mismo criterio que
 // GaleriaMosaico, que usa `fotos[0]` como póster de su celda de video.
-export const VERTICALES_INSTALACIONES = ZONAS.map((z) => ({
+// Se deriva de ZONAS_EN (el objeto CRUDO) y no de ZONAS (el envuelto): esto
+// corre al importar el modulo y copia CADENAS, no referencias — leerlas del
+// proxy las dejaria congeladas en el idioma con el que se cargo la pagina.
+export const VERTICALES_INSTALACIONES = traducible(ZONAS_EN.map((z) => ({
   id: z.id,
   titulo: z.vertical.titulo,
   foto: z.fotos[0]!.src,
   fotoAlt: z.fotos[0]!.alt,
   video: z.vertical.video,
-}))
+})))

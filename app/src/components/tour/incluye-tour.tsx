@@ -3,6 +3,7 @@ import { TituloSeccion } from '@/components/tour/titulo-seccion'
 import { BLOQUE_FICHA } from '@/components/tour/bloque-ficha'
 import * as Modal from '@/components/alignui/modal'
 import type { FichaTour } from '@/data/tours'
+import { t } from '@/lib/i18n'
 
 // Qué incluye + Qué llevar (wireframe A4).
 //
@@ -25,12 +26,12 @@ import type { FichaTour } from '@/data/tours'
 // fichas traducidas y sin traducir, y un icono `Package` genérico en todas
 // las traducidas sería una regresión visible.
 function iconoLlevar(texto: string) {
-  const t = texto.toLowerCase()
-  if (t.includes('traje') || t.includes('baño') || t.includes('swimsuit')) return Waves
-  if (t.includes('toalla') || t.includes('towel')) return Shirt
-  if (t.includes('protector') || t.includes('solar') || t.includes('sunscreen')) return Sun
-  if (t.includes('cámara') || t.includes('camara') || t.includes('camera')) return Camera
-  if (t.includes('efectivo') || t.includes('dinero') || t.includes('saldo') || t.includes('cash')) return Banknote
+  const txt = texto.toLowerCase()
+  if (txt.includes('traje') || txt.includes('baño') || txt.includes('swimsuit')) return Waves
+  if (txt.includes('toalla') || txt.includes('towel')) return Shirt
+  if (txt.includes('protector') || txt.includes('solar') || txt.includes('sunscreen')) return Sun
+  if (txt.includes('cámara') || txt.includes('camara') || txt.includes('camera')) return Camera
+  if (txt.includes('efectivo') || txt.includes('dinero') || txt.includes('saldo') || txt.includes('cash')) return Banknote
   return Package
 }
 
@@ -56,7 +57,7 @@ function BotonRecomendaciones({ items }: { items: string[] }) {
           className="inline-flex items-center gap-1.5 text-sm font-semibold text-aqua-dark transition-colors hover:text-aqua"
         >
           <Info className="size-4" aria-hidden="true" />
-          Additional recommendations
+          {t('Additional recommendations')}
         </button>
       </Modal.Trigger>
       <Modal.Content
@@ -66,7 +67,7 @@ function BotonRecomendaciones({ items }: { items: string[] }) {
       >
         <div className="p-6 pr-14">
           <Modal.Title className="font-display text-h3 font-semibold text-navy">
-            Additional recommendations
+            {t('Additional recommendations')}
           </Modal.Title>
           <ul className="mt-4 flex flex-col gap-3">
             {items.map((item) => (
@@ -88,7 +89,7 @@ function BotonRecomendaciones({ items }: { items: string[] }) {
 export function IncluyeTour({ ficha }: { ficha: FichaTour }) {
   // Los 4 titulares (con sub-línea) + los extras (sin ella) en una sola lista
   // uniforme icono+texto.
-  const incluidos = [...ficha.incluye, ...(ficha.incluyeExtra ?? []).map((t) => ({ titulo: t, texto: '' }))]
+  const incluidos = [...ficha.incluye, ...(ficha.incluyeExtra ?? []).map((txt) => ({ titulo: txt, texto: '' }))]
 
   return (
     <>
@@ -97,7 +98,7 @@ export function IncluyeTour({ ficha }: { ficha: FichaTour }) {
             escribe el cliente — con el apóstrofo tipográfico correcto, que su
             documento tiene invertido (´ en vez de ’). Es una errata evidente,
             de las que el plan 03 §7 dice que se corrigen al portar. */}
-        <TituloSeccion>What’s Included</TituloSeccion>
+        <TituloSeccion>{t('What’s Included')}</TituloSeccion>
 
         <div className="mt-5 grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
           {incluidos.map((b) => (
@@ -118,7 +119,7 @@ export function IncluyeTour({ ficha }: { ficha: FichaTour }) {
               con él dentro (así el dato es legible en crudo, en data y en el
               traspaso) y aquí se pinta como etiqueta aparte. Mientras dure F3
               conviven fichas en inglés y en español. */}
-          <span className="font-medium text-navy-sub">Not included:</span>{' '}
+          <span className="font-medium text-navy-sub">{t('Not included:')}</span>{' '}
           {ficha.noIncluido.replace(/^(No incluido|Not included):\s*/, '')}
         </p>
       </section>
@@ -133,7 +134,7 @@ export function IncluyeTour({ ficha }: { ficha: FichaTour }) {
               ahí o algo sutil», no una segunda llamada a la acción compitiendo
               con el widget. */}
           <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2">
-            <TituloSeccion>What to Bring</TituloSeccion>
+            <TituloSeccion>{t('What to Bring')}</TituloSeccion>
             {ficha.recomendaciones?.length ? <BotonRecomendaciones items={ficha.recomendaciones} /> : null}
           </div>
           <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">

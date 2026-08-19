@@ -1,4 +1,5 @@
 import { useId } from 'react'
+import { t } from '@/lib/i18n'
 
 // SELLO «SUSTAINABLE VESSEL» — el distintivo eco de las cards de flota.
 //
@@ -330,7 +331,7 @@ export function SelloEco({ className = '' }: { className?: string }) {
           `aria-hidden`, porque un lector de pantalla leyendo un texto circular
           repetido —y que además solo existe al hover, un gesto que no tiene—
           sería ruido. Aquí se dice una vez y en orden. */}
-      <span className="sr-only">Sustainable vessel, zero plastic on board</span>
+      <span className="sr-only">{t('Sustainable vessel, zero plastic on board')}</span>
     </span>
   )
 }

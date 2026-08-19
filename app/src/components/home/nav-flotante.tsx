@@ -7,6 +7,7 @@ import { TabsConPaneles } from './nav-tabs'
 import { useMenuDropdown } from '@/lib/use-menu-dropdown'
 import { useDevFlag } from '@/dev/use-dev-flag'
 import type { MenuId } from './header'
+import { t } from '@/lib/i18n'
 
 // Nav flotante — panel de vidrio (2026-07-21, pedido de Samuel). Reemplaza
 // dos piezas separadas que se veían distintas entre sí:
@@ -430,7 +431,7 @@ export function NavFlotante() {
             <Link
               ref={logoRef}
               to="/"
-              aria-label="Hispaniola Aquatic Adventures, home"
+              aria-label={t('Hispaniola Aquatic Adventures, home')}
               className="mr-1 shrink-0"
               style={{ transformOrigin: 'right center' }}
             >
@@ -452,7 +453,7 @@ export function NavFlotante() {
               className="ml-1 shrink-0"
               style={{ transformOrigin: 'left center' }}
             >
-              Book now
+              {t('Book now')}
             </Boton>
           ) : null}
         </nav>

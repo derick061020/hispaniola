@@ -1,6 +1,7 @@
 import { Hourglass } from 'lucide-react'
 import { IconoFuego } from '@/components/ui/icono-fuego'
 import { MESES, hoyISO, parseFechaISO } from '@/lib/fechas'
+import { t, tp } from '@/lib/i18n'
 
 // Chips de aceleración sobre el widget de reserva (Samuel, 2026-07-22: «al
 // widget arriba agregar unos chips de "el más reservado" tal vez con un icono
@@ -53,7 +54,7 @@ export function ChipsUrgencia() {
           {/* size-4 en la clase y no en el SVG: el icono se dimensiona con
               el texto del chip, como los de lucide que lo rodean. */}
           <IconoFuego className="size-4 shrink-0" />
-          Most booked
+          {t('Most booked')}
         </Chip>
       ) : null}
 
@@ -65,7 +66,7 @@ export function ChipsUrgencia() {
               de chips en dos líneas, y dos líneas de urgencia encima del
               precio empiezan a parecer un anuncio. */}
           <Hourglass className="icono-reloj size-3.5 shrink-0" aria-hidden="true" />
-          Acaba el {fin.getDate()} de {MESES[fin.getMonth()]}
+          {tp('Ends on {mes} {dia}', { mes: MESES[fin.getMonth()], dia: fin.getDate() })}
         </Chip>
       ) : null}
     </div>

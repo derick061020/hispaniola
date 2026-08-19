@@ -3,6 +3,7 @@ import { Etiqueta } from '@/components/ui/etiqueta'
 import { useDevFlag } from '@/dev/use-dev-flag'
 import { useIncluyeScroll } from '@/components/home/use-incluye-scroll'
 import { INCLUYE_CRUCERO } from '@/data/home'
+import { t } from '@/lib/i18n'
 
 // Sección «Incluye» (rediseño v3-F19.2, pedido de Samuel 2026-07-15) —
 // editorial inmersiva, ref. "WHAT'S INCLUDED" que aportó Samuel. Cambia por
@@ -114,9 +115,9 @@ export function IncluyeCrucero() {
           lo ocupa a propósito y el catamarán navega por encima del texto al
           scrollear). La mezcla con el agua vive en .incluye-titulo. */}
       <div className="relative z-10 mx-auto w-full max-w-contenido px-5 text-center sm:px-10">
-        <Etiqueta sobreOscuro>On board</Etiqueta>
+        <Etiqueta sobreOscuro>{t('On board')}</Etiqueta>
         <h2 className="incluye-titulo mx-auto mt-4 max-w-4xl font-display text-incluye-titulo-movil font-semibold text-aqua-claro lg:text-incluye-titulo">
-          All our cruises include
+          {t('All our cruises include')}
         </h2>
       </div>
 
@@ -125,7 +126,7 @@ export function IncluyeCrucero() {
           mecánica vive en componentes.css + use-incluye-scroll.ts). */}
       <img
         src="/fotos/incluye-barco-cenital.webp"
-        alt="A Hispaniola catamaran seen from the air, sailing the Caribbean Sea"
+        alt={t('A Hispaniola catamaran seen from the air, sailing the Caribbean Sea')}
         width={964}
         height={1798}
         loading="lazy"

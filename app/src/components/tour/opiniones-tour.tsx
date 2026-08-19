@@ -4,6 +4,7 @@ import { Estrellas } from '@/components/ui/estrellas'
 import { BLOQUE_FICHA } from '@/components/tour/bloque-ficha'
 import { useDevFlag } from '@/dev/use-dev-flag'
 import { QUOTES, type Review, type Tour } from '@/data/home'
+import { numero, t } from '@/lib/i18n'
 
 // Opiniones (wireframe A5 · fix 1.2 de docs/proceso/analisis/revision-wireframes.md).
 //
@@ -129,7 +130,7 @@ export function OpinionesTour({ tour }: { tour: Tour }) {
 
   return (
     <section id="ancla-opiniones" className={`${BLOQUE_FICHA} scroll-mt-sticky-top`}>
-      <TituloSeccion>Reviews</TituloSeccion>
+      <TituloSeccion>{t('Reviews')}</TituloSeccion>
 
       <div className="mt-5 flex items-center gap-4">
         <p className="font-display text-h2 font-semibold text-navy">
@@ -138,7 +139,7 @@ export function OpinionesTour({ tour }: { tour: Tour }) {
         </p>
         <div>
           <Estrellas calificacion={tour.rating} />
-          <p className="mt-1 text-sm text-navy-soft">{tour.resenas.toLocaleString('en-US')} reseñas verificadas</p>
+          <p className="mt-1 text-sm text-navy-soft">{numero(tour.resenas)} {t('verified reviews')}</p>
         </div>
       </div>
 

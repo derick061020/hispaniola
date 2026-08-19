@@ -3,6 +3,7 @@ import { Check } from 'lucide-react'
 import { Boton } from '@/components/ui/boton'
 import { Etiqueta } from '@/components/ui/etiqueta'
 import { UBICACION } from '@/data/por-que-reservar'
+import { t } from '@/lib/i18n'
 
 // «Ubicación, ubicación, ubicación» — slide 56, primera mitad.
 //
@@ -37,7 +38,7 @@ export function Ubicacion() {
           />
         </div>
         <p className="absolute left-4 top-4 rounded-chip bg-navy/70 px-3 py-1 text-xs font-medium text-white backdrop-blur-sm">
-          Cabeza de Toro · Cabo Engaño
+          {t('Cabeza de Toro · Cabo Engaño')}
         </p>
 
         {/* Etiqueta de papel, no card: mismo lenguaje de objetos que el recibo
@@ -74,7 +75,7 @@ export function Ubicacion() {
         </ul>
 
         <div className="mt-7">
-          <Boton to="/#tours">See the tours</Boton>
+          <Boton to="/#tours">{t('See the tours')}</Boton>
         </div>
       </div>
     </section>

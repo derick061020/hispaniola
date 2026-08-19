@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef, useState, type CSSProperties } from 'react'
 import { BENEFICIOS_DIRECTO, BOLETO_TOUR, formatoDinero } from '@/data/home'
+import { t } from '@/lib/i18n'
 
 // Boleto de la comparación «aquí vs. un portal» (why-direct) — UN componente,
 // DOS variantes (→ variantes del futuro componente Figma):
@@ -77,14 +78,14 @@ export function BoletoReserva({
           <p
             className={`text-eyebrow font-semibold uppercase tracking-[0.12em] ${directo ? 'text-aqua-dark' : 'text-navy-soft'}`}
           >
-            {directo ? 'Booking direct' : 'On a booking portal'}
+            {directo ? t('Booking direct') : t('On a booking portal')}
           </p>
           <p className="mt-3 font-display text-h3 font-semibold text-navy">{BOLETO_TOUR.nombre}</p>
           <p className="mt-1 text-sm text-navy-soft">
-            {BOLETO_TOUR.duracionCorta} · max. {BOLETO_TOUR.maxPax} people
+            {BOLETO_TOUR.duracionCorta} {t('· max.')}{' '}{BOLETO_TOUR.maxPax} {t('people')}
           </p>
           <p className="mt-3 flex items-baseline justify-center gap-2">
-            <span className="text-eyebrow uppercase tracking-[0.12em] text-navy-soft">From</span>
+            <span className="text-eyebrow uppercase tracking-[0.12em] text-navy-soft">{t('From')}</span>
             <span className="text-precio font-bold text-navy">{formatoDinero(BOLETO_TOUR.precioLight)}</span>
           </p>
         </div>
@@ -118,13 +119,13 @@ export function BoletoReserva({
                   sube ~9px sobre su caja. mt-3 le da ese aire justo. */}
               <div className="mt-3 flex justify-end pr-2">
                 <p className="boleto-sello inline-block px-3.5 py-1.5 text-eyebrow font-bold uppercase tracking-[0.12em] text-aqua-dark opacity-85">
-                  Direct booking
+                  {t('Direct booking')}
                 </p>
               </div>
             </>
           ) : (
             <>
-              <p className="text-center text-sm text-navy-soft">The same tour. Nothing else.</p>
+              <p className="text-center text-sm text-navy-soft">{t('The same tour. Nothing else.')}</p>
               <div aria-hidden className="mx-auto mt-5 max-w-[13rem] space-y-4">
                 {RANURAS.map((r) => (
                   <div key={r} className={`mx-auto h-3 border-b-2 border-dashed border-linea-fuerte ${r}`} />

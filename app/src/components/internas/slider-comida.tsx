@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { t } from '@/lib/i18n'
 
 // Slider de fotos de comida (correcciones v2, plan 01 §10 — slide 7).
 //
@@ -95,7 +96,7 @@ export function SliderComida({
       {/* Etiqueta permanente: sin ella, una celda que cambia sola se lee como
           un fallo de carga en vez de como una galería. */}
       <span className="pointer-events-none absolute left-2 top-2 rounded-full bg-navy/80 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-white">
-        Menu
+        {t('Menu')}
       </span>
 
       {/* [v2 2026-07-27] DOTS dentro de la propia imagen, abajo (pedido de
@@ -145,7 +146,7 @@ export function SliderComida({
           <button
             type="button"
             onClick={() => ir(-1)}
-            aria-label="Previous photo"
+            aria-label={t('Previous photo')}
             className="absolute left-1.5 top-1/2 grid size-7 -translate-y-1/2 place-items-center rounded-full bg-papel/85 text-navy opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100"
           >
             <ChevronLeft className="size-4" aria-hidden="true" />
@@ -153,7 +154,7 @@ export function SliderComida({
           <button
             type="button"
             onClick={() => ir(1)}
-            aria-label="Next photo"
+            aria-label={t('Next photo')}
             className="absolute right-1.5 top-1/2 grid size-7 -translate-y-1/2 place-items-center rounded-full bg-papel/85 text-navy opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100"
           >
             <ChevronRight className="size-4" aria-hidden="true" />

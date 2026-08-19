@@ -3,6 +3,7 @@ import { Boton } from '@/components/ui/boton'
 import { Etiqueta } from '@/components/ui/etiqueta'
 import { formatoDinero } from '@/data/home'
 import { CONCEPTOS_SUELTOS, PRECIO_TODO_INCLUIDO } from '@/data/por-que-reservar'
+import { t } from '@/lib/i18n'
 
 // «La cuenta» — slide 53, la mejor idea del PowerPoint del cliente: demostrar
 // EN DINERO por qué reservar directo, en vez de repetir que hay que hacerlo.
@@ -49,22 +50,20 @@ export function Recibo() {
   return (
     <section className="grid items-center gap-10 lg:grid-cols-[1fr_26rem] lg:gap-16">
       <div>
-        <Etiqueta>The bill</Etiqueta>
+        <Etiqueta>{t('The bill')}</Etiqueta>
         <h2 className="mt-2 text-balance font-display text-h2 font-semibold text-navy">
-          We’re not the cheapest. But you get{' '}
-          <span className="text-coral">exactly what you pay for</span>.
+          {t('We’re not the cheapest. But you get')}{' '}
+          <span className="text-coral">{t('exactly what you pay for')}</span>.
         </h2>
         <p className="mt-5 text-lead text-navy-sub">
-          There are similar tours, sometimes cheaper. They’re only similar on the outside. Book
-          separately every single thing your day at sea includes and the bill comes out like this.
+          {t('There are similar tours, sometimes cheaper. They’re only similar on the outside. Book separately every single thing your day at sea includes and the bill comes out like this.')}
         </p>
         <p className="mt-4 text-lead text-navy-sub">
-          We don’t charge you for those six things. We charge you for one, and everything comes
-          inside.
+          {t('We don’t charge you for those six things. We charge you for one, and everything comes inside.')}
         </p>
         <div className="mt-8">
           <Boton to="/#tours" tamaño="lg">
-            I want this price
+            {t('I want this price')}
           </Boton>
         </div>
       </div>
@@ -84,10 +83,10 @@ export function Recibo() {
           }
         >
           <p className="text-center text-eyebrow font-semibold uppercase tracking-[0.14em] text-navy-soft">
-            What you’d pay separately
+            {t('What you’d pay separately')}
           </p>
           <p className="mt-2 text-center text-xs text-navy-soft">
-            Booking each thing on its own, around here
+            {t('Booking each thing on its own, around here')}
           </p>
 
           <ul className="mt-6 flex flex-col gap-3.5">
@@ -110,7 +109,7 @@ export function Recibo() {
 
           <div className="mt-5 flex items-baseline gap-2 border-t border-linea pt-4 text-sm">
             <span className="shrink-0 font-semibold uppercase tracking-[0.08em] text-navy-soft">
-              Separate total
+              {t('Separate total')}
             </span>
             <span
               aria-hidden="true"
@@ -126,23 +125,22 @@ export function Recibo() {
 
           <div className="mt-6 text-center">
             <p className="text-eyebrow font-semibold uppercase tracking-[0.14em] text-menta-texto">
-              With us · all included
+              {t('With us · all included')}
             </p>
             <p className="mt-2 font-display text-4xl font-bold tabular-nums text-navy">
               {formatoDinero(PRECIO_TODO_INCLUIDO)}
             </p>
-            <p className="mt-1 text-xs text-navy-soft">No extras, no surprises</p>
+            <p className="mt-1 text-xs text-navy-soft">{t('No extras, no surprises')}</p>
           </div>
 
           <div className="mt-5 flex justify-center">
             <p className="boleto-sello inline-block px-3.5 py-1.5 text-eyebrow font-bold uppercase tracking-[0.12em] text-coral opacity-90">
-              Te ahorras {formatoDinero(ahorro)}
+              {t('You save')}{' '}{formatoDinero(ahorro)}
             </p>
           </div>
 
           <p className="mt-6 border-t border-linea pt-4 text-center text-xs leading-relaxed text-navy-soft">
-            The six figures above are reference prices for equivalent services in the area. They
-            are not our rates: ours is the one below the line.
+            {t('The six figures above are reference prices for equivalent services in the area. They are not our rates: ours is the one below the line.')}
           </p>
 
           <div aria-hidden className="boleto-barcode mt-5 text-navy/20" />

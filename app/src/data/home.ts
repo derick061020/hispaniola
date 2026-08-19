@@ -3,6 +3,7 @@
 // (itinerario, incluye, FAQ propia…) no es parte de este build (ver PLAN.md).
 
 import { WHATSAPP_URL } from '@/data/tours'
+import { numero, traducible } from '@/lib/i18n'
 
 export type Tour = {
   slug: string
@@ -40,7 +41,7 @@ export type Tour = {
   destacados?: string[]
 }
 
-export const TOURS: Tour[] = [
+export const TOURS: Tour[] = traducible([
   {
     slug: 'semi-private-premium',
     nombre: 'Semi-Private Premium',
@@ -167,22 +168,22 @@ export const TOURS: Tour[] = [
     ],
     destacados: ['Speedboat or catamaran', 'Natural pool + buffet', 'Full day'],
   },
-]
+])
 
-export const bookingCta: Record<Tour['booking'], string> = {
+export const bookingCta: Record<Tour['booking'], string> = traducible({
   completo: 'Book now',
   cotizacion: 'Get a quote',
   consulta: 'Enquire',
-}
+})
 
 export type Plato = { id: string; nombre: string; desc: string; foto: string }
 
-export const PLATOS: Plato[] = [
+export const PLATOS: Plato[] = traducible([
   { id: 'mariscos', nombre: 'Seafood', desc: 'Lobster, octopus, shrimp', foto: 'plato-mariscos' },
   { id: 'carne', nombre: 'Beef', desc: 'Certified Angus', foto: 'plato-carne' },
   { id: 'surf-turf', nombre: 'Surf & Turf', desc: 'Lobster + Angus', foto: 'plato-surf-turf' },
   { id: 'vegetariano', nombre: 'Vegetarian', desc: 'Zucchini ceviche', foto: 'plato-vegetariano' },
-]
+])
 
 export type Ocasion = {
   tipo: string
@@ -215,7 +216,7 @@ export type Ocasion = {
 // reutilizan fotos reales de la galería de charter-privado que mejor encajan
 // con cada ocasión. Pendiente pedirle al cliente fotos reales de eventos
 // (ver app/PLAN-v3.md §9).
-export const OCASIONES: Ocasion[] = [
+export const OCASIONES: Ocasion[] = traducible([
   {
     tipo: 'eventos',
     nombre: 'Events & party boat',
@@ -240,7 +241,7 @@ export const OCASIONES: Ocasion[] = [
     foto: 'galeria-charter-privado-3',
     slug: 'corporate',
   },
-]
+])
 
 // [v3 2026-08-06] Aqui vivian `EventoEspecial` y `EVENTOS_ESPECIALES` (la
 // vitrina de 4 boxes Cumpleanos/Bodas/Aniversarios/Despedidas del final de
@@ -271,7 +272,7 @@ export type IncluyeItem = { id: string; titulo: string; texto: string }
 // «Marine Sanctuary». La playa sigue contada en el itinerario de cada ficha.
 // Los `id` se mantienen en español donde el concepto es el mismo: son claves
 // internas (orden y `key` de React), no texto visible.
-export const INCLUYE_CRUCERO: IncluyeItem[] = [
+export const INCLUYE_CRUCERO: IncluyeItem[] = traducible([
   {
     id: 'transporte',
     titulo: 'Transportation',
@@ -313,11 +314,11 @@ export const INCLUYE_CRUCERO: IncluyeItem[] = [
     titulo: 'GoPro Memories',
     texto: 'GoPro photos and videos uploaded to Facebook for free download after your tour.',
   },
-]
+])
 
 export function formatoDinero(n: number | null): string {
   if (n === null) return '—'
-  return 'US$ ' + n.toLocaleString('en-US', { maximumFractionDigits: 2 })
+  return 'US$ ' + numero(n, { maximumFractionDigits: 2 })
 }
 
 export type ItemNav = {
@@ -350,7 +351,7 @@ export type ItemNav = {
 //    /tripulacion — ver App.tsx.
 //  - «El arrecife» sale de aquí: Sostenibilidad sube a tab propio.
 //  - «Blog» sale de aquí y baja a Ayuda.
-export const NAV_NOSOTROS: ItemNav[] = [
+export const NAV_NOSOTROS: ItemNav[] = traducible([
   {
     id: 'tripulacion',
     nombre: 'Crew',
@@ -379,7 +380,7 @@ export const NAV_NOSOTROS: ItemNav[] = [
     descripcion: 'Discover our modern catamarans for shared tours, private charters, and every group size.',
     to: '/fleet',
   },
-]
+])
 
 // [v2 2026-07-27] Sostenibilidad sube a tab propio del nav principal, con un
 // único sub-ítem: la Fundación (reunión 07-24, 26:50).
@@ -387,7 +388,7 @@ export const NAV_NOSOTROS: ItemNav[] = [
 // ⚠️ La ruta es `/foundation` en SINGULAR. `/fundaciones` (plural) YA EXISTE y
 // es otra cosa: la página interna de tokens del proyecto. Se diferencian en
 // una letra — ver los avisos cruzados en App.tsx y en las dos páginas.
-export const NAV_SOSTENIBILIDAD: ItemNav[] = [
+export const NAV_SOSTENIBILIDAD: ItemNav[] = traducible([
   {
     id: 'sostenibilidad',
     nombre: 'Our competitive advantage',
@@ -400,7 +401,7 @@ export const NAV_SOSTENIBILIDAD: ItemNav[] = [
     descripcion: 'Bávaro Reefs Foundation: one of the leading coral restoration projects in the country.',
     to: '/foundation',
   },
-]
+])
 
 // Ayuda (PLAN-v3.md §12.2) — FAQ_CATEGORIAS del prototipo: 6 categorías, 14
 // preguntas (contadas). "Contacto" (ya no "Contacto y WhatsApp", decisión de
@@ -415,7 +416,7 @@ export const NAV_SOSTENIBILIDAD: ItemNav[] = [
 // a la página /mi-reserva donde el cliente edita su menú/recogida/contacto
 // o paga el saldo. Es la pieza que faltaba para cerrar el ciclo post-
 // checkout sin obligar al cliente a escribir por WhatsApp.
-export const NAV_AYUDA: ItemNav[] = [
+export const NAV_AYUDA: ItemNav[] = traducible([
   {
     id: 'faq',
     nombre: 'FAQ',
@@ -450,7 +451,7 @@ export const NAV_AYUDA: ItemNav[] = [
     descripcion: 'Honest guides, stories from the sea and real advice for your trip.',
     to: '/blog',
   },
-]
+])
 
 // Cinta de confianza — vivía enterrada en la ficha del wireframe (ver
 // NOTAS['home-stats'] del prototipo). v3-F11: sube al hero, entre el
@@ -458,7 +459,7 @@ export const NAV_AYUDA: ItemNav[] = [
 export type Stat = { valor: string; label: string }
 // [v3 2026-08-06] Labels en inglés y separador de miles con COMA — en un
 // sitio en inglés «91.607» se lee como noventa y uno con seiscientos siete.
-export const STATS: Stat[] = [
+export const STATS: Stat[] = traducible([
   { valor: '91,607', label: 'happy guests' },
   { valor: '4,454', label: 'days at sea' },
   // v3-F13 (PLAN-v3.md §15.7): "de la capacidad del barco" (24 car.) partía en
@@ -468,7 +469,7 @@ export const STATS: Stat[] = [
   // NOTAS['home-stats']).
   { valor: '≤35%', label: 'of boat capacity' },
   { valor: '0', label: 'plastic on board' },
-]
+])
 
 export type Premio = {
   id: string
@@ -504,7 +505,7 @@ export type Premio = {
 // ⚠️ Siguen SIN enlaces verificables (la otra mitad de la crítica de la
 // auditoría): no tenemos las URLs de los perfiles/premios y no se inventan.
 // Pendiente pedírselas al cliente (ver app/PLAN-v3.md §9).
-export const PREMIOS: Premio[] = [
+export const PREMIOS: Premio[] = traducible([
   {
     id: 'tripadvisor',
     nombre: 'TripAdvisor, #1 water activity in Bávaro / Punta Cana for more than 7 years',
@@ -565,7 +566,7 @@ export const PREMIOS: Premio[] = [
     alto: 128,
     fondo: 'aire',
   },
-]
+])
 
 // ─────────────────────────────────────────────────────────────────────────
 // Sección "Experiencia" (bajo la banda de premios) — v3-F18, pedido de Samuel.
@@ -607,7 +608,7 @@ export const PREMIOS: Premio[] = [
 // (navy-sub). El alternado gris/negro del "texto grande" es la referencia que
 // aportó Samuel ("Who we are" de Journeo). Cada frase es un bloque para que el
 // reveal de scroll (use-experiencia-scroll.ts) las escalone una a una.
-export type SegmentoNarrativa = { t: string; fuerte?: boolean }
+export type SegmentoNarrativa = { texto: string; fuerte?: boolean }
 
 // [v3 2026-08-06, WEBSITE - INICIO pág. 1] Copy APROBADO por el cliente. El
 // original era UN párrafo largo; se reparte en los mismos 3 tramos que ya
@@ -628,26 +629,26 @@ export type SegmentoNarrativa = { t: string; fuerte?: boolean }
 // hospitalidad) y dejaba un tramo largo seguido de uno de dos renglones.
 // Ahora rompe en la junta natural de la frase, justo antes de «where», y los
 // dos bloques quedan parejos.
-export const EXPERIENCIA_NARRATIVA: SegmentoNarrativa[][] = [
+export const EXPERIENCIA_NARRATIVA: SegmentoNarrativa[][] = traducible([
   [
-    { t: "This isn't just a day at sea.", fuerte: true },
-    { t: " It's a " },
-    { t: 'carefully crafted Caribbean experience.', fuerte: true },
+    { texto: "This isn't just a day at sea.", fuerte: true },
+    { texto: " It's a " },
+    { texto: 'carefully crafted Caribbean experience.', fuerte: true },
   ],
   [
-    { t: 'From the moment you arrive, every detail has been thoughtfully designed to immerse you in the very best of Punta Cana,' },
+    { texto: 'From the moment you arrive, every detail has been thoughtfully designed to immerse you in the very best of Punta Cana,' },
   ],
   [
-    { t: 'where ' },
-    { t: 'marine conservation', fuerte: true },
-    { t: ', exclusive access to our ' },
-    { t: 'underwater museum', fuerte: true },
-    { t: ', ' },
-    { t: 'chef-prepared cuisine', fuerte: true },
-    { t: ', spacious catamarans designed for comfort, and genuine Caribbean hospitality come together to create ' },
-    { t: 'unforgettable memories.', fuerte: true },
+    { texto: 'where ' },
+    { texto: 'marine conservation', fuerte: true },
+    { texto: ', exclusive access to our ' },
+    { texto: 'underwater museum', fuerte: true },
+    { texto: ', ' },
+    { texto: 'chef-prepared cuisine', fuerte: true },
+    { texto: ', spacious catamarans designed for comfort, and genuine Caribbean hospitality come together to create ' },
+    { texto: 'unforgettable memories.', fuerte: true },
   ],
-]
+])
 
 // [v3 2026-08-06] «Sin costes ocultos. Sin barcos abarrotados.» se ELIMINA —
 // WEBSITE - INICIO pág. 1: «* REMOVE: sin costos ocultos…». La constante
@@ -681,11 +682,11 @@ export const EXPERIENCIA_NARRATIVA: SegmentoNarrativa[][] = [
 // YouTube), no una foto de la galería ni un frame inventado.
 export type VideoExperiencia = { src: string; poster: string; alt: string }
 
-export const EXPERIENCIA_VIDEO: VideoExperiencia = {
+export const EXPERIENCIA_VIDEO: VideoExperiencia = traducible({
   src: '/video/experiencia-presentadora.mp4',
   poster: '/fotos/experiencia-presentadora-poster.webp',
   alt: 'Hispaniola host explaining how to choose the right excursion in Punta Cana',
-}
+})
 
 /** Card del ticker del hero. Son DOS especies, no una: el tour se compra (tiene
  *  precio, duración y aforo) y la ocasión se cotiza (no tiene precio publicado).
@@ -716,7 +717,7 @@ export type TickerTour = Extract<TickerItem, { tipo: 'tour' }>
 
 // Ticker del hero (v3): los 4 tours + las 6 ocasiones, todo lo que lleva a
 // una ficha propia (PLAN-v3.md §7). Reemplaza a la baraja de v2.
-export const TICKER_ITEMS: TickerItem[] = [
+export const TICKER_ITEMS: TickerItem[] = traducible([
   ...TOURS.map(
     (t): TickerItem => ({
       tipo: 'tour',
@@ -731,7 +732,7 @@ export const TICKER_ITEMS: TickerItem[] = [
   ...OCASIONES.map(
     (o): TickerItem => ({ tipo: 'ocasion', id: o.tipo, nombre: o.nombre, foto: o.foto, slug: o.slug }),
   ),
-]
+])
 
 // ─────────────────────────────────────────────────────────────────────────
 // Sección «Reserva directa» (why-direct v2 — «dos boletos, mismo precio»,
@@ -754,7 +755,7 @@ export type BeneficioDirecto = { id: string; titulo: string }
 // el formato: una línea por check, sin `texto`. Si algún día vuelve el texto
 // de apoyo, hay que rehacer la escena (anchos y sobresalir del banner), no
 // solo añadir el campo.
-export const BENEFICIOS_DIRECTO: BeneficioDirecto[] = [
+export const BENEFICIOS_DIRECTO: BeneficioDirecto[] = traducible([
   { id: 'expertos', titulo: 'Direct access to our local experts' },
   { id: 'personalizar', titulo: 'Customize your experience' },
   { id: 'menu', titulo: 'Choose your preferred menu' },
@@ -762,7 +763,7 @@ export const BENEFICIOS_DIRECTO: BeneficioDirecto[] = [
   { id: 'whatsapp', titulo: 'Priority assistance via WhatsApp' },
   { id: 'cancelacion', titulo: 'Flexible cancellation policy' },
   { id: 'conservacion', titulo: 'Support local marine conservation' },
-]
+])
 
 // El tour que viaja impreso en los DOS boletos de la comparación: el buque
 // insignia (Semi-Privado Premium). Mismo nombre y mismo precio en ambos a
@@ -810,7 +811,7 @@ export type Review = {
 // tiene que ser de verdad.
 // ⚠️ Avatares: NO tenemos fotos de clientes (privacidad). El componente
 // pinta iniciales en un círculo aqua-tint — placeholder honesto, no inventado.
-export const QUOTES: Review[] = [
+export const QUOTES: Review[] = traducible([
   {
     id: 'ny',
     lugar: 'Family from New York',
@@ -861,7 +862,7 @@ export const QUOTES: Review[] = [
     fecha: 'Mar 2026',
     estrellas: 5,
   },
-]
+])
 
 // ⚠️⚠️ RELLENO — HAY QUE SUSTITUIRLO POR RESEÑAS REALES ANTES DE PUBLICAR ⚠️⚠️
 //
@@ -882,7 +883,7 @@ export const QUOTES: Review[] = [
 // consciente, marcada y temporal, para que el diseño se pueda ver. Cuando el
 // cliente exporte sus reseñas de Google/TripAdvisor/Viator, este array se
 // borra entero y RESENAS_MURO pasa a ser QUOTES.
-export const QUOTES_RELLENO: Review[] = [
+export const QUOTES_RELLENO: Review[] = traducible([
   {
     id: 'r-mia',
     lugar: 'Family from Miami',
@@ -1013,7 +1014,7 @@ export const QUOTES_RELLENO: Review[] = [
     fecha: 'Jan 2026',
     estrellas: 5,
   },
-]
+])
 
 // El pool del muro de la home: reales primero, relleno después. El componente
 // lo reparte en 3 filas (reviews.tsx) — el orden de aquí decide qué reseña
@@ -1066,7 +1067,7 @@ export type PlataformaResena = {
   url: string | null
 }
 
-export const PLATAFORMAS_RESENAS: PlataformaResena[] = [
+export const PLATAFORMAS_RESENAS: PlataformaResena[] = traducible([
   {
     id: 'google',
     nombre: 'Google',
@@ -1094,10 +1095,10 @@ export const PLATAFORMAS_RESENAS: PlataformaResena[] = [
     porConfirmar: true,
     url: null,
   },
-]
+])
 
 /** Agregado real, el mismo número que usa el hero y el footer. */
-export const RESENAS_AGREGADO = { rating: '4.9', total: 1782 }
+export const RESENAS_AGREGADO = traducible({ rating: '4.9', total: 1782 })
 
 // Los 2 VIDEO-TESTIMONIOS de la cabecera de la sección (2026-07-22).
 // Sustituyen al antiguo `FUNDADOR` —un solo video, con la frase de los
@@ -1128,7 +1129,7 @@ export type VideoTestimonio = {
   videoPoster: string
 }
 
-export const VIDEO_TESTIMONIOS: VideoTestimonio[] = [
+export const VIDEO_TESTIMONIOS: VideoTestimonio[] = traducible([
   {
     id: 'aniversario',
     frase: 'We celebrated our anniversary and it was magical.',
@@ -1147,7 +1148,7 @@ export const VIDEO_TESTIMONIOS: VideoTestimonio[] = [
     videoSrc: '/video/experiencia-presentadora.mp4',
     videoPoster: '/fotos/experiencia-presentadora-poster.webp',
   },
-]
+])
 
 // ─────────────────────────────────────────────────────────────────────────
 // Sección «Contacto» (2026-07-17, pedido de Samuel) — mapa + formulario +
@@ -1171,7 +1172,7 @@ export type ContactoCard = {
   cta?: string
 }
 
-export const CONTACTO = {
+export const CONTACTO = traducible({
   // eyebrow/lead: chrome de la cabecera de /contacto (HeroInterna), NO del
   // bloque embebido en la home — `titulo` ya hacía ese trabajo ahí y sigue
   // igual. Mapea contact.php de la web actual (H1 "Contact Us" / subtítulo
@@ -1271,7 +1272,7 @@ export const CONTACTO = {
       cta: 'View on the map',
     },
   ] satisfies ContactoCard[],
-}
+})
 
 // ─────────────────────────────────────────────────────────────────────────
 // «Míranos en acción» — reels de Instagram y TikTok (correcciones v1 del
@@ -1310,7 +1311,7 @@ export type Reel = {
   red?: 'instagram' | 'tiktok'
 }
 
-export const REELS: Reel[] = [
+export const REELS: Reel[] = traducible([
   {
     id: 'martes-a-bordo',
     titulo: 'Just another Tuesday on board',
@@ -1351,7 +1352,7 @@ export const REELS: Reel[] = [
     video: null,
     red: 'instagram',
   },
-]
+])
 
 /** Hashtag de la campaña de contenido generado por el cliente (maqueta). */
 export const REELS_HASHTAG = '#HispaniolaMoments'
@@ -1395,12 +1396,12 @@ export type MedioPago = {
   marca: { tipo: 'glifo'; glifo: 'visa' | 'mastercard' | 'paypal' } | { tipo: 'texto'; texto: string }
 }
 
-export const MEDIOS_PAGO: MedioPago[] = [
+export const MEDIOS_PAGO: MedioPago[] = traducible([
   { id: 'visa', nombre: 'Visa', marca: { tipo: 'glifo', glifo: 'visa' } },
   { id: 'mastercard', nombre: 'Mastercard', marca: { tipo: 'glifo', glifo: 'mastercard' } },
   { id: 'amex', nombre: 'American Express', marca: { tipo: 'texto', texto: 'AMEX' } },
   { id: 'paypal', nombre: 'PayPal', marca: { tipo: 'glifo', glifo: 'paypal' } },
-]
+])
 
 // Redes del cliente. ⚠️ Las URLs reales NO están en ninguna fuente del
 // proyecto (ni en prototipo/datos.js ni en la auditoría de la web actual) —
@@ -1408,17 +1409,17 @@ export const MEDIOS_PAGO: MedioPago[] = [
 // el componente pinta un EnlacePrototipo en vez de inventar un destino.
 export type RedSocial = { id: string; nombre: string; url: string | null }
 
-export const REDES: RedSocial[] = [
+export const REDES: RedSocial[] = traducible([
   { id: 'instagram', nombre: 'Instagram', url: null },
   { id: 'facebook', nombre: 'Facebook', url: null },
   { id: 'tiktok', nombre: 'TikTok', url: null },
   { id: 'youtube', nombre: 'YouTube', url: null },
-]
+])
 
 // Monedas. Igual que el idioma (SelectorIdioma), es VISUAL: el sitio no tiene
 // conversión real de divisa todavía. Los precios de todo el sitio están en
 // USD, que es como los publica el cliente.
-export const MONEDAS = ['USD', 'EUR', 'DOP'] as const
+export const MONEDAS = traducible(['USD', 'EUR', 'DOP'] as const)
 
 // ─────────────────────────────────────────────────────────────────────────
 // FAQ de la home (2026-07-17) — reemplaza al layout de galería+FAQ en 2
@@ -1448,7 +1449,12 @@ export const MONEDAS = ['USD', 'EUR', 'DOP'] as const
 //     deriva a WhatsApp. PENDIENTE de confirmar con el cliente.
 export type FaqItem = { p: string; r: string }
 
-export const FAQ_HOME: FaqItem[] = [
+// [2026-08-19] Tres de estas preguntas seguían EN ESPAÑOL en el sitio inglés
+// («¿Incluye recogida en mi hotel?», «¿Puedo elegir mi plato?», «¿Hay baño a
+// bordo?» con su respuesta). Se coló en la traducción de la v3 y llevaba ahí
+// desde entonces: en la home, en inglés, entre preguntas en inglés. Se pasan
+// al idioma del sitio; el español vuelve por el diccionario (lib/i18n).
+export const FAQ_HOME: FaqItem[] = traducible([
   {
     p: 'What happens if it rains on the day of my tour?',
     r: 'Full refund or a date change, at no cost. We only cancel if conditions are not safe.',
@@ -1462,7 +1468,7 @@ export const FAQ_HOME: FaqItem[] = [
     r: 'Yes, you confirm with 25% and pay the rest on the day of the tour.',
   },
   {
-    p: '¿Incluye recogida en mi hotel?',
+    p: 'Does it include pickup at my hotel?',
     r: 'Yes, on every tour (except charters with their own meeting point).',
   },
   {
@@ -1470,10 +1476,10 @@ export const FAQ_HOME: FaqItem[] = [
     r: 'We confirm the exact pickup time by WhatsApp the afternoon before your tour. Except on charters with their own meeting point, we pick you up at your hotel.',
   },
   {
-    p: '¿Puedo elegir mi plato?',
+    p: 'Can I choose my dish?',
     r: 'Yes, each person picks their dish when booking: Seafood, Meat, Surf & Turf or Vegetarian. You can change it from My Booking up to 24 hours before.',
   },
-  { p: '¿Hay baño a bordo?', r: 'Sí, todos nuestros barcos tienen baño.' },
+  { p: 'Is there a restroom on board?', r: 'Yes, every one of our boats has a restroom.' },
   {
     p: 'What should I bring?',
     r: 'Swimsuit, towel, biodegradable sunscreen and cash for the balance if it applies.',
@@ -1494,4 +1500,4 @@ export const FAQ_HOME: FaqItem[] = [
     p: 'Do you take cards? Can I pay at the hotel?',
     r: 'We accept Visa, Mastercard, American Express and PayPal from My Booking. You can also pay the balance on the day of the tour, in cash, with a 5% discount.',
   },
-]
+])

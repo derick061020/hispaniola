@@ -4,6 +4,7 @@ import { Etiqueta } from '@/components/ui/etiqueta'
 import { VideoLightbox } from '@/components/tour/video-lightbox'
 import { useOrigenExpansion } from '@/lib/use-expansion-flip'
 import { REELS, REELS_HASHTAG, type Reel } from '@/data/home'
+import { t } from '@/lib/i18n'
 
 // «Míranos en acción» — carrusel de reels de Instagram/TikTok (correcciones
 // v1 del cliente, 2026-07-20). Cubre DOS peticiones con una sola pieza:
@@ -161,13 +162,13 @@ type Props = {
 }
 
 export function ReelsSociales({
-  titulo = 'This is what a day with us looks like',
+  titulo = t('This is what a day with us looks like'),
   // [v2 2026-07-27] El eyebrow deja de nombrar las redes («Reels · Instagram ·
   // TikTok») por lo mismo que se fue el badge de red: no es un feed conectado,
   // son videos nuestros. Se reutiliza el tono que la ficha de tour ya usaba y
   // que era el correcto desde el principio.
-  eyebrow = 'On video',
-  lead = 'A day on board comes across better on video. This is us, and our guests enjoying the Caribbean.',
+  eyebrow = t('On video'),
+  lead = t('A day on board comes across better on video. This is us, and our guests enjoying the Caribbean.'),
   variante = 'seccion',
   // [v2] El hashtag también sugería feed en vivo → apagado por defecto. La
   // ficha ya lo pasaba en false; ahora ese es el comportamiento normal.
@@ -233,8 +234,8 @@ export function ReelsSociales({
     <div className="hidden items-center gap-2 sm:flex">
       {(
         [
-          { dir: -1 as const, Icono: ChevronLeft, etiqueta: 'Previous reels', apagada: alInicio },
-          { dir: 1 as const, Icono: ChevronRight, etiqueta: 'More reels', apagada: alFinal },
+          { dir: -1 as const, Icono: ChevronLeft, etiqueta: t('Previous reels'), apagada: alInicio },
+          { dir: 1 as const, Icono: ChevronRight, etiqueta: t('More reels'), apagada: alFinal },
         ]
       ).map(({ dir, Icono, etiqueta, apagada }) => (
         <button
@@ -325,8 +326,8 @@ export function ReelsSociales({
 
       {conHashtag ? (
         <p className="mt-8 text-center text-sm text-navy-sub">
-          Sailed with us? Tag us with{' '}
-          <span className="font-semibold text-coral">{REELS_HASHTAG}</span> and get featured on our website.
+          {t('Sailed with us? Tag us with')}{' '}
+          <span className="font-semibold text-coral">{REELS_HASHTAG}</span> {t('and get featured on our website.')}
         </p>
       ) : null}
 

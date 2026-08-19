@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react'
 import { Rotate3d, X } from 'lucide-react'
 import * as CompactButton from '@/components/alignui/compact-button'
 import * as Modal from '@/components/alignui/modal'
+import { t } from '@/lib/i18n'
 
 // «VER EN 360º» — el botón de la esquina de la card (slide 28).
 //
@@ -76,14 +77,14 @@ export function Visor360({
           <div className="flex min-w-0 items-center gap-2 text-white">
             <Rotate3d className="size-5 shrink-0" aria-hidden="true" />
             <Modal.Title className="truncate font-display text-lead font-semibold text-white">
-              {nombre} en 360º
+              {nombre} {t('in 360º')}
             </Modal.Title>
           </div>
           <Modal.Close asChild>
             <CompactButton.Root
               variant="ghost"
               size="large"
-              aria-label="Close the 360º viewer"
+              aria-label={t('Close the 360º viewer')}
               className="shrink-0 text-white hover:bg-white/10 hover:text-white"
             >
               <CompactButton.Icon as={X} />

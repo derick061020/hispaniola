@@ -52,7 +52,11 @@ const navegador = await chromium.launch()
 const filas = []
 
 for (const vp of VIEWPORTS) {
-  const ctx = await navegador.newContext({ viewport: { width: vp.width, height: vp.height } })
+  // [2026-08-19] `locale: 'en-US'` obligatorio desde que el sitio es bilingüe:
+// arranca en el idioma del navegador, y en una máquina con el sistema en
+// español este script buscaría rótulos en inglés en una página en español y
+// fallaría por un motivo que no tiene nada que ver con lo que comprueba.
+const ctx = await navegador.newContext({ viewport: { width: vp.width, height: vp.height }, locale: 'en-US' })
   const page = await ctx.newPage()
   for (const ruta of RUTAS) {
     const errores = []

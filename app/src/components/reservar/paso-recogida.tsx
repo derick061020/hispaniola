@@ -1,5 +1,6 @@
 import { Campo } from '@/components/ui/campo'
 import type { DatosRecogida } from '@/components/reservar/tipos'
+import { t } from '@/lib/i18n'
 
 // Paso 2 del funnel: dónde recogemos al huésped. La web actual promete
 // «recogida gratis desde tu hotel» pero la hora exacta depende del hotel y se
@@ -19,24 +20,23 @@ export function PasoRecogida({
   return (
     <div className="flex flex-col gap-5">
       <div>
-        <h2 className="font-display text-h3 font-semibold text-navy">Where do we pick you up?</h2>
+        <h2 className="font-display text-h3 font-semibold text-navy">{t('Where do we pick you up?')}</h2>
         <p className="mt-1 text-sm text-navy-sub">
-          Free pick-up at hotels in Bávaro and Punta Cana{horaSalida ? ` for the ${horaSalida} departure` : ''}. We
-          confirm the exact time over WhatsApp depending on your hotel.
+          {t('Free pick-up at hotels in Bávaro and Punta Cana')}{horaSalida ? ` for the ${horaSalida} departure` : ''}{t('. We confirm the exact time over WhatsApp depending on your hotel.')}
         </p>
       </div>
 
       <div className="flex flex-col gap-4">
         <Campo
-          etiqueta="Hotel or pick-up point"
-          placeholder="E.g. Meliá Caribe Beach"
+          etiqueta={t('Hotel or pick-up point')}
+          placeholder={t('E.g. Meliá Caribe Beach')}
           value={datos.hotel}
           onChange={(e) => onCambio({ hotel: e.target.value })}
         />
         <Campo
-          etiqueta="Pick-up notes (optional)"
+          etiqueta={t('Pick-up notes (optional)')}
           textarea
-          placeholder="Allergies, reduced mobility, if you’re coming with kids…"
+          placeholder={t('Allergies, reduced mobility, if you’re coming with kids…')}
           value={datos.notas}
           onChange={(e) => onCambio({ notas: e.target.value })}
         />

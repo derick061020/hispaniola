@@ -6,6 +6,7 @@ import { TipsRapidos } from '@/components/guias/tips-rapidos'
 import { useGuiasReveal } from '@/components/guias/use-guias-reveal'
 import { Meta } from '@/components/seo/meta'
 import { useDevFlag } from '@/dev/use-dev-flag'
+import { t } from '@/lib/i18n'
 
 // Página Guías (/guias) — mapea tips-for-punta-cana-....php: de página suelta
 // a la página que es hoy, sin más. Mismo hero compartido (PLAN-INTERNAS-V2.md)
@@ -44,8 +45,8 @@ export function GuiasPage() {
   return (
     <div>
       <Meta
-        titulo="Guides"
-        descripcion="Real tips on snorkeling and sailing in Punta Cana: what the reef is like, how much of the trip is under sail, whether the sea is safe and what seafood we serve on board."
+        titulo={t('Guides')}
+        descripcion={t('Real tips on snorkeling and sailing in Punta Cana: what the reef is like, how much of the trip is under sail, whether the sea is safe and what seafood we serve on board.')}
         ruta="/guides"
       />
       <HeroInterna ctaHref="/#tours">

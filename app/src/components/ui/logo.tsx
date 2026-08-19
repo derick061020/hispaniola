@@ -1,3 +1,4 @@
+import { t } from '@/lib/i18n'
 // Logo real del cliente (langosta pirata + wordmark), descargado de la web actual —
 // no se rediseña (docs/proceso/analisis/direccion-visual.md §1). Dos variantes porque el lockup
 // original lleva el texto en oscuro y es ilegible sobre el video del hero:
@@ -57,7 +58,7 @@ export function Logo({
   return (
     <img
       src={src}
-      alt="Hispaniola Aquatic Adventures"
+      alt={t('Hispaniola Aquatic Adventures')}
       width={anchoRender}
       height={altoRender}
       style={{ marginBlock: holgura }}

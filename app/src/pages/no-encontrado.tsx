@@ -1,6 +1,7 @@
 import { Meta } from '@/components/seo/meta'
 import { Boton } from '@/components/ui/boton'
 import { Header } from '@/components/home/header'
+import { t } from '@/lib/i18n'
 
 // Ruta comodín — App.tsx no tenía ninguna (PLAN-LANZAMIENTO.md Bloque I): una
 // URL desconocida no debe devolver una pantalla en blanco ni un 200 mentiroso
@@ -15,7 +16,7 @@ import { Header } from '@/components/home/header'
 export function NoEncontradoPage() {
   return (
     <div>
-      <Meta titulo="Page not found" descripcion="The page you’re looking for doesn’t exist." ruta="/404" indexable={false} />
+      <Meta titulo={t('Page not found')} descripcion={t('The page you’re looking for doesn’t exist.')} ruta="/404" indexable={false} />
       <Header />
       <div className="grid min-h-[70svh] place-items-center px-5 text-center">
         <div>
@@ -24,9 +25,9 @@ export function NoEncontradoPage() {
               pantalla la abría sin título y el esquema del documento empezaba
               en h2. Mismos estilos, solo cambia la etiqueta. */}
           <h1 className="font-display text-h2 font-semibold text-navy">404</h1>
-          <p className="mt-2 text-lead text-navy-sub">We couldn’t find this page.</p>
+          <p className="mt-2 text-lead text-navy-sub">{t('We couldn’t find this page.')}</p>
           <Boton href="/" className="mt-6">
-            Back to home
+            {t('Back to home')}
           </Boton>
         </div>
       </div>

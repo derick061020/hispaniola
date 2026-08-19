@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Check, Link2 } from 'lucide-react'
 import { IconoFacebook, IconoWhatsApp, IconoX } from '@/components/ui/iconos-redes'
 import type { Articulo } from '@/data/blog'
+import { t } from '@/lib/i18n'
 
 // Compartir en redes (correcciones v1, pedido de Samuel 2026-07-22): a
 // diferencia de REDES en el footer (perfiles propios de Hispaniola, algunos
@@ -66,7 +67,7 @@ export function CompartirArticulo({
 
   return (
     <div className="flex flex-wrap items-center gap-2.5">
-      <span className={`text-sm font-semibold ${sobreOscuro ? 'text-white/90' : 'text-navy'}`}>Share</span>
+      <span className={`text-sm font-semibold ${sobreOscuro ? 'text-white/90' : 'text-navy'}`}>{t('Share')}</span>
       <ul className="flex items-center gap-2">
         {redes.map((red) => (
           <li key={red.nombre}>
@@ -82,7 +83,7 @@ export function CompartirArticulo({
           </li>
         ))}
         <li>
-          <button type="button" onClick={copiarEnlace} aria-label="Copy link" className={clases}>
+          <button type="button" onClick={copiarEnlace} aria-label={t('Copy link')} className={clases}>
             {copiado ? (
               <Check className="size-4" aria-hidden="true" />
             ) : (

@@ -1,3 +1,5 @@
+import { traducible } from '@/lib/i18n'
+
 // Página FAQ standalone (/faq) — mapea frequently-asked-questions.php de la
 // web actual. Contenido portado VERBATIM de prototipo/datos.js
 // (FAQ_CATEGORIAS): 6 categorías, 14 preguntas, ninguna inventada. La home
@@ -14,7 +16,7 @@
 export type PreguntaFaq = { p: string; r: string }
 export type CategoriaFaq = { id: string; nombre: string; preguntas: PreguntaFaq[] }
 
-export const FAQ_CATEGORIAS: CategoriaFaq[] = [
+export const FAQ_CATEGORIAS: CategoriaFaq[] = traducible([
   {
     id: 'reservas',
     nombre: 'Bookings & payments',
@@ -107,11 +109,11 @@ export const FAQ_CATEGORIAS: CategoriaFaq[] = [
       },
     ],
   },
-]
+])
 
-export const FAQ_HERO = {
+export const FAQ_HERO = traducible({
   eyebrow: 'Help',
   titulo: 'Frequently asked questions',
   sub: '17 questions about bookings, payments, food, weather and children. If it’s not here, message us on WhatsApp.',
   galeria: ['galeria-semi-privado-2', 'hero-catamaran-2'],
-}
+})

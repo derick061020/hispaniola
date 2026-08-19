@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { useCatalogo } from '@/lib/api/use-catalogo'
 import { fusionarLista } from '@/lib/api/fusion-catalogo'
 import { TOURS, bookingCta, formatoDinero } from '@/data/home'
+import { t } from '@/lib/i18n'
 
 // Megamenú Tours — el escaparate: los 4 productos, camino directo al dinero
 // (ver NOTAS['home-megamenu-tours'] del prototipo). Cada tour lleva a su ficha
@@ -41,35 +42,35 @@ export function MegaTours() {
     // valor salía de esta misma cuenta).
     <div className="w-fit max-w-[92vw] p-4">
       <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
-        {tours.map((t) => (
+        {tours.map((tour) => (
           // data-mega-item: ver el comentario en item-menu.tsx — marcador
           // que TabsConPaneles (nav-tabs.tsx) anima con stagger al abrir.
-          <Link key={t.slug} to={`/tours/${t.slug}`} className="group block w-mega-card-ancho" data-mega-item>
+          <Link key={tour.slug} to={`/tours/${tour.slug}`} className="group block w-mega-card-ancho" data-mega-item>
             {/* El zoom vive en el contenedor con overflow-hidden, no en el
                 <img>: escalar la imagen suelta crecería su caja y empujaría al
                 texto de debajo. */}
             <span className="block h-36 overflow-hidden rounded-card bg-papel-hueso">
               <img
-                src={`/fotos/${t.foto}.webp`}
+                src={`/fotos/${tour.foto}.webp`}
                 alt=""
                 aria-hidden="true"
                 className="size-full object-cover transition-transform duration-300 group-hover:scale-105"
               />
             </span>
             <span className="mt-2 block font-display text-sm font-semibold leading-tight text-navy transition-colors group-hover:text-aqua-dark">
-              {t.nombre}
+              {tour.nombre}
             </span>
             <span className="mt-0.5 block text-xs text-navy-soft">
-              {t.precioLight !== null ? (
+              {tour.precioLight !== null ? (
                 <>
-                  From <span className="font-semibold text-navy">{formatoDinero(t.precioLight)}</span> ·{' '}
+                  {t('From')}{' '}<span className="font-semibold text-navy">{formatoDinero(tour.precioLight)}</span> ·{' '}
                 </>
               ) : (
                 // Isla Saona no tiene precio publicado (datos.js): en vez de
                 // inventarlo, el menú dice cómo se pide — "Consultar".
-                <>{bookingCta[t.booking]} · </>
+                <>{bookingCta[tour.booking]} · </>
               )}
-              {t.duracionCorta}
+              {tour.duracionCorta}
             </span>
           </Link>
         ))}

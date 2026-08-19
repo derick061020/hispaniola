@@ -4,6 +4,7 @@ import { TICKER_ITEMS, formatoDinero, type TickerItem, type TickerTour } from '@
 import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
 import { useDevFlag } from '@/dev/use-dev-flag'
 import { useTickerDock } from './use-ticker-dock'
+import { t } from '@/lib/i18n'
 
 // Ticker del hero (v3) — sustituye a la baraja de v2 (app/PLAN-v3.md §7).
 // Los 4 tours + los 3 eventos desfilan en loop infinito por el pie del
@@ -119,7 +120,7 @@ function MetaTour({ item }: { item: TickerTour }) {
     <p className="mt-0.5 truncate text-xs text-navy-soft first-letter:uppercase">
       {item.precioDesde !== null ? (
         <>
-          From <span className="font-semibold text-navy">{formatoDinero(item.precioDesde)}</span> ·{' '}
+          {t('From')}{' '}<span className="font-semibold text-navy">{formatoDinero(item.precioDesde)}</span> ·{' '}
         </>
       ) : null}
       {secundarios.join(' · ')}
@@ -136,7 +137,7 @@ function MetaTour({ item }: { item: TickerTour }) {
 function ChipOcasion() {
   return (
     <span className="mt-1 inline-flex rounded-chip bg-aqua-tint px-2 py-0.5 text-xs font-medium text-aqua-dark">
-      Private event
+      {t('Private event')}
     </span>
   )
 }

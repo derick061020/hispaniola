@@ -1,7 +1,9 @@
+import { t } from '@/lib/i18n'
 import { useLayoutEffect, useRef, useState } from 'react'
 import type { Tour } from '@/data/home'
 import { useAnclasActiva, irAlAncla } from '@/components/ui/use-anclas-activa'
-import { useDevFlag } from '@/dev/use-dev-flag' // [dev-mode]
+import { useDevFlag } from '@/dev/use-dev-flag'
+ // [dev-mode]
 
 // Nav de anclas de la ficha (wireframe A2). La ficha es larga y el visitante
 // no llega con la misma pregunta: unos quieren la hora de recogida, otros el
@@ -66,10 +68,10 @@ export function AnclasFicha({ tour }: { tour: Tour }) {
     // el copy aprobado («Itinerary», «What's Included»…), y una pestaña que
     // dice «Incluye» sobre una sección que dice «What's Included» se lee como
     // un fallo, no como una traducción a medias.
-    ...(tour.booking === 'completo' ? [{ id: 'ancla-menu', label: 'Menu' }] : []),
-    { id: 'ancla-itinerario', label: 'Itinerary' },
-    { id: 'ancla-incluye', label: 'Included' },
-    { id: 'ancla-opiniones', label: 'Reviews' },
+    ...(tour.booking === 'completo' ? [{ id: 'ancla-menu', label: t('Menu') }] : []),
+    { id: 'ancla-itinerario', label: t('Itinerary') },
+    { id: 'ancla-incluye', label: t('Included') },
+    { id: 'ancla-opiniones', label: t('Reviews') },
     { id: 'ancla-faq', label: 'FAQ' },
   ]
 
@@ -120,7 +122,7 @@ export function AnclasFicha({ tour }: { tour: Tour }) {
 
   return (
     <nav
-      aria-label="Sections on this page"
+      aria-label={t('Sections on this page')}
       className="sticky top-0 z-30 hidden border-b border-linea bg-papel/90 backdrop-blur-sm md:block"
     >
       <div

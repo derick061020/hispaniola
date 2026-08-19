@@ -1,3 +1,5 @@
+import { traducible } from '@/lib/i18n'
+
 // Página LA FUNDACIÓN (/fundacion) — correcciones v2 del cliente, plan 08
 // §3-§5 (slides 62-64 de «Presentación CAMBIOS 2.0.pdf»).
 //
@@ -44,7 +46,7 @@
 // — ver el aviso sobre ese flag más abajo. No hay ningún pie que dé por
 // hecho lo que la foto no enseña.
 
-export const FUNDACION = {
+export const FUNDACION = traducible({
   // [v3 2026-08-07, WEBSITE-SOSTENIBILIDAD pag. 6] El nombre que el cliente
   // usa ahora en todos sus documentos — ver el ✅ de la cabecera. Lo pintan el
   // teaser de /competitive-advantage (como titular) y el hero de /foundation
@@ -346,4 +348,4 @@ export const FUNDACION = {
     'We built a business that could support conservation.',
   ],
   teaserCta: 'Meet the Foundation',
-} as const
+} as const)

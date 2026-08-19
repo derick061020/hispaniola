@@ -5,6 +5,7 @@ import * as CompactButton from '@/components/alignui/compact-button'
 import { Etiqueta } from '@/components/ui/etiqueta'
 import { SOSTENIBILIDAD, VIDEOS_SOSTENIBILIDAD, type VideoSost } from '@/data/sostenibilidad'
 import { useDevFlag } from '@/dev/use-dev-flag'
+import { t } from '@/lib/i18n'
 
 // Los 7 videos de competitive-advantage.php. Cada tarjeta es el póster real
 // (descargado de YouTube a /video/sostenibilidad, sin hotlink) + un botón play
@@ -94,7 +95,7 @@ function VideoModal({ video, onCerrar }: { video: VideoSost; onCerrar: () => voi
             <CompactButton.Root
               variant="ghost"
               size="large"
-              aria-label="Cerrar video"
+              aria-label={t('Close video')}
               className="text-white hover:bg-white/10 hover:text-white"
             >
               <CompactButton.Icon as={X} />

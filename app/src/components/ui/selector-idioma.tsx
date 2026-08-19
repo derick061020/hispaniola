@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { fijaIdiomaUI, t, useIdiomaUI } from '@/lib/i18n'
 
 // Selector de idioma del Topbar (components/home/topbar.tsx) — pedido de
 // Samuel: "dale más amor", con banderas circulares y que se lea como un
@@ -34,9 +35,11 @@ import { useState } from 'react'
 // "español" más rápido que la bandera dominicana, aunque el negocio esté en
 // RD).
 //
-// Puramente visual por ahora (el sitio no tiene i18n real todavía — ES+EN
-// sigue en Pendientes de app/PLAN-LANZAMIENTO.md): alterna un estado local,
-// no cambia ningún copy.
+// [2026-08-19] YA NO ES VISUAL. Durante un año este toggle movió un thumb y
+// no cambiaba una sola palabra; hoy lee y escribe el idioma de verdad
+// (lib/i18n). Lo único que se conserva del estado local es el `hover`, que es
+// previsualización y no una elección — de ahí que `activo` desaparezca como
+// useState y pase a salir del store.
 //
 // ── CORRECCIONES v3 (2026-08-06, plan 01 §2) ─────────────────────────────
 // El idioma principal del sitio pasa a INGLÉS y el español a secundario, así
@@ -45,9 +48,9 @@ import { useState } from 'react'
 // izquierdo pega al borde izquierdo y la del derecho al derecho— para que el
 // par se lea simétrico, así que también se cruzan.
 //
-// Sigue siendo visual: al cablear el i18n real, `activo` pasará a leer/
-// escribir el idioma de verdad. El sitio en español queda congelado en el tag
-// `v3-pre-en` para usarlo como diccionario en ese momento.
+// El sitio en español quedó congelado en el tag `v3-pre-en` para usarlo como
+// diccionario, y así se hizo: la mayor parte del español que se ve hoy es el
+// copy original del cliente recuperado de ahí, no una traducción inventada.
 //
 // ⚠️ Los colores de las banderas son EXCEPCIÓN a "todo pasa por tokens"
 // (CLAUDE.md): son los colores reales, normados, de cada bandera — no
@@ -57,7 +60,7 @@ type Idioma = 'EN' | 'ES'
 
 function BanderaES({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 32 32" className={className} role="img" aria-label="Spanish, flag of Spain">
+    <svg viewBox="0 0 32 32" className={className} role="img" aria-label={t('Spanish, flag of Spain')}>
       <defs>
         <clipPath id="selector-idioma-circulo-es">
           <circle cx="16" cy="16" r="16" />
@@ -75,7 +78,7 @@ function BanderaES({ className }: { className?: string }) {
 
 function BanderaUS({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 32 32" className={className} role="img" aria-label="English, flag of the United States">
+    <svg viewBox="0 0 32 32" className={className} role="img" aria-label={t('English, flag of the United States')}>
       <defs>
         <clipPath id="selector-idioma-circulo-us">
           <circle cx="16" cy="16" r="16" />
@@ -99,14 +102,15 @@ function BanderaUS({ className }: { className?: string }) {
 }
 
 export function SelectorIdioma({ className = '' }: { className?: string }) {
-  const [activo, setActivo] = useState<Idioma>('EN')
+  const idioma = useIdiomaUI()
+  const activo: Idioma = idioma === 'es' ? 'ES' : 'EN'
   const [hover, setHover] = useState<Idioma | null>(null)
   const mostrado = hover ?? activo
 
   return (
     <div
       role="group"
-      aria-label="Language"
+      aria-label={t('Language')}
       onMouseLeave={() => setHover(null)}
       className={`relative grid grid-cols-2 rounded-full bg-papel-hueso p-0.5 ring-1 ring-linea ${className}`}
     >
@@ -117,10 +121,10 @@ export function SelectorIdioma({ className = '' }: { className?: string }) {
       />
       <button
         type="button"
-        onClick={() => setActivo('EN')}
+        onClick={() => fijaIdiomaUI('en')}
         onMouseEnter={() => setHover('EN')}
         aria-pressed={activo === 'EN'}
-        title="English"
+        title={t('English')}
         className={`relative z-10 flex items-center justify-center gap-1 rounded-full py-0.5 pl-0.5 pr-2 text-[10px] font-semibold transition-colors ${
           mostrado === 'EN' ? 'text-white' : 'text-navy-soft'
         }`}
@@ -130,10 +134,10 @@ export function SelectorIdioma({ className = '' }: { className?: string }) {
       </button>
       <button
         type="button"
-        onClick={() => setActivo('ES')}
+        onClick={() => fijaIdiomaUI('es')}
         onMouseEnter={() => setHover('ES')}
         aria-pressed={activo === 'ES'}
-        title="Español"
+        title={t('Español')}
         className={`relative z-10 flex items-center justify-center gap-1 rounded-full py-0.5 pl-2 pr-0.5 text-[10px] font-semibold transition-colors ${
           mostrado === 'ES' ? 'text-white' : 'text-navy-soft'
         }`}

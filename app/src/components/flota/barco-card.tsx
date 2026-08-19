@@ -8,6 +8,7 @@ import type { BarcoFlota } from '@/data/nosotros'
 import { GaleriaBarco } from './galeria-barco'
 import { FichaTecnicaModal } from './ficha-tecnica-modal'
 import { Visor360 } from './visor-360'
+import { t } from '@/lib/i18n'
 
 // LA «TARJETA DE BARCO (PLANTILLA)» del slide 28, completa.
 //
@@ -70,7 +71,7 @@ export function BarcoCard({
   const media = MEDIA_FLOTA[barco.nombre] ?? []
   const video = media.find((m) => m.tipo === 'video')
   const destino = barco.cta === 'charter' ? '/tours/private-charter' : '/events/weddings'
-  const etiquetaCta = barco.cta === 'charter' ? 'See tours on this boat' : 'Get a quote for your event'
+  const etiquetaCta = barco.cta === 'charter' ? t('See tours on this boat') : t('Get a quote for your event')
 
   const specs = [
     { icono: Ruler, valor: barco.eslora },
@@ -177,8 +178,8 @@ export function BarcoCard({
             className="inline-flex w-full items-center justify-center gap-2 rounded-btn px-4 py-2 text-sm font-semibold text-navy-sub transition hover:bg-papel-hueso hover:text-navy"
           >
             <FileText className="size-4 text-navy-soft" aria-hidden="true" />
-            View full spec sheet
-            <span className="sr-only"> for {barco.nombre}</span>
+            {t('View full spec sheet')}
+            <span className="sr-only"> {t('for')}{' '}{barco.nombre}</span>
           </button>
         </div>
       </div>

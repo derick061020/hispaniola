@@ -7,6 +7,7 @@ import { MenuMovil } from './menu-movil'
 import { TabsConPaneles } from './nav-tabs'
 import { useMenuDropdown } from '@/lib/use-menu-dropdown'
 import { useDevFlag } from '@/dev/use-dev-flag'
+import { t } from '@/lib/i18n'
 
 // [v2 2026-07-27] 'sostenibilidad' entra como tab propio del nav principal
 // (correcciones v2, plan 02 §1 — el cliente dictó el menú en la reunión del
@@ -82,7 +83,7 @@ export function Header({
             su comentario) — cuando este logo sale de vista, NavFlotante funde
             su propia versión compacta dentro del panel de tabs. 'solida' no
             lo necesita (no tiene NavFlotante propio, la 404 es autónoma). */}
-        <Link to="/" aria-label="Hispaniola Aquatic Adventures, home" id={sobreVideo ? 'logo-hero' : undefined}>
+        <Link to="/" aria-label={t('Hispaniola Aquatic Adventures, home')} id={sobreVideo ? 'logo-hero' : undefined}>
           <Logo sobreOscuro={sobreVideo} />
         </Link>
 
@@ -104,12 +105,12 @@ export function Header({
               compacta cuando este boton sale de vista junto con el logo (ver
               nav-flotante.tsx). 'solida' no cambia: sigue visible desde sm. */}
           <span className="hidden sm:inline-flex">
-            <Boton href={ctaHref}>Book now</Boton>
+            <Boton href={ctaHref}>{t('Book now')}</Boton>
           </span>
           <button
             type="button"
             onClick={() => setMovilAbierto(true)}
-            aria-label="Menu"
+            aria-label={t('Menu')}
             className={`grid size-10 place-items-center rounded-lg md:hidden ${sobreVideo ? 'text-white hover:bg-white/10' : 'text-navy hover:bg-papel-hueso'}`}
           >
             <Menu className="size-5" />

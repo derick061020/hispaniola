@@ -1,4 +1,5 @@
 import type { DocumentoLegal } from '@/data/legal'
+import { t } from '@/lib/i18n'
 
 // Cuerpo de la plantilla legal — 2 variantes según `contenidoReal`:
 // política de cancelación tiene texto real (compuesto de hechos ya vetados en
@@ -12,9 +13,7 @@ export function CuerpoLegal({ doc }: { doc: DocumentoLegal }) {
 
       {!doc.contenidoReal ? (
         <div className="mt-6 rounded-card bg-coral/10 p-5 text-sm text-navy ring-1 ring-coral/30">
-          <strong className="font-semibold">A structural draft, not a binding document.</strong> The sections below
-          are the ones expected on this page; the actual legal text still has to be drafted with a lawyer before the
-          site goes live in production.
+          <strong className="font-semibold">{t('A structural draft, not a binding document.')}</strong> {t('The sections below are the ones expected on this page; the actual legal text still has to be drafted with a lawyer before the site goes live in production.')}
         </div>
       ) : null}
 

@@ -4,6 +4,7 @@ import { Etiqueta } from '@/components/ui/etiqueta'
 import { SelloTripAdvisor } from '@/components/ui/sello-tripadvisor'
 import { FAMILIA_FLOTA } from '@/data/flota'
 import { EQUIPO } from '@/data/nosotros'
+import { t } from '@/lib/i18n'
 
 // LA PRESENTACIÓN DE /flota — «Bienvenido a la familia Hispaniola», el dueño
 // y el recorrido de años (slides 26 y 27 del PDF v2).
@@ -106,7 +107,7 @@ export function FamiliaHispaniola() {
                   <span className="font-semibold text-navy">— {fundador.nombre}</span>,{' '}
                   {/* «since», no «desde»: se quedó en español en el barrido de
                       F7 porque es texto suelto en el JSX y no en data/. */}
-                  {FAMILIA_FLOTA.duenoRolLargo} · since {fundador.desde}
+                  {FAMILIA_FLOTA.duenoRolLargo} {t('· since')}{' '}{fundador.desde}
                 </figcaption>
               </div>
             </figure>

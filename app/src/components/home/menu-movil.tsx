@@ -7,6 +7,8 @@ import { fusionarLista } from '@/lib/api/fusion-catalogo'
 import { TOURS, OCASIONES, NAV_NOSOTROS, NAV_SOSTENIBILIDAD, NAV_AYUDA, bookingCta, formatoDinero } from '@/data/home'
 import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
 import { Boton } from '@/components/ui/boton'
+import { t, traducible } from '@/lib/i18n'
+import { SelectorIdioma } from '@/components/ui/selector-idioma'
 
 type Seccion = 'tours' | 'eventos' | 'nosotros' | 'sostenibilidad' | 'ayuda'
 
@@ -14,13 +16,13 @@ type Seccion = 'tours' | 'eventos' | 'nosotros' | 'sostenibilidad' | 'ayuda'
 // por el cliente en la reunión del 07-24: Nosotros · Tours · Eventos ·
 // Sostenibilidad · Ayuda. Si aquí y allí divergen, el sitio se lee distinto
 // según el dispositivo.
-const secciones: { id: Seccion; label: string }[] = [
+const secciones: { id: Seccion; label: string }[] = traducible([
   { id: 'nosotros', label: 'About us' },
   { id: 'tours', label: 'Tours' },
   { id: 'eventos', label: 'Events' },
   { id: 'sostenibilidad', label: 'Sustainability' },
   { id: 'ayuda', label: 'Help' },
-]
+])
 
 // Menú móvil (PLAN-v3.md §13) — "objeto que se despliega", no una pantalla
 // que sustituye a la página: la hoja lleva el mismo margen y radio que el
@@ -122,16 +124,16 @@ export function MenuMovil({
         ref={hojaRef}
         role="dialog"
         aria-modal="true"
-        aria-label="Menu"
+        aria-label={t('Menu')}
         className="menu-hoja fixed inset-hero-margen z-50 flex flex-col overflow-hidden rounded-hero bg-papel shadow-hero md:hidden"
       >
         <div className="flex items-center justify-between border-b border-linea px-5 py-4">
-          <strong className="font-display text-lg text-navy">Menu</strong>
+          <strong className="font-display text-lg text-navy">{t('Menu')}</strong>
           <button
             ref={cerrarBtnRef}
             type="button"
             onClick={onCerrar}
-            aria-label="Close"
+            aria-label={t('Close')}
             className="grid size-9 place-items-center rounded-lg text-navy hover:bg-papel-hueso"
           >
             <X className="size-5" />
@@ -148,7 +150,7 @@ export function MenuMovil({
             onClick={onCerrar}
             className="block border-b border-linea py-3 font-display text-base font-semibold text-navy"
           >
-            Home
+            {t('Home')}
           </Link>
           {secciones.map((s) => (
             <div key={s.id} className="border-b border-linea py-1">
@@ -170,15 +172,15 @@ export function MenuMovil({
                           fichas React Router NO desmonta la página, así que la
                           hoja se quedaría abierta encima, con el scroll del
                           fondo aún bloqueado. */}
-                      {tours.map((t) => (
+                      {tours.map((tour) => (
                         <Link
-                          key={t.slug}
-                          to={`/tours/${t.slug}`}
+                          key={tour.slug}
+                          to={`/tours/${tour.slug}`}
                           className="flex items-center justify-between rounded-lg bg-papel-hueso px-3 py-2.5"
                         >
-                          <span className="text-sm font-medium text-navy">{t.nombre}</span>
+                          <span className="text-sm font-medium text-navy">{tour.nombre}</span>
                           <span className="text-xs font-semibold text-menta-texto">
-                            {t.precioLight !== null ? `From ${formatoDinero(t.precioLight)}` : bookingCta[t.booking]}
+                            {tour.precioLight !== null ? `From ${formatoDinero(tour.precioLight)}` : bookingCta[tour.booking]}
                           </span>
                         </Link>
                       ))}
@@ -282,13 +284,20 @@ export function MenuMovil({
           ))}
         </div>
 
-        <div className="border-t border-linea p-4">
+        <div className="flex items-center gap-3 border-t border-linea p-4">
+          {/* [2026-08-19] El selector de idioma vive en el Topbar, que es
+              `hidden sm:block` — o sea, en móvil NO EXISTE. Con el toggle ya
+              conectado de verdad eso dejaba sin forma de cambiar de idioma
+              justo a la mitad del tráfico que llega de un QR en el muelle.
+              Aquí, junto al CTA, es el único sitio del móvil por el que pasa
+              todo el mundo. */}
+          <SelectorIdioma className="shrink-0" />
           {/* `#tours` solo existe en la home; en la ficha este botón no haría
               nada. Se resuelve contra la página actual: en la ficha manda al
               widget de reserva (el mismo destino que el «Reservar» del header),
               y en la home al grid de tours. */}
-          <Boton href={ctaHref} onClick={onCerrar} className="w-full">
-            Book now
+          <Boton href={ctaHref} onClick={onCerrar} className="flex-1">
+            {t('Book now')}
           </Boton>
         </div>
       </div>

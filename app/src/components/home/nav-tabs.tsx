@@ -7,6 +7,7 @@ import { DropdownNosotros } from './dropdown-nosotros'
 import { DropdownSostenibilidad } from './dropdown-sostenibilidad'
 import { DropdownAyuda } from './dropdown-ayuda'
 import type { MenuId } from './header'
+import { t } from '@/lib/i18n'
 
 // Entrada/salida del panel del mega-menú (2026-07-22, pedido de Samuel:
 // "que los mega menú tengan una animación chula de entrada y salida,
@@ -470,17 +471,17 @@ export function TabsConPaneles({
   return (
     <div className="relative flex items-center gap-1">
       <Link to="/" className={claseInicio}>
-        Home
+        {t('Home')}
       </Link>
       {/* [v2 2026-07-27] Orden nuevo dictado por el cliente (reunión 07-24,
           26:43): Inicio · Nosotros · Tours · Eventos · Sostenibilidad · Ayuda.
           «Nosotros» pasa DELANTE de Tours y Sostenibilidad entra como tab
           propio — el nav pasa de 5 a 6 entradas. */}
-      {botonTab('nosotros', 'About us ▾')}
-      {botonTab('tours', 'Tours ▾')}
-      {botonTab('eventos', 'Events ▾')}
-      {botonTab('sostenibilidad', 'Sustainability ▾')}
-      {botonTab('ayuda', 'Help ▾')}
+      {botonTab('nosotros', t('About us ▾'))}
+      {botonTab('tours', t('Tours ▾'))}
+      {botonTab('eventos', t('Events ▾'))}
+      {botonTab('sostenibilidad', t('Sustainability ▾'))}
+      {botonTab('ayuda', t('Help ▾'))}
       {panelMontado ? (
         <div ref={panelRef} className={clasePanel} style={{ transformOrigin: 'top center' }}>
           {panel}

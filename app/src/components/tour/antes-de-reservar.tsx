@@ -5,6 +5,7 @@ import { TituloSeccion } from '@/components/tour/titulo-seccion'
 import { DESCUENTOS, DESCUENTO_MAXIMO } from '@/lib/tarifas'
 import type { Tour } from '@/data/home'
 import type { FichaTour } from '@/data/tours'
+import { t } from '@/lib/i18n'
 
 // «Antes de reservar» — UN SOLO BLOQUE con todo lo del slide 2 (plan 01 §7).
 //
@@ -78,10 +79,10 @@ export function AntesDeReservar({ tour, ficha }: { tour: Tour; ficha: FichaTour 
           «Antes de reservar» que había. Se revisa en el commit del charter
           (F3.3), que reescribe ese bloque entero con los 5 claims de cocina
           aprobados. */}
-      <TituloSeccion>Book Direct. Enjoy More.</TituloSeccion>
+      <TituloSeccion>{t('Book Direct. Enjoy More.')}</TituloSeccion>
       {/* [v3 2026-08-07] Sin tope de ancho (ver comparador-premium.tsx). */}
       <p className="mt-2 text-navy-sub">
-        Unlock exclusive savings and benefits available only when you book directly with Hispaniola.
+        {t('Unlock exclusive savings and benefits available only when you book directly with Hispaniola.')}
       </p>
 
       {/* FRANJA DE DURACIÓN. Va arriba del todo porque es lo primero que
@@ -96,8 +97,8 @@ export function AntesDeReservar({ tour, ficha }: { tour: Tour; ficha: FichaTour 
           </span>
           <p className="text-sm text-navy-sub">
             <strong className="font-semibold text-navy">
-              Private charters of {ficha.duracion}
-            </strong>, the duration comes with the catamaran you choose.
+              {t('Private charters of')}{' '}{ficha.duracion}
+            </strong>{t(', the duration comes with the catamaran you choose.')}
           </p>
         </div>
       ) : null}
@@ -122,16 +123,15 @@ export function AntesDeReservar({ tour, ficha }: { tour: Tour; ficha: FichaTour 
             de DESCUENTOS (lib/tarifas.ts) —el mismo array que aplica el
             descuento al cobrar— en vez de escribirse a mano. */}
         <div className="flex flex-col rounded-card-grande bg-menta p-5 sm:p-6">
-          <p className={`${ETIQUETA} text-menta-texto`}>Booking direct</p>
+          <p className={`${ETIQUETA} text-menta-texto`}>{t('Booking direct')}</p>
           <p className="mt-3 flex items-baseline gap-2">
             <span className="font-display text-[2.75rem] font-semibold leading-none text-menta-texto">
               {DESCUENTO_MAXIMO}%
             </span>
-            <span className="text-sm text-navy-sub">maximum discount</span>
+            <span className="text-sm text-navy-sub">{t('maximum discount')}</span>
           </p>
           <p className="mt-2 text-sm text-navy-sub">
-            All three <strong className="font-semibold text-navy">stack</strong>: meet the three
-            and you pay {DESCUENTO_MAXIMO}% less than the list price.
+            {t('All three')}{' '}<strong className="font-semibold text-navy">{t('stack')}</strong>{t(': meet the three and you pay')}{' '}{DESCUENTO_MAXIMO}{t('% less than the list price.')}
           </p>
 
           <ul className="mt-5 flex flex-col gap-3 border-t border-menta-texto/15 pt-4">
@@ -150,7 +150,7 @@ export function AntesDeReservar({ tour, ficha }: { tour: Tour; ficha: FichaTour 
                       en vez de esconderse. */}
                   {!d.autoAplicable ? (
                     <span className="mt-0.5 block text-xs text-navy-soft">
-                      We apply it when confirming. Just tell us you have sailed with us before.
+                      {t('We apply it when confirming. Just tell us you have sailed with us before.')}
                     </span>
                   ) : null}
                 </span>
@@ -167,7 +167,7 @@ export function AntesDeReservar({ tour, ficha }: { tour: Tour; ficha: FichaTour 
             y ningún competidor de Punta Cana la publica. */}
         {cocina.length > 0 ? (
           <div className="flex flex-col rounded-card-grande bg-fondo-ficha p-5 sm:p-6">
-            <p className={`${ETIQUETA} text-navy-soft`}>How we cook</p>
+            <p className={`${ETIQUETA} text-navy-soft`}>{t('How we cook')}</p>
             <ul className="mt-4 flex flex-col gap-4">
               {cocina.map((c) => {
                 const Icono = ICONO_COCINA[c.id] ?? Soup
@@ -208,11 +208,10 @@ export function AntesDeReservar({ tour, ficha }: { tour: Tour; ficha: FichaTour 
             </span>
             <div className="min-w-0">
               <p className="font-display text-base font-semibold text-white">
-                ¿Vienen en grupo grande?
+                {t('Coming as a large group?')}
               </p>
               <p className="mt-0.5 text-sm text-white/70">
-                For celebrations, weddings and corporate events we have fixed packages with menu,
-                open bar and the whole boat to yourselves.
+                {t('For celebrations, weddings and corporate events we have fixed packages with menu, open bar and the whole boat to yourselves.')}
               </p>
             </div>
           </div>
@@ -220,7 +219,7 @@ export function AntesDeReservar({ tour, ficha }: { tour: Tour; ficha: FichaTour 
             to="/events/party-boat"
             className="shrink-0 self-start rounded-full bg-coral px-6 py-3 text-center text-sm font-semibold text-white transition hover:brightness-110 sm:self-auto"
           >
-            See the group packages
+            {t('See the group packages')}
           </Link>
         </div>
       ) : null}

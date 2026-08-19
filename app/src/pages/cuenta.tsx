@@ -13,6 +13,7 @@ import {
   cambiarPassword, cerrarSesion, entrar, guardarPerfil, guardarSesion, leerCuenta,
   pedirPassword, sesionGuardada, type PerfilCuenta, type ReservaDeCuenta,
 } from '@/lib/api/cuenta'
+import { t, traducible } from '@/lib/i18n'
 
 // «Mi cuenta» — el área privada del cliente.
 //
@@ -27,11 +28,11 @@ import {
 // `papel-hueso` que «My booking», para que el cliente sienta que es el mismo
 // sitio y no otro producto.
 
-const ESTADOS: Record<string, { etiqueta: string; clase: string }> = {
+const ESTADOS: Record<string, { etiqueta: string; clase: string }> = traducible({
   confirmed: { etiqueta: 'Confirmed', clase: 'bg-aqua-tint text-aqua-dark' },
   pending: { etiqueta: 'Pending', clase: 'bg-linea text-navy-sub' },
   cancelled: { etiqueta: 'Cancelled', clase: 'bg-coral/10 text-coral' },
-}
+})
 
 export function CuentaPage() {
   const [sesion, setSesion] = useState(sesionGuardada)
@@ -75,8 +76,8 @@ export function CuentaPage() {
   return (
     <>
       <Meta
-        titulo="My account · Hispaniola Aquatic Adventures"
-        descripcion="Sign in to see your bookings, choose your menu and update your details."
+        titulo={t('My account · Hispaniola Aquatic Adventures')}
+        descripcion={t('Sign in to see your bookings, choose your menu and update your details.')}
         ruta="/account"
         indexable={false}
       />
@@ -87,9 +88,9 @@ export function CuentaPage() {
             className="inline-flex items-center gap-1.5 justify-self-start text-sm font-semibold text-aqua-dark hover:underline"
           >
             <ArrowLeft className="size-4" aria-hidden="true" />
-            Back to home
+            {t('Back to home')}
           </Link>
-          <Link to="/" aria-label="Hispaniola Aquatic Adventures" className="justify-self-center">
+          <Link to="/" aria-label={t('Hispaniola Aquatic Adventures')} className="justify-self-center">
             <Logo compacto />
           </Link>
           <div aria-hidden="true" className="justify-self-end">
@@ -100,7 +101,7 @@ export function CuentaPage() {
                 className="inline-flex items-center gap-1.5 text-sm font-semibold text-navy-sub hover:text-navy"
               >
                 <LogOut className="size-4" aria-hidden="true" />
-                Sign out
+                {t('Sign out')}
               </button>
             ) : null}
           </div>
@@ -122,11 +123,10 @@ export function CuentaPage() {
           <div className="mx-auto flex max-w-3xl flex-col gap-6">
             <div>
               <h1 className="font-display text-2xl font-semibold text-navy sm:text-3xl">
-                Hello, {perfil.first_name || 'there'}
+                {t('Hello,')}{' '}{perfil.first_name || 'there'}
               </h1>
               <p className="mt-2 text-sm text-navy-sub">
-                Here are your bookings and your details. Changes save straight to our system — the crew sees
-                them right away.
+                {t('Here are your bookings and your details. Changes save straight to our system — the crew sees them right away.')}
               </p>
             </div>
 
@@ -186,15 +186,15 @@ function Acceso({
         onEntrar(d.token, email.trim(), { profile: d.profile, bookings: d.bookings })
       } else {
         await pedirPassword(email.trim())
-        setAviso('If that address has a booking with us, a new password is on its way to it.')
+        setAviso(t('If that address has a booking with us, a new password is on its way to it.'))
         setModo('entrar')
         setPassword('')
       }
     } catch (err: unknown) {
       setError(
         err instanceof ErrorApi && err.codigo === 'bad_credentials'
-          ? 'That email or password is not right. If you lost it, ask for a new one below.'
-          : 'Something went wrong on our side. Try again in a moment.',
+          ? t('That email or password is not right. If you lost it, ask for a new one below.')
+          : t('Something went wrong on our side. Try again in a moment.'),
       )
     } finally {
       setEnviando(false)
@@ -208,33 +208,32 @@ function Acceso({
           <KeyRound className="size-7" aria-hidden="true" strokeWidth={2} />
         </div>
         <h1 className="mt-5 font-display text-2xl font-semibold text-navy sm:text-3xl">
-          {modo === 'entrar' ? 'Your bookings' : 'Get a new password'}
+          {modo === 'entrar' ? t('Your bookings') : t('Get a new password')}
         </h1>
         <p className="mt-3 text-sm text-navy-sub">
           {modo === 'entrar' ? (
             <>
-              Sign in with the email you booked with and the password we sent you when you booked. No account
-              to create — it&rsquo;s already there.
+              {t('Sign in with the email you booked with and the password we sent you when you booked. No account to create — it’s already there.')}
             </>
           ) : (
-            <>Tell us the email you booked with and we&rsquo;ll send a new password to it.</>
+            <>{t('Tell us the email you booked with and we’ll send a new password to it.')}</>
           )}
         </p>
       </div>
 
       <form onSubmit={onSubmit} className="mt-6 space-y-4">
         <Campo
-          etiqueta="Email"
+          etiqueta={t('Email')}
           type="email"
           autoComplete="email"
           required
-          placeholder="you@email.com"
+          placeholder={t('you@email.com')}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
         {modo === 'entrar' ? (
           <Campo
-            etiqueta="Password"
+            etiqueta={t('Password')}
             type="password"
             autoComplete="current-password"
             required
@@ -248,7 +247,7 @@ function Acceso({
           className="w-full"
           disabled={enviando || cargando || email.trim() === ''}
         >
-          {enviando ? 'One moment…' : modo === 'entrar' ? 'Sign in' : 'Send me a password'}
+          {enviando ? t('One moment…') : modo === 'entrar' ? t('Sign in') : t('Send me a password')}
         </FancyButton.Root>
       </form>
 
@@ -269,13 +268,13 @@ function Acceso({
         }}
         className="mt-5 w-full text-center text-sm font-semibold text-aqua-dark hover:underline"
       >
-        {modo === 'entrar' ? 'I lost my password' : 'I have my password'}
+        {modo === 'entrar' ? t('I lost my password') : t('I have my password')}
       </button>
 
       <p className="mt-6 border-t border-linea pt-5 text-center text-xs text-navy-soft">
-        Just want to look at a booking?{' '}
+        {t('Just want to look at a booking?')}{' '}
         <Link to="/my-booking" className="font-semibold text-aqua-dark hover:underline">
-          Open it with your booking code
+          {t('Open it with your booking code')}
         </Link>
         .
       </p>
@@ -288,16 +287,16 @@ function Reservas({ reservas, perfilEmail }: { reservas: ReservaDeCuenta[]; perf
   if (!reservas.length) {
     return (
       <section className="rounded-card-grande bg-papel p-6 ring-1 ring-linea sm:p-8">
-        <h2 className="font-display text-lg font-semibold text-navy">Your bookings</h2>
+        <h2 className="font-display text-lg font-semibold text-navy">{t('Your bookings')}</h2>
         <p className="mt-2 text-sm text-navy-sub">
-          Nothing here yet. When you book, it shows up on this screen.
+          {t('Nothing here yet. When you book, it shows up on this screen.')}
         </p>
       </section>
     )
   }
   return (
     <section className="rounded-card-grande bg-papel p-6 ring-1 ring-linea sm:p-8">
-      <h2 className="font-display text-lg font-semibold text-navy">Your bookings</h2>
+      <h2 className="font-display text-lg font-semibold text-navy">{t('Your bookings')}</h2>
       <ul className="mt-4 flex flex-col gap-3">
         {reservas.map((r) => {
           const estado = ESTADOS[r.status] ?? ESTADOS.pending
@@ -309,7 +308,7 @@ function Reservas({ reservas, perfilEmail }: { reservas: ReservaDeCuenta[]; perf
                   <p className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-navy-sub">
                     <span className="inline-flex items-center gap-1.5">
                       <CalendarDays className="size-4" aria-hidden="true" />
-                      {r.date ? fechaLarga(r.date) : 'Date to be set'}
+                      {r.date ? fechaLarga(r.date) : t('Date to be set')}
                     </span>
                     <span className="inline-flex items-center gap-1.5">
                       <Users className="size-4" aria-hidden="true" />
@@ -326,7 +325,7 @@ function Reservas({ reservas, perfilEmail }: { reservas: ReservaDeCuenta[]; perf
                 <span className="text-sm text-navy-sub">
                   {formatoDinero(r.amounts.total)}
                   {r.amounts.balance > 0 ? (
-                    <span className="text-navy-soft"> · {formatoDinero(r.amounts.balance)} on the day</span>
+                    <span className="text-navy-soft"> · {formatoDinero(r.amounts.balance)} {t('on the day')}</span>
                   ) : null}
                 </span>
                 {r.status !== 'cancelled' ? (
@@ -336,7 +335,7 @@ function Reservas({ reservas, perfilEmail }: { reservas: ReservaDeCuenta[]; perf
                     to={`/my-booking?codigo=${encodeURIComponent(r.code)}&email=${encodeURIComponent(perfilEmail)}`}
                     className="text-sm font-semibold text-aqua-dark hover:underline"
                   >
-                    Menu, pickup and changes &rarr;
+                    {t('Menu, pickup and changes →')}
                   </Link>
                 ) : null}
               </div>
@@ -380,7 +379,7 @@ function DatosPersonales({
       onGuardado(d.profile)
       setHecho(true)
     } catch {
-      setError('We could not save that. Try again in a moment.')
+      setError(t('We could not save that. Try again in a moment.'))
     } finally {
       setGuardando(false)
     }
@@ -388,17 +387,17 @@ function DatosPersonales({
 
   return (
     <section className="rounded-card-grande bg-papel p-6 ring-1 ring-linea sm:p-8">
-      <h2 className="font-display text-lg font-semibold text-navy">Your details</h2>
+      <h2 className="font-display text-lg font-semibold text-navy">{t('Your details')}</h2>
       <form onSubmit={onSubmit} className="mt-4 flex flex-col gap-4">
         <div className="grid gap-4 sm:grid-cols-2">
           <Campo
-            etiqueta="First name"
+            etiqueta={t('First name')}
             autoComplete="given-name"
             value={datos.first_name}
             onChange={(e) => setDatos({ ...datos, first_name: e.target.value })}
           />
           <Campo
-            etiqueta="Last name"
+            etiqueta={t('Last name')}
             autoComplete="family-name"
             value={datos.last_name}
             onChange={(e) => setDatos({ ...datos, last_name: e.target.value })}
@@ -406,14 +405,14 @@ function DatosPersonales({
         </div>
         <div className="grid gap-4 sm:grid-cols-2">
           <Campo
-            etiqueta="WhatsApp / phone"
+            etiqueta={t('WhatsApp / phone')}
             type="tel"
             autoComplete="tel"
             value={datos.phone}
             onChange={(e) => setDatos({ ...datos, phone: e.target.value })}
           />
           <Campo
-            etiqueta="Country"
+            etiqueta={t('Country')}
             autoComplete="country-name"
             value={datos.country}
             onChange={(e) => setDatos({ ...datos, country: e.target.value })}
@@ -424,19 +423,18 @@ function DatosPersonales({
             la que fueron el voucher y todos los avisos. Cambiarlo lo hace el
             equipo, que puede comprobar quién lo pide. */}
         <div>
-          <span className="text-sm font-medium text-navy">Email</span>
+          <span className="text-sm font-medium text-navy">{t('Email')}</span>
           <p className="mt-1.5 flex items-center gap-2 rounded-input border border-linea bg-papel-hueso px-3 py-2.5 text-sm text-navy-sub">
             <Mail className="size-4 shrink-0 text-navy-soft" aria-hidden="true" />
             {datos.email}
           </p>
           <p className="mt-1.5 text-xs text-navy-soft">
-            This is how you sign in and where your booking emails go. To change it, write to us and we&rsquo;ll
-            do it for you.
+            {t('This is how you sign in and where your booking emails go. To change it, write to us and we’ll do it for you.')}
           </p>
         </div>
 
         <label className="flex flex-col gap-1.5">
-          <span className="text-sm font-medium text-navy">Language for your emails</span>
+          <span className="text-sm font-medium text-navy">{t('Language for your emails')}</span>
           <select
             className="h-11 w-full rounded-input border border-linea bg-white px-3 text-sm text-navy outline-none transition-colors focus-visible:border-aqua focus-visible:ring-2 focus-visible:ring-aqua/30"
             value={datos.language}
@@ -458,18 +456,18 @@ function DatosPersonales({
             onChange={(e) => setDatos({ ...datos, marketing_opt_out: !e.target.checked })}
           />
           <span className="text-sm text-navy-sub">
-            Send me the &ldquo;how was your day&rdquo; email and the occasional offer.
+            {t('Send me the “how was your day” email and the occasional offer.')}
             <span className="mt-0.5 block text-xs text-navy-soft">
-              Emails about your own booking — confirmation, changes, cancellation — always arrive.
+              {t('Emails about your own booking — confirmation, changes, cancellation — always arrive.')}
             </span>
           </span>
         </label>
 
         <div className="flex flex-wrap items-center gap-3">
           <FancyButton.Root type="submit" variant="primary" disabled={guardando}>
-            {guardando ? 'Saving…' : 'Save changes'}
+            {guardando ? 'Saving…' : t('Save changes')}
           </FancyButton.Root>
-          {hecho ? <span className="text-sm font-semibold text-aqua-dark">Saved</span> : null}
+          {hecho ? <span className="text-sm font-semibold text-aqua-dark">{t('Saved')}</span> : null}
           {error ? <span className="text-sm text-coral">{error}</span> : null}
         </div>
       </form>
@@ -478,7 +476,7 @@ function DatosPersonales({
 }
 
 // ── Dentro: su contraseña ──────────────────────────────────────────────────
-function CambiarClave({ token, onNuevoToken }: { token: string; onNuevoToken: (t: string) => void }) {
+function CambiarClave({ token, onNuevoToken }: { token: string; onNuevoToken: (nuevo: string) => void }) {
   const [actual, setActual] = useState('')
   const [nueva, setNueva] = useState('')
   const [guardando, setGuardando] = useState(false)
@@ -499,10 +497,10 @@ function CambiarClave({ token, onNuevoToken }: { token: string; onNuevoToken: (t
     } catch (err: unknown) {
       setError(
         err instanceof ErrorApi && err.codigo === 'bad_credentials'
-          ? 'That current password is not right.'
+          ? t('That current password is not right.')
           : err instanceof ErrorApi && err.codigo === 'weak_password'
-            ? 'Use at least 8 characters.'
-            : 'We could not change it. Try again in a moment.',
+            ? t('Use at least 8 characters.')
+            : t('We could not change it. Try again in a moment.'),
       )
     } finally {
       setGuardando(false)
@@ -513,15 +511,15 @@ function CambiarClave({ token, onNuevoToken }: { token: string; onNuevoToken: (t
     <section className="rounded-card-grande bg-papel p-6 ring-1 ring-linea sm:p-8">
       <h2 className="flex items-center gap-2 font-display text-lg font-semibold text-navy">
         <ShieldCheck className="size-5 text-aqua-dark" aria-hidden="true" />
-        Password
+        {t('Password')}
       </h2>
       <p className="mt-2 text-sm text-navy-sub">
-        Change the one we emailed you for one you remember. Nobody from Hispaniola will ever ask you for it.
+        {t('Change the one we emailed you for one you remember. Nobody from Hispaniola will ever ask you for it.')}
       </p>
       <form onSubmit={onSubmit} className="mt-4 flex flex-col gap-4">
         <div className="grid gap-4 sm:grid-cols-2">
           <Campo
-            etiqueta="Current password"
+            etiqueta={t('Current password')}
             type="password"
             autoComplete="current-password"
             required
@@ -529,7 +527,7 @@ function CambiarClave({ token, onNuevoToken }: { token: string; onNuevoToken: (t
             onChange={(e) => setActual(e.target.value)}
           />
           <Campo
-            etiqueta="New password"
+            etiqueta={t('New password')}
             type="password"
             autoComplete="new-password"
             required
@@ -540,9 +538,9 @@ function CambiarClave({ token, onNuevoToken }: { token: string; onNuevoToken: (t
         </div>
         <div className="flex flex-wrap items-center gap-3">
           <FancyButton.Root type="submit" variant="basic" disabled={guardando || nueva.length < 8}>
-            {guardando ? 'Changing…' : 'Change password'}
+            {guardando ? 'Changing…' : t('Change password')}
           </FancyButton.Root>
-          {hecho ? <span className="text-sm font-semibold text-aqua-dark">Done</span> : null}
+          {hecho ? <span className="text-sm font-semibold text-aqua-dark">{t('Done')}</span> : null}
           {error ? <span className="text-sm text-coral">{error}</span> : null}
         </div>
       </form>

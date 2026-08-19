@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight, X } from 'lucide-react'
 import * as CompactButton from '@/components/alignui/compact-button'
 import * as Modal from '@/components/alignui/modal'
 import { useExpansionFlip, type RectOrigen } from '@/lib/use-expansion-flip'
+import { t } from '@/lib/i18n'
 
 // Lightbox de la galería de la ficha (wireframe A1: "Ver 33 fotos →").
 //
@@ -110,7 +111,7 @@ export function GaleriaLightbox({
         // propagación para que pasar fotos no cierre por accidente.
         onClick={onCerrar}
       >
-        <Modal.Title className="sr-only">Galería de {etiqueta}</Modal.Title>
+        <Modal.Title className="sr-only">{t('Gallery of')}{' '}{etiqueta}</Modal.Title>
 
         <div className="flex items-center justify-between px-5 py-4 text-white">
           <span className="text-sm text-white/70">
@@ -120,7 +121,7 @@ export function GaleriaLightbox({
             <CompactButton.Root
               variant="ghost"
               size="large"
-              aria-label="Cerrar galería"
+              aria-label={t('Close gallery')}
               className="text-white hover:bg-white/10 hover:text-white"
             >
               <CompactButton.Icon as={X} />
@@ -136,7 +137,7 @@ export function GaleriaLightbox({
                 e.stopPropagation()
                 ir(indice - 1)
               }}
-              aria-label="Foto anterior"
+              aria-label={t('Previous photo')}
               className="grid size-10 shrink-0 place-items-center rounded-chip bg-white/10 text-white transition-colors hover:bg-white/20"
             >
               <ChevronLeft className="size-5" />
@@ -170,7 +171,7 @@ export function GaleriaLightbox({
                 e.stopPropagation()
                 ir(indice + 1)
               }}
-              aria-label="Foto siguiente"
+              aria-label={t('Next photo')}
               className="grid size-10 shrink-0 place-items-center rounded-chip bg-white/10 text-white transition-colors hover:bg-white/20"
             >
               <ChevronRight className="size-5" />

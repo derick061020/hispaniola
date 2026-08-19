@@ -5,6 +5,7 @@ import { Estrellas } from '@/components/ui/estrellas'
 import { InsigniaTooltip } from '@/components/ui/insignia-tooltip'
 import type { Tour } from '@/data/home'
 import type { FichaTour } from '@/data/tours'
+import { numero, t } from '@/lib/i18n'
 
 // Above the fold de la ficha (wireframe A1): rating con nº de reseñas,
 // cancelación gratis, audiencia y duración como chips junto al H1 — el patrón
@@ -71,7 +72,7 @@ export function CabeceraFicha({ tour, ficha }: Props) {
           <Estrellas calificacion={tour.rating} sobreOscuro />
           <span className="text-sm text-white/80">
             <strong className="font-semibold text-white">{tour.rating}</strong> ·{' '}
-            {tour.resenas.toLocaleString('en-US')} reviews
+            {numero(tour.resenas)} {t('reviews')}
           </span>
         </span>
 
@@ -117,7 +118,7 @@ export function CabeceraFicha({ tour, ficha }: Props) {
             {tour.booking !== 'consulta' ? (
               <StatusBadge.Root status="completed" variant="light">
                 <StatusBadge.Icon as={Check} />
-                Free cancellation
+                {t('Free cancellation')}
               </StatusBadge.Root>
             ) : null}
             <StatusBadge.Root status="disabled" variant="stroke">
@@ -158,18 +159,18 @@ export function CabeceraFicha({ tour, ficha }: Props) {
                 siendo el de la sección de reserva directa de la home. */}
             <InsigniaTooltip
               icono={BadgeCheck}
-              titulo="Badge of excellence"
-              texto="This experience is highly rated by travelers and meets our highest quality standards."
+              titulo={t('Badge of excellence')}
+              texto={t('This experience is highly rated by travelers and meets our highest quality standards.')}
             >
-              Badge of excellence
+              {t('Badge of excellence')}
             </InsigniaTooltip>
 
             <InsigniaTooltip
               icono={ShieldCheck}
-              titulo="Best price guarantee"
-              texto="Booking here you pay the same or less than on any portal, and you also choose your menu, confirm with 25% and talk directly to the boat's team."
+              titulo={t('Best price guarantee')}
+              texto={t("Booking here you pay the same or less than on any portal, and you also choose your menu, confirm with 25% and talk directly to the boat's team.")}
             >
-              Best price guarantee
+              {t('Best price guarantee')}
             </InsigniaTooltip>
           </>
         )}

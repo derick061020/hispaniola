@@ -8,6 +8,7 @@ import { ARTICULOS, CATEGORIAS_BLOG, type Articulo, type CategoriaBlog } from '@
 import { RESENAS_AGREGADO } from '@/data/home'
 import { MetaArticulo, ChipCategoria, fundePapel } from './card-destacado'
 import { CarruselDestacados } from './carrusel-destacados'
+import { numero, t } from '@/lib/i18n'
 
 gsap.registerPlugin(Flip)
 
@@ -67,7 +68,7 @@ function CardArticulo({ articulo }: { articulo: Articulo }) {
             start: pedido de Samuel de que el botón "abarque el 100%
             posible" del ancho de la card. */}
         <span className="mt-4 flex w-full items-center justify-center gap-1.5 rounded-btn bg-coral px-4 py-2.5 text-sm font-semibold text-white transition-colors group-hover:bg-coral-dark">
-          Read the article
+          {t('Read the article')}
           <ArrowRight className="size-4" aria-hidden="true" />
         </span>
       </div>
@@ -166,7 +167,7 @@ export function ListaArticulos() {
             página FAQ — un solo idioma de filtro en todo el sitio. */}
         <div
           role="group"
-          aria-label="Filter articles by category"
+          aria-label={t('Filter articles by category')}
           className="flex flex-wrap gap-2"
         >
           {[{ id: null as CategoriaBlog | null, nombre: 'All' }, ...CATEGORIAS_BLOG.map((c) => ({ id: c, nombre: c }))].map(
@@ -253,13 +254,12 @@ export function Newsletter() {
 
       <div className="relative grid grid-cols-1 items-center gap-6 lg:grid-cols-[1fr_auto] lg:gap-12">
         <div>
-          <Etiqueta sobreOscuro>Newsletter</Etiqueta>
+          <Etiqueta sobreOscuro>{t('Newsletter')}</Etiqueta>
           <h2 className="mt-2 text-balance font-display text-h3 font-semibold text-white sm:text-h2">
-            Don’t miss a thing
+            {t('Don’t miss a thing')}
           </h2>
           <p className="mt-2 max-w-md text-sm text-white/80 sm:text-base">
-            Guides, stories from the sea and deals for your trip to Punta Cana. Straight to your
-            inbox, no spam.
+            {t('Guides, stories from the sea and deals for your trip to Punta Cana. Straight to your inbox, no spam.')}
           </p>
 
           <div className="mt-3 flex items-center gap-2.5">
@@ -276,9 +276,9 @@ export function Newsletter() {
             </div>
             <p className="text-xs text-white/70">
               <span className="font-semibold text-white">
-                {RESENAS_AGREGADO.total.toLocaleString('en-US')}+
+                {numero(RESENAS_AGREGADO.total)}+
               </span>{' '}
-              travelers already trust us
+              {t('travelers already trust us')}
             </p>
           </div>
         </div>
@@ -291,30 +291,30 @@ export function Newsletter() {
           className="w-full lg:w-[28rem]"
         >
           <label htmlFor="newsletter-email" className="text-xs font-medium text-white/70">
-            Stay in the loop
+            {t('Stay in the loop')}
           </label>
           <div className="mt-1.5 flex flex-col gap-2 sm:flex-row">
             <input
               id="newsletter-email"
               type="email"
               required
-              placeholder="you@email.com"
+              placeholder={t('you@email.com')}
               className="min-w-0 flex-1 rounded-btn border border-white/20 bg-white/10 px-4 py-2.5 text-sm text-white placeholder:text-white/50 focus:border-white/40 focus:outline-none focus:ring-2 focus:ring-white/20"
             />
             <button
               type="submit"
               className="shrink-0 rounded-btn bg-coral px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-coral-dark"
             >
-              Subscribe
+              {t('Subscribe')}
             </button>
           </div>
           {enviado ? (
             <p role="status" className="mt-2 text-xs font-medium text-aqua-claro">
-              Thanks! We’ll write to you when we publish something worth reading.
+              {t('Thanks! We’ll write to you when we publish something worth reading.')}
             </p>
           ) : (
             <p className="mt-2 text-xs text-white/50">
-              You agree to receive news from Hispaniola. You can unsubscribe whenever you want.
+              {t('You agree to receive news from Hispaniola. You can unsubscribe whenever you want.')}
             </p>
           )}
         </form>

@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { Boton } from '@/components/ui/boton'
 import { Campo } from '@/components/ui/campo'
-import { ERROR_ENVIO, useEnvioFormulario } from '@/lib/use-envio-formulario'
+import { errorEnvio, useEnvioFormulario } from '@/lib/use-envio-formulario'
 import { useDevFlag } from '@/dev/use-dev-flag'
+import { t } from '@/lib/i18n'
 
 // Registro de agentes de viaje (/agentes-de-viaje) — mapea
 // travel-agent-registration.php de la web actual. Footer: "Es B2B, el 99% del
@@ -33,23 +34,23 @@ export function FormularioAgentes() {
           {/* Los `name` son los que espera `haa.web.lead` (company/name/email/
               phone/message): así el lead llega con sus campos rellenos y no
               solo dentro del payload en bruto. */}
-          <Campo etiqueta="Agency / DMC name" name="company" required />
-          <Campo etiqueta="Contact person" name="name" required />
-          <Campo etiqueta="Email" name="email" type="email" required />
-          <Campo etiqueta="Phone / WhatsApp" name="phone" type="tel" required />
-          <Campo etiqueta="Message" name="message" textarea placeholder="Estimated volume, destinations, season…" />
+          <Campo etiqueta={t('Agency / DMC name')} name="company" required />
+          <Campo etiqueta={t('Contact person')} name="name" required />
+          <Campo etiqueta={t('Email')} name="email" type="email" required />
+          <Campo etiqueta={t('Phone / WhatsApp')} name="phone" type="tel" required />
+          <Campo etiqueta={t('Message')} name="message" textarea placeholder={t('Estimated volume, destinations, season…')} />
         </div>
         <Boton type="submit" className="mt-5 w-full disabled:cursor-not-allowed disabled:opacity-60" disabled={enviando}>
-          {enviando ? 'Sending…' : 'Send registration'}
+          {enviando ? 'Sending…' : t('Send registration')}
         </Boton>
 
         {enviado ? (
           <p role="status" className="mt-4 rounded-btn bg-papel-hueso p-4 text-sm font-medium text-menta-texto">
-            We got your registration. We’ll be in touch within 24 h.
+            {t('We got your registration. We’ll be in touch within 24 h.')}
           </p>
         ) : estado === 'error' ? (
           <p role="alert" className="mt-4 rounded-btn border border-coral/40 bg-coral/5 p-4 text-sm leading-relaxed text-navy-sub">
-            {ERROR_ENVIO}
+            {errorEnvio()}
           </p>
         ) : null}
       </form>

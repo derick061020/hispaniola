@@ -20,6 +20,8 @@ import { menuDeLaReserva } from '@/lib/menu-reserva'
 import { useCheckout } from '@/lib/api/use-checkout'
 import type { ErrorApi } from '@/lib/api/cliente'
 import { cargarStripe, mensajeDeError } from '@/lib/pagos/stripe'
+import { t, traducible } from '@/lib/i18n'
+import { SelectorIdioma } from '@/components/ui/selector-idioma'
 
 // Funnel de reserva (/reservar/:slug, Fase C). El widget de la ficha es el
 // CONFIGURADOR (paquete · fecha · hora · personas); «Continuar» abre aquí, con
@@ -48,17 +50,17 @@ import { cargarStripe, mensajeDeError } from '@/lib/pagos/stripe'
 // en la tarjeta de al lado. Con índices, subir de 20 a 21 personas movía el
 // flujo al paso equivocado; con ids, la numeración se recalcula sola.
 type PasoId = 'contacto' | 'menu' | 'recogida' | 'pago'
-const TITULOS: Record<PasoId, string> = {
+const TITULOS: Record<PasoId, string> = traducible({
   contacto: 'Contact',
   menu: 'Your menu',
   recogida: 'Pickup',
   pago: 'Payment',
-}
+})
 
 export function ReservarPage() {
   const { slug } = useParams()
   const [params] = useSearchParams()
-  const tour = TOURS.find((t) => t.slug === slug)
+  const tour = TOURS.find((candidato) => candidato.slug === slug)
   const ficha = slug ? FICHAS[slug] : undefined
 
   // El funnel solo existe para tours 'completo' (se venden por fecha+paquete).
@@ -311,7 +313,7 @@ function FlujoReserva({
 
       if (datos.metodo === 'paypal') {
         const intento = await checkout.pagar({ proveedor: 'paypal' })
-        if (!intento.approve_url) throw new Error('PayPal did not return an approval link.')
+        if (!intento.approve_url) throw new Error(t('PayPal did not return an approval link.'))
         // La copia local se guarda ANTES de salir del sitio: al volver, la
         // pantalla de gracias pinta al instante mientras se captura el cobro.
         guardarReserva(reservaLocal(codigo))
@@ -320,8 +322,8 @@ function FlujoReserva({
       }
 
       const intento = await checkout.pagar({ proveedor: 'stripe' })
-      if (!intento.client_secret) throw new Error('Stripe did not return a payment secret.')
-      if (!datos.tarjeta) throw new Error('The card form is not ready. Reload the page and try again.')
+      if (!intento.client_secret) throw new Error(t('Stripe did not return a payment secret.'))
+      if (!datos.tarjeta) throw new Error(t('The card form is not ready. Reload the page and try again.'))
 
       const stripe = await cargarStripe(intento.publishable_key || datos.clavePublicable)
       const { error, paymentIntent } = await stripe.confirmCardPayment(intento.client_secret, {
@@ -351,7 +353,7 @@ function FlujoReserva({
       // Falta configurar la pasarela en Odoo (503), el cobro no se pudo iniciar
       // o la tarjeta se rechazó. La reserva SIGUE registrada como pendiente, así
       // que se avisa sin perderla y el equipo puede rematarla por teléfono.
-      setErrorPago(error instanceof Error ? error.message : 'Payment could not be started.')
+      setErrorPago(error instanceof Error ? error.message : t('Payment could not be started.'))
       setPagando(false)
       return
     }
@@ -443,7 +445,7 @@ function FlujoReserva({
   // de salida), así que esta línea solo añade lo que allí no cabe: el regreso.
   const horarioTxt = horario
     ? `Departure ${horario.hora}${horario.regreso ? ` · back at ${horario.regreso}` : ''}`
-    : 'Schedule to be confirmed'
+    : t('Schedule to be confirmed')
 
   const cambiarPlato = (persona: number, plato: string) =>
     setPlatos((prev) => prev.map((p, i) => (i === persona ? plato : p)))
@@ -477,19 +479,24 @@ function FlujoReserva({
       {/* Header MÍNIMO estilo Viator: logo (a la home) + selector de moneda. */}
       <header className="border-b border-linea">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-3 sm:px-8">
-          <Link to="/" aria-label="Hispaniola Aquatic Adventures home">
+          <Link to="/" aria-label={t('Hispaniola Aquatic Adventures home')}>
             <Logo compacto />
           </Link>
-          {/* Selector de moneda visual (Samuel) — como el «USD» de Viator. Los
-              precios del sitio son todos en US$; decorativo, igual que el
-              SelectorIdioma del topbar (sin conversión real todavía). */}
+          <div className="flex items-center gap-3">
+          {/* [2026-08-19] El idioma SÍ entra en el funnel. El Topbar no se
+              pinta aquí a propósito (nada de distracciones mientras se paga),
+              pero el idioma no es una distracción: quien no entiende «Pick-up
+              point» abandona el pago, no lo pospone. El de moneda sigue siendo
+              decorativo — los precios del sitio son todos en US$. */}
+          <SelectorIdioma />
           <button
             type="button"
             className="flex items-center gap-1 text-sm font-medium text-navy-sub transition-colors hover:text-navy"
           >
-            USD
+            {t('USD')}
             <ChevronDown className="size-4" aria-hidden="true" />
           </button>
+          </div>
         </div>
       </header>
 
@@ -502,7 +509,7 @@ function FlujoReserva({
         <div className="mx-auto grid max-w-6xl grid-cols-1 lg:grid-cols-[minmax(0,1fr)_var(--spacing-ficha-widget)]">
           {/* IZQUIERDA (blanca): cabecera + secciones */}
           <div className="px-5 py-8 sm:px-8 sm:py-10">
-            <h1 className="sr-only">Complete your booking: {tour.nombre}</h1>
+            <h1 className="sr-only">{t('Complete your booking:')}{' '}{tour.nombre}</h1>
 
             {/* [2026-08-18] ESTADO DE LA CONEXIÓN CON ODOO. Hasta hoy el funnel
                 solo leía `checkout.pedido` y se pintaba idéntico con el backend
@@ -582,11 +589,11 @@ function FlujoReserva({
                     <ul className="flex flex-col gap-0.5">
                       {platos.map((p, i) => (
                         <li key={i}>
-                          <span className="text-navy-soft">Guest {i + 1}:</span>{' '}
+                          <span className="text-navy-soft">{t('Guest')}{' '}{i + 1}:</span>{' '}
                           {p ? (
                             <span className="font-medium text-navy">{p}</span>
                           ) : (
-                            <span className="text-navy-soft">to be confirmed by email</span>
+                            <span className="text-navy-soft">{t('to be confirmed by email')}</span>
                           )}
                         </li>
                       ))}
@@ -599,7 +606,7 @@ function FlujoReserva({
                       nadie avance creyendo que ya eligió. */}
                   <Continuar
                     habilitado
-                    texto={platos.every((p) => p) ? 'Continue' : 'Continue and pick the menu later'}
+                    texto={platos.every((p) => p) ? t('Continue') : t('Continue and pick the menu later')}
                     onClick={() => {
                       // Los platos van POR COMENSAL, no agregados: la cocina no
                       // necesita «3 mariscos», necesita saber que el invitado 2
@@ -690,7 +697,7 @@ function FlujoReserva({
                 conceptoBase={
                   ficha.upgradePremium !== null
                     ? `${upgrade > 0 ? 'Light' : paquete === 'premium' ? 'Premium' : 'Light'} menu`
-                    : 'Tour fare'
+                    : t('Tour fare')
                 }
                 precioBase={precioLight}
                 upgrade={upgrade}
@@ -708,7 +715,7 @@ function FlujoReserva({
       </main>
 
       <footer className="border-t border-linea py-6 text-center text-xs text-navy-soft">
-        Hispaniola Aquatic Adventures · Secure direct booking · Free cancellation up to 7 days before
+        {t('Hispaniola Aquatic Adventures · Secure direct booking · Free cancellation up to 7 days before')}
       </footer>
     </div>
   )
@@ -731,7 +738,7 @@ function BandaEstado({
   if (cargando) {
     return (
       <p role="status" className="rounded-card border border-linea bg-papel-hueso px-4 py-3 text-sm text-navy-sub">
-        Opening your booking…
+        {t('Opening your booking…')}
       </p>
     )
   }
@@ -742,13 +749,11 @@ function BandaEstado({
     // cuál: lo que necesita saber es que puede terminar por WhatsApp.
     return (
       <p role="alert" className="rounded-card border border-coral/40 bg-coral/5 px-4 py-3 text-sm leading-relaxed text-navy-sub">
-        <strong className="text-navy">We can&rsquo;t open your booking right now.</strong> Our booking system is
-        not answering, so we can&rsquo;t confirm prices or take the payment. You can fill this in and try again in a
-        moment, or{' '}
+        <strong className="text-navy">{t('We can’t open your booking right now.')}</strong> {t('Our booking system is not answering, so we can’t confirm prices or take the payment. You can fill this in and try again in a moment, or')}{' '}
         <a className="font-semibold text-aqua-dark underline" href="https://wa.me/18293052804" target="_blank" rel="noopener">
-          book it with us on WhatsApp
+          {t('book it with us on WhatsApp')}
         </a>{' '}
-        and we&rsquo;ll do it for you.
+        {t('and we’ll do it for you.')}
       </p>
     )
   }
@@ -756,8 +761,7 @@ function BandaEstado({
   if (!aforoOk) {
     return (
       <p role="status" className="rounded-card border border-coral/40 bg-coral/5 px-4 py-3 text-sm leading-relaxed text-navy-sub">
-        <strong className="text-navy">That day just filled up for this group size.</strong> Pick another date or
-        fewer guests on the right — otherwise the payment will be declined at the last step.
+        <strong className="text-navy">{t('That day just filled up for this group size.')}</strong> {t('Pick another date or fewer guests on the right — otherwise the payment will be declined at the last step.')}
       </p>
     )
   }
@@ -811,7 +815,7 @@ function SeccionPaso({
             onClick={onEditar}
             className="shrink-0 text-sm font-medium text-aqua-dark transition-colors hover:text-aqua"
           >
-            Edit
+            {t('Edit')}
           </button>
         ) : null}
       </header>
@@ -826,7 +830,7 @@ function SeccionPaso({
 
 function Continuar({
   habilitado,
-  texto = 'Continue',
+  texto = t('Continue'),
   onClick,
 }: {
   habilitado: boolean

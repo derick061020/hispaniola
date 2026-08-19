@@ -5,6 +5,7 @@ import { HeroInterna } from '@/components/internas/hero-interna'
 import { Meta } from '@/components/seo/meta'
 import { ReelsSociales } from '@/components/ui/reels-sociales'
 import { INSTALACIONES, VERTICALES_INSTALACIONES } from '@/data/instalaciones'
+import { t } from '@/lib/i18n'
 
 // Página Instalaciones (/instalaciones) — correcciones v2, plan 06.
 //
@@ -44,8 +45,8 @@ export function InstalacionesPage() {
   return (
     <div>
       <Meta
-        titulo="Facilities"
-        descripcion="A full complex in Punta Cana: open-air marine museum, biology lab, our own kitchens, shop and offices."
+        titulo={t('Facilities')}
+        descripcion={t('A full complex in Punta Cana: open-air marine museum, biology lab, our own kitchens, shop and offices.')}
         ruta="/facilities"
       />
       <HeroInterna ctaHref="/#tours">

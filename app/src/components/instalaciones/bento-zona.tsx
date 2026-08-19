@@ -4,6 +4,7 @@ import { GaleriaLightbox } from '@/components/tour/galeria-lightbox'
 import { VideoLightbox } from '@/components/tour/video-lightbox'
 import { useOrigenExpansion } from '@/lib/use-expansion-flip'
 import type { ZonaInstalacion } from '@/data/instalaciones'
+import { t } from '@/lib/i18n'
 
 // El MINI-BENTO de media de cada zona de /instalaciones (correcciones v2,
 // slides 46-49, pedido de Samuel 2026-07-28: «no es solo un recurso, sino que
@@ -151,7 +152,7 @@ export function BentoZona({ zona, espejo = false }: { zona: ZonaInstalacion; esp
           <span className="absolute inset-x-0 bottom-0 flex flex-col gap-1 p-3 text-left">
             <span className="flex items-center gap-1.5 text-xs font-medium text-white/80">
               <Volume2 className="size-3.5 shrink-0" aria-hidden="true" />
-              Ver con sonido
+              {t('Watch with sound')}
             </span>
             <span className="text-sm font-semibold text-white">{zona.vertical.titulo}</span>
           </span>
@@ -170,7 +171,7 @@ export function BentoZona({ zona, espejo = false }: { zona: ZonaInstalacion; esp
               className="group relative grid min-h-0 place-items-center overflow-hidden rounded-card bg-navy text-white"
             >
               <span className="rounded-chip bg-white/15 px-3 py-1 text-xs font-semibold ring-1 ring-white/30 backdrop-blur-sm transition-transform duration-300 group-hover:scale-110">
-                Recorre en 360°
+                {t('Explore in 360°')}
               </span>
             </a>
           ) : (

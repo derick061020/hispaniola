@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import * as Button from '@/components/alignui/button'
+import { t } from '@/lib/i18n'
 
 // Comparador anti-OTA (fix 1.6 de docs/proceso/analisis/revision-wireframes.md).
 //
@@ -18,15 +19,15 @@ export function ComparadorStrip() {
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 rounded-card bg-aqua-tint px-4 py-3 ring-1 ring-aqua/20">
       <p className="text-sm text-navy-sub">
-        Same price as on Viator or Civitatis. Here with a <strong className="font-semibold text-navy">25% deposit</strong>
-        , menú a elección y WhatsApp directo.
+        {t('Same price as on Viator or Civitatis. Here with a')}{' '}<strong className="font-semibold text-navy">{t('25% deposit')}</strong>
+        {t(', your choice of menu and direct WhatsApp.')}
       </p>
       {/* Etapa A: Button neutral/stroke del sistema (xsmall) — la pastilla
           blanca de antes, dicha en el idioma AlignUI. [v2 2026-07-28] Apunta
           a /por-que-reservar: /reserva-directa se retiró y ahora el destino
           es la página completa de argumento (slides 50-56 del cliente). */}
       <Button.Root variant="neutral" mode="stroke" size="xsmall" className="shrink-0" asChild>
-        <Link to="/why-book-direct">Why book direct →</Link>
+        <Link to="/why-book-direct">{t('Why book direct →')}</Link>
       </Button.Root>
     </div>
   )

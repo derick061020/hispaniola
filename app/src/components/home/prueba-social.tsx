@@ -3,6 +3,7 @@ import { X } from 'lucide-react'
 import gsap from 'gsap'
 import { TOURS } from '@/data/home'
 import { useDevFlag } from '@/dev/use-dev-flag'
+import { t } from '@/lib/i18n'
 
 // «Pruebas de compra» — avisos de reservas recientes (correcciones v1 del
 // cliente, 2026-07-20 — planes/01-home.md slide 19: «agregar pruebas de
@@ -277,7 +278,7 @@ export function PruebaSocial() {
 
     return () => {
       cancelado = true
-      for (const t of timers) window.clearTimeout(t)
+      for (const temporizador of timers) window.clearTimeout(temporizador)
     }
   }, [cerrado, forzado])
 
@@ -334,12 +335,12 @@ export function PruebaSocial() {
           <div className="relative flex min-w-0 flex-1 items-center gap-1 py-2.5 pl-3.5 pr-1.5">
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-semibold text-navy">{tour.nombre}</p>
-              <p className="mt-0.5 text-xs text-navy-soft">Booked {ejemplo.minutos} min ago</p>
+              <p className="mt-0.5 text-xs text-navy-soft">{t('Booked')}{' '}{ejemplo.minutos} {t('min ago')}</p>
             </div>
             <button
               type="button"
               onClick={() => desgarrar(() => setCerrado(true))}
-              aria-label="Cerrar aviso"
+              aria-label={t('Dismiss notice')}
               className="shrink-0 rounded-full p-1.5 text-navy-soft transition-colors hover:bg-papel-hueso hover:text-navy"
             >
               <X className="size-4" />

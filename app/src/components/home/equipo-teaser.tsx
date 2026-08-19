@@ -6,6 +6,7 @@ import { EQUIPO, type MiembroEquipo } from '@/data/nosotros'
 import { WHATSAPP_URL } from '@/data/tours'
 import { useDevFlag } from '@/dev/use-dev-flag'
 import { useEquipoScroll } from '@/components/home/use-equipo-scroll'
+import { t } from '@/lib/i18n'
 
 // «Las personas detrás de tu día en el mar» — sección de equipo en la home
 // (correcciones v1 del cliente, 2026-07-20, planes/01-home.md slide 15:
@@ -227,9 +228,9 @@ export function EquipoTeaser({
   //  · «since 2010» sustituye al «desde 2012» que tenía el sitio (auditado de
   //    la web del cliente). Gana el copy aprobado; queda en la lista de
   //    peticiones porque su propia web decía otra cosa.
-  etiqueta = 'Meet us',
-  titulo = 'Meet the team behind your Caribbean adventure',
-  texto = "Based in Punta Cana since 2010, we're the local team behind every tour, dedicated to creating unforgettable Caribbean experiences.",
+  etiqueta = t('Meet us'),
+  titulo = t('Meet the team behind your Caribbean adventure'),
+  texto = t("Based in Punta Cana since 2010, we're the local team behind every tour, dedicated to creating unforgettable Caribbean experiences."),
   cierre,
   enmarcada = true,
   hrefHistoria = '/crew',
@@ -303,7 +304,7 @@ export function EquipoTeaser({
               to="/crew"
               className="group inline-flex items-center gap-1.5 text-lead font-semibold text-coral transition-colors hover:text-coral-dark"
             >
-              Meet the crew on board too
+              {t('Meet the crew on board too')}
               <ArrowRight
                 className="size-4 transition-transform duration-200 motion-safe:group-hover:translate-x-1"
                 aria-hidden="true"

@@ -3,6 +3,7 @@ import { MessageCircle, Phone } from 'lucide-react'
 import { WHATSAPP_URL } from '@/data/tours'
 import { CONTACTO } from '@/data/home'
 import { SelectorIdioma } from '@/components/ui/selector-idioma'
+import { t } from '@/lib/i18n'
 
 // Topbar (2026-07-17, pedido de Samuel): banda delgada de contacto/idioma
 // que la web actual lleva ARRIBA del header (nº de WhatsApp, teléfono toll
@@ -47,13 +48,13 @@ export function Topbar() {
       <div className="mx-auto flex max-w-contenido items-center justify-between px-5 py-1.5 text-xs text-navy-soft sm:px-10">
         <a href={WHATSAPP_URL} target="_blank" rel="noopener" className="flex items-center gap-1.5 hover:text-navy">
           <MessageCircle className="size-3.5" aria-hidden="true" />
-          Questions? WhatsApp {whatsapp?.dato}
+          {t('Questions? WhatsApp')}{' '}{whatsapp?.dato}
         </a>
 
         <div className="flex items-center gap-4">
           <a href={telefono?.href} className="flex items-center gap-1.5 hover:text-navy">
             <Phone className="size-3.5" aria-hidden="true" />
-            Bookings: {telefono?.dato}
+            {t('Bookings:')}{' '}{telefono?.dato}
           </a>
 
           <SelectorIdioma />

@@ -8,6 +8,7 @@
 // portada) con `FICHAS` por slug. Si un campo vive en home.ts, se lee de allí.
 
 import type { AddOn } from '@/lib/tarifas'
+import { traducible } from '@/lib/i18n'
 
 export type PasoItinerario = {
   hora: string
@@ -395,7 +396,7 @@ const MENU_PREMIUM_CASA: PlatoMenu[] = [
   { nombre: 'Seafood cocktail', foto: 'plato-coctel-mariscos' },
 ]
 
-export const FICHAS: Record<string, FichaTour> = {
+export const FICHAS: Record<string, FichaTour> = traducible({
   'semi-private-premium': {
     tituloLargo: 'Semi-Private Premium · adults-only catamaran',
     // [v3 2026-08-06, WEBSITE-TOURS pág. 2] Título APROBADO del bloque de
@@ -418,7 +419,7 @@ export const FICHAS: Record<string, FichaTour> = {
       'Premium Lunch',
       'Ages 15+',
     ],
-    audiencia: 'Solo adultos',
+    audiencia: 'Adults only',
     // «4 hours», no «4 horas»: este string se compone dentro del título del
     // itinerario aprobado («Itinerary — 4 Hours») y de la ficha técnica. Las
     // otras 3 fichas lo pasan a inglés en su propio commit de F3.
@@ -574,7 +575,7 @@ export const FICHAS: Record<string, FichaTour> = {
     // [v3 2026-08-06, WEBSITE-TOURS pág. 11] Título APROBADO del bloque de
     // descripción.
     promesa: 'Discover the Caribbean Beneath the Surface',
-    audiencia: 'Familias',
+    audiencia: 'Families',
     duracion: '4 hours',
     // [v3 2026-08-06, WEBSITE-TOURS págs. 11–12] Los 7 párrafos APROBADOS,
     // literales. No es una traducción de los 3 que había: es OTRO
@@ -1549,7 +1550,7 @@ export const FICHAS: Record<string, FichaTour> = {
       },
     ],
   },
-}
+})
 
 /** WhatsApp del negocio. Número confirmado (PLAN-v3.md §12.9) — es el único
  *  enlace externo REAL de la ficha: el resto de destinos (funnel, listado,

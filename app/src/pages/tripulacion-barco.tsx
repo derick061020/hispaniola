@@ -8,6 +8,7 @@ import { CabeceraInterna } from '@/components/internas/cabecera-interna'
 import { HeroInterna } from '@/components/internas/hero-interna'
 import { Meta } from '@/components/seo/meta'
 import { EQUIPO_PAGINA } from '@/data/equipo'
+import { t } from '@/lib/i18n'
 
 // ⚠️⚠️ PÁGINA DE COMPARACIÓN, NO UNA PÁGINA DEL SITIO. ⚠️⚠️
 //
@@ -42,8 +43,8 @@ export function TripulacionBarcoPage() {
           comparación se alarga y empieza a circular el enlace, hay que
           añadirle un robots noindex de verdad. */}
       <Meta
-        titulo="Crew (variant: the boat as an index)"
-        descripcion="Comparison variant of the Crew page: the team is filtered by tapping the boat plan instead of the department chips."
+        titulo={t('Crew (variant: the boat as an index)')}
+        descripcion={t('Comparison variant of the Crew page: the team is filtered by tapping the boat plan instead of the department chips.')}
         ruta="/crew-boat"
       />
       <HeroInterna ctaHref="/#tours">

@@ -1,3 +1,5 @@
+import { traducible } from '@/lib/i18n'
+
 // MARINE PARK — la página NUEVA de las correcciones v3 (plan 05 §6,
 // WEBSITE - NOSOTROS págs. 16–17).
 //
@@ -37,7 +39,7 @@ export type BloqueMarinePark = {
   fotoAlt: string
 }
 
-export const MARINE_PARK = {
+export const MARINE_PARK = traducible({
   eyebrow: 'Marine Park',
   titulo: 'Where Every Adventure Gives Back',
   // El cliente remata el titular con ⭐⭐⭐. Es una marca de ÉNFASIS suya en el
@@ -107,4 +109,4 @@ export const MARINE_PARK = {
       fotoAlt: 'Diver over the reef during the snorkeling stop',
     },
   ] satisfies BloqueMarinePark[],
-}
+})

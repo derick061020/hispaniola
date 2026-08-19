@@ -3,6 +3,7 @@ import { HeroInterna } from '@/components/internas/hero-interna'
 import { CabeceraContacto } from '@/components/contacto/cabecera-contacto'
 import { Contacto } from '@/components/home/contacto'
 import { Meta } from '@/components/seo/meta'
+import { t } from '@/lib/i18n'
 
 // Página Contacto (/contacto) — mapea contact.php de la web actual (H1
 // "Contact Us", subtítulo de ubicación, bloque de teléfono/WhatsApp/email/
@@ -26,8 +27,8 @@ export function ContactoPage() {
   return (
     <div>
       <Meta
-        titulo="Contact"
-        descripcion="Write to us, call or send a WhatsApp. You talk straight to the boat crew. Office in Punta Cana, reply in under 24 h."
+        titulo={t('Contact')}
+        descripcion={t('Write to us, call or send a WhatsApp. You talk straight to the boat crew. Office in Punta Cana, reply in under 24 h.')}
         ruta="/contact"
       />
       <HeroInterna ctaHref="/#tours">

@@ -1,3 +1,5 @@
+import { traducible } from '@/lib/i18n'
+
 // «Trabaja con nosotros» (/trabaja-con-nosotros) — correcciones v1 del
 // cliente, 2026-07-22 (pedido de Samuel, con captura de referencia: el bloque
 // del footer con "Como proveedor de actividades / Como creador de contenido /
@@ -42,7 +44,7 @@ export type PerfilTrabajo = {
   campos: CampoPerfil[]
 }
 
-export const PERFILES_TRABAJO: PerfilTrabajo[] = [
+export const PERFILES_TRABAJO: PerfilTrabajo[] = traducible([
   {
     id: 'proveedor',
     enlace: 'As an activity provider',
@@ -104,7 +106,7 @@ export const PERFILES_TRABAJO: PerfilTrabajo[] = [
       { name: 'audiencia', etiqueta: 'Who you reach', pista: 'U.S. families, divers, weddings…' },
     ],
   },
-]
+])
 
 // «Con quién trabajarías» — el pie del carril del formulario. Existe por dos
 // razones a la vez, y las dos importan:
@@ -121,12 +123,12 @@ export const PERFILES_TRABAJO: PerfilTrabajo[] = [
 // El número de barcos NO se escribe a mano — se cuenta sobre FLOTA
 // (data/nosotros.ts, los 6 catamaranes reales de about-hispaniola.php), para
 // que añadir o quitar uno allí no deje esta frase mintiendo.
-export const RESPALDO: string[] = [
+export const RESPALDO: string[] = traducible([
   'Our own fleet: {barcos} catamarans with names and a fixed crew.',
   'The only excursion company in the DR with a floating kitchen.',
   'Operating in Punta Cana since 2012.',
   '#1 on TripAdvisor 7 years in a row.',
-]
+])
 
 export const PERFIL_POR_DEFECTO: PerfilTrabajo['id'] = 'proveedor'
 

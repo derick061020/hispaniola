@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { t } from '@/lib/i18n'
 
 // Carrusel de imágenes reusable (v3-F20, PLAN-v3.md §18) — las fotos reales de
 // un servicio deslizándose solas; al hover (puntero fino) se PAUSA y aparecen
@@ -79,7 +80,7 @@ export function CarruselImagenes({
           <button
             type="button"
             onClick={() => ir(indice - 1)}
-            aria-label="Previous photo"
+            aria-label={t('Previous photo')}
             className="absolute left-2 top-1/2 z-20 grid size-8 -translate-y-1/2 place-items-center rounded-chip bg-papel/85 text-navy opacity-0 shadow-sm backdrop-blur-sm transition hover:bg-papel focus-visible:opacity-100 group-hover/carrusel:opacity-100"
           >
             <ChevronLeft className="size-5" aria-hidden="true" />
@@ -87,7 +88,7 @@ export function CarruselImagenes({
           <button
             type="button"
             onClick={() => ir(indice + 1)}
-            aria-label="Next photo"
+            aria-label={t('Next photo')}
             className="absolute right-2 top-1/2 z-20 grid size-8 -translate-y-1/2 place-items-center rounded-chip bg-papel/85 text-navy opacity-0 shadow-sm backdrop-blur-sm transition hover:bg-papel focus-visible:opacity-100 group-hover/carrusel:opacity-100"
           >
             <ChevronRight className="size-5" aria-hidden="true" />

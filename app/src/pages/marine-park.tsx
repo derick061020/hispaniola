@@ -5,6 +5,7 @@ import { HeroInterna } from '@/components/internas/hero-interna'
 import { CabeceraInterna } from '@/components/internas/cabecera-interna'
 import { Meta } from '@/components/seo/meta'
 import { MARINE_PARK } from '@/data/marine-park'
+import { t } from '@/lib/i18n'
 
 // MARINE PARK — página NUEVA de las correcciones v3 (plan 05 §6,
 // WEBSITE - NOSOTROS págs. 16–17).
@@ -28,8 +29,8 @@ export function MarineParkPage() {
   return (
     <div>
       <Meta
-        titulo="Marine Park"
-        descripcion="Our protected marine area in Punta Cana: an underwater museum, coral restoration, green sea turtles and artificial reefs."
+        titulo={t('Marine Park')}
+        descripcion={t('Our protected marine area in Punta Cana: an underwater museum, coral restoration, green sea turtles and artificial reefs.')}
         ruta="/marine-park"
       />
       <HeroInterna
@@ -109,12 +110,12 @@ export function MarineParkPage() {
             página contada dos veces — que es justo el riesgo que el plan
             señalaba. */}
         <p className="text-navy-sub">
-          The work behind this park is run by our own foundation.{' '}
+          {t('The work behind this park is run by our own foundation.')}{' '}
           <Link
             to="/foundation"
             className="font-semibold text-aqua-dark underline underline-offset-4 hover:text-aqua"
           >
-            See what the Bávaro Reefs Foundation does
+            {t('See what the Bávaro Reefs Foundation does')}
           </Link>
           .
         </p>

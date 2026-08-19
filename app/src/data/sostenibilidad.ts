@@ -1,3 +1,5 @@
+import { traducible } from '@/lib/i18n'
+
 // Página SOSTENIBILIDAD — combina las 2 páginas reales de la web actual
 // (decisión de arquitectura, arquitectura-nueva.md §"Competitive Advantage":
 // era un stub que se absorbe en Sostenibilidad). Copy portado y TRADUCIDO FIEL
@@ -83,7 +85,7 @@ export type PilarSost = {
  * (Samuel: «la info del slide 63 parece que no está… y el slide 64 tampoco»).
  * Los 7 chips son ahora 7 secciones de aquí, en el orden real de lectura.
  */
-export const ANCLAS_VENTAJA = [
+export const ANCLAS_VENTAJA = traducible([
   { id: 'conservacion', label: 'Conservation' },
   { id: 'comunidades', label: 'Community' },
   { id: 'ancla-impacto', label: 'Impact per guest' },
@@ -91,7 +93,7 @@ export const ANCLAS_VENTAJA = [
   { id: 'ancla-fundacion', label: 'The foundation' },
   { id: 'ancla-proyectos', label: 'Projects' },
   { id: 'ancla-membresias', label: 'Memberships' },
-]
+])
 
 export type VideoSost = {
   /** id de YouTube — también el nombre del póster en /video/sostenibilidad */
@@ -102,7 +104,7 @@ export type VideoSost = {
 // Los 7 videos de competitive-advantage.php, en su mismo orden. El póster de
 // cada uno se descargó de YouTube a /public/video/sostenibilidad/{id}.jpg (sin
 // hotlink externo); el embed solo se carga al abrir el modal.
-export const VIDEOS_SOSTENIBILIDAD: VideoSost[] = [
+export const VIDEOS_SOSTENIBILIDAD: VideoSost[] = traducible([
   { id: '6ixzXs68DPQ', titulo: 'Coral restoration laboratory and museum' },
   { id: 'r0XFksQSfrU', titulo: 'Our floating kitchen' },
   { id: 'ziUx_05VC-4', titulo: 'Where the food begins' },
@@ -110,9 +112,9 @@ export const VIDEOS_SOSTENIBILIDAD: VideoSost[] = [
   { id: 'sjyNxW6iNIs', titulo: 'Restoring the coral reefs' },
   { id: 'GXA4y8JQ2v8', titulo: 'Protecting sea turtles' },
   { id: 'aMVg2cL3Z8o', titulo: 'Manatee watching' },
-]
+])
 
-export const SOSTENIBILIDAD = {
+export const SOSTENIBILIDAD = traducible({
   // [v2 2026-07-27, plan 08 §1] REENCUADRE, no página nueva. El slide 57 dice
   // «nueva pagina de ventajas competitivas», pero Samuel se lo preguntó al
   // cliente en la reunión del 07-24 («¿qué diferencia hay con el anterior?») y
@@ -435,4 +437,4 @@ export const SOSTENIBILIDAD = {
   // Sin CTA: el "Ver disponibilidad" canónico vive en el Footer Océano,
   // justo debajo — duplicarlo aquí serían dos botones pegados.
   cierreFoto: 'arrecife-fondo-cenital',
-}
+})

@@ -35,7 +35,11 @@ const check = (desc, cond, extra = '') => {
 }
 
 const navegador = await chromium.launch()
-const contexto = await navegador.newContext()
+// [2026-08-19] `locale: 'en-US'` obligatorio desde que el sitio es bilingüe:
+// arranca en el idioma del navegador, y en una máquina con el sistema en
+// español este script buscaría rótulos en inglés en una página en español y
+// fallaría por un motivo que no tiene nada que ver con lo que comprueba.
+const contexto = await navegador.newContext({ locale: 'en-US' })
 const pagina = await contexto.newPage()
 
 // Se capturan las llamadas a la API para poder afirmar que existieron. Sin

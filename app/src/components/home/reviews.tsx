@@ -14,6 +14,7 @@ import {
   type VideoTestimonio,
 } from '@/data/home'
 import { useDevFlag } from '@/dev/use-dev-flag'
+import { numero, t } from '@/lib/i18n'
 
 // «Reseñas verificadas» — v7 (Samuel, 2026-07-22, sobre la maqueta de las
 // correcciones v1 del cliente). Estructura:
@@ -83,7 +84,7 @@ function BarraPlataformas() {
         <div>
           <Estrellas calificacion={5} />
           <p className="mt-1 text-sm text-navy-soft">
-            {RESENAS_AGREGADO.total.toLocaleString('en-US')} verified reviews
+            {numero(RESENAS_AGREGADO.total)} {t('verified reviews')}
           </p>
         </div>
       </div>
@@ -157,7 +158,7 @@ function VideoTestimonioBox({ testimonio }: { testimonio: VideoTestimonio }) {
       <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-navy/85 via-navy/40 to-transparent" />
 
       <span className="absolute left-5 top-5 rounded-chip bg-white/15 px-3 py-1 text-xs font-medium text-white ring-1 ring-white/25 backdrop-blur-sm">
-        Video review
+        {t('Video review')}
       </span>
 
       {/* Arriba a la DERECHA: es la única esquina libre — el chip ocupa la
@@ -167,10 +168,10 @@ function VideoTestimonioBox({ testimonio }: { testimonio: VideoTestimonio }) {
       <figcaption className="absolute inset-x-0 bottom-0 p-6 text-white lg:p-8">
         <div className="flex items-center gap-2">
           <Estrellas calificacion={5} sobreOscuro />
-          <span className="text-xs text-white/80">Review on {testimonio.plataforma}</span>
+          <span className="text-xs text-white/80">{t('Review on')}{' '}{testimonio.plataforma}</span>
         </div>
         <blockquote className="mt-3 font-display text-h3 font-semibold">
-          &ldquo;{testimonio.frase}&rdquo;
+          {t('“')}{testimonio.frase}{t('”')}
         </blockquote>
         {/* La línea sutil: quiénes son y de dónde nos visitaron. Deliberadamente
             más pequeña y más apagada que la frase — es el pie de la cita, no
@@ -221,11 +222,11 @@ function CardResena({ review, oculto }: { review: Review; oculto: boolean }) {
       {/* line-clamp: las reseñas no miden lo mismo y sin tope una card el
           doble de alta desalinea la fila entera (todas estiran al alto de la
           más alta). 4 líneas es lo que se alcanza a leer mientras pasa. */}
-      <p className="line-clamp-4 text-sm text-navy">&ldquo;{review.texto}&rdquo;</p>
+      <p className="line-clamp-4 text-sm text-navy">{t('“')}{review.texto}{t('”')}</p>
 
       <p className="mt-auto flex items-center gap-1.5 text-xs font-medium text-menta-texto">
         <BadgeCheck className="size-4 shrink-0" aria-hidden="true" />
-        Verified review
+        {t('Verified review')}
       </p>
     </article>
   )
@@ -311,21 +312,20 @@ export function Reviews() {
     <section className="px-5 py-seccion-sm sm:px-10 sm:py-seccion">
       <div className="mx-auto max-w-contenido">
         <div className="text-center">
-          <Etiqueta>Verified reviews</Etiqueta>
+          <Etiqueta>{t('Verified reviews')}</Etiqueta>
           <h2 className="mt-3 font-display text-h2 font-semibold text-navy">
-            What our travelers say
+            {t('What our travelers say')}
           </h2>
           <p className="mx-auto mt-3 max-w-2xl text-lead text-navy-sub">
-            Thousands of families, couples and groups of friends have already had their Caribbean day with
-            us.
+            {t('Thousands of families, couples and groups of friends have already had their Caribbean day with us.')}
           </p>
         </div>
 
         <BarraPlataformas />
 
         <div className="mt-6 grid gap-6 lg:grid-cols-2">
-          {VIDEO_TESTIMONIOS.map((t) => (
-            <VideoTestimonioBox key={t.id} testimonio={t} />
+          {VIDEO_TESTIMONIOS.map((video) => (
+            <VideoTestimonioBox key={video.id} testimonio={video} />
           ))}
         </div>
 
@@ -362,10 +362,10 @@ export function Reviews() {
             ser un <a> normal con target="_blank". */}
         <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <EnlacePrototipo className="inline-flex items-center justify-center rounded-btn px-5 py-3 text-sm font-semibold text-navy ring-1 ring-linea transition-colors hover:bg-papel-hueso">
-            See all {RESENAS_AGREGADO.total.toLocaleString('en-US')} reviews
+            {t('See all')}{' '}{numero(RESENAS_AGREGADO.total)} {t('reviews')}
           </EnlacePrototipo>
           <EnlacePrototipo className="inline-flex items-center justify-center rounded-btn bg-coral px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-coral-dark">
-            Leave us a review
+            {t('Leave us a review')}
           </EnlacePrototipo>
         </div>
       </div>

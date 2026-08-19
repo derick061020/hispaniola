@@ -18,6 +18,7 @@ import { BLOQUE_FICHA } from '@/components/tour/bloque-ficha'
 import { EVENTOS } from '@/data/eventos'
 import { Meta } from '@/components/seo/meta'
 import { useDevFlag } from '@/dev/use-dev-flag'
+import { t } from '@/lib/i18n'
 
 // Landings de eventos v2 (PLAN-EVENTOS.md) — UNA plantilla data-driven
 // para las 3 landings con destino propio (party-boat, bodas, empresas),
@@ -190,7 +191,7 @@ export function EventoPage() {
               <div className={BLOQUE_FICHA}>
                 <h2 className="font-display text-h3 font-semibold text-navy">
                   {/* MICE es sigla, no se minusculiza al bajar el resto del nombre */}
-                  About {evento.nombre.toLowerCase().replace(/\bmice\b/, 'MICE')}
+                  {t('About')}{' '}{evento.nombre.toLowerCase().replace(/\bmice\b/, 'MICE')}
                 </h2>
                 <div className="mt-3 space-y-3 text-sm text-navy-sub">
                   {evento.descripcionLarga.map((parrafo, i) => (
@@ -253,7 +254,7 @@ export function EventoPage() {
                   gestionan con el click normal del acordeón. */}
               {evento.faq.length > 0 ? (
                 <section id="ancla-faq" className={`${BLOQUE_FICHA} scroll-mt-sticky-top`}>
-                  <TituloSeccion>Frequently asked questions</TituloSeccion>
+                  <TituloSeccion>{t('Frequently asked questions')}</TituloSeccion>
                   <Accordion.Root
                     type="single"
                     collapsible

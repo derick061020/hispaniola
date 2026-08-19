@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { ChevronDown, Users } from 'lucide-react'
+import { t } from '@/lib/i18n'
 
 // Selector de pasajeros plegable (correcciones v2, 2026-07-27; rediseñado el
 // 07-28 siguiendo la captura de Viator que pasó Samuel).
@@ -65,12 +66,12 @@ export function PasajerosPopover({
       <button
         type="button"
         onClick={() => setAbierto((a) => !a)}
-        aria-label="Pasajeros"
+        aria-label={t('Passengers')}
         aria-expanded={abierto}
         className="flex h-10 w-full items-center gap-2 rounded-10 border border-stroke-soft-200 bg-bg-white-0 px-3 text-left text-paragraph-sm text-text-strong-950 transition"
       >
         <Users className="size-5 shrink-0 text-text-sub-600" aria-hidden="true" />
-        <span>Pasajeros</span>
+        <span>{t('Passengers')}</span>
         <span className="ml-auto font-semibold tabular-nums text-navy">{total}</span>
         <ChevronDown
           className={`size-4 shrink-0 text-text-sub-600 transition-transform ${
@@ -82,7 +83,7 @@ export function PasajerosPopover({
 
       {abierto ? (
         <div className="absolute left-0 top-full z-20 mt-2 w-full rounded-card bg-papel p-4 shadow-card ring-1 ring-linea">
-          <p className="mb-3 text-xs text-navy-sub">Hasta {max} pasajeros en total.</p>
+          <p className="mb-3 text-xs text-navy-sub">{t('Up to')}{' '}{max} {t('passengers in total.')}</p>
           {children}
           {/* `text-papel`, NO `text-white` (2026-07-28). El resto del panel ya
               seguía al tema oscuro del widget premium —vive dentro de
@@ -98,7 +99,7 @@ export function PasajerosPopover({
             onClick={() => setAbierto(false)}
             className="mt-4 w-full rounded-btn bg-navy px-4 py-2.5 text-sm font-semibold text-papel transition hover:brightness-110"
           >
-            Aplicar
+            {t('Apply')}
           </button>
         </div>
       ) : null}
@@ -135,7 +136,7 @@ export function FilaPasajero({
           {pista}
         </p>
         <p className="mt-0.5 text-xs text-navy-soft">
-          Mínimo: {minimo}, Máximo: {maximo}
+          {t('Minimum:')}{' '}{minimo}{t(', Maximum:')}{' '}{maximo}
         </p>
       </div>
       <div className="flex shrink-0 items-center gap-2">{children}</div>

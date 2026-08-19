@@ -31,7 +31,11 @@ const ko = (m) => { fallos++; console.log(`  \x1b[31m✗\x1b[0m ${m}`) }
 const check = (cond, m) => (cond ? ok(m) : ko(m))
 
 const navegador = await chromium.launch({ channel: process.env.PW_CHANNEL, executablePath: process.env.PW_CHROME })
-const pagina = await navegador.newPage()
+// [2026-08-19] `locale: 'en-US'` obligatorio desde que el sitio es bilingüe:
+// arranca en el idioma del navegador, y en una máquina con el sistema en
+// español este script buscaría rótulos en inglés en una página en español y
+// fallaría por un motivo que no tiene nada que ver con lo que comprueba.
+const pagina = await navegador.newPage({ locale: 'en-US' })
 
 // Odoo instalado pero con el catálogo sin sembrar: es el 404 que devolvía
 // producción, no una caída de red.

@@ -2,6 +2,7 @@ import { Ship } from 'lucide-react'
 import { formatoDinero } from '@/data/home'
 import { aforoDe, precioDesde } from '@/lib/tarifas'
 import type { SubVarianteTour } from '@/data/tours'
+import { t } from '@/lib/i18n'
 
 // Selector de sub-variantes del widget (v3 2026-07-17).
 // Reutilizable para Saona (3 botes: speedboat/fishing/catamarán) y para
@@ -56,7 +57,7 @@ export function SubVariantePicker({
     // radiogroup y no tablist: esto elige un valor de una reserva, no cambia
     // de panel. Antes era `tablist` porque parecía un toggle; en lista, la
     // semántica correcta también es la que mejor navega con teclado.
-    <div role="radiogroup" aria-label="Elige tu barco" className="flex flex-col gap-1">
+    <div role="radiogroup" aria-label={t('Choose your boat')} className="flex flex-col gap-1">
       {subVariantes.map((s) => {
         const activo = s.id === activa
         const desde = s.tabla.length > 0 ? precioDesde(s.tabla) : null
@@ -169,7 +170,7 @@ export function SubVariantePicker({
                   activo ? 'text-aqua-dark' : 'text-navy-sub'
                 }`}
               >
-                <span className="mr-1 font-sans text-xs font-normal text-navy-soft">desde</span>
+                <span className="mr-1 font-sans text-xs font-normal text-navy-soft">{t('from')}</span>
                 {formatoDinero(desde)}
               </span>
             ) : null}

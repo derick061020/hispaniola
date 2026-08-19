@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { AlertCircle, ArrowRight, Check, ChevronDown, Mail, UtensilsCrossed } from 'lucide-react'
 import type { MenuReserva } from '@/lib/menu-reserva'
+import { crudo, t } from '@/lib/i18n'
 
 // Paso 1 del funnel: cada persona elige su plato del paquete que vino del widget.
 // Es el diferenciador de reservar directo —«eliges tu plato por persona»— hecho
@@ -66,7 +67,7 @@ export function PasoMenu({
     <div className="flex flex-col gap-4">
       <div className="text-sm text-navy-sub">
         <p>
-          <span className="font-semibold text-navy">{menu.titulo}</span> · each person picks their dish.
+          <span className="font-semibold text-navy">{menu.titulo}</span> {t('· each person picks their dish.')}
           {menu.texto ? ` ${menu.texto}` : ''}
         </p>
         {/* La regla que puede CAMBIAR el menú sin salir de aquí (el aforo del
@@ -86,8 +87,7 @@ export function PasoMenu({
       <p className="flex items-start gap-2.5 rounded-card border border-linea bg-papel-hueso px-4 py-3 text-sm text-navy-sub">
         <Mail className="mt-0.5 size-4 shrink-0 text-aqua-dark" aria-hidden="true" />
         <span>
-          <strong className="font-semibold text-navy">You don’t have to decide now.</strong> We’ll email you to confirm
-          the meals. You can choose there, or from “My booking”, up to 48 h before the tour.
+          <strong className="font-semibold text-navy">{t('You don’t have to decide now.')}</strong> {t('We’ll email you to confirm the meals. You can choose there, or from “My booking”, up to 48 h before the tour.')}
         </span>
       </p>
 
@@ -113,16 +113,16 @@ export function PasoMenu({
                   <div className="min-w-0">
                     {/* «Guest», como en el resumen del paso, en «Gracias» y en
                         «Mi reserva» — era el único sitio que decía «Person». */}
-                    <p className="font-display text-sm font-semibold text-navy">Guest {i + 1}</p>
+                    <p className="font-display text-sm font-semibold text-navy">{t('Guest')}{' '}{i + 1}</p>
                     {elegido ? (
-                      <p className="truncate text-xs font-medium text-menta-texto">Done · {elegido}</p>
+                      <p className="truncate text-xs font-medium text-menta-texto">{t('Done ·')}{' '}{elegido}</p>
                     ) : (
-                      <p className="text-xs text-navy-soft">Choose your dish (optional)</p>
+                      <p className="text-xs text-navy-soft">{t('Choose your dish (optional)')}</p>
                     )}
                   </div>
                 </div>
                 {elegido && !abierta ? (
-                  <span className="shrink-0 text-sm font-medium text-aqua-dark">Change</span>
+                  <span className="shrink-0 text-sm font-medium text-aqua-dark">{t('Change')}</span>
                 ) : (
                   <ChevronDown
                     className={`size-5 shrink-0 text-navy-soft transition-transform ${abierta ? 'rotate-180' : ''}`}
@@ -135,12 +135,18 @@ export function PasoMenu({
                 <div className="border-t border-linea p-4">
                   <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
                     {menu.platos.map((plato) => {
-                      const activo = elegido === plato.nombre
+                      // El VALOR es el nombre sin traducir y la ETIQUETA el
+                      // traducido: lo que se guarda tiene que ser el mismo
+                      // texto en los dos idiomas, porque acaba en Odoo y el
+                      // correo del menú busca la foto del plato por ese
+                      // nombre (ver `crudo()` en lib/i18n).
+                      const nombreCanonico = crudo(plato).nombre
+                      const activo = elegido === nombreCanonico
                       return (
                         <button
-                          key={plato.nombre}
+                          key={nombreCanonico}
                           type="button"
-                          onClick={() => elegir(i, plato.nombre)}
+                          onClick={() => elegir(i, nombreCanonico)}
                           aria-pressed={activo}
                           className={`overflow-hidden rounded-card text-left transition ${
                             activo ? 'ring-2 ring-aqua' : 'ring-1 ring-linea hover:ring-linea-fuerte'
@@ -187,10 +193,10 @@ export function PasoMenu({
                     <p className="text-xs text-navy-soft">
                       {elegido ? (
                         <>
-                          Selected: <span className="font-semibold text-navy">{elegido}</span>
+                          {t('Selected:')}{' '}<span className="font-semibold text-navy">{elegido}</span>
                         </>
                       ) : (
-                        'Not chosen yet, we’ll confirm it by email'
+                        t('Not chosen yet, we’ll confirm it by email')
                       )}
                     </p>
                     <button
@@ -198,7 +204,7 @@ export function PasoMenu({
                       onClick={() => avanzar(i)}
                       className="inline-flex items-center justify-center gap-2 rounded-btn border-2 border-aqua-dark bg-white px-4 py-2.5 text-sm font-semibold text-aqua-dark transition hover:bg-aqua-tint focus:outline-none focus-visible:ring-2 focus-visible:ring-aqua focus-visible:ring-offset-2 motion-safe:hover:-translate-y-0.5"
                     >
-                      {elegido ? 'Next' : 'I’ll decide later'}
+                      {elegido ? t('Next') : t('I’ll decide later')}
                       <ArrowRight className="size-4" aria-hidden="true" />
                     </button>
                   </div>

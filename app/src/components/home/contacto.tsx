@@ -5,11 +5,12 @@ import { Etiqueta } from '@/components/ui/etiqueta'
 import { Boton } from '@/components/ui/boton'
 import { Campo } from '@/components/ui/campo'
 import { IconoWhatsApp } from '@/components/ui/iconos-redes'
-import { ERROR_ENVIO, useEnvioFormulario } from '@/lib/use-envio-formulario'
+import { errorEnvio, useEnvioFormulario } from '@/lib/use-envio-formulario'
 import { CONTACTO, type ContactoCard } from '@/data/home'
 import { WHATSAPP_URL } from '@/data/tours'
 import { EQUIPO } from '@/data/nosotros'
 import { useDevFlag } from '@/dev/use-dev-flag'
+import { t } from '@/lib/i18n'
 
 // Sección «Contacto» (2026-07-17, pedido de Samuel) — mapa + formulario +
 // datos de contacto, con la card de persona que pidieron las correcciones v1
@@ -201,7 +202,7 @@ function Persona() {
           nombre del canal en el texto lo identifican sin leerlo. */}
       <Boton href={CARD.whatsapp.href ?? WHATSAPP_URL} tono="whatsapp" className="mt-5 w-full">
         <IconoWhatsApp className="size-4" />
-        {CARD.whatsapp.cta ?? 'Chat now on WhatsApp'}
+        {CARD.whatsapp.cta ?? t('Chat now on WhatsApp')}
       </Boton>
     </div>
   )
@@ -288,9 +289,9 @@ function BloqueReserva() {
           <Ticket className="size-4" strokeWidth={2} />
         </span>
         <div>
-          <p className="text-sm font-semibold text-navy">Already have a booking?</p>
+          <p className="text-sm font-semibold text-navy">{t('Already have a booking?')}</p>
           <p className="mt-1 text-sm leading-snug text-navy-sub">
-            Manage it yourself: change the menu, the pick-up or pay the balance.
+            {t('Manage it yourself: change the menu, the pick-up or pay the balance.')}
           </p>
         </div>
       </div>
@@ -327,8 +328,8 @@ function BloqueReserva() {
         <input
           value={valor}
           onChange={(e) => setValor(e.target.value)}
-          placeholder="Code, email or phone"
-          aria-label="Booking code, email or phone number"
+          placeholder={t('Code, email or phone')}
+          aria-label={t('Booking code, email or phone number')}
           aria-describedby="reserva-ayuda"
           className="min-w-0 flex-1 bg-transparent px-2 py-1.5 text-sm text-navy placeholder:text-navy-soft focus:outline-none"
         />
@@ -336,12 +337,11 @@ function BloqueReserva() {
           to={destino}
           className="shrink-0 rounded-btn bg-navy px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-aqua-dark"
         >
-          Manage
+          {t('Manage')}
         </Link>
       </div>
       <p id="reserva-ayuda" className="mt-2 text-xs leading-snug text-navy-soft">
-        Any of the three works: your booking code (HSP-XXXX-XXXX), the email or the phone number you
-        booked with.
+        {t('Any of the three works: your booking code (HSP-XXXX-XXXX), the email or the phone number you booked with.')}
       </p>
     </div>
   )
@@ -362,14 +362,14 @@ function Confirmacion({ onReset }: { onReset: () => void }) {
       <div aria-hidden="true" className="grid size-12 place-items-center rounded-full bg-menta text-menta-texto">
         <Check className="size-6" strokeWidth={2.5} />
       </div>
-      <p className="mt-4 font-display text-h3 font-semibold text-navy">Mensaje enviado</p>
+      <p className="mt-4 font-display text-h3 font-semibold text-navy">{t('Message sent')}</p>
       <p className="mt-2 max-w-prose text-sm leading-relaxed text-navy-sub">{CONTACTO.confirmacion}</p>
       <button
         type="button"
         onClick={onReset}
         className="mt-5 text-sm font-semibold text-aqua-dark hover:underline"
       >
-        Enviar otro mensaje
+        {t('Send another message')}
       </button>
     </div>
   )
@@ -444,7 +444,7 @@ function MapaInteractivo() {
     <div className="relative mt-10 h-contacto-mapa-movil -mx-5 sm:-mx-10 lg:h-contacto-mapa">
       <iframe
         src={CONTACTO.mapaEmbedUrl}
-        title="Mapa: Oficina Hispaniola Aquatic Adventures, Punta Cana"
+        title={t('Map: Hispaniola Aquatic Adventures office, Punta Cana')}
         loading="lazy"
         referrerPolicy="no-referrer-when-downgrade"
         className="size-full border-0"
@@ -558,10 +558,9 @@ export function Contacto({ mostrarEncabezado = true }: { mostrarEncabezado?: boo
                       help you?» + «We don't just answer questions, we help
                       you choose the right experience for your group, budget,
                       and travel style.» */}
-                  <h3 className="font-display text-h3 font-semibold text-navy">How can we help you?</h3>
+                  <h3 className="font-display text-h3 font-semibold text-navy">{t('How can we help you?')}</h3>
                   <p className="mt-2 text-sm text-navy-sub">
-                    We don&rsquo;t just answer questions, we help you choose the right experience for your
-                    group, budget, and travel style.
+                    {t('We don’t just answer questions, we help you choose the right experience for your group, budget, and travel style.')}
                   </p>
 
                   <div className="mt-6 flex flex-1 flex-col gap-5">
@@ -572,15 +571,15 @@ export function Contacto({ mostrarEncabezado = true }: { mostrarEncabezado?: boo
                         directos. El componente se borra con el selector. */}
 
                     <div className="grid gap-4 sm:grid-cols-2">
-                      <Campo etiqueta="Name" name="name" required />
-                      <Campo etiqueta="WhatsApp / Phone" name="phone" type="tel" />
+                      <Campo etiqueta={t('Name')} name="name" required />
+                      <Campo etiqueta={t('WhatsApp / Phone')} name="phone" type="tel" />
                     </div>
 
                     <div className="grid gap-4 sm:grid-cols-2">
-                      <Campo etiqueta="Email" name="email" type="email" required />
+                      <Campo etiqueta={t('Email')} name="email" type="email" required />
                       <div>
                         <label htmlFor="contacto-asunto" className="text-sm font-medium text-navy">
-                          What about?
+                          {t('What about?')}
                         </label>
                         {/* appearance-none + chevron propio: la flecha nativa
                             del select es la del sistema operativo y era el
@@ -612,7 +611,7 @@ export function Contacto({ mostrarEncabezado = true }: { mostrarEncabezado?: boo
                         encogerse por debajo de esas 5 líneas — en un viewport
                         corto desbordaría el panel en vez de adaptarse. */}
                     <Campo
-                      etiqueta="Message"
+                      etiqueta={t('Message')}
                       name="message"
                       textarea
                       required
@@ -626,15 +625,15 @@ export function Contacto({ mostrarEncabezado = true }: { mostrarEncabezado?: boo
                     className="mt-6 w-full disabled:cursor-not-allowed disabled:opacity-60"
                     disabled={enviando}
                   >
-                    {enviando ? 'Sending…' : 'Send message'}
+                    {enviando ? 'Sending…' : t('Send message')}
                   </Boton>
                   {estado === 'error' ? (
                     <p role="alert" className="mt-3 rounded-btn border border-coral/40 bg-coral/5 p-3 text-xs leading-relaxed text-navy-sub">
-                      {ERROR_ENVIO}
+                      {errorEnvio()}
                     </p>
                   ) : (
                     <p className="mt-3 text-center text-xs text-navy-soft">
-                      We reply within 24 hours. No mailing lists, no sales calls.
+                      {t('We reply within 24 hours. No mailing lists, no sales calls.')}
                     </p>
                   )}
                 </form>

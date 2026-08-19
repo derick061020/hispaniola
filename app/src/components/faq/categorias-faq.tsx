@@ -4,6 +4,7 @@ import { Flip } from 'gsap/Flip'
 import * as Accordion from '@/components/alignui/accordion'
 import { Etiqueta } from '@/components/ui/etiqueta'
 import { FAQ_CATEGORIAS } from '@/data/faq'
+import { t } from '@/lib/i18n'
 
 gsap.registerPlugin(Flip)
 
@@ -135,7 +136,7 @@ export function CategoriasFaq() {
           cambian la URL ni la posición del scroll, solo lo que se pinta. */}
       <div
         role="group"
-        aria-label="Filter questions by category"
+        aria-label={t('Filter questions by category')}
         className="flex flex-wrap justify-center gap-2"
       >
         {[{ id: null, nombre: 'All' }, ...FAQ_CATEGORIAS.map((c) => ({ id: c.id, nombre: c.nombre }))].map(

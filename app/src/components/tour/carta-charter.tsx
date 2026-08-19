@@ -5,6 +5,7 @@ import { BannerLangosta } from '@/components/tour/banner-langosta'
 import { estadoDeFranja, type SeleccionAddOns } from '@/lib/tarifas'
 import { useOrigenExpansion } from '@/lib/use-expansion-flip'
 import type { CartaCharter as CartaCharterDatos } from '@/data/tours'
+import { t } from '@/lib/i18n'
 
 // LA CARTA DEL CHARTER — «El menú a medida».
 //
@@ -267,8 +268,8 @@ export function CartaCharter({
             // [v3] El rotulo del grupo depende de la carta: en la de 4 h las
             // brochetas ya no estan (se mudaron a la de 3 h), y en el Taste of
             // Hispaniola SON la carta, asi que el titulo es el suyo.
-            plato={{ nombre: 'Grilled skewers', foto: fotoBrochetas }}
-            titulo="Grilled skewers"
+            plato={{ nombre: t('Grilled skewers'), foto: fotoBrochetas }}
+            titulo={t('Grilled skewers')}
             pie={brochetas
               .map((b) => b.nombre.replace(/^Brocheta de /, '').replace(/ skewer$/i, ''))
               .join(' · ')}
@@ -301,13 +302,13 @@ export function CartaCharter({
           </span>
           <span className="mt-3">
             <span className="block font-display text-sm font-semibold text-navy sm:text-base">
-              One per guest
+              {t('One per guest')}
             </span>
             {/* SIN `block` junto a `line-clamp-3`: el clamp necesita
                 `display:-webkit-box` y el `block` de Tailwind se lo pisaba —
                 el recorte no se aplicaba y el párrafo se salía igual. */}
             <span className="mt-0.5 line-clamp-3 text-xs text-aqua-dark">
-              Chosen before departure and cooked on board.
+              {t('Chosen before departure and cooked on board.')}
             </span>
           </span>
         </div>
@@ -340,7 +341,7 @@ export function CartaCharter({
           // visitante compara los dos menús antes de elegir). Ahí la langosta
           // no se puede añadir —esos barcos no llevan la cocina flotante— y la
           // franja lo dice en vez de callarse.
-          notaNoElegible="Available on 4-hour charters, which sail with the Floating Kitchen."
+          notaNoElegible={t('Available on 4-hour charters, which sail with the Floating Kitchen.')}
           className="mt-2.5"
         />
       ) : null}
@@ -362,7 +363,7 @@ export function CartaCharter({
           no sirve. */}
       {menu.addOn ? (
         <p className="mt-3 text-xs text-navy-soft">
-          * Lobster is replaced with wild jumbo shrimp from March to June (closed season).
+          {t('* Lobster is replaced with wild jumbo shrimp from March to June (closed season).')}
         </p>
       ) : null}
     </>

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useFilaArrastrable } from '@/components/home/use-fila-arrastrable'
 import { useDevFlag } from '@/dev/use-dev-flag'
 import { EQUIPO_COMPLETO, type MiembroEquipoV2 } from '@/data/equipo'
+import { t } from '@/lib/i18n'
 
 // El muro de tripulación ([v2 2026-07-28, pedido de Samuel: «entiendo que es
 // una sección monótona, y eso está bien, pero me gustaría darle algo chulo»).
@@ -155,7 +156,7 @@ export function MuroTripulacion() {
     // salir de campo por el canto de la ventana. Dentro del max-w-contenido se
     // leería como un carrusel dentro de una caja, que es lo contrario de lo
     // que hace este bloque.
-    <section className="pb-seccion-sm sm:pb-seccion" aria-label="Team portraits">
+    <section className="pb-seccion-sm sm:pb-seccion" aria-label={t('Team portraits')}>
       <div className="flex flex-col gap-muro-equipo-fila">
         {filas.map((gente, i) => (
           <FilaMuro

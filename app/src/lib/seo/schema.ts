@@ -1,3 +1,4 @@
+import { idiomaUI } from '@/lib/i18n'
 // Constructores de datos estructurados (schema.org). Todo sale de src/data/*
 // — nunca se inventa un dato que el sitio no muestre ya en algún lado.
 import { CONTACTO } from '@/data/home'
@@ -17,7 +18,10 @@ export function schemaOrganizacion() {
     image: `${SITIO()}/marca/logo.png`,
     // [v3 2026-08-06] El sitio es en inglés (plan 01). Declararlo aquí evita
     // que Google infiera el idioma solo del contenido.
-    inLanguage: 'en',
+    // [2026-08-19] Y desde que el selector traduce de verdad, sigue al idioma
+    // que se está pintando: el JSON-LD tiene que describir la página que el
+    // rastreador está viendo, no la que había antes de pulsar el toggle.
+    inLanguage: idiomaUI(),
     telephone: '+1-829-305-2804',
     email: CONTACTO.email,
     address: {

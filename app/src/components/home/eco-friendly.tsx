@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import { useDevFlag } from '@/dev/use-dev-flag'
 import { useEcoFriendlyReveal } from '@/components/home/use-eco-friendly-reveal'
+import { t } from '@/lib/i18n'
 
 // Cintillo «Eco-friendly · Cero plástico a bordo» (2026-07-17, pedido de
 // Samuel) — la web actual tiene esto como una banda azul sólida a sangre,
@@ -90,7 +91,7 @@ function SelloEco({ className = '' }: { className?: string }) {
       viewBox="0 0 96 96"
       className={className}
       role="img"
-      aria-label="Eco-friendly seal, zero plastic on board"
+      aria-label={t('Eco-friendly seal, zero plastic on board')}
     >
       {/* Disco de fondo y anillo: el aqua de marca, con cuentagotas — es una
           pieza pequeña, no un fondo de sección. */}
@@ -210,11 +211,11 @@ export function EcoFriendly() {
             no se despegue del sello. */}
         <div className="relative z-10 grid w-full grid-cols-[1fr_auto_1fr] items-center gap-4 sm:gap-6">
           <span className="eco-reveal justify-self-end text-right text-sm font-semibold uppercase tracking-[0.2em] text-navy sm:text-base">
-            Eco-friendly
+            {t('Eco-friendly')}
           </span>
           <SelloEco className="h-20 w-20 shrink-0 sm:h-28 sm:w-28" />
           <span className="eco-reveal justify-self-start text-left text-sm font-semibold uppercase tracking-[0.2em] text-navy sm:text-base">
-            Zero plastic on board
+            {t('Zero plastic on board')}
           </span>
         </div>
       </div>

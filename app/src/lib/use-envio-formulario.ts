@@ -1,3 +1,4 @@
+import { t } from '@/lib/i18n'
 import { useState, type FormEvent } from 'react'
 import { enviarFormulario, type TipoFormulario } from '@/lib/api/api'
 
@@ -54,6 +55,13 @@ export function useEnvioFormulario(tipo: TipoFormulario) {
 
 /** El mensaje de error, igual en los cuatro formularios: qué pasó y qué hacer
  *  ahora — nunca un «inténtalo más tarde» a secas cuando hay un WhatsApp que
- *  contesta en minutos. */
-export const ERROR_ENVIO =
-  'We could not send that — check your connection and try again, or write to us on WhatsApp +1-829-305-2804.'
+ *  contesta en minutos.
+ *
+ *  [2026-08-19] Es una FUNCIÓN, no una constante: como constante se resolvería
+ *  al importar el módulo, o sea una sola vez y antes de que nadie pueda tocar
+ *  el selector, y quedaría clavada en el idioma con el que se abrió la web. */
+export function errorEnvio(): string {
+  return t(
+    'We could not send that — check your connection and try again, or write to us on WhatsApp +1-829-305-2804.',
+  )
+}

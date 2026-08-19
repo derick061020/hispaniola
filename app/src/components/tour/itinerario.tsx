@@ -1,6 +1,7 @@
 import { TituloSeccion } from '@/components/tour/titulo-seccion'
 import { BLOQUE_FICHA } from '@/components/tour/bloque-ficha'
 import type { FichaTour } from '@/data/tours'
+import { t } from '@/lib/i18n'
 
 // Itinerario (wireframe A3): los 5 párrafos de prosa de la web actual se
 // convierten en un timeline con horas. El turista escanea «a qué hora me
@@ -16,7 +17,7 @@ export function Itinerario({ ficha }: { ficha: FichaTour }) {
           nota de recogida. La nota nace con el itinerario de DOBLE SALIDA: en
           cuanto una parada muestra dos horas hay que decir de qué son. */}
       <TituloSeccion>
-        {ficha.itinerarioTitulo ?? 'Itinerary'} · {ficha.duracion}
+        {ficha.itinerarioTitulo ?? t('Itinerary')} · {ficha.duracion}
       </TituloSeccion>
       {ficha.itinerarioNota ? (
         // [v3 2026-08-07] Sin tope de ancho (ver comparador-premium.tsx).

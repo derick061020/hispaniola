@@ -3,6 +3,7 @@ import { HeroInterna } from '@/components/internas/hero-interna'
 import { CabeceraBlog } from '@/components/blog/cabecera-blog'
 import { ListaArticulos } from '@/components/blog/lista-articulos'
 import { Meta } from '@/components/seo/meta'
+import { t } from '@/lib/i18n'
 
 // Página BLOG (/blog) — NUEVA en las correcciones v1 del cliente
 // (2026-07-20, planes/06-blog.md). Mismo hero compartido y mismo esqueleto
@@ -26,8 +27,8 @@ export function BlogPage() {
   return (
     <div>
       <Meta
-        titulo="Blog"
-        descripcion="Honest guides, stories from the sea and real advice for your trip to Punta Cana, told by the people who have been sailing this coast since 2012."
+        titulo={t('Blog')}
+        descripcion={t('Honest guides, stories from the sea and real advice for your trip to Punta Cana, told by the people who have been sailing this coast since 2012.')}
         ruta="/blog"
       />
       {/* El fondo pasa de blanco a --color-fondo-ficha (el gris frío que ya

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Check, Sparkles } from 'lucide-react'
 import { formatoDinero } from '@/data/home'
 import { precioAddOn, type AddOn } from '@/lib/tarifas'
+import { t } from '@/lib/i18n'
 
 // Add-ons del widget de reserva (correcciones v2, 2026-07-27).
 //
@@ -73,11 +74,11 @@ export function AddOnsWidget({
             <div key={a.id} className="rounded-xl border border-aqua bg-aqua/5 p-3">
               <p className="flex items-start gap-2 text-sm font-semibold text-navy">
                 <Sparkles size={16} className="mt-0.5 shrink-0 text-aqua" aria-hidden="true" />
-                ¿Seguro? Estas fotos no se repiten.
+                {t('Sure? These photos don’t happen twice.')}
               </p>
               <p className="mt-1 text-xs leading-relaxed text-navy-sub">
-                El álbum completo en máxima calidad (todas, sin recortar) por{' '}
-                {formatoDinero(a.precio)} para todo el grupo.
+                {t('The full album at top quality (all of them, uncropped) for')}{' '}
+                {formatoDinero(a.precio)} {t('for the whole group.')}
               </p>
               <div className="mt-3 flex gap-2">
                 <button
@@ -87,7 +88,7 @@ export function AddOnsWidget({
                   // el blanco fijo desaparece sobre el navy remapeado a crema.
                   className="rounded-full bg-navy px-4 py-2 text-xs font-semibold text-papel transition hover:brightness-110"
                 >
-                  Quedármelo
+                  {t('Keep it')}
                 </button>
                 <button
                   type="button"
@@ -97,7 +98,7 @@ export function AddOnsWidget({
                   }}
                   className="rounded-full px-4 py-2 text-xs font-medium text-navy-sub underline transition hover:text-navy"
                 >
-                  No, gracias
+                  {t('No, thanks')}
                 </button>
               </div>
             </div>
@@ -146,7 +147,7 @@ export function AddOnsWidget({
                     sale el importe de la derecha. */}
                 {a.base === 'persona' ? (
                   <span className="mt-1 block text-[11px] font-medium uppercase tracking-wide text-aqua">
-                    {formatoDinero(a.precio)} por persona × {personas}
+                    {formatoDinero(a.precio)} {t('per person ×')}{' '}{personas}
                   </span>
                 ) : null}
                 {/* Nota honesta del cliente (ej. la langosta de marzo a junio).

@@ -1,6 +1,7 @@
 import { Etiqueta } from '@/components/ui/etiqueta'
 import type { Articulo } from '@/data/blog'
 import type { MiembroEquipo } from '@/data/nosotros'
+import { t } from '@/lib/i18n'
 
 // Cabecera del artículo — children de HeroInterna (correcciones v1, pedido
 // de Samuel 2026-07-22: el artículo pasa a abrir con el MISMO hero que el
@@ -32,7 +33,7 @@ export function CabeceraArticulo({ articulo, autor }: { articulo: Articulo; auto
         <span aria-hidden="true">·</span>
         <span>{articulo.fecha}</span>
         <span aria-hidden="true">·</span>
-        <span>{articulo.minutos} min read</span>
+        <span>{articulo.minutos} {t('min read')}</span>
       </div>
     </div>
   )

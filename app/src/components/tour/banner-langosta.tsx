@@ -1,6 +1,7 @@
 import { Check, Plus } from 'lucide-react'
 import { formatoDinero } from '@/data/home'
 import type { AddOnDeMenu } from '@/data/tours'
+import { t } from '@/lib/i18n'
 
 // LA FRANJA DE LA LANGOSTA — el único extra de pago del menú, en lámina de oro.
 //
@@ -117,7 +118,7 @@ export function BannerLangosta({
               eso la franja sería un cartel mudo. */}
           {activo ? (
             <p className="mt-0.5 text-sm text-premium-fondo/70">
-              It is on your booking. Click again to remove it.
+              {t('It is on your booking. Click again to remove it.')}
             </p>
           ) : !elegible && notaNoElegible ? (
             <p className="mt-0.5 text-sm text-premium-fondo/70">{notaNoElegible}</p>
@@ -132,7 +133,7 @@ export function BannerLangosta({
           por una pinza. */}
       <p className="relative shrink-0 font-display text-lg font-semibold text-premium-fondo">
         {formatoDinero(addOn.precio)}{' '}
-        <span className="text-xs font-normal text-premium-fondo/60">per person</span>
+        <span className="text-xs font-normal text-premium-fondo/60">{t('per person')}</span>
       </p>
     </>
   )

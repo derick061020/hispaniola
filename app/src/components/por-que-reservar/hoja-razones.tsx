@@ -3,6 +3,7 @@ import { Boton } from '@/components/ui/boton'
 import { Etiqueta } from '@/components/ui/etiqueta'
 import { formatoDinero } from '@/data/home'
 import { RAZONES, TOTAL_RAZONES, PRECIO_TODO_INCLUIDO } from '@/data/por-que-reservar'
+import { t, traducible } from '@/lib/i18n'
 
 // Las 19 razones — slide 55.
 //
@@ -24,7 +25,7 @@ import { RAZONES, TOTAL_RAZONES, PRECIO_TODO_INCLUIDO } from '@/data/por-que-res
 //
 // La cuenta del total (TOTAL_RAZONES) se calcula: si mañana el cliente añade
 // una razón, el titular no se queda diciendo 19.
-const FOTOS = [
+const FOTOS = traducible([
   {
     foto: 'galeria-semi-privado-4',
     alt: 'Guest snorkeling among sergeant major fish over the reef',
@@ -50,19 +51,18 @@ const FOTOS = [
     rot: 'var(--pqr-foto-rot-3)',
     posicion: 'left-4 bottom-24 w-36',
   },
-]
+])
 
 export function HojaRazones() {
   return (
     <section>
       <div className="max-w-2xl">
-        <Etiqueta>Everything booking with us includes</Etiqueta>
+        <Etiqueta>{t('Everything booking with us includes')}</Etiqueta>
         <h2 className="mt-2 font-display text-h2 font-semibold text-navy">
-          {TOTAL_RAZONES} reasons, on one sheet
+          {TOTAL_RAZONES} {t('reasons, on one sheet')}
         </h2>
         <p className="mt-4 text-lead text-navy-sub">
-          It’s not marketing. It’s what every one of our guests lives. They’re all here, with no
-          fine print.
+          {t('It’s not marketing. It’s what every one of our guests lives. They’re all here, with no fine print.')}
         </p>
       </div>
 
@@ -104,10 +104,10 @@ export function HojaRazones() {
 
             <div className="mt-8 flex flex-col items-center gap-4 text-center sm:flex-row sm:justify-between sm:text-left">
               <p className="font-display text-h3 font-semibold text-navy">
-                All of this, for {formatoDinero(PRECIO_TODO_INCLUIDO)}. Everything included
+                {t('All of this, for')}{' '}{formatoDinero(PRECIO_TODO_INCLUIDO)}{t('. Everything included')}
               </p>
               <Boton to="/#tours" className="shrink-0">
-                Book my tour
+                {t('Book my tour')}
               </Boton>
             </div>
           </div>

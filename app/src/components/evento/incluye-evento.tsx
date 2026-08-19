@@ -2,6 +2,7 @@ import { Music, Utensils, Camera, Wifi, Bus, Users, Waves, Package, Wine, Heart,
 import { TituloSeccion } from '@/components/tour/titulo-seccion'
 import { BLOQUE_FICHA } from '@/components/tour/bloque-ficha'
 import type { FichaEvento, BeneficioEvento } from '@/data/eventos'
+import { crudo } from '@/lib/i18n'
 
 // "Qué incluye" de las landings de eventos (PLAN-EVENTOS.md) — grid de
 // items icono + texto, mismo lenguaje que `IncluyeTour` de la ficha de
@@ -11,30 +12,54 @@ import type { FichaEvento, BeneficioEvento } from '@/data/eventos'
 //
 // Mapeo de icono por PALABRA CLAVE en el título — la lista es corta y
 // estable. Si un título no matchea, cae en `Package` (genérico).
+//
+// ── [2026-08-19] DOS ARREGLOS DE UNA VEZ ─────────────────────────────────
+// 1. Buscaba en CASTELLANO («comida», «bebida», «música», «transporte») sobre
+//    unos datos que se tradujeron al inglés en la v3: casi nada acertaba y
+//    medio bloque salía con el icono genérico. Estaba anotado en el README
+//    como pendiente. Las palabras pasan al idioma en el que está escrito el
+//    dato.
+// 2. Lee `crudo(b).titulo`, el título SIN traducir. Es lo mismo que ya se hace
+//    con el plato elegido (ver `crudo()` en lib/i18n): mirar el texto de
+//    pantalla haría que el icono dependiera del idioma del visitante — el
+//    mismo beneficio saldría con copa en inglés y con caja en español.
 function iconoPorTitulo(titulo: string) {
-  const t = titulo.toLowerCase()
-  if (t.includes('snorkel')) return Waves
-  if (t.includes('comida') || t.includes('menú') || t.includes('skewer') || t.includes('fish') || t.includes('lobster') || t.includes('fries') || t.includes('croissant')) return Utensils
-  if (t.includes('bebida') || t.includes('barra') || t.includes('bar ') || t.includes('mamajuana') || t.includes('fruit')) return Wine
-  if (t.includes('música') || t.includes('sonido') || t.includes('aux')) return Music
-  if (t.includes('foto')) return Camera
-  if (t.includes('wifi')) return Wifi
-  if (t.includes('transporte') || t.includes('traslado') || t.includes('logística') || t.includes('hoteles')) return Bus
-  if (t.includes('guía') || t.includes('coordinador') || t.includes('tripulación')) return Users
-  if (t.includes('playa')) return MapPin
-  if (t.includes('check-in') || t.includes('lobby') || t.includes('recepción')) return MapPin
-  if (t.includes('capacidad') || t.includes('flota') || t.includes('multi-barco')) return Briefcase
-  if (t.includes('clima') || t.includes('cancelación') || t.includes('plan b')) return CloudRain
-  if (t.includes('facturación') || t.includes('factura') || t.includes('pago')) return Receipt
-  if (t.includes('coordinadora') || t.includes('wedding planner') || t.includes('dedicad')) return Heart
-  if (t.includes('whatsapp') || t.includes('contacto') || t.includes('idioma')) return Phone
-  if (t.includes('dance')) return Music
-  if (t.includes('kitchen')) return Utensils
+  const txt = titulo.toLowerCase()
+  if (txt.includes('snorkel')) return Waves
+  if (
+    txt.includes('food') || txt.includes('menu') || txt.includes('lunch') || txt.includes('kitchen') ||
+    txt.includes('skewer') || txt.includes('fish') || txt.includes('lobster') || txt.includes('fries') ||
+    txt.includes('croissant') || txt.includes('shrimp') || txt.includes('buffet') || txt.includes('hot dog')
+  )
+    return Utensils
+  if (
+    txt.includes('bar') || txt.includes('drink') || txt.includes('open bar') || txt.includes('mamajuana') ||
+    txt.includes('champagne') || txt.includes('toast') || txt.includes('fruit')
+  )
+    return Wine
+  if (txt.includes('music') || txt.includes('sound') || txt.includes('aux') || txt.includes('dance') || txt.includes('dj'))
+    return Music
+  if (txt.includes('photo') || txt.includes('gopro')) return Camera
+  if (txt.includes('wifi') || txt.includes('wi-fi')) return Wifi
+  if (txt.includes('transport') || txt.includes('transfer') || txt.includes('logistic') || txt.includes('hotel'))
+    return Bus
+  if (txt.includes('guide') || txt.includes('coordinator') || txt.includes('crew') || txt.includes('team'))
+    return Users
+  if (txt.includes('beach') || txt.includes('stop') || txt.includes('route')) return MapPin
+  if (txt.includes('check-in') || txt.includes('lobby') || txt.includes('welcome')) return MapPin
+  if (txt.includes('capacity') || txt.includes('fleet') || txt.includes('multi-boat') || txt.includes('guests'))
+    return Briefcase
+  if (txt.includes('weather') || txt.includes('cancellation') || txt.includes('refund') || txt.includes('plan b'))
+    return CloudRain
+  if (txt.includes('invoic') || txt.includes('payment') || txt.includes('tax')) return Receipt
+  if (txt.includes('wedding planner') || txt.includes('dedicated') || txt.includes('ceremony') || txt.includes('bride'))
+    return Heart
+  if (txt.includes('whatsapp') || txt.includes('contact') || txt.includes('language')) return Phone
   return Package
 }
 
 function Item({ b }: { b: BeneficioEvento }) {
-  const Icono = iconoPorTitulo(b.titulo)
+  const Icono = iconoPorTitulo(crudo(b).titulo)
   return (
     <div className="flex items-start gap-3">
       <span

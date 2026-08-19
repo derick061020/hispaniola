@@ -7,6 +7,7 @@ import { HojaRazones } from '@/components/por-que-reservar/hoja-razones'
 import { Ubicacion } from '@/components/por-que-reservar/ubicacion'
 import { Cierre } from '@/components/por-que-reservar/cierre'
 import { Meta } from '@/components/seo/meta'
+import { t } from '@/lib/i18n'
 
 // Página «Por qué reservar con nosotros» (/por-que-reservar) — correcciones v2
 // del cliente, slides 50-56 (plan en
@@ -51,8 +52,8 @@ export function PorQueReservarPage() {
   return (
     <div>
       <Meta
-        titulo="Why book direct?"
-        descripcion="We are the owner, not a middleman. What each piece of the tour would cost separately, how we compare with the rest, and the 19 reasons to book direct."
+        titulo={t('Why book direct?')}
+        descripcion={t('We are the owner, not a middleman. What each piece of the tour would cost separately, how we compare with the rest, and the 19 reasons to book direct.')}
         ruta="/why-book-direct"
       />
       {/* anchoCompleto: el CTA vive en una columna derecha (pedido de Samuel),

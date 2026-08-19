@@ -1,3 +1,4 @@
+import { t } from '@/lib/i18n'
 // Carga de Stripe.js v3 y los tipos mínimos que usa el checkout.
 //
 // [2026-08-14] Se añade al portar a Hispaniola los MISMOS medios de pago que
@@ -79,7 +80,7 @@ function cargarSdk(): Promise<void> {
       // red no pueden dejar el checkout muerto para siempre. El siguiente
       // intento vuelve a probar.
       sdk = null
-      rechazar(new Error('Stripe.js could not be loaded.'))
+      rechazar(new Error(t('Stripe.js could not be loaded.')))
     })
   })
   return sdk
@@ -90,12 +91,12 @@ function cargarSdk(): Promise<void> {
 const instancias = new Map<string, Stripe>()
 
 export async function cargarStripe(clavePublicable: string): Promise<Stripe> {
-  if (!clavePublicable) throw new Error('Stripe is not configured.')
+  if (!clavePublicable) throw new Error(t('Stripe is not configured.'))
   const cacheada = instancias.get(clavePublicable)
   if (cacheada) return cacheada
 
   await cargarSdk()
-  if (!window.Stripe) throw new Error('Stripe.js could not be loaded.')
+  if (!window.Stripe) throw new Error(t('Stripe.js could not be loaded.'))
   const instancia = window.Stripe(clavePublicable)
   instancias.set(clavePublicable, instancia)
   return instancia
@@ -145,15 +146,15 @@ export function mensajeDeError(error: { message?: string; code?: string; decline
   switch (error.code) {
     case 'card_declined':
       return error.decline_code === 'insufficient_funds'
-        ? 'Your card was declined for insufficient funds. Try another card.'
-        : 'Your card was declined. Try another card or use PayPal.'
+        ? t('Your card was declined for insufficient funds. Try another card.')
+        : t('Your card was declined. Try another card or use PayPal.')
     case 'expired_card':
-      return 'That card has expired. Check the expiry date or try another card.'
+      return t('That card has expired. Check the expiry date or try another card.')
     case 'incorrect_cvc':
-      return 'The security code (CVC) is not correct.'
+      return t('The security code (CVC) is not correct.')
     case 'processing_error':
-      return 'The bank could not process the card right now. Try again in a moment.'
+      return t('The bank could not process the card right now. Try again in a moment.')
     default:
-      return error.message || 'The payment could not be completed.'
+      return error.message || t('The payment could not be completed.')
   }
 }

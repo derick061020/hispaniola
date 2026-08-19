@@ -2,6 +2,7 @@ import { Sparkles } from 'lucide-react'
 import { Campo } from '@/components/ui/campo'
 import { OCASIONES, type DatosCelebracion, type DatosContacto } from '@/components/reservar/tipos'
 import { IDIOMAS, type IdiomaCliente } from '@/lib/idioma'
+import { t } from '@/lib/i18n'
 
 // Paso «Contacto» del funnel. Como Viator (2026-07-17, Samuel: "Viator dice para
 // qué se usará la información, hagámoslo también"): un subtítulo general + una
@@ -34,23 +35,22 @@ export function PasoContacto({
   return (
     <div className="flex flex-col gap-5">
       <div>
-        <h2 className="font-display text-h3 font-semibold text-navy">Contact details</h2>
+        <h2 className="font-display text-h3 font-semibold text-navy">{t('Contact details')}</h2>
         <p className="mt-1 text-sm text-navy-sub">
-          We’ll use this information to send you your confirmation and to let you know about anything new with your
-          booking. No spam.
+          {t('We’ll use this information to send you your confirmation and to let you know about anything new with your booking. No spam.')}
         </p>
       </div>
 
       <div className="flex flex-col gap-4">
         <div className="grid gap-4 sm:grid-cols-2">
           <Campo
-            etiqueta="First name"
+            etiqueta={t('First name')}
             autoComplete="given-name"
             value={datos.nombre}
             onChange={(e) => onCambio({ nombre: e.target.value })}
           />
           <Campo
-            etiqueta="Last name"
+            etiqueta={t('Last name')}
             autoComplete="family-name"
             value={datos.apellidos}
             onChange={(e) => onCambio({ apellidos: e.target.value })}
@@ -59,19 +59,19 @@ export function PasoContacto({
 
         <div>
           <Campo
-            etiqueta="Email"
+            etiqueta={t('Email')}
             type="email"
             autoComplete="email"
-            placeholder="you@email.com"
+            placeholder={t('you@email.com')}
             value={datos.email}
             onChange={(e) => onCambio({ email: e.target.value })}
           />
-          <p className="mt-1.5 text-xs text-navy-soft">We’ll send your booking confirmation to this address.</p>
+          <p className="mt-1.5 text-xs text-navy-soft">{t('We’ll send your booking confirmation to this address.')}</p>
         </div>
 
         <div>
           <Campo
-            etiqueta="WhatsApp / phone"
+            etiqueta={t('WhatsApp / phone')}
             type="tel"
             autoComplete="tel"
             placeholder="+1 809 000 0000"
@@ -79,7 +79,7 @@ export function PasoContacto({
             onChange={(e) => onCambio({ telefono: e.target.value })}
           />
           <p className="mt-1.5 text-xs text-navy-soft">
-            Only to let you know about last-minute changes, for example if the weather forces us to move the tour.
+            {t('Only to let you know about last-minute changes, for example if the weather forces us to move the tour.')}
           </p>
         </div>
 
@@ -91,7 +91,7 @@ export function PasoContacto({
             asunto: a dónde y cómo le escribimos. */}
         <div>
           <label className="flex flex-col gap-1.5">
-            <span className="text-sm font-medium text-navy">Language for your booking emails</span>
+            <span className="text-sm font-medium text-navy">{t('Language for your booking emails')}</span>
             <select
               className="h-11 w-full rounded-input border border-linea bg-white px-3 text-sm text-navy outline-none transition-colors focus-visible:border-aqua focus-visible:ring-2 focus-visible:ring-aqua/30"
               value={datos.idioma}
@@ -105,7 +105,7 @@ export function PasoContacto({
             </select>
           </label>
           <p className="mt-1.5 text-xs text-navy-soft">
-            The website stays in English. This is only the language of the emails we send you.
+            {t('The website stays in English. This is only the language of the emails we send you.')}
           </p>
         </div>
       </div>
@@ -120,11 +120,11 @@ export function PasoContacto({
           <Sparkles className="mt-0.5 size-5 shrink-0 text-coral" aria-hidden="true" />
           <div className="min-w-0 flex-1">
             <p className="font-display text-base font-semibold text-navy">
-              Celebrating something special?{' '}
-              <span className="text-sm font-normal text-navy-soft">(optional)</span>
+              {t('Celebrating something special?')}{' '}
+              <span className="text-sm font-normal text-navy-soft">{t('(optional)')}</span>
             </p>
             <p className="mt-1 text-sm text-navy-sub">
-              Tell us now and the crew will know before you step on board.
+              {t('Tell us now and the crew will know before you step on board.')}
             </p>
 
             <div className="mt-3 flex flex-wrap gap-2">
@@ -159,13 +159,13 @@ export function PasoContacto({
             {celebracion.ocasion && celebracion.ocasion !== 'ninguna' ? (
               <div className="mt-4">
                 <Campo
-                  etiqueta="Tell us more (optional)"
-                  placeholder="E.g. it’s Ana’s birthday, she’s turning 40"
+                  etiqueta={t('Tell us more (optional)')}
+                  placeholder={t('E.g. it’s Ana’s birthday, she’s turning 40')}
                   value={celebracion.nota}
                   onChange={(e) => onCambioCelebracion({ nota: e.target.value })}
                 />
                 <p className="mt-1.5 text-xs text-navy-soft">
-                  If you want something specific (a cake, decorations), we’ll arrange it over WhatsApp before the tour.
+                  {t('If you want something specific (a cake, decorations), we’ll arrange it over WhatsApp before the tour.')}
                 </p>
               </div>
             ) : null}

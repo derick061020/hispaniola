@@ -14,6 +14,7 @@ import { Footer } from '@/components/home/footer'
 import { Meta } from '@/components/seo/meta'
 import { SchemaJsonLd } from '@/components/seo/schema-json-ld'
 import { schemaOrganizacion } from '@/lib/seo/schema'
+import { t } from '@/lib/i18n'
 
 // Home completa (F0-F6) — ver app/PLAN.md. v3: el Header vive DENTRO del
 // Hero (app/PLAN-v3.md §4), ya no se monta aquí como hermano.
@@ -65,8 +66,8 @@ export function HomePage() {
     // final de la página queda tapado en un iPhone con home indicator.
     <div className="pb-[calc(4rem+env(safe-area-inset-bottom))] md:pb-0">
       <Meta
-        titulo="Original catamaran tours in Punta Cana"
-        descripcion="Snorkeling in a real coral nursery, a secluded beach and food cooked on board. Small groups, 4.9★ from 1,782 reviews and #1 on TripAdvisor 7 years running. Book direct, no middleman fees."
+        titulo={t('Original catamaran tours in Punta Cana')}
+        descripcion={t('Snorkeling in a real coral nursery, a secluded beach and food cooked on board. Small groups, 4.9★ from 1,782 reviews and #1 on TripAdvisor 7 years running. Book direct, no middleman fees.')}
         ruta="/"
       />
       <SchemaJsonLd datos={schemaOrganizacion()} />

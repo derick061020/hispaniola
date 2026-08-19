@@ -6,7 +6,11 @@ const BASE = 'http://localhost:5173'
 const navegador = await chromium.launch()
 
 // 1. Botones sin nombre accesible
-const ctx = await navegador.newContext({ viewport: { width: 1440, height: 900 } })
+// [2026-08-19] `locale: 'en-US'` obligatorio desde que el sitio es bilingüe:
+// arranca en el idioma del navegador, y en una máquina con el sistema en
+// español este script buscaría rótulos en inglés en una página en español y
+// fallaría por un motivo que no tiene nada que ver con lo que comprueba.
+const ctx = await navegador.newContext({ viewport: { width: 1440, height: 900 }, locale: 'en-US' })
 const page = await ctx.newPage()
 for (const ruta of ['/tours/semi-private-premium', '/facilities', '/tours/saona-island']) {
   await page.goto(BASE + ruta, { waitUntil: 'load' })
@@ -26,7 +30,7 @@ for (const ruta of ['/tours/semi-private-premium', '/facilities', '/tours/saona-
 }
 
 // 2. Overflow horizontal en móvil
-const ctxM = await navegador.newContext({ viewport: { width: 390, height: 844 } })
+const ctxM = await navegador.newContext({ viewport: { width: 390, height: 844 }, locale: 'en-US' })
 const pageM = await ctxM.newPage()
 await pageM.goto(BASE + '/', { waitUntil: 'load' })
 await pageM.waitForTimeout(1200)

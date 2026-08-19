@@ -1,3 +1,11 @@
+import { traducible } from '@/lib/i18n'
+
+// [2026-08-19] Los nombres pasan por el diccionario (`traducible`, ver
+// lib/i18n): son las ÚNICAS cadenas de este fichero que se ven en pantalla, y
+// se leen por índice (`MESES[d.getMonth()]`), así que envolviendo el array se
+// traducen solas sin tocar ni uno de sus consumidores. El resto del comentario
+// de abajo sigue valiendo: aquí no se usa `Intl` para NOMBRAR el día.
+//
 // Fechas en español — portado de prototipo/datos.js (fuente canónica), que las
 // resuelve a mano y NO con toLocaleDateString por dos razones que siguen
 // valiendo aquí: el resultado de `Intl` varía entre navegadores y versiones de
@@ -5,9 +13,8 @@
 // interpreta como UTC → en GMT-4 (Punta Cana) el día se corre uno hacia atrás.
 // Construir la fecha con sus 3 partes evita el corrimiento.
 
-export const DIAS_CORTOS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-export const MESES_CORTOS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-export const MESES = [
+export const DIAS_CORTOS = traducible(['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'])
+export const MESES = traducible([
   'January',
   'February',
   'March',
@@ -20,7 +27,17 @@ export const MESES = [
   'October',
   'November',
   'December',
-]
+])
+
+/** El mes abreviado. NO es un array traducible como los otros dos, y la razón
+ *  es «May»: en inglés el mes de mayo se escribe igual entero que abreviado,
+ *  así que compartiría entrada de diccionario con el largo y la cabecera del
+ *  calendario acabaría diciendo «may 2026» — o el pie del día, «22 mayo.».
+ *  Recortando el nombre largo se evita la colisión y sale bien en los dos
+ *  idiomas: January→Jan, enero→ene, mayo→may. */
+export function mesCorto(indice: number): string {
+  return MESES[indice].slice(0, 3)
+}
 
 export function fechaAISO(d: Date): string {
   return (

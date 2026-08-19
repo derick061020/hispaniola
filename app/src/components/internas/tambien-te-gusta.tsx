@@ -5,6 +5,7 @@ import { FotosFundido } from '@/components/ui/fotos-fundido'
 import { useDevFlag } from '@/dev/use-dev-flag'
 import { TOURS, bookingCta, formatoDinero } from '@/data/home'
 import { FICHAS } from '@/data/tours'
+import { t } from '@/lib/i18n'
 
 // «También te puede gustar» (PLAN-INTERNAS-V2.md §C4, pedido de Samuel: no
 // quería que compartiera columna con la FAQ, y las cards de antes «parecen
@@ -22,7 +23,7 @@ import { FICHAS } from '@/data/tours'
 // a media página.
 export function TambienTeGusta({ slugs }: { slugs: string[] }) {
   const relacionados = slugs
-    .map((slug) => ({ tour: TOURS.find((t) => t.slug === slug)!, ficha: FICHAS[slug] }))
+    .map((slug) => ({ tour: TOURS.find((candidato) => candidato.slug === slug)!, ficha: FICHAS[slug] }))
     .filter((r) => r.tour && r.ficha)
 
   // [dev-mode] ?dev-tambien=pausado congela el fundido de cada box en su 1ª
@@ -36,29 +37,29 @@ export function TambienTeGusta({ slugs }: { slugs: string[] }) {
 
   return (
     <section className="mx-auto max-w-contenido px-5 py-seccion-sm sm:px-10 sm:py-seccion">
-      <Etiqueta>You might also like</Etiqueta>
+      <Etiqueta>{t('You might also like')}</Etiqueta>
 
       <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
-        {relacionados.map(({ tour: t, ficha: f }) => (
+        {relacionados.map(({ tour: candidato, ficha: f }) => (
           <Link
-            key={t.slug}
-            to={`/tours/${t.slug}`}
+            key={candidato.slug}
+            to={`/tours/${candidato.slug}`}
             className="group relative flex h-tambien-alto items-end overflow-hidden rounded-card-grande"
           >
             <div className="absolute inset-0 transition-transform duration-300 group-hover:scale-105">
               <FotosFundido
-                fotos={[t.foto, ...f.galeriaCompleta]}
-                etiqueta={t.nombre}
+                fotos={[candidato.foto, ...f.galeriaCompleta]}
+                etiqueta={candidato.nombre}
                 activa={!pausado} // [dev-mode]
                 className="absolute inset-0 size-full"
               />
             </div>
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-navy/85 via-navy/25 to-transparent" />
             <div className="relative z-10 p-5 text-white sm:p-6">
-              <p className="font-display text-lg font-semibold sm:text-xl">{t.nombre}</p>
+              <p className="font-display text-lg font-semibold sm:text-xl">{candidato.nombre}</p>
               <p className="mt-1 text-sm text-white/85">
                 {f.audiencia} ·{' '}
-                {t.precioLight !== null ? `from ${formatoDinero(t.precioLight)} /person` : bookingCta[t.booking]}
+                {candidato.precioLight !== null ? `from ${formatoDinero(candidato.precioLight)} /person` : bookingCta[candidato.booking]}
               </p>
             </div>
           </Link>

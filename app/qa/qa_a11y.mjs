@@ -5,7 +5,11 @@
 import { chromium } from 'playwright'
 
 const navegador = await chromium.launch()
-const page = await navegador.newPage()
+// [2026-08-19] `locale: 'en-US'` obligatorio desde que el sitio es bilingüe:
+// arranca en el idioma del navegador, y en una máquina con el sistema en
+// español este script buscaría rótulos en inglés en una página en español y
+// fallaría por un motivo que no tiene nada que ver con lo que comprueba.
+const page = await navegador.newPage({ locale: 'en-US' })
 
 for (const ruta of ['/facilities', '/tours/semi-private-premium', '/', '/fleet']) {
   await page.goto('http://localhost:5173' + ruta, { waitUntil: 'load' })

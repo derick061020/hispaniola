@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { ChevronLeft, ChevronRight, Play, Rotate3d } from 'lucide-react'
 import { useDevFlag } from '@/dev/use-dev-flag'
 import type { MediaBarco } from '@/data/flota'
+import { t } from '@/lib/i18n'
 
 // EL VISOR DE LA CARD DE BARCO (slide 28 del PDF v2 + reunión del 07-24).
 //
@@ -146,7 +147,7 @@ export function GaleriaBarco({
             className="absolute right-3 top-3 inline-flex items-center gap-1.5 rounded-chip bg-papel/90 px-3 py-1.5 text-xs font-semibold text-navy shadow-sm backdrop-blur-sm transition hover:bg-papel"
           >
             <Rotate3d className="size-3.5" aria-hidden="true" />
-            View in 360º
+            {t('View in 360º')}
             <span className="sr-only">, {nombre}</span>
           </button>
         ) : null}

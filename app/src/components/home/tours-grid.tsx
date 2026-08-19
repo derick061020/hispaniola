@@ -3,6 +3,7 @@ import { TOURS } from '@/data/home'
 import { Etiqueta } from '@/components/ui/etiqueta'
 import { TourCard } from './tour-card'
 import { useDevFlag } from '@/dev/use-dev-flag'
+import { t } from '@/lib/i18n'
 
 // El escaparate: 4 productos con galería propia (semi-privado, snorkel-lovers,
 // charter-privado, isla-saona). v3 (2026-07-17): Saona deja de ser
@@ -11,7 +12,7 @@ import { useDevFlag } from '@/dev/use-dev-flag'
 // itinerario real, menú buffet) — entra al escaparate como un producto más.
 // Sigue viva en el ticker, el megamenú, el footer y el menú móvil (que
 // solo leen `TOURS`, no este filtro), y ahora también aquí.
-const TOURS_ESCAPARATE = TOURS.filter((t) => t.galeria && t.galeria.length > 0)
+const TOURS_ESCAPARATE = TOURS.filter((tour) => tour.galeria && tour.galeria.length > 0)
 
 export function ToursGrid() {
   // [dev-mode] ?dev-tours=estatico congela los carruseles en su 1ª foto (sin
@@ -38,10 +39,10 @@ export function ToursGrid() {
             Reviews y EquipoTeaser: mismo `<div className="text-center">`
             envolviendo eyebrow + h2 + lead. */}
         <div className="text-center">
-          <Etiqueta>Our tours</Etiqueta>
-          <h2 className="mt-3 font-display text-h2 font-semibold text-navy">Choose your Caribbean experience</h2>
+          <Etiqueta>{t('Our tours')}</Etiqueta>
+          <h2 className="mt-3 font-display text-h2 font-semibold text-navy">{t('Choose your Caribbean experience')}</h2>
           <p className="mx-auto mt-3 max-w-2xl text-lead text-navy-sub">
-            Shared tours and private charters designed for unforgettable Caribbean experiences.
+            {t('Shared tours and private charters designed for unforgettable Caribbean experiences.')}
           </p>
         </div>
 
@@ -53,8 +54,8 @@ export function ToursGrid() {
             4 funciona porque la TourCard ya tenía tamaño cómodo para grids
             de 3 — el ancho por card se reduce un poco, sigue legible. */}
         <div className="tours-cards mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4">
-          {TOURS_ESCAPARATE.map((t) => (
-            <TourCard key={t.slug} tour={t} autoAvance={!estatico} descripcionDesplegada={descripciones} /> // [dev-mode] gate
+          {TOURS_ESCAPARATE.map((tour) => (
+            <TourCard key={tour.slug} tour={tour} autoAvance={!estatico} descripcionDesplegada={descripciones} /> // [dev-mode] gate
           ))}
         </div>
       </div>

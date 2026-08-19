@@ -4,6 +4,7 @@ import { Boton } from '@/components/ui/boton'
 import { BoletoReserva, type VarianteBoleto } from '@/components/home/boleto-reserva'
 import { useWhyDirectScroll } from '@/components/home/use-why-direct-scroll'
 import { useDevFlag } from '@/dev/use-dev-flag'
+import { t } from '@/lib/i18n'
 
 // "Why book direct" — el bloque que no existe en la web actual (ver
 // NOTAS['home-why-direct'] del prototipo): Viator vende el mismo tour al
@@ -64,16 +65,16 @@ export function WhyDirect() {
           <div className="text-white">
             {/* [v3 2026-08-06, WEBSITE - INICIO pág. 3] Título y bajada
                 APROBADOS por el cliente. */}
-            <Etiqueta sobreOscuro>Book direct</Etiqueta>
+            <Etiqueta sobreOscuro>{t('Book direct')}</Etiqueta>
             <h2 className="mt-3 text-balance font-display text-h2 font-semibold">
-              Book Direct. Experience More.
+              {t('Book Direct. Experience More.')}
             </h2>
             <p className="mt-4 max-w-md text-lead text-white/80">
-              Everything the portals can&rsquo;t offer.
+              {t('Everything the portals can’t offer.')}
             </p>
             <div className="mt-7">
               <Boton href="#" tamaño="lg" onClick={(e) => e.preventDefault()}>
-                Check availability
+                {t('Check availability')}
               </Boton>
             </div>
           </div>
@@ -85,7 +86,7 @@ export function WhyDirect() {
               <div className="flex justify-center">
                 <div
                   role="group"
-                  aria-label="Compare how to book"
+                  aria-label={t('Compare how to book')}
                   className="inline-flex rounded-chip bg-white/15 p-1 ring-1 ring-white/25 backdrop-blur-sm"
                 >
                   {VARIANTES.map((v) => (

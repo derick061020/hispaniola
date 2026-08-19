@@ -3,7 +3,7 @@ import { CalendarDays, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-rea
 import {
   DIAS_CORTOS,
   MESES,
-  MESES_CORTOS,
+  mesCorto,
   diasEnMes,
   fechaAISO,
   hoyISO,
@@ -13,6 +13,7 @@ import {
 } from '@/lib/fechas'
 import { useDevFlag } from '@/dev/use-dev-flag'
 import { useDisponibilidad } from '@/components/tour/use-disponibilidad'
+import { t } from '@/lib/i18n'
 
 // Ventana de reserva del demo: 3 meses hacia delante desde el mes actual —
 // mismo criterio que el DIAS_VISIBLES=14 que este calendario reemplaza (un
@@ -34,7 +35,7 @@ function fechasAgotadasDemo(hoy: string): string[] {
 
 function formatoFechaCorta(iso: string): string {
   const d = parseFechaISO(iso)
-  return `${DIAS_CORTOS[d.getDay()]}, ${d.getDate()} ${MESES_CORTOS[d.getMonth()]}.`
+  return `${DIAS_CORTOS[d.getDay()]}, ${d.getDate()} ${mesCorto(d.getMonth())}.`
 }
 
 type Celda = { iso: string; dia: number }
@@ -88,7 +89,7 @@ function GridMensual({
           type="button"
           onClick={() => setMesVisible(new Date(anio, mes - 1, 1))}
           disabled={!puedeRetroceder}
-          aria-label="Mes anterior"
+          aria-label={t('Previous month')}
           className="grid size-6 place-items-center rounded-lg text-navy-sub transition-colors hover:bg-papel-hueso hover:text-navy disabled:pointer-events-none disabled:opacity-30"
         >
           <ChevronLeft className="size-4" />
@@ -100,7 +101,7 @@ function GridMensual({
           type="button"
           onClick={() => setMesVisible(new Date(anio, mes + 1, 1))}
           disabled={!puedeAvanzar}
-          aria-label="Mes siguiente"
+          aria-label={t('Next month')}
           className="grid size-6 place-items-center rounded-lg text-navy-sub transition-colors hover:bg-papel-hueso hover:text-navy disabled:pointer-events-none disabled:opacity-30"
         >
           <ChevronRight className="size-4" />
@@ -126,7 +127,7 @@ function GridMensual({
               disabled={deshabilitado}
               onClick={() => onSeleccionar(c.iso)}
               aria-pressed={elegido}
-              aria-label={`${diaSemanaLargo(c.iso)}${agotado ? ', sold out' : ''}`}
+              aria-label={`${diaSemanaLargo(c.iso)}${agotado ? t(', sold out') : ''}`}
               // `dia-cal` no pinta nada por sí sola: es el asidero para que el
               // tema oscuro del widget pueda subir el contraste de los días
               // DISPONIBLES sin tocar el tema claro (componentes.css).
@@ -249,7 +250,7 @@ export function CalendarioWidget({
         aria-label={
           fecha && hora
             ? `Tour date and time: ${formatoFechaCorta(fecha)}, departure ${hora}`
-            : 'Tour date'
+            : t('Tour date')
         }
         aria-expanded={abierto}
         className={`flex h-10 w-full items-center gap-2 rounded-10 border bg-bg-white-0 px-3 text-left text-paragraph-sm text-text-strong-950 transition ${
@@ -258,7 +259,7 @@ export function CalendarioWidget({
       >
         <CalendarDays className="size-5 shrink-0 text-aqua-dark" aria-hidden="true" />
         <span className={fecha ? '' : 'text-text-sub-600'}>
-          {fecha ? formatoFechaCorta(fecha) : 'Choose a date'}
+          {fecha ? formatoFechaCorta(fecha) : t('Choose a date')}
           {fecha && hora ? (
             <>
               <span className="mx-1.5 text-navy-soft/50" aria-hidden="true">
@@ -289,7 +290,7 @@ export function CalendarioWidget({
               cada apertura es más ruido que información. */}
           {!disponibilidad.cargando && !disponibilidad.consultada && tour ? (
             <p className="mt-1.5 px-1 text-xs text-navy-soft">
-              We couldn&rsquo;t check live availability — we&rsquo;ll confirm your date by e-mail.
+              {t('We couldn’t check live availability — we’ll confirm your date by e-mail.')}
             </p>
           ) : null}
         </div>

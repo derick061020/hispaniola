@@ -1,3 +1,5 @@
+import { traducible } from '@/lib/i18n'
+
 // Página NOSOTROS (/nosotros) — mapea about-hispaniola.php de la web actual
 // (Crew + Fleet; Foundation ya vive aparte, en /sostenibilidad desde que es
 // tab propio — 2026-07-17).
@@ -140,7 +142,7 @@ export type MiembroEquipo = {
   cta?: { label: string; tipo: 'whatsapp' | 'historia' }
 }
 
-export const EQUIPO: MiembroEquipo[] = [
+export const EQUIPO: MiembroEquipo[] = traducible([
   {
     id: 'omar',
     nombre: 'Omar',
@@ -199,7 +201,7 @@ export const EQUIPO: MiembroEquipo[] = [
     foto: 'equipo-eva',
     cta: { label: 'Chat with Eva', tipo: 'whatsapp' },
   },
-]
+])
 
 // ─────────────────────────────────────────────────────────────────────────
 // LÍNEA DE TIEMPO de la flota (correcciones v1 — planes/03-nosotros.md
@@ -216,7 +218,7 @@ export const EQUIPO: MiembroEquipo[] = [
 // 2012 ya operaban con otro barco, falta ese dato.
 export type HitoFlota = { anio: string; titulo: string; texto?: string }
 
-export const TIMELINE_FLOTA: HitoFlota[] = [
+export const TIMELINE_FLOTA: HitoFlota[] = traducible([
   // [v3 2026-08-06, WEBSITE - NOSOTROS pags. 5-7] LA TIMELINE COMPLETA, tal
   // como la escribe el cliente. Sustituye a los 5 hitos que habia, que se
   // dedujeron de about-hispaniola.php a falta de algo mejor.
@@ -240,7 +242,7 @@ export const TIMELINE_FLOTA: HitoFlota[] = [
   { anio: '2020', titulo: 'Resilience', texto: 'Even during the pandemic, the fleet continues growing with the acquisition of Joker.' },
   { anio: '2021', titulo: 'A New Flagship', texto: "After nearly five years of construction, Karaya is delivered, becoming the company's signature vessel." },
   { anio: '2024', titulo: 'A New Generation', texto: 'Grandpa and Follow Your Dreams join the fleet, representing the next chapter of innovation and guest experience.' },
-]
+])
 
 export type MiembroTripulacion = { rol: string; nota: string }
 
@@ -251,12 +253,12 @@ export type MiembroTripulacion = { rol: string; nota: string }
 // línea bajo cada rol en vez del chip pelado que teníamos. Las 4 frases son
 // del cliente (su propia maqueta), no nuestras — describen la función, que es
 // justo lo que el chip a secas no decía.
-export const TRIPULACION: MiembroTripulacion[] = [
+export const TRIPULACION: MiembroTripulacion[] = traducible([
   { rol: 'Captain', nota: 'At the helm on every trip' },
   { rol: 'Marine biologist', nota: 'Shows you the reef' },
   { rol: 'Onboard chef', nota: 'Live floating kitchen' },
   { rol: 'Snorkeling guide', nota: 'With you in the water' },
-]
+])
 
 // Correcciones v1 (planes/03-nosotros.md slide 5): la maqueta del cliente
 // pide capacidad visible, un «ideal para» y un CTA por barco.
@@ -304,7 +306,7 @@ export type BarcoFlota = {
 // (no la versión simplificada "Catamarán A/B" de prototipo/datos.js — 2ª
 // vuelta de este mismo rediseño, pedido explícito de Samuel de portar TODO
 // el contenido de la web original). Specs y años, verbatim de la fuente.
-export const FLOTA: BarcoFlota[] = [
+export const FLOTA: BarcoFlota[] = traducible([
   {
     nombre: 'Santa María',
     tipo: 'Power catamaran',
@@ -389,9 +391,9 @@ export const FLOTA: BarcoFlota[] = [
     idealPara: 'Ideal for large events and weddings',
     cta: 'evento',
   },
-]
+])
 
-export const NOSOTROS = {
+export const NOSOTROS = traducible({
   eyebrow: 'About us',
   titulo: 'The crew and the fleet behind every tour',
   sub: 'Two catamarans, a floating kitchen and a team that has been sailing the Punta Cana coast since 2012.',
@@ -438,7 +440,7 @@ export const NOSOTROS = {
   // El texto del banner YA cuenta el arrecife; el fondo solo ambienta mar.
   arrecifeFoto: 'arrecife-fondo-cenital',
   arrecifeFotoAlt: 'Overhead view of the Caribbean Sea with crystal-clear turquoise water',
-}
+})
 
 // ---------- Intro «Quiénes somos» (NUEVO, portado de about-hispaniola.php) ----------
 // Condensa la bienvenida ("Bienvenido a nuestra familia de Hispaniola...") y
@@ -449,7 +451,7 @@ export const NOSOTROS = {
 // GRUPOS PEQUEÑOS». Las dos frases que habia —la bienvenida a la familia y el
 // diferenciador de aforo— salen, y su sitio lo ocupa el texto APROBADO, que
 // dice otra cosa: que los barcos son PROPIOS y los mantiene su equipo.
-export const INTRO_NOSOTROS = {
+export const INTRO_NOSOTROS = traducible({
   eyebrow: 'Our fleet',
   titulo: 'Every boat has a purpose',
   parrafos: [
@@ -458,7 +460,7 @@ export const INTRO_NOSOTROS = {
   ],
   foto: 'galeria-charter-privado-4',
   fotoAlt: 'Catamaran anchored off a palm-lined beach',
-}
+})
 
 // ---------- La experiencia a bordo (NUEVO) — 3 paradas del tour ----------
 // Portado de la narrativa del itinerario en about-hispaniola.php: vivero de
@@ -469,12 +471,12 @@ export const INTRO_NOSOTROS = {
 // bordo» — primero la cocina flotante (el diferenciador, que antes vivía
 // suelto tres bloques más abajo) y después el itinerario. La sección estrena
 // cabecera propia y un CTA de cierre, que es lo que la maqueta le pone.
-export const EXPERIENCIA = {
+export const EXPERIENCIA = traducible({
   eyebrow: 'The onboard experience',
   titulo: 'A day at sea, cared for down to the detail',
   sub: 'What you live with us, you don’t live on just any excursion.',
   cta: 'Live this day, see availability',
-}
+})
 
 export type ParadaExperiencia = {
   numero: string
@@ -486,7 +488,7 @@ export type ParadaExperiencia = {
   chip?: string
 }
 
-export const EXPERIENCIA_ABORDO: ParadaExperiencia[] = [
+export const EXPERIENCIA_ABORDO: ParadaExperiencia[] = traducible([
   {
     numero: '01',
     titulo: 'Snorkeling at the coral nursery',
@@ -510,7 +512,7 @@ export const EXPERIENCIA_ABORDO: ParadaExperiencia[] = [
     foto: 'bar-flotante',
     fotoAlt: 'Group enjoying drinks at the floating bar, in the natural pool',
   },
-]
+])
 
 // ---------- Cocina flotante (NUEVO) — el diferenciador único ----------
 // "Hispaniola es la única empresa de excursiones en toda la República
@@ -546,7 +548,7 @@ const COCINA_TIEMPOS = [
   'Moments later, your meal is served, freshly prepared just a few steps from your table, while you sail through the crystal-clear waters of Punta Cana.',
 ]
 
-export const COCINA_FLOTANTE = {
+export const COCINA_FLOTANTE = traducible({
   badge: 'Only in Punta Cana',
   eyebrow: 'Only with Hispaniola',
   titulo: 'More Than Lunch. A Memory You Can Taste.',
@@ -566,4 +568,4 @@ export const COCINA_FLOTANTE = {
   ],
   foto: 'cocina-flotante',
   fotoAlt: 'The crew grilling seafood in the floating kitchen',
-}
+})

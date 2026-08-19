@@ -6,6 +6,7 @@ import { FrentesFundacion } from '@/components/fundacion/frentes-fundacion'
 import { FundadoresFundacion } from '@/components/fundacion/fundadores-fundacion'
 import { CierreDoble } from '@/components/sostenibilidad/cierre-doble'
 import { FUNDACION } from '@/data/fundacion'
+import { t } from '@/lib/i18n'
 
 // Página de la Fundación (/fundacion) — correcciones v2, plan 08 §3-§5
 // (slides 62-64). El copy y las notas de procedencia viven en
@@ -51,8 +52,8 @@ export function FundacionPage() {
   return (
     <div>
       <Meta
-        titulo="The Foundation"
-        descripcion="Bávaro Reefs Foundation: coral restoration and artificial reefs since 2016, in partnership with the Ministry of the Environment."
+        titulo={t('The Foundation')}
+        descripcion={t('Bávaro Reefs Foundation: coral restoration and artificial reefs since 2016, in partnership with the Ministry of the Environment.')}
         ruta="/foundation"
       />
 

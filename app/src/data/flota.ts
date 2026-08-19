@@ -12,6 +12,7 @@ import {
   Zap,
 } from 'lucide-react'
 import { FLOTA, TIMELINE_FLOTA, type BarcoFlota } from './nosotros'
+import { traducible } from '@/lib/i18n'
 
 /** Barcos que tiene la flota DE VERDAD. Dato del cliente: «SINCE 2010, FLEET
  *  CONSISTING OF 12» (WEBSITE - NOSOTROS pag. 4), y su timeline aprobada los
@@ -66,7 +67,7 @@ export const BARCOS_FLOTA = 12
 // saludo no puede vivir en dos páginas. Hay que decidir cuál se queda: o
 // /tripulacion pierde su intro, o esta cambia de titular. No se toca
 // /tripulacion en esta iteración porque no estaba en el encargo.
-export const FAMILIA_FLOTA = {
+export const FAMILIA_FLOTA = traducible({
   // [v3 2026-08-06, WEBSITE - NOSOTROS pag. 4] «QUITAR: BIENVENIDOS» y
   // «QUITAR: GRUPOS PEQUEÑOS». Las dos piezas salen y su sitio lo ocupa el
   // texto APROBADO, que dice otra cosa y mas fuerte: los barcos son PROPIOS y
@@ -141,7 +142,7 @@ export const FAMILIA_FLOTA = {
     { cifra: `Fleet of ${BARCOS_FLOTA}`, label: 'boats we own' },
     { cifra: 'The only', label: 'floating kitchen in Punta Cana' },
   ],
-}
+})
 
 // La línea de tiempo de /flota. Es TIMELINE_FLOTA (data/nosotros.ts) con el
 // hito «Hoy» reescrito para que su cifra se CUENTE en vez de estar escrita a
@@ -190,12 +191,12 @@ export type MediaBarco =
 //
 // El titular va en Title Case porque así lo escribe él; es el mismo caso que
 // «More Than Lunch. A Memory You Can Taste.» de la cocina flotante.
-export const REJILLA_FLOTA = {
+export const REJILLA_FLOTA = traducible({
   eyebrow: 'The fleet',
   titulo: 'More Than Boats. Your Home at Sea.',
   texto:
     "Every vessel in our fleet has its own personality, its own purpose, and thousands of unforgettable stories. We own, design, and maintain every boat ourselves, so every detail reflects the experience we want you to live. Explore each vessel through photos, 360° tours, videos, technical specifications, and onboard features before choosing the one that's perfect for you.",
-}
+})
 
 const VIDEO_BARCO = {
   tipo: 'video',
@@ -229,7 +230,7 @@ function galeriaDe(barco: BarcoFlota, extras: Array<[foto: string, etiqueta: str
 // mentira para quien navega con lector de pantalla, y una etiqueta de
 // encuadre equivocada lo es para todo el mundo. Si mañana se cambia un
 // archivo, hay que volver a mirarlo.
-export const MEDIA_FLOTA: Record<string, MediaBarco[]> = Object.fromEntries(
+export const MEDIA_FLOTA: Record<string, MediaBarco[]> = traducible(Object.fromEntries(
   FLOTA.map((barco, i) => {
     const juegos: Array<Array<[string, string, string]>> = [
       [
@@ -265,7 +266,7 @@ export const MEDIA_FLOTA: Record<string, MediaBarco[]> = Object.fromEntries(
     ]
     return [barco.nombre, galeriaDe(barco, juegos[i % juegos.length])]
   }),
-)
+))
 
 // ── El 360º ──────────────────────────────────────────────────────────────
 // El plan 04 §3 dejó dicho: «el botón "Ver en 360º" no se pinta si el barco
@@ -939,7 +940,7 @@ export function potenciaDe(barco: BarcoFlota) {
 // lectura razonable de lo que ya dice la web (vajilla reutilizable, cristal),
 // pero hay que CONFIRMARLAS con el cliente antes de publicar — si en realidad
 // las botellas son de aluminio, el banner estaría mintiendo en el detalle.
-export const CERO_PLASTICO = {
+export const CERO_PLASTICO = traducible({
   eyebrow: 'Zero plastic on board',
   titulo: 'Not one plastic bottle comes aboard our boats',
   texto:
@@ -956,7 +957,7 @@ export const CERO_PLASTICO = {
   // («el mar que devolvemos como lo encontramos») es el que pide mar limpio,
   // no una foto de residuos. Es decorativa: el texto ya lo cuenta todo.
   foto: 'arrecife-fondo-cenital',
-}
+})
 
 // ═════════════════════════════════════════════════════════════════════════
 // §5 — LA COCINA FLOTANTE Y LAS 3 PARADAS (slides 32-34)
@@ -1002,7 +1003,7 @@ export const CERO_PLASTICO = {
 // de data/nosotros.ts en el componente. Aquí solo vive lo que este formato
 // añade — y `momentos`, que sale de la propia maqueta del cliente (slide 34:
 // «PRIMERA PARADA · AL MEDIODÍA · PARA CERRAR»).
-export const COCINA_Y_PARADAS = {
+export const COCINA_Y_PARADAS = traducible({
   // ⚠️ AQUÍ VIVÍA `detalle` Y SE RETIRA (2026-08-07, Samuel: «quítala»). Era el
   // párrafo que absorbía las dos cifras del slide 33 como prosa —«Seven dishes
   // to choose from, grilled while you sail. Zero reheated food…»—, y era copy
@@ -1061,4 +1062,4 @@ export const COCINA_Y_PARADAS = {
   // que llevaba la versión anterior: «Primera parada» dice lo mismo que un
   // «01» y además dice CUÁNDO, que es la información que se estaba perdiendo.
   momentos: ['First stop', 'At midday', 'To finish'],
-}
+})

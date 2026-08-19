@@ -1,4 +1,5 @@
 import type { IdiomaCliente } from '@/lib/idioma'
+import { traducible } from '@/lib/i18n'
 // Tipos compartidos del funnel de reserva (/reservar/:slug, Fase C). Viven
 // aparte para que los pasos y la página los importen sin ciclos (la página
 // importa los pasos; los pasos importan solo estos tipos).
@@ -27,13 +28,13 @@ export type DatosContacto = {
 // Los ids son estables (viajan a la reserva guardada); las etiquetas son copy.
 export type Ocasion = 'cumpleanos' | 'aniversario' | 'luna-de-miel' | 'pedida' | 'ninguna'
 
-export const OCASIONES: { id: Ocasion; etiqueta: string }[] = [
+export const OCASIONES: { id: Ocasion; etiqueta: string }[] = traducible([
   { id: 'cumpleanos', etiqueta: 'Birthday' },
   { id: 'aniversario', etiqueta: 'Anniversary' },
   { id: 'luna-de-miel', etiqueta: 'Honeymoon' },
   { id: 'pedida', etiqueta: 'Proposal' },
   { id: 'ninguna', etiqueta: 'Nothing in particular' },
-]
+])
 
 export type DatosCelebracion = { ocasion: Ocasion | null; nota: string }
 

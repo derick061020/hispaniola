@@ -15,6 +15,7 @@ import { Meta } from '@/components/seo/meta'
 import { ANCLAS_VENTAJA, SOSTENIBILIDAD } from '@/data/sostenibilidad'
 import { useDevFlag } from '@/dev/use-dev-flag'
 import { useSostenibilidadReveal } from '@/components/sostenibilidad/use-sostenibilidad-reveal'
+import { t } from '@/lib/i18n'
 
 // Página VENTAJA COMPETITIVA (/ventaja-competitiva) — combina las 2 páginas
 // reales de la web actual: sustainability.php (intro + 3 pilares + cierre) y
@@ -78,7 +79,7 @@ export function VentajaCompetitivaPage() {
     <div>
       <Meta
         titulo={SOSTENIBILIDAD.titulo}
-        descripcion="Coral reef restoration, support for local communities and responsible operations: the Bávaro Reefs Foundation behind every tour."
+        descripcion={t('Coral reef restoration, support for local communities and responsible operations: the Bávaro Reefs Foundation behind every tour.')}
         ruta="/competitive-advantage"
       />
       <HeroInterna ctaHref="/#tours">
@@ -113,7 +114,7 @@ export function VentajaCompetitivaPage() {
             <p className="text-lead text-navy-sub">{SOSTENIBILIDAD.historia}</p>
             <img
               src="/fotos/arrecife-fondo-cenital.webp"
-              alt="The protected marine area seen from the air"
+              alt={t('The protected marine area seen from the air')}
               loading="lazy"
               className="h-56 w-full rounded-card object-cover lg:h-72"
             />
@@ -148,7 +149,7 @@ export function VentajaCompetitivaPage() {
           STORY STARTS HERE» — el cliente pide OTRO texto para la misma banda
           de cierre que la home. Por eso el footer lo acepta por prop desde F2:
           esta es la pagina que lo estrena. */}
-      <Footer cta="Your Caribbean story starts here" />
+      <Footer cta={t('Your Caribbean story starts here')} />
     </div>
   )
 }

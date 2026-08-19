@@ -5,6 +5,7 @@ import { useOrigenExpansion } from '@/lib/use-expansion-flip'
 import { SliderComida } from '@/components/internas/slider-comida'
 import { VideoLightbox } from '@/components/tour/video-lightbox'
 import { useDevFlag } from '@/dev/use-dev-flag'
+import { t } from '@/lib/i18n'
 
 // Mosaico de fotos reales del tour/evento — vive DENTRO del contenido, no en
 // el hero (2026-07-17: la iteración que lo incrustó en el hero desalineaba el
@@ -147,7 +148,7 @@ export function GaleriaMosaico({
         />
         {esUltima && restantes > 0 ? (
           <span className="absolute inset-0 grid place-items-center bg-overlay-foto text-sm font-semibold text-white">
-            +{restantes} photos →
+            +{restantes} {t('photos →')}
           </span>
         ) : null}
       </button>
@@ -225,7 +226,7 @@ export function GaleriaMosaico({
               className="absolute inset-x-0 bottom-0 flex items-center justify-center gap-1.5 px-3 pb-3 text-xs font-medium text-white"
             >
               <Volume2 className="size-3.5 shrink-0" />
-              Watch with sound
+              {t('Watch with sound')}
             </span>
           </button>
         ) : null}

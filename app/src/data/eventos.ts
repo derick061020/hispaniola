@@ -1,3 +1,5 @@
+import { traducible } from '@/lib/i18n'
+
 // Contenido de las 3 LANDINGS de eventos v2 (PLAN-EVENTOS.md) — portado
 // VERBATIM de las 3 URLs de la web actual del cliente:
 //
@@ -831,15 +833,15 @@ const EMPRESAS: FichaEvento = {
   ctaSecundaria: 'Request the corporate dossier (PDF)',
 }
 
-export const EVENTOS: Record<FichaEvento['slug'], FichaEvento> = {
+export const EVENTOS: Record<FichaEvento['slug'], FichaEvento> = traducible({
   'party-boat': PARTY_BOAT,
   weddings: BODAS,
   corporate: EMPRESAS,
-}
+})
 
 /** Lista ordenada de las 3 landings — para el selector de "Otras
  *  ocasiones" de cada evento y para el megamenú de Eventos. */
-export const EVENTOS_ORDEN: FichaEvento[] = [PARTY_BOAT, BODAS, EMPRESAS]
+export const EVENTOS_ORDEN: FichaEvento[] = traducible([PARTY_BOAT, BODAS, EMPRESAS])
 
 /** WhatsApp del negocio. Mismo número que ficha de tour. */
 export const WHATSAPP_URL = 'https://wa.me/18293052804'
