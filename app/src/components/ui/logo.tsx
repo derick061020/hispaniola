@@ -5,9 +5,16 @@
 //   - por defecto: lockup original tal cual sale de la web actual.
 // Ambas se sirven a 64px de alto, muy por debajo de su ancho nativo (250px / 512px),
 // así que quedan nítidas en retina.
+// [2026-08-20] Los dos archivos se sustituyen por los VECTORES que entregó el
+// cliente, rasterizados a 360×140. Además de ganar resolución (a 64px de alto
+// eran 250px de ancho para 145 mostrados: justo por debajo del 2x), esto
+// arregla de raíz el salto que describe el comentario de ANCHO_RENDER_COMPACTO:
+// las dos variantes YA NO tienen proporciones distintas (2,273 vs 2,133), ahora
+// las dos son 2,571. El letterboxing que compensaba esa diferencia deja de
+// tener nada que compensar.
 const VARIANTES = {
-  claro: { src: '/marca/logo.png', ancho: 250, alto: 110 },
-  oscuro: { src: '/marca/logo-hispaniola-white.png', ancho: 512, alto: 240 },
+  claro: { src: '/marca/logo.png', ancho: 360, alto: 140 },
+  oscuro: { src: '/marca/logo-hispaniola-white.png', ancho: 360, alto: 140 },
 } as const
 
 const ALTO_RENDER = 64
