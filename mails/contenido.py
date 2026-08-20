@@ -50,6 +50,7 @@ EJEMPLO = {
         "support_email": "info@hispaniolaaquaticadventures.com",
         "company_address": "Calle El Cortecito 12, Bávaro 23000",
         "unsubscribe_block": "¿Prefieres no recibir estos correos? Date de baja.",
+        "account_email": "marta.ruiz@gmail.com", "temp_password": "Hka7-9Wq2-Lm4",
     },
     "en": {
         "first_name": "Marta", "booking_id": "HAA-2417", "boat_name": "Karaya",
@@ -68,6 +69,7 @@ EJEMPLO = {
         "support_email": "info@hispaniolaaquaticadventures.com",
         "company_address": "Calle El Cortecito 12, Bávaro 23000",
         "unsubscribe_block": "Rather not get these emails? Unsubscribe.",
+        "account_email": "marta.ruiz@gmail.com", "temp_password": "Hka7-9Wq2-Lm4",
     },
 }
 
@@ -349,8 +351,27 @@ def m11(t, c, idioma, pv=False):
 #   11 hero-grupo        un asiento vacio con toalla y gafas. «Te guardamos tu plaza»
 
 
+def m12(t, c, idioma, pv=False):
+    # Dos cajas: las credenciales y lo que se hace con ellas. Van separadas
+    # porque la primera se COPIA y la segunda se LEE, y son momentos distintos.
+    return [
+        p.intro(t["etiqueta"], t["titular"], t["entradilla"]),
+        p.tarjeta(p.credenciales(
+            t["l_usuario"], "{{account_email}}",
+            t["l_pass"], "{{temp_password}}",
+            nota=t["nota_pass"],
+        )),
+        p.boton(t["cta"], "{{login_link}}"),
+        p.aviso(t["av_titulo"], t["av_cuerpo"], None, None, tono="ambar"),
+        p.CORTE,
+        p.lista(t["q_titulo"], [
+            (t["q1"], t["q1d"]), (t["q2"], t["q2d"]), (t["q3"], t["q3d"]),
+        ], pad="20px 32px 0"),
+    ]
+
+
 # ═══════════════════════════════════════════════════════════════════════════
-#  LOS 11 CORREOS
+#  LOS 12 CORREOS
 # ═══════════════════════════════════════════════════════════════════════════
 
 EMAILS = [
@@ -704,6 +725,64 @@ EMAILS = [
             l_resto="The rest", v_resto="On tour day, with 5% off when paid in cash",
             cta="Finish my booking",
             alt="I would rather book on WhatsApp",
+        ),
+    ),
+    # ── 12 ───────────────────────────────────────────────────────────────
+    # Nace el 2026-08-17 a peticion de Samuel; no venia en las 11 del cliente.
+    # Se dispara A LA VEZ que el correo 1, no despues: los dos salen del mismo
+    # evento (el deposito cobrado). Van separados a proposito — mezclar la
+    # confirmacion de la reserva con unas credenciales hace que se pierda una de
+    # las dos, y la contrasena es justo la que hay que poder encontrar luego.
+    #
+    # ⚠️ DECISION DE SEGURIDAD, TOMADA POR EL CLIENTE. Mandar una contrasena en
+    # texto plano por correo es una practica debil: el mensaje se queda en el
+    # buzon indefinidamente y quien entre en ese buzon entra en la cuenta. Lo
+    # estandar hoy es un enlace de un solo uso con caducidad para que la persona
+    # cree su propia contrasena, y ese enlace no sirve dos veces.
+    # Se construye como se pidio. Mitigaciones que SI estan puestas:
+    #   · el aviso de cambiarla no es una nota al pie, es un bloque con acento
+    #   · el copy dice que caduca, para que el mensaje no valga para siempre
+    #   · el correo NO repite el codigo de reserva junto a las credenciales
+    # Si Derick puede hacer el enlace de un solo uso, este correo se simplifica:
+    # desaparece la contrasena y queda solo el boton.
+    dict(
+        id="12-cuenta-creada", mvp=True, foto="hero-llave.jpg", ref=True,
+        disparador={"es": "Pago del depósito completado, a la vez que el correo 1",
+                    "en": "Deposit payment completed, at the same time as email 1"},
+        monta=m12,
+        es=dict(
+            asunto="Tu cuenta de Hispaniola ya está lista",
+            preheader="Tus datos de acceso para gestionar la reserva.",
+            etiqueta="Cuenta creada", titular="Ya puedes gestionar tu reserva, {{first_name}}.",
+            entradilla="Te hemos creado una cuenta para que cambies lo que necesites sin "
+            "tener que escribirnos. Estos son tus datos de acceso.",
+            l_usuario="Usuario", l_pass="Contraseña temporal",
+            nota_pass="Cópiala tal cual, respetando mayúsculas y minúsculas.",
+            cta="Acceder a mi cuenta",
+            av_titulo="Cámbiala la primera vez que entres",
+            av_cuerpo="Esta contraseña es temporal y caduca. En cuanto entres, ponte una tuya: "
+            "este correo se queda en tu bandeja y cualquiera que lo lea podría usarla.",
+            q_titulo="Qué puedes hacer desde tu cuenta",
+            q1="Ver y cambiar tu reserva", q1d="Fecha, personas, punto de recogida y extras.",
+            q2="Elegir el menú", q2d="El plato de cada persona, hasta 48 h antes del tour.",
+            q3="Consultar el saldo", q3d="Lo que queda por pagar y el descuento en efectivo.",
+        ),
+        en=dict(
+            asunto="Your Hispaniola account is ready",
+            preheader="Your sign-in details to manage the booking.",
+            etiqueta="Account created", titular="You can manage your booking now, {{first_name}}.",
+            entradilla="We have created an account so you can change whatever you need without "
+            "writing to us. These are your sign-in details.",
+            l_usuario="Username", l_pass="Temporary password",
+            nota_pass="Copy it exactly, upper and lower case matter.",
+            cta="Go to my account",
+            av_titulo="Change it the first time you sign in",
+            av_cuerpo="This password is temporary and it expires. Set your own as soon as you are "
+            "in: this email stays in your inbox and anyone reading it could use it.",
+            q_titulo="What you can do from your account",
+            q1="View and change your booking", q1d="Date, guests, pickup point and extras.",
+            q2="Choose the menu", q2d="Each guest's dish, up to 48 h before the tour.",
+            q3="Check the balance", q3d="What is left to pay and the cash discount.",
         ),
     ),
 ]

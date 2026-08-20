@@ -615,6 +615,39 @@ def filas_menu(titulo, items, pad="20px 22px 4px"):
     )
 
 
+def credenciales(l_usuario, usuario, l_pass, password, nota=None):
+    """Usuario y contrasena temporal.
+
+    La contrasena va en MONOESPACIADA y con letter-spacing: hay que poder
+    distinguir a simple vista un 1 de una l y un 0 de una O, que es justo donde
+    se equivoca quien la teclea a mano. Y va mas grande que el resto porque es
+    el unico dato del correo que el lector tiene que copiar.
+
+    El usuario lleva word-break: es un email, y uno largo desbordaria la caja en
+    movil en vez de partirse.
+
+    ⚠️ Courier New en la pila: es la unica monoespaciada que existe con
+    seguridad en Windows, Mac y Android. Sin ella, Outlook cae a proporcional y
+    se pierde justo lo que hace legible una contrasena.
+    """
+    mono = "Consolas,'Courier New',monospace"
+    html = (
+        '<table role="presentation" width="100%%" cellpadding="0" cellspacing="0" border="0" style="%s">'
+        '<tr><td style="padding:0 0 4px;font-size:13px;color:%s;">%s</td></tr>'
+        '<tr><td style="padding:0 0 16px;font-size:15px;font-weight:600;color:%s;word-break:break-all;">%s</td></tr>'
+        '<tr><td style="padding:0 0 4px;font-size:13px;color:%s;">%s</td></tr>'
+        '<tr><td style="font-family:%s;font-size:20px;font-weight:700;letter-spacing:.08em;'
+        'color:%s;word-break:break-all;">%s</td></tr>'
+        % (_f(), T["navy_soft"], l_usuario, T["navy"], usuario,
+           T["navy_soft"], l_pass, mono, T["navy"], password)
+    )
+    if nota:
+        html += ('<table role="presentation" width="100%%" cellpadding="0" cellspacing="0" border="0" '
+                 'style="%s"><tr><td style="padding:12px 0 0;font-size:12.5px;line-height:1.55;'
+                 'color:%s;">%s</td></tr></table>' % (_f(), T["navy_soft"], nota))
+    return html
+
+
 def dato_grande(label, valor, color=None):
     """Un solo dato, en grande. Para cuando el mensaje ES ese dato — la hora a la
     que cierra la cocina, por ejemplo. 19px y no 22 como el saldo: aqui el valor
