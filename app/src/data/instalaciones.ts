@@ -164,8 +164,20 @@ export const INSTALACIONES = {
 // recortado a 9:16 en la celda del bento esos subtítulos caen justo encima del
 // pie de la card. En el popup de la home el video se ve entero y no molesta;
 // aquí sí. No es un placeholder peor: es un placeholder que rompe la celda.
-const V_OCEANO = { video: '/video/incluye-oceano-cenital.mp4', poster: 'incluye-oceano-poster' }
+// [2026-08-20] LLEGARON LOS VERTICALES DE VERDAD. El cliente entrega un video
+// propio para cuatro de las cinco zonas, asi que se acaba el reparto de clips
+// prestados que describe el comentario de arriba. Cada zona usa AHORA el suyo.
+// La tienda (FOUNDATION STORE) sigue con placeholder: su carpeta llegó vacia,
+// marcada PENDIENTE por el propio cliente.
+//
+// ⚠️ Dos de los cuatro (recibimiento y oficinas) venian en 16:9 horizontal, no
+// en 9:16. Se recortan al centro para caber en la celda vertical del bento, asi
+// que pierden los laterales del encuadre original.
 const V_CATAMARAN = { video: '/video/hero.mp4', poster: 'hero-video-poster' }
+const V_RECIBIMIENTO = { video: '/video/instalaciones/recibimiento.mp4', poster: 'hero-video-poster' }
+const V_BIOLOGIA = { video: '/video/instalaciones/biologia.mp4', poster: 'hero-video-poster' }
+const V_COCINAS = { video: '/video/instalaciones/cocinas.mp4', poster: 'hero-video-poster' }
+const V_OFICINAS = { video: '/video/instalaciones/oficinas.mp4', poster: 'hero-video-poster' }
 
 export const ZONAS: ZonaInstalacion[] = [
   {
@@ -181,18 +193,26 @@ export const ZONAS: ZonaInstalacion[] = [
       'Comfortable waiting areas & restrooms',
       'Tour briefing before departure',
     ],
-    vertical: { ...V_CATAMARAN, titulo: 'Así te recibimos' },
+    vertical: { ...V_RECIBIMIENTO, titulo: 'Así te recibimos' },
     fotos: [
       // No `hero-catamaran-1` aunque sea la foto de llegada más clara del repo:
       // se la queda el banner de cierre de esta misma página (ver `cierreFoto`),
       // y a media pantalla de distancia se vería dos veces.
       {
-        src: 'galeria-isla-saona-2',
-        alt: 'Guests boarding the catamaran from the shore',
+      // [2026-08-20] Foto REAL de la instalacion (entrega del cliente,
+      // «FOTO PARA NUEVA WEB 2026»). Antes era un hueco PRESTADO de
+      // otra galeria: no se podia sobrescribir porque ese .webp lo
+      // consumen hasta 11 archivos de datos mas.
+        src: 'instalacion-recibimiento-1',
+        alt: 'The wooden Guest Welcome Center, with a crew member getting the check-in desk ready',
       },
       {
-        src: 'galeria-semi-privado-3',
-        alt: 'Group photo of all the guests on the beach',
+      // [2026-08-20] Foto REAL de la instalacion (entrega del cliente,
+      // «FOTO PARA NUEVA WEB 2026»). Antes era un hueco PRESTADO de
+      // otra galeria: no se podia sobrescribir porque ese .webp lo
+      // consumen hasta 11 archivos de datos mas.
+        src: 'instalacion-recibimiento-2',
+        alt: 'Inside the Guest Welcome Center: long wooden counters, stools and the reef information panels',
       },
     ],
   },
@@ -217,15 +237,19 @@ export const ZONAS: ZonaInstalacion[] = [
       'Interactive coral museum',
     ],
     cierre: 'Real conservation. Real scientists. Real impact.',
-    vertical: { ...V_CATAMARAN, titulo: 'Inside the lab' },
+    vertical: { ...V_BIOLOGIA, titulo: 'Inside the lab' },
     fotos: [
       {
         src: 'galeria-snorkel-lovers-9',
         alt: 'The team handling coral fragments on the work bench',
       },
       {
-        src: 'galeria-semi-privado-1',
-        alt: 'Visitors around the coral growing tank',
+      // [2026-08-20] Foto REAL de la instalacion (entrega del cliente,
+      // «FOTO PARA NUEVA WEB 2026»). Antes era un hueco PRESTADO de
+      // otra galeria: no se podia sobrescribir porque ese .webp lo
+      // consumen hasta 11 archivos de datos mas.
+        src: 'instalacion-biologia-1',
+        alt: 'The coral growing tanks at the Marine Biology Center, under the Bávaro Reefs mural',
       },
     ],
   },
@@ -242,7 +266,7 @@ export const ZONAS: ZonaInstalacion[] = [
       'Large cold-storage facilities',
       'Daily quality control',
     ],
-    vertical: { ...V_OCEANO, titulo: 'The kitchen in action' },
+    vertical: { ...V_COCINAS, titulo: 'The kitchen in action' },
     fotos: [
       // ⚠️ NI cocina-flotante NI plato-mariscos, que eran los candidatos
       // obvios: la primera es la cocina A BORDO (otra cosa distinta de las
@@ -253,12 +277,20 @@ export const ZONAS: ZonaInstalacion[] = [
       // una foto. Estas dos sí tienen fondo y cuentan preparación y servicio,
       // que es de lo que habla la zona.
       {
-        src: 'mice-3',
-        alt: 'Appetizers prepared and lined up on the service table before an event',
+      // [2026-08-20] Foto REAL de la instalacion (entrega del cliente,
+      // «FOTO PARA NUEVA WEB 2026»). Antes era un hueco PRESTADO de
+      // otra galeria: no se podia sobrescribir porque ese .webp lo
+      // consumen hasta 11 archivos de datos mas.
+        src: 'instalacion-cocinas-1',
+        alt: 'The Culinary Center kitchen, with the cold room and the prep shelves',
       },
       {
-        src: 'galeria-charter-privado-1',
-        alt: 'A team member serving the buffet to guests',
+      // [2026-08-20] Foto REAL de la instalacion (entrega del cliente,
+      // «FOTO PARA NUEVA WEB 2026»). Antes era un hueco PRESTADO de
+      // otra galeria: no se podia sobrescribir porque ese .webp lo
+      // consumen hasta 11 archivos de datos mas.
+        src: 'instalacion-cocinas-2',
+        alt: 'The stainless steel prep counter and the grill at the Culinary Center',
       },
     ],
   },
@@ -302,15 +334,23 @@ export const ZONAS: ZonaInstalacion[] = [
       'Sales & Foundation offices',
     ],
     cierre: 'What you experience as a perfect day is the result of hundreds of details working together behind the scenes.',
-    vertical: { ...V_OCEANO, titulo: 'A day at the offices' },
+    vertical: { ...V_OFICINAS, titulo: 'A day at the offices' },
     fotos: [
       {
-        src: 'mice-2',
-        alt: 'Hispaniola staff looking after a group in the covered area of the complex',
+      // [2026-08-20] Foto REAL de la instalacion (entrega del cliente,
+      // «FOTO PARA NUEVA WEB 2026»). Antes era un hueco PRESTADO de
+      // otra galeria: no se podia sobrescribir porque ese .webp lo
+      // consumen hasta 11 archivos de datos mas.
+        src: 'instalacion-oficinas-1',
+        alt: 'A member of the office team at her desk in the Operations Center',
       },
       {
-        src: 'mice-1',
-        alt: 'Team and guests during the setup of an event',
+      // [2026-08-20] Foto REAL de la instalacion (entrega del cliente,
+      // «FOTO PARA NUEVA WEB 2026»). Antes era un hueco PRESTADO de
+      // otra galeria: no se podia sobrescribir porque ese .webp lo
+      // consumen hasta 11 archivos de datos mas.
+        src: 'instalacion-oficinas-2',
+        alt: 'A workstation at the Operations Center, with the notice board and the shelving',
       },
     ],
   },

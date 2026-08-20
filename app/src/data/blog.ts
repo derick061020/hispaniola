@@ -227,7 +227,8 @@ export const ARTICULOS: Articulo[] = [
     fecha: '30 may 2026',
     minutos: 4,
     foto: 'galeria-charter-privado-6',
-    fotoAlt: 'Family enjoying a deserted beach',
+    // [2026-08-20] «Family» ya no era cierto: la foto nueva son ocho adultos.
+    fotoAlt: 'Group enjoying a deserted beach',
     cuerpo: null,
   },
   // ---- Ampliación 2026-07-22 (Samuel: "cada categoría entre 3 y 5 cards,
@@ -316,7 +317,10 @@ export const ARTICULOS: Articulo[] = [
     fecha: '12 abr 2026',
     minutos: 6,
     foto: 'galeria-semi-privado-5',
-    fotoAlt: 'Crew preparing the catamaran before setting sail',
+    // [2026-08-20] El alt nunca describio esta foto (es la cocina flotante con
+    // las bandejas emplatadas, no la preparacion del barco). La foto nueva es
+    // la misma escena en alta, asi que se corrige el texto.
+    fotoAlt: 'The crew plating the floating-kitchen lunch',
     cuerpo: null,
   },
   {

@@ -501,7 +501,8 @@ export const EXPERIENCIA_ABORDO: ParadaExperiencia[] = [
     titulo: 'Deserted beach and coco-loco',
     texto: 'We land on a deserted beach for cold coconuts opened on the spot and coconut cocktails. Have all the ones you want.',
     foto: 'galeria-charter-privado-6',
-    fotoAlt: 'Family enjoying fresh coconuts on a deserted beach',
+    // [2026-08-20] «Family» ya no era cierto: la foto nueva son ocho adultos.
+    fotoAlt: 'Group enjoying fresh coconuts on a deserted beach',
   },
   {
     numero: '03',

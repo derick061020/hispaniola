@@ -476,7 +476,7 @@ const PARTY_BOAT: FichaEvento = {
     'events-7',
     'events-8',
   ],
-  videoGaleria: '/video/hero.mp4',
+  videoGaleria: '/video/eventos/party-boat.mp4',
   // FAQ de la ficha de party boat de la web del cliente. La web NO
   // traía una FAQ propia — se OMITE, no se inventa. El widget pide
   // los detalles por formulario, que es más honesto que inventar
@@ -796,7 +796,7 @@ const EMPRESAS: FichaEvento = {
   fotoAlt: 'The catamaran deck with several groups eating at their tables',
   // 4 fotos de la galería original del cliente.
   galeria: ['mice-3', 'mice-1', 'mice-2', 'mice-4'],
-  videoGaleria: '/video/hero.mp4',
+  videoGaleria: '/video/eventos/corporate.mp4',
   // FAQ corporativa — 4 preguntas operativas, las que un DMC
   // (destination management company) o un head de eventos hace
   // primero. Copiadas del data/eventos.ts versión anterior.

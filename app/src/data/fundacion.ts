@@ -258,8 +258,11 @@ export const FUNDACION = {
       claim: 'Healthy ecosystems begin with clean waters.',
       texto:
         'Regular coastal and underwater clean-up campaigns remove marine debris, improve habitat quality and protect the ecosystems that support marine life.',
-      foto: 'galeria-semi-privado-3',
-      fotoAlt: 'A large group at the shoreline of Bávaro beach',
+      // [2026-08-20] Foto REAL de la campana, de la entrega del cliente. Antes
+      // se apoyaba en un hueco de galeria cuyo alt hablaba de un grupo en la
+      // orilla: no ensenaba ni una bolsa de basura.
+      foto: 'fundacion-limpieza',
+      fotoAlt: 'Volunteers with the bags of debris collected during a beach clean-up',
       contexto: true,
     },
     {
@@ -268,8 +271,11 @@ export const FUNDACION = {
       claim: 'Conservation succeeds when communities succeed.',
       texto:
         'We work alongside local fishermen, promoting sustainable practices and creating opportunities that align livelihoods with long-term marine conservation.',
-      foto: 'galeria-semi-privado-4',
-      fotoAlt: 'A school of sergeant major fish over the reef, next to a swimmer',
+      // [2026-08-20] Foto REAL, de la entrega del cliente. El hueco anterior
+      // ensenaba a alguien esnorkeleando entre peces bajo el titular «Working
+      // with Local Fishermen»: no habia ningun pescador.
+      foto: 'fundacion-pescadores',
+      fotoAlt: 'A local fisherman casting his net from his boat',
       contexto: true,
     },
     {
@@ -288,7 +294,9 @@ export const FUNDACION = {
       texto:
         'Working alongside the Ministry of Environment, we help manage the protected marine area where we operate through monitoring, scientific data collection and on-the-water conservation efforts.',
       foto: 'arrecife-fondo-cenital',
-      fotoAlt: 'The marine protected area seen from the air',
+      // [2026-08-20] El alt sigue a la foto: arrecife-fondo-cenital ya no es la
+      // imagen de stock de agua turquesa, es la tortuga que entrego el cliente.
+      fotoAlt: 'A sea turtle in the shallow turquoise water of the protected area',
       contexto: true,
     },
   ],
