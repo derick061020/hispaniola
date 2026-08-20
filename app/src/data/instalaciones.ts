@@ -174,10 +174,10 @@ export const INSTALACIONES = {
 // en 9:16. Se recortan al centro para caber en la celda vertical del bento, asi
 // que pierden los laterales del encuadre original.
 const V_CATAMARAN = { video: '/video/hero.mp4', poster: 'hero-video-poster' }
-const V_RECIBIMIENTO = { video: '/video/instalaciones/recibimiento.mp4', poster: 'hero-video-poster' }
-const V_BIOLOGIA = { video: '/video/instalaciones/biologia.mp4', poster: 'hero-video-poster' }
-const V_COCINAS = { video: '/video/instalaciones/cocinas.mp4', poster: 'hero-video-poster' }
-const V_OFICINAS = { video: '/video/instalaciones/oficinas.mp4', poster: 'hero-video-poster' }
+const V_RECIBIMIENTO = { video: '/video/instalaciones/recibimiento.mp4', poster: 'instalacion-recibimiento-poster' }
+const V_BIOLOGIA = { video: '/video/instalaciones/biologia.mp4', poster: 'instalacion-biologia-poster' }
+const V_COCINAS = { video: '/video/instalaciones/cocinas.mp4', poster: 'instalacion-cocinas-poster' }
+const V_OFICINAS = { video: '/video/instalaciones/oficinas.mp4', poster: 'instalacion-oficinas-poster' }
 
 export const ZONAS: ZonaInstalacion[] = [
   {
