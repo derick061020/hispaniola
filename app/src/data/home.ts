@@ -1380,6 +1380,14 @@ export const REELS: Reel[] = [
     titulo: 'Lunch on board, then straight into the reef',
     foto: 'reel-2',
     fotoAlt: 'A crew member serving lunch to a guest on deck',
+    // ⚠️ ESTE ES EL UNICO REEL QUE NO ES EL CLIP DEL CLIENTE TAL CUAL. Del
+    // original («3 PAGINA INICIO.mp4», 33,2s) se quitan 2,2 segundos, de 10,9s
+    // a 13,1s: ahi el recorrido del barco entra en el bano y se ven un
+    // urinario y un lavabo. Los dos cortes caen en los limites de plano del
+    // propio original (a 10,9 acaba la barra, a 13,1 ya esta resuelto el
+    // fundido al almuerzo), asi que el empalme no se nota. El resto del clip
+    // esta entero. Si algun dia hay que rehacerlo, el corte es:
+    //   trim=0:10.9 + trim=13.1  ->  concat
     video: '/video/reels/reel-2.mp4',
     red: 'tiktok',
   },
