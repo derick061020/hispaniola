@@ -100,7 +100,11 @@ export function BentoZona({ zona, espejo = false }: { zona: ZonaInstalacion; esp
           foto.abrirDesde(e.currentTarget)
           setLightbox(indice)
         }}
-        aria-label={avisa ? `Ver las ${todas.length} fotos de ${zona.nombre}` : undefined}
+        aria-label={
+          avisa
+            ? `Open all ${todas.length} photos of the ${zona.nombre}`
+            : `Open photo ${indice + 1} of ${todas.length} of the ${zona.nombre}`
+        }
         className="group relative min-h-0 overflow-hidden rounded-card bg-papel-hueso"
       >
         <img
@@ -132,7 +136,7 @@ export function BentoZona({ zona, espejo = false }: { zona: ZonaInstalacion; esp
         video.abrirDesde(e.currentTarget)
         setVerVideo(true)
       }}
-      aria-label={`Ver el video: ${zona.vertical.titulo}`}
+      aria-label={`Watch the video: ${zona.vertical.titulo}`}
       className={`group relative overflow-hidden bg-navy ${clases}`}
     >
       {/* Bucle mudo = cartel animado (los navegadores no autoreproducen
@@ -182,6 +186,7 @@ export function BentoZona({ zona, espejo = false }: { zona: ZonaInstalacion; esp
           foto.abrirDesde(e.currentTarget)
           setLightbox(0)
         }}
+        aria-label={`Open photo 1 of ${todas.length} of the ${zona.nombre}`}
         className={`group relative overflow-hidden bg-papel-hueso ${clases}`}
       >
         <img

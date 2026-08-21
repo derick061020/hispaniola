@@ -133,7 +133,7 @@ export function ModalVideoCrew({ src, poster }: { src: string; poster: string })
       <div
         role={grande ? 'dialog' : undefined}
         aria-modal={grande || undefined}
-        aria-label="Video de la tripulación de Hispaniola"
+        aria-label="Hispaniola crew video"
         style={{ width: ancho, height: alto, transform, transformOrigin: '0 0' }}
         className="fixed left-0 top-0 z-50 overflow-hidden rounded-card-grande bg-navy shadow-card-flotante transition-transform duration-500 ease-out"
       >
@@ -163,7 +163,7 @@ export function ModalVideoCrew({ src, poster }: { src: string; poster: string })
           <button
             type="button"
             onClick={() => setEstado('grande')}
-            aria-label="Volver a ver el video en grande"
+            aria-label="Expand the video again"
             className="absolute inset-0 cursor-zoom-in"
           />
         ) : null}
@@ -189,7 +189,7 @@ export function ModalVideoCrew({ src, poster }: { src: string; poster: string })
             <button
               type="button"
               onClick={() => video.current?.play()}
-              aria-label="Reproducir el video de la tripulación"
+              aria-label="Play the crew video"
               aria-hidden={!grande}
               tabIndex={grande ? undefined : -1}
               style={{ width: compensado(36), height: compensado(36) }}
@@ -219,7 +219,7 @@ export function ModalVideoCrew({ src, poster }: { src: string; poster: string })
         <button
           type="button"
           onClick={() => (grande ? acoplar() : setEstado('fuera'))}
-          aria-label={grande ? 'Minimizar el video' : 'Cerrar el video'}
+          aria-label={grande ? 'Minimize the video' : 'Close the video'}
           style={{
             width: compensado(28),
             height: compensado(28),
