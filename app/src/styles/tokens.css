@@ -637,6 +637,23 @@
     NO gap de la pista (ver --spacing-reviews-card-gap: con la pista repetida,
     un `gap` del flex desincroniza el arranque de la copia y el loop salta). */
   --spacing-muro-equipo-fila: 0.75rem; /* separación entre las dos filas */
+
+  /* EL VIDEO DE LA TRIPULACION (/crew). Dos ritmos distintos, y por eso dos
+     duraciones con una sola curva:
+       · ENTRADA — el video ya no salta al cargar la pagina, asoma cuando se
+         ha scrolleado un poco (Samuel, 2026-08-21: «el modal me parece muy
+         invasivo»). Es la unica vez que se PRESENTA, asi que entra despacio,
+         creciendo desde el 92% y subiendo un pelin: el gesto tiene que
+         leerse como que algo se ofrece, no como que algo aparece de golpe.
+       · VIAJE — el salto centro <-> esquina, que ya no presenta nada, solo
+         mueve. Mas corto: con la duracion de la entrada se siente lento,
+         porque para entonces ya sabes lo que hay.
+     La curva es la misma que --flota-potencia-easing y --notch-fondo-easing:
+     arranca decidido y ATRACA suave, sin nada de rebote. Un rebote aqui
+     convertiria una pieza de marca en un pop-up. */
+  --crew-video-entrada-duracion: 720ms;
+  --crew-video-viaje-duracion: 520ms;
+  --crew-video-easing: cubic-bezier(0.22, 1, 0.36, 1);
   --spacing-muro-equipo-desvanecido: 8rem; /* fundido lateral, más ancho que
     el de reseñas: la banda va a sangre contra el borde de la ventana y el
     corte se ve mucho más que dentro de un panel. */

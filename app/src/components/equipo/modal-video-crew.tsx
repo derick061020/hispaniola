@@ -10,8 +10,10 @@ import { Play, X } from 'lucide-react'
 // lo que es, una pieza de bienvenida, y se comporta como el mini-reproductor
 // de YouTube:
 //
-//   · Al entrar en la página se abre EN GRANDE, en el centro, sobre un fondo
-//     oscurecido y desenfocado. No arranca solo: espera un clic.
+//   · NO salta al cargar. Asoma cuando se ha scrolleado un poco (Samuel,
+//     2026-08-21: «el modal me parece muy invasivo, que aparezca al hacer un
+//     poco de scroll»). Entonces se abre EN GRANDE, en el centro, sobre un
+//     fondo oscurecido y desenfocado. No arranca solo: espera un clic.
 //   · Al cerrarlo NO desaparece. El mismo <video> —el mismo elemento, sin
 //     desmontar— viaja al pie izquierdo y se queda pequeño, con el fondo ya
 //     retirado. Se PAUSA al hacerlo (Samuel, 2026-08-21): un vídeo con voz
@@ -33,6 +35,13 @@ import { Play, X } from 'lucide-react'
 //     layout del reproductor ni parpadean los controles nativos.
 // El precio es tener que saber el tamaño del viewport en JS. De ahí el
 // `useEffect` con el listener de resize.
+//
+// ⚠️ LA ENTRADA TAMBIÉN VA EN ESE MISMO `transform`, y por eso hay que
+// compensar el origen. Con `transform-origin: 0 0`, escalar al 92% encoge la
+// caja hacia su esquina superior izquierda: el video se iría al rincón en vez
+// de crecer donde está. La compensación es media caja de lo que falta
+// —`ancho * (1 - escala) / 2`— y es lo que hace que crezca desde su CENTRO.
+// Ver `centrado()`.
 
 /** Tope de ancho del estado grande. Por encima, un 16:9 se come la pantalla y
  *  los controles nativos quedan a un metro del centro. */
@@ -42,13 +51,33 @@ const ANCHO_MAXIMO = 1024
 const ANCHO_ACOPLADO = 192
 /** Aire contra los bordes de la ventana, en los dos estados. */
 const MARGEN = 20
+/** Cuánto hay que bajar para que asome, en pantallas. Medio viewport es «un
+ *  poco de scroll»: el hero de /crew ya se ha ido, has empezado a leer, y el
+ *  video llega como algo que se ofrece en vez de como una puerta que se cruza
+ *  antes de ver nada. */
+const DISPARO = 0.5
+/** De cuánto arranca la entrada. El 92% se nota sin llamar la atención; por
+ *  debajo del 85% el gesto empieza a leerse como un pop-up. */
+const ESCALA_ENTRADA = 0.92
+/** Y cuánto sube al colocarse. Muy poco a propósito: el movimiento lo lleva la
+ *  escala, esto solo le da dirección. */
+const DERIVA_ENTRADA = 24
 
-type Estado = 'grande' | 'acoplado' | 'fuera'
+type Estado = 'oculto' | 'grande' | 'acoplado' | 'fuera'
 
 export function ModalVideoCrew({ src, poster }: { src: string; poster: string }) {
-  const [estado, setEstado] = useState<Estado>('grande')
+  const [estado, setEstado] = useState<Estado>('oculto')
   const [reproduciendo, setReproduciendo] = useState(false)
   const [ventana, setVentana] = useState<{ w: number; h: number } | null>(null)
+  // DOS banderas para la entrada, y las dos hacen falta:
+  //  · `colocado` es el interruptor de la animación. Se enciende un fotograma
+  //    DESPUÉS de montar (de ahí el doble rAF) para que el navegador llegue a
+  //    pintar el estado inicial; encendiéndolo en el mismo commit no habría dos
+  //    valores entre los que transicionar y el video aparecería ya puesto.
+  //  · `presentado` dice si la entrada ya terminó, y solo sirve para elegir
+  //    duración: mientras dura, manda la lenta; después, la del viaje.
+  const [colocado, setColocado] = useState(false)
+  const [presentado, setPresentado] = useState(false)
   const video = useRef<HTMLVideoElement>(null)
 
   // El tamaño de la ventana es un dato de render, así que se mide antes de
@@ -60,6 +89,50 @@ export function ModalVideoCrew({ src, poster }: { src: string; poster: string })
     window.addEventListener('resize', medir)
     return () => window.removeEventListener('resize', medir)
   }, [])
+
+  // EL DISPARO. Se mira el scroll en vez de observar un elemento porque lo que
+  // manda es «cuánto has bajado», no «qué bloque has alcanzado»: un
+  // IntersectionObserver ataría el video a una sección concreta de la página y
+  // se rompería el día que esa sección se mueva. Se comprueba también al
+  // montar, por si se llega con la página ya scrolleada (un enlace con #ancla,
+  // o volver atrás en el historial).
+  useEffect(() => {
+    if (estado !== 'oculto') return
+    const mirar = () => {
+      if (window.scrollY > window.innerHeight * DISPARO) setEstado('grande')
+    }
+    mirar()
+    window.addEventListener('scroll', mirar, { passive: true })
+    return () => window.removeEventListener('scroll', mirar)
+  }, [estado])
+
+  // Doble rAF: el primero deja que React pinte el estado inicial (pequeño y
+  // transparente) y el segundo enciende la transición hacia el final.
+  useEffect(() => {
+    if (estado !== 'grande' || colocado) return
+    let dos = 0
+    const uno = requestAnimationFrame(() => {
+      dos = requestAnimationFrame(() => setColocado(true))
+    })
+    return () => {
+      cancelAnimationFrame(uno)
+      cancelAnimationFrame(dos)
+    }
+  }, [estado, colocado])
+
+  // Cuando la entrada acaba, el componente pasa a su duración de viaje. El
+  // número sale del token, no de aquí, para que no puedan divergir.
+  useEffect(() => {
+    if (!colocado || presentado) return
+    const ms = Number.parseInt(
+      getComputedStyle(document.documentElement).getPropertyValue(
+        '--crew-video-entrada-duracion',
+      ),
+      10,
+    )
+    const t = setTimeout(() => setPresentado(true), Number.isFinite(ms) ? ms : 720)
+    return () => clearTimeout(t)
+  }, [colocado, presentado])
 
   // Con el vídeo en grande la página de detrás no debe moverse: es un modal.
   // Acoplado sí se puede scrollear, que es justamente para lo que sirve.
@@ -90,7 +163,7 @@ export function ModalVideoCrew({ src, poster }: { src: string; poster: string })
     return () => window.removeEventListener('keydown', alPulsar)
   }, [estado, acoplar])
 
-  if (estado === 'fuera' || !ventana) return null
+  if (estado === 'oculto' || estado === 'fuera' || !ventana) return null
 
   // La caja mide SIEMPRE lo que mide el estado grande; el pequeño es esta
   // misma caja a escala. El ancho se acota por los tres lados: el tope, el
@@ -105,6 +178,13 @@ export function ModalVideoCrew({ src, poster }: { src: string; poster: string })
   const escala = Math.min(1, ANCHO_ACOPLADO / ancho)
 
   const grande = estado === 'grande'
+  // Mientras no se haya colocado, el video está en su posición de salida: un
+  // punto más pequeño y un pelín más abajo.
+  const asomando = grande && !colocado
+  const escalaVista = asomando ? ESCALA_ENTRADA : 1
+  /** Dónde cae la esquina superior izquierda para que la caja quede CENTRADA
+   *  aun estando escalada. Ver el aviso de la cabecera. */
+  const centrado = (libre: number, lado: number) => libre / 2 + (lado * (1 - escalaVista)) / 2
   // La equis y el disco de play viven DENTRO de la caja, así que el `scale` los
   // encoge con ella: a escala 0,19 una equis de 36px aterriza en 7. Se les da
   // el tamaño dividido por la escala para que caigan en pantalla con los
@@ -113,8 +193,19 @@ export function ModalVideoCrew({ src, poster }: { src: string; poster: string })
     grande ? undefined : Math.round(enPantalla / escala)
 
   const transform = grande
-    ? `translate(${(ventana.w - ancho) / 2}px, ${(ventana.h - alto) / 2}px) scale(1)`
+    ? `translate(${centrado(ventana.w - ancho, ancho)}px, ${
+        centrado(ventana.h - alto, alto) + (asomando ? DERIVA_ENTRADA : 0)
+      }px) scale(${escalaVista})`
     : `translate(${MARGEN}px, ${ventana.h - alto * escala - MARGEN}px) scale(${escala})`
+
+  // La entrada es lenta porque presenta; el viaje centro <-> esquina es más
+  // corto porque solo mueve. Ver los tokens --crew-video-*.
+  const ritmo = {
+    transitionDuration: presentado
+      ? 'var(--crew-video-viaje-duracion)'
+      : 'var(--crew-video-entrada-duracion)',
+    transitionTimingFunction: 'var(--crew-video-easing)',
+  }
 
   return (
     <>
@@ -125,8 +216,9 @@ export function ModalVideoCrew({ src, poster }: { src: string; poster: string })
       <div
         aria-hidden="true"
         onClick={acoplar}
-        className={`fixed inset-0 z-50 bg-navy/70 backdrop-blur-md transition-opacity duration-500 ease-out ${
-          grande ? 'opacity-100' : 'pointer-events-none opacity-0'
+        style={ritmo}
+        className={`fixed inset-0 z-50 bg-navy/70 backdrop-blur-md motion-safe:transition-opacity ${
+          grande && colocado ? 'opacity-100' : 'pointer-events-none opacity-0'
         }`}
       />
 
@@ -134,8 +226,15 @@ export function ModalVideoCrew({ src, poster }: { src: string; poster: string })
         role={grande ? 'dialog' : undefined}
         aria-modal={grande || undefined}
         aria-label="Hispaniola crew video"
-        style={{ width: ancho, height: alto, transform, transformOrigin: '0 0' }}
-        className="fixed left-0 top-0 z-50 overflow-hidden rounded-card-grande bg-navy shadow-card-flotante transition-transform duration-500 ease-out"
+        style={{
+          width: ancho,
+          height: alto,
+          transform,
+          transformOrigin: '0 0',
+          opacity: asomando ? 0 : 1,
+          ...ritmo,
+        }}
+        className="fixed left-0 top-0 z-50 overflow-hidden rounded-card-grande bg-navy shadow-card-flotante motion-safe:transition-[transform,opacity]"
       >
         <video
           ref={video}
