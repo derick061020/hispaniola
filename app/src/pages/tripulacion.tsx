@@ -5,6 +5,7 @@ import { CierreEquipo } from '@/components/equipo/cierre-equipo'
 import { FranjaEquipo } from '@/components/equipo/franja-equipo'
 import { GridEquipo } from '@/components/equipo/grid-equipo'
 import { MuroTripulacion } from '@/components/equipo/muro-tripulacion'
+import { ModalVideoCrew } from '@/components/equipo/modal-video-crew'
 import { Meta } from '@/components/seo/meta'
 import { EQUIPO_PAGINA } from '@/data/equipo'
 import { EQUIPO } from '@/data/nosotros'
@@ -149,6 +150,15 @@ export function TripulacionPage() {
           con su llamada a la acción y lo último que ves antes del footer son
           las caras pasando. Sin cabecera, así que no compite con nada. */}
       <MuroTripulacion />
+
+      {/* El video del equipo. Se abre en grande al entrar y, al cerrarlo, se
+          acopla abajo a la izquierda en vez de desaparecer. Va el ULTIMO del
+          arbol para que su capa quede por encima de todo sin pelear z-index
+          con el header pegajoso. */}
+      <ModalVideoCrew
+        src="/video/equipo/tripulacion.mp4"
+        poster="/fotos/tripulacion-video-poster.webp"
+      />
 
       <Footer />
     </div>
