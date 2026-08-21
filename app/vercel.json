@@ -8,6 +8,9 @@
     { "source": "/tours/semi-privado", "destination": "/tours/semi-private-premium", "permanent": true },
     { "source": "/tours/charter-privado", "destination": "/tours/private-charter", "permanent": true },
     { "source": "/tours/isla-saona", "destination": "/tours/saona-island", "permanent": true },
+    { "source": "/tours/snorkel-lovers", "destination": "/tours/coral", "permanent": true },
+    { "source": "/book/snorkel-lovers", "destination": "/book/coral", "permanent": true },
+    { "source": "/book/snorkel-lovers/thank-you", "destination": "/book/coral/thank-you", "permanent": true },
 
     { "source": "/eventos/bodas/gracias", "destination": "/events/weddings/thank-you", "permanent": true },
     { "source": "/eventos/empresas/gracias", "destination": "/events/corporate/thank-you", "permanent": true },

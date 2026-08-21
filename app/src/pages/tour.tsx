@@ -170,7 +170,13 @@ export function TourPage() {
                   nav de anclas como en la v1 de PLAN-TOURS.md. Primero en la
                   columna: el visitante ve el producto antes de leer texto. */}
               <GaleriaMosaico
-                fotos={[tour.foto, ...ficha.galeriaCompleta]}
+                // [2026-08-21] Ya NO se antepone `tour.foto`. Esa es la foto
+                // del MENU de navegación y de las cards, que Samuel deja como
+                // está mientras el cliente decide si la cambia; colarla aquí
+                // metía en la galería del producto una imagen que no está en
+                // la carpeta que él entregó, y hacía que el contador dijera 13
+                // fotos donde hay 12.
+                fotos={ficha.galeriaCompleta}
                 etiqueta={tour.nombre}
                 video={ficha.videoGaleria}
                 // [v2 2026-07-27] Las fotos de plato de ESTE tour alimentan el

@@ -165,6 +165,16 @@ EXACTOS = [
     # que ademas es lo que promete el nombre del hueco.
     ("SUSTAINABILITY/OUR COMPETITIVE ADVANTAGE/1.jpg", "arrecife-fondo-cenital",
      (900, 1850, 2768, 2784), (2400, 1200)),
+    # La MISMA foto, pero para el bloque de la historia de las tortugas en
+    # /competitive-advantage. Samuel: «está puesta con un tamaño raro donde ni
+    # siquiera se ve la tortuga». Aqui la ventana se centra en ella.
+    ("SUSTAINABILITY/OUR COMPETITIVE ADVANTAGE/1.jpg", "sostenibilidad-tortuga",
+     (876, 675, 3424, 2075), (1200, 660)),
+    # La charla de educacion ambiental a bordo. La camara (una AKASO) le quemo
+    # la fecha en la esquina inferior derecha: se recorta el 5% de abajo, que
+    # es cubierta y no se echa en falta, y de ahi al 4:3 de la caja.
+    ("SUSTAINABILITY/OUR COMPETITIVE ADVANTAGE/Community & environmental education.JPG",
+     "sostenibilidad-educacion", (160, 0, 4960, 3648), (1200, 900)),
 ]
 NUEVOS = [
     ("ABOUT US/FACILITIES - ABOUT US/GUEST WELCOME CENTER/IMG_8836-HDR.jpg", "instalacion-recibimiento-1", 0.5, 0.5, CELDA),
@@ -202,9 +212,28 @@ NUEVOS = [
     ("ABOUT US/MARINE PARK - ABOUT US/GREEN SEA TURTLE.jpg", "marine-park-tortuga", 0.5, 0.5, BLOQUE),
     ("ABOUT US/MARINE PARK - ABOUT US/ARTIFICIAL REEF.jpg", "marine-park-arrecife", 0.5, 0.5, BLOQUE),
 
-    ("SUSTAINABILITY/THE FOUNDATION/CLEANER OCEANS.jpeg", "fundacion-limpieza", 0.5, 0.5, CELDA),
-    ("SUSTAINABILITY/THE FOUNDATION/RESTORING MARINE.jpg", "fundacion-pescadores", 0.5, 0.5, CELDA),
 ]
+
+# ── Sostenibilidad y fundacion ──────────────────────────────────────────────
+# Pedido de Samuel, 2026-08-21. Cada archivo de SUSTAINABILITY lleva en el
+# nombre la seccion a la que va, igual que pasaba con MARINE PARK.
+FRENTE = (900, 1200)   # la card del carril horizontal de /foundation (3:4)
+NUEVOS += [
+    ("SUSTAINABILITY/THE FOUNDATION/CORAL REEF RESTORATION.jpg", "fundacion-coral", 0.5, 0.5, FRENTE),
+    ("SUSTAINABILITY/THE FOUNDATION/EVIROMENTAL EDUCATION & ECOTOURISM.jpg", "fundacion-educacion", 0.5, 0.5, FRENTE),
+    ("SUSTAINABILITY/THE FOUNDATION/MARINE PROTECTED AREA MANAGEMENT.jpg", "fundacion-area-protegida", 0.5, 0.5, FRENTE),
+    # RESTORING MARINE.jpg ya estaba convertida como `fundacion-pescadores`,
+    # pero su sitio no era «Working with Local Fishermen»: el cliente la nombro
+    # por la seccion «Restoring Marine Biodiversity». Se regenera con el nombre
+    # que le toca y el frente de pescadores vuelve a su foto anterior.
+    ("SUSTAINABILITY/THE FOUNDATION/RESTORING MARINE.jpg", "fundacion-biodiversidad", 0.5, 0.5, FRENTE),
+    # La misma limpieza de playa, pero recortada para la card 3:4 del carril.
+    ("SUSTAINABILITY/THE FOUNDATION/CLEANER OCEANS.jpeg", "fundacion-limpieza", 0.5, 0.5, FRENTE),
+    # /competitive-advantage, bloque 2 «Community & environmental education».
+    # ⚠️ Se genera con ventana explicita, en EXACTOS, no aqui: hay que quitarle
+    # antes la franja de abajo, donde la camara le quemo la fecha.
+]
+
 
 # ── Los 28 retratos de la tripulacion ───────────────────────────────────────
 # La carpeta CREW trae 55 fotos en 6 subcarpetas, 2 o 3 por persona: una de pie

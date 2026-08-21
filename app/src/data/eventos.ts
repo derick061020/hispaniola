@@ -201,6 +201,21 @@ export type FichaEvento = {
    *  grabe uno por ocasión (una boda no se vende con el mismo clip que un
    *  party boat) — misma deuda que ya arrastran los 4 tours. */
   videoGaleria: string | null
+  /** [2026-08-21, pedido de Samuel] LAS FOTOS DEL MENU, que son la mini
+   *  galería de la primera celda del mosaico. Antes se DERIVABAN de las fotos
+   *  de los paquetes, que son bodegones de plato sobre blanco; ahora salen de
+   *  la subcarpeta COMIDA que entregó el cliente para cada evento, que es
+   *  comida servida a bordo. Samuel: «esas imágenes que hay actualmente de
+   *  comida las vas a quitar y vas a poner solamente las que están en esta
+   *  subcarpeta». */
+  fotosMenu: string[]
+  /** [2026-08-21, pedido de Samuel] EL VIDEO DEL PROPIO EVENTO, 16:9. No va en
+   *  la columna vertical —esa queda reservada para el clip de alguien
+   *  explicando cómo reservar, que el cliente aún no ha grabado— sino como una
+   *  CELDA MAS de la rejilla: «el vídeo siempre tiene que salir en el grid, no
+   *  puede estar oculto de último». Desde ahí abre la galería en su
+   *  diapositiva 0, así que también se llega a él pasando fotos. */
+  videoProducto: { src: string; poster: string } | null
   /** faq del acordeón */
   faq: PreguntaEvento[]
   /** meta que se muestra en la página de gracias ("Pronto nos pondremos
@@ -462,21 +477,48 @@ const PARTY_BOAT: FichaEvento = {
   },
   // Foto de portada (la 1ª del mosaico). Sin quote sobre la foto: el
   // party boat no tiene un review de 5★ "famoso" que destaque.
-  foto: 'events-1',
+  foto: 'ev-partyboat-1',
   fotoAlt: 'The catamaran deck set up for a celebration with lights and decorations',
   // 8 fotos de la galería original del cliente. La 1ª (`events-1`) es
   // la portada — el mosaico la pone primera.
+  // [2026-08-21] Las 13 fotos de EVENTS/PARTYBOATS, y SOLO esas: las
+  // `events-*` de antes salen de aquí (siguen vivas en la home, /fleet y
+  // /facilities, que es donde también se usan).
   galeria: [
-    'events-1',
-    'events-2',
-    'events-3',
-    'events-4',
-    'events-5',
-    'events-6',
-    'events-7',
-    'events-8',
+    'ev-partyboat-1',
+    'ev-partyboat-3',
+    'ev-partyboat-6',
+    'ev-partyboat-9',
+    'ev-partyboat-7',
+    'ev-partyboat-11',
+    'ev-partyboat-10',
+    'ev-partyboat-2',
+    'ev-partyboat-4',
+    'ev-partyboat-5',
+    'ev-partyboat-12',
+    'ev-partyboat-13',
+    'ev-partyboat-8',
   ],
-  videoGaleria: '/video/eventos/party-boat.mp4',
+  fotosMenu: [
+    'ev-partyboat-menu-1',
+    'ev-partyboat-menu-2',
+    'ev-partyboat-menu-3',
+    'ev-partyboat-menu-4',
+    'ev-partyboat-menu-5',
+    'ev-partyboat-menu-6',
+    'ev-partyboat-menu-7',
+    'ev-partyboat-menu-8',
+    'ev-partyboat-menu-9',
+    'ev-partyboat-menu-10',
+  ],
+  // ⚠️ PLACEHOLDER a propósito: la columna vertical espera el clip de alguien
+  // explicando cómo reservar. El clip real del party boat está abajo, en
+  // `videoProducto`, dentro de la rejilla.
+  videoGaleria: '/video/hero.mp4',
+  videoProducto: {
+    src: '/video/eventos/party-boat.mp4',
+    poster: '/fotos/ev-partyboat-video-poster.webp',
+  },
   // FAQ de la ficha de party boat de la web del cliente. La web NO
   // traía una FAQ propia — se OMITE, no se inventa. El widget pide
   // los detalles por formulario, que es más honesto que inventar
@@ -615,24 +657,48 @@ const BODAS: FichaEvento = {
   // La única foto de boda real del repo: la novia a bordo con su
   // grupo. ES LA PORTADA — la 1ª del mosaico. Las 12 siguientes son la
   // galería del cliente.
-  foto: 'weddings-5',
+  foto: 'ev-weddings-1',
   fotoAlt: 'Bride celebrating on board the catamaran with her group of guests',
+  // [2026-08-21] Las 20 fotos de EVENTS/WEDDINGS, y SOLO esas.
   galeria: [
-    'weddings-5',
-    'weddings-1',
-    'weddings-2',
-    'weddings-3',
-    'weddings-4',
-    'weddings-6',
-    'weddings-7',
-    'weddings-8',
-    'weddings-9',
-    'weddings-10',
-    'weddings-11',
-    'weddings-12',
-    'weddings-13',
+    'ev-weddings-19',
+    'ev-weddings-16',
+    'ev-weddings-10',
+    'ev-weddings-17',
+    'ev-weddings-14',
+    'ev-weddings-8',
+    'ev-weddings-13',
+    'ev-weddings-1',
+    'ev-weddings-5',
+    'ev-weddings-20',
+    'ev-weddings-9',
+    'ev-weddings-2',
+    'ev-weddings-3',
+    'ev-weddings-6',
+    'ev-weddings-15',
+    'ev-weddings-4',
+    'ev-weddings-7',
+    'ev-weddings-11',
+    'ev-weddings-12',
+    'ev-weddings-18',
   ],
+  fotosMenu: [
+    'ev-weddings-menu-1',
+    'ev-weddings-menu-2',
+    'ev-weddings-menu-3',
+    'ev-weddings-menu-4',
+    'ev-weddings-menu-5',
+    'ev-weddings-menu-6',
+    'ev-weddings-menu-7',
+    'ev-weddings-menu-8',
+    'ev-weddings-menu-9',
+    'ev-weddings-menu-10',
+  ],
+  // ⚠️ PLACEHOLDER: mismo caso que las otras dos landings. Bodas es además el
+  // único evento del que el cliente NO entregó vídeo propio, así que aquí no
+  // hay `videoProducto` que poner en la rejilla.
   videoGaleria: '/video/hero.mp4',
+  videoProducto: null,
   // FAQ de bodas — las 3 preguntas de la web del cliente + 1
   // pregunta sobre el Dress code (la más común, sale de la práctica
   // de coordinar con novios).
@@ -792,11 +858,46 @@ const EMPRESAS: FichaEvento = {
   incluyeTitulo: 'What an event planner needs to know',
   incluye: [],
   // Foto de portada: la cubierta llena de grupos sentados comiendo.
-  foto: 'mice-3',
-  fotoAlt: 'The catamaran deck with several groups eating at their tables',
-  // 4 fotos de la galería original del cliente.
-  galeria: ['mice-3', 'mice-1', 'mice-2', 'mice-4'],
-  videoGaleria: '/video/eventos/corporate.mp4',
+  foto: 'ev-corporate-1',
+  fotoAlt: 'A corporate group in matching polos on the bow of the catamaran',
+  // [2026-08-21] Las 9 fotos de EVENTS/CORPORATE, y SOLO esas. Las `mice-*`
+  // salen de aquí; siguen vivas en las cards de ocasión de esta misma página.
+  galeria: [
+    'ev-corporate-2',
+    'ev-corporate-1',
+    'ev-corporate-6',
+    'ev-corporate-3',
+    'ev-corporate-5',
+    'ev-corporate-9',
+    'ev-corporate-4',
+    'ev-corporate-8',
+    'ev-corporate-7',
+  ],
+  fotosMenu: [
+    'ev-corporate-menu-1',
+    'ev-corporate-menu-2',
+    'ev-corporate-menu-3',
+    'ev-corporate-menu-4',
+    'ev-corporate-menu-5',
+    'ev-corporate-menu-6',
+    'ev-corporate-menu-7',
+    'ev-corporate-menu-8',
+    'ev-corporate-menu-9',
+    'ev-corporate-menu-10',
+    'ev-corporate-menu-11',
+    'ev-corporate-menu-12',
+    'ev-corporate-menu-13',
+    'ev-corporate-menu-14',
+    'ev-corporate-menu-15',
+    'ev-corporate-menu-16',
+  ],
+  // ⚠️ PLACEHOLDER, igual que en las otras dos. El clip real de corporate va
+  // en la rejilla, abajo.
+  videoGaleria: '/video/hero.mp4',
+  videoProducto: {
+    src: '/video/eventos/corporate.mp4',
+    poster: '/fotos/ev-corporate-video-poster.webp',
+  },
   // FAQ corporativa — 4 preguntas operativas, las que un DMC
   // (destination management company) o un head de eventos hace
   // primero. Copiadas del data/eventos.ts versión anterior.

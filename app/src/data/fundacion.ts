@@ -240,8 +240,11 @@ export const FUNDACION = {
       claim: 'Restoring the foundation of marine life.',
       texto:
         'We rescue coral fragments, grow them in our nurseries and laboratories, and transplant them using advanced restoration techniques to rebuild healthy reefs.',
-      foto: 'galeria-snorkel-lovers-6',
-      fotoAlt: 'Coral nursery structures underwater, with a diver checking them',
+      // [2026-08-21] Foto REAL de la fundación. El cliente nombró cada
+      // archivo con la sección a la que va; antes cada frente tomaba prestado
+      // un tile de la galería de Coral Quest.
+      foto: 'fundacion-coral',
+      fotoAlt: 'Staghorn coral growing on the nursery structures',
     },
     {
       clave: 'Biodiversity',
@@ -249,8 +252,12 @@ export const FUNDACION = {
       claim: 'A healthy reef needs abundant marine life.',
       texto:
         'Our restoration strategy goes beyond corals by increasing fish populations, protecting key species and rebuilding the ecological balance that allows reefs to flourish naturally.',
-      foto: 'galeria-snorkel-lovers-5',
-      fotoAlt: 'Fish swimming over a brain coral on the Bávaro reef',
+      // [2026-08-21] `RESTORING MARINE.jpg`, que es como el cliente llamó al
+      // archivo de esta sección. El 20 lo puse por error en «Working with
+      // Local Fishermen» —sale un pescador lanzando la atarraya— y Samuel lo
+      // recolocó: el nombre del archivo manda.
+      foto: 'fundacion-biodiversidad',
+      fotoAlt: 'A local fisherman casting his net over the reef',
     },
     {
       clave: 'Clean-ups',
@@ -274,8 +281,12 @@ export const FUNDACION = {
       // [2026-08-20] Foto REAL, de la entrega del cliente. El hueco anterior
       // ensenaba a alguien esnorkeleando entre peces bajo el titular «Working
       // with Local Fishermen»: no habia ningun pescador.
-      foto: 'fundacion-pescadores',
-      fotoAlt: 'A local fisherman casting his net from his boat',
+      // ⚠️ VUELVE LA FOTO ANTERIOR (Samuel, 2026-08-21: «si había una imagen
+      // anterior ahí puesta, deja la que estaba»). El 20 metí aquí el
+      // pescador de `RESTORING MARINE.jpg`, pero ese archivo es de la sección
+      // de biodiversidad, no de esta.
+      foto: 'galeria-semi-privado-4',
+      fotoAlt: 'Guest snorkeling among sergeant major fish over the reef',
       contexto: true,
     },
     {
@@ -284,8 +295,10 @@ export const FUNDACION = {
       claim: 'Protecting what people learn to value.',
       texto:
         'Every visitor, student and local resident becomes part of our mission through educational experiences that inspire long-term stewardship of the Caribbean.',
-      foto: 'galeria-snorkel-lovers-10',
-      fotoAlt: 'A Hispaniola guide explaining the coral nursery to a group of children',
+      // [2026-08-21] Foto REAL, del archivo que el cliente nombró con esta
+      // misma sección.
+      foto: 'fundacion-educacion',
+      fotoAlt: 'A Hispaniola guide explaining the coral nursery to a visiting group',
     },
     {
       clave: 'Protected area',
@@ -293,11 +306,10 @@ export const FUNDACION = {
       claim: 'Turning protection into action.',
       texto:
         'Working alongside the Ministry of Environment, we help manage the protected marine area where we operate through monitoring, scientific data collection and on-the-water conservation efforts.',
-      foto: 'arrecife-fondo-cenital',
-      // [2026-08-21] El alt sigue a la foto: arrecife-fondo-cenital ya no es la
-      // imagen de stock, es una franja del arrecife que entrego el cliente. La
-      // tortuga de esa misma foto vive ahora en su bloque de /marine-park.
-      fotoAlt: 'Coral heads on the seabed under the turquoise water of the protected area',
+      // [2026-08-21] Foto REAL, `MARINE PROTECTED AREA MANAGEMENT.jpg`. Antes
+      // tiraba de la textura de fondo de los banners, que es agua sin sujeto.
+      foto: 'fundacion-area-protegida',
+      fotoAlt: 'A sea turtle over the reef of the protected marine area',
       contexto: true,
     },
   ],

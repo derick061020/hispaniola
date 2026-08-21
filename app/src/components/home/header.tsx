@@ -83,7 +83,11 @@ export function Header({
             su propia versión compacta dentro del panel de tabs. 'solida' no
             lo necesita (no tiene NavFlotante propio, la 404 es autónoma). */}
         <Link to="/" aria-label="Hispaniola Aquatic Adventures, home" id={sobreVideo ? 'logo-hero' : undefined}>
-          <Logo sobreOscuro={sobreVideo} />
+          {/* `entrada`: la animación completa del logo al cargar la página
+              ([2026-08-21] pedido de Samuel). Solo la dispara Header, y Logo
+              se encarga de que suene UNA vez por carga y no en cada
+              navegación — Header se remonta al cambiar de ruta. */}
+          <Logo sobreOscuro={sobreVideo} entrada />
         </Link>
 
         {/* 2026-07-21: los TABS de escritorio de 'sobreVideo' (antes un

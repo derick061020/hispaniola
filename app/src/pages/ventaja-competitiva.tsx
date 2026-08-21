@@ -128,9 +128,17 @@ export function VentajaCompetitivaPage() {
                   es un golpe. */}
           <section className="grid gap-6 rounded-card-grande bg-fondo-ficha p-6 lg:grid-cols-2 lg:items-center lg:gap-10 lg:p-8">
             <p className="text-lead text-navy-sub">{SOSTENIBILIDAD.historia}</p>
+            {/* [2026-08-21, Samuel: «está puesta con un tamaño raro donde ni
+                siquiera se ve la tortuga»] Antes tiraba de
+                `arrecife-fondo-cenital`, que es la TEXTURA de fondo de los
+                banners: una franja 2:1 de agua sin sujeto, y metida en una
+                caja de 1,8 no quedaba nada que mirar. Ahora usa su propio
+                recorte de la misma foto del cliente, con la tortuga centrada,
+                que es de lo que habla el párrafo de al lado (documentaron las
+                colisiones con tortugas verdes). */}
             <img
-              src="/fotos/arrecife-fondo-cenital.webp"
-              alt="The protected marine area seen from the air"
+              src="/fotos/sostenibilidad-tortuga.webp"
+              alt="A green sea turtle in the shallow water of the protected marine area"
               loading="lazy"
               className="h-56 w-full rounded-card object-cover lg:h-72"
             />

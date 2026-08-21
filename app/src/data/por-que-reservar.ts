@@ -21,7 +21,7 @@ import { TOURS, STATS, RESENAS_AGREGADO } from './home'
  *  tarifa adulto que también publica Viator), no de una constante suelta: si
  *  mañana cambia el precio del tour, cambia aquí y en el desglose a la vez. */
 export const PRECIO_TODO_INCLUIDO =
-  TOURS.find((t) => t.slug === 'snorkel-lovers')?.precioLight ?? 114
+  TOURS.find((t) => t.slug === 'coral')?.precioLight ?? 114
 
 export type Kpi = { valor: string; label: string }
 

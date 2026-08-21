@@ -131,6 +131,10 @@ const SLUGS_VIEJOS: Record<string, string> = {
   'semi-privado': 'semi-private-premium',
   'charter-privado': 'private-charter',
   'isla-saona': 'saona-island',
+  // [2026-08-21] El tour se llama El Coral desde v3 y la URL seguía
+  // diciendo el nombre viejo. La vieja se sigue atendiendo: hay enlaces
+  // repartidos por WhatsApp y una entrada en el sitemap indexada.
+  'snorkel-lovers': 'coral',
   bodas: 'weddings',
   empresas: 'corporate',
   'politica-de-cancelacion': 'cancellation-policy',

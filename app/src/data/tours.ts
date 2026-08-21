@@ -456,14 +456,23 @@ export const FICHAS: Record<string, FichaTour> = {
       { nombre: 'Grilled fish fillet', desc: 'With potatoes and vegetables', foto: 'plato-fish-bodegon' },
     ],
     menuPremium: MENU_PREMIUM_CASA,
+    // [2026-08-21] LAS 11 FOTOS DE TOURS/CARIBBEAN SCAPE, y solo esas. Samuel: «solamente
+    // que estén en el grid de imágenes las que están en la carpeta; si teníamos
+    // fotos de antes, quítalas». Las `galeria-semi-privado-*` de antes salen de aquí; siguen
+    // vivas en las páginas que también las usaban.
+    // El orden es EDITORIAL: las primeras son las que se ven sin abrir el visor.
     galeriaCompleta: [
-      'galeria-semi-privado-1',
-      'galeria-semi-privado-2',
-      'galeria-semi-privado-3',
-      'galeria-semi-privado-4',
-      'galeria-semi-privado-5',
-      'galeria-semi-privado-6',
-      'galeria-semi-privado-7',
+      'tour-escape-5',
+      'tour-escape-1',
+      'tour-escape-11',
+      'tour-escape-10',
+      'tour-escape-7',
+      'tour-escape-3',
+      'tour-escape-8',
+      'tour-escape-9',
+      'tour-escape-2',
+      'tour-escape-4',
+      'tour-escape-6',
     ],
     videoGaleria: '/video/hero.mp4',
     quoteDestacada: 'The coral was the highlight of the trip. The biologist explained everything to us.',
@@ -534,7 +543,7 @@ export const FICHAS: Record<string, FichaTour> = {
         r: 'Only if you choose to pay the 25% deposit, the balance gets a 5% discount when paid in cash.',
       },
     ],
-    tambienTeGusta: ['snorkel-lovers', 'private-charter'],
+    tambienTeGusta: ['coral', 'private-charter'],
     // [v2 2026-07-27] Las 4 ventajas del comparador (slide 17) y de la caja de
     // upsell del widget (slide 5). Salen de menuPremium/incluye de esta misma
     // ficha: langosta y Angus están en los platos Premium, la variedad de 7 vs
@@ -567,7 +576,7 @@ export const FICHAS: Record<string, FichaTour> = {
     ],
   },
 
-  'snorkel-lovers': {
+  coral: {
     // [2026-08-12, Samuel] El nombre nuevo, literal — ver el gemelo del
     // semi-privado y la tabla de renombres en data/home.ts.
     tituloLargo: 'Coral Quest: A Marine Conservation Experience (All Ages)',
@@ -696,25 +705,24 @@ export const FICHAS: Record<string, FichaTour> = {
     // familiar (la web tenía `images/excursions/educational/{4,5,7,8,10,11,
     // 13,14,16,17,20,21,22,23,24,25,26,27}.jpg`). Antes 9 — faltaban las
     // 9 últimas. Descargadas y reencodeadas a WEBP quality 85 (~50-170 KB).
+    // [2026-08-21] LAS 12 FOTOS DE TOURS/CORAL QUEST, y solo esas. Samuel: «solamente
+    // que estén en el grid de imágenes las que están en la carpeta; si teníamos
+    // fotos de antes, quítalas». Las `galeria-snorkel-lovers-*` de antes salen de aquí; siguen
+    // vivas en las páginas que también las usaban.
+    // El orden es EDITORIAL: las primeras son las que se ven sin abrir el visor.
     galeriaCompleta: [
-      'galeria-snorkel-lovers-1',
-      'galeria-snorkel-lovers-2',
-      'galeria-snorkel-lovers-3',
-      'galeria-snorkel-lovers-4',
-      'galeria-snorkel-lovers-5',
-      'galeria-snorkel-lovers-6',
-      'galeria-snorkel-lovers-7',
-      'galeria-snorkel-lovers-8',
-      'galeria-snorkel-lovers-9',
-      'galeria-snorkel-lovers-10',
-      'galeria-snorkel-lovers-11',
-      'galeria-snorkel-lovers-12',
-      'galeria-snorkel-lovers-13',
-      'galeria-snorkel-lovers-14',
-      'galeria-snorkel-lovers-15',
-      'galeria-snorkel-lovers-16',
-      'galeria-snorkel-lovers-17',
-      'galeria-snorkel-lovers-18',
+      'tour-coral-9',
+      'tour-coral-5',
+      'tour-coral-7',
+      'tour-coral-10',
+      'tour-coral-8',
+      'tour-coral-1',
+      'tour-coral-3',
+      'tour-coral-6',
+      'tour-coral-12',
+      'tour-coral-4',
+      'tour-coral-11',
+      'tour-coral-2',
     ],
     videoGaleria: '/video/hero.mp4',
     quoteDestacada: 'Perfect for going with kids. Everyone felt safe.',
@@ -1177,14 +1185,22 @@ export const FICHAS: Record<string, FichaTour> = {
         },
       ],
     },
+    // [2026-08-21] LAS 10 FOTOS DE TOURS/PRIVATE CHARTER, y solo esas. Samuel: «solamente
+    // que estén en el grid de imágenes las que están en la carpeta; si teníamos
+    // fotos de antes, quítalas». Las `galeria-charter-privado-*` de antes salen de aquí; siguen
+    // vivas en las páginas que también las usaban.
+    // El orden es EDITORIAL: las primeras son las que se ven sin abrir el visor.
     galeriaCompleta: [
-      'galeria-charter-privado-1',
-      'galeria-charter-privado-2',
-      'galeria-charter-privado-3',
-      'galeria-charter-privado-4',
-      'galeria-charter-privado-5',
-      'galeria-charter-privado-6',
-      'galeria-charter-privado-7',
+      'tour-charter-8',
+      'tour-charter-6',
+      'tour-charter-5',
+      'tour-charter-1',
+      'tour-charter-2',
+      'tour-charter-3',
+      'tour-charter-9',
+      'tour-charter-4',
+      'tour-charter-7',
+      'tour-charter-10',
     ],
     videoGaleria: '/video/hero.mp4',
     quoteDestacada: 'They tailored everything for us, the whole boat just for the family.',
@@ -1262,7 +1278,7 @@ export const FICHAS: Record<string, FichaTour> = {
       { p: 'Do you accept corporate payments?', r: 'Yes, see the Corporate & MICE page for formal invoicing.' },
       { p: 'What if it rains?', r: 'Full refund or a date change, at no cost.' },
     ],
-    tambienTeGusta: ['semi-private-premium', 'snorkel-lovers'],
+    tambienTeGusta: ['semi-private-premium', 'coral'],
     // [v2] Charter privado. OJO con el texto del álbum: la web original de
     // este tour promete que «TODAS las fotos» se suben gratis a Facebook, así
     // que aquí NO se puede vender «el álbum completo» — solo la máxima

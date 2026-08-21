@@ -253,18 +253,20 @@ export const SOSTENIBILIDAD = {
       // El punto final es NUESTRO: el cliente cierra el párrafo sin puntuar.
       texto:
         'We work alongside local communities, schools, authorities and thousands of visitors every year, transforming every tour into an opportunity to inspire environmental awareness and create lasting change.',
-      // ⚠️ PROVISIONAL — decisión consciente de Samuel (2026-07-22): NO existe
-      // ni una foto de la acción comunitaria en todo el proyecto, así que esta
-      // ilustra "personas", no lo que dice el texto. Con el copy nuevo encaja
-      // algo mejor (dos personas haciendo snorkel = el visitante que se lleva
-      // la conciencia ambiental), pero sigue sin ser lo que el párrafo cuenta:
-      // ni comunidad, ni colegios, ni charla.
-      // Es EL pendiente de contenido de esta página: pedir al cliente fotos
-      // propias de la fundación (mismo pendiente que la foto de cabecera).
-      // Sustituir en cuanto lleguen — no hace falta tocar código, solo este
-      // par de campos.
-      foto: 'galeria-snorkel-lovers-12',
-      fotoAlt: 'Two people snorkeling together over the reef',
+      // [2026-08-21] RESUELTO EL PENDIENTE QUE ESTE COMENTARIO ANUNCIABA. Era
+      // «el pendiente de contenido de esta página»: no había ni una foto de la
+      // acción comunitaria y la que había ilustraba «personas», no lo que dice
+      // el párrafo. El cliente entregó `Community & environmental education`,
+      // que es literalmente una charla de la fundación, y Samuel la coloca
+      // aquí. Como se anticipó, no hubo que tocar código: solo estos dos
+      // campos.
+      // ⚠️ El original traía la FECHA QUEMADA en la esquina inferior derecha
+      // («2023/01/02», de una cámara AKASO). Se recorta el 5% de abajo al
+      // convertirla —es cubierta, no se echa en falta— así que el sello no
+      // llega a publicarse. El recorte está anotado en
+      // scripts/reemplazar-fotos.py.
+      foto: 'sostenibilidad-educacion',
+      fotoAlt: 'A Hispaniola guide talking to a group during an environmental education session',
     },
     {
       id: 'operacion',

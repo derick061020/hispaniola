@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { ChevronLeft, ChevronRight, X } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Play, X } from 'lucide-react'
 import * as CompactButton from '@/components/alignui/compact-button'
 import * as Modal from '@/components/alignui/modal'
 import { useExpansionFlip, type RectOrigen } from '@/lib/use-expansion-flip'
@@ -21,6 +21,7 @@ export function GaleriaLightbox({
   etiqueta,
   onCerrar,
   origen = null,
+  video = null,
 }: {
   fotos: string[]
   indiceInicial: number
@@ -31,9 +32,20 @@ export function GaleriaLightbox({
    *  parezca DESPEGAR de ahí en vez de aparecer en el centro. `null` (o si el
    *  usuario tiene reduced-motion) = fundido normal. Ver lib/use-expansion-flip.ts. */
   origen?: RectOrigen | null
+  /** [2026-08-21, pedido de Samuel] EL VIDEO DEL PRODUCTO, DENTRO DE LA
+   *  GALERIA. Antes vivía solo en la columna vertical de al lado del mosaico y
+   *  en su propio reproductor: quien abría el visor no lo encontraba. Ahora es
+   *  la DIAPOSITIVA 0 y se pasa como una foto más, con sus flechas, su
+   *  miniatura y su contador. `null` = galería solo de fotos, como siempre. */
+  video?: { src: string; poster: string } | null
 }) {
   const [indice, setIndice] = useState(indiceInicial)
-  const n = fotos.length
+  // Con video, la diapositiva 0 es el video y la foto `i` cae en `i + 1`. Ese
+  // desplazamiento lo aplica QUIEN ABRE (galeria-mosaico), no este componente:
+  // aquí `indice` ya es un índice del conjunto completo.
+  const hayVideo = video !== null
+  const desfase = hayVideo ? 1 : 0
+  const n = fotos.length + desfase
   const refExpansion = useExpansionFlip(origen)
   const tiraRef = useRef<HTMLDivElement>(null)
 
@@ -154,13 +166,31 @@ export function GaleriaLightbox({
                 transformada se aplica a la PROPIA imagen y no al contenedor
                 flex: el contenedor decide el sitio disponible y transformarlo
                 falsearía el cálculo de `max-w-full`. */}
-            <img
-              ref={refExpansion}
-              src={`/fotos/${fotos[indice]}.webp`}
-              alt={`${etiqueta}, foto ${indice + 1} de ${n}`}
-              onClick={(e) => e.stopPropagation()}
-              className="max-h-full max-w-full rounded-card object-contain"
-            />
+            {hayVideo && indice === 0 ? (
+              // `controls` y sin `autoPlay`: se abre parado, en su póster, y
+              // arranca cuando alguien lo pide. Autoreproducir con sonido lo
+              // bloquean los navegadores, y hacerlo mudo sería enseñar un
+              // video sin lo que cuenta.
+              <video
+                src={video.src}
+                poster={video.poster}
+                controls
+                controlsList="nodownload"
+                playsInline
+                preload="none"
+                aria-label={`${etiqueta}, video`}
+                onClick={(e) => e.stopPropagation()}
+                className="max-h-full max-w-full rounded-card object-contain"
+              />
+            ) : (
+              <img
+                ref={refExpansion}
+                src={`/fotos/${fotos[indice - desfase]}.webp`}
+                alt={`${etiqueta}, foto ${indice + 1 - desfase} de ${fotos.length}`}
+                onClick={(e) => e.stopPropagation()}
+                className="max-h-full max-w-full rounded-card object-contain"
+              />
+            )}
           </div>
 
           {n > 1 ? (
@@ -198,12 +228,12 @@ export function GaleriaLightbox({
             className="scroll-sutil flex shrink-0 gap-2 overflow-x-auto px-[50%] py-1 pb-5"
             onClick={(e) => e.stopPropagation()}
           >
-            {fotos.map((f, i) => (
+            {(hayVideo ? [null, ...fotos] : fotos).map((f, i) => (
               <button
-                key={f}
+                key={f ?? 'video'}
                 type="button"
                 onClick={() => ir(i)}
-                aria-label={`Ver la foto ${i + 1} de ${n}`}
+                aria-label={f === null ? 'Ver el video' : `Ver la foto ${i + 1 - desfase} de ${fotos.length}`}
                 aria-current={i === indice}
                 // BORDE, no `ring`. Un ring de Tailwind se pinta POR FUERA de
                 // la caja, y esta tira es un contenedor con `overflow-x-auto`
@@ -218,13 +248,30 @@ export function GaleriaLightbox({
                     : 'border-transparent opacity-45 hover:opacity-80'
                 }`}
               >
-                <img
-                  src={`/fotos/${f}.webp`}
-                  alt=""
-                  aria-hidden="true"
-                  loading="lazy"
-                  className="size-full object-cover"
-                />
+                {f === null && video ? (
+                  // La miniatura del video lleva su triángulo: en una tira de
+                  // 20 recuadros iguales, sin él nadie sabe cuál es el video.
+                  <span className="relative block size-full">
+                    <img
+                      src={video.poster}
+                      alt=""
+                      aria-hidden="true"
+                      loading="lazy"
+                      className="size-full object-cover"
+                    />
+                    <span className="absolute inset-0 grid place-items-center bg-navy/40">
+                      <Play className="size-5 fill-current text-white" />
+                    </span>
+                  </span>
+                ) : (
+                  <img
+                    src={`/fotos/${f}.webp`}
+                    alt=""
+                    aria-hidden="true"
+                    loading="lazy"
+                    className="size-full object-cover"
+                  />
+                )}
               </button>
             ))}
           </div>

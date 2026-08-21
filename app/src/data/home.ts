@@ -55,11 +55,16 @@ export type Tour = {
 // producto, `tituloLargo` es cómo se presenta— así que el renombre no inventa
 // nada: parte el nombre nuevo por donde el propio nombre se parte.
 //
-// ⚠️ LOS SLUGS NO CAMBIAN (`semi-private-premium`, `snorkel-lovers`). Son URLs
-// indexadas y enlazadas desde fuera, y cambiarlas es tocar App.tsx +
-// public/sitemap.xml + vercel.json con sus 301 — otro encargo, no éste.
-// Samuel no lo pidió. Mientras no se haga, las rutas siguen diciendo el nombre
-// viejo: /tours/semi-private-premium y /tours/snorkel-lovers.
+// ⚠️ LOS SLUGS. `semi-private-premium` sigue diciendo el nombre viejo: es una
+// URL indexada y enlazada desde fuera, y cambiarla es tocar App.tsx +
+// public/sitemap.xml + vercel.json con sus 301. Samuel no lo ha pedido.
+//
+// `snorkel-lovers` SÍ cambió, a `coral` (Samuel, 2026-08-21). Se hicieron las
+// cuatro cosas en el mismo commit: el slug aquí, la clave de FICHAS en
+// tours.ts, la entrada del sitemap, y los 301 de vercel.json para /tours y
+// /book. La URL vieja además se sigue atendiendo dentro de la SPA, vía
+// SLUGS_VIEJOS en App.tsx, porque el 301 del host no cubre la navegación
+// interna.
 //
 // ⚠️ Y LOS COMENTARIOS ANTIGUOS DEL PROYECTO SIGUEN DICIENDO «Snorkel Lovers» y
 // «semi-privado» (menu-tour.tsx, widget-reserva.tsx, tokens, nombres de foto
@@ -94,7 +99,7 @@ export const TOURS: Tour[] = [
     destacados: ['Limited guests', 'Underwater museum', 'Floating kitchen'],
   },
   {
-    slug: 'snorkel-lovers',
+    slug: 'coral',
     nombre: 'Coral Quest',
     audienciaChip: 'All ages',
     duracionCorta: '4 h',
