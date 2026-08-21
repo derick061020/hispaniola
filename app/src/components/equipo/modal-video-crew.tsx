@@ -14,8 +14,9 @@ import { Play, X } from 'lucide-react'
 //     oscurecido y desenfocado. No arranca solo: espera un clic.
 //   · Al cerrarlo NO desaparece. El mismo <video> —el mismo elemento, sin
 //     desmontar— viaja al pie izquierdo y se queda pequeño, con el fondo ya
-//     retirado. Si estaba reproduciéndose, sigue: no se pierde ni el minuto ni
-//     el sonido.
+//     retirado. Se PAUSA al hacerlo (Samuel, 2026-08-21): un vídeo con voz
+//     sonando desde una miniatura mientras se lee la página es ruido, no
+//     compañía. El minuto no se pierde, así que al volver sigue donde estaba.
 //   · Al pulsar el pequeño vuelve al centro. Ida y vuelta las veces que haga
 //     falta.
 //
@@ -38,7 +39,7 @@ import { Play, X } from 'lucide-react'
 const ANCHO_MAXIMO = 1024
 /** Ancho del estado acoplado. Lo justo para reconocer la escena sin tapar la
  *  página que hay detrás. */
-const ANCHO_ACOPLADO = 288
+const ANCHO_ACOPLADO = 192
 /** Aire contra los bordes de la ventana, en los dos estados. */
 const MARGEN = 20
 
@@ -71,7 +72,14 @@ export function ModalVideoCrew({ src, poster }: { src: string; poster: string })
     }
   }, [estado])
 
-  const acoplar = useCallback(() => setEstado('acoplado'), [])
+  // Acoplar PAUSA. Lo pidió Samuel el 2026-08-21 y es lo correcto: la voz en
+  // off de un vídeo de tres minutos saliendo de una miniatura de 192px,
+  // mientras alguien lee la página, se busca de dónde viene para apagarla. El
+  // `currentTime` no se toca, así que al volver al centro sigue donde estaba.
+  const acoplar = useCallback(() => {
+    video.current?.pause()
+    setEstado('acoplado')
+  }, [])
 
   useEffect(() => {
     if (estado !== 'grande') return
@@ -97,6 +105,13 @@ export function ModalVideoCrew({ src, poster }: { src: string; poster: string })
   const escala = Math.min(1, ANCHO_ACOPLADO / ancho)
 
   const grande = estado === 'grande'
+  // La equis y el disco de play viven DENTRO de la caja, así que el `scale` los
+  // encoge con ella: a escala 0,19 una equis de 36px aterriza en 7. Se les da
+  // el tamaño dividido por la escala para que caigan en pantalla con los
+  // píxeles que se piden aquí, que son los que hacen falta para poder tocarlos.
+  const compensado = (enPantalla: number) =>
+    grande ? undefined : Math.round(enPantalla / escala)
+
   const transform = grande
     ? `translate(${(ventana.w - ancho) / 2}px, ${(ventana.h - alto) / 2}px) scale(1)`
     : `translate(${MARGEN}px, ${ventana.h - alto * escala - MARGEN}px) scale(${escala})`
@@ -177,15 +192,23 @@ export function ModalVideoCrew({ src, poster }: { src: string; poster: string })
               aria-label="Reproducir el video de la tripulación"
               aria-hidden={!grande}
               tabIndex={grande ? undefined : -1}
-              className={`relative grid size-16 place-items-center rounded-full bg-white/90 text-navy shadow-card-flotante transition-transform duration-300 sm:size-20 ${
-                grande ? 'pointer-events-auto hover:scale-110' : 'pointer-events-none'
+              style={{ width: compensado(36), height: compensado(36) }}
+              className={`relative grid place-items-center rounded-full bg-white/90 text-navy shadow-card-flotante transition-transform duration-300 ${
+                grande
+                  ? 'pointer-events-auto size-16 hover:scale-110 sm:size-20'
+                  : 'pointer-events-none'
               }`}
             >
               <span
                 aria-hidden="true"
                 className="absolute inset-0 rounded-full bg-white/60 motion-safe:animate-ping"
               />
-              <Play className="relative size-7 translate-x-0.5 fill-current sm:size-8" />
+              <Play
+                style={{ width: compensado(15), height: compensado(15) }}
+                className={`relative translate-x-0.5 fill-current ${
+                  grande ? 'size-7 sm:size-8' : ''
+                }`}
+              />
             </button>
           </div>
         ) : null}
@@ -195,16 +218,19 @@ export function ModalVideoCrew({ src, poster }: { src: string; poster: string })
             habría forma de quitárselo de encima en toda la página. */}
         <button
           type="button"
-          onClick={() => setEstado(grande ? 'acoplado' : 'fuera')}
+          onClick={() => (grande ? acoplar() : setEstado('fuera'))}
           aria-label={grande ? 'Minimizar el video' : 'Cerrar el video'}
-          // El botón viaja dentro de la caja, así que en el estado pequeño lo
-          // encoge el mismo `scale` que al vídeo. Se compensa agrandándolo
-          // cuando está acoplado para que siga siendo tocable.
-          className={`absolute right-3 top-3 grid place-items-center rounded-full bg-navy/70 text-white ring-1 ring-white/25 backdrop-blur-sm transition hover:bg-navy ${
-            grande ? 'size-9' : 'size-20'
+          style={{
+            width: compensado(28),
+            height: compensado(28),
+            right: compensado(8),
+            top: compensado(8),
+          }}
+          className={`absolute grid place-items-center rounded-full bg-navy/70 text-white ring-1 ring-white/25 backdrop-blur-sm transition hover:bg-navy ${
+            grande ? 'right-3 top-3 size-9' : ''
           }`}
         >
-          <X className={grande ? 'size-4' : 'size-10'} />
+          <X style={{ width: compensado(15), height: compensado(15) }} className={grande ? 'size-4' : ''} />
         </button>
       </div>
     </>

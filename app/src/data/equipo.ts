@@ -3,7 +3,7 @@
 // [2026-08-21] LOS RETRATOS YA SON REALES. El cliente entregó la carpeta
 // «FOTO PARA NUEVA WEB 2026/ABOUT US/CREW»: 55 fotos de estudio repartidas en
 // seis subcarpetas. Esta página deja de ser un molde de 70 fichas inventadas y
-// pasa a enseñar a las 28 personas de las que hay retrato.
+// pasa a enseñar a las 27 personas de las que hay retrato.
 //
 // ⚠️ SIGUE SIN HABER NOMBRES, Y POR ESO LAS CARDS NO LLEVAN NINGUNO. El
 // cliente no mandó la plantilla con nombre y cargo, así que la card es el
@@ -97,7 +97,7 @@ const RETRATOS_POR_DEPARTAMENTO: Record<DepartamentoId, number> = {
   capitanes: 4,
   guias: 4,
   marinos: 1,
-  cocina: 9,
+  cocina: 8,
   oficina: 8,
   fundacion: 2,
 }
@@ -111,7 +111,7 @@ export const EQUIPO_COMPLETO: MiembroEquipoV2[] = DEPARTAMENTOS.flatMap((d) =>
 )
 
 /** Cuántos RETRATOS hay, que ya no es lo mismo que cuánta gente trabaja en la
- *  empresa: son 28 fotos de una plantilla que el cliente cifra en más de 70.
+ *  empresa: son 27 fotos de una plantilla que el cliente cifra en más de 70.
  *  Se deriva del array, como todos los contadores de esta página. */
 export const TOTAL_EQUIPO = EQUIPO_COMPLETO.length
 

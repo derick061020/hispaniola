@@ -217,16 +217,18 @@ NUEVOS = [
 # escrito para que se pueda comprobar:
 #   · CAPITANES: el contaba 3, son 4 (8849/8850, 8853/8854, 8867/8869,
 #     8913/8914 — comparadas cara a cara).
-#   · COCINA: el contaba 8, son 9. 8771 y 8775 son la MISMA persona (mismo
-#     corte, mismas cejas) y 8773 es otra distinta con una sola foto.
-# El resto cuadra: fundacion 2, guias 4, marinos 1, oficina 8.
+# El resto cuadra: cocina 8, fundacion 2, guias 4, marinos 1, oficina 8.
 #
 # Fuente 3253x4337 = 3:4 exacto, la misma proporcion que la card del muro, asi
 # que estos no se recortan: solo se reescalan.
 RETRATO = (800, 1067)
 PERSONAS = {
     "CAPITANES": ["IMG_8850", "IMG_8854", "IMG_8869", "IMG_8914"],
-    "COCINA": ["IMG_8758", "IMG_8762", "IMG_8769", "IMG_8771", "IMG_8773",
+    # ⚠️ SIN IMG_8771. Al comparar las caras lo separe de 8773 y lo agrupe con
+    # 8775; Samuel lo vio en la pagina y corrigio: 8771, 8773 y 8775 son LA
+    # MISMA persona, con tres fotos en vez de dos. Con eso cocina son 8, que es
+    # justo lo que el contaba. Se queda 8773, la de brazos cruzados.
+    "COCINA": ["IMG_8758", "IMG_8762", "IMG_8769", "IMG_8773",
                "IMG_8778", "IMG_8787", "IMG_8859", "IMG_8862"],
     "FUNDACIÓN": ["IMG_8875", "IMG_8913_(2)"],
     "GUÍAS": ["IMG_8908", "IMG_8911", "IMG_8918", "IMG_8922"],

@@ -43,7 +43,7 @@ import { BLOQUE_FICHA } from '@/components/tour/bloque-ficha'
 // final no aterriza en ninguna página, ese contenido se pierde con /nosotros —
 // conviene decidirlo, no dejarlo caducar en silencio.
 //
-// [2026-08-21] YA NO ES UNA PÁGINA DE MOLDE. Los 28 retratos son las fotos de
+// [2026-08-21] YA NO ES UNA PÁGINA DE MOLDE. Los 27 retratos son las fotos de
 // estudio que entregó el cliente, agrupadas en sus seis departamentos reales.
 // Lo que sigue faltando son los NOMBRES: la card se pinta solo con la cara,
 // sin nombre inventado ni frase en primera persona. El detalle completo, en la
