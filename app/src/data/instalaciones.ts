@@ -79,8 +79,21 @@ export type ZonaInstalacion = {
   bullets: string[]
   /** Celda grande del bento. */
   vertical: VerticalZona
-  /** [placeholder-v2] Las 2 celdas apiladas del bento. */
+  /** El clip de la zona es 16:9 y no 9:16. Cuando es true el bento INTERCAMBIA
+   *  sitios: el video baja a una celda apilada (que ya es apaisada) y el hueco
+   *  9:16 lo ocupa `fotoVertical`. Recortar un 16:9 a vertical se comia los
+   *  lados de la sala. Pedido de Samuel, 2026-08-21. */
+  videoApaisado?: boolean
+  /** La foto que ocupa el hueco 9:16 cuando `videoApaisado`. */
+  fotoVertical?: FotoZona
+  /** Las celdas apiladas del bento. Con `videoApaisado` solo hay UNA, porque la
+   *  otra se la queda el video. */
   fotos: FotoZona[]
+  /** Fotos de la carpeta que NO se pintan en el bento y solo aparecen al abrir
+   *  el lightbox. El cliente (2026-08-21): «las que tengan mas de dos, al darle
+   *  clic que ahi si esten todas las demas para que se puedan ver». La celda
+   *  avisa de cuantas hay con un «+N». */
+  fotosExtra?: FotoZona[]
   /** Ausente a propósito: no existe el material. NO poner un placeholder aquí. */
   tour360?: string
 }
@@ -193,26 +206,20 @@ export const ZONAS: ZonaInstalacion[] = [
       'Comfortable waiting areas & restrooms',
       'Tour briefing before departure',
     ],
+    // ⚠️ ZONA DE VIDEO APAISADO — ver `videoApaisado` en el tipo.
+    videoApaisado: true,
     vertical: { ...V_RECIBIMIENTO, titulo: 'Así te recibimos' },
+    fotoVertical: {
+      src: 'instalacion-recibimiento-vertical',
+      alt: 'Inside the Guest Welcome Center: long wooden counters, stools and the reef information panels',
+    },
     fotos: [
       // No `hero-catamaran-1` aunque sea la foto de llegada más clara del repo:
       // se la queda el banner de cierre de esta misma página (ver `cierreFoto`),
       // y a media pantalla de distancia se vería dos veces.
       {
-      // [2026-08-20] Foto REAL de la instalacion (entrega del cliente,
-      // «FOTO PARA NUEVA WEB 2026»). Antes era un hueco PRESTADO de
-      // otra galeria: no se podia sobrescribir porque ese .webp lo
-      // consumen hasta 11 archivos de datos mas.
         src: 'instalacion-recibimiento-1',
         alt: 'The wooden Guest Welcome Center, with a crew member getting the check-in desk ready',
-      },
-      {
-      // [2026-08-20] Foto REAL de la instalacion (entrega del cliente,
-      // «FOTO PARA NUEVA WEB 2026»). Antes era un hueco PRESTADO de
-      // otra galeria: no se podia sobrescribir porque ese .webp lo
-      // consumen hasta 11 archivos de datos mas.
-        src: 'instalacion-recibimiento-2',
-        alt: 'Inside the Guest Welcome Center: long wooden counters, stools and the reef information panels',
       },
     ],
   },
@@ -244,10 +251,6 @@ export const ZONAS: ZonaInstalacion[] = [
         alt: 'The team handling coral fragments on the work bench',
       },
       {
-      // [2026-08-20] Foto REAL de la instalacion (entrega del cliente,
-      // «FOTO PARA NUEVA WEB 2026»). Antes era un hueco PRESTADO de
-      // otra galeria: no se podia sobrescribir porque ese .webp lo
-      // consumen hasta 11 archivos de datos mas.
         src: 'instalacion-biologia-1',
         alt: 'The coral growing tanks at the Marine Biology Center, under the Bávaro Reefs mural',
       },
@@ -277,20 +280,22 @@ export const ZONAS: ZonaInstalacion[] = [
       // una foto. Estas dos sí tienen fondo y cuentan preparación y servicio,
       // que es de lo que habla la zona.
       {
-      // [2026-08-20] Foto REAL de la instalacion (entrega del cliente,
-      // «FOTO PARA NUEVA WEB 2026»). Antes era un hueco PRESTADO de
-      // otra galeria: no se podia sobrescribir porque ese .webp lo
-      // consumen hasta 11 archivos de datos mas.
         src: 'instalacion-cocinas-1',
         alt: 'The Culinary Center kitchen, with the cold room and the prep shelves',
       },
       {
-      // [2026-08-20] Foto REAL de la instalacion (entrega del cliente,
-      // «FOTO PARA NUEVA WEB 2026»). Antes era un hueco PRESTADO de
-      // otra galeria: no se podia sobrescribir porque ese .webp lo
-      // consumen hasta 11 archivos de datos mas.
         src: 'instalacion-cocinas-2',
         alt: 'The stainless steel prep counter and the grill at the Culinary Center',
+      },
+    ],
+    fotosExtra: [
+      {
+        src: 'instalacion-cocinas-3',
+        alt: 'The dry store of the Culinary Center, with the fridges and the stacked crockery',
+      },
+      {
+        src: 'instalacion-cocinas-4',
+        alt: 'The convection oven at the Culinary Center',
       },
     ],
   },
@@ -334,23 +339,25 @@ export const ZONAS: ZonaInstalacion[] = [
       'Sales & Foundation offices',
     ],
     cierre: 'What you experience as a perfect day is the result of hundreds of details working together behind the scenes.',
+    // ⚠️ ZONA DE VIDEO APAISADO — mismo caso que el recibimiento. Samuel solo
+    // señaló el welcome center, pero el clip del Operations Center también es
+    // 16:9 y el motivo para intercambiar es idéntico.
+    videoApaisado: true,
     vertical: { ...V_OFICINAS, titulo: 'A day at the offices' },
+    fotoVertical: {
+      src: 'instalacion-oficinas-vertical',
+      alt: 'A member of the office team at her desk in the Operations Center',
+    },
     fotos: [
       {
-      // [2026-08-20] Foto REAL de la instalacion (entrega del cliente,
-      // «FOTO PARA NUEVA WEB 2026»). Antes era un hueco PRESTADO de
-      // otra galeria: no se podia sobrescribir porque ese .webp lo
-      // consumen hasta 11 archivos de datos mas.
-        src: 'instalacion-oficinas-1',
-        alt: 'A member of the office team at her desk in the Operations Center',
-      },
-      {
-      // [2026-08-20] Foto REAL de la instalacion (entrega del cliente,
-      // «FOTO PARA NUEVA WEB 2026»). Antes era un hueco PRESTADO de
-      // otra galeria: no se podia sobrescribir porque ese .webp lo
-      // consumen hasta 11 archivos de datos mas.
         src: 'instalacion-oficinas-2',
         alt: 'A workstation at the Operations Center, with the notice board and the shelving',
+      },
+    ],
+    fotosExtra: [
+      {
+        src: 'instalacion-oficinas-3',
+        alt: 'The briefing room of the Operations Center, with the planning boards',
       },
     ],
   },
@@ -370,7 +377,12 @@ export const ZONAS: ZonaInstalacion[] = [
 export const VERTICALES_INSTALACIONES = ZONAS.map((z) => ({
   id: z.id,
   titulo: z.vertical.titulo,
-  foto: z.fotos[0]!.src,
-  fotoAlt: z.fotos[0]!.alt,
+  // Con `videoApaisado` el cartel es la foto VERTICAL de la zona: la card del
+  // carril es 9:16 y una apaisada se recortaría por los lados.
+  foto: (z.fotoVertical ?? z.fotos[0]!).src,
+  fotoAlt: (z.fotoVertical ?? z.fotos[0]!).alt,
   video: z.vertical.video,
+  // Se propaga para que el reproductor abra en 16:9 y no herede el 9:16 de la
+  // card, que recortaría el clip por los lados.
+  apaisado: z.videoApaisado ?? false,
 }))

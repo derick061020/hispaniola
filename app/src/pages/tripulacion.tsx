@@ -42,9 +42,11 @@ import { BLOQUE_FICHA } from '@/components/tour/bloque-ficha'
 // final no aterriza en ninguna página, ese contenido se pierde con /nosotros —
 // conviene decidirlo, no dejarlo caducar en silencio.
 //
-// ⚠️ PÁGINA DE MOLDE: los nombres, retratos y frases son placeholders. Ver la
-// cabecera de data/equipo.ts. El aviso también se pinta EN PANTALLA (GridEquipo)
-// mientras dure — no basta con un comentario en el código.
+// [2026-08-21] YA NO ES UNA PÁGINA DE MOLDE. Los 28 retratos son las fotos de
+// estudio que entregó el cliente, agrupadas en sus seis departamentos reales.
+// Lo que sigue faltando son los NOMBRES: la card se pinta solo con la cara,
+// sin nombre inventado ni frase en primera persona. El detalle completo, en la
+// cabecera de data/equipo.ts.
 export function TripulacionPage() {
   // El CEO: la unica ficha con historia larga (WEBSITE - NOSOTROS pag. 2). Se
   // busca por su CTA de historia, igual que hace /flota, para no atarlo a un

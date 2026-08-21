@@ -294,9 +294,10 @@ export const FUNDACION = {
       texto:
         'Working alongside the Ministry of Environment, we help manage the protected marine area where we operate through monitoring, scientific data collection and on-the-water conservation efforts.',
       foto: 'arrecife-fondo-cenital',
-      // [2026-08-20] El alt sigue a la foto: arrecife-fondo-cenital ya no es la
-      // imagen de stock de agua turquesa, es la tortuga que entrego el cliente.
-      fotoAlt: 'A sea turtle in the shallow turquoise water of the protected area',
+      // [2026-08-21] El alt sigue a la foto: arrecife-fondo-cenital ya no es la
+      // imagen de stock, es una franja del arrecife que entrego el cliente. La
+      // tortuga de esa misma foto vive ahora en su bloque de /marine-park.
+      fotoAlt: 'Coral heads on the seabed under the turquoise water of the protected area',
       contexto: true,
     },
   ],

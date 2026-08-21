@@ -336,6 +336,7 @@ export function ReelsSociales({
           poster={`/fotos/${reelAbierto.foto}.webp`}
           etiqueta={reelAbierto.titulo}
           origen={expansion.origen}
+          apaisado={reelAbierto.apaisado}
           onCerrar={() => setReelAbierto(null)}
         />
       ) : null}

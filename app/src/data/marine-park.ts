@@ -61,8 +61,8 @@ export const MARINE_PARK = {
         'More than 70 reef restoration structures',
         'Coral gardening & marine habitat creation',
       ],
-      foto: 'galeria-snorkel-lovers-6',
-      fotoAlt: 'Coral nursery structures underwater, with a diver checking them',
+      foto: 'marine-park-museo',
+      fotoAlt: 'A diver next to one of the sculptures of the underwater museum',
     },
     {
       titulo: 'Foundation Bracelet',
@@ -71,8 +71,8 @@ export const MARINE_PARK = {
         'Access to the Underwater Museum is included through a Foundation conservation bracelet. Every bracelet directly supports the operation of The Bávaro Reef Foundation and contributes to the protection, restoration, and monitoring of Punta Cana’s marine ecosystems.',
         "Your visit doesn't just create memories. It helps create a healthier ocean.",
       ],
-      foto: 'galeria-snorkel-lovers-10',
-      fotoAlt: 'A Hispaniola guide explaining the coral nursery to a group of children',
+      foto: 'marine-park-pulsera',
+      fotoAlt: 'Guests tying coral fragments to a nursery structure on deck',
     },
     {
       numero: '02',
@@ -82,8 +82,8 @@ export const MARINE_PARK = {
         'Our marine biologists cultivate corals year-round using scientifically managed nurseries before transplanting them onto restoration sites throughout the Marine Park. Every new colony strengthens the reef and creates new habitat for marine life.',
       ],
       checks: ['Coral nurseries', 'Reef restoration projects', 'Long-term scientific monitoring'],
-      foto: 'galeria-snorkel-lovers-9',
-      fotoAlt: 'The team handling coral fragments on the work bench',
+      foto: 'marine-park-coral',
+      fotoAlt: 'Staghorn coral growing on one of the nursery trees',
     },
     {
       numero: '03',
@@ -92,8 +92,8 @@ export const MARINE_PARK = {
       parrafos: [
         "Years of conservation work have helped establish one of the country's most important Green Sea Turtle populations. Through habitat protection, education, and continuous monitoring, we're helping ensure future generations can experience these incredible animals in the wild.",
       ],
-      foto: 'galeria-snorkel-lovers-4',
-      fotoAlt: 'Colorful fish over the reef at the snorkeling stop',
+      foto: 'marine-park-tortuga',
+      fotoAlt: 'A green sea turtle swimming in the shallow turquoise water',
     },
     {
       numero: '04',
@@ -103,8 +103,8 @@ export const MARINE_PARK = {
         'Our artificial reefs create shelter for juvenile fish, increase biodiversity, and strengthen marine ecosystems. Today, these restoration sites have become some of the richest underwater habitats in the entire reef system, attracting an extraordinary variety of marine life.',
       ],
       checks: ['Fish nursery habitats', 'Increased biodiversity', 'Healthier coral ecosystems'],
-      foto: 'galeria-snorkel-lovers-2',
-      fotoAlt: 'Diver over the reef during the snorkeling stop',
+      foto: 'marine-park-arrecife',
+      fotoAlt: 'Artificial reef blocks on the seabed, surrounded by fish',
     },
   ] satisfies BloqueMarinePark[],
 }

@@ -12,14 +12,19 @@ import { DEPARTAMENTOS, contarPorDepartamento, type DepartamentoId } from '@/dat
 // barcos y tienen un complejo en tierra— contada como plano en vez de como
 // lista de categorías.
 //
-// ⚠️ DÓNDE COJEA, Y POR QUÉ SE ADMITE EN VEZ DE DISIMULARSE: de los 6
-// departamentos solo 2 viven a bordo (cubierta y cocina). Los otros 4
-// —oficina, marketing, administración y la fundación— trabajan en tierra. Un
-// plano que los colocara igualmente sobre el barco sería más bonito y sería
-// MENTIRA. Así que el plano tiene DOS zonas declaradas, «a bordo» y «en
-// tierra», separadas por la línea de flotación. Si esta versión se cae, se
-// cae por aquí: son 4 de 6 los que no están en el barco, y eso es mucho para
-// una metáfora que se llama «el barco como índice».
+// ⚠️ DÓNDE COJEABA, Y POR QUÉ YA CASI NO: cuando esto se escribió, de los 6
+// departamentos solo 2 vivían a bordo (cubierta y cocina) y los otros 4
+// —oficina, marketing, administración y la fundación— trabajaban en tierra.
+// Eran 4 de 6 fuera del barco, mucho para una metáfora que se llama «el barco
+// como índice».
+//
+// [2026-08-21] La proporción se da la vuelta sola. Los departamentos pasan a
+// ser las seis subcarpetas de retratos del cliente, y eso parte el antiguo
+// «Marine Operations» en los tres oficios que de verdad van a bordo:
+// capitanes, guías y marinos. Con la cocina son 4 de 6 EN el barco y solo 2 en
+// tierra (oficina y fundación). La línea de flotación se queda igual: sigue
+// habiendo dos zonas declaradas y sigue sin colocarse en cubierta a nadie que
+// no navegue.
 //
 // Si gana, el trabajo pendiente es de ilustración: hoy el barco es el recorte
 // real que ya había en el repo (catamaran-recorte.webp) y la tierra es una
@@ -33,15 +38,19 @@ import { DEPARTAMENTOS, contarPorDepartamento, type DepartamentoId } from '@/dat
 // La separación VERTICAL entre los dos es lo que hay que respetar si se
 // mueven: los rótulos miden ~180×48px y a poco que se acerquen se pisan (pasó
 // en la 1ª versión, con 82% y 76%).
+// Los cuatro puntos van de popa a proa, que es como se lee un barco: el puente
+// arriba a la derecha, la cubierta en medio, la cocina flotante al costado y el
+// trampolín de proa abajo a la izquierda. La separación VERTICAL entre puntos
+// consecutivos no baja de 20 puntos por lo dicho arriba.
 const A_BORDO: { id: DepartamentoId; x: string; y: string; zona: string }[] = [
-  { id: 'playa', x: '16%', y: '93%', zona: 'Deck and bow' },
-  { id: 'cocina', x: '52%', y: '70%', zona: 'Floating kitchen' },
+  { id: 'capitanes', x: '66%', y: '30%', zona: 'Helm' },
+  { id: 'guias', x: '34%', y: '52%', zona: 'Deck' },
+  { id: 'cocina', x: '54%', y: '72%', zona: 'Floating kitchen' },
+  { id: 'marinos', x: '16%', y: '93%', zona: 'Bow' },
 ]
 
 const EN_TIERRA: { id: DepartamentoId; zona: string }[] = [
   { id: 'oficina', zona: 'Offices' },
-  { id: 'marketing', zona: 'Offices' },
-  { id: 'administracion', zona: 'Administration' },
   { id: 'fundacion', zona: 'Marine lab' },
 ]
 

@@ -73,11 +73,25 @@ export function BentoZona({ zona, espejo = false }: { zona: ZonaInstalacion; esp
   const foto = useOrigenExpansion()
   const video = useOrigenExpansion()
 
-  const fotos = zona.fotos.map((f) => f.src)
+  // TODAS las fotos de la zona, en el orden en que las recorre el visor: la
+  // vertical primero (cuando la zona tiene el video apaisado), después las que
+  // se pintan en el bento y al final las que SOLO viven en el visor.
+  // ⚠️ Los índices que se pasan a `setLightbox` son índices DE ESTA lista, no
+  // de `zona.fotos`: con `videoApaisado` las dos se desplazan una posición.
+  const todas = [
+    ...(zona.videoApaisado && zona.fotoVertical ? [zona.fotoVertical] : []),
+    ...zona.fotos,
+    ...(zona.fotosExtra ?? []),
+  ]
+  const fotos = todas.map((f) => f.src)
+  // Cuántas hay de más que las que se ven. El cliente (2026-08-21): «me
+  // gustaría que se haga referencia a que hay más». De ahí el «+N».
+  const deMas = zona.fotosExtra?.length ?? 0
 
-  const celdaFoto = (indice: number) => {
-    const f = zona.fotos[indice]
+  const celdaFoto = (indice: number, contador = false) => {
+    const f = todas[indice]
     if (!f) return null
+    const avisa = contador && deMas > 0
     return (
       <button
         key={f.src}
@@ -86,11 +100,93 @@ export function BentoZona({ zona, espejo = false }: { zona: ZonaInstalacion; esp
           foto.abrirDesde(e.currentTarget)
           setLightbox(indice)
         }}
+        aria-label={avisa ? `Ver las ${todas.length} fotos de ${zona.nombre}` : undefined}
         className="group relative min-h-0 overflow-hidden rounded-card bg-papel-hueso"
       >
         <img
           src={`/fotos/${f.src}.webp`}
           alt={f.alt}
+          loading="lazy"
+          decoding="async"
+          className="size-full object-cover transition-transform duration-300 group-hover:scale-105"
+        />
+        {avisa ? (
+          <span
+            aria-hidden="true"
+            className="absolute bottom-2 right-2 rounded-chip bg-navy/70 px-2.5 py-1 text-xs font-semibold text-white ring-1 ring-white/25 backdrop-blur-sm transition-transform duration-300 group-hover:scale-105"
+          >
+            +{deMas}
+          </span>
+        ) : null}
+      </button>
+    )
+  }
+
+  // El botón del video. Vive en la celda 9:16 cuando el clip es vertical y en
+  // una celda apilada cuando es 16:9 (`videoApaisado`) — es el MISMO contenido
+  // en las dos, solo cambia de hueco, así que se escribe una vez.
+  const celdaVideo = (clases: string) => (
+    <button
+      type="button"
+      onClick={(e) => {
+        video.abrirDesde(e.currentTarget)
+        setVerVideo(true)
+      }}
+      aria-label={`Ver el video: ${zona.vertical.titulo}`}
+      className={`group relative overflow-hidden bg-navy ${clases}`}
+    >
+      {/* Bucle mudo = cartel animado (los navegadores no autoreproducen
+          con sonido). El póster evita que el hueco esté vacío mientras
+          carga. */}
+      <video
+        src={zona.vertical.video}
+        poster={`/fotos/${zona.vertical.poster}.webp`}
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="metadata"
+        aria-hidden="true"
+        className="size-full object-cover transition-transform duration-300 group-hover:scale-105"
+      />
+      {/* Degradado al pie: sin él ni el título ni la píldora leen sobre
+          fotogramas que cambian. */}
+      <span
+        aria-hidden="true"
+        className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-navy/80 to-transparent"
+      />
+      <span aria-hidden="true" className="absolute inset-0 grid place-items-center">
+        <span className="grid size-12 place-items-center rounded-full bg-white/25 text-white ring-1 ring-white/40 backdrop-blur-sm transition-transform duration-300 group-hover:scale-110">
+          <Play className="size-5 translate-x-px fill-current" />
+        </span>
+      </span>
+      <span className="absolute inset-x-0 bottom-0 flex flex-col gap-1 p-3 text-left">
+        <span className="flex items-center gap-1.5 text-xs font-medium text-white/80">
+          <Volume2 className="size-3.5 shrink-0" aria-hidden="true" />
+          Ver con sonido
+        </span>
+        <span className="text-sm font-semibold text-white">{zona.vertical.titulo}</span>
+      </span>
+    </button>
+  )
+
+  // La celda 9:16. Con el video apaisado la ocupa la foto vertical de la zona,
+  // que es el índice 0 de `todas`.
+  const celdaGrande = () => {
+    const clases = 'aspect-[9/16] h-full shrink-0 rounded-card-grande'
+    if (!zona.videoApaisado || !zona.fotoVertical) return celdaVideo(clases)
+    return (
+      <button
+        type="button"
+        onClick={(e) => {
+          foto.abrirDesde(e.currentTarget)
+          setLightbox(0)
+        }}
+        className={`group relative overflow-hidden bg-papel-hueso ${clases}`}
+      >
+        <img
+          src={`/fotos/${zona.fotoVertical.src}.webp`}
+          alt={zona.fotoVertical.alt}
           loading="lazy"
           decoding="async"
           className="size-full object-cover transition-transform duration-300 group-hover:scale-105"
@@ -108,56 +204,19 @@ export function BentoZona({ zona, espejo = false }: { zona: ZonaInstalacion; esp
           espejo ? 'flex-row-reverse' : ''
         }`}
       >
-        <button
-          type="button"
-          onClick={(e) => {
-            video.abrirDesde(e.currentTarget)
-            setVerVideo(true)
-          }}
-          aria-label={`Ver el video: ${zona.vertical.titulo}`}
-          className="group relative aspect-[9/16] h-full shrink-0 overflow-hidden rounded-card-grande bg-navy"
-        >
-          {/* Bucle mudo = cartel animado (los navegadores no autoreproducen
-              con sonido). El póster evita que el hueco esté vacío mientras
-              carga. */}
-          <video
-            src={zona.vertical.video}
-            poster={`/fotos/${zona.vertical.poster}.webp`}
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="metadata"
-            aria-hidden="true"
-            className="size-full object-cover transition-transform duration-300 group-hover:scale-105"
-          />
-          {/* Degradado al pie: sin él ni el título ni la píldora leen sobre
-              fotogramas que cambian. */}
-          <span
-            aria-hidden="true"
-            className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-navy/80 to-transparent"
-          />
-          <span aria-hidden="true" className="absolute inset-0 grid place-items-center">
-            <span className="grid size-12 place-items-center rounded-full bg-white/25 text-white ring-1 ring-white/40 backdrop-blur-sm transition-transform duration-300 group-hover:scale-110">
-              <Play className="size-5 translate-x-px fill-current" />
-            </span>
-          </span>
-          <span className="absolute inset-x-0 bottom-0 flex flex-col gap-1 p-3 text-left">
-            <span className="flex items-center gap-1.5 text-xs font-medium text-white/80">
-              <Volume2 className="size-3.5 shrink-0" aria-hidden="true" />
-              Ver con sonido
-            </span>
-            <span className="text-sm font-semibold text-white">{zona.vertical.titulo}</span>
-          </span>
-        </button>
+        {celdaGrande()}
 
         <div
           className="grid min-w-0 flex-1 gap-bento-hueco"
           style={espejo ? FILAS_ESPEJO : FILAS_NORMAL}
         >
-          {celdaFoto(0)}
+          {/* Con el video apaisado la primera celda apilada ES el video: ya es
+              horizontal, así que el clip entra sin recortarse. La foto vertical
+              de la zona se ha ido arriba, a la celda 9:16. */}
+          {zona.videoApaisado ? celdaVideo('min-h-0 rounded-card') : celdaFoto(0)}
           {/* La celda del 360°. Ausencia silenciosa mientras no haya material:
-              la ocupa la 2ª foto de la zona. */}
+              la ocupa la última foto visible de la zona, que además es la que
+              lleva el «+N» cuando hay más en el visor. */}
           {zona.tour360 ? (
             <a
               href={zona.tour360}
@@ -168,7 +227,9 @@ export function BentoZona({ zona, espejo = false }: { zona: ZonaInstalacion; esp
               </span>
             </a>
           ) : (
-            celdaFoto(1)
+            // Siempre el índice 1: sin video apaisado es `fotos[1]`, y con él
+            // es `fotos[0]`, porque la vertical ocupa el 0 de `todas`.
+            celdaFoto(1, true)
           )}
         </div>
       </div>
@@ -189,6 +250,7 @@ export function BentoZona({ zona, espejo = false }: { zona: ZonaInstalacion; esp
           poster={`/fotos/${zona.vertical.poster}.webp`}
           etiqueta={zona.vertical.titulo}
           origen={video.origen}
+          apaisado={zona.videoApaisado}
           onCerrar={() => setVerVideo(false)}
         />
       ) : null}

@@ -29,6 +29,7 @@ export function VideoLightbox({
   etiqueta,
   onCerrar,
   origen = null,
+  apaisado = false,
 }: {
   src: string
   /** Foto de portada — el mismo `poster` de la celda del mosaico. */
@@ -39,6 +40,11 @@ export function VideoLightbox({
   /** [v2 2026-07-28] Rectángulo del elemento pulsado, para que el video parezca
    *  DESPEGAR de ahí. `null` = fundido normal. Ver lib/use-expansion-flip.ts. */
   origen?: RectOrigen | null
+  /** El archivo es 16:9. Sin esto la caja hereda la proporción de la celda de
+   *  la que sale y, si esa celda es 9:16 (el carril de verticales), el
+   *  `object-cover` se comería los lados del clip. Con `apaisado` la caja se
+   *  fija en 16:9 y el fotograma la rellena entero. */
+  apaisado?: boolean
 }) {
   const video = useRef<HTMLVideoElement>(null)
   const refExpansion = useExpansionFlip(origen)
@@ -47,8 +53,9 @@ export function VideoLightbox({
   // largo junto al <video>: es lo que hace que expandir sea un zoom y no un
   // cambio de formato. Se descartan medidas degeneradas (una celda de alto 0
   // daría una división por cero y una caja imposible).
-  const aspecto =
-    origen && origen.width > 0 && origen.height > 0
+  const aspecto = apaisado
+    ? '16 / 9'
+    : origen && origen.width > 0 && origen.height > 0
       ? `${origen.width} / ${origen.height}`
       : null
 

@@ -79,10 +79,6 @@ MAPEO = [
     ("TOURS/CARIBBEAN SCAPE/309851022_853479442731938_4097252526470560517_n.jpg", "tour-semi-privado", 0.45),
     ("TOURS/PRIVATE CHARTER/_MG_9052.jpg", "tour-charter-privado"),
     ("HOMEPAGE/FOTO SECCIÓN BOOK DIRECT/1.jpg", "hero-catamaran-1"),
-    # sesgo 0.0: este archivo es TEXTURA de fondo bajo degradado en 4 banners.
-    # Anclado arriba, la tortuga cae abajo-derecha y deja limpia la mitad
-    # superior izquierda, que es donde se apoya el texto.
-    ("SUSTAINABILITY/OUR COMPETITIVE ADVANTAGE/1.jpg", "arrecife-fondo-cenital", 0.0),
 
     # Caribbean Escape (semi-privado)
     # sesgo 0.35: la fuente es 4000x6000 VERTICAL contra un hueco de 1.28. Se
@@ -153,17 +149,101 @@ MAPEO = [
 # galeria, porque esos huecos los comparten hasta 11 archivos de datos.
 # A 736x574 (el doble del tile de galeria) porque son celdas grandes del bento.
 CELDA = (736, 574)
+BLOQUE = (1040, 714)
+VERT = (720, 1280)   # la celda 9:16 del bento
+
+# ── Recortes con ventana explicita ──────────────────────────────────────────
+# (archivo, hueco, caja en coordenadas de la FUENTE, medida final). Solo para
+# lo que el sesgo no sabe expresar.
+EXACTOS = [
+    # ⚠️ `OUR COMPETITIVE ADVANTAGE/1.jpg` y `MARINE PARK/GREEN SEA TURTLE.jpg`
+    # son EL MISMO ARCHIVO (md5 58e677be). La tortuga se queda en su bloque de
+    # /marine-park, que es donde el cliente la puso por nombre; este hueco es
+    # textura de fondo bajo degradado en 4 banners, y uno de ellos es el HERO
+    # de esa misma pagina: saldria la misma tortuga dos veces en una pantalla.
+    # Se recorta la franja de abajo, sin tortuga y con la mancha de arrecife,
+    # que ademas es lo que promete el nombre del hueco.
+    ("SUSTAINABILITY/OUR COMPETITIVE ADVANTAGE/1.jpg", "arrecife-fondo-cenital",
+     (900, 1850, 2768, 2784), (2400, 1200)),
+]
 NUEVOS = [
     ("ABOUT US/FACILITIES - ABOUT US/GUEST WELCOME CENTER/IMG_8836-HDR.jpg", "instalacion-recibimiento-1", 0.5, 0.5, CELDA),
-    ("ABOUT US/FACILITIES - ABOUT US/GUEST WELCOME CENTER/IMG_0337.jpg", "instalacion-recibimiento-2", 0.5, 0.5, CELDA),
+    # ⚠️ EL VIDEO DEL WELCOME CENTER ES 16:9, no vertical (el cliente no lo
+    # grabo en vertical). En vez de recortarlo al hueco 9:16, la zona INTERCAMBIA
+    # sitios: el video se va a una celda apaisada y el 9:16 lo ocupa IMG_0337,
+    # que es la unica foto vertical de la entrega. Pedido de Samuel 2026-08-21.
+    ("ABOUT US/FACILITIES - ABOUT US/GUEST WELCOME CENTER/IMG_0337.jpg", "instalacion-recibimiento-vertical", 0.5, 0.5, VERT),
     ("ABOUT US/FACILITIES - ABOUT US/MARINE BIOLOGY CENTER/IMG_0079.jpg", "instalacion-biologia-1", 0.5, 0.5, CELDA),
     ("ABOUT US/FACILITIES - ABOUT US/CULINARY CENTER/IMG_8897-HDR.jpg", "instalacion-cocinas-1", 0.5, 0.5, CELDA),
     ("ABOUT US/FACILITIES - ABOUT US/CULINARY CENTER/IMG_8900-HDR.jpg", "instalacion-cocinas-2", 0.5, 0.5, CELDA),
-    ("ABOUT US/FACILITIES - ABOUT US/OPERATON CENTER/IMG_8815-HDR.jpg", "instalacion-oficinas-1", 0.5, 0.5, CELDA),
+    # ⚠️ El OPERATION CENTER tiene el MISMO problema que el welcome center: su
+    # video tambien es 16:9. Samuel no lo menciono —da por hecho que solo el
+    # welcome lo era— pero el motivo es identico, asi que recibe el mismo
+    # tratamiento. Su hueco 9:16 lo ocupa IMG_8815 recortada en vertical:
+    # sesgo_x 0.08 porque la administrativa esta pegada al borde izquierdo y con
+    # el recorte centrado se queda fuera de plano.
+    ("ABOUT US/FACILITIES - ABOUT US/OPERATON CENTER/IMG_8815-HDR.jpg", "instalacion-oficinas-vertical", 0.5, 0.08, VERT),
     ("ABOUT US/FACILITIES - ABOUT US/OPERATON CENTER/IMG_8812-HDR.jpg", "instalacion-oficinas-2", 0.5, 0.5, CELDA),
+    # Las que NO se pintan en el bento y solo salen al abrir el lightbox. El
+    # cliente: «las que tengan mas de dos, al darle clic que ahi si esten todas
+    # las demas para que se puedan ver».
+    ("ABOUT US/FACILITIES - ABOUT US/CULINARY CENTER/IMG_8894-HDR.jpg", "instalacion-cocinas-3", 0.5, 0.5, CELDA),
+    ("ABOUT US/FACILITIES - ABOUT US/CULINARY CENTER/IMG_8903-HDR.jpg", "instalacion-cocinas-4", 0.5, 0.5, CELDA),
+    ("ABOUT US/FACILITIES - ABOUT US/OPERATON CENTER/IMG_8818-HDR.jpg", "instalacion-oficinas-3", 0.5, 0.5, CELDA),
+    # /marine-park. El cliente nombro cada archivo con la seccion a la que va:
+    # UNDERWATER MUSEUM, FOUNDATION BRACELET, CORAL RESTORA, GREEN SEA TURTLE y
+    # ARTIFICIAL REEF son, literalmente, los cinco bloques de la pagina. Antes
+    # cada bloque tomaba prestado un tile de la galeria de Coral Quest.
+    # 1040x714 = la proporcion de la figura (h-96 a media columna), sin escalar
+    # ARTIFICIAL REEF, que es la fuente mas pequena de las cinco (1080x806).
+    ("ABOUT US/MARINE PARK - ABOUT US/UNDERWATER MUSEUM.jpg", "marine-park-museo", 0.5, 0.5, BLOQUE),
+    ("ABOUT US/MARINE PARK - ABOUT US/FOUNDATION BRACELET.jpg", "marine-park-pulsera", 0.5, 0.5, BLOQUE),
+    ("ABOUT US/MARINE PARK - ABOUT US/CORAL RESTORA.jpg", "marine-park-coral", 0.5, 0.5, BLOQUE),
+    ("ABOUT US/MARINE PARK - ABOUT US/GREEN SEA TURTLE.jpg", "marine-park-tortuga", 0.5, 0.5, BLOQUE),
+    ("ABOUT US/MARINE PARK - ABOUT US/ARTIFICIAL REEF.jpg", "marine-park-arrecife", 0.5, 0.5, BLOQUE),
+
     ("SUSTAINABILITY/THE FOUNDATION/CLEANER OCEANS.jpeg", "fundacion-limpieza", 0.5, 0.5, CELDA),
     ("SUSTAINABILITY/THE FOUNDATION/RESTORING MARINE.jpg", "fundacion-pescadores", 0.5, 0.5, CELDA),
 ]
+
+# ── Los 28 retratos de la tripulacion ───────────────────────────────────────
+# La carpeta CREW trae 55 fotos en 6 subcarpetas, 2 o 3 por persona: una de pie
+# con los brazos caidos y otra con los BRAZOS CRUZADOS. Samuel (2026-08-21):
+# «usa solamente las fotos que estan con los brazos cruzados, ya que se ve un
+# poco mas jovial y queda mejor con la web». Donde esa persona no tiene ninguna
+# cruzada se usa la que hay.
+#
+# ⚠️ EL CONTEO NO ES EL QUE DIJO SAMUEL EN DOS CARPETAS, y se deja el suyo por
+# escrito para que se pueda comprobar:
+#   · CAPITANES: el contaba 3, son 4 (8849/8850, 8853/8854, 8867/8869,
+#     8913/8914 — comparadas cara a cara).
+#   · COCINA: el contaba 8, son 9. 8771 y 8775 son la MISMA persona (mismo
+#     corte, mismas cejas) y 8773 es otra distinta con una sola foto.
+# El resto cuadra: fundacion 2, guias 4, marinos 1, oficina 8.
+#
+# Fuente 3253x4337 = 3:4 exacto, la misma proporcion que la card del muro, asi
+# que estos no se recortan: solo se reescalan.
+RETRATO = (800, 1067)
+PERSONAS = {
+    "CAPITANES": ["IMG_8850", "IMG_8854", "IMG_8869", "IMG_8914"],
+    "COCINA": ["IMG_8758", "IMG_8762", "IMG_8769", "IMG_8771", "IMG_8773",
+               "IMG_8778", "IMG_8787", "IMG_8859", "IMG_8862"],
+    "FUNDACIÓN": ["IMG_8875", "IMG_8913_(2)"],
+    "GUÍAS": ["IMG_8908", "IMG_8911", "IMG_8918", "IMG_8922"],
+    "MARINOS": ["IMG_8848"],
+    "OFICINA": ["IMG_8781", "IMG_8792", "IMG_8796", "IMG_8889", "IMG_8899",
+                "IMG_8925", "IMG_8929", "IMG_8936"],
+}
+# La clave del departamento en data/equipo.ts, sin tildes.
+SLUG = {"CAPITANES": "capitanes", "COCINA": "cocina", "FUNDACIÓN": "fundacion",
+        "GUÍAS": "guias", "MARINOS": "marinos", "OFICINA": "oficina"}
+NUEVOS += [
+    ("ABOUT US/CREW - ABOUT US/%s/%s.jpg" % (dep, arch),
+     "crew-%s-%d" % (SLUG[dep], n + 1), 0.5, 0.5, RETRATO)
+    for dep, archivos in PERSONAS.items()
+    for n, arch in enumerate(archivos)
+]
+
 
 # ── Lo que se queda fuera a proposito ───────────────────────────────────────
 # No es olvido: cada linea es una decision que Samuel tiene que confirmar.
@@ -205,6 +285,25 @@ NO_ENTRAN = [
 ]
 
 
+def aplicar_exactos(lista, dry=False):
+    ok = fallo = 0
+    for rel, hueco, caja, medida in lista:
+        origen, destino = ENTREGA / rel, DESTINO / (hueco + ".webp")
+        if not origen.exists():
+            print("  MAL  %-30s no encuentro %s" % (hueco, origen.name))
+            fallo += 1
+            continue
+        im = ImageOps.exif_transpose(Image.open(origen)).convert("RGB").crop(caja)
+        im = im.resize(medida, Image.LANCZOS)
+        if not dry:
+            im.save(destino, "WEBP", quality=82, method=6)
+        ok += 1
+        print("  ok   %-30s <- %-40s %dx%d desde %s  %s" % (
+            hueco, rel.split("/")[-1][:40], medida[0], medida[1], caja,
+            ("%6.1f KB" % (destino.stat().st_size / 1024)) if not dry else ""))
+    return ok, fallo
+
+
 def aplicar(mapeo, dry=False):
     ok = fallo = 0
     for e in mapeo:
@@ -226,13 +325,23 @@ def aplicar(mapeo, dry=False):
 
 if __name__ == "__main__":
     dry = "--dry" in sys.argv
+    # --solo <prefijo>: reaplica unicamente los huecos que empiecen por ahi,
+    # para no rehacer las 51 cada vez que se retoca una seccion.
+    solo = None
+    if "--solo" in sys.argv:
+        solo = sys.argv[sys.argv.index("--solo") + 1]
+        MAPEO[:] = [e for e in MAPEO if e[1].startswith(solo)]
+        NUEVOS[:] = [e for e in NUEVOS if e[1].startswith(solo)]
+        EXACTOS[:] = [e for e in EXACTOS if e[1].startswith(solo)]
     print("\n== huecos existentes (sin tocar codigo) ==")
     a, f1 = aplicar(MAPEO, dry)
     print("\n== archivos nuevos (obligan a editar el .ts que los apunta) ==")
     b, f2 = aplicar(NUEVOS, dry)
+    print("\n== recortes con ventana explicita ==")
+    c, f3 = aplicar_exactos(EXACTOS, dry)
     print("\n== fuera a proposito: %d, pendientes de que Samuel confirme ==" % len(NO_ENTRAN))
     for rel, hueco, motivo in NO_ENTRAN:
         print("  --   %-30s %s" % (hueco, rel.split("/")[-1]))
-    print("\n  %d fotos aplicadas (%d sobrescritas + %d nuevas), %d con problema"
-          % (a + b, a, b, f1 + f2))
-    sys.exit(1 if (f1 + f2) else 0)
+    print("\n  %d fotos aplicadas (%d sobrescritas + %d nuevas + %d a ventana), "
+          "%d con problema" % (a + b + c, a, b, c, f1 + f2 + f3))
+    sys.exit(1 if (f1 + f2 + f3) else 0)

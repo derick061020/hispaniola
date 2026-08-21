@@ -1358,6 +1358,10 @@ export type Reel = {
   fotoAlt: string
   /** Video vertical del reel. null = pendiente del cliente. */
   video: string | null
+  /** El archivo es 16:9 y no 9:16. Lo usa el carril de /instalaciones, donde
+   *  dos zonas tienen el clip apaisado porque el cliente no lo grabó vertical:
+   *  el reproductor abre en 16:9 en vez de heredar el 9:16 de la card. */
+  apaisado?: boolean
   /** Red donde vive. Sin consumidores desde que se retiró el badge de red
    *  (v2 2026-07-27, ver reels-sociales.tsx) — opcional para que otros
    *  carriles que reutilizan el componente (el de /instalaciones, que no son
