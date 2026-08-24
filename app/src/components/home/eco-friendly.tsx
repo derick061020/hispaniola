@@ -2,7 +2,7 @@ import { useRef, useState } from 'react'
 import { useDevFlag } from '@/dev/use-dev-flag'
 import { useEcoFriendlyReveal } from '@/components/home/use-eco-friendly-reveal'
 
-// Cintillo «Eco-friendly · Cero plástico a bordo» (2026-07-17, pedido de
+// Cintillo «Eco-friendly · Positive impact on board» (2026-07-17, pedido de
 // Samuel) — la web actual tiene esto como una banda azul sólida a sangre,
 // justo debajo de los premios ("ECO FRIENDLY [ícono] NO PLASTIC"). Copiar esa
 // banda tal cual violaría el guardarraíl de la dirección B (direccion-visual.md
@@ -66,12 +66,31 @@ import { useEcoFriendlyReveal } from '@/components/home/use-eco-friendly-reveal'
 // meciéndose y el anillo punteado girando. Todo en CSS (componentes.css) con
 // tokens --eco-*; el JSX solo aporta los ganchos.
 //
-// Copy: «Cero plástico a bordo» → «Zero plastic on board», la misma frase que
-// el stat del hero ya traducido ("0 / plastic on board") — las 3 apariciones
-// del dato en la home siguen hablando igual. ⚠️ La 3ª, la del footer, sigue
-// en español («Eco-friendly · Sin plástico · Desde 2012.»): es chrome
-// compartido por todas las páginas y además arrastra el 2012 vs 2010 sin
-// resolver, así que cae en el barrido F7 (plan 01 §5), no aquí.
+// Copy: «Cero plástico a bordo» → «Zero plastic on board» (v3), y desde el
+// 2026-08-24 → «Positive impact on board».
+//
+// ⚠️ [2026-08-24, UPDATES 08/22 del cliente, pág. 1] «CAMBIAR ZERO PLASTIC
+// PARA → POSITIVE IMPACT». El cambio es de argumento, no de redacción: el
+// mensaje deja de ser una ausencia comprobable (no hay plástico) y pasa a ser
+// una afirmación de impacto. Se conserva «on board» porque es lo único que el
+// cliente no tocó y porque ancla la frase al barco.
+//
+// ⚠️⚠️ Y CON ESTO SE ROMPE A PROPÓSITO UNA COHERENCIA QUE ESTE MISMO COMENTARIO
+// presumía. Hasta hoy las 3 apariciones del dato en la home decían lo mismo;
+// ahora el cintillo dice «positive impact» y las otras dos siguen con el
+// plástico:
+//   · el stat del hero, «0 / plastic on board» (data/home.ts) — NO se puede
+//     traducir sin más: el dato es un par valor+etiqueta y «positive impact»
+//     no admite un 0 delante. Haría falta una cifra que no existe en el repo,
+//     y aquí no se inventan datos.
+//   · el footer, «Eco-friendly · Zero plastic · Since 2010» — chrome
+//     compartido por las 25 páginas.
+// Fuera de la home queda también el sello curvado de las cards de /fleet
+// (components/ui/sello-eco.tsx), que Samuel acopló a mano a este copy
+// («puede ser el mismo texto del home»). Decisión de Samuel del 2026-08-24:
+// se cambia SOLO el cintillo, que es lo único que el cliente marcó. Los otros
+// tres sitios quedan pendientes de que él decida si el claim eco entero se
+// retira o convive.
 
 // Sello eco: círculo con anillo + hoja + gota. Todo con currentColor y los
 // tokens de la paleta (cero hex sueltos, regla de CLAUDE.md).
@@ -90,7 +109,7 @@ function SelloEco({ className = '' }: { className?: string }) {
       viewBox="0 0 96 96"
       className={className}
       role="img"
-      aria-label="Eco-friendly seal, zero plastic on board"
+      aria-label="Eco-friendly seal, positive impact on board"
     >
       {/* Disco de fondo y anillo: el aqua de marca, con cuentagotas — es una
           pieza pequeña, no un fondo de sección. */}
@@ -198,7 +217,7 @@ export function EcoFriendly() {
             no está centrado con respecto a la pantalla… quiero que el sello,
             sin importar eso, esté centrado»). Con `flex justify-center` los
             3 hijos se centran COMO GRUPO: el sello acaba donde lo dejen los
-            textos, y como «Zero plastic on board» es bastante más ancho que
+            textos, y como «Positive impact on board» es bastante más ancho que
             «Eco-friendly», el grupo entero se corre y el sello queda a la
             izquierda del eje. Con dos columnas laterales de 1fr —que por
             definición miden lo mismo— la columna `auto` del centro cae
@@ -214,7 +233,7 @@ export function EcoFriendly() {
           </span>
           <SelloEco className="h-20 w-20 shrink-0 sm:h-28 sm:w-28" />
           <span className="eco-reveal justify-self-start text-left text-sm font-semibold uppercase tracking-[0.2em] text-navy sm:text-base">
-            Zero plastic on board
+            Positive impact on board
           </span>
         </div>
       </div>

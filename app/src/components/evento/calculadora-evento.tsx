@@ -348,8 +348,14 @@ export function CalculadoraEvento({
         </div>
       ) : null}
 
+      {/* [2026-08-21, auditoría móvil] `max-lg:h-11`: el tamaño `medium` de
+          FancyButton mide 40px de alto y el mínimo cómodo para un pulgar son
+          44 (Apple HIG). Se sube SOLO por debajo de lg —donde se toca con el
+          dedo— para no recalcular el alto del widget en el desktop que dibujó
+          Samuel. La pieza vendor no se toca: se personaliza por className,
+          como manda CLAUDE.md. */}
       <EnlacePrototipo>
-        <FancyButton.Root variant="primary" className="w-full" asChild>
+        <FancyButton.Root variant="primary" className="w-full max-lg:h-11" asChild>
           <span>Book this package</span>
         </FancyButton.Root>
       </EnlacePrototipo>

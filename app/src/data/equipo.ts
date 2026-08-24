@@ -3,7 +3,9 @@
 // [2026-08-21] LOS RETRATOS YA SON REALES. El cliente entregó la carpeta
 // «FOTO PARA NUEVA WEB 2026/ABOUT US/CREW»: 55 fotos de estudio repartidas en
 // seis subcarpetas. Esta página deja de ser un molde de 70 fichas inventadas y
-// pasa a enseñar a las 27 personas de las que hay retrato.
+// pasa a enseñar a las 30 personas de las que hay retrato (27 en la 1ª
+// entrega del cliente + 3 en la 2ª, 2026-08-23 — de las 6 fotos que llegaron
+// solo había 3 personas nuevas; el resto eran segundas tomas de las mismas).
 //
 // ⚠️ SIGUE SIN HABER NOMBRES, Y POR ESO LAS CARDS NO LLEVAN NINGUNO. El
 // cliente no mandó la plantilla con nombre y cargo, así que la card es el
@@ -95,9 +97,23 @@ export type MiembroEquipoV2 = {
  *  descarte están en scripts/reemplazar-fotos.py. */
 const RETRATOS_POR_DEPARTAMENTO: Record<DepartamentoId, number> = {
   capitanes: 4,
-  guias: 4,
+  // [2026-08-23, 2ª entrega del cliente] guías 4 → 5 y cocina 8 → 10.
+  // ⚠️ La carpeta `GUÍAS/AGREGAR` traía DOS archivos (IMG_8924 e IMG_8926) y
+  // aquí solo entra UNO: son la misma persona, con la toma de brazos caídos y
+  // la de brazos cruzados. Manda la regla de Samuel del 21 —una persona, un
+  // retrato, y de los dos el de brazos cruzados—, así que se publica 8926.
+  // Contarlos como dos habría repetido una cara en el muro, que es el bug que
+  // se arregló en el commit 308114d.
+  guias: 5,
   marinos: 1,
-  cocina: 8,
+  // De `COCINA/AGREGAR` entran DOS, no cuatro. [2026-08-24, Samuel sobre el
+  // muro ya montado] los cuatro archivos son solo DOS personas, cada una con
+  // su toma de brazos caídos y su toma de brazos cruzados: 8927/8929 son el
+  // mismo hombre y 8931/8935 el mismo chico. Manda la regla del 21 —una
+  // persona, un retrato— así que se publican 8929 y 8931 y los otros dos se
+  // borraron. Ninguno de los dos estaba ya en el muro (comparados contra los
+  // 8 retratos publicados).
+  cocina: 10,
   oficina: 8,
   fundacion: 2,
 }
@@ -111,7 +127,7 @@ export const EQUIPO_COMPLETO: MiembroEquipoV2[] = DEPARTAMENTOS.flatMap((d) =>
 )
 
 /** Cuántos RETRATOS hay, que ya no es lo mismo que cuánta gente trabaja en la
- *  empresa: son 27 fotos de una plantilla que el cliente cifra en más de 70.
+ *  empresa: son 30 fotos de una plantilla que el cliente cifra en más de 70.
  *  Se deriva del array, como todos los contadores de esta página. */
 export const TOTAL_EQUIPO = EQUIPO_COMPLETO.length
 
@@ -149,11 +165,20 @@ export const EQUIPO_PAGINA = {
     // fecha el primer barco en 2010 y el copy de la home dice «since 2010».
     { id: 'desde', valor: 'Since 2010', etiqueta: 'growing together' },
     // ⚠️ Este es el único dato de la franja que afirma algo sobre la EMPRESA y
-    // no sobre esta página. No estaba en la web original — sale de la maqueta
-    // del cliente (slide 37) y se publica por pedido explícito de Samuel
-    // (2026-07-28: «que el equipo es de RD y España»). Si el cliente lo
-    // desmiente, es lo primero que cae.
-    { id: 'origen', valor: 'DR + Spain', etiqueta: 'local team and management' },
+    // no sobre esta página. Nació de la maqueta del cliente (slide 37) y de un
+    // pedido explícito de Samuel (2026-07-28: «que el equipo es de RD y
+    // España»), y su propio comentario ya avisaba de que «si el cliente lo
+    // desmiente, es lo primero que cae».
+    //
+    // [2026-08-24, UPDATES 08/22 del cliente, pág. 3] Cayó. El cliente rodea
+    // esta celda y da el texto nuevo, literal: «Multicultural team» /
+    // «different backgrounds, one passion». No está desmintiendo el dato —
+    // sigue habiendo gente de RD y de España—: está cambiando el EJE, de origen
+    // geográfico a diversidad. Por eso el dato no se borra, se reescribe.
+    //
+    // El icono se queda en Globe2 (franja-equipo.tsx): sirve igual para
+    // «multicultural» y cambiarlo no lo pidió nadie.
+    { id: 'origen', valor: 'Multicultural team', etiqueta: 'different backgrounds, one passion' },
   ],
   // El muro de retratos (equipo/muro-tripulacion.tsx) NO tiene copy: es solo
   // los dos tickers, sin eyebrow ni titular ni descripción (2ª vuelta del

@@ -234,7 +234,12 @@ function Card({
           type="button"
           onClick={onElegir}
           aria-pressed={elegido}
-          className={`mt-4 w-full rounded-btn px-4 py-2.5 text-sm font-semibold transition ${
+          // [2026-08-21, auditoría móvil] py-3 (antes py-2.5): 10px de padding
+          // sobre una línea de 20px daban 40px de alto, por debajo de los 44
+          // que necesita el pulgar. Son 4 botones apilados en móvil y son los
+          // que mandan el paquete al widget, así que fallar el toque aquí
+          // cuesta una elección de producto.
+          className={`mt-4 w-full rounded-btn px-4 py-3 text-sm font-semibold transition ${
             elegido
               ? 'cursor-default bg-aqua-tint text-aqua-dark'
               : 'bg-papel text-navy ring-1 ring-linea hover:bg-papel-hueso'

@@ -72,7 +72,18 @@ export function WhyDirect() {
               Everything the portals can&rsquo;t offer.
             </p>
             <div className="mt-7">
-              <Boton href="#" tamaño="lg" onClick={(e) => e.preventDefault()}>
+              {/* [2026-08-24, barrido de enlaces] ERA UN BOTÓN MUERTO: `href="#"`
+                  con `onClick={e => e.preventDefault()}`, o sea que ni navegaba
+                  ni scrolleaba. Y no era un placeholder declarado — para eso
+                  está ui/enlace-prototipo.tsx, que al menos lo dice en su
+                  `title`. Era el CTA grande de una sección entera de la home.
+                  Va al grid de tours, que es lo mismo que hacen el CTA del hero
+                  y el del footer con este mismo texto. Ancla suelta y no
+                  `to="/#tours"` porque WhyDirect SOLO se monta en la home
+                  (pages/home.tsx): el ancla nativa vuelve a scrollear aunque ya
+                  estés en /#tours, y un <Link> al mismo hash no dispara
+                  ScrollAlNavegar. Misma elección que hero.tsx y experiencia.tsx. */}
+              <Boton href="#tours" tamaño="lg">
                 Check availability
               </Boton>
             </div>

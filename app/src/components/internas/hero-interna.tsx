@@ -64,7 +64,8 @@ import { useDevFlag } from '@/dev/use-dev-flag'
 // mide exactamente lo que medía en el resto de internas, donde el título de
 // una ficha SÍ quiere una columna estrecha para no leerse a 1400px de ancho.
 export function HeroInterna({
-  ctaHref = '#tours',
+  // Mismo motivo que el default de Header: ver components/home/header.tsx.
+  ctaHref = '/#tours',
   imagen,
   pie,
   anchoCompleto = false,

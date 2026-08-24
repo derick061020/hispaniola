@@ -830,7 +830,11 @@ export const FICHAS: Record<string, FichaTour> = {
       eyebrow: 'Premium mode',
       texto:
         'In this section we offer our Private Charter in Premium mode, which is our best seller.',
-      cta: { texto: 'See more affordable options', a: '/eventos/party-boat' },
+      // [2026-08-24, barrido de enlaces] La ruta era `/eventos/party-boat`, en
+      // espanol: se quedo sin traducir en el cambio de rutas a ingles de v3.
+      // Funcionaba de milagro —App.tsx la redirige— pero cobrando un salto de
+      // mas, y es el unico enlace del sitio que seguia hablando en espanol.
+      cta: { texto: 'See more affordable options', a: '/events/party-boat' },
     },
     tituloLargo: 'Private Charter · the whole catamaran for your group',
     // [v3 2026-08-06, WEBSITE-TOURS pag. 17] Titulo APROBADO del bloque de
@@ -1185,18 +1189,29 @@ export const FICHAS: Record<string, FichaTour> = {
         },
       ],
     },
-    // [2026-08-21] LAS 10 FOTOS DE TOURS/PRIVATE CHARTER, y solo esas. Samuel: «solamente
+    // [2026-08-21] LAS FOTOS DE TOURS/PRIVATE CHARTER, y solo esas. Samuel: «solamente
     // que estén en el grid de imágenes las que están en la carpeta; si teníamos
     // fotos de antes, quítalas». Las `galeria-charter-privado-*` de antes salen de aquí; siguen
     // vivas en las páginas que también las usaban.
     // El orden es EDITORIAL: las primeras son las que se ven sin abrir el visor.
+    // [2026-08-23, 2ª entrega] 10 → 12: entran las dos de `PRIVATE CHARTER/AGREGAR`.
+    // Van en 4ª y 8ª posición y no al final, porque el final de esta lista es lo
+    // que solo se ve abriendo el visor y las dos son de las mejores del grupo:
+    // la mesa montada a bordo y el grupo en la proa.
+    // ⚠️ `tour-charter-11` es BYTE A BYTE la misma imagen que `ev-weddings-6`
+    // (mismo md5; el cliente puso `_MG_9277.jpg` en las carpetas de bodas y de
+    // charter a la vez). Sale, por tanto, en /events/weddings y aquí. Tiene
+    // sentido —una boda a bordo de un charter privado es las dos cosas— pero
+    // queda anotado por si algún día molesta verla repetida.
     galeriaCompleta: [
       'tour-charter-8',
       'tour-charter-6',
       'tour-charter-5',
+      'tour-charter-12',
       'tour-charter-1',
       'tour-charter-2',
       'tour-charter-3',
+      'tour-charter-11',
       'tour-charter-9',
       'tour-charter-4',
       'tour-charter-7',

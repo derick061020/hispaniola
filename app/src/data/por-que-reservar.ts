@@ -86,7 +86,14 @@ export const CONCEPTOS_SUELTOS: ConceptoSuelto[] = [
     nota: 'Boat, crew, drinks and appetizers',
     importe: 75,
     foto: 'hero-catamaran-1',
-    fotoAlt: 'Hispaniola catamaran sailing off the coast of Bávaro',
+    // [2026-08-23] El alt se reescribe con la 2ª entrega del cliente. El hueco
+    // `hero-catamaran-1` cambia de foto —ahora es la vista cenital de la
+    // plataforma flotante con los barcos fondeados sobre el arrecife— y el alt
+    // anterior («catamaran sailing off the coast of Bávaro») describía la
+    // anterior. Un alt que describe una foto que ya no está es peor que no
+    // tenerlo: lo lee quien no puede ver la imagen y no tiene cómo saber que
+    // miente.
+    fotoAlt: 'Aerial view of the Hispaniola floating platform and boats anchored over the reef',
   },
   {
     id: 'snorkel',

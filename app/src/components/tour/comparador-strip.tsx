@@ -14,6 +14,12 @@ import * as Button from '@/components/alignui/button'
 // esto no es una sección, es un badge de argumento de una línea — el mismo
 // estatus que el chip aqua de «Evento privado» del ticker. Si crece, deja de
 // estar amparado por ese precedente.
+// ⚠️ [2026-08-24] ESTE COMPONENTE NO SE MONTA EN NINGUN SITIO. Hoy la ficha
+// usa ComparadorPremium (pages/tour.tsx). Se deja aqui como estaba, pero OJO
+// antes de revivirlo: su CTA apunta a /why-book-direct, y esa pagina se retiro
+// de la navegacion el 2026-08-24 por decision de Samuel («no la vamos a
+// usar»). Montarlo tal cual devolveria a la web el enlace que se acaba de
+// quitar del footer. Si se recupera, cambiale el destino primero.
 export function ComparadorStrip() {
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 rounded-card bg-aqua-tint px-4 py-3 ring-1 ring-aqua/20">

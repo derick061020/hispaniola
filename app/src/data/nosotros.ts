@@ -70,7 +70,8 @@
 //      sustituye la entrada entera por alguien real que el cliente confirme, o
 //      se borra. Ver el flag `placeholder` en el tipo, más abajo.
 // Archivos: /public/fotos/equipo-{omar,lola,eva,capitan,biologa}.webp
-// (recorte transparente, object-fit: cover en la card). La foto de Eva se RESUSTITUYÓ el mismo día
+// (recorte transparente, object-fit: cover en la card). La foto de Blanka (el
+// archivo `equipo-eva`, ver su entrada) se RESUSTITUYÓ el mismo día
 // (2ª vuelta, pedido de Samuel: "la de eva se ve mas lejos y se ve mas cuerpo
 // completo, cosa que no deberia") — la primera elección quedaba de cuerpo
 // entero y lejana; la actual es un plano de busto con los brazos cruzados,
@@ -82,7 +83,7 @@
 //
 // 2ª vuelta (2026-07-22, pedido de Samuel): el teaser de la home pasa de 3 a
 // 5 cards para poder tener 3 niveles de altura en el efecto de scroll (con 3
-// cards solo hay sitio para 2: centro y extremos). Omar/Lola/Eva son las
+// cards solo hay sitio para 2: centro y extremos). Omar/Lola/Blanka son las
 // ÚNICAS personas confirmadas por el cliente (maqueta real, ver el comentario
 // de arriba) — inventar 2 nombres/cargos/quotes nuevos habría sido fabricar
 // personas que no existen. Las 2 de relleno NO son personas: reusan tal cual
@@ -191,13 +192,21 @@ export const EQUIPO: MiembroEquipo[] = [
     cta: { label: 'Our story', tipo: 'historia' },
   },
   {
+    // [2026-08-24, Samuel sobre la card de Contacto: «falta cambiar nombre de
+    // Eva a Blanka»] SE LLAMA BLANKA. ⚠️ El `id` sigue siendo 'eva' A PROPÓSITO:
+    // es una clave interna, no un nombre — la apuntan CONTACTO.persona.idEquipo
+    // (data/home.ts) y los 7 `autorId` del blog, y renombrarla no cambia ni un
+    // píxel. Todo lo que se LEE sale de `nombre`, así que con esta línea ya
+    // dicen Blanka la card de Contacto, el bloque de /about-us, el teaser de la
+    // home y las firmas del blog. Lo mismo con `foto`, que además es stock y
+    // hay que sustituir antes de producción (ver la nota de arriba).
     id: 'eva',
-    nombre: 'Eva',
+    nombre: 'Blanka',
     rol: 'Guest support',
     desde: '2018',
     quote: 'When you write in, I’m the one who answers. No bots. I’ll help you put together your perfect day.',
     foto: 'equipo-eva',
-    cta: { label: 'Chat with Eva', tipo: 'whatsapp' },
+    cta: { label: 'Chat with Blanka', tipo: 'whatsapp' },
   },
 ]
 

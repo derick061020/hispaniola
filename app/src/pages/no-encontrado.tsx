@@ -16,7 +16,12 @@ export function NoEncontradoPage() {
   return (
     <div>
       <Meta titulo="Page not found" descripcion="The page you’re looking for doesn’t exist." ruta="/404" indexable={false} />
-      <Header />
+      {/* [2026-08-24, barrido de enlaces] `ctaHref` EXPLICITO. Sin el, Header
+          cae en su default `#tours`, que es un ancla de la HOME — y esta
+          pagina no la tiene. Resultado: el boton coral «Book now» de la 404,
+          justo donde el visitante ya se ha perdido una vez, no hacia nada.
+          `/#tours` es lo que pasan las 18 internas via HeroInterna. */}
+      <Header ctaHref="/#tours" />
       <div className="grid min-h-[70svh] place-items-center px-5 text-center">
         <div>
           {/* [v3 F8 · QA 2026-08-07] El «404» pasa de <p> a <h1>: era la única

@@ -75,7 +75,11 @@ export const TIPS_GUIAS: TipGuia[] = [
     fotoAlt: 'The sailboat Maite sailing with the sail up at sunset',
     fotoPie: 'Maite · the sailboat in our fleet',
     stat: { valor: '50%', texto: 'of the trip under engine, because of the wind and the shallow water' },
-    ctaPrimario: { texto: 'See the Maite, our sailboat', to: '/nosotros' },
+    // [2026-08-24, barrido de enlaces] ERA `/nosotros`, doble fallo: (1) esa
+    // ruta ya solo es un <Navigate> a /crew, y (2) el destino final es la
+    // pagina de TRIPULACION, donde la Maite no sale. El velero vive en /fleet
+    // (FLOTA, data/nosotros.ts). Se ancla en #barcos, la rejilla de barcos.
+    ctaPrimario: { texto: 'See the Maite, our sailboat', to: '/fleet#barcos' },
   },
   {
     categoria: 'Safety',
@@ -99,7 +103,11 @@ export const TIPS_GUIAS: TipGuia[] = [
     fotoAlt: 'Seafood cocktail freshly prepared on board in the floating kitchen',
     fotoPie: 'Local seafood, seasoned in front of you',
     stat: { valor: 'Freshly caught', texto: 'local, not frozen or imported · cooked in front of you' },
-    ctaPrimario: { texto: 'Meet the floating kitchen', to: '/nosotros' },
+    // [2026-08-24, barrido de enlaces] MISMO FOSIL que el de la Maite: iba a
+    // /nosotros → /crew, y la cocina flotante no esta ahi. La cuenta
+    // CocinaTiempos, que solo monta /fleet (pages/flota.tsx). Sin ancla: esa
+    // seccion no tiene `id` propio.
+    ctaPrimario: { texto: 'Meet the floating kitchen', to: '/fleet' },
   },
 ]
 

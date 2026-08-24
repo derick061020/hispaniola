@@ -44,6 +44,7 @@ import type { MenuReserva } from '@/lib/menu-reserva'
 // aquí no es un adorno: es parte de lo que se está comprando, y quitar el paso
 // sin enseñarla en algún sitio sería esconder el producto.
 export function ResumenReserva({
+  className = '',
   tour,
   fechaISO,
   onFecha,
@@ -91,12 +92,14 @@ export function ResumenReserva({
   total: number
   deposito: number
   saldo: number
+  /** [2026-08-21] El funnel lo usa para el orden en móvil. Ver reservar.tsx. */
+  className?: string
 }) {
   const enEfectivo = Math.round(saldo * 0.95)
   const ahorro = saldo - enEfectivo
 
   return (
-    <div>
+    <div className={className}>
       {/* SIN `overflow-hidden` (2026-08-07): al entrar el calendario en la
           tarjeta, ese clip le cortaba el popover — el grid mensual es más ancho
           que la columna y perdía la columna del sábado. Las esquinas de abajo

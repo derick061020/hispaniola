@@ -73,8 +73,17 @@ export function FundacionPage() {
           Hoy los cuentan los cuatro datos del teaser de
           /competitive-advantage, que es contenido aprobado v3 — salvo el
           tercer vivero, que el propio cliente retiró. */}
+      {/* [2026-08-24, barrido de enlaces] `ctaHref` ERA `/competitive-advantage`.
+          Ese prop no alimenta ningun boton propio del hero: HeroInterna se lo
+          pasa tal cual a Header y a MenuMovil, donde es el CTA coral que dice
+          literalmente «Book now». Asi que en /foundation el boton de reservar
+          llevaba a la pagina de ventaja competitiva. Era la unica pagina del
+          sitio que se salia de `/#tours` sin ser una ficha (las fichas y las
+          landings de evento si lo cambian a proposito, a su propio widget).
+          Si se quiere empujar a /competitive-advantage desde aqui, eso es un
+          CTA de contenido con su texto, no el boton de reservar. */}
       <HeroInterna
-        ctaHref="/competitive-advantage"
+        ctaHref="/#tours"
         imagen={{
           src: '/fotos/arrecife-fondo-cenital.webp',
           alt: 'Overhead view of the turquoise water at Playa Bávaro',

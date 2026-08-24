@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { Link, Navigate, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { Check, ChevronDown } from 'lucide-react'
 import * as FancyButton from '@/components/alignui/fancy-button'
@@ -10,9 +10,10 @@ import { BannerPremium } from '@/components/reservar/banner-premium'
 import { PasoContacto } from '@/components/reservar/paso-contacto'
 import { PasoPago } from '@/components/reservar/paso-pago'
 import { ResumenReserva } from '@/components/reservar/resumen-reserva'
+import { BarraMovilReserva } from '@/components/reservar/barra-movil-reserva'
 import { etiquetaOcasion, type DatosCelebracion, type DatosContacto, type DatosRecogida, type Paquete } from '@/components/reservar/tipos'
 import { maxPersonasDe } from '@/components/tour/widget-reserva'
-import { TOURS, type Tour } from '@/data/home'
+import { formatoDinero, TOURS, type Tour } from '@/data/home'
 import { FICHAS, type FichaTour } from '@/data/tours'
 import { guardarReserva, generarCodigoReserva, type Reserva } from '@/lib/reservas'
 import { menuDeLaReserva } from '@/lib/menu-reserva'
@@ -260,6 +261,67 @@ function FlujoReserva({
     navigate(`/book/${tour.slug}/thank-you?codigo=${codigo}`)
   }
 
+  // [2026-08-21, auditoría móvil] LA ACCIÓN DEL PASO ACTIVO, EN UN SOLO SITIO.
+  // Hasta hoy cada sección se traía su propio botón dentro del acordeón, y en
+  // móvil eso significaba que el botón se iba de pantalla en cuanto la sección
+  // crecía (el paso de contacto mide ~1.100px con las píldoras de celebración
+  // abiertas). Describir aquí el CTA —texto, si está habilitado y qué hace—
+  // permite que la barra fija de abajo lo lleve sin duplicar ninguna regla:
+  // los botones de dentro y el de la barra leen EXACTAMENTE lo mismo, así que
+  // no pueden desincronizarse.
+  const ctaPaso: { texto: string; habilitado: boolean; accion: () => void } =
+    pasoActivo === 'contacto'
+      ? {
+          texto: 'Continue',
+          habilitado: contacto.nombre.trim() !== '' && contacto.email.trim() !== '',
+          accion: () => setPaso(siguienteDe('contacto')),
+        }
+      : pasoActivo === 'menu'
+        ? {
+            // Mismo copy que el botón de dentro: el menú dejó de ser obligatorio
+            // (2026-08-07), pero el texto tiene que decir que se avanza sin
+            // haber elegido — si no, se avanza creyendo que ya está hecho.
+            texto: platos.every((p) => p) ? 'Continue' : 'Continue and pick the menu later',
+            habilitado: true,
+            accion: () => setPaso(siguienteDe('menu')),
+          }
+        : pasoActivo === 'recogida'
+          ? {
+              texto: 'Continue',
+              habilitado: recogida.hotel.trim() !== '',
+              accion: () => setPaso(siguienteDe('recogida')),
+            }
+          : {
+              texto: `Pay deposit · ${formatoDinero(deposito)}`,
+              habilitado: fechaISO !== null,
+              accion: handlePagar,
+            }
+
+  // [2026-08-21, auditoría móvil] AL AVANZAR, LLEVAR AL PASO NUEVO. Pulsar
+  // «Continuar» abría la sección siguiente pero dejaba el scroll donde estaba:
+  // en móvil el acordeón recién abierto nacía por debajo del borde inferior de
+  // la pantalla, así que la respuesta visible al clic era que la sección de
+  // arriba se plegaba y no pasaba nada más. Ahora el paso nuevo sube al borde
+  // superior.
+  //
+  // ⚠️ Se guarda EL PASO ANTERIOR, no un booleano de «primer render». Con un
+  // booleano esto se rompe en desarrollo: `StrictMode` (main.tsx) monta y
+  // ejecuta los efectos DOS VECES, así que la primera pasada gastaba el flag y
+  // la segunda scrolleaba — al abrir el checkout la página aparecía ya bajada
+  // al paso 1, tapando justo la tarjeta del resumen que en móvil se pone la
+  // primera a propósito. Comparando el valor no hay nada que gastar: si el
+  // paso no ha cambiado, no se scrollea, se ejecute el efecto las veces que se
+  // ejecute.
+  const pasoPrevio = useRef(pasoActivo)
+  useEffect(() => {
+    if (pasoPrevio.current === pasoActivo) return
+    pasoPrevio.current = pasoActivo
+    document.getElementById(`paso-${pasoActivo}`)?.scrollIntoView({
+      block: 'start',
+      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+    })
+  }, [pasoActivo])
+
   // La FECHA ya la pinta el propio campo de calendario del resumen (con su hora
   // de salida), así que esta línea solo añade lo que allí no cabe: el regreso.
   const horarioTxt = horario
@@ -273,7 +335,10 @@ function FlujoReserva({
     // overflow-x-clip: recorta el ::after w-screen de la zona gris sin volverse
     // contenedor de scroll (a diferencia de overflow-hidden), así el sticky de
     // la derecha sigue funcionando.
-    <div className="flex min-h-screen flex-col overflow-x-clip bg-papel">
+    // [2026-08-21, auditoría móvil] pb reservado para BarraMovilReserva, con
+    // la misma fórmula que el resto del sitio: el hueco crece con la zona
+    // segura del iPhone, o el pie del checkout queda debajo de la barra.
+    <div className="flex min-h-screen flex-col overflow-x-clip bg-papel pb-[calc(4.5rem+env(safe-area-inset-bottom))] lg:pb-0">
       <Meta
         titulo={`Book · ${tour.nombre}`}
         descripcion={`Set up your ${tour.nombre}: pick each guest’s dish, the pickup and confirm with just a 25% deposit.`}
@@ -313,6 +378,7 @@ function FlujoReserva({
 
             <div className="flex flex-col gap-4">
               <SeccionPaso
+                id="contacto"
                 numero={indiceDe('contacto') + 1}
                 titulo={TITULOS.contacto}
                 estado={estadoDe('contacto')}
@@ -353,6 +419,7 @@ function FlujoReserva({
                   aparecía un paso 2 con la rejilla vacía. */}
               {hayPasoMenu && menu ? (
                 <SeccionPaso
+                  id="menu"
                   numero={indiceDe('menu') + 1}
                   titulo={TITULOS.menu}
                   estado={estadoDe('menu')}
@@ -385,6 +452,7 @@ function FlujoReserva({
               ) : null}
 
               <SeccionPaso
+                id="recogida"
                 numero={indiceDe('recogida') + 1}
                 titulo={TITULOS.recogida}
                 estado={estadoDe('recogida')}
@@ -406,7 +474,7 @@ function FlujoReserva({
                 />
               </SeccionPaso>
 
-              <SeccionPaso numero={indiceDe('pago') + 1} titulo={TITULOS.pago} estado={estadoDe('pago')}>
+              <SeccionPaso id="pago" numero={indiceDe('pago') + 1} titulo={TITULOS.pago} estado={estadoDe('pago')}>
                 <PasoPago
                   deposito={deposito}
                   saldo={saldo}
@@ -423,13 +491,24 @@ function FlujoReserva({
               qué compra, cuánto paga hoy ni el stepper de personas que ahora vive
               dentro. En desktop no cambia nada (lg:order-none). */}
           <div className="relative order-first bg-fondo-ficha px-5 py-8 sm:px-8 sm:py-10 lg:order-none lg:after:absolute lg:after:inset-y-0 lg:after:left-full lg:after:w-screen lg:after:bg-fondo-ficha lg:after:content-['']">
-            <div className="lg:sticky lg:top-6">
+            {/* [2026-08-21, auditoría móvil] `flex flex-col` + `order` para poder
+                INVERTIR el orden en móvil sin tocar el desktop. En desktop el
+                banner va arriba de la tarjeta, como pidió Samuel el 2026-08-07.
+                En móvil esa misma pila hacía que lo PRIMERO de todo el checkout
+                fuese un upsell negro a pantalla completa (medido: 550px, más de
+                media pantalla de un iPhone) — se pedía subir de plan antes de
+                haber visto qué se compra ni cuánto vale. Con el orden invertido
+                se lee en el orden natural: esto es lo que llevas, esto cuesta,
+                ¿lo quieres mejor? El banner sigue estando por encima del
+                formulario, que es lo que importa para que se vea. */}
+            <div className="flex flex-col lg:sticky lg:top-6">
               {/* Banner de upgrade ARRIBA de la tarjeta (2026-08-07, pedido de
                   Samuel). Solo con Light elegido y solo si el tour publica
                   upgrade y ventajas — en Premium desaparece porque ya no hay
                   nada que ofrecer, igual que la caja del widget de la ficha. */}
               {paquete === 'light' && ficha.upgradePremium !== null && ficha.ventajasPremium?.length ? (
                 <BannerPremium
+                  className="order-2 mt-4 lg:order-none lg:mt-0"
                   upgrade={ficha.upgradePremium}
                   personas={personas}
                   totalActual={total}
@@ -438,6 +517,7 @@ function FlujoReserva({
                 />
               ) : null}
               <ResumenReserva
+                className="order-1 lg:order-none"
                 tour={tour}
                 fechaISO={fechaISO}
                 onFecha={setFechaISO}
@@ -470,6 +550,15 @@ function FlujoReserva({
       <footer className="border-t border-linea py-6 text-center text-xs text-navy-soft">
         Hispaniola Aquatic Adventures · Secure direct booking · Free cancellation up to 7 days before
       </footer>
+
+      {/* Precio + acción del paso activo, siempre a la vista en móvil. */}
+      <BarraMovilReserva
+        deposito={deposito}
+        total={total}
+        texto={ctaPaso.texto}
+        habilitado={ctaPaso.habilitado}
+        onAccion={ctaPaso.accion}
+      />
     </div>
   )
 }
@@ -479,6 +568,7 @@ type EstadoSeccion = 'done' | 'activo' | 'pendiente'
 // Una sección del acordeón (columna izquierda). Activa = formulario expandido;
 // hecha = colapsada con su resumen + «Editar»; pendiente = cabecera en gris.
 function SeccionPaso({
+  id,
   numero,
   titulo,
   estado,
@@ -486,6 +576,8 @@ function SeccionPaso({
   resumen,
   children,
 }: {
+  /** Ancla del paso — el auto-scroll al avanzar la busca por `paso-${id}`. */
+  id: PasoId
   numero: number
   titulo: string
   estado: EstadoSeccion
@@ -495,7 +587,10 @@ function SeccionPaso({
 }) {
   return (
     <section
-      className={`overflow-hidden rounded-card-grande border bg-papel ${
+      id={`paso-${id}`}
+      // scroll-mt-4: el auto-scroll deja el paso pegado al borde superior; sin
+      // este respiro la card se lee como si estuviera cortada por arriba.
+      className={`scroll-mt-4 overflow-hidden rounded-card-grande border bg-papel ${
         estado === 'activo' ? 'border-linea-fuerte' : 'border-linea'
       }`}
     >
@@ -544,7 +639,13 @@ function Continuar({
   onClick: () => void
 }) {
   return (
-    <div className="mt-5">
+    // [2026-08-21, auditoría móvil] `max-lg:hidden`: por debajo de lg este
+    // botón NO se pinta — la acción del paso activo la lleva
+    // BarraMovilReserva, fija abajo. Con los dos a la vez habría dos
+    // «Continuar» idénticos en la misma pantalla, y este se va de vista en
+    // cuanto la sección crece. Los dos leen el MISMO descriptor (`ctaPaso`),
+    // así que no pueden decir cosas distintas.
+    <div className="mt-5 max-lg:hidden">
       <FancyButton.Root variant="primary" disabled={!habilitado} onClick={onClick}>
         {texto}
       </FancyButton.Root>

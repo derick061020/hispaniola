@@ -23,7 +23,7 @@
 // una nota honesta de "en redacción" en vez de fingir un cuerpo que no existe.
 // Cuando se escriban, basta con rellenar `cuerpo` y la página se completa sola.
 //
-// Autores: los del EQUIPO real (data/nosotros.ts) — Omar, Lola y Eva, los
+// Autores: los del EQUIPO real (data/nosotros.ts) — Omar, Lola y Blanka, los
 // mismos nombres que el propio cliente dio en sus maquetas.
 
 export type CategoriaBlog =

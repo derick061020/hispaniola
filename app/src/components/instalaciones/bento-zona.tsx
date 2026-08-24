@@ -65,6 +65,72 @@ import type { ZonaInstalacion } from '@/data/instalaciones'
 const FILAS_NORMAL = { gridTemplateRows: '0.85fr 1.15fr' } as CSSProperties
 const FILAS_ESPEJO = { gridTemplateRows: '1.15fr 0.85fr' } as CSSProperties
 
+// [2026-08-24, Samuel sobre el Operations Center: «como todas las imágenes y
+// videos son horizontales haz un bento de 4, para que todo entre horizontal»]
+// EL BENTO DE 4 CELDAS, para las zonas marcadas `todoApaisado`.
+//
+//     ┌──────────────────┬──────────┐
+//     │      VIDEO       │   foto   │
+//     ├──────────────────┼──────────┤
+//     │      foto        │   foto   │
+//     └──────────────────┴──────────┘
+//
+// El bento de 3 nace de tener un 9:16 que enseñar, y `videoApaisado` ya fue un
+// primer parche para las zonas cuyo CLIP es 16:9: el video bajaba a una celda
+// apilada y el hueco vertical lo tapaba una foto recortada. En el Operations
+// Center ese parche se quedó corto, porque ahí no es solo el clip — las tres
+// fotos de la carpeta son 3:2 apaisadas. La celda 9:16 estaba enseñando el
+// único recorte imposible de la zona: una sala vacía cortada a lo alto.
+//
+// Sin material vertical, la respuesta no es rellenar el hueco mejor: es no
+// tenerlo. Las 4 celdas salen de repartir la MISMA caja (mismo alto que las
+// otras zonas, que es lo que mantiene el bento a ras con su columna de texto)
+// en 2×2, y ninguna baja de 1:1 — la más estrecha queda en ~1.1:1 y la más
+// ancha en ~1.95:1, así que las fotos 3:2 y el clip 16:9 entran recortando por
+// donde sobra y no por donde está la sala.
+//
+// La ASIMETRÍA se mantiene por el mismo motivo que en el bento de 3 (si no,
+// son cuatro rectángulos iguales y deja de ser un bento) y se espeja igual:
+// la columna ancha se va al MARGEN EXTERIOR de la página y el escalón de las
+// filas se invierte, así el zigzag de la sección se sigue dibujando.
+// [2026-08-24, 2ª vuelta de Samuel: «aun se achican un poco, se puede mantener
+// el aspect ratio de las imagenes? con el que vienen, solo para este bento 05»]
+// AQUI MANDA EL MATERIAL, NO LA CELDA.
+//
+// La primera versión del bento de 4 repartía la caja en 2×2 con fracciones
+// elegidas a mano (1.3fr/1fr × 1.15fr/0.85fr) y metía las fotos ahí con
+// object-cover. Ya no cortaba a lo alto, que era el problema gordo, pero seguía
+// cortando: celdas de 1.16:1 y 2.03:1 para fotos de 1.5:1. Se comía los lados.
+//
+// No hace falta, porque esta zona tiene el material MAS uniforme de la página:
+// las tres fotos vienen en 3:2 y el clip en 16:9 exacto. Asi que las celdas
+// dejan de ser un molde y pasan a ser el resultado.
+//
+// LA MECANICA es la de una galería justificada, y sale de una sola regla: en
+// una fila flex donde cada celda lleva su `aspect-ratio` y crece con
+// `flex-grow = esa misma proporcion` (con `flex-basis: 0`), TODAS las celdas de
+// la fila acaban con el mismo alto y ninguna se deforma. El ancho se reparte
+// solo, el hueco se descuenta solo, y el alto de cada fila lo dicta el ancho
+// disponible:
+//
+//     ┌────────────────────┬──────────────┐   fila 1: 16/9 + 3/2
+//     │     VIDEO 16:9     │   foto 3:2   │   → alto = (ancho - hueco) / 3.28
+//     ├──────────────────┬─┴──────────────┤
+//     │    foto 3:2      │   foto 3:2     │   fila 2: 3/2 + 3/2
+//     └──────────────────┴────────────────┘   → alto = (ancho - hueco) / 3
+//
+// Y de ahi sale, gratis, lo que antes se buscaba a mano: las dos filas NO miden
+// lo mismo de alto y la linea vertical de la fila de arriba no cae donde la de
+// abajo. Sigue siendo un bento, pero la asimetría ya no es una decision
+// arbitraria — es la forma que tienen las fotos.
+//
+// ⚠️ ESTE ES EL UNICO BENTO SIN ALTO FIJO. No lleva `h-bento-zona-alto` porque
+// el alto es consecuencia del ancho; a 1440px da ~406px contra los 416px de sus
+// hermanas, diferencia invisible con la fila centrada (`items-center`). Si
+// alguien vuelve a poner un alto aqui, las fotos se recortan otra vez.
+const CRECE_16_9 = { flexGrow: 16 / 9, flexBasis: 0 } as CSSProperties
+const CRECE_3_2 = { flexGrow: 3 / 2, flexBasis: 0 } as CSSProperties
+
 export function BentoZona({ zona, espejo = false }: { zona: ZonaInstalacion; espejo?: boolean }) {
   const [lightbox, setLightbox] = useState<number | null>(null)
   const [verVideo, setVerVideo] = useState(false)
@@ -78,8 +144,13 @@ export function BentoZona({ zona, espejo = false }: { zona: ZonaInstalacion; esp
   // se pintan en el bento y al final las que SOLO viven en el visor.
   // ⚠️ Los índices que se pasan a `setLightbox` son índices DE ESTA lista, no
   // de `zona.fotos`: con `videoApaisado` las dos se desplazan una posición.
+  // ⚠️ Con `todoApaisado` la vertical NO entra: ya no pinta celda, y en el
+  // visor sería el mismo rincón que su versión apaisada, la misma sala dos
+  // veces. Ahí los índices de `todas` son directamente los de `zona.fotos`.
   const todas = [
-    ...(zona.videoApaisado && zona.fotoVertical ? [zona.fotoVertical] : []),
+    ...(zona.videoApaisado && zona.fotoVertical && !zona.todoApaisado
+      ? [zona.fotoVertical]
+      : []),
     ...zona.fotos,
     ...(zona.fotosExtra ?? []),
   ]
@@ -88,7 +159,7 @@ export function BentoZona({ zona, espejo = false }: { zona: ZonaInstalacion; esp
   // gustaría que se haga referencia a que hay más». De ahí el «+N».
   const deMas = zona.fotosExtra?.length ?? 0
 
-  const celdaFoto = (indice: number, contador = false) => {
+  const celdaFoto = (indice: number, contador = false, clases = '', estilo?: CSSProperties) => {
     const f = todas[indice]
     if (!f) return null
     const avisa = contador && deMas > 0
@@ -105,7 +176,8 @@ export function BentoZona({ zona, espejo = false }: { zona: ZonaInstalacion; esp
             ? `Open all ${todas.length} photos of the ${zona.nombre}`
             : `Open photo ${indice + 1} of ${todas.length} of the ${zona.nombre}`
         }
-        className="group relative min-h-0 overflow-hidden rounded-card bg-papel-hueso"
+        style={estilo}
+        className={`group relative min-h-0 overflow-hidden rounded-card bg-papel-hueso ${clases}`}
       >
         <img
           src={`/fotos/${f.src}.webp`}
@@ -129,7 +201,7 @@ export function BentoZona({ zona, espejo = false }: { zona: ZonaInstalacion; esp
   // El botón del video. Vive en la celda 9:16 cuando el clip es vertical y en
   // una celda apilada cuando es 16:9 (`videoApaisado`) — es el MISMO contenido
   // en las dos, solo cambia de hueco, así que se escribe una vez.
-  const celdaVideo = (clases: string) => (
+  const celdaVideo = (clases: string, estilo?: CSSProperties) => (
     <button
       type="button"
       onClick={(e) => {
@@ -137,6 +209,7 @@ export function BentoZona({ zona, espejo = false }: { zona: ZonaInstalacion; esp
         setVerVideo(true)
       }}
       aria-label={`Watch the video: ${zona.vertical.titulo}`}
+      style={estilo}
       className={`group relative overflow-hidden bg-navy ${clases}`}
     >
       {/* Bucle mudo = cartel animado (los navegadores no autoreproducen
@@ -200,44 +273,69 @@ export function BentoZona({ zona, espejo = false }: { zona: ZonaInstalacion; esp
     )
   }
 
+  // Las filas se leen al revés cuando el bento abre a la derecha, así el video
+  // —la celda más ancha— se va al MARGEN EXTERIOR de la página igual que el
+  // vertical en el bento de 3.
+  const fila = `flex gap-bento-hueco ${espejo ? 'flex-row-reverse' : ''}`
+
+  const bento = zona.todoApaisado ? (
+    <div className="flex flex-col gap-bento-hueco">
+      <div className={fila}>
+        {/* El video va con la foto y no solo en su fila: a lo ancho del bento
+            un 16:9 mediría ~350px de alto y dejaría las tres fotos en una
+            tira de 137px. */}
+        {celdaVideo('aspect-video min-w-0 rounded-card-grande', CRECE_16_9)}
+        {celdaFoto(0, false, 'aspect-[3/2] min-w-0', CRECE_3_2)}
+      </div>
+      <div className={fila}>
+        {celdaFoto(1, false, 'aspect-[3/2] min-w-0', CRECE_3_2)}
+        {/* El «+N» sigue colgando de la última celda por si la zona vuelve a
+            tener `fotosExtra`; hoy el Operations Center las enseña todas. */}
+        {celdaFoto(2, true, 'aspect-[3/2] min-w-0', CRECE_3_2)}
+      </div>
+    </div>
+  ) : (
+    /* La FILA manda el alto y las tres celdas lo copian (h-full / min-h-0),
+       así el bento tiene un solo alto que gobernar en cada breakpoint. */
+    <div
+      className={`flex h-bento-zona-alto-movil gap-bento-hueco lg:h-bento-zona-alto ${
+        espejo ? 'flex-row-reverse' : ''
+      }`}
+    >
+      {celdaGrande()}
+
+      <div
+        className="grid min-w-0 flex-1 gap-bento-hueco"
+        style={espejo ? FILAS_ESPEJO : FILAS_NORMAL}
+      >
+        {/* Con el video apaisado la primera celda apilada ES el video: ya es
+            horizontal, así que el clip entra sin recortarse. La foto vertical
+            de la zona se ha ido arriba, a la celda 9:16. */}
+        {zona.videoApaisado ? celdaVideo('min-h-0 rounded-card') : celdaFoto(0)}
+        {/* La celda del 360°. Ausencia silenciosa mientras no haya material:
+            la ocupa la última foto visible de la zona, que además es la que
+            lleva el «+N» cuando hay más en el visor. */}
+        {zona.tour360 ? (
+          <a
+            href={zona.tour360}
+            className="group relative grid min-h-0 place-items-center overflow-hidden rounded-card bg-navy text-white"
+          >
+            <span className="rounded-chip bg-white/15 px-3 py-1 text-xs font-semibold ring-1 ring-white/30 backdrop-blur-sm transition-transform duration-300 group-hover:scale-110">
+              Recorre en 360°
+            </span>
+          </a>
+        ) : (
+          // Siempre el índice 1: sin video apaisado es `fotos[1]`, y con él
+          // es `fotos[0]`, porque la vertical ocupa el 0 de `todas`.
+          celdaFoto(1, true)
+        )}
+      </div>
+    </div>
+  )
+
   return (
     <>
-      {/* La FILA manda el alto y las tres celdas lo copian (h-full / min-h-0),
-          así el bento tiene un solo alto que gobernar en cada breakpoint. */}
-      <div
-        className={`flex h-bento-zona-alto-movil gap-bento-hueco lg:h-bento-zona-alto ${
-          espejo ? 'flex-row-reverse' : ''
-        }`}
-      >
-        {celdaGrande()}
-
-        <div
-          className="grid min-w-0 flex-1 gap-bento-hueco"
-          style={espejo ? FILAS_ESPEJO : FILAS_NORMAL}
-        >
-          {/* Con el video apaisado la primera celda apilada ES el video: ya es
-              horizontal, así que el clip entra sin recortarse. La foto vertical
-              de la zona se ha ido arriba, a la celda 9:16. */}
-          {zona.videoApaisado ? celdaVideo('min-h-0 rounded-card') : celdaFoto(0)}
-          {/* La celda del 360°. Ausencia silenciosa mientras no haya material:
-              la ocupa la última foto visible de la zona, que además es la que
-              lleva el «+N» cuando hay más en el visor. */}
-          {zona.tour360 ? (
-            <a
-              href={zona.tour360}
-              className="group relative grid min-h-0 place-items-center overflow-hidden rounded-card bg-navy text-white"
-            >
-              <span className="rounded-chip bg-white/15 px-3 py-1 text-xs font-semibold ring-1 ring-white/30 backdrop-blur-sm transition-transform duration-300 group-hover:scale-110">
-                Recorre en 360°
-              </span>
-            </a>
-          ) : (
-            // Siempre el índice 1: sin video apaisado es `fotos[1]`, y con él
-            // es `fotos[0]`, porque la vertical ocupa el 0 de `todas`.
-            celdaFoto(1, true)
-          )}
-        </div>
-      </div>
+      {bento}
 
       {lightbox !== null ? (
         <GaleriaLightbox

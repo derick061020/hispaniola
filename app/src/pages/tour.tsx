@@ -115,7 +115,7 @@ export function TourPage() {
     // BarraMovilFicha ahora crece con la zona segura del iPhone — el padding
     // reservado aquí tiene que crecer igual o el final de la página queda
     // tapado en un iPhone con home indicator.
-    <div className="pb-[calc(4rem+env(safe-area-inset-bottom))] md:pb-0">
+    <div className="pb-[calc(4rem+env(safe-area-inset-bottom))] lg:pb-0">
       <Meta titulo={tour.nombre} descripcion={tour.descripcionCorta} ruta={`/tours/${tour.slug}`} />
       <SchemaJsonLd datos={schemaTour(tour, ficha)} />
       {ficha.faqTour.length > 0 ? <SchemaJsonLd datos={schemaFaq(ficha.faqTour)} /> : null}
@@ -316,14 +316,26 @@ export function TourPage() {
                   componente) para que `ui/reels-sociales.tsx` siga sin saber
                   nada de la ficha. `conHashtag={false}`: aquí no se invita a
                   irse a Instagram a media decisión de compra. */}
+              {/* [2026-08-24, UPDATES 08/22 del cliente] LA CABECERA YA NO SE
+                  PASA A MANO: se HEREDA del componente, que es donde vive el
+                  copy nuevo del cliente («This is what your day in the
+                  Caribbean looks like» + «Real moments, real people, real
+                  Caribbean…»).
+
+                  Antes esta llamada repetía a mano el título y la bajada, y
+                  eso fue exactamente lo que dejó la ficha desincronizada: al
+                  cambiar la cabecera de la home, las 4 rutas de tour se
+                  quedaron con el título viejo sobre los pies nuevos —los pies
+                  sí son compartidos, salen del array REELS—. Heredando, la
+                  cabecera tiene UN solo sitio y no puede volver a divergir.
+
+                  `variante="bloque"` y `conHashtag={false}` SÍ se quedan
+                  explícitos: son de esta página, no del copy. El segundo está
+                  además argumentado arriba (aquí no se invita a irse a
+                  Instagram a media decisión de compra) y dejarlo escrito lo
+                  protege de un cambio de defecto. */}
               <div className={BLOQUE_FICHA}>
-                <ReelsSociales
-                  variante="bloque"
-                  conHashtag={false}
-                  eyebrow="On video"
-                  titulo="This is what a day with us looks like"
-                  lead="Clips from on board and from our guests, the tour before the tour."
-                />
+                <ReelsSociales variante="bloque" conHashtag={false} />
               </div>
 
               <OpinionesTour tour={tour} />

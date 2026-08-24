@@ -38,7 +38,18 @@ export function PasoPago({
         </p>
       ) : null}
 
-      <FancyButton.Root variant="primary" className="w-full" disabled={!fechaElegida} onClick={onPagar}>
+      {/* [2026-08-21, auditoría móvil] `max-lg:hidden` — igual que el
+          «Continuar» de los otros pasos: en móvil el botón de pagar vive en
+          BarraMovilReserva, fija abajo y con el importe del depósito al lado.
+          Lo que SÍ se queda visible en móvil es lo de alrededor: el aviso de
+          que falta la fecha y la línea de pago seguro, que es la reassurance
+          copy del instante de pagar. */}
+      <FancyButton.Root
+        variant="primary"
+        className="w-full max-lg:hidden"
+        disabled={!fechaElegida}
+        onClick={onPagar}
+      >
         Pay deposit · {formatoDinero(deposito)}
       </FancyButton.Root>
 

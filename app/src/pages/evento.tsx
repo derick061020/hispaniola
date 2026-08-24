@@ -10,6 +10,7 @@ import { QueOfrecemos } from '@/components/evento/que-ofrecemos'
 import { IncluyeEvento } from '@/components/evento/incluye-evento'
 import { PaquetesEvento } from '@/components/evento/paquetes-evento'
 import { OtrasOcasiones } from '@/components/evento/otras-ocasiones'
+import { BarraMovilEvento } from '@/components/evento/barra-movil-evento'
 import { GaleriaMosaico } from '@/components/internas/galeria-mosaico'
 import { VideoAcompanante } from '@/components/tour/video-acompanante'
 import * as Accordion from '@/components/alignui/accordion'
@@ -70,8 +71,18 @@ export function EventoPage() {
   // dato no pueden tener cada una el suyo.
   // Arranca en el primero con precio (el Premium), igual que arrancaba el
   // useState que vivía dentro de la calculadora.
+  //
+  // ⚠️ [2026-08-24] SALVO EN MODO ESCAPARATE, donde arranca VACÍO. Pre-elegir
+  // un paquete tiene sentido cuando hay una calculadora al lado que enseña SU
+  // total; en MICE no la hay, así que la card del Premium salía marcada
+  // «Selected» nada más cargar sin que nadie hubiera elegido nada y sin que
+  // esa marca significara algo. Sin preselección, «Selected» vuelve a querer
+  // decir «esto es lo que he elegido», y al pulsar se baja al formulario de
+  // cotización, que es donde se sigue.
   const [paquete, setPaquete] = useState<string | null>(
-    evento?.paquetes?.items.find((p) => p.precioBase !== null)?.id ?? null,
+    evento?.paquetes?.soloEscaparate
+      ? null
+      : (evento?.paquetes?.items.find((p) => p.precioBase !== null)?.id ?? null),
   )
 
   // Elegir desde la izquierda (las cards) tiene una diferencia con elegirlo
@@ -102,7 +113,13 @@ export function EventoPage() {
   if (!evento) return <Navigate to="/" replace />
 
   return (
-    <div>
+    // [2026-08-21, auditoría móvil] pb reservado para BarraMovilEvento, con la
+    // misma fórmula que la home y la ficha de tour: si el hueco no crece con
+    // `env(safe-area-inset-bottom)`, en un iPhone con home indicator el final
+    // de «Otras ocasiones» queda debajo de la barra. Se abre en `lg` porque es
+    // ahí donde el widget de la columna derecha se vuelve sticky y releva a la
+    // barra.
+    <div className="pb-[calc(4rem+env(safe-area-inset-bottom))] lg:pb-0">
       <Meta titulo={evento.titulo} descripcion={evento.sub} ruta={`/events/${slug}`} />
 
       {/* HeroInterna compartido con la home y la ficha de tour — mismo
@@ -208,6 +225,23 @@ export function EventoPage() {
                   argumento MICE del cliente es el barco, asi que se enseña
                   antes que los formatos de evento que caben en el. Solo la
                   trae corporativo. */}
+              {/* [2026-08-24, Samuel: «en MICE los paquetes hay que subirlos, van
+                  debajo de la sección que nombra al barco karaya»] LOS PAQUETES
+                  CAMBIAN DE SITIO, PERO SOLO EN MICE.
+
+                  La lectura anterior de la petición del cliente (UPDATES 08/22,
+                  pág. 6: «agregar los paquetes debajo de KARAYA») se conformó con
+                  que cayeran más abajo en la página —entre medias quedaban
+                  «What we offer» y «What's included»— para no reordenar una
+                  plantilla que comparten las tres landings. No era eso: «debajo
+                  de Karaya» es PEGADO a Karaya.
+
+                  La condición es `barcoInsignia` y no el slug: es el único dato
+                  que tiene MICE y no tienen las otras dos (data/eventos.ts), y
+                  además dice el porqué —los paquetes siguen al barco que los
+                  sirve— en vez de codificar un nombre de landing. Bodas y party
+                  boat no se enteran: los suyos se quedan donde estaban, tras
+                  «What's included». */}
               {evento.barcoInsignia ? (
                 <section className={BLOQUE_FICHA}>
                   <div className="grid gap-4 lg:grid-cols-[1.1fr_1fr] lg:items-center lg:gap-6">
@@ -238,15 +272,23 @@ export function EventoPage() {
                 </section>
               ) : null}
 
+              {/* Paquetes, sitio 1 de 2: pegados al barco insignia (MICE). */}
+              {evento.barcoInsignia ? (
+                <PaquetesEvento evento={evento} elegido={paquete} onElegir={elegirPaquete} />
+              ) : null}
+
               <QueOfrecemos evento={evento} />
               <IncluyeEvento evento={evento} />
 
-              {/* Paquetes (party-boat y bodas — comparten el mismo array,
-                  ver PAQUETES_COMIDA en data/eventos.ts). Misma card
-                  soft-UI que el resto, con 4 cards (Premium destacado + 3
-                  paquetes estándar). Se pinta SOLO si el evento tiene
-                  `paquetes` en data, así que MICE no lo lleva. */}
-              <PaquetesEvento evento={evento} elegido={paquete} onElegir={elegirPaquete} />
+              {/* Paquetes, sitio 2 de 2: party-boat y bodas, que comparten el
+                  mismo array (ver PAQUETES_COMIDA en data/eventos.ts). Misma
+                  card soft-UI que el resto, con 4 cards (Premium destacado + 3
+                  paquetes estándar). El componente ya se pinta SOLO si el
+                  evento tiene `paquetes` en data; la condición de aquí es la
+                  del SITIO, no la de si hay paquetes. */}
+              {evento.barcoInsignia ? null : (
+                <PaquetesEvento evento={evento} elegido={paquete} onElegir={elegirPaquete} />
+              )}
 
               {/* FAQ — solo si hay preguntas. La web del cliente de
                   party boat NO tenía FAQ propia, así que su landing
@@ -323,7 +365,15 @@ export function EventoPage() {
                   Ahora bajan DENTRO —justo bajo el contador de invitados, que
                   es lo que dispara el regalo, y pegados al desglose que lo
                   descuenta—: se pasa el dato en vez de anunciarlo aparte. */}
-              {evento.paquetes ? (
+              {/* [2026-08-24] LA RESERVA ONLINE YA NO CUELGA DE `paquetes` A
+                  SECAS. Cuando MICE estrenó el bloque de paquetes (UPDATES
+                  08/22, pág. 6) heredaba de rebote la calculadora con depósito
+                  del 25%, que es justo lo que Samuel había decidido NO darle el
+                  2026-07-28: un incentivo de 300 pax en convoy no tiene tarifa
+                  cerrada. Con `soloEscaparate` la landing enseña los paquetes y
+                  se queda en cotización. Ver el JSDoc del campo en
+                  data/eventos.ts. */}
+              {evento.paquetes && !evento.paquetes.soloEscaparate ? (
                 <CalculadoraEvento
                   paquetes={evento.paquetes.items}
                   elegido={paquete}
@@ -336,7 +386,14 @@ export function EventoPage() {
                   tiene la reserva online — si no hay calculadora (MICE), el
                   formulario ES el widget y sería absurdo esconderlo. Ver el
                   porqué en widget-evento.tsx. */}
-              <WidgetEvento evento={evento} colapsable={Boolean(evento.paquetes)} />
+              {/* El formulario se pliega SOLO cuando encima tiene la reserva
+                  online. En modo escaparate no hay nada que lo releve, así que
+                  se queda desplegado: es el único camino de conversión que
+                  tiene la landing corporativa. */}
+              <WidgetEvento
+                evento={evento}
+                colapsable={Boolean(evento.paquetes && !evento.paquetes.soloEscaparate)}
+              />
             </div>
           </div>
         </div>
@@ -348,6 +405,11 @@ export function EventoPage() {
       <OtrasOcasiones slugActual={evento.slug} />
 
       <Footer />
+
+      {/* CTA persistente en móvil — el equivalente de BarraMovilFicha en las
+          fichas de tour. Va fuera del flujo, al final, por el mismo motivo que
+          allí: es cromo de la página, no una sección más. */}
+      <BarraMovilEvento evento={evento} />
     </div>
   )
 }

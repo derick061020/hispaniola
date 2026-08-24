@@ -8,8 +8,26 @@
 //
 // ✅ EL COPY DE LAS 6 ZONAS ES REAL: lo escribió el cliente en su PowerPoint
 // (slides 46-49). Es la parte más valiosa de esas slides y se usa tal cual.
-// También son suyos los pies de los verticales («Así te recibimos», «Dentro
-// del laboratorio», «La cocina en acción»…) y el copy de las bandas de CTA.
+// También son suyos el copy de las bandas de CTA y —hasta la ronda del 08/22—
+// los pies de los verticales.
+//
+// ⚠️ [2026-08-24, UPDATES 08/22 del cliente, pág. 4] LOS 5 PIES SON OTROS. El
+// cliente los reescribe enteros y los da literales: «Your adventure starts
+// here» (recepción), «Bringing corals back to life» (laboratorio), «Caribbean
+// flavors in action» (cocina), «Take paradise home» (tienda) y «Making it all
+// happen» (oficina). Siguen siendo copy suyo, solo que de esta ronda y no del
+// PowerPoint de las slides 46-49.
+//
+// Dos cosas que cambian de naturaleza y conviene tener presentes:
+//   · Con esto se cae «Así te recibimos», que era el ÚNICO texto en ESPAÑOL
+//     que quedaba visible en una web íntegramente en inglés (salía dos veces
+//     por página: en la card del carril y en la celda del bento). Los otros
+//     cuatro ya se habían traducido en su momento y éste se quedó atrás.
+//   · Los pies nuevos son AFIRMACIONES DE MARCA, no descripciones de lo que se
+//     ve en el clip, que es lo que hacían los viejos («A walk through the
+//     shop»). Con cuatro de los cinco vídeos ya reales no molesta; en la
+//     tienda, cuyo vídeo sigue siendo el catamarán de relleno, «Take paradise
+//     home» promete una tienda que el clip todavía no enseña.
 //
 // ⚠️ LA MEDIA ES PLACEHOLDER. No hay ni una foto de las instalaciones en tierra
 // en el repo. Decisión de Samuel (2026-07-27): la página se construye igual,
@@ -84,8 +102,17 @@ export type ZonaInstalacion = {
    *  9:16 lo ocupa `fotoVertical`. Recortar un 16:9 a vertical se comia los
    *  lados de la sala. Pedido de Samuel, 2026-08-21. */
   videoApaisado?: boolean
-  /** La foto que ocupa el hueco 9:16 cuando `videoApaisado`. */
+  /** La foto que ocupa el hueco 9:16 cuando `videoApaisado`. Con
+   *  `todoApaisado` ese hueco ya no existe en el bento y esta foto sobrevive
+   *  SOLO como cartel de la card del carril de verticales, que sigue siendo
+   *  9:16 (ver VERTICALES_INSTALACIONES al pie). */
   fotoVertical?: FotoZona
+  /** TODO el material de la zona es apaisado —las fotos de la carpeta y el
+   *  clip— asi que el bento pasa de 3 celdas a 4 y ninguna es vertical. Pedido
+   *  de Samuel, 2026-08-24, sobre el Operations Center: «como todas las
+   *  imagenes y videos son horizontales haz un bento de 4, para que todo entre
+   *  horizontal». Implica `videoApaisado`; ver bento-zona.tsx. */
+  todoApaisado?: boolean
   /** Las celdas apiladas del bento. Con `videoApaisado` solo hay UNA, porque la
    *  otra se la queda el video. */
   fotos: FotoZona[]
@@ -208,7 +235,7 @@ export const ZONAS: ZonaInstalacion[] = [
     ],
     // ⚠️ ZONA DE VIDEO APAISADO — ver `videoApaisado` en el tipo.
     videoApaisado: true,
-    vertical: { ...V_RECIBIMIENTO, titulo: 'Así te recibimos' },
+    vertical: { ...V_RECIBIMIENTO, titulo: 'Your adventure starts here' },
     fotoVertical: {
       src: 'instalacion-recibimiento-vertical',
       alt: 'Inside the Guest Welcome Center: long wooden counters, stools and the reef information panels',
@@ -244,7 +271,7 @@ export const ZONAS: ZonaInstalacion[] = [
       'Interactive coral museum',
     ],
     cierre: 'Real conservation. Real scientists. Real impact.',
-    vertical: { ...V_BIOLOGIA, titulo: 'Inside the lab' },
+    vertical: { ...V_BIOLOGIA, titulo: 'Bringing corals back to life' },
     fotos: [
       {
         src: 'galeria-snorkel-lovers-9',
@@ -269,7 +296,7 @@ export const ZONAS: ZonaInstalacion[] = [
       'Large cold-storage facilities',
       'Daily quality control',
     ],
-    vertical: { ...V_COCINAS, titulo: 'The kitchen in action' },
+    vertical: { ...V_COCINAS, titulo: 'Caribbean flavors in action' },
     fotos: [
       // ⚠️ NI cocina-flotante NI plato-mariscos, que eran los candidatos
       // obvios: la primera es la cocina A BORDO (otra cosa distinta de las
@@ -313,7 +340,7 @@ export const ZONAS: ZonaInstalacion[] = [
       'Every purchase supports conservation',
     ],
     cierre: 'Your souvenir helps protect the ocean you came to enjoy.',
-    vertical: { ...V_CATAMARAN, titulo: 'A walk through the shop' },
+    vertical: { ...V_CATAMARAN, titulo: 'Take paradise home' },
     fotos: [
       {
         src: 'bar-flotante',
@@ -343,18 +370,51 @@ export const ZONAS: ZonaInstalacion[] = [
     // señaló el welcome center, pero el clip del Operations Center también es
     // 16:9 y el motivo para intercambiar es idéntico.
     videoApaisado: true,
-    vertical: { ...V_OFICINAS, titulo: 'A day at the offices' },
+    vertical: { ...V_OFICINAS, titulo: 'Making it all happen' },
+    // [2026-08-23, 2ª entrega del cliente] SE REPARTE LA ZONA DE NUEVO.
+    // Petición literal: «cambiar foto, no achicar ni colocar vertical», con la
+    // flecha sobre la celda alta. Y además borró de su carpeta
+    // `IMG_8815-HDR.jpg`, que era justo la foto que ocupaba esa celda — con la
+    // regla de siempre (en la web solo lo que está en la carpeta), tenía que
+    // salir igualmente.
+    //
+    // De las tres fotos que quedan en OPERATON CENTER, solo UNA tiene gente:
+    // `IMG_8994-HDR` (la oficina con las tres compañeras trabajando). Las otras
+    // dos son la sala vacía. Así que la que tiene gente se lleva la celda
+    // ANCHA, donde se ve apaisada y entera —que es lo que pedía el cliente—, y
+    // la celda alta 9:16 la ocupa un rincón vacío recortado en vertical:
+    // recortar una sala sin nadie no cuesta nada, recortar la foto con las tres
+    // personas sí.
+    //
+    //
+    // [2026-08-24, Samuel: «como todas las imágenes y videos son horizontales
+    // haz un bento de 4, para que todo entre horizontal»] EL REPARTO DE ARRIBA
+    // SE DESHACE. Era correcto salvo en una cosa: daba por buena la celda 9:16.
+    // Y esta zona no tiene NADA vertical que meter ahí — las tres fotos de la
+    // carpeta son 3:2 apaisadas y el clip es 16:9. Lo que se veía en esa celda
+    // era el resultado de recortar una sala a la fuerza: un aire
+    // acondicionado, un perchero y una estantería, sin oficina y sin nadie.
+    //
+    // Con `todoApaisado` el bento pasa a 4 celdas y cada pieza entra en su
+    // formato: el clip, las tres fotos, y ya no hay `fotosExtra` porque no
+    // queda ninguna escondida (de ahí que desaparezca el «+1»).
+    // `instalacion-oficinas-2` VUELVE —es 8812 apaisada, la 4ª celda— y
+    // `fotoVertical` se queda SOLO como cartel de la card del carril, que
+    // sigue siendo 9:16.
+    todoApaisado: true,
     fotoVertical: {
       src: 'instalacion-oficinas-vertical',
-      alt: 'A member of the office team at her desk in the Operations Center',
+      alt: 'A corner of the Operations Center with the shelving and the notice board',
     },
     fotos: [
       {
-        src: 'instalacion-oficinas-2',
-        alt: 'A workstation at the Operations Center, with the notice board and the shelving',
+        src: 'instalacion-oficinas-4',
+        alt: 'The office team at their desks in the Operations Center',
       },
-    ],
-    fotosExtra: [
+      {
+        src: 'instalacion-oficinas-2',
+        alt: 'A workstation in the Operations Center, with the planning board and the shelving',
+      },
       {
         src: 'instalacion-oficinas-3',
         alt: 'The briefing room of the Operations Center, with the planning boards',

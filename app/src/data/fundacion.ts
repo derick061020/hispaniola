@@ -278,15 +278,19 @@ export const FUNDACION = {
       claim: 'Conservation succeeds when communities succeed.',
       texto:
         'We work alongside local fishermen, promoting sustainable practices and creating opportunities that align livelihoods with long-term marine conservation.',
-      // [2026-08-20] Foto REAL, de la entrega del cliente. El hueco anterior
-      // ensenaba a alguien esnorkeleando entre peces bajo el titular «Working
-      // with Local Fishermen»: no habia ningun pescador.
-      // ⚠️ VUELVE LA FOTO ANTERIOR (Samuel, 2026-08-21: «si había una imagen
-      // anterior ahí puesta, deja la que estaba»). El 20 metí aquí el
-      // pescador de `RESTORING MARINE.jpg`, pero ese archivo es de la sección
-      // de biodiversidad, no de esta.
-      foto: 'galeria-semi-privado-4',
-      fotoAlt: 'Guest snorkeling among sergeant major fish over the reef',
+      // [2026-08-23, 2ª entrega del cliente] POR FIN LA FOTO DE ESTA SECCIÓN.
+      // Historia corta de este hueco: el 20 se le puso el pescador de
+      // `RESTORING MARINE.jpg` y Samuel lo devolvió a biodiversidad el 21,
+      // porque ese archivo es de allí; el hueco se quedó con la de snorkel
+      // que tenía —sin un solo pescador dentro, bajo el titular «Working with
+      // Local Fishermen»—, a la espera de material.
+      // Ahora el cliente manda `WORKING WITH LOCAL FISHERMEN.jpg`, nombrado
+      // con el título exacto de la sección, que es la convención de toda su
+      // carpeta. Es la foto institucional del acuerdo: la comunidad pesquera
+      // con la Armada y el equipo, en el centro de interpretación.
+      foto: 'fundacion-pescadores',
+      fotoAlt:
+        'The Hispaniola team with local fishermen, the Navy and authorities at the marine interpretation centre',
       contexto: true,
     },
     {

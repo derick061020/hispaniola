@@ -820,6 +820,31 @@
   animation: titulo-ola-fluye var(--titulo-subrayado-duracion) linear infinite;
 }
 
+/* ⚠️ [2026-08-21, auditoría móvil] La onda SE APAGA por debajo de 640px.
+   El motivo no es estético, es que ahí está ROTA: `.titulo-subrayado` envuelve
+   dos palabras («Caribbean Catamaran») y la onda es un hijo absoluto con
+   `left:0; right:0` colgado de su borde inferior. Mientras las dos palabras
+   caben en UNA línea —que es lo que pasa en desktop, y la razón por la que se
+   eligió justo ese par— la onda cae limpia debajo de ellas. En un móvil no
+   caben: a 36px («--text-hero-movil») «Caribbean Catamaran» pide ~397px y la
+   columna útil de un iPhone son ~350. Al partirse en dos líneas, la caja del
+   span pasa a medir dos líneas de alto y el ancho ENTERO del titular, así que
+   la onda se dibujaba a todo lo ancho entre «Catamaran» y «Experience»: una
+   raya azul cruzando el H1 por la mitad. Verificado a 320/360/390/414px.
+
+   Se apaga la onda y NO el flotado de las palabras (`.titulo-palabra`), que
+   sigue funcionando igual partido en dos líneas.
+
+   Para recuperarla en móvil hay que decidir diseño, no CSS: o el subrayado
+   pasa a UNA sola palabra, o el titular baja de cuerpo hasta que el par quepa.
+   Las dos cosas son de Samuel, así que aquí solo se quita lo que estaba mal
+   dibujado. */
+@media (max-width: 639px) {
+  .titulo-ola {
+    display: none;
+  }
+}
+
 @keyframes titulo-ola-fluye {
   from {
     mask-position: 0 0;
@@ -4124,5 +4149,37 @@
   .logo-marca--entrando .logo-jalla,
   .logo-marca--entrando .logo-tl {
     animation: none;
+  }
+}
+
+/* ============================================================
+   Campos de formulario en móvil — el zoom de iOS (2026-08-21, auditoría móvil)
+
+   Safari de iOS hace ZOOM automático al enfocar cualquier campo cuyo
+   `font-size` sea menor de 16px, y NO lo deshace al salir: el visitante se
+   queda con la página ampliada y con scroll horizontal a mitad del checkout.
+   Medido en esta auditoría: TODOS los campos del sitio salían a 14px
+   (`text-sm` en ui/campo.tsx, `text-paragraph-sm` en el widget de evento),
+   así que el efecto se disparaba en el formulario de contacto de la home, en
+   el de cotización de eventos y —lo más caro— en los 4 campos de contacto del
+   funnel de reserva.
+
+   Se arregla AQUÍ y no campo a campo por dos razones:
+    1. Las piezas de `components/alignui/` son vendor copy-in y no se editan a
+       mano (CLAUDE.md) — el widget de evento usa sus clases.
+    2. Un suelo de 16px es una regla de plataforma, no una decisión de diseño
+       por componente: vale para el campo que exista mañana sin tener que
+       acordarse.
+
+   `max(16px, 1em)` conserva los campos que YA son mayores (el `em` resuelve
+   contra el padre), así que solo sube los que disparan el zoom. Por encima de
+   `md` no aplica: ahí no hay zoom que evitar y el diseño de 14px se queda tal
+   cual lo dibujó Samuel.
+   ============================================================ */
+@media (max-width: 767px) {
+  input:not([type='checkbox']):not([type='radio']):not([type='range']),
+  select,
+  textarea {
+    font-size: max(16px, 1em);
   }
 }

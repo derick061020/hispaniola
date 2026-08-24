@@ -1375,10 +1375,31 @@ export type Reel = {
   red?: 'instagram' | 'tiktok'
 }
 
+// [2026-08-24, UPDATES 08/22 del cliente, pág. 2] LOS 5 PIES SON NUEVOS, y son
+// literales del cliente. Antes decían, en este mismo orden: «Just another
+// Tuesday on board», «Lunch on board, then straight into the reef», «A green
+// turtle, right off the boat», «Coco Loco on the sandbank» y «This is how we
+// cook in the middle of the sea».
+//
+// ⚠️ ESTE ARRAY NO ES SOLO DE LA HOME. Lo consume también la ficha de tour
+// (pages/tour.tsx), así que los pies nuevos salen en 5 rutas. Es lo correcto
+// —son los mismos 5 vídeos— pero conviene saberlo antes de tocarlos otra vez.
+//
+// ⚠️ «Coco Loco at the natural pool» CONTRADICE al itinerario publicado: en
+// data/tours.ts el Coco Loco se sirve en «a secluded beach» y la piscina
+// natural es una parada POSTERIOR. Manda el cliente, que es quien vende el
+// tour, pero queda anotado por si un día hay que elegir cuál de las dos frases
+// es la verdadera. El `fotoAlt` de ese reel sigue diciendo «on the sandbank»
+// A PROPÓSITO: el alt describe LA FOTO que hay puesta, no el pie de marca —
+// hoy además no se pinta nunca, porque los 5 reels tienen vídeo.
+//
+// Los `id` (martes-a-bordo, snorkel-coral, sunset…) NO se tocan: ya estaban
+// desalineados con los pies antes de esta ronda y solo son key de React.
+// Renombrarlos ensuciaría el diff sin arreglar nada visible.
 export const REELS: Reel[] = [
   {
     id: 'martes-a-bordo',
-    titulo: 'Just another Tuesday on board',
+    titulo: 'Just another day in paradise',
     foto: 'reel-1',
     fotoAlt: 'Group enjoying the catamaran deck',
     video: '/video/reels/reel-1.mp4',
@@ -1386,7 +1407,7 @@ export const REELS: Reel[] = [
   },
   {
     id: 'piscina-natural',
-    titulo: 'Lunch on board, then straight into the reef',
+    titulo: 'Lunch on board, Caribbean style',
     foto: 'reel-2',
     fotoAlt: 'A crew member serving lunch to a guest on deck',
     // ⚠️ ESTE ES EL UNICO REEL QUE NO ES EL CLIP DEL CLIENTE TAL CUAL. Del
@@ -1402,7 +1423,7 @@ export const REELS: Reel[] = [
   },
   {
     id: 'cocina-flotante',
-    titulo: 'A green turtle, right off the boat',
+    titulo: 'Meet our neighbors beneath the surface',
     foto: 'reel-3',
     fotoAlt: 'A green sea turtle swimming next to the catamaran',
     video: '/video/reels/reel-3.mp4',
@@ -1410,7 +1431,7 @@ export const REELS: Reel[] = [
   },
   {
     id: 'snorkel-coral',
-    titulo: 'Coco Loco on the sandbank',
+    titulo: 'Coco Loco at the natural pool',
     foto: 'reel-4',
     fotoAlt: 'A family toasting with coconuts on the sandbank',
     video: '/video/reels/reel-4.mp4',
@@ -1418,7 +1439,7 @@ export const REELS: Reel[] = [
   },
   {
     id: 'sunset',
-    titulo: 'This is how we cook in the middle of the sea',
+    titulo: 'Fresh flavors, served at sea',
     foto: 'reel-5',
     fotoAlt: 'The crew grilling lobster in the floating kitchen',
     video: '/video/reels/reel-5.mp4',

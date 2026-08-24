@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { TOURS, MEDIOS_PAGO, REDES, MONEDAS, RESENAS_AGREGADO } from '@/data/home'
+import { TOURS, OCASIONES, MEDIOS_PAGO, REDES, MONEDAS, RESENAS_AGREGADO } from '@/data/home'
 import { WHATSAPP_URL } from '@/data/tours'
 import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
 import { Logo } from '@/components/ui/logo'
@@ -96,9 +96,22 @@ export function Footer({ cta = 'Ready for an unforgettable day?' }: { cta?: stri
                 </Link>
               </li>
             ))}
-            <li>
-              <EnlacePrototipo className="hover:text-white">Events</EnlacePrototipo>
-            </li>
+            {/* [2026-08-24, barrido de enlaces] ERA UN `EnlacePrototipo`
+                («Events», href="#", no navegaba) en el footer, o sea en las 25
+                paginas. Su motivo caduco: ese componente dice «eventos... son
+                otro plan», pero las tres landings existen desde hace tiempo y
+                el megamenu y el menu movil YA las enumeran una a una desde
+                OCASIONES. Se hace lo mismo aqui, que ademas es como esta
+                columna trata a los tours justo arriba. Se filtra por `slug`
+                porque en el tipo `Ocasion` es OPCIONAL: sin la guarda, una
+                ocasion sin slug pintaria `/events/undefined` en silencio. */}
+            {OCASIONES.filter((o) => o.slug).map((o) => (
+              <li key={o.tipo}>
+                <Link to={`/events/${o.slug}`} className="hover:text-white">
+                  {o.nombre}
+                </Link>
+              </li>
+            ))}
           </ul>
         </div>
 
@@ -195,15 +208,27 @@ export function Footer({ cta = 'Ready for an unforgettable day?' }: { cta?: stri
                 Book now
               </Link>
             </li>
+            {/* [2026-08-24, Samuel: «la pagina de why book direct quitala de
+                todos los lugares que apunten a ella, no la vamos a usar»]
+                AQUI VIVIA «Why book direct?», y era el UNICO enlace navegable a
+                /why-book-direct de toda la web (el footer se pinta en las 25
+                paginas). La pagina NO se borra — su ruta, su contenido y los
+                301 de vercel.json siguen en pie: solo se queda sin puertas.
+                Tambien sale del sitemap, para no dejar indexada una pagina
+                huerfana. Para revivirla basta con devolver este <li>. */}
             <li>
-              {/* [v2 2026-07-28] /reserva-directa → /por-que-reservar: la
-                  página se rehízo entera con los slides 50-56 del cliente. */}
-              <Link to="/why-book-direct" className="font-semibold hover:text-white">
-                Why book direct?
-              </Link>
-            </li>
-            <li>
-              <Link to="/#faq" className="hover:text-white">
+              {/* [2026-08-24, barrido de enlaces] ERA `/#faq`, UN ANCLA
+                  HUERFANA. La seccion de preguntas de la home se borro en las
+                  correcciones v2 («quitar preguntas de la home»), y con ella el
+                  id: hoy `id="faq"` no existe en ninguna pagina. Y no fallaba
+                  en silencio del todo — te sacaba de la pagina en la que
+                  estabas, te dejaba en la home y ScrollAlNavegar, al no
+                  encontrar el destino, ni siquiera subia arriba. El vecino de
+                  al lado («Contacto») ya se habia actualizado a /contact cuando
+                  paso lo mismo; este se quedo atras. Va a /faq, que es la
+                  pagina real y el mismo destino que NAV_AYUDA usa en el
+                  megamenu y en el menu movil. */}
+              <Link to="/faq" className="hover:text-white">
                 FAQ
               </Link>
             </li>

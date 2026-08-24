@@ -23,6 +23,11 @@ horiz () {
   printf '  %-42s %6.1f MB\n' "$(basename "$2")" "$(stat -c%s "$2" | awk '{print $1/1048576}')"
 }
 
+# ⚠️ [2026-08-23] ESTE BUCLE YA NO SE PUEDE REEJECUTAR TAL CUAL. En la 2ª
+# entrega el cliente BORRO «4 PAGINA INICIO.mp4» de su carpeta y lo sustituyo
+# por «CAMBIOS/4.mp4», que es el que hoy alimenta reel-3. Correrlo otra vez
+# fallaria en esa iteracion y dejaria reel-3 a medias. Para rehacer solo ese,
+# usa scripts/video-entrega-2.sh, que documenta el cambio.
 echo "== reels de la home (2..6 -> posicion 1..5) =="
 i=1
 for n in 2 3 4 5 6; do

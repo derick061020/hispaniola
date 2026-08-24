@@ -1769,7 +1769,7 @@
      animaciones-a-figma), no "a ojo" en el JS. */
   --eco-reveal-y: 1rem; /* 16px — de dónde sube cada texto; más corto que --sost-reveal-y (24px), el cintillo es angosto y un salto grande se vería fuera de escala */
   --eco-reveal-duracion: 0.5s; /* también el pop de .eco-sello-fondo */
-  --eco-reveal-stagger: 0.08; /* s — entre los 2 textos ("Eco-friendly" / "Zero plastic on board") */
+  --eco-reveal-stagger: 0.08; /* s — entre los 2 textos ("Eco-friendly" / "Positive impact on board") */
   --eco-sello-dibujo-duracion: 0.9s; /* s — cuánto tarda cada trazo en completarse */
   --eco-sello-dibujo-retraso: 0.15s; /* s — pausa de suspenso ENTRE que el trazo termina y el color empieza a entrar (no a la vez: el hueco es lo que hace notar el remate) */
 

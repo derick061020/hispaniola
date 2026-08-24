@@ -93,8 +93,17 @@ export function CarruselImagenes({
             <ChevronRight className="size-5" aria-hidden="true" />
           </button>
 
-          {/* Puntos — siempre visibles: son la única nav en táctil (sin hover) */}
-          <div className="absolute inset-x-0 bottom-2.5 z-20 flex justify-center gap-1.5">
+          {/* Puntos — siempre visibles: son la única nav en táctil (sin hover).
+              [2026-08-21, auditoría móvil] El punto DIBUJADO mide 6px, que es
+              lo que pide el diseño, pero 6px es imposible de acertar con el
+              pulgar (el mínimo cómodo son 44). El `before` transparente le
+              pone al botón una zona táctil de ~30×14 sin mover un píxel del
+              dibujo, y el `gap-2` + `-inset-x-1` hace que esas zonas queden
+              PEGADAS entre sí: cualquier toque en la tira cae en el punto más
+              cercano en vez de entre dos. No se estira más en vertical a
+              propósito — el `z-20` se comería los toques del título de la
+              card, que empieza justo debajo de la foto. */}
+          <div className="absolute inset-x-0 bottom-2.5 z-20 flex justify-center gap-2">
             {imagenes.map((foto, i) => (
               <button
                 key={foto}
@@ -102,7 +111,7 @@ export function CarruselImagenes({
                 onClick={() => ir(i)}
                 aria-label={`Go to photo ${i + 1} of ${n}`}
                 aria-current={i === indice}
-                className={`h-1.5 rounded-chip shadow-sm transition-all ${
+                className={`relative h-1.5 rounded-chip shadow-sm transition-all before:absolute before:-inset-x-1 before:-inset-y-3 before:content-[''] ${
                   i === indice ? 'w-4 bg-white' : 'w-1.5 bg-white/60 hover:bg-white/80'
                 }`}
               />

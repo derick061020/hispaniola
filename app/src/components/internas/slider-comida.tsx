@@ -120,8 +120,13 @@ export function SliderComida({
         />
       ) : null}
 
+      {/* [2026-08-21, auditoría móvil] Misma corrección que en
+          ui/carrusel-imagenes.tsx: el punto se sigue DIBUJANDO a 6px y es el
+          `before` transparente el que le da tamaño de dedo. Aquí importa más
+          todavía porque el mosaico de la ficha llega a 10 fotos: diez dianas
+          de 6px separadas por 4 son una lotería. */}
       {fotos.length > 1 ? (
-        <div className="pointer-events-none absolute inset-x-0 bottom-2 flex items-center justify-center gap-1">
+        <div className="pointer-events-none absolute inset-x-0 bottom-2 flex items-center justify-center gap-2">
           {fotos.map((f, i) => (
             <button
               key={f}
@@ -129,7 +134,7 @@ export function SliderComida({
               onClick={() => setIndice(i)}
               aria-label={`See photo ${i + 1} of ${fotos.length}`}
               aria-current={i === indice}
-              className={`pointer-events-auto h-1.5 rounded-full transition-all duration-300 motion-reduce:transition-none ${
+              className={`pointer-events-auto relative h-1.5 rounded-full transition-all duration-300 before:absolute before:-inset-x-1 before:-inset-y-3 before:content-[''] motion-reduce:transition-none ${
                 i === indice ? 'w-4 bg-white' : 'w-1.5 bg-white/55 hover:bg-white/80'
               }`}
             />

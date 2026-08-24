@@ -32,7 +32,14 @@ export type MenuId = 'tours' | 'eventos' | 'nosotros' | 'sostenibilidad' | 'ayud
 // solo en esta variante: es el sentinel que ese observer usa para saberlo.
 export function Header({
   variante = 'solida',
-  ctaHref = '#tours',
+  // [2026-08-24, barrido de enlaces] EL DEFAULT ERA `#tours`, Y ERA UNA
+  // TRAMPA: un ancla suelta solo resuelve en la home, asi que cualquier pagina
+  // que se olvidara de pasar `ctaHref` heredaba un «Book now» muerto. Le paso
+  // exactamente eso a la 404. Ahora el default es el destino que vale desde
+  // CUALQUIER pagina —el que ya pasan las 18 internas— y la home, que es el
+  // unico sitio donde el ancla suelta es lo correcto, lo pasa explicito
+  // (components/home/hero.tsx).
+  ctaHref = '/#tours',
 }: {
   variante?: 'solida' | 'sobreVideo'
   ctaHref?: string
