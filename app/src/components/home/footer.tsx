@@ -1,6 +1,6 @@
 import { useSyncExternalStore } from 'react'
 import { UserRound } from 'lucide-react'
-import { escuchaMoneda, fechaTasas, fijaMoneda, hayTasa, monedaActiva, SIMBOLO, type Moneda } from '@/lib/moneda'
+import { escuchaMoneda, fechaTasas, fijaMoneda, hayTasa, instantaneaMoneda, monedaActiva, SIMBOLO, type Moneda } from '@/lib/moneda'
 import { Link } from 'react-router-dom'
 import { useCatalogo } from '@/lib/api/use-catalogo'
 import { fusionarLista } from '@/lib/api/fusion-catalogo'
@@ -48,7 +48,11 @@ const ICONO_RED: Record<string, (p: { className?: string }) => React.ReactElemen
 export function Footer({ cta = t('Ready for an unforgettable day?') }: { cta?: string }) {
   // La moneda vive fuera de React (`lib/moneda.ts`): se lee con
   // `useSyncExternalStore` para que el propio selector se entere del cambio.
-  const moneda = useSyncExternalStore(escuchaMoneda, monedaActiva, () => 'USD' as const)
+  // La instantánea lleva un contador además de la moneda: sin él, al llegar las
+  // tasas del día `useSyncExternalStore` veía el mismo «USD» de antes, se
+  // ahorraba el render y las opciones se quedaban deshabilitadas para siempre.
+  useSyncExternalStore(escuchaMoneda, instantaneaMoneda, () => 'USD|0')
+  const moneda = monedaActiva()
   const fecha = fechaTasas()
   // [2026-08-18] La lista sale de Odoo: un tour despublicado desaparece de aquí
   // sin tocar código, y el «desde US$» es el del catálogo, no el que quedó

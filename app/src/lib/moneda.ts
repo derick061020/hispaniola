@@ -62,6 +62,24 @@ let actual: Moneda = 'USD'
 let tasas: Tasas | null = null
 const oyentes = new Set<() => void>()
 
+// [2026-08-25] POR QUÉ HACE FALTA UN CONTADOR.
+//
+// El selector se suscribe con `useSyncExternalStore`, que compara la
+// instantánea anterior con la nueva y NO repinta si son iguales. La moneda por
+// sí sola no sirve como instantánea: cuando llegan las tasas del día, la moneda
+// sigue siendo «USD» y React se ahorra el render — así que las opciones se
+// quedaban deshabilitadas para siempre y el selector parecía muerto en la
+// primera visita, que es justo cuando todavía no hay tasas guardadas.
+//
+// El contador cambia en CADA aviso, así que la instantánea del selector cambia
+// también cuando lo que cambió fueron las tasas y no la moneda.
+let version = 0
+
+function avisar() {
+  version += 1
+  oyentes.forEach((fn) => fn())
+}
+
 function leeGuardado<T>(clave: string): T | null {
   try {
     const crudo = window.localStorage.getItem(clave)
@@ -96,6 +114,14 @@ export function monedaActiva(): Moneda {
   return actual
 }
 
+/** Instantánea para quien tiene que repintarse también al llegar las tasas —
+ *  el selector. El proveedor NO usa esta: él solo remonta el árbol cuando
+ *  cambia la moneda de verdad, y hacerlo por unas tasas nuevas sería tirar la
+ *  página entera para nada. */
+export function instantaneaMoneda(): string {
+  return `${actual}|${version}`
+}
+
 /** ¿Hay cambio real para esa moneda? El selector desactiva las que no. */
 export function hayTasa(moneda: Moneda): boolean {
   return moneda === 'USD' || Boolean(tasas?.valores?.[moneda])
@@ -107,7 +133,7 @@ export function fijaMoneda(moneda: Moneda) {
   if (destino === actual) return
   actual = destino
   guarda(CLAVE_MONEDA, destino)
-  oyentes.forEach((avisa) => avisa())
+  avisar()
 }
 
 export function escuchaMoneda(fn: () => void): () => void {
@@ -181,7 +207,7 @@ export function cargaTasas(): Promise<void> {
       // Si la moneda guardada se quedó sin tasa, se vuelve a dólares antes de
       // que nadie llegue a leer un precio sin convertir.
       if (!hayTasa(actual)) fijaMoneda('USD')
-      oyentes.forEach((avisa) => avisa())
+      avisar()
     })
     .catch(() => {
       // Sin tasas nuevas se sigue con las guardadas si las hay; si no, USD.
