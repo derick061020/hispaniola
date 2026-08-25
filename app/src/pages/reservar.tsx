@@ -14,6 +14,7 @@ import { ResumenReserva } from '@/components/reservar/resumen-reserva'
 import { etiquetaOcasion, telefonoDe, PREFIJO_INICIAL, type DatosCelebracion, type DatosContacto, type DatosRecogida, type Paquete } from '@/components/reservar/tipos'
 import { maxPersonasDe } from '@/components/tour/widget-reserva'
 import { TOURS, type Tour } from '@/data/home'
+import { TOURS_EVENTO, FICHAS_EVENTO } from '@/data/eventos-reservables'
 import { FICHAS, type FichaTour } from '@/data/tours'
 import { guardarReserva, type Reserva } from '@/lib/reservas'
 import { menuDeLaReserva } from '@/lib/menu-reserva'
@@ -60,8 +61,13 @@ const TITULOS: Record<PasoId, string> = traducible({
 export function ReservarPage() {
   const { slug } = useParams()
   const [params, setParams] = useSearchParams()
-  const tour = TOURS.find((candidato) => candidato.slug === slug)
-  const ficha = slug ? FICHAS[slug] : undefined
+  // [2026-08-25] Party boat y bodas también se reservan aquí. Viven en su
+  // propio registro (`data/eventos-reservables.ts`) y no en `TOURS`, que es el
+  // catálogo de los cuatro tours y alimenta el grid, el megamenú y el sitemap.
+  const tour =
+    TOURS.find((candidato) => candidato.slug === slug) ??
+    TOURS_EVENTO.find((candidato) => candidato.slug === slug)
+  const ficha = slug ? FICHAS[slug] ?? FICHAS_EVENTO[slug] : undefined
 
   // El funnel solo existe para tours 'completo' (se venden por fecha+paquete).
   // Charter cotiza y Saona consulta → de vuelta a su ficha (o a la home).

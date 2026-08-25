@@ -2,7 +2,9 @@ import { useState } from 'react'
 import { Minus, Package, Plus, Users } from 'lucide-react'
 import * as CompactButton from '@/components/alignui/compact-button'
 import * as FancyButton from '@/components/alignui/fancy-button'
+import { Link } from 'react-router-dom'
 import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
+import { esEventoReservable, slugOdooDePaquete } from '@/data/eventos-reservables'
 import { NumeroEditable } from '@/components/ui/numero-editable'
 import { formatoDinero } from '@/data/home'
 import {
@@ -31,11 +33,16 @@ import { t } from '@/lib/i18n'
 // Los tours (charter, Saona) usan sustitución — ver lib/tarifas.ts. No
 // mezclar los dos.
 //
-// FRONTERA DEL BUILD: igual que en tours, esto NO cobra. El depósito es el 25%
-// (decisión de Samuel, 2026-07-27 — el mismo que los tours, sin porcentaje
-// especial por ser evento) y el paso de pago lo dirá con todas las letras
-// cuando el funnel acepte slugs de evento. Mientras tanto, el CTA es
-// EnlacePrototipo: enseña el estado real sin fingir que reserva.
+// [2026-08-25] YA COBRA. El depósito sigue siendo el 25% (decisión de Samuel,
+// 2026-07-27 — el mismo que los tours, sin porcentaje especial por ser
+// evento), pero el CTA dejó de ser `EnlacePrototipo` y entra al funnel de
+// verdad: party boat y bodas se reservan y se pagan como un tour.
+//
+// Lo que faltaba no era el botón: era que Odoo supiera cuánto vale cada
+// paquete. Los cuatro están sembrados allí como variantes con su base y su
+// extra por invitado, así que el precio que se cobra sale del servidor. Este
+// total de aquí sigue siendo el que se pinta mientras se configura —y tiene
+// que dar lo mismo—, pero no es el que se cobra.
 
 const DEPOSITO = 0.25
 
@@ -77,6 +84,9 @@ export function CalculadoraEvento({
     conPrecio.findIndex((p) => p.id === elegido),
   )
   const paquete = conPrecio[idx]
+  // Solo party boat y bodas se pagan online; MICE no tiene precio cerrado y
+  // se queda en cotización — ahí el CTA sigue siendo el del prototipo.
+  const varianteOdoo = esEventoReservable(slug) ? slugOdooDePaquete(paquete.id) : null
   const total = totalPaqueteEvento(paquete, personas, slug)
   const incluidas = paquete.incluyeHasta ?? 12
   const pagan = personasQuePagan(personas, slug)
@@ -348,11 +358,22 @@ export function CalculadoraEvento({
         </div>
       ) : null}
 
-      <EnlacePrototipo>
+      {/* El paquete viaja como `variante` —que es lo que Odoo cotiza— y el
+          número de invitados como `personas`. El funnel no recalcula: abre el
+          pedido con esto y le pregunta el precio al servidor. */}
+      {varianteOdoo ? (
         <FancyButton.Root variant="primary" className="w-full" asChild>
-          <span>{t('Book this package')}</span>
+          <Link to={`/book/${slug}?variante=${varianteOdoo}&personas=${personas}`}>
+            {t('Book this package')}
+          </Link>
         </FancyButton.Root>
-      </EnlacePrototipo>
+      ) : (
+        <EnlacePrototipo>
+          <FancyButton.Root variant="primary" className="w-full" asChild>
+            <span>{t('Book this package')}</span>
+          </FancyButton.Root>
+        </EnlacePrototipo>
+      )}
     </div>
   )
 }
