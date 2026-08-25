@@ -4,6 +4,7 @@ import { CalendarioWidget } from '@/components/tour/calendario-widget'
 import { NumeroEditable } from '@/components/ui/numero-editable'
 import { formatoDinero, type Tour } from '@/data/home'
 import type { MenuReserva } from '@/lib/menu-reserva'
+import { nombreSinPaquete } from '@/lib/nombre-tour'
 import { t } from '@/lib/i18n'
 
 // Columna DERECHA del funnel (Fase C, layout Viator): «qué estás comprando»,
@@ -132,7 +133,12 @@ export function ResumenReserva({
             className="size-16 shrink-0 rounded-card object-cover"
           />
           <div className="min-w-0">
-            <p className="font-display text-sm font-semibold leading-snug text-navy">{tour.nombre}</p>
+            {/* Sin la coletilla del paquete: la línea de debajo ya lo dice
+                (ver `lib/nombre-tour.ts`). Solo cuando esa línea existe — sin
+                paquete que anunciar, el nombre va entero. */}
+            <p className="font-display text-sm font-semibold leading-snug text-navy">
+              {menu ? nombreSinPaquete(tour.nombre) : tour.nombre}
+            </p>
             <p className="mt-0.5 text-xs text-navy-soft">
               {menu ? `${menu.etiqueta} · ` : ''}
               {tour.duracionCorta}
