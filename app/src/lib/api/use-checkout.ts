@@ -101,11 +101,17 @@ export function useCheckout(inicio: InicioCheckout) {
             // roto — pulsarlo mandaba a premium algo que ya era premium, o sea
             // que no cambiaba nada en pantalla.
             //
-            // El paquete y la variante son la eleccion de la FICHA y viajan en
-            // la URL: si el pedido retomado no coincide, manda la URL. Fecha,
-            // personas y horario NO se reponen aqui a proposito — esos si se
-            // cambian dentro del funnel y no vuelven a la URL, asi que
-            // repescarlos borraria lo que el visitante acaba de elegir.
+            // La URL es la configuracion que el visitante acaba de elegir; el
+            // pedido retomado es solo el envase. Donde no coincidan, manda la
+            // URL — y se comprueba TODO lo que decide el precio, no solo el
+            // paquete: en el charter y en Saona lo que cambia es el BARCO
+            // (`variante`) y el tamano del grupo, y un pedido viejo de 20
+            // personas retomado por uno de 6 cobraria las 20.
+            //
+            // Esto solo es seguro porque el funnel escribe en la URL lo que se
+            // cambia dentro de el (fecha, horario, personas y la subida a
+            // Premium). Si dejara de hacerlo, recargar volveria a la
+            // configuracion de la ficha y borraria lo que se acaba de elegir.
             const desajuste: ParcheCheckout = {}
             if (inicio.paquete && pedido.package !== inicio.paquete) {
               desajuste.package = inicio.paquete
@@ -113,6 +119,26 @@ export function useCheckout(inicio: InicioCheckout) {
             const varianteUrl = inicio.variante ?? null
             if (varianteUrl !== null && pedido.variant !== varianteUrl) {
               desajuste.variant = varianteUrl
+            }
+            if (inicio.fecha && pedido.date !== inicio.fecha) {
+              desajuste.date = inicio.fecha
+            }
+            if (inicio.scheduleIndex !== undefined
+                && pedido.schedule_index !== inicio.scheduleIndex) {
+              desajuste.schedule_index = inicio.scheduleIndex
+            }
+            if (inicio.pax) {
+              const { adults, children, infants } = inicio.pax
+              if (pedido.pax.adults !== adults || pedido.pax.children !== children
+                  || pedido.pax.infants !== infants) {
+                desajuste.pax = { adults, children, infants }
+              }
+            }
+            // Los extras se eligen en la ficha y no se tocan dentro del
+            // funnel, asi que la lista de la URL es siempre la buena.
+            const extras = inicio.addons ?? []
+            if ([...extras].sort().join(',') !== [...pedido.addons].sort().join(',')) {
+              desajuste.addons = extras
             }
             if (Object.keys(desajuste).length) {
               try {

@@ -70,8 +70,14 @@ export function ReservarPage() {
   }
 
   // Config que trae el widget en la URL; defaults sensatos si se entra directo.
-  // Desde 2026-08-07 la URL es solo el VALOR INICIAL: fecha y personas se
-  // pueden cambiar ya dentro del funnel (ResumenReserva), sin volver a la ficha.
+  // Desde 2026-08-07 fecha y personas se pueden cambiar dentro del funnel
+  // (ResumenReserva), sin volver a la ficha.
+  //
+  // [2026-08-25] Y desde hoy la URL NO es solo el valor inicial: es la
+  // configuracion viva. Lo que se cambia aqui dentro se escribe de vuelta
+  // (`onConfigurar`), porque el pedido retomado de una visita anterior se
+  // corrige contra ella (`use-checkout.ts`). Lo que la pantalla pinta y lo que
+  // Odoo cobra tienen que salir de la misma fuente, y esa fuente es la URL.
   const paquete: Paquete = params.get('paquete') === 'premium' ? 'premium' : 'light'
   const horarioIdx = Number(params.get('horario')) || 0
   const fechaISO = params.get('fecha')
@@ -111,11 +117,18 @@ export function ReservarPage() {
       horarioInicial={horarioIdx}
       fechaInicialISO={fechaISO}
       addonsIniciales={addons}
-      // Subir a Premium desde el banner del checkout tiene que quedar escrito
-      // en la URL: es la fuente del paquete al montar. Ver `subirAPremium`.
-      onSubirPaquete={() => {
+      // [2026-08-25] TODO lo que se cambia dentro del funnel vuelve a la URL.
+      // La URL dejo de ser «el valor inicial» para ser la configuracion viva:
+      // es de donde se leen paquete, fecha, horario y personas al montar, y
+      // desde hoy tambien lo que corrige un pedido retomado que no coincida
+      // (`use-checkout.ts`). Si no se escribiera aqui, recargar despues de
+      // cambiar la fecha la devolveria a la de la ficha.
+      onConfigurar={(cambios) => {
         const siguiente = new URLSearchParams(params)
-        siguiente.set('paquete', 'premium')
+        for (const [clave, valor] of Object.entries(cambios)) {
+          if (valor === null) siguiente.delete(clave)
+          else siguiente.set(clave, String(valor))
+        }
         setParams(siguiente, { replace: true })
       }}
       // Si el widget no mandó desglose (el caso normal, tarifa única), todas
@@ -144,14 +157,14 @@ function FlujoReserva({
   ninosIniciales,
   bebesIniciales,
   addonsIniciales,
-  onSubirPaquete,
+  onConfigurar,
 }: {
   tour: Tour
   ficha: FichaTour
   precioLight: number
   paqueteInicial: Paquete
-  /** Escribe `?paquete=premium` en la URL cuando se sube desde el banner. */
-  onSubirPaquete: () => void
+  /** Escribe en la URL lo que se cambia dentro del funnel. `null` borra. */
+  onConfigurar: (cambios: Record<string, string | number | null>) => void
   /** Sub-variante (bote) elegida en el widget; null en los tours sin ellas. */
   varianteInicial: string | null
   personasIniciales: number
@@ -262,10 +275,13 @@ function FlujoReserva({
     setPlatos((prev) => Array.from({ length: n }, (_, i) => prev[i] ?? ''))
     // El stepper de esta pantalla es un único número, así que el cambio va a
     // adultos y se conserva el desglose de niños/bebés que trajo el widget.
+    const adultos = Math.max(n - ninosIniciales - bebesIniciales, 1)
     checkout.sincronizar({
-      pax: { adults: Math.max(n - ninosIniciales - bebesIniciales, 1),
-             children: ninosIniciales, infants: bebesIniciales },
+      pax: { adults: adultos, children: ninosIniciales, infants: bebesIniciales },
     })
+    // `personas` y `adultos` a la vez: la pantalla lee el total y el pedido el
+    // desglose, y si se separan el resumen y el precio dejan de contar lo mismo.
+    onConfigurar({ personas: n, adultos })
     // Se recalcula con el aforo NUEVO: en el charter, crecer hasta 21 elimina
     // el paso del menú (pasa a buffet), así que devolver el flujo ahí sería
     // mandarlo a una sección que ya no existe.
@@ -290,7 +306,7 @@ function FlujoReserva({
     // coincida (ver `use-checkout.ts`): si se queda en `light`, recargar la
     // pagina despues de subir a Premium volveria a bajar la reserva a Light.
     // `replace` para no dejar un paso intermedio en el historial.
-    onSubirPaquete()
+    onConfigurar({ paquete: 'premium' })
   }
 
   // "Pagar" (2026-08-10: ya hay backend).
@@ -476,11 +492,13 @@ function FlujoReserva({
   const cambiarFecha = (iso: string | null) => {
     setFechaISO(iso)
     checkout.sincronizar({ date: iso })
+    onConfigurar({ fecha: iso })
   }
 
   const cambiarHorario = (idx: number) => {
     setHorarioIdx(idx)
     checkout.sincronizar({ schedule_index: idx })
+    onConfigurar({ horario: idx })
   }
 
   return (
