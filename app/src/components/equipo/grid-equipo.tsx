@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { t } from '@/lib/i18n'
 import { Anchor, ChefHat, Compass, Headset, Ship, Waves } from 'lucide-react'
 import {
   DEPARTAMENTOS,
@@ -170,7 +171,7 @@ export function GridEquipo({
               : 'border-linea text-navy hover:bg-papel-hueso'
           }`}
         >
-          All <span className="opacity-60">{TOTAL_EQUIPO}</span>
+          {t('All')} <span className="opacity-60">{TOTAL_EQUIPO}</span>
         </button>
         {DEPARTAMENTOS.map((d) => {
           const n = EQUIPO_COMPLETO.filter((m) => m.departamento === d.id).length

@@ -1,4 +1,5 @@
 import * as FancyButton from '@/components/alignui/fancy-button'
+import { t } from '@/lib/i18n'
 import { formatoDinero } from '@/data/home'
 import { type FichaEvento } from '@/data/eventos'
 
@@ -52,10 +53,10 @@ export function BarraMovilEvento({ evento }: { evento: FichaEvento }) {
         {desde !== null ? (
           <>
             <p className="font-display text-base font-semibold text-navy">
-              <span className="text-xs font-normal text-navy-soft">from </span>
+              <span className="text-xs font-normal text-navy-soft">{t('from')} </span>
               {formatoDinero(desde)}
             </p>
-            <p className="truncate text-xs text-navy-soft">Up to 12 guests · 25% to confirm</p>
+            <p className="truncate text-xs text-navy-soft">{t('Up to 12 guests · 25% to confirm')}</p>
           </>
         ) : (
           <>
@@ -63,7 +64,7 @@ export function BarraMovilEvento({ evento }: { evento: FichaEvento }) {
                 del precio lo ocupa lo único concreto que sí se puede prometer:
                 que la respuesta llega, y cuándo. `cierreMeta` ya es ese copy
                 aprobado por landing — no se inventa uno nuevo aquí. */}
-            <p className="font-display text-base font-semibold text-navy">Free quote</p>
+            <p className="font-display text-base font-semibold text-navy">{t('Free quote')}</p>
             <p className="truncate text-xs text-navy-soft">{evento.cierreMeta}</p>
           </>
         )}

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Genera src/data/hoteles.ts a partir del volcado de `haa.hotel` de Odoo.
+"""Genera src/lib/api/hoteles.ts a partir del volcado de `haa.hotel` de Odoo.
 
 Uso (desde app/):
     ssh ... 'docker exec odoo-db-1 psql -U odoo -d odoo -t -A -F"|" \

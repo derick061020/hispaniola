@@ -1,4 +1,5 @@
 import * as FancyButton from '@/components/alignui/fancy-button'
+import { t } from '@/lib/i18n'
 import { formatoDinero } from '@/data/home'
 
 // Barra inferior fija del funnel de reserva en móvil.
@@ -46,10 +47,10 @@ export function BarraMovilReserva({
   return (
     <div className="fixed inset-x-0 bottom-0 z-30 flex items-center justify-between gap-3 border-t border-linea bg-papel px-5 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-card lg:hidden">
       <div className="min-w-0">
-        <p className="text-xs text-navy-soft">You pay today</p>
+        <p className="text-xs text-navy-soft">{t('You pay today')}</p>
         <p className="font-display text-base font-semibold text-navy">
           {formatoDinero(deposito)}
-          <span className="ml-1.5 text-xs font-normal text-navy-soft">of {formatoDinero(total)}</span>
+          <span className="ml-1.5 text-xs font-normal text-navy-soft">{t('of')} {formatoDinero(total)}</span>
         </p>
       </div>
 

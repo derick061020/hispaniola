@@ -199,7 +199,7 @@ export function GaleriaMosaico({
             className="absolute inset-x-0 bottom-0 flex items-center justify-center gap-1.5 px-2 pb-2 text-xs font-medium text-white"
           >
             <Volume2 className="size-3.5 shrink-0" />
-            Watch with sound
+            {t('Watch with sound')}
           </span>
         </button>
       )

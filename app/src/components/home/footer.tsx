@@ -266,7 +266,7 @@ export function Footer({ cta = t('Ready for an unforgettable day?') }: { cta?: s
                   pagina real y el mismo destino que NAV_AYUDA usa en el
                   megamenu y en el menu movil. */}
               <Link to="/faq" className="hover:text-white">
-                FAQ
+                {t('FAQ')}
               </Link>
             </li>
             <li>

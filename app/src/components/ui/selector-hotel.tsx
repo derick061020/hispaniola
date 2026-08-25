@@ -2,7 +2,7 @@ import { useEffect, useId, useMemo, useRef, useState } from 'react'
 import { Check, ChevronDown, Search } from 'lucide-react'
 import { obtenerHoteles } from '@/lib/api/api'
 import type { Hotel } from '@/lib/api/tipos'
-import { HOTELES } from '@/data/hoteles'
+import { HOTELES } from '@/lib/api/hoteles'
 import { t } from '@/lib/i18n'
 
 // [2026-08-25, pedido de Samuel] SELECTOR DE HOTEL DEL FUNNEL.

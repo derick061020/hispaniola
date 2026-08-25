@@ -4,7 +4,7 @@ import * as CompactButton from '@/components/alignui/compact-button'
 import * as FancyButton from '@/components/alignui/fancy-button'
 import { Link } from 'react-router-dom'
 import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
-import { esEventoReservable, slugOdooDePaquete } from '@/data/eventos-reservables'
+import { esEventoReservable, slugOdooDePaquete } from '@/lib/eventos-reservables'
 import { NumeroEditable } from '@/components/ui/numero-editable'
 import { formatoDinero } from '@/data/home'
 import {

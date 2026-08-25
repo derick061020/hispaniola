@@ -1,4 +1,5 @@
 import { iconoDepartamento, TODOS, type Filtro } from '@/components/equipo/grid-equipo'
+import { t } from '@/lib/i18n'
 import { Etiqueta } from '@/components/ui/etiqueta'
 import { DEPARTAMENTOS, contarPorDepartamento, type DepartamentoId } from '@/data/equipo'
 
@@ -121,12 +122,12 @@ export function PlanoBarco({
   return (
     <section className="relative overflow-hidden rounded-card-grande bg-linear-to-b from-papel-hueso to-aqua-tint px-6 py-10 sm:px-10 sm:py-12">
       <div className="text-center">
-        <Etiqueta>The team, by where they are based</Etiqueta>
+        <Etiqueta>{t('The team, by where they are based')}</Etiqueta>
         <h2 className="mt-3 font-display text-h2 font-semibold text-navy">
-          Some sail, others keep the ship afloat
+          {t('Some sail, others keep the ship afloat')}
         </h2>
         <p className="mx-auto mt-2 max-w-2xl text-navy-sub">
-          Tap an area to see its people. Tap it again to see them all.
+          {t('Tap an area to see its people. Tap it again to see them all.')}
         </p>
       </div>
 
@@ -146,7 +147,7 @@ export function PlanoBarco({
             plano en vez de como dos cosas sueltas. */}
         <div className="flex w-full max-w-xs flex-col gap-3 lg:pb-6">
           <p className="text-eyebrow font-semibold uppercase tracking-[0.12em] text-navy-soft">
-            En tierra
+            {t('On land')}
           </p>
           {EN_TIERRA.map((p) => (
             <Punto
@@ -165,7 +166,7 @@ export function PlanoBarco({
             del panel hace el mismo trabajo. */}
         <div className="relative w-full max-w-sm">
           <p className="mb-2 text-center text-eyebrow font-semibold uppercase tracking-[0.12em] text-navy-soft">
-            A bordo
+            {t('On board')}
           </p>
           <div className="relative">
             <img

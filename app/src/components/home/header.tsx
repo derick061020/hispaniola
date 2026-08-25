@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { t } from '@/lib/i18n'
 import { Link, useLocation } from 'react-router-dom'
 import { Menu } from 'lucide-react'
 import { Logo } from '@/components/ui/logo'
@@ -115,7 +116,7 @@ export function Header({
               compacta cuando este boton sale de vista junto con el logo (ver
               nav-flotante.tsx). 'solida' no cambia: sigue visible desde sm. */}
           <span className="hidden sm:inline-flex">
-            <Boton href={ctaHref}>Book now</Boton>
+            <Boton href={ctaHref}>{t('Book now')}</Boton>
           </span>
           <button
             type="button"
