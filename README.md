@@ -9,7 +9,7 @@ El fuente vive en la rama `main`.
 
 | | |
 |---|---|
-| Commit de origen | `8185c4f` — *La cotización de eventos le dice a Odoo qué paquete se pidió* |
+| Commit de origen | `00c755a` — *Party boat y bodas se reservan y se pagan como un tour* |
 | Comando | `npm run build` en `app/` (= `tsc -b && vite build`) |
 | `VITE_API_URL` compilada | `https://sistemashispaniola.com` (de `app/.env.production`) |
 
