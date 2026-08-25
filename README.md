@@ -9,7 +9,7 @@ El fuente vive en la rama `main`.
 
 | | |
 |---|---|
-| Commit de origen | `e8d5e7c` — *El resumen del checkout no repite «Premium» dos veces seguidas* |
+| Commit de origen | `e36408d` — *Plantillas nuevas, desglose por edades, «Mi cuenta» y el tramo del charter* |
 | Comando | `npm run build` en `app/` (= `tsc -b && vite build`) |
 | `VITE_API_URL` compilada | `https://sistemashispaniola.com` (de `app/.env.production`) |
 
