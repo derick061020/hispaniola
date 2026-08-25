@@ -1,5 +1,3 @@
-import { traducible } from '@/lib/i18n'
-
 // Página de Instalaciones (correcciones v2, plan 06) — 2026-07-27.
 //
 // El argumento de la página, en palabras del propio cliente: «Mucho más que una
@@ -10,8 +8,26 @@ import { traducible } from '@/lib/i18n'
 //
 // ✅ EL COPY DE LAS 6 ZONAS ES REAL: lo escribió el cliente en su PowerPoint
 // (slides 46-49). Es la parte más valiosa de esas slides y se usa tal cual.
-// También son suyos los pies de los verticales («Así te recibimos», «Dentro
-// del laboratorio», «La cocina en acción»…) y el copy de las bandas de CTA.
+// También son suyos el copy de las bandas de CTA y —hasta la ronda del 08/22—
+// los pies de los verticales.
+//
+// ⚠️ [2026-08-24, UPDATES 08/22 del cliente, pág. 4] LOS 5 PIES SON OTROS. El
+// cliente los reescribe enteros y los da literales: «Your adventure starts
+// here» (recepción), «Bringing corals back to life» (laboratorio), «Caribbean
+// flavors in action» (cocina), «Take paradise home» (tienda) y «Making it all
+// happen» (oficina). Siguen siendo copy suyo, solo que de esta ronda y no del
+// PowerPoint de las slides 46-49.
+//
+// Dos cosas que cambian de naturaleza y conviene tener presentes:
+//   · Con esto se cae «Así te recibimos», que era el ÚNICO texto en ESPAÑOL
+//     que quedaba visible en una web íntegramente en inglés (salía dos veces
+//     por página: en la card del carril y en la celda del bento). Los otros
+//     cuatro ya se habían traducido en su momento y éste se quedó atrás.
+//   · Los pies nuevos son AFIRMACIONES DE MARCA, no descripciones de lo que se
+//     ve en el clip, que es lo que hacían los viejos («A walk through the
+//     shop»). Con cuatro de los cinco vídeos ya reales no molesta; en la
+//     tienda, cuyo vídeo sigue siendo el catamarán de relleno, «Take paradise
+//     home» promete una tienda que el clip todavía no enseña.
 //
 // ⚠️ LA MEDIA ES PLACEHOLDER. No hay ni una foto de las instalaciones en tierra
 // en el repo. Decisión de Samuel (2026-07-27): la página se construye igual,
@@ -81,13 +97,35 @@ export type ZonaInstalacion = {
   bullets: string[]
   /** Celda grande del bento. */
   vertical: VerticalZona
-  /** [placeholder-v2] Las 2 celdas apiladas del bento. */
+  /** El clip de la zona es 16:9 y no 9:16. Cuando es true el bento INTERCAMBIA
+   *  sitios: el video baja a una celda apilada (que ya es apaisada) y el hueco
+   *  9:16 lo ocupa `fotoVertical`. Recortar un 16:9 a vertical se comia los
+   *  lados de la sala. Pedido de Samuel, 2026-08-21. */
+  videoApaisado?: boolean
+  /** La foto que ocupa el hueco 9:16 cuando `videoApaisado`. Con
+   *  `todoApaisado` ese hueco ya no existe en el bento y esta foto sobrevive
+   *  SOLO como cartel de la card del carril de verticales, que sigue siendo
+   *  9:16 (ver VERTICALES_INSTALACIONES al pie). */
+  fotoVertical?: FotoZona
+  /** TODO el material de la zona es apaisado —las fotos de la carpeta y el
+   *  clip— asi que el bento pasa de 3 celdas a 4 y ninguna es vertical. Pedido
+   *  de Samuel, 2026-08-24, sobre el Operations Center: «como todas las
+   *  imagenes y videos son horizontales haz un bento de 4, para que todo entre
+   *  horizontal». Implica `videoApaisado`; ver bento-zona.tsx. */
+  todoApaisado?: boolean
+  /** Las celdas apiladas del bento. Con `videoApaisado` solo hay UNA, porque la
+   *  otra se la queda el video. */
   fotos: FotoZona[]
+  /** Fotos de la carpeta que NO se pintan en el bento y solo aparecen al abrir
+   *  el lightbox. El cliente (2026-08-21): «las que tengan mas de dos, al darle
+   *  clic que ahi si esten todas las demas para que se puedan ver». La celda
+   *  avisa de cuantas hay con un «+N». */
+  fotosExtra?: FotoZona[]
   /** Ausente a propósito: no existe el material. NO poner un placeholder aquí. */
   tour360?: string
 }
 
-export const INSTALACIONES = traducible({
+export const INSTALACIONES = {
   // [v3 2026-08-06, WEBSITE - NOSOTROS pags. 10-11] Copy APROBADO, literal.
   // El cliente remata el titular con ⭐⭐⭐: es su marca de enfasis en el
   // documento, no parte del texto — el enfasis lo pone la tipografia.
@@ -123,8 +161,8 @@ export const INSTALACIONES = traducible({
   /** Enlace discreto al pie de cada zona (slides 46-49). */
   zonaCta: 'Book your tour',
 
-  cierreEyebrow: 'We are waiting for you in Punta Cana',
-  cierreTitulo: 'Come and see it for yourself',
+  cierreEyebrow: 'Te esperamos en Punta Cana',
+  cierreTitulo: 'Ven a conocernos en persona',
   cierreTexto:
     'All of this is waiting for you before and after your tour. Book your day and see why we are far more than an excursion.',
   cierreCta: 'Book your tour',
@@ -138,7 +176,7 @@ export const INSTALACIONES = traducible({
   // dos bloques más abajo, en el propio footer, y las dos entrarían en cuadro de
   // una sola pasada.
   cierreFoto: 'hero-catamaran-1',
-} as const)
+} as const
 
 // Banda de CTA intercalada (slide 48). La maqueta pone TRES bandas a ancho
 // completo entre las zonas — coral («¿Listo para vivir todo esto?»), verde
@@ -166,10 +204,22 @@ export const INSTALACIONES = traducible({
 // recortado a 9:16 en la celda del bento esos subtítulos caen justo encima del
 // pie de la card. En el popup de la home el video se ve entero y no molesta;
 // aquí sí. No es un placeholder peor: es un placeholder que rompe la celda.
-const V_OCEANO = { video: '/video/incluye-oceano-cenital.mp4', poster: 'incluye-oceano-poster' }
+// [2026-08-20] LLEGARON LOS VERTICALES DE VERDAD. El cliente entrega un video
+// propio para cuatro de las cinco zonas, asi que se acaba el reparto de clips
+// prestados que describe el comentario de arriba. Cada zona usa AHORA el suyo.
+// La tienda (FOUNDATION STORE) sigue con placeholder: su carpeta llegó vacia,
+// marcada PENDIENTE por el propio cliente.
+//
+// ⚠️ Dos de los cuatro (recibimiento y oficinas) venian en 16:9 horizontal, no
+// en 9:16. Se recortan al centro para caber en la celda vertical del bento, asi
+// que pierden los laterales del encuadre original.
 const V_CATAMARAN = { video: '/video/hero.mp4', poster: 'hero-video-poster' }
+const V_RECIBIMIENTO = { video: '/video/instalaciones/recibimiento.mp4', poster: 'instalacion-recibimiento-poster' }
+const V_BIOLOGIA = { video: '/video/instalaciones/biologia.mp4', poster: 'instalacion-biologia-poster' }
+const V_COCINAS = { video: '/video/instalaciones/cocinas.mp4', poster: 'instalacion-cocinas-poster' }
+const V_OFICINAS = { video: '/video/instalaciones/oficinas.mp4', poster: 'instalacion-oficinas-poster' }
 
-const ZONAS_EN: ZonaInstalacion[] = [
+export const ZONAS: ZonaInstalacion[] = [
   {
     id: 'recibimiento',
     chip: 'Welcome',
@@ -183,18 +233,20 @@ const ZONAS_EN: ZonaInstalacion[] = [
       'Comfortable waiting areas & restrooms',
       'Tour briefing before departure',
     ],
-    vertical: { ...V_CATAMARAN, titulo: 'This is how we welcome you' },
+    // ⚠️ ZONA DE VIDEO APAISADO — ver `videoApaisado` en el tipo.
+    videoApaisado: true,
+    vertical: { ...V_RECIBIMIENTO, titulo: 'Your adventure starts here' },
+    fotoVertical: {
+      src: 'instalacion-recibimiento-vertical',
+      alt: 'Inside the Guest Welcome Center: long wooden counters, stools and the reef information panels',
+    },
     fotos: [
       // No `hero-catamaran-1` aunque sea la foto de llegada más clara del repo:
       // se la queda el banner de cierre de esta misma página (ver `cierreFoto`),
       // y a media pantalla de distancia se vería dos veces.
       {
-        src: 'galeria-isla-saona-2',
-        alt: 'Guests boarding the catamaran from the shore',
-      },
-      {
-        src: 'galeria-semi-privado-3',
-        alt: 'Group photo of all the guests on the beach',
+        src: 'instalacion-recibimiento-1',
+        alt: 'The wooden Guest Welcome Center, with a crew member getting the check-in desk ready',
       },
     ],
   },
@@ -219,15 +271,15 @@ const ZONAS_EN: ZonaInstalacion[] = [
       'Interactive coral museum',
     ],
     cierre: 'Real conservation. Real scientists. Real impact.',
-    vertical: { ...V_CATAMARAN, titulo: 'Inside the lab' },
+    vertical: { ...V_BIOLOGIA, titulo: 'Bringing corals back to life' },
     fotos: [
       {
         src: 'galeria-snorkel-lovers-9',
         alt: 'The team handling coral fragments on the work bench',
       },
       {
-        src: 'galeria-semi-privado-1',
-        alt: 'Visitors around the coral growing tank',
+        src: 'instalacion-biologia-1',
+        alt: 'The coral growing tanks at the Marine Biology Center, under the Bávaro Reefs mural',
       },
     ],
   },
@@ -244,7 +296,7 @@ const ZONAS_EN: ZonaInstalacion[] = [
       'Large cold-storage facilities',
       'Daily quality control',
     ],
-    vertical: { ...V_OCEANO, titulo: 'The kitchen in action' },
+    vertical: { ...V_COCINAS, titulo: 'Caribbean flavors in action' },
     fotos: [
       // ⚠️ NI cocina-flotante NI plato-mariscos, que eran los candidatos
       // obvios: la primera es la cocina A BORDO (otra cosa distinta de las
@@ -255,12 +307,22 @@ const ZONAS_EN: ZonaInstalacion[] = [
       // una foto. Estas dos sí tienen fondo y cuentan preparación y servicio,
       // que es de lo que habla la zona.
       {
-        src: 'mice-3',
-        alt: 'Appetizers prepared and lined up on the service table before an event',
+        src: 'instalacion-cocinas-1',
+        alt: 'The Culinary Center kitchen, with the cold room and the prep shelves',
       },
       {
-        src: 'galeria-charter-privado-1',
-        alt: 'A team member serving the buffet to guests',
+        src: 'instalacion-cocinas-2',
+        alt: 'The stainless steel prep counter and the grill at the Culinary Center',
+      },
+    ],
+    fotosExtra: [
+      {
+        src: 'instalacion-cocinas-3',
+        alt: 'The dry store of the Culinary Center, with the fridges and the stacked crockery',
+      },
+      {
+        src: 'instalacion-cocinas-4',
+        alt: 'The convection oven at the Culinary Center',
       },
     ],
   },
@@ -278,7 +340,7 @@ const ZONAS_EN: ZonaInstalacion[] = [
       'Every purchase supports conservation',
     ],
     cierre: 'Your souvenir helps protect the ocean you came to enjoy.',
-    vertical: { ...V_CATAMARAN, titulo: 'A walk through the shop' },
+    vertical: { ...V_CATAMARAN, titulo: 'Take paradise home' },
     fotos: [
       {
         src: 'bar-flotante',
@@ -304,21 +366,62 @@ const ZONAS_EN: ZonaInstalacion[] = [
       'Sales & Foundation offices',
     ],
     cierre: 'What you experience as a perfect day is the result of hundreds of details working together behind the scenes.',
-    vertical: { ...V_OCEANO, titulo: 'A day at the offices' },
+    // ⚠️ ZONA DE VIDEO APAISADO — mismo caso que el recibimiento. Samuel solo
+    // señaló el welcome center, pero el clip del Operations Center también es
+    // 16:9 y el motivo para intercambiar es idéntico.
+    videoApaisado: true,
+    vertical: { ...V_OFICINAS, titulo: 'Making it all happen' },
+    // [2026-08-23, 2ª entrega del cliente] SE REPARTE LA ZONA DE NUEVO.
+    // Petición literal: «cambiar foto, no achicar ni colocar vertical», con la
+    // flecha sobre la celda alta. Y además borró de su carpeta
+    // `IMG_8815-HDR.jpg`, que era justo la foto que ocupaba esa celda — con la
+    // regla de siempre (en la web solo lo que está en la carpeta), tenía que
+    // salir igualmente.
+    //
+    // De las tres fotos que quedan en OPERATON CENTER, solo UNA tiene gente:
+    // `IMG_8994-HDR` (la oficina con las tres compañeras trabajando). Las otras
+    // dos son la sala vacía. Así que la que tiene gente se lleva la celda
+    // ANCHA, donde se ve apaisada y entera —que es lo que pedía el cliente—, y
+    // la celda alta 9:16 la ocupa un rincón vacío recortado en vertical:
+    // recortar una sala sin nadie no cuesta nada, recortar la foto con las tres
+    // personas sí.
+    //
+    //
+    // [2026-08-24, Samuel: «como todas las imágenes y videos son horizontales
+    // haz un bento de 4, para que todo entre horizontal»] EL REPARTO DE ARRIBA
+    // SE DESHACE. Era correcto salvo en una cosa: daba por buena la celda 9:16.
+    // Y esta zona no tiene NADA vertical que meter ahí — las tres fotos de la
+    // carpeta son 3:2 apaisadas y el clip es 16:9. Lo que se veía en esa celda
+    // era el resultado de recortar una sala a la fuerza: un aire
+    // acondicionado, un perchero y una estantería, sin oficina y sin nadie.
+    //
+    // Con `todoApaisado` el bento pasa a 4 celdas y cada pieza entra en su
+    // formato: el clip, las tres fotos, y ya no hay `fotosExtra` porque no
+    // queda ninguna escondida (de ahí que desaparezca el «+1»).
+    // `instalacion-oficinas-2` VUELVE —es 8812 apaisada, la 4ª celda— y
+    // `fotoVertical` se queda SOLO como cartel de la card del carril, que
+    // sigue siendo 9:16.
+    todoApaisado: true,
+    fotoVertical: {
+      src: 'instalacion-oficinas-vertical',
+      alt: 'A corner of the Operations Center with the shelving and the notice board',
+    },
     fotos: [
       {
-        src: 'mice-2',
-        alt: 'Hispaniola staff looking after a group in the covered area of the complex',
+        src: 'instalacion-oficinas-4',
+        alt: 'The office team at their desks in the Operations Center',
       },
       {
-        src: 'mice-1',
-        alt: 'Team and guests during the setup of an event',
+        src: 'instalacion-oficinas-2',
+        alt: 'A workstation in the Operations Center, with the planning board and the shelving',
+      },
+      {
+        src: 'instalacion-oficinas-3',
+        alt: 'The briefing room of the Operations Center, with the planning boards',
       },
     ],
   },
 ]
-
-export const ZONAS: ZonaInstalacion[] = traducible(ZONAS_EN)
 
 // El carril de verticales del slide 45, DERIVADO de las zonas: mismo video,
 // mismo pie y misma foto de portada que la celda grande del bento de más
@@ -331,13 +434,15 @@ export const ZONAS: ZonaInstalacion[] = traducible(ZONAS_EN)
 // que se ve es el póster, y los 3 videos del repo darían 3 portadas repetidas
 // donde tiene que haber 6 zonas distintas. Es el mismo criterio que
 // GaleriaMosaico, que usa `fotos[0]` como póster de su celda de video.
-// Se deriva de ZONAS_EN (el objeto CRUDO) y no de ZONAS (el envuelto): esto
-// corre al importar el modulo y copia CADENAS, no referencias — leerlas del
-// proxy las dejaria congeladas en el idioma con el que se cargo la pagina.
-export const VERTICALES_INSTALACIONES = traducible(ZONAS_EN.map((z) => ({
+export const VERTICALES_INSTALACIONES = ZONAS.map((z) => ({
   id: z.id,
   titulo: z.vertical.titulo,
-  foto: z.fotos[0]!.src,
-  fotoAlt: z.fotos[0]!.alt,
+  // Con `videoApaisado` el cartel es la foto VERTICAL de la zona: la card del
+  // carril es 9:16 y una apaisada se recortaría por los lados.
+  foto: (z.fotoVertical ?? z.fotos[0]!).src,
+  fotoAlt: (z.fotoVertical ?? z.fotos[0]!).alt,
   video: z.vertical.video,
-})))
+  // Se propaga para que el reproductor abra en 16:9 y no herede el 9:16 de la
+  // card, que recortaría el clip por los lados.
+  apaisado: z.videoApaisado ?? false,
+}))

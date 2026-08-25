@@ -22,7 +22,7 @@ import { numero, t, traducible } from '@/lib/i18n'
  *  tarifa adulto que también publica Viator), no de una constante suelta: si
  *  mañana cambia el precio del tour, cambia aquí y en el desglose a la vez. */
 export const PRECIO_TODO_INCLUIDO =
-  TOURS.find((t) => t.slug === 'snorkel-lovers')?.precioLight ?? 114
+  TOURS.find((t) => t.slug === 'coral')?.precioLight ?? 114
 
 export type Kpi = { valor: string; label: string }
 
@@ -100,7 +100,14 @@ export const CONCEPTOS_SUELTOS: ConceptoSuelto[] = traducible([
     nota: 'Boat, crew, drinks and appetizers',
     importe: 75,
     foto: 'hero-catamaran-1',
-    fotoAlt: 'Hispaniola catamaran sailing off the coast of Bávaro',
+    // [2026-08-23] El alt se reescribe con la 2ª entrega del cliente. El hueco
+    // `hero-catamaran-1` cambia de foto —ahora es la vista cenital de la
+    // plataforma flotante con los barcos fondeados sobre el arrecife— y el alt
+    // anterior («catamaran sailing off the coast of Bávaro») describía la
+    // anterior. Un alt que describe una foto que ya no está es peor que no
+    // tenerlo: lo lee quien no puede ver la imagen y no tiene cómo saber que
+    // miente.
+    fotoAlt: 'Aerial view of the Hispaniola floating platform and boats anchored over the reef',
   },
   {
     id: 'snorkel',

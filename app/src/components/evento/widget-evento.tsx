@@ -472,10 +472,12 @@ export function WidgetEvento({ evento, colapsable = false, paqueteElegido = null
           />
         </div>
 
+        {/* max-lg:h-11 — mismo motivo que en calculadora-evento.tsx: 40px es
+            poco para el dedo, y este es el botón que envía la cotización. */}
         <FancyButton.Root
           type="submit"
           variant="primary"
-          className="w-full sm:col-span-2"
+          className="w-full max-lg:h-11 sm:col-span-2"
           disabled={enviando}
         >
           {enviando ? 'Sending…' : evento.ctaPrincipal}

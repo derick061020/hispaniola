@@ -61,6 +61,7 @@ export function GaleriaMosaico({
   etiqueta,
   video = null,
   fotosComida,
+  videoProducto = null,
 }: {
   fotos: string[]
   /** describe el conjunto para lectores de pantalla (el nombre del tour/evento) */
@@ -71,6 +72,15 @@ export function GaleriaMosaico({
    *  primera celda pasa a ser el slider. Sin ellas, el mosaico es el de
    *  siempre — las landings sin menú no cambian. */
   fotosComida?: string[]
+  /** [2026-08-21, pedido de Samuel] EL VIDEO DEL PRODUCTO, 16:9, DENTRO DE LA
+   *  REJILLA. Es distinto de `video`: aquel es la columna 9:16 de al lado (hoy
+   *  un placeholder, mañana alguien explicando cómo reservar) y este es el clip
+   *  que el cliente grabó del propio evento. Samuel: «el vídeo siempre tiene
+   *  que salir en el grid, no puede estar oculto de último». Ocupa la primera
+   *  celda libre —la 0, o la 1 si la 0 se la lleva el slider de comida— y abre
+   *  la MISMA galería que las fotos, en su diapositiva 0, para que además se
+   *  llegue a él pasando fotos. */
+  videoProducto?: { src: string; poster: string } | null
 }) {
   const [lightbox, setLightbox] = useState<number | null>(null)
   // [v2 2026-07-28] QUÉ conjunto muestra el lightbox. Bug que reportó Samuel:
@@ -92,9 +102,14 @@ export function GaleriaMosaico({
 
   if (fotos.length <= 1) return null
 
-  const amplio = fotos.length >= 7
-  const visibles = amplio ? 7 : Math.min(4, fotos.length)
-  const restantes = fotos.length - visibles
+  // ⚠️ `visibles` y `restantes` se calculan sobre las PIEZAS, no sobre las
+  // fotos: desde que el slider de comida y el video del producto ocupan celda,
+  // la rejilla puede tener 7 huecos con solo 5 fotos dentro. El «+N» sigue
+  // contando FOTOS, que es lo que el visitante espera encontrar al pulsarlo.
+  const totalPiezas =
+    fotos.length + ((fotosComida?.length ?? 0) >= 2 ? 1 : 0) + (videoProducto ? 1 : 0)
+  const amplio = totalPiezas >= 7
+  const visibles = amplio ? 7 : Math.min(4, totalPiezas)
 
   // [v2] Con fotos de menú, la celda 0 se sustituye por el slider. El resto de
   // índices NO se desplazan: el slider abre el lightbox en la 0 igual que
@@ -102,8 +117,28 @@ export function GaleriaMosaico({
   // cuadrando con `fotos`.
   const hayComida = (fotosComida?.length ?? 0) >= 2
 
+  // Las PIEZAS de la rejilla, en orden. Antes eran los índices de `fotos` a
+  // secas; ahora delante puede haber hasta dos piezas que no son fotos (el
+  // slider de comida y el video del producto), así que se enumeran y cada una
+  // sabe a qué diapositiva del visor abre.
+  //  · comida  -> abre el visor en el conjunto de comida
+  //  · video   -> abre el visor de la galería en su diapositiva 0
+  //  · foto i  -> abre en `i + 1` si hay video delante, en `i` si no
+  const desfase = videoProducto ? 1 : 0
+  const piezas: ({ tipo: 'comida' } | { tipo: 'video' } | { tipo: 'foto'; i: number })[] = [
+    ...(hayComida ? [{ tipo: 'comida' } as const] : []),
+    ...(videoProducto ? [{ tipo: 'video' } as const] : []),
+    ...fotos.map((_, i) => ({ tipo: 'foto', i }) as const),
+  ]
+
+  const fotosVisibles = piezas.slice(0, visibles).filter((p) => p.tipo === 'foto').length
+  const restantes = fotos.length - fotosVisibles
+
   const celda = (indice: number, span: string) => {
-    if (indice === 0 && hayComida) {
+    const pieza = piezas[indice]
+    if (!pieza) return null
+
+    if (pieza.tipo === 'comida') {
       return (
         <div key="slider-comida" className={`${span} h-full overflow-hidden`}>
           <SliderComida
@@ -113,7 +148,7 @@ export function GaleriaMosaico({
               foto.abrirDesde(el)
               setConjunto('comida')
               // Abre EN EL PLATO que se estaba viendo, no en el primero: el
-              // slider va rotando solo, así que empezar en el 0 sería saltar
+              // slider va rotando solo, asi que empezar en el 0 seria saltar
               // a una foto distinta de la que el visitante acaba de pulsar.
               setLightbox(indiceComida)
             }}
@@ -121,26 +156,75 @@ export function GaleriaMosaico({
         </div>
       )
     }
+
+    if (pieza.tipo === 'video') {
+      return (
+        <button
+          key="video-producto"
+          type="button"
+          onClick={(e) => {
+            foto.abrirDesde(e.currentTarget)
+            setConjunto('galeria')
+            // Diapositiva 0 de la MISMA galeria: desde ahi se pasa a las fotos
+            // con las flechas, y desde cualquier foto se vuelve al video.
+            setLightbox(0)
+          }}
+          aria-label={`Watch the ${etiqueta} video`}
+          className={`group relative overflow-hidden bg-navy ${span}`}
+        >
+          {/* Bucle mudo = cartel animado. Los navegadores no autoreproducen
+              con sonido, asi que la pildora de abajo dice que el clic lo trae. */}
+          <video
+            src={videoProducto!.src}
+            poster={videoProducto!.poster}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            aria-hidden="true"
+            className="size-full object-cover transition-transform duration-300 group-hover:scale-105"
+          />
+          <span
+            aria-hidden="true"
+            className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-navy/70 to-transparent"
+          />
+          <span aria-hidden="true" className="absolute inset-0 grid place-items-center">
+            <span className="grid size-12 place-items-center rounded-full bg-white/25 text-white ring-1 ring-white/40 backdrop-blur-sm transition-transform duration-300 group-hover:scale-110">
+              <Play className="size-5 translate-x-px fill-current" />
+            </span>
+          </span>
+          <span
+            aria-hidden="true"
+            className="absolute inset-x-0 bottom-0 flex items-center justify-center gap-1.5 px-2 pb-2 text-xs font-medium text-white"
+          >
+            <Volume2 className="size-3.5 shrink-0" />
+            Watch with sound
+          </span>
+        </button>
+      )
+    }
+
     const esUltima = indice === visibles - 1
     return (
       <button
-        key={fotos[indice]}
+        key={fotos[pieza.i]}
         type="button"
         onClick={(e) => {
           foto.abrirDesde(e.currentTarget)
           setConjunto('galeria')
-          setLightbox(indice)
+          setLightbox(pieza.i + desfase)
         }}
-        // [v3 F8 · QA 2026-08-07] La foto es DECORATIVA (alt vacío + aria-hidden:
+        // [v3 F8 - QA 2026-08-07] La foto es DECORATIVA (alt vacio + aria-hidden:
         // describir una a una las 8 fotos de un mosaico es ruido para quien usa
-        // lector de pantalla), pero eso dejaba al BOTÓN sin nombre accesible —
-        // se anunciaba solo como «botón». El nombre va aquí, y dice lo que el
-        // botón HACE, no lo que la foto muestra.
-        aria-label={`Open photo ${indice + 1} of ${fotos.length} in the gallery`}
+        // lector de pantalla), pero eso dejaba al BOTON sin nombre accesible -
+        // se anunciaba solo como «boton». El nombre va aqui, y dice lo que el
+        // boton HACE, no lo que la foto muestra.
+        aria-label={`Open photo ${pieza.i + 1} of ${fotos.length} in the gallery`}
         className={`group relative overflow-hidden bg-papel-hueso ${span}`}
       >
         <img
-          src={`/fotos/${fotos[indice]}.webp`}
+          src={`/fotos/${fotos[pieza.i]}.webp`}
           alt=""
           aria-hidden="true"
           loading="lazy"
@@ -148,7 +232,7 @@ export function GaleriaMosaico({
         />
         {esUltima && restantes > 0 ? (
           <span className="absolute inset-0 grid place-items-center bg-overlay-foto text-sm font-semibold text-white">
-            +{restantes} {t('photos →')}
++{restantes} {t('photos')}
           </span>
         ) : null}
       </button>
@@ -240,6 +324,10 @@ export function GaleriaMosaico({
           indiceInicial={lightbox}
           etiqueta={conjunto === 'comida' ? `the ${etiqueta} menu` : etiqueta}
           origen={foto.origen}
+          // El video solo viaja al conjunto GENERAL: la galería del menú son
+          // platos, y meterle el video del evento sería prometer una cosa y
+          // dar otra (el mismo motivo por el que los dos conjuntos existen).
+          video={conjunto === 'comida' ? null : videoProducto}
           onCerrar={() => setLightbox(null)}
         />
       ) : null}

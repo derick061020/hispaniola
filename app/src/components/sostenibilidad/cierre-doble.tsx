@@ -4,10 +4,17 @@ import { Etiqueta } from '@/components/ui/etiqueta'
 import { FUNDACION } from '@/data/fundacion'
 import { SOSTENIBILIDAD } from '@/data/sostenibilidad'
 
-// EL CIERRE DE /ventaja-competitiva: las dos llamadas a la acción del slide
-// 64, en paralelo — 2026-07-28, 5ª vuelta (Samuel: «los 2 banners CTA que
-// estén uno al lado del otro y sean similares a cards de precios; por
-// supuesto no tienen precios, pero estéticamente sean de ese estilo»).
+// EL CIERRE DE /foundation: las dos llamadas a la acción del slide 64, en
+// paralelo — 2026-07-28, 5ª vuelta (Samuel: «los 2 banners CTA que estén uno
+// al lado del otro y sean similares a cards de precios; por supuesto no tienen
+// precios, pero estéticamente sean de ese estilo»).
+//
+// ⚠️ NACIÓ EN /ventaja-competitiva y por eso está en `sostenibilidad/`. Desde
+// el 2026-08-12 su ÚNICO consumidor es /foundation: al mudarse allí el tramo
+// de la fundación, las dos tarjetas habrían salido en las dos páginas
+// («ya que las 2 cards finales estarían duplicadas quita una») y se quitó la
+// de /competitive-advantage. La carpeta y el nombre se arreglan en la próxima
+// limpieza, junto con `fundacion-teaser.tsx`, que arrastra lo mismo.
 //
 // Sustituye a DOS componentes que estaban apilados: membresias-sostenibilidad
 // (superficie clara) y cierre-sostenibilidad (banda con foto). Los dos se
@@ -35,12 +42,15 @@ import { SOSTENIBILIDAD } from '@/data/sostenibilidad'
 // hay niveles, ni precios, ni pasarela — mismo bloqueo Odoo que el resto de
 // pagos). Recoger interés real desde el primer día es preferible a prometer un
 // flujo que no está.
-// `id` y `anclaClase` son props porque este bloque tiene DOS consumidores
-// desde el 2026-07-28 (Samuel: «en el CTA final de /fundacion reemplázalo por
-// el que tenemos en ventaja-competitiva, que son 2 cards una al lado de la
-// otra tipo card price, ese está mejor»). En /ventaja-competitiva es el
-// destino del chip «Membresías» y despeja la barra de anclas; en /fundacion
-// es el ancla `#membresias` de siempre y solo tiene que despejar el header.
+// `id` y `anclaClase` son props porque este bloque tuvo DOS consumidores entre
+// el 2026-07-28 y el 2026-08-12 (Samuel: «en el CTA final de /fundacion
+// reemplázalo por el que tenemos en ventaja-competitiva, que son 2 cards una
+// al lado de la otra tipo card price, ese está mejor»): en /fundacion es el
+// ancla `#membresias` de siempre y solo despeja el header, y en
+// /ventaja-competitiva era el destino del chip «Membresías» y tenía que
+// despejar además la barra de anclas. Hoy solo queda el primero, así que los
+// DEFAULTS ya no los usa nadie — se dejan puestos porque son el contrato del
+// componente, no la configuración de una página.
 export function CierreDoble({
   id = 'ancla-membresias',
   anclaClase = 'scroll-mt-sticky-top',
@@ -50,9 +60,14 @@ export function CierreDoble({
 } = {}) {
   return (
     <section id={id} className={anclaClase}>
+      {/* [2026-08-12] FUERA LAS DOS CLASES `.sost-reveal` de las tarjetas. Las
+          pintaba use-sostenibilidad-reveal.ts, que solo se llama desde
+          pages/ventaja-competitiva.tsx; desde que este bloque no se monta allí
+          no hay hook que las mire y eran marcadores muertos. En /foundation no
+          hay reveal de página: el bloque entra como el resto. */}
       <div className="grid items-stretch gap-5 lg:grid-cols-2">
         {/* ---------- Apoyar la fundación ---------- */}
-        <article className="sost-reveal flex flex-col rounded-card-grande bg-papel-hueso p-8 sm:p-10">
+        <article className="flex flex-col rounded-card-grande bg-papel-hueso p-8 sm:p-10">
           <Etiqueta>{FUNDACION.membresiasEyebrow}</Etiqueta>
           <h2 className="mt-3 text-balance font-display text-h2 font-semibold text-navy">
             {FUNDACION.membresiasTitulo}
@@ -78,7 +93,7 @@ export function CierreDoble({
         </article>
 
         {/* ---------- Reservar (la destacada) ---------- */}
-        <article className="sost-reveal relative flex flex-col overflow-hidden rounded-card-grande p-8 sm:p-10">
+        <article className="relative flex flex-col overflow-hidden rounded-card-grande p-8 sm:p-10">
           <img
             src={`/fotos/${SOSTENIBILIDAD.cierreFoto}.webp`}
             alt=""

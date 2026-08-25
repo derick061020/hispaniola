@@ -48,6 +48,7 @@ import { t } from '@/lib/i18n'
 // aquí no es un adorno: es parte de lo que se está comprando, y quitar el paso
 // sin enseñarla en algún sitio sería esconder el producto.
 export function ResumenReserva({
+  className = '',
   tour,
   fechaISO,
   onFecha,
@@ -113,7 +114,8 @@ export function ResumenReserva({
   lineasAddOns?: { label: string; quantity: number; amount: number }[]
   total: number
   deposito: number
-  saldo: number  /** [2026-08-18] true = Odoo todavía no ha contestado (o no contesta) y el
+  saldo: number
+  /** [2026-08-18] true = Odoo todavía no ha contestado (o no contesta) y el
    *  número de arriba es una ESTIMACIÓN local. Se dice en pantalla: el precio
    *  bueno lo pone el servidor y en los tours por tramos la estimación puede
    *  quedarse muy corta o muy larga. */
@@ -121,13 +123,15 @@ export function ResumenReserva({
   /** Sub-variante (el barco) elegida en el widget. El aforo es por barco, así
    *  que el calendario la necesita para preguntar por el que toca. */
   variante?: string | null
+  /** [2026-08-21] El funnel lo usa para el orden en móvil. Ver reservar.tsx. */
+  className?: string
 
 }) {
   const enEfectivo = Math.round(saldo * 0.95)
   const ahorro = saldo - enEfectivo
 
   return (
-    <div>
+    <div className={className}>
       {/* SIN `overflow-hidden` (2026-08-07): al entrar el calendario en la
           tarjeta, ese clip le cortaba el popover — el grid mensual es más ancho
           que la columna y perdía la columna del sábado. Las esquinas de abajo

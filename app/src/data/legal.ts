@@ -100,10 +100,18 @@ export const LEGAL: Record<string, DocumentoLegal> = traducible({
   cookies: {
     slug: 'cookies',
     nombre: 'Cookie Policy',
-    actualizado: 'July 17, 2026',
+    actualizado: 'August 23, 2026',
     contenidoReal: false,
+    // ⚠️ [2026-08-23] Esta intro DECÍA que el sitio no usaba cookies de
+    // analítica. Dejó de ser cierto el día que entró Microsoft Clarity en
+    // app/index.html (pedido de Samuel): Clarity pone `_clck` y `_clsk` y graba
+    // sesiones. Una política de cookies que afirma lo contrario de lo que hace
+    // la web no es un texto pendiente, es un texto FALSO — y esta página es
+    // precisamente donde alguien va a comprobarlo.
+    // Sigue siendo placeholder (`contenidoReal: false`): las tres secciones de
+    // abajo esperan el texto legal de verdad (PLAN-LANZAMIENTO.md Bloque G).
     intro:
-      'Today the site uses no analytics or advertising cookies (PLAN-LANZAMIENTO.md Bloque G, not implemented yet). This page will be completed when that changes.',
+      'This site uses Microsoft Clarity to understand how visitors use these pages, through heatmaps and session recordings. Clarity sets its own cookies. We use no advertising cookies. The full policy is still being drafted.',
     secciones: [
       { titulo: 'What cookies are', texto: PLACEHOLDER },
       { titulo: 'Cookies we use', texto: PLACEHOLDER },

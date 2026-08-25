@@ -39,6 +39,31 @@ export function Hero() {
   const reducirMovimiento =
     typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
+  // [2026-08-21, auditoría móvil] EL CTA STICKY SOLO APARECE CUANDO EL DEL
+  // HERO SE VA. Hasta hoy la barra fija de abajo se pintaba desde el píxel 0,
+  // así que en la primera pantalla de un móvil se veían DOS botones «See
+  // availability» a la vez —el del hero, con su mar y su catamarán, y una copia
+  // plana pegada al borde inferior— comiéndose 69px de la pantalla más cara del
+  // sitio. La barra existe para el resto de la home (18.700px de scroll en
+  // móvil), no para competir con el hero.
+  //
+  // Se observa el CTA de verdad y no un umbral de scroll en píxeles: el alto
+  // del hero depende de cuántas líneas ocupe el titular, que cambia con el
+  // ancho del teléfono (medido: 5 líneas a 390px, 6 a 320px).
+  const ctaHeroRef = useRef<HTMLDivElement>(null)
+  const [ctaHeroFuera, setCtaHeroFuera] = useState(false)
+  useEffect(() => {
+    const diana = ctaHeroRef.current
+    if (!diana) return
+    const observador = new IntersectionObserver(([entrada]) => setCtaHeroFuera(!entrada.isIntersecting), {
+      // El botón tiene que salir ENTERO antes de que aparezca el relevo: con
+      // el umbral en 0 la barra asomaba con medio CTA del hero aún visible.
+      threshold: 0,
+    })
+    observador.observe(diana)
+    return () => observador.disconnect()
+  }, [])
+
   useEffect(() => {
     const video = videoRef.current
     if (!video) return
@@ -115,7 +140,10 @@ export function Hero() {
           </div>
 
           <div className="relative z-10 flex flex-1 flex-col">
-            <Header variante="sobreVideo" />
+            {/* `#tours` explicito, no el default: el hero SOLO vive en la
+                home, y ahi el ancla nativa scrollea siempre (un <Link> al
+                mismo hash no re-dispara ScrollAlNavegar). Ver header.tsx. */}
+            <Header variante="sobreVideo" ctaHref="#tours" />
 
             {/* La pirámide de confianza (PLAN-v3.md §14): el eyebrow de
                 localización que vivía arriba del título se retira — la
@@ -228,7 +256,7 @@ export function Hero() {
                     de decidir el clic; su función es ser texto de letra
                     pequeña, no una credencial que compita con las insignias
                     de confianza (§F16/F17) por atención. */}
-                <div className="mt-8 flex flex-col items-center gap-4">
+                <div ref={ctaHeroRef} className="mt-8 flex flex-col items-center gap-4">
                   {/* CTA «mar» (pedido de Samuel, 2026-07-14): el botón lleva
                       su propio mar — 2 capas de olas en deriva infinita al
                       pie, y el catamarán REAL del cliente (recorte de
@@ -337,7 +365,18 @@ export function Hero() {
           2026-07-17): mismo motivo que barra-movil-ficha.tsx — sin esto, en
           un iPhone con home indicator el botón queda en la franja del
           gesto de swipe-to-home. */}
-      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-linea bg-papel px-3 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-card md:hidden">
+      {/* [2026-08-21] `translate-y-full` + `invisible` en reposo, no
+          `display:none`: así entra deslizándose desde abajo en vez de
+          aparecer de golpe, y el hueco que reserva HomePage
+          (pb-[calc(4rem+safe-area)]) no cambia nunca de tamaño — si la barra
+          se desmontara, el final de la página daría un salto al llegar.
+          `invisible` (y no solo la opacidad) para que el botón no sea
+          pulsable ni enfocable mientras está fuera de pantalla. */}
+      <div
+        className={`fixed inset-x-0 bottom-0 z-30 border-t border-linea bg-papel px-3 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-card transition-[transform,opacity,visibility] duration-300 ease-out motion-reduce:transition-none md:hidden ${
+          ctaHeroFuera ? 'translate-y-0 opacity-100' : 'invisible translate-y-full opacity-0'
+        }`}
+      >
         <Boton href="#tours" className="w-full">
           {t('See availability')}
         </Boton>

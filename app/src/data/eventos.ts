@@ -40,9 +40,15 @@ export type PaqueteEvento = {
   nombre: string
   /** [v2 2026-07-28] Etiqueta corta para el segmented del widget de reserva
    *  online (evento/calculadora-evento.tsx): ahí cada pestaña mide ~85px y
-   *  «Hispaniola Premium Package» no cabe ni a 12px. El nombre completo se
-   *  sigue leyendo entero en la card de preview justo debajo y en el bloque
-   *  de paquetes de la página, así que la abreviatura nunca aparece sola. */
+   *  «Hispaniola Premium Package» —el nombre que tenía el ancla hasta el
+   *  2026-08-24— no cabía ni a 12px. El nombre completo se sigue leyendo
+   *  entero en la card de preview justo debajo y en el bloque de paquetes de
+   *  la página, así que la abreviatura nunca aparece sola.
+   *  ⚠️ Con los nombres nuevos (Starfish/Breeze/Tide) el campo casi repite el
+   *  `nombre`, y aun así SE CONSERVA: es lo que evita que el próximo nombre
+   *  largo del cliente vuelva a romper el widget, y en el traspaso a Figma es
+   *  una propiedad del componente. El único que sigue abreviando de verdad es
+   *  el Premium («Premium (Turtle) Package» → «Premium»). */
   nombreCorto: string
   /** ej: "US$ 660.00" — "Starting at" según la web del cliente */
   precio: string
@@ -177,8 +183,8 @@ export type FichaEvento = {
    *  4 paquetes a LOS MISMOS precios (TARIFARIO-WEB-ORIGINAL.md §3), así
    *  que `items` apunta al mismo array compartido (`PAQUETES_COMIDA`) y
    *  lo único propio de cada landing es el `titulo`/`intro`.
-   *  MICE no los tiene: los eventos corporativos se cotizan a medida —
-   *  su widget sigue siendo solo el formulario. */
+   *  [2026-08-24] MICE TAMBIÉN LOS ENSEÑA, pero solo como escaparate —
+   *  ver `soloEscaparate`. */
   paquetes?: {
     titulo: string
     /** copy introductorio bajo el titulo */
@@ -187,6 +193,24 @@ export type FichaEvento = {
     /** nota al pie del bloque de paquetes (ej: "Lobster puede no estar
      *  disponible de marzo a junio") */
     nota?: string
+    /** [2026-08-24] EL BLOQUE SE PINTA, PERO NO SE PUEDE RESERVAR AQUÍ.
+     *
+     *  Hasta hoy `paquetes` era un interruptor único que encendía TRES cosas a
+     *  la vez: el bloque de la columna izquierda, la calculadora de reserva
+     *  online con depósito del 25% y el plegado del formulario de cotización.
+     *  El cliente pidió para MICE «los paquetes» (UPDATES 08/22, pág. 6), no
+     *  que los eventos corporativos pasen a reservarse online, así que el
+     *  interruptor se parte en dos.
+     *
+     *  Con `soloEscaparate` la landing enseña los 4 paquetes y deja intacto su
+     *  camino de conversión: el formulario sigue desplegado y la barra móvil
+     *  sigue prometiendo cotización, no reserva. Es lo correcto por dos
+     *  razones, y conviene que consten: (1) «Book this package» es hoy un
+     *  EnlacePrototipo que no lleva a ningún funnel, así que en corporate
+     *  habría sido un CTA muerto tapando al único que funciona; (2) un
+     *  incentivo de 300 pax en convoy multi-barco no tiene —ni puede tener—
+     *  tarifa cerrada, que era el argumento de Samuel del 2026-07-28. */
+    soloEscaparate?: boolean
   }
   /** foto principal del mosaico (la portada) */
   foto: string
@@ -203,6 +227,21 @@ export type FichaEvento = {
    *  grabe uno por ocasión (una boda no se vende con el mismo clip que un
    *  party boat) — misma deuda que ya arrastran los 4 tours. */
   videoGaleria: string | null
+  /** [2026-08-21, pedido de Samuel] LAS FOTOS DEL MENU, que son la mini
+   *  galería de la primera celda del mosaico. Antes se DERIVABAN de las fotos
+   *  de los paquetes, que son bodegones de plato sobre blanco; ahora salen de
+   *  la subcarpeta COMIDA que entregó el cliente para cada evento, que es
+   *  comida servida a bordo. Samuel: «esas imágenes que hay actualmente de
+   *  comida las vas a quitar y vas a poner solamente las que están en esta
+   *  subcarpeta». */
+  fotosMenu: string[]
+  /** [2026-08-21, pedido de Samuel] EL VIDEO DEL PROPIO EVENTO, 16:9. No va en
+   *  la columna vertical —esa queda reservada para el clip de alguien
+   *  explicando cómo reservar, que el cliente aún no ha grabado— sino como una
+   *  CELDA MAS de la rejilla: «el vídeo siempre tiene que salir en el grid, no
+   *  puede estar oculto de último». Desde ahí abre la galería en su
+   *  diapositiva 0, así que también se llega a él pasando fotos. */
+  videoProducto: { src: string; poster: string } | null
   /** faq del acordeón */
   faq: PreguntaEvento[]
   /** meta que se muestra en la página de gracias ("Pronto nos pondremos
@@ -254,10 +293,27 @@ export type FichaEvento = {
 //
 // Los items de cada paquete vienen de la web del cliente con el mismo
 // patrón "1p/p" cuando aplica.
+//
+// ⚠️ [2026-08-24, UPDATES 08/22 del cliente, pág. 6] LOS CUATRO SE RENOMBRAN,
+// a un set marino: Classic → Starfish, Signature → Breeze, Grand → Tide, e
+// «Hispaniola Premium Package» → «Premium (Turtle) Package».
+//
+// Los tres primeros los escribió a secas («Classic → Starfish») y el cuarto
+// con el patrón entero («Premium → Será Premium (Turtle) Package»). Se les
+// pone «Package» a los cuatro por decisión de Samuel: mezclar «Starfish» con
+// «Premium (Turtle) Package» en el mismo segmented se lee como un descuido de
+// maquetación, no como una decisión. Y el ancla CONSERVA la palabra «Premium»
+// porque es con la que se vende: es el badge «Most complete», el único de 4
+// horas y el que cita el copy aprobado de bodas.
+//
+// ⚠️ LOS `id` NO SE TOCAN (premium, package-i, package-ii, package-iii). Son
+// la clave del estado, del deep-link `?dev-paquete=` y de lo que se guarda en
+// localStorage: cambiarlos rompería enlaces y cotizaciones ya guardadas, y no
+// se ve en pantalla. Lo que el visitante lee es `nombre`; el `id` es plomería.
 const PAQUETES_COMIDA: PaqueteEvento[] = [
   {
     id: 'premium',
-    nombre: 'Hispaniola Premium Package',
+    nombre: 'Premium (Turtle) Package',
     nombreCorto: 'Premium',
     precio: 'US$ 1,188.00',
     precioBase: 1188,
@@ -266,7 +322,7 @@ const PAQUETES_COMIDA: PaqueteEvento[] = [
     capacidad: '1-12 guests',
     meta: '4 hours on board',
     foto: 'paquete-premium',
-    fotoAlt: 'Hispaniola Premium Package: lobster, skewers and fries on a white plate',
+    fotoAlt: 'Premium (Turtle) Package: lobster, skewers and fries on a white plate',
     items: [
       { titulo: 'Chicken Skewer', texto: '1p/p' },
       { titulo: 'Beef Skewer', texto: '1p/p' },
@@ -292,8 +348,8 @@ const PAQUETES_COMIDA: PaqueteEvento[] = [
     // ⚠️ PENDIENTE DE OK DEL CLIENTE (plan 06 §4, duda 2). Hasta que conteste
     // son etiquetas de marketing, no datos — si dice que no, se cambian aqui
     // y no hay que tocar nada mas.
-    nombre: 'Classic Package',
-    nombreCorto: 'Classic',
+    nombre: 'Starfish Package',
+    nombreCorto: 'Starfish',
     precio: 'US$ 660.00',
     precioBase: 660,
     incluyeHasta: 12,
@@ -301,7 +357,7 @@ const PAQUETES_COMIDA: PaqueteEvento[] = [
     capacidad: '1-12 guests',
     meta: '3 hours on board · 2 stops',
     foto: 'paquete-i',
-    fotoAlt: 'Party boat Classic Package',
+    fotoAlt: 'Party boat Starfish Package',
     items: [{ titulo: 'Hot Dog', texto: '1p/p' }],
     // Las "Vegetarian Substitutions" del cliente son reemplazos, no items
     // extra — el plato de cada comensal es O el hot dog O el vegetariano.
@@ -311,8 +367,8 @@ const PAQUETES_COMIDA: PaqueteEvento[] = [
   },
   {
     id: 'package-ii',
-    nombre: 'Signature Package',
-    nombreCorto: 'Signature',
+    nombre: 'Breeze Package',
+    nombreCorto: 'Breeze',
     precio: 'US$ 780.00',
     precioBase: 780,
     incluyeHasta: 12,
@@ -320,7 +376,7 @@ const PAQUETES_COMIDA: PaqueteEvento[] = [
     capacidad: '1-12 guests',
     meta: '3 hours on board · 2 stops',
     foto: 'paquete-ii',
-    fotoAlt: 'Party boat Signature Package',
+    fotoAlt: 'Party boat Breeze Package',
     items: [
       { titulo: 'Hot Dog', texto: '1p/p' },
       { titulo: 'Chicken Skewer', texto: '1p/p' },
@@ -331,8 +387,8 @@ const PAQUETES_COMIDA: PaqueteEvento[] = [
   },
   {
     id: 'package-iii',
-    nombre: 'Grand Package',
-    nombreCorto: 'Grand',
+    nombre: 'Tide Package',
+    nombreCorto: 'Tide',
     precio: 'US$ 900.00',
     precioBase: 900,
     incluyeHasta: 12,
@@ -340,7 +396,7 @@ const PAQUETES_COMIDA: PaqueteEvento[] = [
     capacidad: '1-12 guests',
     meta: '3 hours on board · 2 stops',
     foto: 'paquete-iii',
-    fotoAlt: 'Party boat Grand Package',
+    fotoAlt: 'Party boat Tide Package',
     items: [
       { titulo: 'Chicken Skewer', texto: '1p/p' },
       { titulo: 'Beef Skewer', texto: '1p/p' },
@@ -464,21 +520,48 @@ const PARTY_BOAT: FichaEvento = {
   },
   // Foto de portada (la 1ª del mosaico). Sin quote sobre la foto: el
   // party boat no tiene un review de 5★ "famoso" que destaque.
-  foto: 'events-1',
+  foto: 'ev-partyboat-1',
   fotoAlt: 'The catamaran deck set up for a celebration with lights and decorations',
   // 8 fotos de la galería original del cliente. La 1ª (`events-1`) es
   // la portada — el mosaico la pone primera.
+  // [2026-08-21] Las 13 fotos de EVENTS/PARTYBOATS, y SOLO esas: las
+  // `events-*` de antes salen de aquí (siguen vivas en la home, /fleet y
+  // /facilities, que es donde también se usan).
   galeria: [
-    'events-1',
-    'events-2',
-    'events-3',
-    'events-4',
-    'events-5',
-    'events-6',
-    'events-7',
-    'events-8',
+    'ev-partyboat-1',
+    'ev-partyboat-3',
+    'ev-partyboat-6',
+    'ev-partyboat-9',
+    'ev-partyboat-7',
+    'ev-partyboat-11',
+    'ev-partyboat-10',
+    'ev-partyboat-2',
+    'ev-partyboat-4',
+    'ev-partyboat-5',
+    'ev-partyboat-12',
+    'ev-partyboat-13',
+    'ev-partyboat-8',
   ],
+  fotosMenu: [
+    'ev-partyboat-menu-1',
+    'ev-partyboat-menu-2',
+    'ev-partyboat-menu-3',
+    'ev-partyboat-menu-4',
+    'ev-partyboat-menu-5',
+    'ev-partyboat-menu-6',
+    'ev-partyboat-menu-7',
+    'ev-partyboat-menu-8',
+    'ev-partyboat-menu-9',
+    'ev-partyboat-menu-10',
+  ],
+  // ⚠️ PLACEHOLDER a propósito: la columna vertical espera el clip de alguien
+  // explicando cómo reservar. El clip real del party boat está abajo, en
+  // `videoProducto`, dentro de la rejilla.
   videoGaleria: '/video/hero.mp4',
+  videoProducto: {
+    src: '/video/eventos/party-boat.mp4',
+    poster: '/fotos/ev-partyboat-video-poster.webp',
+  },
   // FAQ de la ficha de party boat de la web del cliente. La web NO
   // traía una FAQ propia — se OMITE, no se inventa. El widget pide
   // los detalles por formulario, que es más honesto que inventar
@@ -617,24 +700,59 @@ const BODAS: FichaEvento = {
   // La única foto de boda real del repo: la novia a bordo con su
   // grupo. ES LA PORTADA — la 1ª del mosaico. Las 12 siguientes son la
   // galería del cliente.
-  foto: 'weddings-5',
+  foto: 'ev-weddings-1',
   fotoAlt: 'Bride celebrating on board the catamaran with her group of guests',
+  // [2026-08-21] Las fotos de EVENTS/WEDDINGS, y SOLO esas.
+  // [2026-08-23, 2ª entrega] 20 → 15. El cliente pidió «eliminar fotos de
+  // parejas, solo dejar las que quedan en la carpeta» y quitó CINCO archivos de
+  // su carpeta: `Karaya HD (5)` (la novia con sus damas), `Karaya medium (3)` y
+  // `New Project - 2024-02-12...` (novios besándose — la segunda, además,
+  // delante de un mural con marca ajena bien legible), `Montaje bodas` (mesas
+  // vacías) y `privaxcy` (novios bajo el arco floral). Eran, por orden
+  // alfabético de la carpeta, las `ev-weddings` 14, 16, 17, 18 y 19.
+  //
+  // ⚠️ El borrado no se vio a la primera: la carpeta nueva se copió encima de la
+  // vieja saltando los archivos que ya existían, así que entraron las altas
+  // pero no las bajas. Salió comparando con la descarga limpia del OneDrive del
+  // cliente. Si vuelve a pasar, la señal es que la web enseña fotos que ya no
+  // están en la carpeta.
+  //
+  // `ev-weddings-1` NO está en la lista de bajas, así que la portada de la
+  // landing (`foto`, arriba) sigue en pie.
   galeria: [
-    'weddings-5',
-    'weddings-1',
-    'weddings-2',
-    'weddings-3',
-    'weddings-4',
-    'weddings-6',
-    'weddings-7',
-    'weddings-8',
-    'weddings-9',
-    'weddings-10',
-    'weddings-11',
-    'weddings-12',
-    'weddings-13',
+    'ev-weddings-10',
+    'ev-weddings-8',
+    'ev-weddings-13',
+    'ev-weddings-1',
+    'ev-weddings-5',
+    'ev-weddings-20',
+    'ev-weddings-9',
+    'ev-weddings-2',
+    'ev-weddings-3',
+    'ev-weddings-6',
+    'ev-weddings-15',
+    'ev-weddings-4',
+    'ev-weddings-7',
+    'ev-weddings-11',
+    'ev-weddings-12',
   ],
+  fotosMenu: [
+    'ev-weddings-menu-1',
+    'ev-weddings-menu-2',
+    'ev-weddings-menu-3',
+    'ev-weddings-menu-4',
+    'ev-weddings-menu-5',
+    'ev-weddings-menu-6',
+    'ev-weddings-menu-7',
+    'ev-weddings-menu-8',
+    'ev-weddings-menu-9',
+    'ev-weddings-menu-10',
+  ],
+  // ⚠️ PLACEHOLDER: mismo caso que las otras dos landings. Bodas es además el
+  // único evento del que el cliente NO entregó vídeo propio, así que aquí no
+  // hay `videoProducto` que poner en la rejilla.
   videoGaleria: '/video/hero.mp4',
+  videoProducto: null,
   // FAQ de bodas — las 3 preguntas de la web del cliente + 1
   // pregunta sobre el Dress code (la más común, sale de la práctica
   // de coordinar con novios).
@@ -689,12 +807,28 @@ const BODAS: FichaEvento = {
 // corporativo que quiera el snorkel activity ya está en la landing de
 // party boat; el segundo link se omite por no tener URL aprobada.
 //
-// ⚠️ SIN `paquetes` A PROPÓSITO (Samuel, 2026-07-28: «en MICE sí deja el
-// formulario como está»). Party boat y bodas ganan reserva online porque
-// tienen tarifario público de precio cerrado; un incentivo de 300 pax en
-// convoy multi-barco no lo tiene y no lo puede tener. Sin `paquetes`, la
-// página no pinta el bloque de paquetes ni la calculadora, y el formulario
-// se queda desplegado —es el widget entero— exactamente como hasta ahora.
+// ⚠️ HASTA EL 2026-08-24 ESTA LANDING NO TENÍA `paquetes` A PROPÓSITO (Samuel,
+// 2026-07-28: «en MICE sí deja el formulario como está»). Party boat y bodas
+// ganaron reserva online porque tienen tarifario público de precio cerrado; un
+// incentivo de 300 pax en convoy multi-barco no lo tiene y no lo puede tener.
+//
+// [2026-08-24, UPDATES 08/22 del cliente, pág. 6] «En la sección MICE/Corporate
+// hay que agregar los paquetes debajo de KARAYA (los que están en los otros 2
+// eventos)». Se añaden — pero con `soloEscaparate`, que es la mitad del
+// interruptor que el cliente pidió. La landing ENSEÑA los 4 paquetes y NO gana
+// reserva online: el formulario de cotización sigue desplegado y sigue siendo
+// el camino de conversión. Así el argumento de 2026-07-28 se mantiene en pie —
+// lo que no tiene tarifa cerrada sigue sin poder reservarse— y el cliente ve en
+// la página lo que pidió ver. El porqué largo, en el JSDoc de `soloEscaparate`.
+//
+// KARAYA es el `barcoInsignia` de esta landing, y los paquetes van PEGADOS a
+// él. La primera lectura de la petición se conformó con que cayeran más abajo
+// en la página (barco → formatos → incluye → paquetes) para no reordenar la
+// plantilla que comparten las tres landings, y Samuel lo corrigió el mismo día:
+// «en MICE los paquetes hay que subirlos, van debajo de la sección que nombra
+// al barco karaya». Ahora pages/evento.tsx los coloca en uno de dos sitios
+// según haya `barcoInsignia` o no, así que bodas y party boat conservan el
+// suyo.
 
 const EMPRESAS: FichaEvento = {
   slug: 'corporate',
@@ -794,11 +928,70 @@ const EMPRESAS: FichaEvento = {
   incluyeTitulo: 'What an event planner needs to know',
   incluye: [],
   // Foto de portada: la cubierta llena de grupos sentados comiendo.
-  foto: 'mice-3',
-  fotoAlt: 'The catamaran deck with several groups eating at their tables',
-  // 4 fotos de la galería original del cliente.
-  galeria: ['mice-3', 'mice-1', 'mice-2', 'mice-4'],
+  foto: 'ev-corporate-1',
+  fotoAlt: 'A corporate group in matching polos on the bow of the catamaran',
+  // [2026-08-21] Las 9 fotos de EVENTS/CORPORATE, y SOLO esas. Las `mice-*`
+  // salen de aquí; siguen vivas en las cards de ocasión de esta misma página.
+  galeria: [
+    'ev-corporate-2',
+    'ev-corporate-1',
+    'ev-corporate-6',
+    'ev-corporate-3',
+    'ev-corporate-5',
+    'ev-corporate-9',
+    'ev-corporate-4',
+    'ev-corporate-8',
+    'ev-corporate-7',
+  ],
+  fotosMenu: [
+    'ev-corporate-menu-1',
+    'ev-corporate-menu-2',
+    'ev-corporate-menu-3',
+    'ev-corporate-menu-4',
+    'ev-corporate-menu-5',
+    'ev-corporate-menu-6',
+    'ev-corporate-menu-7',
+    'ev-corporate-menu-8',
+    'ev-corporate-menu-9',
+    'ev-corporate-menu-10',
+    'ev-corporate-menu-11',
+    'ev-corporate-menu-12',
+    'ev-corporate-menu-13',
+    'ev-corporate-menu-14',
+    'ev-corporate-menu-15',
+    'ev-corporate-menu-16',
+  ],
+  // ⚠️ PLACEHOLDER, igual que en las otras dos. El clip real de corporate va
+  // en la rejilla, abajo.
   videoGaleria: '/video/hero.mp4',
+  videoProducto: {
+    src: '/video/eventos/corporate.mp4',
+    poster: '/fotos/ev-corporate-video-poster.webp',
+  },
+  // [2026-08-24, UPDATES 08/22 del cliente, pág. 6] Los 4 paquetes, EN MODO
+  // ESCAPARATE (`soloEscaparate`). Ver el bloque ⚠️ de arriba y el JSDoc del
+  // campo: la landing los enseña pero no se reserva aquí — el formulario de
+  // cotización sigue desplegado y sigue siendo el camino de conversión.
+  //
+  // `items` apunta al MISMO array que party boat y bodas, que es lo que pidió
+  // el cliente («los que están en los otros 2 eventos»). No hay tarifario MICE
+  // propio: la fuente canónica solo publica estos precios para party boat y
+  // bodas (TARIFARIO-WEB-ORIGINAL.md §3).
+  paquetes: {
+    titulo: 'Onboard Catering Packages',
+    // ⚠️ COPY DE LA CASA, PENDIENTE DE APROBAR. La intro de party boat y bodas
+    // no vale aquí: remite a un «What's Included above» que esta landing no
+    // tiene, y habla de «your celebration», que no es como se vende un
+    // incentivo. Esto es redacción nuestra, mínima y sin inventar ningún dato
+    // —solo enlaza lo que ya dice la propia página (buffet y open bar, en su
+    // copy aprobado) con lo que ahora se enseña—, y dice en voz alta lo que el
+    // botón NO hace. Hay que pedirle al cliente la versión suya.
+    intro:
+      'The same onboard catering packages we serve on our party boats and weddings, available for corporate groups. Prices are per group and cover up to 12 guests, with a set rate for each additional guest. For larger groups, multi-boat convoys or a custom menu, tell us about your event and we will quote it.',
+    items: PAQUETES_COMIDA,
+    nota: NOTA_PAQUETES,
+    soloEscaparate: true,
+  },
   // FAQ corporativa — 4 preguntas operativas, las que un DMC
   // (destination management company) o un head de eventos hace
   // primero. Copiadas del data/eventos.ts versión anterior.

@@ -25,7 +25,7 @@ import { traducible } from '@/lib/i18n'
 // una nota honesta de "en redacción" en vez de fingir un cuerpo que no existe.
 // Cuando se escriban, basta con rellenar `cuerpo` y la página se completa sola.
 //
-// Autores: los del EQUIPO real (data/nosotros.ts) — Omar, Lola y Eva, los
+// Autores: los del EQUIPO real (data/nosotros.ts) — Omar, Lola y Blanka, los
 // mismos nombres que el propio cliente dio en sus maquetas.
 
 export type CategoriaBlog =
@@ -229,7 +229,8 @@ export const ARTICULOS: Articulo[] = traducible([
     fecha: 'May 30, 2026',
     minutos: 4,
     foto: 'galeria-charter-privado-6',
-    fotoAlt: 'Family enjoying a deserted beach',
+    // [2026-08-20] «Family» ya no era cierto: la foto nueva son ocho adultos.
+    fotoAlt: 'Group enjoying a deserted beach',
     cuerpo: null,
   },
   // ---- Ampliación 2026-07-22 (Samuel: "cada categoría entre 3 y 5 cards,
@@ -318,7 +319,10 @@ export const ARTICULOS: Articulo[] = traducible([
     fecha: 'Apr 12, 2026',
     minutos: 6,
     foto: 'galeria-semi-privado-5',
-    fotoAlt: 'Crew preparing the catamaran before setting sail',
+    // [2026-08-20] El alt nunca describio esta foto (es la cocina flotante con
+    // las bandejas emplatadas, no la preparacion del barco). La foto nueva es
+    // la misma escena en alta, asi que se corrige el texto.
+    fotoAlt: 'The crew plating the floating-kitchen lunch',
     cuerpo: null,
   },
   {
@@ -359,7 +363,9 @@ export const ARTICULOS: Articulo[] = traducible([
   },
   {
     slug: 'snorkel-lovers-que-esperar',
-    titulo: 'Snorkel Lovers: what to expect from our most popular tour',
+    // [2026-08-12] Renombre del tour. El SLUG del artículo se queda: es una URL
+    // del blog y el renombre no toca URLs (ver la tabla en data/home.ts).
+    titulo: 'Coral Quest: what to expect from our most popular tour',
     extracto: 'What it includes, who it suits and what you’ll find underwater.',
     categoria: 'Things to do',
     autorId: 'eva',

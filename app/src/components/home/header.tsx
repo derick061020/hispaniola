@@ -7,7 +7,6 @@ import { MenuMovil } from './menu-movil'
 import { TabsConPaneles } from './nav-tabs'
 import { useMenuDropdown } from '@/lib/use-menu-dropdown'
 import { useDevFlag } from '@/dev/use-dev-flag'
-import { t } from '@/lib/i18n'
 
 // [v2 2026-07-27] 'sostenibilidad' entra como tab propio del nav principal
 // (correcciones v2, plan 02 §1 — el cliente dictó el menú en la reunión del
@@ -33,7 +32,14 @@ export type MenuId = 'tours' | 'eventos' | 'nosotros' | 'sostenibilidad' | 'ayud
 // solo en esta variante: es el sentinel que ese observer usa para saberlo.
 export function Header({
   variante = 'solida',
-  ctaHref = '#tours',
+  // [2026-08-24, barrido de enlaces] EL DEFAULT ERA `#tours`, Y ERA UNA
+  // TRAMPA: un ancla suelta solo resuelve en la home, asi que cualquier pagina
+  // que se olvidara de pasar `ctaHref` heredaba un «Book now» muerto. Le paso
+  // exactamente eso a la 404. Ahora el default es el destino que vale desde
+  // CUALQUIER pagina —el que ya pasan las 18 internas— y la home, que es el
+  // unico sitio donde el ancla suelta es lo correcto, lo pasa explicito
+  // (components/home/hero.tsx).
+  ctaHref = '/#tours',
 }: {
   variante?: 'solida' | 'sobreVideo'
   ctaHref?: string
@@ -83,8 +89,12 @@ export function Header({
             su comentario) — cuando este logo sale de vista, NavFlotante funde
             su propia versión compacta dentro del panel de tabs. 'solida' no
             lo necesita (no tiene NavFlotante propio, la 404 es autónoma). */}
-        <Link to="/" aria-label={t('Hispaniola Aquatic Adventures, home')} id={sobreVideo ? 'logo-hero' : undefined}>
-          <Logo sobreOscuro={sobreVideo} />
+        <Link to="/" aria-label="Hispaniola Aquatic Adventures, home" id={sobreVideo ? 'logo-hero' : undefined}>
+          {/* `entrada`: la animación completa del logo al cargar la página
+              ([2026-08-21] pedido de Samuel). Solo la dispara Header, y Logo
+              se encarga de que suene UNA vez por carga y no en cada
+              navegación — Header se remonta al cambiar de ruta. */}
+          <Logo sobreOscuro={sobreVideo} entrada />
         </Link>
 
         {/* 2026-07-21: los TABS de escritorio de 'sobreVideo' (antes un
@@ -105,12 +115,12 @@ export function Header({
               compacta cuando este boton sale de vista junto con el logo (ver
               nav-flotante.tsx). 'solida' no cambia: sigue visible desde sm. */}
           <span className="hidden sm:inline-flex">
-            <Boton href={ctaHref}>{t('Book now')}</Boton>
+            <Boton href={ctaHref}>Book now</Boton>
           </span>
           <button
             type="button"
             onClick={() => setMovilAbierto(true)}
-            aria-label={t('Menu')}
+            aria-label="Menu"
             className={`grid size-10 place-items-center rounded-lg md:hidden ${sobreVideo ? 'text-white hover:bg-white/10' : 'text-navy hover:bg-papel-hueso'}`}
           >
             <Menu className="size-5" />

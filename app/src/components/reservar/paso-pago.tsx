@@ -47,6 +47,7 @@ export function PasoPago({
   pedidoListo,
   fechaElegida,
   onPagar,
+  registraLanzar,
   procesando = false,
   error = null,
 }: {
@@ -60,6 +61,16 @@ export function PasoPago({
    *  no podía salir bien, con un mensaje genérico como única pista. */
   pedidoListo: boolean
   onPagar: (datos: DatosPago) => void
+  /** [2026-08-25, al integrar la barra móvil de Samuel] Publica hacia arriba el
+   *  disparador del cobro.
+   *
+   *  En móvil el botón de pagar vive en `BarraMovilReserva`, fuera de este
+   *  componente — pero los datos que necesita el cobro (método elegido y el
+   *  elemento de tarjeta de Stripe) viven AQUÍ dentro. La barra no puede
+   *  llamar a `onPagar` directamente: lo haría sin tarjeta. Así que este paso
+   *  registra su propio `lanzar` y la barra tira de él, que es exactamente lo
+   *  mismo que pulsar el botón de dentro. */
+  registraLanzar?: (lanzar: () => void) => void
   /** [2026-08-10] El pago dejó de ser instantáneo: viaja a Odoo y a la
    *  pasarela. Sin esto se puede pulsar dos veces. */
   procesando?: boolean
@@ -154,6 +165,15 @@ export function PasoPago({
   const lanzar = () =>
     onPagar({ metodo, tarjeta: elemento.current, titular: titular.trim(), clavePublicable: clave })
 
+  // La barra móvil dispara ESTE `lanzar`, no `onPagar`: así el cobro sale con
+  // el método y la tarjeta que se acaban de rellenar aquí dentro. Se vuelve a
+  // publicar cuando cambia algo de lo que lee, o la barra se quedaría con una
+  // versión vieja (el método elegido antes de cambiarlo, por ejemplo).
+  const publicar = registraLanzar
+  useEffect(() => {
+    publicar?.(lanzar)
+  })
+
   return (
     <div className="flex flex-col gap-4">
       <p className="text-sm text-navy-sub">
@@ -247,7 +267,11 @@ export function PasoPago({
         </fieldset>
       )}
 
-      <FancyButton.Root variant="primary" className="w-full" disabled={!puedePagar} onClick={lanzar}>
+      {/* [2026-08-21, auditoría móvil] En móvil este botón se esconde: la
+          acción del paso vive en la barra fija de abajo, con el importe al
+          lado. Se esconde el BOTÓN, no la pasarela — los métodos de pago y el
+          campo de tarjeta siguen aquí, que es donde se rellenan. */}
+      <FancyButton.Root variant="primary" className="w-full max-lg:hidden" disabled={!puedePagar} onClick={lanzar}>
         {procesando
           ? 'Processing…'
           : metodo === 'paypal'

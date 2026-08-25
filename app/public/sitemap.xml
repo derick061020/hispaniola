@@ -9,7 +9,12 @@
   [v3 2026-08-06] Rutas EN INGLÉS (plan 01 §4). Las viejas en español NO van
   aquí: son 301 (netlify.toml / app/vercel.json), y un sitemap no debe listar
   URLs que redirigen. De paso se completan las que faltaban (party-boat, las
-  3 internas de Nosotros, FAQ, blog, guides, why-book-direct, travel-agents).
+  3 internas de Nosotros, FAQ, blog, guides, travel-agents).
+
+  [2026-08-24, Samuel: «la pagina de why book direct quitala de todos los
+  lugares que apunten a ella, no la vamos a usar»] SALE /why-book-direct. La
+  pagina sigue existiendo y respondiendo, pero se ha quedado sin un solo enlace
+  entrante en toda la web: anunciarla aqui la dejaria indexada como huerfana.
   NO se listan: /my-booking y /book/* (privadas/transaccionales), /legal/*
   (sin valor de búsqueda), /fundaciones y /crew-boat (internas).
 -->
@@ -25,7 +30,7 @@
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://hispaniolaaquaticadventures.com/tours/snorkel-lovers</loc>
+    <loc>https://hispaniolaaquaticadventures.com/tours/coral</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -76,11 +81,6 @@
   </url>
   <url>
     <loc>https://hispaniolaaquaticadventures.com/fleet</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://hispaniolaaquaticadventures.com/why-book-direct</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>

@@ -75,7 +75,7 @@ import { t } from '@/lib/i18n'
 //   ┌─ encabezado centrado (eyebrow · H2 · lead) ──────────────────┐
 //   ├─ PANEL (un solo hairline recorta TODO, sin sombra) ──────────┤
 //   │ carril (gris)          │ formulario (blanco = la acción)     │
-//   │  · Eva + punto vivo    │  · canal preferido (segmentado)     │
+//   │  · Blanka + punto vivo │  · canal preferido (segmentado)     │
 //   │  · CTA WhatsApp        │  · nombre/tel · email/asunto        │
 //   │  · filas tel. y email  │  · mensaje                          │
 //   │  · ¿ya tienes reserva? │  · enviar                           │
@@ -87,7 +87,7 @@ import { t } from '@/lib/i18n'
 // Y CADA DATO VIVE EN UN SOLO SITIO, al peso que le toca:
 //   · WhatsApp → CTA primario (es el canal que el cliente quiere empujar).
 //   · Teléfono y Email → filas con hairline, en el carril.
-//   · ¿Ya tienes una reserva? → vive en el carril, junto a Eva/WhatsApp/
+//   · ¿Ya tienes una reserva? → vive en el carril, junto a Blanka/WhatsApp/
 //     teléfono/email: es la 5ª forma de «habla con nosotros / gestiona lo
 //     tuyo» del mismo carril de acciones, no una intención tan distinta como
 //     para necesitar su propia franja a lo ancho (que es donde vivía antes
@@ -158,7 +158,8 @@ function Persona() {
   // píldora con el punto que late. El resto queda como meta en una línea.
   // [v3 2026-08-06] Desde las correcciones v3 solo hay UN chip y `texto` es
   // null (WEBSITE - INICIO pág. 6: «quitar la parte debajo de Eva, solo
-  // poner Fast Response»), así que `resto` viene vacío y el párrafo no se
+  // poner Fast Response» — cita literal, entonces se llamaba Eva; hoy es
+  // Blanka, ver data/nosotros.ts), así que `resto` viene vacío y el párrafo no se
   // pinta — las dos ramas condicionales de abajo ya lo contemplaban.
   const [estado, ...resto] = CONTACTO.persona.chips
 
@@ -246,7 +247,7 @@ function FilaContacto({ card }: { card: ContactoCard }) {
 
 // «¿Ya tienes una reserva?» — vive en el carril (3ª vuelta del rediseño,
 // pedido de Samuel: el mapa se va grande al pie del panel y este bloque
-// ocupa el hueco que deja, junto a Eva/WhatsApp/teléfono/email). Es la 5ª
+// ocupa el hueco que deja, junto a Blanka/WhatsApp/teléfono/email). Es la 5ª
 // forma de «habla con nosotros / gestiona lo tuyo» del mismo carril de
 // acciones — no necesita su propia franja a lo ancho, esa es la intención
 // que sí tiene el formulario (pedir info), esta es «ya soy cliente». No

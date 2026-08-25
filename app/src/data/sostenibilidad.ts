@@ -84,15 +84,28 @@ export type PilarSost = {
  * a anclas LOCALES porque los slides 63 y 64 ya viven también en esta página
  * (Samuel: «la info del slide 63 parece que no está… y el slide 64 tampoco»).
  * Los 7 chips son ahora 7 secciones de aquí, en el orden real de lectura.
+ *
+ * [2026-08-12] Y VUELVEN A SER ENLACES los tres últimos. El tramo de la
+ * fundación sale de /competitive-advantage y se queda solo en /foundation (ver
+ * la cabecera de pages/ventaja-competitiva.tsx), así que sus secciones ya no
+ * existen aquí: con `id` local seguirían dibujándose pero no llevarían a
+ * ninguna parte. Los 7 chips del slide 58 se mantienen —el cliente pidió esa
+ * lista, no «los chips que quepan»—, cuatro como anclas de esta página y tres
+ * como enlaces a la otra. `to` existe exactamente para esto.
+ *
+ * ⚠️ Los `id` de esos tres tienen que existir en pages/fundacion.tsx
+ * (`fundacion`, `proyectos`, `membresias`). El aviso de consola de
+ * NavAnclasChips NO los vigila: solo comprueba los chips SIN `to`, porque un
+ * ancla de otra página no se puede verificar desde ésta.
  */
 export const ANCLAS_VENTAJA = traducible([
   { id: 'conservacion', label: 'Conservation' },
   { id: 'comunidades', label: 'Community' },
   { id: 'ancla-impacto', label: 'Impact per guest' },
   { id: 'ancla-videos', label: 'On video' },
-  { id: 'ancla-fundacion', label: 'The foundation' },
-  { id: 'ancla-proyectos', label: 'Projects' },
-  { id: 'ancla-membresias', label: 'Memberships' },
+  { id: 'fundacion', label: 'The foundation', to: '/foundation#fundacion' },
+  { id: 'proyectos', label: 'Projects', to: '/foundation#proyectos' },
+  { id: 'membresias', label: 'Memberships', to: '/foundation#membresias' },
 ])
 
 export type VideoSost = {
@@ -242,18 +255,20 @@ export const SOSTENIBILIDAD = traducible({
       // El punto final es NUESTRO: el cliente cierra el párrafo sin puntuar.
       texto:
         'We work alongside local communities, schools, authorities and thousands of visitors every year, transforming every tour into an opportunity to inspire environmental awareness and create lasting change.',
-      // ⚠️ PROVISIONAL — decisión consciente de Samuel (2026-07-22): NO existe
-      // ni una foto de la acción comunitaria en todo el proyecto, así que esta
-      // ilustra "personas", no lo que dice el texto. Con el copy nuevo encaja
-      // algo mejor (dos personas haciendo snorkel = el visitante que se lleva
-      // la conciencia ambiental), pero sigue sin ser lo que el párrafo cuenta:
-      // ni comunidad, ni colegios, ni charla.
-      // Es EL pendiente de contenido de esta página: pedir al cliente fotos
-      // propias de la fundación (mismo pendiente que la foto de cabecera).
-      // Sustituir en cuanto lleguen — no hace falta tocar código, solo este
-      // par de campos.
-      foto: 'galeria-snorkel-lovers-12',
-      fotoAlt: 'Two people snorkeling together over the reef',
+      // [2026-08-21] RESUELTO EL PENDIENTE QUE ESTE COMENTARIO ANUNCIABA. Era
+      // «el pendiente de contenido de esta página»: no había ni una foto de la
+      // acción comunitaria y la que había ilustraba «personas», no lo que dice
+      // el párrafo. El cliente entregó `Community & environmental education`,
+      // que es literalmente una charla de la fundación, y Samuel la coloca
+      // aquí. Como se anticipó, no hubo que tocar código: solo estos dos
+      // campos.
+      // ⚠️ El original traía la FECHA QUEMADA en la esquina inferior derecha
+      // («2023/01/02», de una cámara AKASO). Se recorta el 5% de abajo al
+      // convertirla —es cubierta, no se echa en falta— así que el sello no
+      // llega a publicarse. El recorte está anotado en
+      // scripts/reemplazar-fotos.py.
+      foto: 'sostenibilidad-educacion',
+      fotoAlt: 'A Hispaniola guide talking to a group during an environmental education session',
     },
     {
       id: 'operacion',

@@ -13,6 +13,15 @@ import { t } from '@/lib/i18n'
 // Etapa A: el CTA es el mismo FancyButton primary del widget — un solo
 // lenguaje de botón de acción en toda la ficha (PLAN-ALIGNUI.md).
 //
+// [2026-08-21, auditoría móvil] `lg:hidden`, antes `md:hidden`. El widget de
+// la ficha solo se vuelve sticky en `lg` (pages/tour.tsx: la rejilla es
+// `lg:grid-cols-[...]` y la columna `lg:sticky`), así que entre 768px y
+// 1023px —iPad en vertical, tablets Android, un móvil grande en apaisado— la
+// página se quedaba SIN LOS DOS: la barra ya se había escondido y el widget
+// todavía no se había vuelto sticky. En esa franja no había ningún CTA
+// persistente en toda la ficha. El `pb` reservado por pages/tour.tsx se mueve
+// al mismo breakpoint, o el hueco se cerraría con la barra todavía encima.
+//
 // pb-[max(...,env(safe-area-inset-bottom))] (auditoría móvil 2026-07-17):
 // sin esto, en un iPhone con home indicator la barra queda con solo 12px
 // reales hasta el borde — justo la franja del gesto de swipe-to-home. El
@@ -21,7 +30,7 @@ export function BarraMovilFicha({ tour }: { tour: Tour }) {
   const irAlWidget = () => document.getElementById('ficha-widget')?.scrollIntoView({ block: 'center' })
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-30 flex items-center justify-between gap-3 border-t border-linea bg-papel px-5 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] md:hidden">
+    <div className="fixed inset-x-0 bottom-0 z-30 flex items-center justify-between gap-3 border-t border-linea bg-papel px-5 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] lg:hidden">
       <div className="min-w-0">
         <p className="font-display text-base font-semibold text-navy">
           {tour.precioLight !== null ? formatoDinero(tour.precioLight) : t('On request')}

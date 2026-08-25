@@ -60,9 +60,11 @@ export const TIPS_GUIAS: TipGuia[] = traducible([
       'Let’s be honest: much of the Atlantic coast has been damaged over the years, and Catalina or Bayahibe, on the south coast, have better visibility. Even so, on our route there’s an almost 100% chance of seeing turtles from the catamaran, thanks to the artificial reefs we’ve been planting since 2016 with the Fundación de Arrecifes Ecológicos de Bávaro, a project the Ministry of the Environment ranks among the 3 largest coral gardening efforts in the country.',
     foto: 'galeria-snorkel-lovers-4',
     fotoAlt: 'Snorkelers swimming over the reef next to the catamaran in Cabeza de Toro',
-    fotoPie: 'Snorkel Lovers · Cabeza de Toro reef',
+    fotoPie: 'Coral Quest · Cabeza de Toro reef',
     stat: { valor: '≈100%', texto: 'of our trips see turtles · Top 3 coral project in the country' },
-    ctaPrimario: { texto: 'See the Snorkel Lovers', to: '/tours/snorkel-lovers' },
+    // ⚠️ El `to` conserva el slug viejo a propósito: el renombre del 2026-08-12
+    // no toca URLs (ver la tabla en data/home.ts).
+    ctaPrimario: { texto: 'See Coral Quest', to: '/tours/coral' },
     ctaEnlace: { texto: 'The full foundation story', to: '/foundation' },
   },
   {
@@ -75,7 +77,11 @@ export const TIPS_GUIAS: TipGuia[] = traducible([
     fotoAlt: 'The sailboat Maite sailing with the sail up at sunset',
     fotoPie: 'Maite · the sailboat in our fleet',
     stat: { valor: '50%', texto: 'of the trip under engine, because of the wind and the shallow water' },
-    ctaPrimario: { texto: 'See the Maite, our sailboat', to: '/nosotros' },
+    // [2026-08-24, barrido de enlaces] ERA `/nosotros`, doble fallo: (1) esa
+    // ruta ya solo es un <Navigate> a /crew, y (2) el destino final es la
+    // pagina de TRIPULACION, donde la Maite no sale. El velero vive en /fleet
+    // (FLOTA, data/nosotros.ts). Se ancla en #barcos, la rejilla de barcos.
+    ctaPrimario: { texto: 'See the Maite, our sailboat', to: '/fleet#barcos' },
   },
   {
     categoria: 'Safety',
@@ -99,7 +105,11 @@ export const TIPS_GUIAS: TipGuia[] = traducible([
     fotoAlt: 'Seafood cocktail freshly prepared on board in the floating kitchen',
     fotoPie: 'Local seafood, seasoned in front of you',
     stat: { valor: 'Freshly caught', texto: 'local, not frozen or imported · cooked in front of you' },
-    ctaPrimario: { texto: 'Meet the floating kitchen', to: '/nosotros' },
+    // [2026-08-24, barrido de enlaces] MISMO FOSIL que el de la Maite: iba a
+    // /nosotros → /crew, y la cocina flotante no esta ahi. La cuenta
+    // CocinaTiempos, que solo monta /fleet (pages/flota.tsx). Sin ancla: esa
+    // seccion no tiene `id` propio.
+    ctaPrimario: { texto: 'Meet the floating kitchen', to: '/fleet' },
   },
 ])
 

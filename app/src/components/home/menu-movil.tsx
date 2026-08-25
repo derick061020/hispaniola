@@ -31,7 +31,8 @@ const secciones: { id: Seccion; label: string }[] = traducible([
 export function MenuMovil({
   abierto,
   onCerrar,
-  ctaHref = '#tours',
+  // Mismo motivo que el default de Header: ver components/home/header.tsx.
+  ctaHref = '/#tours',
 }: {
   abierto: boolean
   onCerrar: () => void

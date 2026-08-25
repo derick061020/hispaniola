@@ -162,13 +162,30 @@ type Props = {
 }
 
 export function ReelsSociales({
-  titulo = t('This is what a day with us looks like'),
+  // [2026-08-24, UPDATES 08/22 del cliente, pág. 1] Cabecera nueva, LITERAL del
+  // cliente. Antes: «This is what a day with us looks like» / «A day on board
+  // comes across better on video. This is us, and our guests enjoying the
+  // Caribbean.»
+  //
+  // ⚠️ ESTOS DEFECTOS SON LA CABECERA DE VERDAD, no un fallback. La home y las
+  // 4 rutas de ficha de tour los HEREDAN las cinco (ninguna pasa cabecera), así
+  // que este es el único sitio donde se escribe este copy. Se hizo así el
+  // 2026-08-24 justamente porque la ficha lo repetía a mano y se quedó con el
+  // título viejo sobre los pies nuevos en cuanto cambió la home.
+  //
+  // La ÚNICA que sí pasa cabecera propia es /facilities (pages/instalaciones.tsx),
+  // y con razón: allí el componente no enseña estos reels sino los verticales de
+  // las zonas (`VERTICALES_INSTALACIONES`), o sea otra sección con otros vídeos.
+  // Si algún día hay que cambiar «el título de los reels», es aquí — y NO en
+  // instalaciones.
+  titulo = t('This is what your day in the Caribbean looks like'),
   // [v2 2026-07-27] El eyebrow deja de nombrar las redes («Reels · Instagram ·
   // TikTok») por lo mismo que se fue el badge de red: no es un feed conectado,
   // son videos nuestros. Se reutiliza el tono que la ficha de tour ya usaba y
   // que era el correcto desde el principio.
+  // El cliente no lo toca en la ronda del 08/22: se queda «On video».
   eyebrow = t('On video'),
-  lead = t('A day on board comes across better on video. This is us, and our guests enjoying the Caribbean.'),
+  lead = t('Real moments, real people, real Caribbean. Take a look at what a day on board with us is really like.'),
   variante = 'seccion',
   // [v2] El hashtag también sugería feed en vivo → apagado por defecto. La
   // ficha ya lo pasaba en false; ahora ese es el comportamiento normal.
@@ -337,6 +354,7 @@ export function ReelsSociales({
           poster={`/fotos/${reelAbierto.foto}.webp`}
           etiqueta={reelAbierto.titulo}
           origen={expansion.origen}
+          apaisado={reelAbierto.apaisado}
           onCerrar={() => setReelAbierto(null)}
         />
       ) : null}

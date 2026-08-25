@@ -1,3 +1,5 @@
+import { useEffect } from 'react'
+import { refrescaScrollTriggerAlCrecer } from '@/lib/refresca-scrolltrigger'
 import { Hero } from '@/components/home/hero'
 import { Premios } from '@/components/home/premios'
 import { EcoFriendly } from '@/components/home/eco-friendly'
@@ -7,7 +9,6 @@ import { WhyDirect } from '@/components/home/why-direct'
 import { IncluyeCrucero } from '@/components/home/incluye-crucero'
 import { Reviews } from '@/components/home/reviews'
 import { Contacto } from '@/components/home/contacto'
-import { EquipoTeaser } from '@/components/home/equipo-teaser'
 import { ReelsSociales } from '@/components/ui/reels-sociales'
 import { PruebaSocial } from '@/components/home/prueba-social'
 import { Footer } from '@/components/home/footer'
@@ -53,12 +54,43 @@ import { t } from '@/lib/i18n'
 // queda partido por esta franja, con su propio fondo (--color-menta) a
 // propósito: es la línea divisoria, no hace falta un border-b.
 //
-// EquipoTeaser se MUEVE de entre WhyDirect e IncluyeCrucero a debajo de
-// Contacto (2026-07-22, pedido de Samuel): antes vivía en la zona de "por
-// qué nosotros" de mitad de página; ahora cierra junto con Contacto y Faq —
-// zona de cierre/confianza, justo antes del Footer. El rediseño de las cards
-// (retrato + rol/antigüedad + hover) va en equipo-teaser.tsx.
+// EquipoTeaser vivió aquí entre el 2026-07-22 y el 2026-08-24: nació de una
+// petición del propio cliente en las correcciones v1 («agregar sección del
+// equipo»), pasó por cinco vueltas de diseño y acabó cerrando la página junto
+// a Contacto.
+//
+// ⚠️ [2026-08-24, UPDATES 08/22 del cliente, pág. 3] SALE DE LA HOME. El
+// cliente tacha la sección entera con una X y escribe «QUITAR ESO DE HOME
+// PORFA». Es un DESMONTAJE, no un borrado: `components/home/equipo-teaser.tsx`
+// y su hook siguen vivos porque /foundation los reutiliza
+// (components/fundacion/fundadores-fundacion.tsx) para presentar a los tres
+// cofundadores. Por eso el archivo se queda donde está aunque su única
+// consumidora pase a ser otra página — moverlo a otra carpeta es un refactor
+// aparte, no parte de este encargo.
+//
+// Lo que la home pierde con la sección, y que NO es cosmético: era el único
+// sitio de esta página que llamaba a `refrescaScrollTriggerAlCrecer()`. Ver el
+// useEffect de abajo.
 export function HomePage() {
+  // ⚠️ ESTO NO ES DEL EQUIPO, ES DE LA HOME ENTERA. `refrescaScrollTriggerAlCrecer()`
+  // es un refresco GLOBAL: recalcula TODOS los ScrollTrigger de la página
+  // cuando el documento crece porque han entrado imágenes `loading="lazy"`
+  // (el porqué completo, con los dos bugs que lo causaron, está en
+  // lib/refresca-scrolltrigger.ts).
+  //
+  // En la home lo pedía un solo sitio —el hook del teaser de equipo— y de ahí
+  // se beneficiaban todos los demás bloques enganchados al scroll: Experiencia,
+  // WhyDirect, IncluyeCrucero, EcoFriendly. Al quitar el teaser (2026-08-24) se
+  // quedaba sin ningún llamador y esos cuatro volverían a disparar con las
+  // posiciones viejas, que es exactamente el bug que costó dos vueltas de
+  // Samuel. No lo arregla `invalidateOnRefresh`: sin nadie que pida el refresh,
+  // no hay nada que invalidar.
+  //
+  // Sube AQUÍ, a la página, y no a otra sección: atado a una sección vuelve a
+  // irse el día que esa sección se quite. Es el tercer caso que el propio
+  // lib/refresca-scrolltrigger.ts anticipaba.
+  useEffect(() => refrescaScrollTriggerAlCrecer(), [])
+
   return (
     // pb-[calc(4rem+env(safe-area-inset-bottom))] (auditoría móvil 2026-07-17):
     // el CTA sticky de hero.tsx ahora crece con la zona segura del iPhone —
@@ -102,7 +134,6 @@ export function HomePage() {
       <Reviews />
       <ReelsSociales />
       <Contacto />
-      <EquipoTeaser />
       <Footer />
       {/* Fijo, fuera del flujo (como lo era ModalBienvenida). Vive aquí y no
           en el shell porque es un comportamiento de LA HOME. Ver el aviso de

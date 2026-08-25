@@ -398,7 +398,13 @@ const MENU_PREMIUM_CASA: PlatoMenu[] = [
 
 export const FICHAS: Record<string, FichaTour> = traducible({
   'semi-private-premium': {
-    tituloLargo: 'Semi-Private Premium · adults-only catamaran',
+    // [2026-08-12, Samuel] EL NOMBRE NUEVO, LITERAL. Sustituye a
+    // «Semi-Private Premium · adults-only catamaran», que era construcción
+    // nuestra (nombre del producto + coletilla). Éste lo da el cliente entero
+    // y por eso ocupa el H1 tal cual, con su «(15+)» incluido. El corto
+    // —«Caribbean Escape»— vive en TOURS de data/home.ts; ahí está la tabla
+    // que traduce los dos nombres viejos.
+    tituloLargo: 'Caribbean Escape: An Adults-Only Ocean Experience (15+)',
     // [v3 2026-08-06, WEBSITE-TOURS pág. 2] Título APROBADO del bloque de
     // descripción, literal. Convive con el H1 del hero, que sigue siendo el
     // NOMBRE del producto (el que usan el ticker, el grid y el megamenú): uno
@@ -459,14 +465,23 @@ export const FICHAS: Record<string, FichaTour> = traducible({
       { nombre: 'Grilled fish fillet', desc: 'With potatoes and vegetables', foto: 'plato-fish-bodegon' },
     ],
     menuPremium: MENU_PREMIUM_CASA,
+    // [2026-08-21] LAS 11 FOTOS DE TOURS/CARIBBEAN SCAPE, y solo esas. Samuel: «solamente
+    // que estén en el grid de imágenes las que están en la carpeta; si teníamos
+    // fotos de antes, quítalas». Las `galeria-semi-privado-*` de antes salen de aquí; siguen
+    // vivas en las páginas que también las usaban.
+    // El orden es EDITORIAL: las primeras son las que se ven sin abrir el visor.
     galeriaCompleta: [
-      'galeria-semi-privado-1',
-      'galeria-semi-privado-2',
-      'galeria-semi-privado-3',
-      'galeria-semi-privado-4',
-      'galeria-semi-privado-5',
-      'galeria-semi-privado-6',
-      'galeria-semi-privado-7',
+      'tour-escape-5',
+      'tour-escape-1',
+      'tour-escape-11',
+      'tour-escape-10',
+      'tour-escape-7',
+      'tour-escape-3',
+      'tour-escape-8',
+      'tour-escape-9',
+      'tour-escape-2',
+      'tour-escape-4',
+      'tour-escape-6',
     ],
     videoGaleria: '/video/hero.mp4',
     quoteDestacada: 'The coral was the highlight of the trip. The biologist explained everything to us.',
@@ -537,7 +552,7 @@ export const FICHAS: Record<string, FichaTour> = traducible({
         r: 'Only if you choose to pay the 25% deposit, the balance gets a 5% discount when paid in cash.',
       },
     ],
-    tambienTeGusta: ['snorkel-lovers', 'private-charter'],
+    tambienTeGusta: ['coral', 'private-charter'],
     // [v2 2026-07-27] Las 4 ventajas del comparador (slide 17) y de la caja de
     // upsell del widget (slide 5). Salen de menuPremium/incluye de esta misma
     // ficha: langosta y Angus están en los platos Premium, la variedad de 7 vs
@@ -570,8 +585,10 @@ export const FICHAS: Record<string, FichaTour> = traducible({
     ],
   },
 
-  'snorkel-lovers': {
-    tituloLargo: 'Snorkel Lovers · a catamaran for all ages',
+  coral: {
+    // [2026-08-12, Samuel] El nombre nuevo, literal — ver el gemelo del
+    // semi-privado y la tabla de renombres en data/home.ts.
+    tituloLargo: 'Coral Quest: A Marine Conservation Experience (All Ages)',
     // [v3 2026-08-06, WEBSITE-TOURS pág. 11] Título APROBADO del bloque de
     // descripción.
     promesa: 'Discover the Caribbean Beneath the Surface',
@@ -592,7 +609,12 @@ export const FICHAS: Record<string, FichaTour> = traducible({
     // nombres para el mismo sitio. Se porta el de este documento, que es el
     // que lo describe en detalle, y se le pide elegir uno.
     descripcionLarga: [
-      "Snorkel Lovers is more than a catamaran tour, it's an immersive marine conservation experience designed for families, ocean lovers and curious explorers of all ages.",
+      // ⚠️ [2026-08-12] SEGUNDO retoque al copy aprobado de este párrafo: el
+      // documento abre con «Snorkel Lovers is more than a catamaran tour» y el
+      // producto ya no se llama así. Se sustituye el nombre y nada más — el
+      // resto es literal. Cuando llegue copy v4, este párrafo es el primero que
+      // hay que contrastar.
+      "Coral Quest is more than a catamaran tour, it's an immersive marine conservation experience designed for families, ocean lovers and curious explorers of all ages.",
       "Departing from Bávaro, you'll sail to our exclusive Marine Park, where you'll snorkel among vibrant coral reefs, tropical fish, artificial reefs and the Underwater Museum, all within one of the Dominican Republic's leading coral restoration projects.",
       "Before boarding, you'll visit our Marine Interpretation Center, where our Foundation team will introduce you to the reef ecosystem, explain how coral restoration works and show how these projects are helping protect Punta Cana's marine life for future generations.",
       "On board, you'll take part in a symbolic coral planting activity, becoming part of the restoration effort and creating a meaningful connection with the ocean you'll soon explore.",
@@ -692,25 +714,24 @@ export const FICHAS: Record<string, FichaTour> = traducible({
     // familiar (la web tenía `images/excursions/educational/{4,5,7,8,10,11,
     // 13,14,16,17,20,21,22,23,24,25,26,27}.jpg`). Antes 9 — faltaban las
     // 9 últimas. Descargadas y reencodeadas a WEBP quality 85 (~50-170 KB).
+    // [2026-08-21] LAS 12 FOTOS DE TOURS/CORAL QUEST, y solo esas. Samuel: «solamente
+    // que estén en el grid de imágenes las que están en la carpeta; si teníamos
+    // fotos de antes, quítalas». Las `galeria-snorkel-lovers-*` de antes salen de aquí; siguen
+    // vivas en las páginas que también las usaban.
+    // El orden es EDITORIAL: las primeras son las que se ven sin abrir el visor.
     galeriaCompleta: [
-      'galeria-snorkel-lovers-1',
-      'galeria-snorkel-lovers-2',
-      'galeria-snorkel-lovers-3',
-      'galeria-snorkel-lovers-4',
-      'galeria-snorkel-lovers-5',
-      'galeria-snorkel-lovers-6',
-      'galeria-snorkel-lovers-7',
-      'galeria-snorkel-lovers-8',
-      'galeria-snorkel-lovers-9',
-      'galeria-snorkel-lovers-10',
-      'galeria-snorkel-lovers-11',
-      'galeria-snorkel-lovers-12',
-      'galeria-snorkel-lovers-13',
-      'galeria-snorkel-lovers-14',
-      'galeria-snorkel-lovers-15',
-      'galeria-snorkel-lovers-16',
-      'galeria-snorkel-lovers-17',
-      'galeria-snorkel-lovers-18',
+      'tour-coral-9',
+      'tour-coral-5',
+      'tour-coral-7',
+      'tour-coral-10',
+      'tour-coral-8',
+      'tour-coral-1',
+      'tour-coral-3',
+      'tour-coral-6',
+      'tour-coral-12',
+      'tour-coral-4',
+      'tour-coral-11',
+      'tour-coral-2',
     ],
     videoGaleria: '/video/hero.mp4',
     quoteDestacada: 'Perfect for going with kids. Everyone felt safe.',
@@ -818,7 +839,11 @@ export const FICHAS: Record<string, FichaTour> = traducible({
       eyebrow: 'Premium mode',
       texto:
         'In this section we offer our Private Charter in Premium mode, which is our best seller.',
-      cta: { texto: 'See more affordable options', a: '/eventos/party-boat' },
+      // [2026-08-24, barrido de enlaces] La ruta era `/eventos/party-boat`, en
+      // espanol: se quedo sin traducir en el cambio de rutas a ingles de v3.
+      // Funcionaba de milagro —App.tsx la redirige— pero cobrando un salto de
+      // mas, y es el unico enlace del sitio que seguia hablando en espanol.
+      cta: { texto: 'See more affordable options', a: '/events/party-boat' },
     },
     tituloLargo: 'Private Charter · the whole catamaran for your group',
     // [v3 2026-08-06, WEBSITE-TOURS pag. 17] Titulo APROBADO del bloque de
@@ -1178,14 +1203,33 @@ export const FICHAS: Record<string, FichaTour> = traducible({
         },
       ],
     },
+    // [2026-08-21] LAS FOTOS DE TOURS/PRIVATE CHARTER, y solo esas. Samuel: «solamente
+    // que estén en el grid de imágenes las que están en la carpeta; si teníamos
+    // fotos de antes, quítalas». Las `galeria-charter-privado-*` de antes salen de aquí; siguen
+    // vivas en las páginas que también las usaban.
+    // El orden es EDITORIAL: las primeras son las que se ven sin abrir el visor.
+    // [2026-08-23, 2ª entrega] 10 → 12: entran las dos de `PRIVATE CHARTER/AGREGAR`.
+    // Van en 4ª y 8ª posición y no al final, porque el final de esta lista es lo
+    // que solo se ve abriendo el visor y las dos son de las mejores del grupo:
+    // la mesa montada a bordo y el grupo en la proa.
+    // ⚠️ `tour-charter-11` es BYTE A BYTE la misma imagen que `ev-weddings-6`
+    // (mismo md5; el cliente puso `_MG_9277.jpg` en las carpetas de bodas y de
+    // charter a la vez). Sale, por tanto, en /events/weddings y aquí. Tiene
+    // sentido —una boda a bordo de un charter privado es las dos cosas— pero
+    // queda anotado por si algún día molesta verla repetida.
     galeriaCompleta: [
-      'galeria-charter-privado-1',
-      'galeria-charter-privado-2',
-      'galeria-charter-privado-3',
-      'galeria-charter-privado-4',
-      'galeria-charter-privado-5',
-      'galeria-charter-privado-6',
-      'galeria-charter-privado-7',
+      'tour-charter-8',
+      'tour-charter-6',
+      'tour-charter-5',
+      'tour-charter-12',
+      'tour-charter-1',
+      'tour-charter-2',
+      'tour-charter-3',
+      'tour-charter-11',
+      'tour-charter-9',
+      'tour-charter-4',
+      'tour-charter-7',
+      'tour-charter-10',
     ],
     videoGaleria: '/video/hero.mp4',
     quoteDestacada: 'They tailored everything for us, the whole boat just for the family.',
@@ -1263,7 +1307,7 @@ export const FICHAS: Record<string, FichaTour> = traducible({
       { p: 'Do you accept corporate payments?', r: 'Yes, see the Corporate & MICE page for formal invoicing.' },
       { p: 'What if it rains?', r: 'Full refund or a date change, at no cost.' },
     ],
-    tambienTeGusta: ['semi-private-premium', 'snorkel-lovers'],
+    tambienTeGusta: ['semi-private-premium', 'coral'],
     // [v2] Charter privado. OJO con el texto del álbum: la web original de
     // este tour promete que «TODAS las fotos» se suben gratis a Facebook, así
     // que aquí NO se puede vender «el álbum completo» — solo la máxima

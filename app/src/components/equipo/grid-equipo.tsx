@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Anchor, Calculator, ChefHat, Headset, Megaphone, Waves } from 'lucide-react'
+import { Anchor, ChefHat, Compass, Headset, Ship, Waves } from 'lucide-react'
 import {
   DEPARTAMENTOS,
   EQUIPO_COMPLETO,
@@ -8,7 +8,6 @@ import {
   type DepartamentoId,
   type MiembroEquipoV2,
 } from '@/data/equipo'
-import { t } from '@/lib/i18n'
 
 // Grid del equipo con filtros por departamento (correcciones v2, plan 05).
 //
@@ -60,17 +59,30 @@ export function iconoDepartamento(id: DepartamentoId) {
 // Un icono por departamento. Viven aquí y no en data/equipo.ts porque son
 // presentación: el dato es el departamento, no su dibujo.
 const ICONOS: Record<DepartamentoId, typeof Anchor> = {
-  oficina: Headset,
-  playa: Anchor,
-  marketing: Megaphone,
-  administracion: Calculator,
+  capitanes: Ship,
+  guias: Compass,
+  marinos: Anchor,
   cocina: ChefHat,
+  oficina: Headset,
   fundacion: Waves,
 }
 
-function Retrato({ miembro, Icono }: { miembro: MiembroEquipoV2; Icono: typeof Anchor }) {
-  if (miembro.foto) {
-    return (
+// [2026-08-21] LA CARD ES EL RETRATO Y NADA MÁS.
+//
+// Antes llevaba degradado navy, cargo en aqua, nombre grande y la antigüedad
+// al hover. Todo eso describía a una persona que no existía («Name Surname
+// 07»). Ahora las caras son REALES y el cliente no ha mandado la plantilla con
+// nombres, así que no hay nada cierto que escribir encima: se retiran el
+// degradado (estaba solo para que ese texto leyera) y el bloque de texto
+// entero. Cuando lleguen los nombres, `nombre` y `rol` ya existen en el tipo y
+// vuelve el degradado con ellos.
+//
+// `alt=""` a propósito: sin nombre, 28 alt distintos serían 28 veces la misma
+// frase genérica. Quien lleva la información es el encabezado del
+// departamento, que sí dice qué se está viendo.
+function CardMiembro({ miembro }: { miembro: MiembroEquipoV2 }) {
+  return (
+    <article className="group relative aspect-[4/5] overflow-hidden rounded-card-grande bg-papel-hueso">
       <img
         src={`/fotos/${miembro.foto}.webp`}
         alt=""
@@ -79,70 +91,6 @@ function Retrato({ miembro, Icono }: { miembro: MiembroEquipoV2; Icono: typeof A
         // anclando arriba ninguna cara queda cortada por la barbilla.
         className="absolute inset-0 size-full object-cover object-top transition-transform duration-500 motion-safe:group-hover:scale-105"
       />
-    )
-  }
-  // Sin foto: el ICONO DEL DEPARTAMENTO sobre un degradado de marca. Dos
-  // decisiones, las dos por lo mismo:
-  //  - Oscuro y no el aqua-tint claro de antes: la card lleva ahora el nombre
-  //    en blanco montado sobre el degradado navy, y sobre un fondo casi blanco
-  //    ese texto desaparecía. El hueco tiene que ser oscuro para que la card
-  //    sin retrato se lea igual que las demás.
-  //  - Icono y no iniciales: mientras la plantilla sea de molde TODOS se
-  //    llaman «Nombre Apellido NN», así que las iniciales daban 23 tarjetas
-  //    con el mismo «NA» y eso se leía como un error, no como un hueco. El
-  //    icono además dice algo cierto (de qué departamento es) sin inventar
-  //    nada de la persona.
-  return (
-    <div
-      aria-hidden="true"
-      className="absolute inset-0 grid place-items-center bg-linear-to-br from-navy to-aqua-dark"
-    >
-      <Icono className="size-10 text-white/25" strokeWidth={1.5} />
-    </div>
-  )
-}
-
-function CardMiembro({ miembro, Icono }: { miembro: MiembroEquipoV2; Icono: typeof Anchor }) {
-  return (
-    <article className="group relative aspect-[4/5] overflow-hidden rounded-card-grande bg-papel-hueso">
-      <Retrato miembro={miembro} Icono={Icono} />
-
-      {/* Degradado propio de la card: denso abajo (donde va el texto) y
-          transparente arriba, para no apagar la cara.
-          Las paradas están AJUSTADAS AL MÓVIL (2026-07-28): con la curva por
-          defecto, a 175px de ancho el rol ocupa dos líneas y su primera línea
-          caía en la zona del 25% de navy — sobre un retrato de fondo claro,
-          ilegible. Ahora el 55% llega hasta el 40% de la altura, que es donde
-          empieza el bloque de texto en el caso más largo, y a partir de ahí se
-          desvanece hasta desaparecer en el 80%. */}
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 bg-linear-to-t from-navy/95 via-navy/55 via-40% to-transparent to-80%"
-      />
-
-      {miembro.responsable ? (
-        <span className="absolute left-3 top-3 rounded-chip bg-coral px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-white">
-          {t('Team lead')}
-        </span>
-      ) : null}
-
-      <div className="absolute inset-x-0 bottom-0 p-3 sm:p-4">
-        <p className="text-[0.625rem] font-semibold uppercase leading-tight tracking-[0.12em] text-aqua-claro sm:text-eyebrow">
-          {miembro.rol}
-        </p>
-        <p className="mt-1 font-display text-base font-semibold leading-tight text-white sm:text-lg">
-          {miembro.nombre}
-        </p>
-        {/* Antigüedad: SOLO EN DESKTOP, revelada al pasar el ratón — mismo
-            mecanismo que la frase y el CTA de las cards de equipo de la home.
-            En móvil no se pinta: a dos columnas, el rol ya ocupa dos líneas y
-            el nombre otras dos, y añadir esta tercera frase empujaba el bloque
-            de texto hasta la cara del retrato. El cargo y el nombre son lo que
-            hay que leer de un vistazo; la antigüedad es dato de apoyo. */}
-        <p className="hidden overflow-hidden text-xs text-white/70 transition-all duration-300 sm:block sm:max-h-0 sm:opacity-0 sm:group-hover:mt-1 sm:group-hover:max-h-8 sm:group-hover:opacity-100">
-          {miembro.experiencia} {t('years of experience · since')}{' '}{miembro.desde}
-        </p>
-      </div>
     </article>
   )
 }
@@ -163,18 +111,26 @@ function SeccionDepartamento({ departamento }: { departamento: Departamento }) {
         <div>
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
             <h2 className="font-display text-h3 font-semibold text-navy">{departamento.nombre}</h2>
+            {/* Singular de verdad: marinos es 1 sola persona y «1 people» se
+                lee como un bug. */}
             <span className="rounded-chip bg-aqua-tint px-2.5 py-0.5 text-xs font-semibold text-aqua-dark">
-              {gente.length} {t('people')}
+              {gente.length} {gente.length === 1 ? 'person' : 'people'}
             </span>
           </div>
-          {/* Este copy SÍ es real: lo escribió el cliente en su PowerPoint. */}
-          <p className="mt-1 max-w-2xl text-navy-sub">{departamento.descripcion}</p>
+          {/* Este copy SÍ es real: lo escribió el cliente en su PowerPoint.
+              Tres departamentos no tienen ninguno (capitanes, guías y marinos:
+              el cliente los describió juntos, como «Marine Operations», y al
+              separarlos en tres se quedaron sin párrafo). Ahí no se pinta nada
+              en vez de inventarlo — ver la cabecera de data/equipo.ts. */}
+          {departamento.descripcion ? (
+            <p className="mt-1 max-w-2xl text-navy-sub">{departamento.descripcion}</p>
+          ) : null}
         </div>
       </div>
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
         {gente.map((m) => (
-          <CardMiembro key={m.id} miembro={m} Icono={Icono} />
+          <CardMiembro key={m.id} miembro={m} />
         ))}
       </div>
     </section>
@@ -214,7 +170,7 @@ export function GridEquipo({
               : 'border-linea text-navy hover:bg-papel-hueso'
           }`}
         >
-          {t('All')}{' '}<span className="opacity-60">{TOTAL_EQUIPO}</span>
+          All <span className="opacity-60">{TOTAL_EQUIPO}</span>
         </button>
         {DEPARTAMENTOS.map((d) => {
           const n = EQUIPO_COMPLETO.filter((m) => m.departamento === d.id).length

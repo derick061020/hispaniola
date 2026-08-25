@@ -360,16 +360,21 @@ export function CalculadoraEvento({
 
       {/* El paquete viaja como `variante` —que es lo que Odoo cotiza— y el
           número de invitados como `personas`. El funnel no recalcula: abre el
-          pedido con esto y le pregunta el precio al servidor. */}
+          pedido con esto y le pregunta el precio al servidor.
+
+          [2026-08-21, auditoría móvil] `max-lg:h-11`: el tamaño `medium` de
+          FancyButton mide 40px y el mínimo cómodo para un pulgar son 44 (Apple
+          HIG). Solo por debajo de lg, para no recalcular el alto del widget en
+          el desktop que dibujó Samuel. */}
       {varianteOdoo ? (
-        <FancyButton.Root variant="primary" className="w-full" asChild>
+        <FancyButton.Root variant="primary" className="w-full max-lg:h-11" asChild>
           <Link to={`/book/${slug}?variante=${varianteOdoo}&personas=${personas}`}>
             {t('Book this package')}
           </Link>
         </FancyButton.Root>
       ) : (
         <EnlacePrototipo>
-          <FancyButton.Root variant="primary" className="w-full" asChild>
+          <FancyButton.Root variant="primary" className="w-full max-lg:h-11" asChild>
             <span>{t('Book this package')}</span>
           </FancyButton.Root>
         </EnlacePrototipo>

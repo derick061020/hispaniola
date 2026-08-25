@@ -820,6 +820,31 @@
   animation: titulo-ola-fluye var(--titulo-subrayado-duracion) linear infinite;
 }
 
+/* ⚠️ [2026-08-21, auditoría móvil] La onda SE APAGA por debajo de 640px.
+   El motivo no es estético, es que ahí está ROTA: `.titulo-subrayado` envuelve
+   dos palabras («Caribbean Catamaran») y la onda es un hijo absoluto con
+   `left:0; right:0` colgado de su borde inferior. Mientras las dos palabras
+   caben en UNA línea —que es lo que pasa en desktop, y la razón por la que se
+   eligió justo ese par— la onda cae limpia debajo de ellas. En un móvil no
+   caben: a 36px («--text-hero-movil») «Caribbean Catamaran» pide ~397px y la
+   columna útil de un iPhone son ~350. Al partirse en dos líneas, la caja del
+   span pasa a medir dos líneas de alto y el ancho ENTERO del titular, así que
+   la onda se dibujaba a todo lo ancho entre «Catamaran» y «Experience»: una
+   raya azul cruzando el H1 por la mitad. Verificado a 320/360/390/414px.
+
+   Se apaga la onda y NO el flotado de las palabras (`.titulo-palabra`), que
+   sigue funcionando igual partido en dos líneas.
+
+   Para recuperarla en móvil hay que decidir diseño, no CSS: o el subrayado
+   pasa a UNA sola palabra, o el titular baja de cuerpo hasta que el par quepa.
+   Las dos cosas son de Samuel, así que aquí solo se quita lo que estaba mal
+   dibujado. */
+@media (max-width: 639px) {
+  .titulo-ola {
+    display: none;
+  }
+}
+
 @keyframes titulo-ola-fluye {
   from {
     mask-position: 0 0;
@@ -3938,5 +3963,223 @@
   .cocina-espuma {
     height: calc(var(--spacing-cocina-espuma) + var(--cocina-espuma-sangrado));
     --cocina-espuma-tile: calc(var(--spacing-cocina-espuma) * var(--cocina-espuma-aspecto));
+  }
+}
+
+/* ============================================================================
+   LOGO ANIMADO  ·  ui/logo.tsx + ui/logo-trazados.ts
+   [2026-08-21, pedido de Samuel] «que cuando cargue la página se reproduzca la
+   animación completa, y cuando se haga hover en el logo la mascota salude».
+
+   POR QUÉ EL BRAZO SE RECORTA EN VEZ DE GIRAR UNA CAPA. El vector del cliente es
+   una exportación plana de Illustrator: 180 trazados, ninguno con nombre, y el
+   negro de TODA la langosta —sombrero, cuerpo, las dos pinzas y el timón— es un
+   único `path` de 19 KB. El brazo no existe como pieza. Se separa con dos
+   recortes complementarios sobre el MISMO dibujo (`--brazo` y `--cuerpo`, el
+   segundo es el primero restado de un rectángulo grande con `clip-rule:evenodd`)
+   y se gira sobre la bola del hombro: al ser redonda, se queda quieta al girar y
+   la costura no se ve.
+
+   POR QUÉ EL SALUDO SOLO VA HACIA DENTRO. La antena derecha está PEGADA a la
+   pinza en el vector. Girando hacia fuera se abre un hueco entre las dos con el
+   corte a la vista; girando hacia dentro la pinza pasa por encima y lo tapa. Si
+   algún día se despega la antena en el vector, se pueden meter ángulos positivos.
+
+   POR QUÉ LAS LETRAS SE REVELAN POR RECORTE. «Hispaniola» no son diez letras:
+   son tres contornos fundidos (la H suelta, «ispa» soldado en uno y «niola» en
+   otro) más los dos puntos de las íes — la cursiva las une y no hay forma de
+   separarlas por código. Se revelan con diez recortes inclinados con la misma
+   pendiente de la letra (0,325). El TAGLINE sí viene letra a letra (17 trazados
+   independientes), así que ahí el escalonado es real.
+
+   LA JALLA son dos formas RELLENAS, no un trazo: no se puede «dibujar» con
+   stroke-dashoffset porque no hay línea que recorrer. Se descubre con un barrido.
+
+   `overflow: visible` EN EL SVG: la entrada rebota (cubic-bezier con overshoot),
+   así que la mascota se sale unas 8 unidades por arriba del viewBox durante un
+   instante. Un <svg> recorta por defecto y ahí se cortaba el sombrero. Ningún
+   ancestro del logo recorta (header y hero lo evitan a propósito — ver sus
+   comentarios; el overflow-hidden del footer está a 14rem de distancia). */
+.logo-marca {
+  display: block;
+  overflow: visible;
+}
+
+/* Solo los grupos que se mueven: `transform-box: view-box` hace que
+   transform-origin se pueda escribir en unidades del viewBox y no en % de una
+   caja que cambia con el tamaño de render (64px en el header, 44px en el
+   compacto — el mismo origen tiene que valer para los dos). */
+.logo-flota,
+.logo-mascota,
+.logo-brazo,
+.logo-letra,
+.logo-tl {
+  transform-box: view-box;
+}
+
+/* ---- 1 · la mascota sale (0,00 – 0,70s) ---- */
+.logo-marca--entrando .logo-mascota {
+  transform-origin: 58px 134px; /* los pies, para que crezca desde el suelo */
+  animation: logo-entra 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes logo-entra {
+  from {
+    transform: translateY(16px) scale(0.55) rotate(-12deg);
+    opacity: 0;
+  }
+  55% {
+    opacity: 1;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+/* Respiración de fondo, ya terminada la entrada — sin esto el logo queda muerto
+   de golpe al acabar los 3,4s. Vive en un grupo aparte para no pelearse con el
+   transform de `logo-entra`. */
+.logo-marca--entrando .logo-flota {
+  transform-origin: 58px 134px;
+  animation: logo-flota 5.2s 3.5s ease-in-out infinite both;
+}
+
+@keyframes logo-flota {
+  0%,
+  100% {
+    transform: none;
+  }
+  50% {
+    transform: translateY(-1.6px);
+  }
+}
+
+/* ---- 2 · saluda con el bracito (0,55 – 1,60s en la entrada; solo, en el hover) ---- */
+.logo-marca--entrando .logo-brazo {
+  animation: logo-saluda 1.05s 0.55s ease-in-out both;
+}
+
+.logo-marca--saludando .logo-brazo {
+  animation: logo-saluda 1.05s ease-in-out both;
+}
+
+@keyframes logo-saluda {
+  0% {
+    transform: rotate(0);
+  }
+  12% {
+    transform: rotate(-21deg);
+  }
+  26% {
+    transform: rotate(-5deg);
+  }
+  40% {
+    transform: rotate(-19deg);
+  }
+  54% {
+    transform: rotate(-4deg);
+  }
+  70% {
+    transform: rotate(-13deg);
+  }
+  86% {
+    transform: rotate(-2deg);
+  }
+  100% {
+    transform: rotate(0);
+  }
+}
+
+/* ---- 3 · las letras, una a una (1,35 – 2,55s) ---- */
+.logo-marca--entrando .logo-letra {
+  animation: logo-letra 0.34s calc(1.35s + var(--i) * 0.085s) cubic-bezier(0.2, 1.5, 0.4, 1) both;
+}
+
+@keyframes logo-letra {
+  from {
+    transform: translateY(9px) scale(0.86);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+/* ---- 4 · la jalla se pinta (2,32 – 2,84s) ---- */
+.logo-marca--entrando .logo-jalla {
+  animation: logo-jalla 0.52s 2.32s cubic-bezier(0.5, 0, 0.2, 1) both;
+}
+
+@keyframes logo-jalla {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* ---- 5 · el tagline (2,68 – 3,35s) ---- */
+.logo-marca--entrando .logo-tl {
+  transform-origin: 180px 132px;
+  animation: logo-tag 0.4s calc(2.68s + var(--i) * 0.028s) ease-out both;
+}
+
+@keyframes logo-tag {
+  from {
+    transform: translateY(4px);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+/* Quien lo tenga activado ve el logo quieto y completo, sin un solo fotograma —
+   las clases se siguen poniendo desde React, aquí se anulan sus animaciones. */
+@media (prefers-reduced-motion: reduce) {
+  .logo-marca--entrando .logo-mascota,
+  .logo-marca--entrando .logo-flota,
+  .logo-marca--entrando .logo-brazo,
+  .logo-marca--saludando .logo-brazo,
+  .logo-marca--entrando .logo-letra,
+  .logo-marca--entrando .logo-jalla,
+  .logo-marca--entrando .logo-tl {
+    animation: none;
+  }
+}
+
+/* ============================================================
+   Campos de formulario en móvil — el zoom de iOS (2026-08-21, auditoría móvil)
+
+   Safari de iOS hace ZOOM automático al enfocar cualquier campo cuyo
+   `font-size` sea menor de 16px, y NO lo deshace al salir: el visitante se
+   queda con la página ampliada y con scroll horizontal a mitad del checkout.
+   Medido en esta auditoría: TODOS los campos del sitio salían a 14px
+   (`text-sm` en ui/campo.tsx, `text-paragraph-sm` en el widget de evento),
+   así que el efecto se disparaba en el formulario de contacto de la home, en
+   el de cotización de eventos y —lo más caro— en los 4 campos de contacto del
+   funnel de reserva.
+
+   Se arregla AQUÍ y no campo a campo por dos razones:
+    1. Las piezas de `components/alignui/` son vendor copy-in y no se editan a
+       mano (CLAUDE.md) — el widget de evento usa sus clases.
+    2. Un suelo de 16px es una regla de plataforma, no una decisión de diseño
+       por componente: vale para el campo que exista mañana sin tener que
+       acordarse.
+
+   `max(16px, 1em)` conserva los campos que YA son mayores (el `em` resuelve
+   contra el padre), así que solo sube los que disparan el zoom. Por encima de
+   `md` no aplica: ahí no hay zoom que evitar y el diseño de 14px se queda tal
+   cual lo dibujó Samuel.
+   ============================================================ */
+@media (max-width: 767px) {
+  input:not([type='checkbox']):not([type='radio']):not([type='range']),
+  select,
+  textarea {
+    font-size: max(16px, 1em);
   }
 }

@@ -242,8 +242,11 @@ export const FUNDACION = traducible({
       claim: 'Restoring the foundation of marine life.',
       texto:
         'We rescue coral fragments, grow them in our nurseries and laboratories, and transplant them using advanced restoration techniques to rebuild healthy reefs.',
-      foto: 'galeria-snorkel-lovers-6',
-      fotoAlt: 'Coral nursery structures underwater, with a diver checking them',
+      // [2026-08-21] Foto REAL de la fundación. El cliente nombró cada
+      // archivo con la sección a la que va; antes cada frente tomaba prestado
+      // un tile de la galería de Coral Quest.
+      foto: 'fundacion-coral',
+      fotoAlt: 'Staghorn coral growing on the nursery structures',
     },
     {
       clave: 'Biodiversity',
@@ -251,8 +254,12 @@ export const FUNDACION = traducible({
       claim: 'A healthy reef needs abundant marine life.',
       texto:
         'Our restoration strategy goes beyond corals by increasing fish populations, protecting key species and rebuilding the ecological balance that allows reefs to flourish naturally.',
-      foto: 'galeria-snorkel-lovers-5',
-      fotoAlt: 'Fish swimming over a brain coral on the Bávaro reef',
+      // [2026-08-21] `RESTORING MARINE.jpg`, que es como el cliente llamó al
+      // archivo de esta sección. El 20 lo puse por error en «Working with
+      // Local Fishermen» —sale un pescador lanzando la atarraya— y Samuel lo
+      // recolocó: el nombre del archivo manda.
+      foto: 'fundacion-biodiversidad',
+      fotoAlt: 'A local fisherman casting his net over the reef',
     },
     {
       clave: 'Clean-ups',
@@ -260,8 +267,11 @@ export const FUNDACION = traducible({
       claim: 'Healthy ecosystems begin with clean waters.',
       texto:
         'Regular coastal and underwater clean-up campaigns remove marine debris, improve habitat quality and protect the ecosystems that support marine life.',
-      foto: 'galeria-semi-privado-3',
-      fotoAlt: 'A large group at the shoreline of Bávaro beach',
+      // [2026-08-20] Foto REAL de la campana, de la entrega del cliente. Antes
+      // se apoyaba en un hueco de galeria cuyo alt hablaba de un grupo en la
+      // orilla: no ensenaba ni una bolsa de basura.
+      foto: 'fundacion-limpieza',
+      fotoAlt: 'Volunteers with the bags of debris collected during a beach clean-up',
       contexto: true,
     },
     {
@@ -270,8 +280,19 @@ export const FUNDACION = traducible({
       claim: 'Conservation succeeds when communities succeed.',
       texto:
         'We work alongside local fishermen, promoting sustainable practices and creating opportunities that align livelihoods with long-term marine conservation.',
-      foto: 'galeria-semi-privado-4',
-      fotoAlt: 'A school of sergeant major fish over the reef, next to a swimmer',
+      // [2026-08-23, 2ª entrega del cliente] POR FIN LA FOTO DE ESTA SECCIÓN.
+      // Historia corta de este hueco: el 20 se le puso el pescador de
+      // `RESTORING MARINE.jpg` y Samuel lo devolvió a biodiversidad el 21,
+      // porque ese archivo es de allí; el hueco se quedó con la de snorkel
+      // que tenía —sin un solo pescador dentro, bajo el titular «Working with
+      // Local Fishermen»—, a la espera de material.
+      // Ahora el cliente manda `WORKING WITH LOCAL FISHERMEN.jpg`, nombrado
+      // con el título exacto de la sección, que es la convención de toda su
+      // carpeta. Es la foto institucional del acuerdo: la comunidad pesquera
+      // con la Armada y el equipo, en el centro de interpretación.
+      foto: 'fundacion-pescadores',
+      fotoAlt:
+        'The Hispaniola team with local fishermen, the Navy and authorities at the marine interpretation centre',
       contexto: true,
     },
     {
@@ -280,8 +301,10 @@ export const FUNDACION = traducible({
       claim: 'Protecting what people learn to value.',
       texto:
         'Every visitor, student and local resident becomes part of our mission through educational experiences that inspire long-term stewardship of the Caribbean.',
-      foto: 'galeria-snorkel-lovers-10',
-      fotoAlt: 'A Hispaniola guide explaining the coral nursery to a group of children',
+      // [2026-08-21] Foto REAL, del archivo que el cliente nombró con esta
+      // misma sección.
+      foto: 'fundacion-educacion',
+      fotoAlt: 'A Hispaniola guide explaining the coral nursery to a visiting group',
     },
     {
       clave: 'Protected area',
@@ -289,8 +312,10 @@ export const FUNDACION = traducible({
       claim: 'Turning protection into action.',
       texto:
         'Working alongside the Ministry of Environment, we help manage the protected marine area where we operate through monitoring, scientific data collection and on-the-water conservation efforts.',
-      foto: 'arrecife-fondo-cenital',
-      fotoAlt: 'The marine protected area seen from the air',
+      // [2026-08-21] Foto REAL, `MARINE PROTECTED AREA MANAGEMENT.jpg`. Antes
+      // tiraba de la textura de fondo de los banners, que es agua sin sujeto.
+      foto: 'fundacion-area-protegida',
+      fotoAlt: 'A sea turtle over the reef of the protected marine area',
       contexto: true,
     },
   ],

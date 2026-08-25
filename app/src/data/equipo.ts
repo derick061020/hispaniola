@@ -1,88 +1,73 @@
-import { traducible } from '@/lib/i18n'
-
 // Página de Tripulación / Equipo (correcciones v2, plan 05) — 2026-07-27.
 //
-// ⚠️ ESTA PÁGINA ES UN MOLDE CON PLACEHOLDERS. Léelo antes de tocar nada.
+// [2026-08-21] LOS RETRATOS YA SON REALES. El cliente entregó la carpeta
+// «FOTO PARA NUEVA WEB 2026/ABOUT US/CREW»: 55 fotos de estudio repartidas en
+// seis subcarpetas. Esta página deja de ser un molde de 70 fichas inventadas y
+// pasa a enseñar a las 30 personas de las que hay retrato (27 en la 1ª
+// entrega del cliente + 3 en la 2ª, 2026-08-23 — de las 6 fotos que llegaron
+// solo había 3 personas nuevas; el resto eran segundas tomas de las mismas).
 //
-// Decisión de Samuel (2026-07-27): la página se construye YA, sin esperar a la
-// plantilla real, y se dimensiona «bajo el paraguas de 70 empleados». El número
-// exacto no se conoce — el cliente dijo «cerca de 70» en la reunión del 07-24
-// (27:57) y su propia maqueta listaba 37. Los contadores de los chips se
-// DERIVAN del array (nunca se escriben a mano), así que el día que llegue la
-// plantilla real la página se ajusta sola.
+// ⚠️ SIGUE SIN HABER NOMBRES, Y POR ESO LAS CARDS NO LLEVAN NINGUNO. El
+// cliente no mandó la plantilla con nombre y cargo, así que la card es el
+// retrato y nada más. La versión anterior rellenaba con «Name Surname 07» y un
+// lorem ipsum en primera persona; poner esas frases bajo una CARA REAL sería
+// mucho peor que bajo un nombre de relleno, porque sería atribuir una
+// declaración a una persona identificable. Cuando llegue la plantilla, cada
+// retrato gana su nombre y su cargo sin tocar el componente.
 //
-// Escalera de contenido aplicada (ver docs/proceso/correcciones-v2-cliente/planes/00-INDICE.md):
-//   1. Web original → los 6 nombres de departamento y sus descripciones son
-//      REALES: los escribió el cliente en su PowerPoint.
-//   2. Assets repetidos → los retratos rotan entre las fotos de equipo que ya
-//      hay en el repo; quien no tiene, cae al fallback de iniciales.
-//   3. Lorem ipsum → las frases en primera persona.
+// LOS SEIS DEPARTAMENTOS SON LAS SEIS SUBCARPETAS (pedido de Samuel,
+// 2026-08-21: «así es como quiero que estén organizadas las categorías; las
+// que no tengamos ninguna foto y no aparezca ni siquiera el nombre de la
+// carpeta, elimínalas»). Eso retira dos que sí existen en la empresa y tenían
+// copy aprobado —Sales & Marketing y Administration— porque no hay ni una foto
+// suya; vuelven en cuanto lleguen. Y parte lo que antes era un solo
+// departamento, «Marine Operations», en los tres que el cliente separó al
+// fotografiar: capitanes, guías y marinos.
 //
-// ⚠️ POR QUÉ LOS NOMBRES SON GENÉRICOS Y NO LOS DE LA MAQUETA DEL CLIENTE:
-// su maqueta traía 37 nombres (Rafael, Carmen, Lola…) con frases en primera
-// persona. Esos nombres NO están en la web original — los generó la IA con la
-// que él hizo la maqueta. Publicar «Al timón, mi trabajo es que disfrutes
-// tranquilo» firmado por «Rafael, Capitán» sería poner una declaración en boca
-// de una persona identificable que nunca la dijo. Un lorem ipsum se ve a la
-// legua; un nombre verosímil con su frase, no — y se queda para siempre.
-// Cuando llegue la plantilla real se sustituye todo esto de una vez.
+// ⚠️ TRES DEPARTAMENTOS SE QUEDAN SIN PÁRRAFO. El cliente escribió seis
+// descripciones, pero para SUS seis departamentos, no para estos. Cocina,
+// oficina y fundación conservan la suya palabra por palabra; capitanes, guías
+// y marinos no tienen ninguna y NO se les inventa: la cabecera se pinta sin
+// párrafo hasta que el cliente los escriba.
 
+// Las seis subcarpetas de CREW, en el orden en que se leen en la página.
 export type DepartamentoId =
-  | 'oficina'
-  | 'playa'
-  | 'marketing'
-  | 'administracion'
+  | 'capitanes'
+  | 'guias'
+  | 'marinos'
   | 'cocina'
+  | 'oficina'
   | 'fundacion'
 
 export type Departamento = {
   id: DepartamentoId
   nombre: string
-  /** Descripción REAL — la escribió el cliente en su PowerPoint. */
-  descripcion: string
-  /** Cuánta gente se maqueta en este departamento (suman 70). */
-  plantilla: number
+  /** Descripción REAL — la escribió el cliente en su PowerPoint. Ausente en
+   *  los tres departamentos que él no describió (ver la cabecera): la cabecera
+   *  se pinta sin párrafo, no con uno inventado. */
+  descripcion?: string
 }
 
-// Los 6 departamentos y sus descripciones son CONTENIDO REAL del cliente
-// (slides 37-42 del PDF v2 + confirmados de viva voz en la reunión, 27:46).
-export const DEPARTAMENTOS: Departamento[] = traducible([
-  // [v3 2026-08-06, WEBSITE - NOSOTROS pags. 2-3] Los 6 departamentos con el
-  // nombre y el parrafo APROBADOS. Mapean 1:1 con los 6 que ya habia —el
-  // cliente no cambia la estructura, cambia el texto— salvo dos renombres que
-  // dicen mejor lo que hacen: «Operaciones Playa» pasa a MARINE OPERATIONS
-  // (es la tripulacion del mar, no de la playa) y «Fundacion The Bavaro Reef»
-  // a BAVARO REEFS FOUNDATION, que es como el cliente la nombra en todos los
-  // documentos nuevos.
-  // ⚠️ Las cifras de plantilla NO se tocan: son suyas y suman 70, que es lo
-  // que el copy nuevo repite («more than 70 passionate professionals»).
+// El copy de cocina, oficina y fundación es CONTENIDO REAL del cliente (slides
+// 37-42 del PDF v2, reconfirmado en el WEBSITE - NOSOTROS de v3). Se copia
+// palabra por palabra desde la versión anterior de este archivo.
+export const DEPARTAMENTOS: Departamento[] = [
+  // Los tres de mar. Antes eran un solo departamento, «Marine Operations», y
+  // su párrafo describía a los tres juntos; al separarlos se quedan sin él.
+  { id: 'capitanes', nombre: 'Captains' },
+  { id: 'guias', nombre: 'Guides' },
+  { id: 'marinos', nombre: 'Deckhands' },
   {
-    id: 'marketing',
-    nombre: 'Sales & Marketing',
+    id: 'cocina',
+    nombre: 'Kitchen Operations',
     descripcion:
-      "Your adventure starts long before you step on board. We listen, offer personalized recommendations, answer every question, and help you choose the experience that's perfect for you.",
-    plantilla: 9,
+      'From land to our floating kitchen and then your table on board, our professional chefs prepare fresh, high-quality dishes with passion and attention to every detail, making every meal part of the experience.',
   },
   {
     id: 'oficina',
     nombre: 'Office Operations',
     descripcion:
       'From the moment you arrive, we welcome you to our facilities, guide you through check-in, introduce your adventure, and provide personalized support throughout your experience.',
-    plantilla: 11,
-  },
-  {
-    id: 'playa',
-    nombre: 'Marine Operations',
-    descripcion:
-      'More than a crew: from boarding to snorkeling and every unforgettable moment in between, our team is dedicated to your safety, comfort, and enjoyment, making you feel like part of our family.',
-    plantilla: 21,
-  },
-  {
-    id: 'cocina',
-    nombre: 'Kitchen Operations',
-    descripcion:
-      'From land to our floating kitchen and then your table on board, our professional chefs prepare fresh, high-quality dishes with passion and attention to every detail, making every meal part of the experience.',
-    plantilla: 12,
   },
   {
     id: 'fundacion',
@@ -92,102 +77,65 @@ export const DEPARTAMENTOS: Departamento[] = traducible([
     nombre: 'Bávaro Reefs Foundation',
     descripcion:
       'Driven by a passion for the ocean, our multidisciplinary conservation team works every day to protect coral reefs, restore marine life, and preserve the Caribbean for future generations.',
-    plantilla: 9,
   },
-  {
-    id: 'administracion',
-    nombre: 'Administration',
-    descripcion:
-      'Our management and administrative team oversees every aspect of the business, ensuring smooth operations, financial responsibility, and full compliance with Dominican regulations.',
-    plantilla: 8,
-  },
-])
-
-/** Roles por departamento — genéricos y verificables (son puestos, no
- *  personas). Se rotan para dar variedad al molde. */
-const ROLES: Record<DepartamentoId, string[]> = {
-  oficina: ['Guest support', 'Booking coordination', 'Support & front desk'],
-  playa: ['Captain', 'Snorkeling guide', 'Deck crew', 'Tour leader'],
-  marketing: ['Sales executive', 'Marketing', 'Community & content'],
-  administracion: ['Administration', 'Accounting', 'Human resources'],
-  cocina: ['Onboard chef', 'Kitchen assistant', 'Food logistics'],
-  fundacion: ['Marine biology', 'Coral restoration', 'Project coordination'],
-}
-
-/** Retratos reales que YA existen en el repo. Se rotan como placeholder —
- *  que se repitan es intencional y se detecta a simple vista, que es
- *  justamente lo que hace segura esta clase de relleno. */
-const RETRATOS = ['equipo-omar', 'equipo-lola', 'equipo-eva', 'equipo-capitan', 'equipo-biologa']
-
-/** Frase de relleno. Lorem ipsum a propósito: NO se pone una frase verosímil
- *  en boca de alguien que no la ha dicho. Ver la cabecera del archivo. */
-const FRASE_PLACEHOLDER =
-  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pending the real quote from each person.'
+]
 
 export type MiembroEquipoV2 = {
   id: string
-  nombre: string
-  rol: string
   departamento: DepartamentoId
-  /** Año de entrada — alimenta el filtro «desde cuándo» que pidió el cliente. */
-  desde: number
-  /** Años de experiencia — campo que salió en la reunión (28:02: «el capitán
-   *  con 15 años de experiencia navegando en Punta Cana»). */
-  experiencia: number
-  frase: string
-  foto: string | null
-  responsable: boolean
-  /** SIEMPRE true mientras sea molde. El grep de `[placeholder-v2]` y este
-   *  flag son lo que impide que esto se publique por olvido. */
-  placeholder: true
+  /** Nombre del archivo en /public/fotos, sin extensión. */
+  foto: string
+  /** El cliente todavía no ha mandado la plantilla con nombre y cargo, así que
+   *  la card se pinta solo con el retrato. Ver la cabecera del archivo. */
+  nombre?: string
+  rol?: string
 }
 
-/** Genera la plantilla de molde. Se genera en código —y no a mano— para que
- *  quede claro que es relleno y para que cambiar el tamaño sea cambiar un
- *  número en DEPARTAMENTOS. */
-function generarPlantilla(): MiembroEquipoV2[] {
-  const gente: MiembroEquipoV2[] = []
-  let n = 0
-  for (const depto of DEPARTAMENTOS) {
-    const roles = ROLES[depto.id]
-    for (let i = 0; i < depto.plantilla; i++) {
-      n++
-      gente.push({
-        id: `${depto.id}-${i + 1}`,
-        // [placeholder-v2] Nombre genérico evidente. Sustituir por la
-        // plantilla real cuando el cliente la mande.
-        nombre: `Name Surname ${String(n).padStart(2, '0')}`,
-        rol: roles[i % roles.length],
-        departamento: depto.id,
-        desde: 2012 + (i % 13),
-        experiencia: 2 + (i % 18),
-        frase: FRASE_PLACEHOLDER,
-        // [placeholder-v2] Retratos repetidos; 1 de cada 3 sin foto para
-        // ejercitar el fallback de iniciales, que es como se verá la mayoría
-        // hasta que lleguen los 70 retratos (y su consentimiento).
-        foto: i % 3 === 2 ? null : RETRATOS[i % RETRATOS.length],
-        responsable: i === 0,
-        placeholder: true,
-      })
-    }
-  }
-  return gente
+/** Cuántos retratos hay por departamento. El número sale de contar PERSONAS
+ *  distintas en cada subcarpeta, no archivos: cada una posó dos o tres veces y
+ *  solo entra una foto suya. Los archivos elegidos y el porqué de cada
+ *  descarte están en scripts/reemplazar-fotos.py. */
+const RETRATOS_POR_DEPARTAMENTO: Record<DepartamentoId, number> = {
+  capitanes: 4,
+  // [2026-08-23, 2ª entrega del cliente] guías 4 → 5 y cocina 8 → 10.
+  // ⚠️ La carpeta `GUÍAS/AGREGAR` traía DOS archivos (IMG_8924 e IMG_8926) y
+  // aquí solo entra UNO: son la misma persona, con la toma de brazos caídos y
+  // la de brazos cruzados. Manda la regla de Samuel del 21 —una persona, un
+  // retrato, y de los dos el de brazos cruzados—, así que se publica 8926.
+  // Contarlos como dos habría repetido una cara en el muro, que es el bug que
+  // se arregló en el commit 308114d.
+  guias: 5,
+  marinos: 1,
+  // De `COCINA/AGREGAR` entran DOS, no cuatro. [2026-08-24, Samuel sobre el
+  // muro ya montado] los cuatro archivos son solo DOS personas, cada una con
+  // su toma de brazos caídos y su toma de brazos cruzados: 8927/8929 son el
+  // mismo hombre y 8931/8935 el mismo chico. Manda la regla del 21 —una
+  // persona, un retrato— así que se publican 8929 y 8931 y los otros dos se
+  // borraron. Ninguno de los dos estaba ya en el muro (comparados contra los
+  // 8 retratos publicados).
+  cocina: 10,
+  oficina: 8,
+  fundacion: 2,
 }
 
-// `traducible` va aquí y no dentro de `generarPlantilla`: la funcion arma los
-// objetos con cadenas crudas (ROLES, FRASE_PLACEHOLDER), asi que es el
-// resultado lo que hay que envolver.
-export const EQUIPO_COMPLETO: MiembroEquipoV2[] = traducible(generarPlantilla())
+export const EQUIPO_COMPLETO: MiembroEquipoV2[] = DEPARTAMENTOS.flatMap((d) =>
+  Array.from({ length: RETRATOS_POR_DEPARTAMENTO[d.id] }, (_, i) => ({
+    id: `${d.id}-${i + 1}`,
+    departamento: d.id,
+    foto: `crew-${d.id}-${i + 1}`,
+  })),
+)
 
-/** El total se DERIVA del array, nunca se escribe a mano: el cliente no ha
- *  confirmado si son 37 o 70 y este número tiene que seguir al dato. */
+/** Cuántos RETRATOS hay, que ya no es lo mismo que cuánta gente trabaja en la
+ *  empresa: son 30 fotos de una plantilla que el cliente cifra en más de 70.
+ *  Se deriva del array, como todos los contadores de esta página. */
 export const TOTAL_EQUIPO = EQUIPO_COMPLETO.length
 
 export function contarPorDepartamento(id: DepartamentoId): number {
   return EQUIPO_COMPLETO.filter((m) => m.departamento === id).length
 }
 
-export const EQUIPO_PAGINA = traducible({
+export const EQUIPO_PAGINA = {
   // [v3 2026-08-06, WEBSITE - NOSOTROS pags. 1-2] Copy APROBADO. El cliente
   // escribe el titular en dos pisos («THE PEOPLE BEHIND THE SCENES» / «MORE
   // THAN A CREW, A TEAM DEDICATED TO YOU»): el primero es el H1 y el segundo
@@ -204,21 +152,33 @@ export const EQUIPO_PAGINA = traducible({
   // redacción son del cliente). Los dos primeros valores se DERIVAN del array,
   // como todos los contadores de esta página; los dos últimos son texto fijo.
   //
-  // El «≈» del total NO es adorno: el cliente dijo «cerca de 70» de viva voz y
-  // su maqueta listaba 37. Mientras la plantilla real no llegue, el número es
-  // una aproximación y se enseña como tal.
+  // ⚠️ EL «70+» NO SE DERIVA DE `TOTAL_EQUIPO`, y es a propósito: son dos
+  // números de cosas distintas. 70+ es la plantilla que el cliente afirma en su
+  // copy aprobado («more than 70 passionate professionals», el lead de aquí
+  // arriba), y TOTAL_EQUIPO son los 28 de los que hay retrato. Derivarlo del
+  // array pondría «≈ 28 people on the team» tres líneas debajo de un lead que
+  // dice más de 70.
   datos: [
-    { id: 'personas', valor: `≈ ${TOTAL_EQUIPO}`, etiqueta: 'people on the team' },
+    { id: 'personas', valor: '70+', etiqueta: 'people on the team' },
     { id: 'departamentos', valor: `${DEPARTAMENTOS.length} departments`, etiqueta: 'from the office to the sea' },
     // [v3 2026-08-06] «Desde 2012» -> 2010: la timeline aprobada de /flota
     // fecha el primer barco en 2010 y el copy de la home dice «since 2010».
     { id: 'desde', valor: 'Since 2010', etiqueta: 'growing together' },
     // ⚠️ Este es el único dato de la franja que afirma algo sobre la EMPRESA y
-    // no sobre esta página. No estaba en la web original — sale de la maqueta
-    // del cliente (slide 37) y se publica por pedido explícito de Samuel
-    // (2026-07-28: «que el equipo es de RD y España»). Si el cliente lo
-    // desmiente, es lo primero que cae.
-    { id: 'origen', valor: 'DR + Spain', etiqueta: 'local team and management' },
+    // no sobre esta página. Nació de la maqueta del cliente (slide 37) y de un
+    // pedido explícito de Samuel (2026-07-28: «que el equipo es de RD y
+    // España»), y su propio comentario ya avisaba de que «si el cliente lo
+    // desmiente, es lo primero que cae».
+    //
+    // [2026-08-24, UPDATES 08/22 del cliente, pág. 3] Cayó. El cliente rodea
+    // esta celda y da el texto nuevo, literal: «Multicultural team» /
+    // «different backgrounds, one passion». No está desmintiendo el dato —
+    // sigue habiendo gente de RD y de España—: está cambiando el EJE, de origen
+    // geográfico a diversidad. Por eso el dato no se borra, se reescribe.
+    //
+    // El icono se queda en Globe2 (franja-equipo.tsx): sirve igual para
+    // «multicultural» y cambiarlo no lo pidió nadie.
+    { id: 'origen', valor: 'Multicultural team', etiqueta: 'different backgrounds, one passion' },
   ],
   // El muro de retratos (equipo/muro-tripulacion.tsx) NO tiene copy: es solo
   // los dos tickers, sin eyebrow ni titular ni descripción (2ª vuelta del
@@ -244,4 +204,4 @@ export const EQUIPO_PAGINA = traducible({
   // no las da es la clase de promesa pequeña que este proyecto evita, así que
   // se usa la frase que el propio cliente escribió debajo.
   cierreCta: 'Tell us who you are',
-} as const)
+} as const

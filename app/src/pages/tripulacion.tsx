@@ -5,6 +5,7 @@ import { CierreEquipo } from '@/components/equipo/cierre-equipo'
 import { FranjaEquipo } from '@/components/equipo/franja-equipo'
 import { GridEquipo } from '@/components/equipo/grid-equipo'
 import { MuroTripulacion } from '@/components/equipo/muro-tripulacion'
+import { ModalVideoCrew } from '@/components/equipo/modal-video-crew'
 import { Meta } from '@/components/seo/meta'
 import { EQUIPO_PAGINA } from '@/data/equipo'
 import { EQUIPO } from '@/data/nosotros'
@@ -43,9 +44,11 @@ import { t } from '@/lib/i18n'
 // final no aterriza en ninguna página, ese contenido se pierde con /nosotros —
 // conviene decidirlo, no dejarlo caducar en silencio.
 //
-// ⚠️ PÁGINA DE MOLDE: los nombres, retratos y frases son placeholders. Ver la
-// cabecera de data/equipo.ts. El aviso también se pinta EN PANTALLA (GridEquipo)
-// mientras dure — no basta con un comentario en el código.
+// [2026-08-21] YA NO ES UNA PÁGINA DE MOLDE. Los 27 retratos son las fotos de
+// estudio que entregó el cliente, agrupadas en sus seis departamentos reales.
+// Lo que sigue faltando son los NOMBRES: la card se pinta solo con la cara,
+// sin nombre inventado ni frase en primera persona. El detalle completo, en la
+// cabecera de data/equipo.ts.
 export function TripulacionPage() {
   // El CEO: la unica ficha con historia larga (WEBSITE - NOSOTROS pag. 2). Se
   // busca por su CTA de historia, igual que hace /flota, para no atarlo a un
@@ -148,6 +151,15 @@ export function TripulacionPage() {
           con su llamada a la acción y lo último que ves antes del footer son
           las caras pasando. Sin cabecera, así que no compite con nada. */}
       <MuroTripulacion />
+
+      {/* El video del equipo. Se abre en grande al entrar y, al cerrarlo, se
+          acopla abajo a la izquierda en vez de desaparecer. Va el ULTIMO del
+          arbol para que su capa quede por encima de todo sin pelear z-index
+          con el header pegajoso. */}
+      <ModalVideoCrew
+        src="/video/equipo/tripulacion.mp4"
+        poster="/fotos/tripulacion-video-poster.webp"
+      />
 
       <Footer />
     </div>

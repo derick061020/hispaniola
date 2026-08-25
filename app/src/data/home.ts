@@ -42,10 +42,41 @@ export type Tour = {
   destacados?: string[]
 }
 
-export const TOURS: Tour[] = traducible([
+// ══ RENOMBRE DE LAS DOS EXPERIENCIAS COMPARTIDAS (2026-08-12, Samuel) ══
+//
+//   Semi-Private Premium → Caribbean Escape
+//                          «Caribbean Escape: An Adults-Only Ocean Experience (15+)»
+//   Snorkel Lovers       → Coral Quest
+//                          «Coral Quest: A Marine Conservation Experience (All Ages)»
+//
+// El nombre que dio Samuel es el LARGO (el de arriba, literal, en
+// `FICHAS[].tituloLargo` → H1 de la ficha). Aquí va el CORTO, que es su primera
+// mitad: `nombre` alimenta nav, ticker, cards del grid, footer, menú móvil y el
+// resumen de reserva, y a 54-56 caracteres el nombre entero se va a dos y tres
+// líneas en todos ellos. Es el reparto que este dato ya tenía —`nombre` es el
+// producto, `tituloLargo` es cómo se presenta— así que el renombre no inventa
+// nada: parte el nombre nuevo por donde el propio nombre se parte.
+//
+// ⚠️ LOS SLUGS. `semi-private-premium` sigue diciendo el nombre viejo: es una
+// URL indexada y enlazada desde fuera, y cambiarla es tocar App.tsx +
+// public/sitemap.xml + vercel.json con sus 301. Samuel no lo ha pedido.
+//
+// `snorkel-lovers` SÍ cambió, a `coral` (Samuel, 2026-08-21). Se hicieron las
+// cuatro cosas en el mismo commit: el slug aquí, la clave de FICHAS en
+// tours.ts, la entrada del sitemap, y los 301 de vercel.json para /tours y
+// /book. La URL vieja además se sigue atendiendo dentro de la SPA, vía
+// SLUGS_VIEJOS en App.tsx, porque el 301 del host no cubre la navegación
+// interna.
+//
+// ⚠️ Y LOS COMENTARIOS ANTIGUOS DEL PROYECTO SIGUEN DICIENDO «Snorkel Lovers» y
+// «semi-privado» (menu-tour.tsx, widget-reserva.tsx, tokens, nombres de foto
+// `galeria-snorkel-lovers-*`, `tour-semi-privado`). No se tocan: son el registro
+// fechado de por qué se hizo cada cosa y reescribirlos borraría la pista. Esta
+// tabla es la que los traduce.
+export const TOURS: Tour[] = [
   {
     slug: 'semi-private-premium',
-    nombre: 'Semi-Private Premium',
+    nombre: 'Caribbean Escape',
     audienciaChip: 'Adults only',
     duracionCorta: '4 h',
     rating: 4.9,
@@ -70,8 +101,8 @@ export const TOURS: Tour[] = traducible([
     destacados: ['Limited guests', 'Underwater museum', 'Floating kitchen'],
   },
   {
-    slug: 'snorkel-lovers',
-    nombre: 'Snorkel Lovers',
+    slug: 'coral',
+    nombre: 'Coral Quest',
     audienciaChip: 'All ages',
     duracionCorta: '4 h',
     rating: 4.9,
@@ -169,7 +200,7 @@ export const TOURS: Tour[] = traducible([
     ],
     destacados: ['Speedboat or catamaran', 'Natural pool + buffet', 'Full day'],
   },
-])
+]
 
 export const bookingCta: Record<Tour['booking'], string> = traducible({
   completo: 'Book now',
@@ -539,6 +570,36 @@ export const PREMIOS: Premio[] = traducible([
     ancho: 318,
     alto: 128,
     fondo: 'macizo',
+  },
+  // [2026-08-12, Samuel] EL PREMIO NUEVO. Va PEGADO al LTG de 2021/22 porque
+  // es el mismo galardón cuatro años después: juntos se leen como una racha,
+  // repartidos por la fila parecen dos marcas distintas.
+  //
+  // El sello es OTRA pieza, no una versión nueva de la anterior: aquél es el
+  // lockup ancho sobre navy y con la categoría escrita («Aquatic Tour Operator
+  // of the Year, Dominican Republic»); éste es el sello cuadrado sobre blanco
+  // y NO nombra categoría. Por eso el `nombre` —que es el `alt`— dice solo lo
+  // que el sello dice. La categoría de 2025/26 no se copia de la de 2021/22:
+  // sería inventarle al cliente un premio que su propio sello no declara.
+  //
+  // `fondo: 'aire'`: la escala corta (0.88) es para los badges que traen un
+  // rectángulo de color a sangre y por eso pesan de más (el LTG navy de
+  // arriba, WeddingWire, los Viator). Éste llega sobre blanco puro y la
+  // sección es --color-papel (#ffffff), así que no se ve ninguna caja: lo que
+  // pesa es su tipografía, como en TripAdvisor o Luxury Travel Guide.
+  //
+  // ⚠️ EL ORIGINAL VINO EN JPEG y con un 14% de margen blanco. Se recortó a ras
+  // de tinta antes de convertir: los 7 badges anteriores tienen margen vertical
+  // CERO (medido), y la tira los normaliza por ALTURA — sin recortar, éste se
+  // habría visto un 14% más bajo que sus vecinos a la misma altura nominal.
+  // El .jpeg de origen se conserva en /premios junto al .webp.
+  {
+    id: 'ltg-2025',
+    nombre: 'LTG Global Awards 2025/26, Winner',
+    foto: 'premio-ltg-2025-26',
+    ancho: 119,
+    alto: 128,
+    fondo: 'aire',
   },
   // TripAdvisor y los Viator: nativo 82px / 109px de alto — no llegan a 128
   // (2× de --spacing-premio-alto), así que se exportan a su nativo y NO se
@@ -1313,6 +1374,10 @@ export type Reel = {
   fotoAlt: string
   /** Video vertical del reel. null = pendiente del cliente. */
   video: string | null
+  /** El archivo es 16:9 y no 9:16. Lo usa el carril de /instalaciones, donde
+   *  dos zonas tienen el clip apaisado porque el cliente no lo grabó vertical:
+   *  el reproductor abre en 16:9 en vez de heredar el 9:16 de la card. */
+  apaisado?: boolean
   /** Red donde vive. Sin consumidores desde que se retiró el badge de red
    *  (v2 2026-07-27, ver reels-sociales.tsx) — opcional para que otros
    *  carriles que reutilizan el componente (el de /instalaciones, que no son
@@ -1321,48 +1386,77 @@ export type Reel = {
   red?: 'instagram' | 'tiktok'
 }
 
-export const REELS: Reel[] = traducible([
+// [2026-08-24, UPDATES 08/22 del cliente, pág. 2] LOS 5 PIES SON NUEVOS, y son
+// literales del cliente. Antes decían, en este mismo orden: «Just another
+// Tuesday on board», «Lunch on board, then straight into the reef», «A green
+// turtle, right off the boat», «Coco Loco on the sandbank» y «This is how we
+// cook in the middle of the sea».
+//
+// ⚠️ ESTE ARRAY NO ES SOLO DE LA HOME. Lo consume también la ficha de tour
+// (pages/tour.tsx), así que los pies nuevos salen en 5 rutas. Es lo correcto
+// —son los mismos 5 vídeos— pero conviene saberlo antes de tocarlos otra vez.
+//
+// ⚠️ «Coco Loco at the natural pool» CONTRADICE al itinerario publicado: en
+// data/tours.ts el Coco Loco se sirve en «a secluded beach» y la piscina
+// natural es una parada POSTERIOR. Manda el cliente, que es quien vende el
+// tour, pero queda anotado por si un día hay que elegir cuál de las dos frases
+// es la verdadera. El `fotoAlt` de ese reel sigue diciendo «on the sandbank»
+// A PROPÓSITO: el alt describe LA FOTO que hay puesta, no el pie de marca —
+// hoy además no se pinta nunca, porque los 5 reels tienen vídeo.
+//
+// Los `id` (martes-a-bordo, snorkel-coral, sunset…) NO se tocan: ya estaban
+// desalineados con los pies antes de esta ronda y solo son key de React.
+// Renombrarlos ensuciaría el diff sin arreglar nada visible.
+export const REELS: Reel[] = [
   {
     id: 'martes-a-bordo',
-    titulo: 'Just another Tuesday on board',
-    foto: 'galeria-charter-privado-2',
+    titulo: 'Just another day in paradise',
+    foto: 'reel-1',
     fotoAlt: 'Group enjoying the catamaran deck',
-    video: null,
+    video: '/video/reels/reel-1.mp4',
     red: 'instagram',
   },
   {
     id: 'piscina-natural',
-    titulo: 'The natural pool, from the water',
-    foto: 'galeria-isla-saona-4',
-    fotoAlt: 'Shallow turquoise water of the natural pool',
-    video: null,
+    titulo: 'Lunch on board, Caribbean style',
+    foto: 'reel-2',
+    fotoAlt: 'A crew member serving lunch to a guest on deck',
+    // ⚠️ ESTE ES EL UNICO REEL QUE NO ES EL CLIP DEL CLIENTE TAL CUAL. Del
+    // original («3 PAGINA INICIO.mp4», 33,2s) se quitan 2,2 segundos, de 10,9s
+    // a 13,1s: ahi el recorrido del barco entra en el bano y se ven un
+    // urinario y un lavabo. Los dos cortes caen en los limites de plano del
+    // propio original (a 10,9 acaba la barra, a 13,1 ya esta resuelto el
+    // fundido al almuerzo), asi que el empalme no se nota. El resto del clip
+    // esta entero. Si algun dia hay que rehacerlo, el corte es:
+    //   trim=0:10.9 + trim=13.1  ->  concat
+    video: '/video/reels/reel-2.mp4',
     red: 'tiktok',
   },
   {
     id: 'cocina-flotante',
-    titulo: 'This is how we cook in the middle of the sea',
-    foto: 'cocina-flotante',
-    fotoAlt: 'The crew grilling in the floating kitchen',
-    video: null,
+    titulo: 'Meet our neighbors beneath the surface',
+    foto: 'reel-3',
+    fotoAlt: 'A green sea turtle swimming next to the catamaran',
+    video: '/video/reels/reel-3.mp4',
     red: 'instagram',
   },
   {
     id: 'snorkel-coral',
-    titulo: 'Snorkeling over the coral nursery',
-    foto: 'galeria-semi-privado-1',
-    fotoAlt: 'Guests snorkeling over the coral nursery',
-    video: null,
+    titulo: 'Coco Loco at the natural pool',
+    foto: 'reel-4',
+    fotoAlt: 'A family toasting with coconuts on the sandbank',
+    video: '/video/reels/reel-4.mp4',
     red: 'tiktok',
   },
   {
     id: 'sunset',
-    titulo: 'Sunset under sail, the couples’ favorite',
-    foto: 'flota-maite',
-    fotoAlt: 'The sailing catamaran Maite under full sail at sunset',
-    video: null,
+    titulo: 'Fresh flavors, served at sea',
+    foto: 'reel-5',
+    fotoAlt: 'The crew grilling lobster in the floating kitchen',
+    video: '/video/reels/reel-5.mp4',
     red: 'instagram',
   },
-])
+]
 
 /** Hashtag de la campaña de contenido generado por el cliente (maqueta). */
 export const REELS_HASHTAG = '#HispaniolaMoments'
@@ -1506,7 +1600,10 @@ export const FAQ_HOME: FaqItem[] = traducible([
   },
   {
     p: 'Can children join every tour?',
-    r: 'On Snorkel Lovers, yes; Semi-Private Premium is adults only (18+). We carry child life jackets in every size.',
+    // ⚠️ [2026-08-12] 18+ → 15+ (ver el gemelo en data/faq.ts, que lleva el
+    // porqué completo): la ficha ya publicaba «Ages 15+» y el nombre nuevo del
+    // tour lo lleva dentro.
+    r: 'On Coral Quest, yes; Caribbean Escape is adults only (15+). We carry child life jackets in every size.',
   },
   {
     p: 'Do you take cards? Can I pay at the hotel?',

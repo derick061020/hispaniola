@@ -28,7 +28,11 @@ export function BannerPremium({
   totalActual,
   ventajas,
   onCambiar,
+  className = '',
 }: {
+  /** [2026-08-21] Lo usa el funnel para bajar el banner DEBAJO del resumen en
+   *  móvil (`order-2`) sin cambiar el orden de desktop. Ver reservar.tsx. */
+  className?: string
   /** Sobrecoste por persona del Premium. */
   upgrade: number
   personas: number
@@ -41,7 +45,7 @@ export function BannerPremium({
   const diferencia = upgrade * personas
 
   return (
-    <div className="mb-4 overflow-hidden rounded-card bg-premium-fondo">
+    <div className={`mb-4 overflow-hidden rounded-card bg-premium-fondo ${className}`}>
       <button
         type="button"
         onClick={() => setAbierto((a) => !a)}

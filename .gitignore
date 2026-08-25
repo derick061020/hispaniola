@@ -24,3 +24,8 @@ app/final-*.png
 # output de sesiones puntuales — los .cjs de script y los logs podrían
 # quedarse aquí si la auditoría encuentra un bug reproducible.
 app/audit/
+
+# Entrega de fotos y videos del cliente (agosto 2026). 3,4 GB de masters de
+# camara: son la FUENTE, no assets de web. Lo que se publica vive ya
+# procesado en app/public/. Meter esto en git haria el repo inclonable.
+FOTO PARA NUEVA WEB 2026/
