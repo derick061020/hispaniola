@@ -292,6 +292,8 @@ export type CotizacionEvento = {
   fecha?: string
   personas?: number
   mensaje?: string
+  /** Nombre del paquete que el visitante dejó marcado en la landing. */
+  paquete?: string
   /** Honeypot: campo oculto que ningun humano rellena. */
   honeypot?: string
 }
@@ -307,6 +309,11 @@ export function enviarCotizacionEvento(datos: CotizacionEvento) {
         whatsapp: datos.contacto.whatsapp,
       },
       event_type: datos.tipoEvento,
+      // [2026-08-25] `package` lo esperaba Odoo desde el primer día
+      // (`package_name` en `haa.event.quote`) y el front no lo mandaba nunca:
+      // la solicitud llegaba al equipo sin decir qué paquete había marcado el
+      // visitante, que es la mitad de lo que hace falta para cotizarle.
+      package: datos.paquete,
       date: datos.fecha,
       guests: datos.personas,
       message: datos.mensaje,

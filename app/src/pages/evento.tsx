@@ -333,7 +333,7 @@ export function EventoPage() {
                   tiene la reserva online — si no hay calculadora (MICE), el
                   formulario ES el widget y sería absurdo esconderlo. Ver el
                   porqué en widget-evento.tsx. */}
-              <WidgetEvento evento={evento} colapsable={Boolean(evento.paquetes)} />
+              <WidgetEvento evento={evento} colapsable={Boolean(evento.paquetes)} paqueteElegido={paquete} />
             </div>
           </div>
         </div>

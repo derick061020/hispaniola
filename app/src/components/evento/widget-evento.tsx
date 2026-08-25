@@ -68,6 +68,9 @@ type Props = {
    *  paquetes de precio cerrado). Sin calculadora —MICE— el formulario ES
    *  el widget y se pinta abierto, como siempre. */
   colapsable?: boolean
+  /** Id del paquete marcado en la columna de al lado. Viaja con la solicitud
+   *  para que la cotización llegue a Odoo diciendo qué se pidió. */
+  paqueteElegido?: string | null
 }
 
 const MAX_PERSONAS = 200 // tope: la web del cliente lo tiene en min=1, max=120
@@ -242,7 +245,7 @@ function StepperPersonas({
   )
 }
 
-export function WidgetEvento({ evento, colapsable = false }: Props) {
+export function WidgetEvento({ evento, colapsable = false, paqueteElegido = null }: Props) {
   const navigate = useNavigate()
   // [v2 2026-07-28] Ver el comentario largo de arriba (§EL FORMULARIO NO
   // COMPITE CON LA COMPRA). `abierto` arranca en true salvo que la página
@@ -305,6 +308,14 @@ export function WidgetEvento({ evento, colapsable = false }: Props) {
       slug: evento.slug,
       contacto: { nombre, email, whatsapp },
       tipoEvento: evento.tiposEvento[tipoIdx],
+      // [2026-08-25, Samuel: «los eventos no funciona su compra, manéjalo
+      // correctamente con Odoo»] Estos tres productos NO se cobran online (en
+      // Odoo son `booking_mode: quote`), así que lo que tiene que funcionar es
+      // la solicitud — y llegaba coja: el visitante marcaba «Grand Package» en
+      // la columna de al lado y al equipo le entraba una cotización que no
+      // decía qué paquete había elegido. Se manda el NOMBRE, no el id: lo lee
+      // una persona en el back-office.
+      paquete: evento.paquetes?.items.find((p) => p.id === paqueteElegido)?.nombre,
       fecha,
       personas,
       mensaje,

@@ -36,6 +36,10 @@ export type CotizacionEvento = {
   fecha: string
   personas: number
   mensaje: string
+  /** [2026-08-25] Paquete marcado en la landing. Opcional porque MICE no
+   *  tiene paquetes y porque las cotizaciones guardadas antes de hoy no lo
+   *  llevan. */
+  paquete?: string
 }
 
 export type NuevaCotizacion = Omit<CotizacionEvento, 'codigo' | 'fechaISO'>
@@ -106,6 +110,7 @@ export async function guardarCotizacion(
         whatsapp: nueva.contacto.whatsapp,
       },
       tipoEvento: nueva.tipoEvento,
+      paquete: nueva.paquete,
       // El campo es opcional en el form («fecha tentativa»); '' no es una fecha
       // y Odoo la rechazaría.
       fecha: nueva.fecha || undefined,
