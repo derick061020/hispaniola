@@ -25,6 +25,7 @@ import type { Tour as TourOdoo, Variante, Tramo, Horario as HorarioOdoo, AddOn a
 import type { FichaTour, Horario, TramoPrecio, SubVarianteTour } from '@/data/tours'
 import type { AddOn } from '@/lib/tarifas'
 import type { Tour as TarjetaTour } from '@/data/home'
+import { t } from '@/lib/i18n'
 
 function aHorario(h: HorarioOdoo): Horario {
   return { hora: h.departure, regreso: h.back ?? '' }
@@ -40,13 +41,23 @@ function aTramo(t: Tramo): TramoPrecio {
   }
 }
 
+// [2026-08-25, Samuel: «revisa idiomas en el addon, de fotos por ejemplo, no se
+// traduce, creo es porque vienen de Odoo»] Exacto. El copy del front pasa por
+// `traducible()` y se traduce; lo que llega de Odoo entraba tal cual, en
+// ingles, y se quedaba en ingles con la web en espanol — el album de fotos era
+// el caso visible porque es el unico add-on encendido por defecto.
+//
+// No hace falta traducir en Odoo: el diccionario se indexa POR EL INGLES
+// (`lib/i18n/nucleo.ts`), asi que el texto que manda el backend ya es la clave.
+// Se pasa por `t()` al fusionar y lo que no este traducido sigue saliendo en
+// ingles, como en el resto del sitio.
 function aAddOn(a: AddOnOdoo, estatico?: AddOn): AddOn {
   return {
     // El id es el contrato con el resto del front (la franja de la langosta
     // apunta a un add-on por id), y es el mismo slug en los dos lados.
     id: a.slug,
-    etiqueta: a.label || estatico?.etiqueta || a.slug,
-    descripcion: a.description ?? estatico?.descripcion ?? '',
+    etiqueta: a.label ? t(a.label) : estatico?.etiqueta || a.slug,
+    descripcion: a.description ? t(a.description) : estatico?.descripcion ?? '',
     base: a.base === 'group' ? 'grupo' : 'persona',
     precio: a.price,
     porDefecto: a.default_on,
@@ -67,8 +78,8 @@ function aSubVariante(v: Variante, estatica?: SubVarianteTour): SubVarianteTour 
   return {
     id: v.slug,
     nombre: v.name || estatica?.nombre || v.slug,
-    descripcion: v.description ?? estatica?.descripcion ?? '',
-    capacidad: v.capacity_label ?? estatica?.capacidad ?? '',
+    descripcion: v.description ? t(v.description) : estatica?.descripcion ?? '',
+    capacidad: v.capacity_label ? t(v.capacity_label) : estatica?.capacidad ?? '',
     tabla: v.tiers.length ? v.tiers.map(aTramo) : (estatica?.tabla ?? []),
     // La foto NO está en Odoo: es del front y se conserva siempre.
     ...(estatica?.foto ? { foto: estatica.foto } : {}),

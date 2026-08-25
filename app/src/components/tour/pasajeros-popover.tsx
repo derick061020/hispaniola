@@ -1,5 +1,8 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
-import { ChevronDown, Users } from 'lucide-react'
+import { ChevronDown, Minus, Plus, Users } from 'lucide-react'
+import * as CompactButton from '@/components/alignui/compact-button'
+import { PistaInfo } from '@/components/ui/pista-info'
+import { NumeroEditable } from '@/components/ui/numero-editable'
 import { t } from '@/lib/i18n'
 
 // Selector de pasajeros plegable (correcciones v2, 2026-07-27; rediseñado el
@@ -141,5 +144,188 @@ export function FilaPasajero({
       </div>
       <div className="flex shrink-0 items-center gap-2">{children}</div>
     </div>
+  )
+}
+
+// [2026-08-25, Samuel: «en el resumen de compra hay un select solo de personas
+// y cuando lo usas se rompe porque no sabe qué cambiar»] Las tres filas
+// —adultos, niños, bebés— vivían escritas a mano dentro del widget de la
+// ficha. El resumen del checkout tenía en su lugar UN stepper de «personas», y
+// con un grupo desglosado ese control es irresoluble: bajar de 4 a 2 con 2
+// niños dentro no dice a quién quitar, y lo que hacía era restarlo todo del
+// carril de adultos y dejar el total sin cuadrar con el número que se estaba
+// pintando. En Snorkel, que cobra distinto al niño, eso además cambiaba el
+// precio sin que nadie lo hubiera pedido.
+//
+// Se extraen aquí para que la ficha y el checkout usen LA MISMA pieza y no dos
+// parecidas que se desincronizan — que es justo la regla que el propio resumen
+// dice seguir para la fecha y el stepper.
+export function FilasPasajeros({
+  adultos,
+  ninos,
+  bebes,
+  maxPersonas,
+  onAdultos,
+  onNinos,
+  onBebes,
+  sobreOscuro = false,
+}: {
+  adultos: number
+  ninos: number
+  bebes: number
+  /** Aforo del barco. Los bebés NO cuentan para él (decisión de Samuel). */
+  maxPersonas: number
+  onAdultos: (n: number) => void
+  onNinos: (n: number) => void
+  onBebes: (n: number) => void
+  /** Piel premium: solo la usa el widget de la ficha. */
+  sobreOscuro?: boolean
+}) {
+  const setAdultos = (f: (n: number) => number) => onAdultos(f(adultos))
+  const setNinos = (f: (n: number) => number) => onNinos(f(ninos))
+  const setBebes = (f: (n: number) => number) => onBebes(f(bebes))
+  return (
+          <div role="group" aria-label={t('Passengers')} className="divide-y divide-linea">
+            <FilaPasajero
+              titulo={t('Adults')}
+              edades="13-99"
+              minimo={1}
+              maximo={maxPersonas}
+              pista={
+                <PistaInfo
+                  sobreOscuro={sobreOscuro}
+                  etiqueta={t('What counts as an adult')}
+                  texto={t('From age 13 the full fare applies. At least one adult has to travel with the minors.')}
+                />
+              }
+            >
+                <NumeroEditable
+                  valor={adultos}
+                  min={1}
+                  max={maxPersonas - ninos}
+                  onCambio={onAdultos}
+                  etiqueta={t('Number of adults')}
+                  className="min-w-[1.5rem] font-semibold tabular-nums text-navy"
+                />
+                <CompactButton.Root
+                  type="button"
+                  variant="stroke"
+                  fullRadius
+                  aria-label={t('Remove an adult')}
+                  disabled={adultos <= 1}
+                  onClick={() => setAdultos((a) => Math.max(1, a - 1))}
+                  className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
+                >
+                  <CompactButton.Icon as={Minus} />
+                </CompactButton.Root>
+                <CompactButton.Root
+                  type="button"
+                  variant="stroke"
+                  fullRadius
+                  aria-label={t('Add an adult')}
+                  disabled={adultos + ninos >= maxPersonas}
+                  onClick={() => setAdultos((a) => Math.min(maxPersonas - ninos, a + 1))}
+                  className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
+                >
+                  <CompactButton.Icon as={Plus} />
+                </CompactButton.Root>
+            </FilaPasajero>
+
+            <FilaPasajero
+              titulo={t('Children')}
+              edades="4-7"
+              minimo={0}
+              maximo={maxPersonas - 1}
+              pista={
+                <PistaInfo
+                  sobreOscuro={sobreOscuro}
+                  etiqueta={t('What age counts as a child')}
+                  texto={t('Ages 4 to 7 pay a reduced fare. Under 4s do not pay: add them as infants.')}
+                />
+              }
+            >
+                <NumeroEditable
+                  valor={ninos}
+                  min={0}
+                  max={maxPersonas - adultos}
+                  onCambio={onNinos}
+                  etiqueta={t('Number of children')}
+                  className="min-w-[1.5rem] font-semibold tabular-nums text-navy"
+                />
+                <CompactButton.Root
+                  type="button"
+                  variant="stroke"
+                  fullRadius
+                  aria-label={t('Remove a child')}
+                  disabled={ninos <= 0}
+                  onClick={() => setNinos((n) => Math.max(0, n - 1))}
+                  className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
+                >
+                  <CompactButton.Icon as={Minus} />
+                </CompactButton.Root>
+                <CompactButton.Root
+                  type="button"
+                  variant="stroke"
+                  fullRadius
+                  aria-label={t('Add a child')}
+                  disabled={adultos + ninos >= maxPersonas}
+                  onClick={() => setNinos((n) => Math.min(maxPersonas - adultos, n + 1))}
+                  className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
+                >
+                  <CompactButton.Icon as={Plus} />
+                </CompactButton.Root>
+            </FilaPasajero>
+
+            {/* Los bebés NO restan del aforo (decisión de Samuel del 07-27:
+                «los bebés no suman»), por eso su máximo no depende de
+                `maxPersonas` ni deshabilita el «+». */}
+            <FilaPasajero
+              titulo={t('Infants')}
+              edades="0-3"
+              minimo={0}
+              maximo={maxPersonas}
+              pista={
+                <PistaInfo
+                  sobreOscuro={sobreOscuro}
+                  etiqueta={t('What age counts as an infant')}
+                  texto={t('Up to age 3 they travel free and do not take up a spot. From age 4 they pay the child fare.')}
+                />
+              }
+            >
+                {/* El máximo NO es el aforo (los bebés no ocupan plaza), pero
+                    sí es el tope que anuncia la propia fila: escribir 40
+                    bebés en un barco de 30 no tendría a quién sentar. */}
+                <NumeroEditable
+                  valor={bebes}
+                  min={0}
+                  max={maxPersonas}
+                  onCambio={onBebes}
+                  etiqueta={t('Number of infants')}
+                  className="min-w-[1.5rem] font-semibold tabular-nums text-navy"
+                />
+                <CompactButton.Root
+                  type="button"
+                  variant="stroke"
+                  fullRadius
+                  aria-label={t('Remove an infant')}
+                  disabled={bebes <= 0}
+                  onClick={() => setBebes((b) => Math.max(0, b - 1))}
+                  className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
+                >
+                  <CompactButton.Icon as={Minus} />
+                </CompactButton.Root>
+                <CompactButton.Root
+                  type="button"
+                  variant="stroke"
+                  fullRadius
+                  aria-label={t('Add an infant')}
+                  disabled={false}
+                  onClick={() => setBebes((b) => b + 1)}
+                  className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
+                >
+                  <CompactButton.Icon as={Plus} />
+                </CompactButton.Root>
+            </FilaPasajero>
+          </div>
   )
 }

@@ -21,9 +21,8 @@ import {
 } from '@/lib/tarifas'
 import { AddOnsWidget } from '@/components/tour/add-ons-widget'
 import { useCotizacion } from '@/components/tour/use-cotizacion'
-import { PistaInfo } from '@/components/ui/pista-info'
 import { NumeroEditable } from '@/components/ui/numero-editable'
-import { PasajerosPopover, FilaPasajero } from '@/components/tour/pasajeros-popover'
+import { PasajerosPopover, FilasPasajeros } from '@/components/tour/pasajeros-popover'
 import { numero, t } from '@/lib/i18n'
 
 // «El widget ES la página» (wireframe A2): sticky en desktop, con el precio en
@@ -989,148 +988,16 @@ export function WidgetReserva({
                 niños 4-7, bebés 0-3. El tope de 7 sigue sin confirmar por
                 escrito con Fernando (salió de la reunión, donde el cliente no
                 recordaba el rango) — y ahora es copy visible. */}
-            <div role="group" aria-label={t('Passengers')} className="divide-y divide-linea">
-              <FilaPasajero
-                titulo={t('Adults')}
-                edades="13-99"
-                minimo={1}
-                maximo={maxPersonas}
-                pista={
-                  <PistaInfo
-                    sobreOscuro={pielOscura}
-                    etiqueta={t('What counts as an adult')}
-                    texto={t('From age 13 the full fare applies. At least one adult has to travel with the minors.')}
-                  />
-                }
-              >
-                  <NumeroEditable
-                    valor={adultos}
-                    min={1}
-                    max={maxPersonas - ninos}
-                    onCambio={setAdultos}
-                    etiqueta={t('Number of adults')}
-                    className="min-w-[1.5rem] font-semibold tabular-nums text-navy"
-                  />
-                  <CompactButton.Root
-                    type="button"
-                    variant="stroke"
-                    fullRadius
-                    aria-label={t('Remove an adult')}
-                    disabled={adultos <= 1}
-                    onClick={() => setAdultos((a) => Math.max(1, a - 1))}
-                    className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
-                  >
-                    <CompactButton.Icon as={Minus} />
-                  </CompactButton.Root>
-                  <CompactButton.Root
-                    type="button"
-                    variant="stroke"
-                    fullRadius
-                    aria-label={t('Add an adult')}
-                    disabled={adultos + ninos >= maxPersonas}
-                    onClick={() => setAdultos((a) => Math.min(maxPersonas - ninos, a + 1))}
-                    className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
-                  >
-                    <CompactButton.Icon as={Plus} />
-                  </CompactButton.Root>
-              </FilaPasajero>
-
-              <FilaPasajero
-                titulo={t('Children')}
-                edades="4-7"
-                minimo={0}
-                maximo={maxPersonas - 1}
-                pista={
-                  <PistaInfo
-                    sobreOscuro={pielOscura}
-                    etiqueta={t('What age counts as a child')}
-                    texto={t('Ages 4 to 7 pay a reduced fare. Under 4s do not pay: add them as infants.')}
-                  />
-                }
-              >
-                  <NumeroEditable
-                    valor={ninos}
-                    min={0}
-                    max={maxPersonas - adultos}
-                    onCambio={setNinos}
-                    etiqueta={t('Number of children')}
-                    className="min-w-[1.5rem] font-semibold tabular-nums text-navy"
-                  />
-                  <CompactButton.Root
-                    type="button"
-                    variant="stroke"
-                    fullRadius
-                    aria-label={t('Remove a child')}
-                    disabled={ninos <= 0}
-                    onClick={() => setNinos((n) => Math.max(0, n - 1))}
-                    className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
-                  >
-                    <CompactButton.Icon as={Minus} />
-                  </CompactButton.Root>
-                  <CompactButton.Root
-                    type="button"
-                    variant="stroke"
-                    fullRadius
-                    aria-label={t('Add a child')}
-                    disabled={adultos + ninos >= maxPersonas}
-                    onClick={() => setNinos((n) => Math.min(maxPersonas - adultos, n + 1))}
-                    className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
-                  >
-                    <CompactButton.Icon as={Plus} />
-                  </CompactButton.Root>
-              </FilaPasajero>
-
-              {/* Los bebés NO restan del aforo (decisión de Samuel del 07-27:
-                  «los bebés no suman»), por eso su máximo no depende de
-                  `maxPersonas` ni deshabilita el «+». */}
-              <FilaPasajero
-                titulo={t('Infants')}
-                edades="0-3"
-                minimo={0}
-                maximo={maxPersonas}
-                pista={
-                  <PistaInfo
-                    sobreOscuro={pielOscura}
-                    etiqueta={t('What age counts as an infant')}
-                    texto={t('Up to age 3 they travel free and do not take up a spot. From age 4 they pay the child fare.')}
-                  />
-                }
-              >
-                  {/* El máximo NO es el aforo (los bebés no ocupan plaza), pero
-                      sí es el tope que anuncia la propia fila: escribir 40
-                      bebés en un barco de 30 no tendría a quién sentar. */}
-                  <NumeroEditable
-                    valor={bebes}
-                    min={0}
-                    max={maxPersonas}
-                    onCambio={setBebes}
-                    etiqueta={t('Number of infants')}
-                    className="min-w-[1.5rem] font-semibold tabular-nums text-navy"
-                  />
-                  <CompactButton.Root
-                    type="button"
-                    variant="stroke"
-                    fullRadius
-                    aria-label={t('Remove an infant')}
-                    disabled={bebes <= 0}
-                    onClick={() => setBebes((b) => Math.max(0, b - 1))}
-                    className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
-                  >
-                    <CompactButton.Icon as={Minus} />
-                  </CompactButton.Root>
-                  <CompactButton.Root
-                    type="button"
-                    variant="stroke"
-                    fullRadius
-                    aria-label={t('Add an infant')}
-                    disabled={false}
-                    onClick={() => setBebes((b) => b + 1)}
-                    className="size-11 active:scale-90 active:border-transparent active:bg-navy active:text-papel active:shadow-none"
-                  >
-                    <CompactButton.Icon as={Plus} />
-                  </CompactButton.Root>
-              </FilaPasajero>
-            </div>
+            <FilasPasajeros
+              adultos={adultos}
+              ninos={ninos}
+              bebes={bebes}
+              maxPersonas={maxPersonas}
+              onAdultos={setAdultos}
+              onNinos={setNinos}
+              onBebes={setBebes}
+              sobreOscuro={pielOscura}
+            />
           </PasajerosPopover>
         ) : (
           // CLÁSICO: 1 input «Personas» (semi-privado, charter, Saona)

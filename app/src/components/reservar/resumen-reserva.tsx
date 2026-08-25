@@ -4,6 +4,7 @@ import { CalendarioWidget } from '@/components/tour/calendario-widget'
 import { NumeroEditable } from '@/components/ui/numero-editable'
 import { formatoDinero, type Tour } from '@/data/home'
 import type { MenuReserva } from '@/lib/menu-reserva'
+import { PasajerosPopover, FilasPasajeros } from '@/components/tour/pasajeros-popover'
 import { nombreSinPaquete } from '@/lib/nombre-tour'
 import { t } from '@/lib/i18n'
 
@@ -59,6 +60,8 @@ export function ResumenReserva({
   minPersonas,
   maxPersonas,
   onPersonas,
+  desglose,
+  onDesglose,
   conceptoBase,
   precioBase,
   upgrade,
@@ -86,6 +89,10 @@ export function ResumenReserva({
   minPersonas: number
   maxPersonas: number
   onPersonas: (n: number) => void
+  /** Desglose por edades. Solo lo mandan los tours que lo tienen (Snorkel
+   *  cobra distinto al niño); con `null` se pinta el stepper de siempre. */
+  desglose: { adultos: number; ninos: number; bebes: number } | null
+  onDesglose: (parcial: { adultos?: number; ninos?: number; bebes?: number }) => void
   /** Rótulo de la primera línea del desglose. Con paquetes es el nombre del
    *  paquete («Light menu»); sin ellos (Saona, charter) es la tarifa del tour —
    *  llamarla «Island buffet» daría a entender que la comida se paga aparte. */
@@ -190,6 +197,24 @@ export function ResumenReserva({
             personas={personas}
           />
 
+          {/* [2026-08-25] Con desglose por edades, LAS MISMAS filas de la ficha
+              (`FilasPasajeros`). Un único stepper de «personas» no puede
+              resolver un grupo mixto: bajar de 4 a 2 con 2 niños dentro no
+              dice a quién se quita, y lo que hacía era restarlo del carril de
+              adultos y dejar el total descuadrado con el número pintado. */}
+          {desglose ? (
+            <PasajerosPopover total={personas} max={maxPersonas}>
+              <FilasPasajeros
+                adultos={desglose.adultos}
+                ninos={desglose.ninos}
+                bebes={desglose.bebes}
+                maxPersonas={maxPersonas}
+                onAdultos={(n) => onDesglose({ adultos: n })}
+                onNinos={(n) => onDesglose({ ninos: n })}
+                onBebes={(n) => onDesglose({ bebes: n })}
+              />
+            </PasajerosPopover>
+          ) : (
           <div
             role="group"
             aria-label={t('Number of people')}
@@ -232,6 +257,7 @@ export function ResumenReserva({
               </CompactButton.Root>
             </div>
           </div>
+          )}
 
           {/* HORARIO. Misma píldora que el widget de la ficha (solo la hora de
               SALIDA; el regreso vive en la línea de confirmación de abajo).
@@ -288,7 +314,7 @@ export function ResumenReserva({
                 key={i}
                 concepto={
                   <>
-                    {linea.label}{' '}
+                    {t(linea.label)}{' '}
                     {linea.quantity > 1 ? (
                       <span className="text-navy-soft">
                         {formatoDinero(linea.unit_price)} × {linea.quantity}
@@ -332,7 +358,7 @@ export function ResumenReserva({
               key={extra.label}
               concepto={
                 <>
-                  {extra.label}{' '}
+                  {t(extra.label)}{' '}
                   {extra.quantity > 1 ? (
                     <span className="text-navy-soft">× {extra.quantity}</span>
                   ) : null}

@@ -264,17 +264,30 @@ function CardBarco({
             el suyo sin buscarlo. */}
         {abierta ? (
           <ul className="mt-4 flex flex-col gap-2 rounded-card bg-papel-hueso p-4 text-sm">
-            {s.tabla.map((tramo) => {
-              const aplica = tramo === tramo
+            {s.tabla.map((fila) => {
+              // [2026-08-25, Samuel: «lo de "tu grupo" debe aparecer solo en el
+              // rango de personas en el que entras, y solo en el barco que
+              // seleccionas»] Aquí ponía `tramo === tramo`, que es siempre
+              // cierto: el parámetro del map se llamaba igual que el tramo
+              // calculado arriba y lo tapaba, así que la comparación era
+              // consigo mismo. Resultado: la etiqueta y la negrita salían en
+              // TODAS las filas y en TODOS los barcos, que es justo lo
+              // contrario de lo que la etiqueta promete.
+              //
+              // Ahora se compara contra el tramo real del grupo (`tramo`, de
+              // `tramoDe`) y solo se marca en el barco elegido: en otro barco
+              // ese rango no es «tu grupo», es el rango que te tocaría si te
+              // cambiaras.
+              const aplica = esActivo && fila === tramo
               return (
                 <li
-                  key={`${tramo.desde}-${tramo.hasta ?? 'max'}`}
+                  key={`${fila.desde}-${fila.hasta ?? 'max'}`}
                   className={`flex items-baseline justify-between gap-4 ${
                     aplica ? 'font-semibold text-navy' : 'text-navy-sub'
                   }`}
                 >
                   <span>
-                    {rangoTramo(tramo, aforo)}
+                    {rangoTramo(fila, aforo)}
                     {aplica ? (
                       <span className="ml-2 rounded-full bg-aqua-dark px-2 py-0.5 text-xs font-semibold text-white">
                         {t('your group')}
@@ -282,9 +295,9 @@ function CardBarco({
                     ) : null}
                   </span>
                   <span className="whitespace-nowrap">
-                    {formatoDinero(tramo.precio)}
+                    {formatoDinero(fila.precio)}
                     <span className="ml-1 text-xs font-normal text-navy-soft">
-                      {tramo.tipo === 'grupo' ? t('the whole boat') : t('per guest')}
+                      {fila.tipo === 'grupo' ? t('the whole boat') : t('per guest')}
                     </span>
                   </span>
                 </li>

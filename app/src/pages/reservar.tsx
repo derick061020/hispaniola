@@ -191,7 +191,15 @@ function FlujoReserva({
   // leídas de la URL). Cambiarlas aquí evita el viaje de vuelta a la ficha —y,
   // en el caso de la fecha, cierra un agujero: entrando directo a /book/:slug
   // se podía completar el flujo entero sin haber elegido día.
-  const [personas, setPersonas] = useState(personasIniciales)
+  // [2026-08-25] EL GRUPO SE GUARDA POR ROL, no como un número suelto.
+  // Snorkel cobra distinto al niño y los bebés no ocupan plaza, así que
+  // «personas» no es un dato: es la SUMA de adultos + niños. Guardarlo al
+  // revés —un total y un desglose fijo traído de la ficha— es lo que rompía
+  // el stepper del resumen: bajar el total no sabía a quién quitar.
+  const [adultos, setAdultos] = useState(adultosIniciales)
+  const [ninos, setNinos] = useState(ninosIniciales)
+  const [bebes, setBebes] = useState(bebesIniciales)
+  const personas = adultos + ninos
   const [fechaISO, setFechaISO] = useState<string | null>(fechaInicialISO)
   // Empieza SIN plato elegido (2026-07-17, Samuel): cada persona lo escoge
   // activamente en su card. «Continuar» del paso 1 se habilita al elegir todos.
@@ -270,18 +278,30 @@ function FlujoReserva({
   // ya elegidos. Si el grupo CRECE y el paso del menú ya estaba cerrado, el
   // flujo vuelve a él: el comensal nuevo no tiene plato y salir a pagar con un
   // menú incompleto sería una reserva que la cocina no puede preparar.
+  /** Cambia el grupo por rol y arrastra todo lo que depende de él. */
+  const cambiarGrupo = (parcial: { adultos?: number; ninos?: number; bebes?: number }) => {
+    const a = parcial.adultos ?? adultos
+    const ni = parcial.ninos ?? ninos
+    const be = parcial.bebes ?? bebes
+    setAdultos(a)
+    setNinos(ni)
+    setBebes(be)
+    aplicarGrupo(a, ni, be)
+  }
+
+  /** El stepper simple de los tours sin tramos de edad: todo son adultos. */
   const cambiarPersonas = (n: number) => {
-    setPersonas(n)
+    setAdultos(n)
+    aplicarGrupo(n, ninos, bebes)
+  }
+
+  function aplicarGrupo(a: number, ni: number, be: number) {
+    const n = a + ni
     setPlatos((prev) => Array.from({ length: n }, (_, i) => prev[i] ?? ''))
-    // El stepper de esta pantalla es un único número, así que el cambio va a
-    // adultos y se conserva el desglose de niños/bebés que trajo el widget.
-    const adultos = Math.max(n - ninosIniciales - bebesIniciales, 1)
-    checkout.sincronizar({
-      pax: { adults: adultos, children: ninosIniciales, infants: bebesIniciales },
-    })
-    // `personas` y `adultos` a la vez: la pantalla lee el total y el pedido el
-    // desglose, y si se separan el resumen y el precio dejan de contar lo mismo.
-    onConfigurar({ personas: n, adultos })
+    checkout.sincronizar({ pax: { adults: a, children: ni, infants: be } })
+    // El desglose entero a la URL: la pantalla lee el total y el pedido lee los
+    // tres carriles, y si se separan dejan de contar lo mismo.
+    onConfigurar({ personas: n, adultos: a, ninos: ni, bebes: be })
     // Se recalcula con el aforo NUEVO: en el charter, crecer hasta 21 elimina
     // el paso del menú (pasa a buffet), así que devolver el flujo ahí sería
     // mandarlo a una sección que ya no existe.
@@ -740,6 +760,12 @@ function FlujoReserva({
                 upgrade={upgrade}
                 lineas={checkout.pedido?.quote?.lines}
                 lineasAddOns={checkout.pedido?.quote?.addons}
+                desglose={
+                  tour.precioNino != null || ninos > 0 || bebes > 0
+                    ? { adultos, ninos, bebes }
+                    : null
+                }
+                onDesglose={cambiarGrupo}
                 total={total}
                 deposito={deposito}
                 saldo={saldo}

@@ -1,3 +1,4 @@
+import { UserRound } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useCatalogo } from '@/lib/api/use-catalogo'
 import { fusionarLista } from '@/lib/api/fusion-catalogo'
@@ -69,7 +70,26 @@ export function Footer({ cta = t('Ready for an unforgettable day?') }: { cta?: s
 
       <div className="relative z-10 mx-auto flex max-w-contenido flex-col items-center gap-4 text-center">
         <h2 className="font-display text-h2 font-semibold text-white">{cta}</h2>
-        <Boton to="/#tours">{t('See availability')}</Boton>
+        {/* [2026-08-25, pedido de Samuel: «en el footer agrega un botón que
+            diga mi cuenta, hacia el área privada del cliente»] El enlace al
+            área privada ya existía desde el 07-18, pero como una línea más de
+            la lista de «Reservas», entre otras siete: quien vuelve a entrar a
+            ver SU reserva no lo encontraba. Aquí es un botón y se ve.
+
+            Al lado del CTA y no en su lugar: «Ver disponibilidad» es para
+            quien todavía no ha reservado y manda; esto es para quien ya lo
+            hizo. Por eso va perfilado y no en coral — mismo alto y mismo
+            radio, pero sin competir con el principal. */}
+        <div className="flex flex-wrap items-center justify-center gap-3">
+          <Boton to="/#tours">{t('See availability')}</Boton>
+          <Link
+            to="/account"
+            className="inline-flex items-center justify-center gap-2 rounded-btn border border-white/40 px-5 py-3 text-sm font-semibold text-white transition hover:border-white hover:bg-white/10"
+          >
+            <UserRound className="size-4 shrink-0" aria-hidden="true" />
+            {t('My account')}
+          </Link>
+        </div>
       </div>
 
       {/* [v2 2026-07-28] De 4 a 5 columnas al sacar «Trabaja con nosotros» de

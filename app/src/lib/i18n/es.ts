@@ -2132,6 +2132,9 @@ export const ES: Record<string, string> = {
   "Tour briefing before departure": "Explicación del tour antes de salir",
   "Tour date": "Fecha del tour",
   "Tour FAQ": "Preguntas del tour",
+  // [2026-08-25] Etiquetas que manda Odoo en las lineas del presupuesto.
+  "Premium menu": "Menú Premium",
+  "Light menu": "Menú Light",
   "Tour fare": "Tarifa del tour",
   "Tour leader": "Guía de tour",
   "Tour Leader Manager": "Responsable de guías",
