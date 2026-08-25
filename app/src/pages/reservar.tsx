@@ -59,7 +59,7 @@ const TITULOS: Record<PasoId, string> = traducible({
 
 export function ReservarPage() {
   const { slug } = useParams()
-  const [params] = useSearchParams()
+  const [params, setParams] = useSearchParams()
   const tour = TOURS.find((candidato) => candidato.slug === slug)
   const ficha = slug ? FICHAS[slug] : undefined
 
@@ -111,6 +111,13 @@ export function ReservarPage() {
       horarioInicial={horarioIdx}
       fechaInicialISO={fechaISO}
       addonsIniciales={addons}
+      // Subir a Premium desde el banner del checkout tiene que quedar escrito
+      // en la URL: es la fuente del paquete al montar. Ver `subirAPremium`.
+      onSubirPaquete={() => {
+        const siguiente = new URLSearchParams(params)
+        siguiente.set('paquete', 'premium')
+        setParams(siguiente, { replace: true })
+      }}
       // Si el widget no mandó desglose (el caso normal, tarifa única), todas
       // las personas son adultos: es lo que este funnel ha asumido siempre.
       adultosIniciales={adultosUrl || personas}
@@ -137,11 +144,14 @@ function FlujoReserva({
   ninosIniciales,
   bebesIniciales,
   addonsIniciales,
+  onSubirPaquete,
 }: {
   tour: Tour
   ficha: FichaTour
   precioLight: number
   paqueteInicial: Paquete
+  /** Escribe `?paquete=premium` en la URL cuando se sube desde el banner. */
+  onSubirPaquete: () => void
   /** Sub-variante (bote) elegida en el widget; null en los tours sin ellas. */
   varianteInicial: string | null
   personasIniciales: number
@@ -275,6 +285,12 @@ function FlujoReserva({
     setPaquete('premium')
     setPlatos((prev) => prev.map(() => ''))
     checkout.sincronizar({ package: 'premium', dishes: [] })
+    // [2026-08-25] La URL tiene que reflejarlo. Es de donde sale el paquete al
+    // montar y, desde hoy, tambien lo que corrige un pedido retomado que no
+    // coincida (ver `use-checkout.ts`): si se queda en `light`, recargar la
+    // pagina despues de subir a Premium volveria a bajar la reserva a Light.
+    // `replace` para no dejar un paso intermedio en el historial.
+    onSubirPaquete()
   }
 
   // "Pagar" (2026-08-10: ya hay backend).

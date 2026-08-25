@@ -91,6 +91,43 @@ export function useCheckout(inicio: InicioCheckout) {
           // Un pedido ya cerrado no se retoma: se abre uno nuevo.
           if (!['paid', 'confirmed', 'cancelled'].includes(pedido.state)) {
             sesion.current = guardado
+            // [2026-08-25, Samuel: «cuando voy al semiprivado light, en
+            // checkout muestra el premium»] El pedido guardado se buscaba SOLO
+            // por tour, asi que quien configuraba Premium, volvia a la ficha,
+            // elegia Light y entraba otra vez, retomaba su pedido Premium tal
+            // cual: la URL decia `light`, el pedido en Odoo seguia en
+            // `premium` y el resumen pintaba el precio Premium (228 en vez de
+            // 198). De paso parecia que el boton «Switch to Premium» estaba
+            // roto — pulsarlo mandaba a premium algo que ya era premium, o sea
+            // que no cambiaba nada en pantalla.
+            //
+            // El paquete y la variante son la eleccion de la FICHA y viajan en
+            // la URL: si el pedido retomado no coincide, manda la URL. Fecha,
+            // personas y horario NO se reponen aqui a proposito — esos si se
+            // cambian dentro del funnel y no vuelven a la URL, asi que
+            // repescarlos borraria lo que el visitante acaba de elegir.
+            const desajuste: ParcheCheckout = {}
+            if (inicio.paquete && pedido.package !== inicio.paquete) {
+              desajuste.package = inicio.paquete
+            }
+            const varianteUrl = inicio.variante ?? null
+            if (varianteUrl !== null && pedido.variant !== varianteUrl) {
+              desajuste.variant = varianteUrl
+            }
+            if (Object.keys(desajuste).length) {
+              try {
+                const { pedido: corregido } = await sincronizarCheckout(
+                  guardado.codigo, guardado.token, desajuste,
+                )
+                if (cancelado) return
+                setEstado((s) => ({ ...s, pedido: corregido, cargando: false }))
+                return
+              } catch {
+                // Si la correccion falla, se sigue con el pedido tal cual: es
+                // mejor un precio a corregir que un funnel que no abre.
+              }
+              if (cancelado) return
+            }
             setEstado((s) => ({ ...s, pedido, cargando: false }))
             return
           }
