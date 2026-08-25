@@ -18,6 +18,15 @@ export type RespuestaOk<T> = { ok: true; data: T } & Record<string, unknown>
 export type RespuestaError = { ok: false; error: string; message: string } & Record<string, unknown>
 export type Respuesta<T> = RespuestaOk<T> | RespuestaError
 
+/** Hotel de recogida tal y como lo gestiona el back-office (`haa.hotel`).
+ *  El funnel ofrece ESTOS y no una lista propia: un nombre escrito a mano no
+ *  casa con ninguna ficha, y sin ficha no hay tabla de recogidas. */
+export type Hotel = {
+  id: number
+  name: string
+  zone: string
+}
+
 export type Tramo = {
   from: number
   to: number | null

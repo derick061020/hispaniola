@@ -1,5 +1,6 @@
 import { Sparkles } from 'lucide-react'
 import { Campo } from '@/components/ui/campo'
+import { CampoTelefono } from '@/components/ui/campo-telefono'
 import { OCASIONES, type DatosCelebracion, type DatosContacto } from '@/components/reservar/tipos'
 import { IDIOMAS, type IdiomaCliente } from '@/lib/idioma'
 import { t } from '@/lib/i18n'
@@ -69,14 +70,20 @@ export function PasoContacto({
           <p className="mt-1.5 text-xs text-navy-soft">{t('We’ll send your booking confirmation to this address.')}</p>
         </div>
 
+        {/* [2026-08-25, pedido de Samuel] Prefijo de pais aparte. Sin el
+            llegaban numeros locales imposibles de marcar desde RD y el aviso
+            de ultima hora se quedaba sin enviar — ver `lib/telefono.ts`. */}
         <div>
-          <Campo
+          <CampoTelefono
             etiqueta={t('WhatsApp / phone')}
-            type="tel"
-            autoComplete="tel"
-            placeholder="+1 809 000 0000"
-            value={datos.telefono}
-            onChange={(e) => onCambio({ telefono: e.target.value })}
+            prefijo={datos.prefijo}
+            numero={datos.telefono}
+            onCambio={(parcial) =>
+              onCambio({
+                ...(parcial.prefijo !== undefined ? { prefijo: parcial.prefijo } : {}),
+                ...(parcial.numero !== undefined ? { telefono: parcial.numero } : {}),
+              })
+            }
           />
           <p className="mt-1.5 text-xs text-navy-soft">
             {t('Only to let you know about last-minute changes, for example if the weather forces us to move the tour.')}

@@ -1,4 +1,5 @@
 import type { IdiomaCliente } from '@/lib/idioma'
+import { componTelefono, PREFIJO_POR_DEFECTO } from '@/lib/telefono'
 import { traducible } from '@/lib/i18n'
 // Tipos compartidos del funnel de reserva (/reservar/:slug, Fase C). Viven
 // aparte para que los pasos y la página los importen sin ciclos (la página
@@ -11,12 +12,25 @@ export type DatosRecogida = { hotel: string; notas: string }
 // `idioma` decide en que lengua le escribe Odoo (los once correos existen en
 // espanol y en ingles). Arranca en el del navegador y el cliente puede
 // cambiarlo — ver `lib/idioma.ts`.
+//
+// [2026-08-25] `telefono` guarda SOLO el numero local; el pais va aparte en
+// `prefijo` (un id ISO, no el codigo: +1 lo comparten EE.UU., Canada y RD).
+// Lo que viaja a Odoo es siempre el compuesto — `telefonoDe()`, nunca
+// `datos.telefono` a secas, o se manda un numero sin prefijo.
 export type DatosContacto = {
   nombre: string
   apellidos: string
   email: string
+  prefijo: string
   telefono: string
   idioma: IdiomaCliente
+}
+
+export const PREFIJO_INICIAL = PREFIJO_POR_DEFECTO
+
+/** El telefono tal y como se guarda en la reserva: «+34 612345678». */
+export function telefonoDe(contacto: Pick<DatosContacto, 'prefijo' | 'telefono'>): string {
+  return componTelefono(contacto.prefijo, contacto.telefono)
 }
 
 // «¿Celebras algo especial?» — dato OPCIONAL del paso de contacto (2026-08-07,

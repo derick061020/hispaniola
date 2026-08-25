@@ -33,7 +33,11 @@ export type Reserva = {
    *  falten por decidir, es que no hay nada que decidir. */
   platos: string[]
   recogida: DatosRecogida
-  contacto: DatosContacto
+  /** [2026-08-25] Sin `prefijo`: la reserva guardada lleva UN telefono ya
+   *  compuesto («+34 612345678»), que es lo que pinta «Mi reserva» y lo que
+   *  Odoo devuelve. La particion en pais + numero es del formulario, no del
+   *  dato guardado — ver `telefonoDe()` en components/reservar/tipos.ts. */
+  contacto: Omit<DatosContacto, 'prefijo'>
   total: number
   deposito: number
   saldo: number

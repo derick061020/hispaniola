@@ -1,7 +1,7 @@
 import { llamar, llamarSobre, enviarBaliza } from './cliente'
 import { idiomaDelNavegador } from '@/lib/idioma'
 import type {
-  ConfigPublica, Cotizacion, Disponibilidad, IntencionPago, ParcheCheckout,
+  ConfigPublica, Cotizacion, Disponibilidad, Hotel, IntencionPago, ParcheCheckout,
   Paquete, Pax, Pedido, Reserva, Tour,
 } from './tipos'
 
@@ -20,6 +20,13 @@ export function obtenerCatalogo(signal?: AbortSignal) {
 
 export function obtenerTour(slug: string, signal?: AbortSignal) {
   return llamar<Tour>(`/tours/${encodeURIComponent(slug)}`, { signal })
+}
+
+/** Hoteles de recogida. La lista viva la tiene Odoo: quien da de alta un
+ *  hotel en el back-office lo ve aparecer en el funnel sin desplegar el front.
+ *  `data/hoteles.ts` es la instantanea que se pinta mientras esto viaja. */
+export function obtenerHoteles(signal?: AbortSignal) {
+  return llamar<{ hotels: Hotel[] }>('/hotels', { signal }).then((d) => d.hotels)
 }
 
 export function obtenerDisponibilidad(

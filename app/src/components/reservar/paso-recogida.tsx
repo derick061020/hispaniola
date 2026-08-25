@@ -1,4 +1,5 @@
 import { Campo } from '@/components/ui/campo'
+import { SelectorHotel } from '@/components/ui/selector-hotel'
 import type { DatosRecogida } from '@/components/reservar/tipos'
 import { t } from '@/lib/i18n'
 
@@ -7,6 +8,10 @@ import { t } from '@/lib/i18n'
 // confirma aparte — el copy lo dice, no se inventa una hora fija (mismo criterio
 // anti-invención que el resto del build). Sin campo de nº de habitación
 // (2026-07-17, Samuel): se pide el hotel y, si hace falta, se afina por WhatsApp.
+//
+// [2026-08-25, pedido de Samuel] El hotel ya no se escribe: se elige de la
+// lista de Odoo (`SelectorHotel`). Escrito a mano no casaba con ninguna ficha
+// de `haa.hotel`, y sin ficha no hay tabla de recogidas.
 export function PasoRecogida({
   datos,
   onCambio,
@@ -27,11 +32,10 @@ export function PasoRecogida({
       </div>
 
       <div className="flex flex-col gap-4">
-        <Campo
+        <SelectorHotel
           etiqueta={t('Hotel or pick-up point')}
-          placeholder={t('E.g. Meliá Caribe Beach')}
           value={datos.hotel}
-          onChange={(e) => onCambio({ hotel: e.target.value })}
+          onChange={(hotel) => onCambio({ hotel })}
         />
         <Campo
           etiqueta={t('Pick-up notes (optional)')}

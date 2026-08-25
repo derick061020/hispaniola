@@ -11,7 +11,7 @@ import { PasoContacto } from '@/components/reservar/paso-contacto'
 import { idiomaDelNavegador } from '@/lib/idioma'
 import { PasoPago, type DatosPago } from '@/components/reservar/paso-pago'
 import { ResumenReserva } from '@/components/reservar/resumen-reserva'
-import { etiquetaOcasion, type DatosCelebracion, type DatosContacto, type DatosRecogida, type Paquete } from '@/components/reservar/tipos'
+import { etiquetaOcasion, telefonoDe, PREFIJO_INICIAL, type DatosCelebracion, type DatosContacto, type DatosRecogida, type Paquete } from '@/components/reservar/tipos'
 import { maxPersonasDe } from '@/components/tour/widget-reserva'
 import { TOURS, type Tour } from '@/data/home'
 import { FICHAS, type FichaTour } from '@/data/tours'
@@ -178,6 +178,9 @@ function FlujoReserva({
     nombre: '',
     apellidos: '',
     email: '',
+    // [2026-08-25] El pais del telefono va aparte del numero: lo que se guarda
+    // en la reserva es el compuesto (`telefonoDe`), nunca `contacto.telefono`.
+    prefijo: PREFIJO_INICIAL,
     telefono: '',
     // Se propone el idioma del navegador; el cliente lo cambia en el paso de
     // contacto si prefiere otro. Es lo que decide en que lengua le llegan sus
@@ -332,7 +335,7 @@ function FlujoReserva({
           billing_details: {
             name: datos.titular,
             email: contacto.email.trim() || undefined,
-            phone: contacto.telefono.trim() || undefined,
+            phone: telefonoDe(contacto) || undefined,
           },
         },
       })
@@ -372,7 +375,7 @@ function FlujoReserva({
       first_name: contacto.nombre.trim(),
       last_name: contacto.apellidos.trim(),
       email: contacto.email.trim(),
-      phone: contacto.telefono.trim(),
+      phone: telefonoDe(contacto),
       language: contacto.idioma,
     },
     pickup: { hotel: recogida.hotel.trim(), notes: recogida.notas.trim() },
@@ -425,7 +428,7 @@ function FlujoReserva({
         nombre: contacto.nombre.trim(),
         apellidos: contacto.apellidos.trim(),
         email: contacto.email.trim(),
-        telefono: contacto.telefono.trim(),
+        telefono: telefonoDe(contacto),
         idioma: contacto.idioma,
       },
       // Solo viaja si hay algo que celebrar: `ninguna` es una respuesta válida
@@ -537,7 +540,7 @@ function FlujoReserva({
                         {[contacto.nombre, contacto.apellidos].filter(Boolean).join(' ') || '—'}
                       </span>
                       {contacto.email ? ` · ${contacto.email}` : ''}
-                      {contacto.telefono ? ` · ${contacto.telefono}` : ''}
+                      {contacto.telefono ? ` · ${telefonoDe(contacto)}` : ''}
                     </p>
                     {etiquetaOcasion(celebracion.ocasion) ? (
                       <p className="mt-0.5 text-coral">
@@ -563,7 +566,7 @@ function FlujoReserva({
                         first_name: contacto.nombre.trim(),
                         last_name: contacto.apellidos.trim(),
                         email: contacto.email.trim(),
-                        phone: contacto.telefono.trim(),
+                        phone: telefonoDe(contacto),
                         language: contacto.idioma,
                       },
                       ...(celebracion.ocasion && celebracion.ocasion !== 'ninguna'
