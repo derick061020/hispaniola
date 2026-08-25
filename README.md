@@ -9,7 +9,7 @@ El fuente vive en la rama `main`.
 
 | | |
 |---|---|
-| Commit de origen | `23bcb06` — *El selector de moneda se entera de que ya hay tasas* |
+| Commit de origen | `cc80ed1` — *Traducidos los textos que trajo la integración* |
 | Comando | `npm run build` en `app/` (= `tsc -b && vite build`) |
 | `VITE_API_URL` compilada | `https://sistemashispaniola.com` (de `app/.env.production`) |
 
