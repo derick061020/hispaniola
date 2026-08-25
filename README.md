@@ -9,7 +9,7 @@ El fuente vive en la rama `main`.
 
 | | |
 |---|---|
-| Commit de origen | `cedc522` — *El pedido retomado se corrige entero, no solo el paquete* |
+| Commit de origen | `e8d5e7c` — *El resumen del checkout no repite «Premium» dos veces seguidas* |
 | Comando | `npm run build` en `app/` (= `tsc -b && vite build`) |
 | `VITE_API_URL` compilada | `https://sistemashispaniola.com` (de `app/.env.production`) |
 
