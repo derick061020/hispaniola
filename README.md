@@ -9,7 +9,7 @@ El fuente vive en la rama `main`.
 
 | | |
 |---|---|
-| Commit de origen | `e36408d` — *Plantillas nuevas, desglose por edades, «Mi cuenta» y el tramo del charter* |
+| Commit de origen | `8185c4f` — *La cotización de eventos le dice a Odoo qué paquete se pidió* |
 | Comando | `npm run build` en `app/` (= `tsc -b && vite build`) |
 | `VITE_API_URL` compilada | `https://sistemashispaniola.com` (de `app/.env.production`) |
 
