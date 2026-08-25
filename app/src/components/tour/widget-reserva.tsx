@@ -130,8 +130,20 @@ export function maxPersonasDe(tour: Tour, ficha: FichaTour): number {
   if (tour.precioNino != null) return tour.maxPax ?? 30
   // Sub-variantes (Saona, charter): el tramo más alto de cualquier bote.
   if (ficha.subVariantes) {
-    return Math.max(...ficha.subVariantes.flatMap((v) => v.tabla.map((tramo) => tramo.hasta ?? tramo.desde)))
+    const topes = ficha.subVariantes.flatMap((v) =>
+      v.tabla.map((tramo) => tramo.hasta ?? tramo.desde),
+    )
+    // [2026-08-25] `Math.max()` sin argumentos devuelve **-Infinity**, y de ahí
+    // salía el «infinito» en pantalla: el aforo se volvía -Infinity, el
+    // stepper de personas lo pintaba tal cual y el total se iba a NaN.
+    //
+    // Pasa cuando hay sub-variantes SIN tabla de precios, que es justo el caso
+    // que estrenaron los paquetes de eventos: su precio lo pone Odoo, así que
+    // aquí no hay tramos que recorrer. El aforo entonces es el del producto.
+    return topes.length ? Math.max(...topes) : tour.maxPax ?? MAX_PERSONAS_DEFAULT
   }
+  // Sin sub-variantes se mantiene el tope de siempre: tocar esto subiría de 6
+  // a su aforo el stepper de semi-privado, que es otra decisión y no la de hoy.
   return MAX_PERSONAS_DEFAULT
 }
 
