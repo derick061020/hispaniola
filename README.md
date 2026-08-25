@@ -9,7 +9,7 @@ El fuente vive en la rama `main`.
 
 | | |
 |---|---|
-| Commit de origen | `3101eb4` — *Entrar con Light ya no retoma el pedido Premium de antes* |
+| Commit de origen | `cedc522` — *El pedido retomado se corrige entero, no solo el paquete* |
 | Comando | `npm run build` en `app/` (= `tsc -b && vite build`) |
 | `VITE_API_URL` compilada | `https://sistemashispaniola.com` (de `app/.env.production`) |
 
