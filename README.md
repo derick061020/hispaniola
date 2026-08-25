@@ -9,7 +9,7 @@ El fuente vive en la rama `main`.
 
 | | |
 |---|---|
-| Commit de origen | `fd8074c` — *Area privada y edicion de menu* |
+| Commit de origen | `5dfeded` — *El hotel se elige de la lista de Odoo y el teléfono lleva prefijo de país* |
 | Comando | `npm run build` en `app/` (= `tsc -b && vite build`) |
 | `VITE_API_URL` compilada | `https://sistemashispaniola.com` (de `app/.env.production`) |
 
