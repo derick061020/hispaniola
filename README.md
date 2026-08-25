@@ -9,7 +9,7 @@ El fuente vive en la rama `main`.
 
 | | |
 |---|---|
-| Commit de origen | `1b95c45` — *El aforo de un producto sin tramos ya no sale «infinito»* |
+| Commit de origen | `59b149b` — *Integra el frontend de Samuel (38 commits) con el backend de Odoo* |
 | Comando | `npm run build` en `app/` (= `tsc -b && vite build`) |
 | `VITE_API_URL` compilada | `https://sistemashispaniola.com` (de `app/.env.production`) |
 

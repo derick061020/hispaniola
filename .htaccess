@@ -4,10 +4,13 @@
 Options -MultiViews
 RewriteEngine On
 
-# --- 34 redirecciones de las URLs viejas en espanol ---
+# --- 37 redirecciones de las URLs viejas en espanol ---
 RewriteRule "^tours/semi-privado/?$" "/tours/semi-private-premium" [R=301,L]
 RewriteRule "^tours/charter-privado/?$" "/tours/private-charter" [R=301,L]
 RewriteRule "^tours/isla-saona/?$" "/tours/saona-island" [R=301,L]
+RewriteRule "^tours/snorkel-lovers/?$" "/tours/coral" [R=301,L]
+RewriteRule "^book/snorkel-lovers/?$" "/book/coral" [R=301,L]
+RewriteRule "^book/snorkel-lovers/thank-you/?$" "/book/coral/thank-you" [R=301,L]
 RewriteRule "^eventos/bodas/gracias/?$" "/events/weddings/thank-you" [R=301,L]
 RewriteRule "^eventos/empresas/gracias/?$" "/events/corporate/thank-you" [R=301,L]
 RewriteRule "^eventos/bodas/?$" "/events/weddings" [R=301,L]
