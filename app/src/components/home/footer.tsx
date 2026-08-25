@@ -1,4 +1,6 @@
+import { useSyncExternalStore } from 'react'
 import { UserRound } from 'lucide-react'
+import { escuchaMoneda, fechaTasas, fijaMoneda, hayTasa, monedaActiva, SIMBOLO, type Moneda } from '@/lib/moneda'
 import { Link } from 'react-router-dom'
 import { useCatalogo } from '@/lib/api/use-catalogo'
 import { fusionarLista } from '@/lib/api/fusion-catalogo'
@@ -44,6 +46,10 @@ const ICONO_RED: Record<string, (p: { className?: string }) => React.ReactElemen
 // y el footer es único para toda la web. Prop con el de la home por defecto —
 // las páginas que no lo pasen siguen igual que hasta ahora.
 export function Footer({ cta = t('Ready for an unforgettable day?') }: { cta?: string }) {
+  // La moneda vive fuera de React (`lib/moneda.ts`): se lee con
+  // `useSyncExternalStore` para que el propio selector se entere del cambio.
+  const moneda = useSyncExternalStore(escuchaMoneda, monedaActiva, () => 'USD' as const)
+  const fecha = fechaTasas()
   // [2026-08-18] La lista sale de Odoo: un tour despublicado desaparece de aquí
   // sin tocar código, y el «desde US$» es el del catálogo, no el que quedó
   // escrito en `data/home.ts`. Si Odoo no contesta se pinta la lista estática.
@@ -340,19 +346,31 @@ export function Footer({ cta = t('Ready for an unforgettable day?') }: { cta?: s
             <label htmlFor="footer-moneda" className="mb-2 block text-sm font-semibold text-white">
               {t('Currency')}
             </label>
-            {/* Visual, como el idioma: el sitio publica en USD y no hay
-                conversión real todavía (ver MONEDAS en data/home.ts). */}
+            {/* [2026-08-25] Ya convierte de verdad, con el cambio del día
+                (`lib/moneda.ts`). Cambiarla repinta el sitio entero, igual que
+                el idioma. Una divisa sin tasa se deshabilita en vez de
+                enseñarse: sin cambio real no hay nada que convertir. */}
             <select
               id="footer-moneda"
-              defaultValue="USD"
+              value={moneda}
+              onChange={(e) => fijaMoneda(e.target.value as Moneda)}
               className="rounded-btn border border-white/20 bg-white/10 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-white/30"
             >
               {MONEDAS.map((m) => (
-                <option key={m} value={m} className="text-navy">
-                  {m}
+                <option key={m} value={m} disabled={!hayTasa(m)} className="text-navy">
+                  {SIMBOLO[m]} {m}
                 </option>
               ))}
             </select>
+            {/* De cuándo es el cambio. Sin esta línea, un precio en pesos es un
+                número sin procedencia — y el que se cobra sigue siendo el
+                dólar, así que hay que poder comprobarlo. */}
+            {moneda !== 'USD' ? (
+              <p className="mt-2 max-w-[16rem] text-xs leading-relaxed text-white/50">
+                {t('Approximate conversion')}
+                {fecha ? ` · ${fecha.toLocaleDateString()}` : ''}. {t('You are charged in US dollars.')}
+              </p>
+            ) : null}
           </div>
         </div>
       </div>

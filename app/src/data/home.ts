@@ -2,8 +2,9 @@
 // Solo se incluyen los campos que la HOME usa; el resto de la ficha de tour
 // (itinerario, incluye, FAQ propia…) no es parte de este build (ver PLAN.md).
 
+import { formatoMoneda, MONEDAS_DISPONIBLES } from '@/lib/moneda'
 import { WHATSAPP_URL } from '@/data/tours'
-import { numero, traducible } from '@/lib/i18n'
+import { traducible } from '@/lib/i18n'
 
 export type Tour = {
   slug: string
@@ -316,9 +317,18 @@ export const INCLUYE_CRUCERO: IncluyeItem[] = traducible([
   },
 ])
 
+// [2026-08-25] EL EMBUDO POR EL QUE PASA TODO EL DINERO DEL SITIO.
+//
+// Los 25 ficheros que pintan precios llaman aquí, así que la conversión de
+// divisa vive en este único sitio y el resto lo hereda sin enterarse: es lo
+// que hace que el selector del footer alcance a toda la web sin tocar 25
+// componentes. El porqué completo (y lo que NO hace: el cobro sigue siendo en
+// USD) está en `lib/moneda.ts`.
+//
+// Con USD elegido —el caso por defecto— devuelve exactamente lo de siempre.
 export function formatoDinero(n: number | null): string {
   if (n === null) return '—'
-  return 'US$ ' + numero(n, { maximumFractionDigits: 2 })
+  return formatoMoneda(n)
 }
 
 export type ItemNav = {
@@ -1416,10 +1426,12 @@ export const REDES: RedSocial[] = traducible([
   { id: 'youtube', nombre: 'YouTube', url: null },
 ])
 
-// Monedas. Igual que el idioma (SelectorIdioma), es VISUAL: el sitio no tiene
-// conversión real de divisa todavía. Los precios de todo el sitio están en
-// USD, que es como los publica el cliente.
-export const MONEDAS = traducible(['USD', 'EUR', 'DOP'] as const)
+// Monedas. [2026-08-25] Ya NO es visual: el selector convierte de verdad, con
+// el cambio del día. La lista vive en `lib/moneda.ts` junto a las tasas para
+// que no puedan separarse — añadir una divisa aquí sin tasa dejaría un precio
+// sin convertir. Los precios del tarifario siguen publicándose en USD, que es
+// como los da el cliente y como se cobran.
+export const MONEDAS = MONEDAS_DISPONIBLES
 
 // ─────────────────────────────────────────────────────────────────────────
 // FAQ de la home (2026-07-17) — reemplaza al layout de galería+FAQ en 2

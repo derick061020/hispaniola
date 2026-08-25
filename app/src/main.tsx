@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom'
 import './index.css'
 import App from './App.tsx'
 import { ProveedorIdioma } from '@/lib/i18n'
+import { ProveedorMoneda } from '@/lib/proveedor-moneda'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -13,7 +14,12 @@ createRoot(document.getElementById('root')!).render(
           sobrevivir a ese remonte — quien cambia a español leyendo una ficha
           se queda en su ficha, no vuelve a la home. */}
       <ProveedorIdioma>
-        <App />
+        {/* Dentro del idioma: cambiarlo remonta todo igualmente, y así el
+            formato de número (es-DO / en-US) ya está puesto cuando se pintan
+            los precios convertidos. */}
+        <ProveedorMoneda>
+          <App />
+        </ProveedorMoneda>
       </ProveedorIdioma>
     </BrowserRouter>
   </StrictMode>,

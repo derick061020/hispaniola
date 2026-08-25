@@ -2135,6 +2135,12 @@ export const ES: Record<string, string> = {
   // [2026-08-25] Etiquetas que manda Odoo en las lineas del presupuesto.
   "Premium menu": "Menú Premium",
   "Light menu": "Menú Light",
+  // [2026-08-25] Selector de moneda con conversion real.
+  "per extra guest": "por invitado extra",
+  "Approximate conversion": "Conversión aproximada",
+  "You are charged in US dollars.": "El cobro se hace en dólares estadounidenses.",
+  "Approximate conversion. You are charged": "Conversión aproximada. Se te cobra",
+  "in US dollars.": "en dólares estadounidenses.",
   "Tour fare": "Tarifa del tour",
   "Tour leader": "Guía de tour",
   "Tour Leader Manager": "Responsable de guías",

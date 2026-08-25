@@ -5,6 +5,7 @@ import { NumeroEditable } from '@/components/ui/numero-editable'
 import { formatoDinero, type Tour } from '@/data/home'
 import type { MenuReserva } from '@/lib/menu-reserva'
 import { PasajerosPopover, FilasPasajeros } from '@/components/tour/pasajeros-popover'
+import { formatoUSD, monedaActiva } from '@/lib/moneda'
 import { nombreSinPaquete } from '@/lib/nombre-tour'
 import { t } from '@/lib/i18n'
 
@@ -371,6 +372,19 @@ export function ResumenReserva({
             <span className="font-semibold text-navy">{t('Total')}</span>
             <span className="font-display text-precio font-semibold text-navy">{formatoDinero(total)}</span>
           </div>
+          {/* [2026-08-25] EL IMPORTE QUE SE COBRA, SIEMPRE EN DÓLARES.
+              El selector de moneda convierte lo que se LEE en todo el sitio,
+              pero Odoo tarifa en USD y Stripe y PayPal cobran en USD. Enseñar
+              «€1.014» y pasar «US$ 1.188» a la tarjeta sin decirlo sería
+              mentir justo en la pantalla donde no se puede. Solo aparece
+              cuando hay algo que aclarar: en dólares sobra. */}
+          {monedaActiva() !== 'USD' ? (
+            <p className="mt-2 text-xs leading-relaxed text-navy-soft">
+              {t('Approximate conversion. You are charged')}{' '}
+              <span className="font-semibold text-navy">{formatoUSD(total)}</span>{' '}
+              {t('in US dollars.')}
+            </p>
+          ) : null}
           {precioProvisional ? (
             <p className="mt-2 text-xs leading-relaxed text-navy-soft">
               {t('Estimated price — we confirm the final amount before you pay.')}

@@ -3,6 +3,7 @@ import { Check, Minus, Sparkles, Package } from 'lucide-react'
 import { TituloSeccion } from '@/components/tour/titulo-seccion'
 import { BLOQUE_FICHA } from '@/components/tour/bloque-ficha'
 import type { FichaEvento, PaqueteEvento } from '@/data/eventos'
+import { formatoDinero } from '@/data/home'
 import { t, tp } from '@/lib/i18n'
 
 // "Paquetes" de las landings de evento (PLAN-EVENTOS.md §3) — presente en
@@ -165,14 +166,21 @@ function Card({
           {paquete.nombre}
         </h3>
 
+        {/* [2026-08-25] Del NÚMERO, no del texto. `precio` y `extraPrecio` son
+            cadenas del cliente («US$ 1,188.00») y con el selector de moneda
+            eran los dos únicos precios del sitio que se quedaban en dólares
+            mientras el resto se convertía. `precioBase` y `porPersonaExtra`
+            son los mismos importes en número, así que pasan por
+            `formatoDinero` como todo lo demás. Las cadenas se conservan como
+            red por si algún paquete no publicara su número. */}
         <p className={`mt-1 font-display font-semibold text-navy ${ancha ? 'text-2xl' : 'text-xl'}`}>
-          {paquete.precio}
+          {paquete.precioBase != null ? formatoDinero(paquete.precioBase) : paquete.precio}
         </p>
-        {/* El precio y su condición, juntos. `extraPrecio` es texto del
-            cliente ("US$ 99.00 por persona extra") — se pinta tal cual. */}
         <p className="text-xs text-navy-soft">
           {incluidas !== null ? tp('Up to {n} guests', { n: incluidas }) : paquete.capacidad}
-          {paquete.extraPrecio ? <> · +{paquete.extraPrecio}</> : null}
+          {paquete.porPersonaExtra
+            ? <> · +{formatoDinero(paquete.porPersonaExtra ?? null)} {t('per extra guest')}</>
+            : paquete.extraPrecio ? <> · +{paquete.extraPrecio}</> : null}
         </p>
         <p className="mt-0.5 text-xs text-navy-soft">{paquete.meta}</p>
 
