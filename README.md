@@ -9,7 +9,7 @@ El fuente vive en la rama `main`.
 
 | | |
 |---|---|
-| Commit de origen | `5dfeded` — *El hotel se elige de la lista de Odoo y el teléfono lleva prefijo de país* |
+| Commit de origen | `3101eb4` — *Entrar con Light ya no retoma el pedido Premium de antes* |
 | Comando | `npm run build` en `app/` (= `tsc -b && vite build`) |
 | `VITE_API_URL` compilada | `https://sistemashispaniola.com` (de `app/.env.production`) |
 
