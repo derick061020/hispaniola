@@ -30,6 +30,26 @@ export type Tour = {
   booking: 'completo' | 'cotizacion' | 'consulta'
   descripcionCorta: string
   /** nombre de archivo en /fotos (sin extensión) */
+  /** Portada del tour. Es la MISMA foto que abre el carrusel de su tarjeta
+   *  (`galeria[0]`), y esa es toda la regla.
+   *
+   *  [2026-08-26, el cliente: «la imagen de tours que se ve desde el menú es
+   *  otra… las imágenes no coinciden»] Tenía razón: hasta hoy este hueco
+   *  guardaba una foto suelta (`tour-semi-privado`, `tour-charter-privado`…)
+   *  que no salía en ningún otro sitio, así que el megamenú, la miniatura del
+   *  checkout y el bloque «también te gusta» enseñaban una imagen y la tarjeta
+   *  de la home otra distinta para el mismo tour. Encima no eran fotos de la
+   *  carpeta que entregó el cliente —está anotado en `pages/tour.tsx`, donde
+   *  se dejaron fuera de la galería del producto por eso mismo—, y una de
+   *  ellas presentaba el charter PRIVADO con un grupo grande posando.
+   *
+   *  Si hay que cambiar la portada de un tour, se mueve esa foto al principio
+   *  de su `galeria` y se copia aquí: las dos superficies tienen que seguir
+   *  diciendo lo mismo. Eso es justo lo que se hizo hoy con tres de los cuatro
+   *  —el orden de las galerías era el del nombre del archivo, 1..5, y abría
+   *  con el buffet de la plataforma, un coral descolorido y un grupo de veinte
+   *  personas posando para presentar el charter PRIVADO—. Ninguna foto se
+   *  quita: solo cambia cuál va primera. */
   foto: string
   /** v3-F20 (§18): galería real del servicio (varios /fotos) para el carrusel
    *  de la card del grid. Solo la tienen los 3 productos del escaparate
@@ -87,12 +107,12 @@ export const TOURS: Tour[] = [
     // [v3 2026-08-06] Copy APROBADO por el cliente (WEBSITE - INICIO, pág. 2).
     descripcionCorta:
       'An intimate adults-only Caribbean experience featuring protected reef snorkeling, an exclusive underwater museum, a secluded beach, and chef-prepared cuisine from our floating kitchen.',
-    foto: 'tour-semi-privado',
+    foto: 'galeria-semi-privado-4',
     galeria: [
+      'galeria-semi-privado-4',
       'galeria-semi-privado-1',
       'galeria-semi-privado-2',
       'galeria-semi-privado-3',
-      'galeria-semi-privado-4',
       'galeria-semi-privado-5',
     ],
     // Los chips salen de la «tagline» que el cliente puso tras el asterisco
@@ -119,12 +139,12 @@ export const TOURS: Tour[] = [
     // [v3] Copy APROBADO (WEBSITE - INICIO, pág. 2).
     descripcionCorta:
       'An all-ages experience where coral restoration, symbolic coral planting, an exclusive underwater museum, and protected reefs inspire unforgettable memories.',
-    foto: 'tour-snorkel-lovers',
+    foto: 'galeria-snorkel-lovers-4',
     galeria: [
+      'galeria-snorkel-lovers-4',
       'galeria-snorkel-lovers-1',
       'galeria-snorkel-lovers-2',
       'galeria-snorkel-lovers-3',
-      'galeria-snorkel-lovers-4',
       'galeria-snorkel-lovers-5',
     ],
     // Tagline del cliente: «Limited guests exploring coral restoration, our
@@ -158,12 +178,12 @@ export const TOURS: Tour[] = [
     // [v3] Copy APROBADO (WEBSITE - INICIO, pág. 2).
     descripcionCorta:
       'Your boat. Your people. Private charters with catamarans for every group size, style, and budget.',
-    foto: 'tour-charter-privado',
+    foto: 'galeria-charter-privado-4',
     galeria: [
+      'galeria-charter-privado-4',
       'galeria-charter-privado-1',
       'galeria-charter-privado-2',
       'galeria-charter-privado-3',
-      'galeria-charter-privado-4',
       'galeria-charter-privado-5',
     ],
     destacados: ['Whole boat', 'Menu your way', 'Dedicated coordinator'],
@@ -190,7 +210,7 @@ export const TOURS: Tour[] = [
     // [v3] Copy APROBADO (WEBSITE - INICIO, pág. 2).
     descripcionCorta:
       'Paradise made personal. White-sand beaches, turquoise waters, private charters, and unforgettable Saona Island experiences.',
-    foto: 'tour-isla-saona',
+    foto: 'galeria-isla-saona-1',
     galeria: [
       'galeria-isla-saona-1',
       'galeria-isla-saona-2',

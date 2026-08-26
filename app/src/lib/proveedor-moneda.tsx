@@ -1,4 +1,5 @@
 import { Fragment, useCallback, useEffect, useLayoutEffect, useRef, useSyncExternalStore, type ReactNode } from 'react'
+import { useLocation } from 'react-router-dom'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { cargaTasas, escuchaMoneda, monedaActiva } from '@/lib/moneda'
 
@@ -36,6 +37,18 @@ export function ProveedorMoneda({ children }: { children: ReactNode }) {
 
   const moneda = useSyncExternalStore(suscribe, monedaActiva, () => 'USD' as const)
 
+  // [2026-08-26] EN EL CHECKOUT NO SE REMONTA.
+  //
+  // Desde hoy la moneda también se puede cambiar dentro del funnel de pago, y
+  // remontar allí sería peor que no convertir: el formulario vive en `useState`
+  // —fecha, personas, plato de cada comensal, contacto— y volvería a empezar de
+  // cero a media reserva. La página del checkout se suscribe ella misma a la
+  // moneda (ver `pages/reservar.tsx`) y ninguno de sus importes está memoizado,
+  // así que con repintarse le basta. El resto del sitio sí necesita el remonte,
+  // que es de lo que va este proveedor.
+  const enCheckout = /^\/(book|reservar)\//.test(useLocation().pathname)
+  const clave = enCheckout ? 'checkout' : moneda
+
   useLayoutEffect(() => {
     if (primeraVez.current) {
       primeraVez.current = false
@@ -47,5 +60,5 @@ export function ProveedorMoneda({ children }: { children: ReactNode }) {
     return () => window.clearTimeout(id)
   }, [moneda])
 
-  return <Fragment key={moneda}>{children}</Fragment>
+  return <Fragment key={clave}>{children}</Fragment>
 }

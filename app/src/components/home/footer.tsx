@@ -1,10 +1,11 @@
 import { useSyncExternalStore } from 'react'
 import { UserRound } from 'lucide-react'
-import { escuchaMoneda, fechaTasas, fijaMoneda, hayTasa, instantaneaMoneda, monedaActiva, SIMBOLO, type Moneda } from '@/lib/moneda'
+import { escuchaMoneda, fechaTasas, instantaneaMoneda, monedaActiva } from '@/lib/moneda'
+import { SelectorMoneda } from '@/components/ui/selector-moneda'
 import { Link } from 'react-router-dom'
 import { useCatalogo } from '@/lib/api/use-catalogo'
 import { fusionarLista } from '@/lib/api/fusion-catalogo'
-import { TOURS, OCASIONES, MEDIOS_PAGO, REDES, MONEDAS, RESENAS_AGREGADO } from '@/data/home'
+import { TOURS, OCASIONES, MEDIOS_PAGO, REDES, RESENAS_AGREGADO } from '@/data/home'
 import { WHATSAPP_URL } from '@/data/tours'
 import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
 import { Logo } from '@/components/ui/logo'
@@ -378,19 +379,10 @@ export function Footer({ cta = t('Ready for an unforgettable day?') }: { cta?: s
             {/* [2026-08-25] Ya convierte de verdad, con el cambio del día
                 (`lib/moneda.ts`). Cambiarla repinta el sitio entero, igual que
                 el idioma. Una divisa sin tasa se deshabilita en vez de
-                enseñarse: sin cambio real no hay nada que convertir. */}
-            <select
-              id="footer-moneda"
-              value={moneda}
-              onChange={(e) => fijaMoneda(e.target.value as Moneda)}
-              className="rounded-btn border border-white/20 bg-white/10 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-white/30"
-            >
-              {MONEDAS.map((m) => (
-                <option key={m} value={m} disabled={!hayTasa(m)} className="text-navy">
-                  {SIMBOLO[m]} {m}
-                </option>
-              ))}
-            </select>
+                enseñarse: sin cambio real no hay nada que convertir.
+                [2026-08-26] El desplegable es el mismo componente que usa la
+                cabecera del checkout, para que no haya dos que se parezcan. */}
+            <SelectorMoneda tono="oscuro" id="footer-moneda" />
             {/* De cuándo es el cambio. Sin esta línea, un precio en pesos es un
                 número sin procedencia — y el que se cobra sigue siendo el
                 dólar, así que hay que poder comprobarlo. */}

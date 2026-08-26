@@ -56,7 +56,26 @@ export function WhyDirect() {
         {/* Fondo: foto de playa + overlay de legibilidad (capa aparte para que
             los boletos puedan sobresalir del banner sin recortarse). */}
         <div aria-hidden className="wd-banner-fondo">
-          <img src="/fotos/hero-catamaran-1.webp" alt="" />
+          {/* [2026-08-26, el cliente: «el banner que está antes de la sección
+              del barco en movimiento está mal, es otra imagen de fondo»] Y lo
+              era, sin que nadie tocara este archivo: el banner apuntaba a
+              `hero-catamaran-1.webp`, y con la 2ª entrega de fotos
+              (2026-08-23) ESE HUECO CAMBIÓ DE FOTO — ahora es la vista cenital
+              de la plataforma flotante, un plano lejano y clarísimo donde el
+              título en blanco casi no se lee. Está contado en
+              `data/por-que-reservar.ts`, que sí actualizó su alt.
+
+              [2026-08-26, el cliente: «la misma que esté en el git»] Pues la
+              del git: es la que este banner enseñó siempre y estaba entera en
+              el historial (el blob anterior a 17cdb9f). Se recupera con nombre
+              PROPIO —`banner-reserva-directo`— en vez de devolvérsela a
+              `hero-catamaran-1`: ese hueco lo ocupa hoy una foto del cliente
+              que otras páginas ya usan con su alt escrito para ella
+              (`data/instalaciones.ts`, `data/por-que-reservar.ts`), y
+              pisársela rompería aquello para arreglar esto. Con archivo propio
+              el banner no vuelve a cambiar de foto porque alguien reemplace
+              otra. */}
+          <img src="/fotos/banner-reserva-directo.webp" alt="" />
           <div className="wd-banner-overlay" />
         </div>
 

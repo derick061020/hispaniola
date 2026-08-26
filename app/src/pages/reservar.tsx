@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { useEffect, useRef, useState, useSyncExternalStore, type ReactNode } from 'react'
 import { Link, Navigate, useNavigate, useParams, useSearchParams } from 'react-router-dom'
-import { Check, ChevronDown } from 'lucide-react'
+import { Check } from 'lucide-react'
 import * as FancyButton from '@/components/alignui/fancy-button'
 import { Logo } from '@/components/ui/logo'
 import { Meta } from '@/components/seo/meta'
@@ -23,7 +23,9 @@ import { useCheckout } from '@/lib/api/use-checkout'
 import type { ErrorApi } from '@/lib/api/cliente'
 import { cargarStripe, mensajeDeError } from '@/lib/pagos/stripe'
 import { t, traducible } from '@/lib/i18n'
+import { escuchaMoneda, instantaneaMoneda } from '@/lib/moneda'
 import { SelectorIdioma } from '@/components/ui/selector-idioma'
+import { SelectorMoneda } from '@/components/ui/selector-moneda'
 
 // Funnel de reserva (/reservar/:slug, Fase C). El widget de la ficha es el
 // CONFIGURADOR (paquete · fecha · hora · personas); «Continuar» abre aquí, con
@@ -62,6 +64,13 @@ const TITULOS: Record<PasoId, string> = traducible({
 export function ReservarPage() {
   const { slug } = useParams()
   const [params, setParams] = useSearchParams()
+  // [2026-08-26] Cambiar de moneda aquí repinta ESTA página y nada más. El
+  // proveedor remonta el árbol entero cuando cambia la divisa (ver
+  // `lib/proveedor-moneda.tsx`) y en mitad del checkout eso borraría el
+  // formulario: fecha, personas, platos y contacto. Como aquí ningún importe
+  // vive dentro de un `useMemo` —se formatean en cada render—, basta con
+  // suscribirse y volver a pintar.
+  useSyncExternalStore(escuchaMoneda, instantaneaMoneda, () => 'USD|0')
   // [2026-08-25] Party boat y bodas también se reservan aquí. Viven en su
   // propio registro (`data/eventos-reservables.ts`) y no en `TOURS`, que es el
   // catálogo de los cuatro tours y alimenta el grid, el megamenú y el sitemap.
@@ -620,16 +629,15 @@ function FlujoReserva({
           {/* [2026-08-19] El idioma SÍ entra en el funnel. El Topbar no se
               pinta aquí a propósito (nada de distracciones mientras se paga),
               pero el idioma no es una distracción: quien no entiende «Pick-up
-              point» abandona el pago, no lo pospone. El de moneda sigue siendo
-              decorativo — los precios del sitio son todos en US$. */}
+              point» abandona el pago, no lo pospone.
+
+              [2026-08-26] Y la moneda tampoco. Hasta hoy esto era un <button>
+              con la palabra «USD» que no abría nada, mientras el selector real
+              vivía en el pie —que aquí no se pinta—: de ahí el «el cambio de
+              monedas en el checkout no funciona». El resumen sigue diciendo el
+              importe exacto en dólares que se va a cobrar. */}
           <SelectorIdioma />
-          <button
-            type="button"
-            className="flex items-center gap-1 text-sm font-medium text-navy-sub transition-colors hover:text-navy"
-          >
-            {t('USD')}
-            <ChevronDown className="size-4" aria-hidden="true" />
-          </button>
+          <SelectorMoneda />
           </div>
         </div>
       </header>
