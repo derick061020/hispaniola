@@ -121,5 +121,5 @@ export const FAQ_HERO = traducible({
   eyebrow: 'Help',
   titulo: 'Frequently asked questions',
   sub: '17 questions about bookings, payments, food, weather and children. If it’s not here, message us on WhatsApp.',
-  galeria: ['galeria-semi-privado-2', 'hero-catamaran-2'],
+  galeria: ['galeria-semi-privado-2-v2', 'hero-catamaran-2'],
 })

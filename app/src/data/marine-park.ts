@@ -46,7 +46,7 @@ export const MARINE_PARK = traducible({
   // documento (usa la misma en /instalaciones), no parte del copy: se respeta
   // el texto y el énfasis lo pone la tipografía, no tres emojis en un H1.
   lead: "The Caribbean isn't just where we work. It's our home. Every coral we restore, every turtle we protect, and every reef we help recover is part of our commitment to preserving Punta Cana for future generations. When you visit our Marine Park, you become part of that mission.",
-  heroFoto: 'arrecife-fondo-cenital',
+  heroFoto: 'arrecife-fondo-cenital-v2',
   heroFotoAlt: 'The reef seen from the air, turquoise water over the coral structures',
 
   bloques: [

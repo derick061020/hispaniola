@@ -27,7 +27,7 @@ import { t, traducible } from '@/lib/i18n'
 // una razón, el titular no se queda diciendo 19.
 const FOTOS = traducible([
   {
-    foto: 'galeria-semi-privado-4',
+    foto: 'galeria-semi-privado-4-v2',
     alt: 'Guest snorkeling among sergeant major fish over the reef',
     rot: 'var(--pqr-foto-rot-1)',
     // Cada foto se cuelga de un borde distinto del papel para que no se lean

@@ -469,7 +469,7 @@ const PARTY_BOAT: FichaEvento = {
     {
       titulo: 'Birthdays',
       texto: 'A party with family and friends, great food and a national open bar.',
-      foto: 'events-2',
+      foto: 'events-2-v2',
       fotoAlt: 'Group celebrating on board the catamaran, cocktails in hand',
     },
     {
@@ -481,7 +481,7 @@ const PARTY_BOAT: FichaEvento = {
     {
       titulo: 'Corporate',
       texto: 'Team building, incentive, launch or convention closing.',
-      foto: 'events-4',
+      foto: 'events-4-v2',
       fotoAlt: 'Corporate group having dinner on board the catamaran',
     },
   ],
@@ -638,7 +638,7 @@ const BODAS: FichaEvento = {
       // de palmeras (escenario de la ceremonia, sin fingir una que no
       // hay). Mismo criterio que el resto del proyecto (data/eventos.ts
       // versión anterior).
-      foto: 'weddings-4',
+      foto: 'weddings-4-v2',
       fotoAlt: 'The catamaran anchored off a palm-lined beach',
     },
     {
@@ -650,7 +650,7 @@ const BODAS: FichaEvento = {
     {
       titulo: 'Farewell for the group',
       texto: 'The last day, everyone together, no formalities.',
-      foto: 'weddings-2',
+      foto: 'weddings-2-v2',
       fotoAlt: 'A group of friends toasting on the beach, the catamaran behind them',
     },
   ],
@@ -894,7 +894,7 @@ const EMPRESAS: FichaEvento = {
     {
       titulo: 'Incentive',
       texto: 'The year’s reward for the sales team.',
-      foto: 'mice-1',
+      foto: 'mice-1-v2',
       fotoAlt: 'Group celebrating the close of an incentive trip on board',
     },
     {

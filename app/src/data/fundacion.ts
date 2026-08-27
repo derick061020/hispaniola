@@ -103,7 +103,7 @@ export const FUNDACION = traducible({
       titulo: 'Restoration begins',
       texto:
         'A coral restoration and artificial reef building project, in collaboration with the Ministry of Environment.',
-      foto: 'galeria-snorkel-lovers-13',
+      foto: 'galeria-snorkel-lovers-13-v2',
       fotoAlt: 'Coral fragments growing on the nursery structures, with a fish among them',
     },
     {
@@ -190,11 +190,11 @@ export const FUNDACION = traducible({
       'Creating the ecological conditions needed for the restoration and growth of coral reefs, through environmental monitoring and protection.',
     fotos: [
       {
-        src: 'galeria-snorkel-lovers-4',
+        src: 'galeria-snorkel-lovers-4-v2',
         alt: 'Artificial reef blocks on the seabed, surrounded by fish',
       },
       {
-        src: 'galeria-snorkel-lovers-18',
+        src: 'galeria-snorkel-lovers-18-v2',
         alt: 'A sea turtle swimming over the Bávaro reef',
       },
     ],

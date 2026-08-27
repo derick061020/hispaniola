@@ -236,22 +236,22 @@ export const MEDIA_FLOTA: Record<string, MediaBarco[]> = traducible(Object.fromE
       [
         ['galeria-charter-privado-3', 'Deck and dining', 'Upper deck with guests eating at tables under the canopy'],
         ['cocina-flotante', 'Floating kitchen', 'The chef and two guests behind the counter, with trays of freshly cooked seafood and meat'],
-        ['galeria-charter-privado-7', 'In the water', 'Group swimming next to the anchored catamaran'],
+        ['galeria-charter-privado-7-v2', 'In the water', 'Group swimming next to the anchored catamaran'],
       ],
       [
-        ['events-8', 'Service on board', 'Buffet served on deck during a trip'],
+        ['events-8-v2', 'Service on board', 'Buffet served on deck during a trip'],
         ['galeria-charter-privado-5', 'On board', 'Group toasting on the catamaran deck'],
         ['galeria-isla-saona-3', 'At anchor', 'The catamaran anchored over shallow turquoise water'],
       ],
       [
-        ['galeria-snorkel-lovers-4', 'The snorkeling stop', 'Colorful fish over the reef at the snorkeling stop'],
-        ['galeria-semi-privado-2', 'On board', 'Two guests sitting on the rail with their drinks'],
+        ['galeria-snorkel-lovers-4-v2', 'The snorkeling stop', 'Colorful fish over the reef at the snorkeling stop'],
+        ['galeria-semi-privado-2-v2', 'On board', 'Two guests sitting on the rail with their drinks'],
         ['galeria-isla-saona-7', 'Lunch on the beach', 'Long table with lunch served under the palm trees'],
       ],
       [
         ['galeria-semi-privado-6', 'The slide', 'Group in the water next to the catamaran, with the slide out'],
         ['galeria-charter-privado-2', 'Secluded beach', 'Group with freshly opened coconuts on the beach, catamaran in the background'],
-        ['galeria-snorkel-lovers-9', 'On deck', 'Guests getting their gear ready on the aft deck'],
+        ['galeria-snorkel-lovers-9-v2', 'On deck', 'Guests getting their gear ready on the aft deck'],
       ],
       [
         ['events-3', 'Floating bar', 'The floating bar with guests around it, standing in the water'],
@@ -259,7 +259,7 @@ export const MEDIA_FLOTA: Record<string, MediaBarco[]> = traducible(Object.fromE
         ['bar-flotante', 'Bar in the water', 'The floating bar during drinks service'],
       ],
       [
-        ['events-8', 'Service on board', 'Buffet served on deck during a celebration'],
+        ['events-8-v2', 'Service on board', 'Buffet served on deck during a celebration'],
         ['galeria-charter-privado-3', 'Deck and dining', 'Upper deck with the tables set under the canopy'],
         ['galeria-isla-saona-3', 'At anchor', 'The boat anchored over shallow turquoise water'],
       ],
@@ -956,7 +956,7 @@ export const CERO_PLASTICO = traducible({
   // familia de imagen que ya usa el banner de arrecife, porque el mensaje
   // («el mar que devolvemos como lo encontramos») es el que pide mar limpio,
   // no una foto de residuos. Es decorativa: el texto ya lo cuenta todo.
-  foto: 'arrecife-fondo-cenital',
+  foto: 'arrecife-fondo-cenital-v2',
 })
 
 // ═════════════════════════════════════════════════════════════════════════
@@ -1041,7 +1041,7 @@ export const COCINA_Y_PARADAS = traducible({
     },
     // «Mariscos y carnes frescos» → el bufé servido.
     {
-      foto: 'events-8',
+      foto: 'events-8-v2',
       alt: 'Seafood and meat buffet served on deck during a trip',
     },
   ],

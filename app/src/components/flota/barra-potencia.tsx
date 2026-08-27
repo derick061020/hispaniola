@@ -116,7 +116,7 @@ export function BarraPotencia({
           className="relative overflow-hidden rounded-chip bg-cover bg-center ring-1 ring-inset ring-linea"
           style={{
             height: 'var(--spacing-flota-potencia-alto)',
-            backgroundImage: 'url(/fotos/arrecife-fondo-cenital.webp)',
+            backgroundImage: 'url(/fotos/arrecife-fondo-cenital-v2.webp)',
           }}
         >
           {/* ⚠️ LA MÁSCARA NO TAPA: ATENÚA. Tercera versión de esta capa y la

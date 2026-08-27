@@ -175,7 +175,7 @@ export const INSTALACIONES = {
   // Tampoco `footer-oceano`, que es la foto de mar más grande del proyecto: vive
   // dos bloques más abajo, en el propio footer, y las dos entrarían en cuadro de
   // una sola pasada.
-  cierreFoto: 'hero-catamaran-1',
+  cierreFoto: 'hero-catamaran-1-v2',
 } as const
 
 // Banda de CTA intercalada (slide 48). La maqueta pone TRES bandas a ancho
@@ -274,7 +274,7 @@ export const ZONAS: ZonaInstalacion[] = [
     vertical: { ...V_BIOLOGIA, titulo: 'Bringing corals back to life' },
     fotos: [
       {
-        src: 'galeria-snorkel-lovers-9',
+        src: 'galeria-snorkel-lovers-9-v2',
         alt: 'The team handling coral fragments on the work bench',
       },
       {

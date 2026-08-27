@@ -179,7 +179,7 @@ export const SOSTENIBILIDAD = traducible({
   // PLAN-INTERNAS-V2.md: fotos del hero-interna (fundido, no foto fija) — las
   // mismas 3 del arrecife/vivero de coral que ya usa la home en Experiencia,
   // reales y ya curadas, no nuevas.
-  galeria: ['galeria-snorkel-lovers-3', 'galeria-semi-privado-1', 'galeria-snorkel-lovers-6'],
+  galeria: ['galeria-snorkel-lovers-3', 'galeria-semi-privado-1-v2', 'galeria-snorkel-lovers-6-v2'],
   fotoAlt: 'Snorkeling over the coral reef the foundation restores',
 
   pilaresTitulo: 'How we make it happen',
@@ -451,5 +451,5 @@ export const SOSTENIBILIDAD = traducible({
   // cenital turquesa + gradiente navy encima, texto blanco a la izquierda.
   // Sin CTA: el "Ver disponibilidad" canónico vive en el Footer Océano,
   // justo debajo — duplicarlo aquí serían dos botones pegados.
-  cierreFoto: 'arrecife-fondo-cenital',
+  cierreFoto: 'arrecife-fondo-cenital-v2',
 })

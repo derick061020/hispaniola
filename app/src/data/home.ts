@@ -107,13 +107,13 @@ export const TOURS: Tour[] = [
     // [v3 2026-08-06] Copy APROBADO por el cliente (WEBSITE - INICIO, pág. 2).
     descripcionCorta:
       'An intimate adults-only Caribbean experience featuring protected reef snorkeling, an exclusive underwater museum, a secluded beach, and chef-prepared cuisine from our floating kitchen.',
-    foto: 'galeria-semi-privado-4',
+    foto: 'galeria-semi-privado-4-v2',
     galeria: [
-      'galeria-semi-privado-4',
-      'galeria-semi-privado-1',
-      'galeria-semi-privado-2',
+      'galeria-semi-privado-4-v2',
+      'galeria-semi-privado-1-v2',
+      'galeria-semi-privado-2-v2',
       'galeria-semi-privado-3',
-      'galeria-semi-privado-5',
+      'galeria-semi-privado-5-v2',
     ],
     // Los chips salen de la «tagline» que el cliente puso tras el asterisco
     // en el mismo copy aprobado: «Limited guests. Adults only. Protected
@@ -139,11 +139,11 @@ export const TOURS: Tour[] = [
     // [v3] Copy APROBADO (WEBSITE - INICIO, pág. 2).
     descripcionCorta:
       'An all-ages experience where coral restoration, symbolic coral planting, an exclusive underwater museum, and protected reefs inspire unforgettable memories.',
-    foto: 'galeria-snorkel-lovers-4',
+    foto: 'galeria-snorkel-lovers-4-v2',
     galeria: [
-      'galeria-snorkel-lovers-4',
+      'galeria-snorkel-lovers-4-v2',
       'galeria-snorkel-lovers-1',
-      'galeria-snorkel-lovers-2',
+      'galeria-snorkel-lovers-2-v2',
       'galeria-snorkel-lovers-3',
       'galeria-snorkel-lovers-5',
     ],
@@ -181,7 +181,7 @@ export const TOURS: Tour[] = [
     foto: 'galeria-charter-privado-4',
     galeria: [
       'galeria-charter-privado-4',
-      'galeria-charter-privado-1',
+      'galeria-charter-privado-1-v2',
       'galeria-charter-privado-2',
       'galeria-charter-privado-3',
       'galeria-charter-privado-5',

@@ -87,7 +87,7 @@ export const ARTICULOS: Articulo[] = traducible([
     autorId: 'omar',
     fecha: 'Jul 12, 2026',
     minutos: 6,
-    foto: 'galeria-semi-privado-1',
+    foto: 'galeria-semi-privado-1-v2',
     fotoAlt: 'Guests snorkeling over the coral nursery',
     destacado: true,
     // Único artículo con cuerpo: cada bloque sale de contenido REAL del
@@ -177,7 +177,7 @@ export const ARTICULOS: Articulo[] = traducible([
     autorId: 'omar',
     fecha: 'Jun 28, 2026',
     minutos: 7,
-    foto: 'arrecife-fondo-cenital',
+    foto: 'arrecife-fondo-cenital-v2',
     fotoAlt: 'Overhead view of the Caribbean Sea with turquoise water',
     destacado: true,
     cuerpo: null,
@@ -216,7 +216,7 @@ export const ARTICULOS: Articulo[] = traducible([
     autorId: 'lola',
     fecha: 'Jun 6, 2026',
     minutos: 9,
-    foto: 'galeria-snorkel-lovers-2',
+    foto: 'galeria-snorkel-lovers-2-v2',
     fotoAlt: 'Catamaran anchored over turquoise water',
     cuerpo: null,
   },
@@ -228,7 +228,7 @@ export const ARTICULOS: Articulo[] = traducible([
     autorId: 'eva',
     fecha: 'May 30, 2026',
     minutos: 4,
-    foto: 'galeria-charter-privado-6',
+    foto: 'galeria-charter-privado-6-v2',
     // [2026-08-20] «Family» ya no era cierto: la foto nueva son ocho adultos.
     fotoAlt: 'Group enjoying a deserted beach',
     cuerpo: null,
@@ -294,7 +294,7 @@ export const ARTICULOS: Articulo[] = traducible([
     autorId: 'lola',
     fecha: 'May 3, 2026',
     minutos: 5,
-    foto: 'tour-charter-privado',
+    foto: 'tour-charter-privado-v2',
     fotoAlt: 'Hispaniola catamaran ready to set sail',
     cuerpo: null,
   },
@@ -318,7 +318,7 @@ export const ARTICULOS: Articulo[] = traducible([
     autorId: 'lola',
     fecha: 'Apr 12, 2026',
     minutos: 6,
-    foto: 'galeria-semi-privado-5',
+    foto: 'galeria-semi-privado-5-v2',
     // [2026-08-20] El alt nunca describio esta foto (es la cocina flotante con
     // las bandejas emplatadas, no la preparacion del barco). La foto nueva es
     // la misma escena en alta, asi que se corrige el texto.
@@ -357,7 +357,7 @@ export const ARTICULOS: Articulo[] = traducible([
     autorId: 'omar',
     fecha: 'Mar 15, 2026',
     minutos: 5,
-    foto: 'galeria-snorkel-lovers-9',
+    foto: 'galeria-snorkel-lovers-9-v2',
     fotoAlt: 'Guest snorkeling next to tropical fish',
     cuerpo: null,
   },
@@ -371,7 +371,7 @@ export const ARTICULOS: Articulo[] = traducible([
     autorId: 'eva',
     fecha: 'Mar 22, 2026',
     minutos: 6,
-    foto: 'galeria-snorkel-lovers-11',
+    foto: 'galeria-snorkel-lovers-11-v2',
     fotoAlt: 'Group snorkeling in turquoise water',
     cuerpo: null,
   },
@@ -394,5 +394,5 @@ export const BLOG_HERO = traducible({
   titulo: 'The Caribbean, told by the people who sail it',
   sub: 'Honest guides, stories from the sea and real advice for your trip to Punta Cana. No empty marketing.',
   // Fotos del hero compartido (mismo patrón que el resto de internas).
-  galeria: ['galeria-snorkel-lovers-2', 'galeria-charter-privado-2', 'galeria-semi-privado-1'],
+  galeria: ['galeria-snorkel-lovers-2-v2', 'galeria-charter-privado-2', 'galeria-semi-privado-1-v2'],
 })

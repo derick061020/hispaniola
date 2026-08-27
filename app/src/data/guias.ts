@@ -58,7 +58,7 @@ export const TIPS_GUIAS: TipGuia[] = traducible([
     lead: 'For pure diving, there are better spots in the Caribbean. But for seeing turtles, few beat it.',
     respuesta:
       'Let’s be honest: much of the Atlantic coast has been damaged over the years, and Catalina or Bayahibe, on the south coast, have better visibility. Even so, on our route there’s an almost 100% chance of seeing turtles from the catamaran, thanks to the artificial reefs we’ve been planting since 2016 with the Fundación de Arrecifes Ecológicos de Bávaro, a project the Ministry of the Environment ranks among the 3 largest coral gardening efforts in the country.',
-    foto: 'galeria-snorkel-lovers-4',
+    foto: 'galeria-snorkel-lovers-4-v2',
     fotoAlt: 'Snorkelers swimming over the reef next to the catamaran in Cabeza de Toro',
     fotoPie: 'Coral Quest · Cabeza de Toro reef',
     stat: { valor: '≈100%', texto: 'of our trips see turtles · Top 3 coral project in the country' },
@@ -126,5 +126,5 @@ export const GUIAS_HERO = traducible({
   eyebrow: 'Guides',
   titulo: 'Punta Cana guides',
   sub: 'What we know after more than a decade sailing this coast, so you can decide with real information, not marketing.',
-  galeria: ['galeria-snorkel-lovers-4', 'galeria-semi-privado-2'],
+  galeria: ['galeria-snorkel-lovers-4-v2', 'galeria-semi-privado-2-v2'],
 })

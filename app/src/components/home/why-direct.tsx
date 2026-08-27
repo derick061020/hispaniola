@@ -83,8 +83,16 @@ export function WhyDirect() {
               no habría servido de nada. Es la misma trampa, y la única salida
               es un nombre que nadie tenga guardado.
 
-              ⚠️ La misma trampa sigue viva para el resto de fotos que se
-              reemplazaron conservando el nombre. */}
+              ✅ RESUELTO (2026-08-27) para el resto de fotos: las 25 que la 2ª
+              entrega reemplazó conservando el nombre Y que alguien carga de
+              verdad llevan ahora sufijo `-v2` (`galeria-semi-privado-4-v2`,
+              `hero-catamaran-1-v2`, `weddings-2-v2`…). Se comparó el build
+              publicado el 19-08 con el actual para saber cuáles cambiaron de
+              contenido bajo el mismo nombre; las que solo se nombran en
+              comentarios se dejaron quietas, porque un fichero que nadie pide
+              no está en la caché de nadie. La regla, para la próxima entrega:
+              foto nueva con nombre viejo = sufijo nuevo, o el cliente seguirá
+              viendo la anterior durante un año. */}
           <img src="/fotos/banner-reserva-directo-aerea.webp" alt="" />
           <div className="wd-banner-overlay" />
         </div>

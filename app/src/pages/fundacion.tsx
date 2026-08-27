@@ -86,7 +86,7 @@ export function FundacionPage() {
       <HeroInterna
         ctaHref="/#tours"
         imagen={{
-          src: '/fotos/arrecife-fondo-cenital.webp',
+          src: '/fotos/arrecife-fondo-cenital-v2.webp',
           alt: 'Overhead view of the turquoise water at Playa Bávaro',
         }}
       >

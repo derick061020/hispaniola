@@ -99,7 +99,7 @@ export const CONCEPTOS_SUELTOS: ConceptoSuelto[] = traducible([
     nombre: '4-hour charter',
     nota: 'Boat, crew, drinks and appetizers',
     importe: 75,
-    foto: 'hero-catamaran-1',
+    foto: 'hero-catamaran-1-v2',
     // [2026-08-23] El alt se reescribe con la 2ª entrega del cliente. El hueco
     // `hero-catamaran-1` cambia de foto —ahora es la vista cenital de la
     // plataforma flotante con los barcos fondeados sobre el arrecife— y el alt
@@ -114,7 +114,7 @@ export const CONCEPTOS_SUELTOS: ConceptoSuelto[] = traducible([
     nombre: 'Snorkeling trip',
     nota: 'Gear, guide and a stop at the reef',
     importe: 30,
-    foto: 'galeria-semi-privado-4',
+    foto: 'galeria-semi-privado-4-v2',
     fotoAlt: 'Guest snorkeling among sergeant major fish over the reef',
   },
   {
@@ -146,7 +146,7 @@ export const CONCEPTOS_SUELTOS: ConceptoSuelto[] = traducible([
     nombre: 'Tour photos',
     nota: 'All day long, GoPro included on the snorkel stop',
     importe: 20,
-    foto: 'galeria-snorkel-lovers-9',
+    foto: 'galeria-snorkel-lovers-9-v2',
     fotoAlt: 'Family on deck during a tour activity',
   },
 ])
@@ -196,7 +196,7 @@ export const CARA_A_CARA: FilaCaraACara[] = traducible([
     concepto: 'Tour photos',
     nosotros: 'Included, snorkeling shots too',
     otros: 'Charged separately',
-    foto: 'galeria-snorkel-lovers-9',
+    foto: 'galeria-snorkel-lovers-9-v2',
     fotoAlt: 'Family on deck during a tour activity',
   },
   // Las dos sin foto van al final a propósito: así el bloque ABRE con cuatro
@@ -325,7 +325,7 @@ export const UBICACION = traducible({
     'Good sea conditions all year round',
     'Minutes from your hotel, not across the island',
   ],
-  foto: 'arrecife-fondo-cenital',
+  foto: 'arrecife-fondo-cenital-v2',
   fotoAlt: 'Aerial view of the Cabeza de Toro reef with the turquoise water of Cabo Engaño',
 } as const)
 

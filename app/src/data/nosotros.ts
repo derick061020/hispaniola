@@ -172,7 +172,7 @@ export const EQUIPO: MiembroEquipo[] = traducible([
     id: 'capitan-placeholder',
     nombre: 'Captain',
     rol: 'Onboard crew',
-    foto: 'equipo-capitan',
+    foto: 'equipo-capitan-v2',
     placeholder: true,
     cta: { label: 'Our story', tipo: 'historia' },
   },
@@ -189,7 +189,7 @@ export const EQUIPO: MiembroEquipo[] = traducible([
     id: 'biologa-placeholder',
     nombre: 'Marine biologist',
     rol: 'Onboard crew',
-    foto: 'equipo-biologa',
+    foto: 'equipo-biologa-v2',
     placeholder: true,
     cta: { label: 'Our story', tipo: 'historia' },
   },
@@ -407,7 +407,7 @@ export const NOSOTROS = traducible({
   titulo: 'The crew and the fleet behind every tour',
   sub: 'Two catamarans, a floating kitchen and a team that has been sailing the Punta Cana coast since 2012.',
   // PLAN-INTERNAS-V2.md: fotos del hero-interna en fundido.
-  galeria: ['galeria-charter-privado-1', 'hero-catamaran-1', 'galeria-semi-privado-3'],
+  galeria: ['galeria-charter-privado-1-v2', 'hero-catamaran-1-v2', 'galeria-semi-privado-3'],
 
   // El equipo con nombre + la tripulación a bordo (maqueta de correcciones v1
   // slide 2 y 3). El bloque de personas reutiliza la sección de la home
@@ -447,7 +447,7 @@ export const NOSOTROS = traducible({
   // vista cenital") — sustituimos la foto del vivero de coral real por una
   // cenital genérica de agua turquesa caribeña (stock, sin marca de agua).
   // El texto del banner YA cuenta el arrecife; el fondo solo ambienta mar.
-  arrecifeFoto: 'arrecife-fondo-cenital',
+  arrecifeFoto: 'arrecife-fondo-cenital-v2',
   arrecifeFotoAlt: 'Overhead view of the Caribbean Sea with crystal-clear turquoise water',
 })
 
@@ -503,7 +503,7 @@ export const EXPERIENCIA_ABORDO: ParadaExperiencia[] = traducible([
     titulo: 'Snorkeling at the coral nursery',
     texto:
       'Our first stop is a coral nursery where the Bávaro Reefs Foundation restores the marine habitat. You’ll swim surrounded by colorful fish in crystal-clear water.',
-    foto: 'galeria-semi-privado-4',
+    foto: 'galeria-semi-privado-4-v2',
     fotoAlt: 'Snorkeling among tropical fish at the coral nursery',
     chip: 'Reef restoration · Bávaro Reefs Foundation',
   },
@@ -511,7 +511,7 @@ export const EXPERIENCIA_ABORDO: ParadaExperiencia[] = traducible([
     numero: '02',
     titulo: 'Deserted beach and coco-loco',
     texto: 'We land on a deserted beach for cold coconuts opened on the spot and coconut cocktails. Have all the ones you want.',
-    foto: 'galeria-charter-privado-6',
+    foto: 'galeria-charter-privado-6-v2',
     // [2026-08-20] «Family» ya no era cierto: la foto nueva son ocho adultos.
     fotoAlt: 'Group enjoying fresh coconuts on a deserted beach',
   },
