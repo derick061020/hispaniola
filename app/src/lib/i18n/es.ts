@@ -1541,6 +1541,7 @@ export const ES: Record<string, string> = {
   "Or pay in cash on board — you save 5% and there’s nothing to do here.": "O paga en efectivo a bordo: te ahorras un 5% y aquí no hay nada que hacer.",
   "Original catamaran tours in Punta Cana": "Tours en catamarán originales en Punta Cana",
   "Other": "Otro",
+  "Other calendar (.ics)": "Otro calendario (.ics)",
   "Other occasions": "Otras ocasiones",
   "Other tours": "Otros tours",
   "Other tours:": "Otros tours:",

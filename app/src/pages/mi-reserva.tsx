@@ -1,6 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
-import { ArrowLeft, CalendarPlus, Check, ChevronRight, CreditCard, KeyRound, MapPin, Pencil, Ticket, Users, Utensils } from 'lucide-react'
+import { ArrowLeft, Check, ChevronRight, CreditCard, KeyRound, MapPin, Pencil, Ticket, Users, Utensils } from 'lucide-react'
 import * as FancyButton from '@/components/alignui/fancy-button'
 import { Logo } from '@/components/ui/logo'
 import { Meta } from '@/components/seo/meta'
@@ -10,7 +10,7 @@ import {
   actualizarReserva, buscarReserva as buscarReservaOdoo,
   buscarReservaPorContacto as buscarPorContacto,
 } from '@/lib/api/api'
-import { urlGoogleCalendar } from '@/lib/calendario'
+import { BotonCalendario } from '@/components/ui/boton-calendario'
 import { PagoSaldo } from '@/components/mi-reserva/pago-saldo'
 import { reservaDesdeOdoo } from '@/lib/api/desde-odoo'
 import { ErrorApi } from '@/lib/api/cliente'
@@ -761,20 +761,12 @@ function BloqueReserva({
         </p>
       )}
 
-      {/* «Añadir al calendario» → Google Calendar, con la fecha, las horas, el
-          hotel y el código ya dentro. Sale de la MISMA reserva que esta
-          pantalla está pintando, así que no puede desincronizarse. Es el mismo
-          botón que la pantalla de gracias y comparte helper a propósito: dos
-          copias del mismo evento acaban divergiendo. Ver lib/calendario.ts. */}
-      <a
-        href={urlGoogleCalendar(reserva)}
-        target="_blank"
-        rel="noopener"
-        className="mt-4 inline-flex items-center gap-2 rounded-btn border border-linea bg-papel px-4 py-2 text-sm font-semibold text-navy transition-colors hover:bg-papel-hueso"
-      >
-        <CalendarPlus className="size-4" aria-hidden="true" />
-        {t('Add to calendar')}
-      </a>
+      {/* «Añadir al calendario» con la fecha, las horas, el hotel y el código
+          ya dentro, para Google, Apple, Outlook.com, Office 365 o un .ics. Sale
+          de la MISMA reserva que esta pantalla está pintando, así que no puede
+          desincronizarse, y es el MISMO componente que la pantalla de gracias:
+          dos copias del mismo evento acaban divergiendo. Ver ui/boton-calendario. */}
+      <BotonCalendario reserva={reserva} className="mt-4" />
     </section>
   )
 }

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
-import { Calendar, Check, MessageCircle, Sparkles } from 'lucide-react'
+import { Check, MessageCircle, Sparkles } from 'lucide-react'
 import { Logo } from '@/components/ui/logo'
 import { Meta } from '@/components/seo/meta'
 import { etiquetaOcasion } from '@/components/reservar/tipos'
@@ -9,7 +9,7 @@ import { buscarReserva, type Reserva } from '@/lib/reservas'
 import { menuDeLaReserva } from '@/lib/menu-reserva'
 import { dispararConfetti } from '@/lib/celebracion'
 import { confirmarPago, enviarFormulario, leerCheckout } from '@/lib/api/api'
-import { urlGoogleCalendar } from '@/lib/calendario'
+import { BotonCalendario } from '@/components/ui/boton-calendario'
 import { olvidarSesionCheckout, sesionCheckoutGuardada } from '@/lib/api/use-checkout'
 import { formatoDinero } from '@/data/home'
 import { t, traducible } from '@/lib/i18n'
@@ -311,20 +311,14 @@ export function GraciasPage() {
             se promete tres líneas más arriba, así que el botón sobraba y solo
             podía decepcionar. «Add to calendar» sí es real ahora: el .ics lo
             sirve Odoo con la fecha, la recogida y el hotel dentro. */}
-        {/* [2026-08-27] Y desde hoy no descarga un .ics: abre Google Calendar
-            con el evento relleno (fecha, hora de salida y de regreso, hotel y
-            código), que es lo que pidió Samuel. El porqué y lo que se pierde
-            —Apple Calendar y Outlook— está en lib/calendario.ts. */}
+        {/* [2026-08-27] Y desde hoy no descarga un .ics de Odoo: el botón
+            despliega las cinco salidas (Google, Apple, Outlook.com, Office 365
+            y un .ics para el resto) con el evento ya relleno —fecha, hora de
+            salida y de regreso, hotel y código—. El evento se arma en el
+            navegador con ESTA reserva, así que no puede decir algo distinto de
+            lo que se está leyendo. Ver lib/calendario.ts. */}
         <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
-          <a
-            href={urlGoogleCalendar(reserva)}
-            target="_blank"
-            rel="noopener"
-            className="inline-flex items-center gap-2 rounded-btn border border-linea bg-papel px-4 py-2.5 text-sm font-semibold text-navy transition-colors hover:bg-papel-hueso"
-          >
-            <Calendar className="size-4" aria-hidden="true" />
-            {t('Add to calendar')}
-          </a>
+          <BotonCalendario reserva={reserva} />
           <a
             href="https://wa.me/18293052804"
             target="_blank"
