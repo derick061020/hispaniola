@@ -8,8 +8,9 @@ import { fechaLarga } from '@/lib/fechas'
 import { guardarReserva, type Reserva } from '@/lib/reservas'
 import {
   actualizarReserva, buscarReserva as buscarReservaOdoo,
-  buscarReservaPorContacto as buscarPorContacto, urlCalendario,
+  buscarReservaPorContacto as buscarPorContacto,
 } from '@/lib/api/api'
+import { urlGoogleCalendar } from '@/lib/calendario'
 import { PagoSaldo } from '@/components/mi-reserva/pago-saldo'
 import { reservaDesdeOdoo } from '@/lib/api/desde-odoo'
 import { ErrorApi } from '@/lib/api/cliente'
@@ -669,7 +670,6 @@ function DetalleReserva({
         <BloqueReserva
           reserva={reservaParaMostrar}
           token={token}
-          email={emailEnviado}
           onPagado={() => setRecargas((n) => n + 1)}
         />
 
@@ -720,15 +720,15 @@ function DetalleReserva({
 // Sub-componentes
 // ────────────────────────────────────────────────────────────────────────
 
+// `email` desapareció de las props (2026-08-27): lo pedía el .ics de Odoo para
+// autorizar la descarga, y el botón del calendario ya no pasa por Odoo.
 function BloqueReserva({
   reserva,
   token,
-  email,
   onPagado,
 }: {
   reserva: Reserva
   token: string | null
-  email: string | null
   onPagado: () => void
 }) {
   return (
@@ -761,11 +761,15 @@ function BloqueReserva({
         </p>
       )}
 
-      {/* «Añadir al calendario». El .ics lo sirve Odoo con la fecha, la hora de
-          recogida y el hotel ya dentro — es lo mismo que enseña esta pantalla,
-          así que no puede desincronizarse. */}
+      {/* «Añadir al calendario» → Google Calendar, con la fecha, las horas, el
+          hotel y el código ya dentro. Sale de la MISMA reserva que esta
+          pantalla está pintando, así que no puede desincronizarse. Es el mismo
+          botón que la pantalla de gracias y comparte helper a propósito: dos
+          copias del mismo evento acaban divergiendo. Ver lib/calendario.ts. */}
       <a
-        href={urlCalendario(reserva.codigo, { email: email ?? undefined, token: token ?? undefined })}
+        href={urlGoogleCalendar(reserva)}
+        target="_blank"
+        rel="noopener"
         className="mt-4 inline-flex items-center gap-2 rounded-btn border border-linea bg-papel px-4 py-2 text-sm font-semibold text-navy transition-colors hover:bg-papel-hueso"
       >
         <CalendarPlus className="size-4" aria-hidden="true" />

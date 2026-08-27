@@ -8,7 +8,8 @@ import { sumarDias, fechaLarga } from '@/lib/fechas'
 import { buscarReserva, type Reserva } from '@/lib/reservas'
 import { menuDeLaReserva } from '@/lib/menu-reserva'
 import { dispararConfetti } from '@/lib/celebracion'
-import { confirmarPago, enviarFormulario, leerCheckout, urlCalendario } from '@/lib/api/api'
+import { confirmarPago, enviarFormulario, leerCheckout } from '@/lib/api/api'
+import { urlGoogleCalendar } from '@/lib/calendario'
 import { olvidarSesionCheckout, sesionCheckoutGuardada } from '@/lib/api/use-checkout'
 import { formatoDinero } from '@/data/home'
 import { t, traducible } from '@/lib/i18n'
@@ -310,9 +311,15 @@ export function GraciasPage() {
             se promete tres líneas más arriba, así que el botón sobraba y solo
             podía decepcionar. «Add to calendar» sí es real ahora: el .ics lo
             sirve Odoo con la fecha, la recogida y el hotel dentro. */}
+        {/* [2026-08-27] Y desde hoy no descarga un .ics: abre Google Calendar
+            con el evento relleno (fecha, hora de salida y de regreso, hotel y
+            código), que es lo que pidió Samuel. El porqué y lo que se pierde
+            —Apple Calendar y Outlook— está en lib/calendario.ts. */}
         <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
           <a
-            href={urlCalendario(reserva.codigo, { email: reserva.contacto.email })}
+            href={urlGoogleCalendar(reserva)}
+            target="_blank"
+            rel="noopener"
             className="inline-flex items-center gap-2 rounded-btn border border-linea bg-papel px-4 py-2.5 text-sm font-semibold text-navy transition-colors hover:bg-papel-hueso"
           >
             <Calendar className="size-4" aria-hidden="true" />
