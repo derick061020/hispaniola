@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Minus, Package, Plus, Users } from 'lucide-react'
+import { CalendarDays, Minus, Package, Plus, Users } from 'lucide-react'
 import * as CompactButton from '@/components/alignui/compact-button'
 import * as FancyButton from '@/components/alignui/fancy-button'
 import { Link } from 'react-router-dom'
@@ -76,6 +76,12 @@ export function CalculadoraEvento({
 }) {
   const conPrecio = paquetes.filter((p) => p.precioBase !== null)
   const [personas, setPersonas] = useState(12)
+  // La fecha del evento. Hasta ahora el funnel se abria sin ella y habia que
+  // pedirsela otra vez al cliente dentro del checkout; ahora viaja en la URL
+  // igual que `personas`, que es lo que `reservar.tsx` ya sabe leer.
+  const [fecha, setFecha] = useState('')
+  // No tiene sentido reservar un evento para ayer.
+  const hoyISO = new Date().toISOString().slice(0, 10)
 
   if (conPrecio.length === 0) return null
 
@@ -234,6 +240,27 @@ export function CalculadoraEvento({
             suelto junto a los botones—, así que de los cinco steppers del sitio
             este era el único que se leía distinto. Ahora los cinco son la misma
             pieza, que es lo que tiene que llegar a Figma. */}
+        {/* La fecha va ANTES del numero de invitados: es la primera pregunta
+            que hace cualquiera al organizar un evento, y asi llega al checkout
+            sin volver a preguntarla. Mismo alto y mismo borde que el contador
+            de al lado para que la pieza siga cuadrada. */}
+        <label
+          htmlFor={`evento-fecha-${slug}`}
+          className="mb-2 flex h-10 items-center gap-2 rounded-10 border border-stroke-soft-200 bg-bg-white-0 px-3"
+        >
+          <CalendarDays className="size-5 shrink-0 text-text-sub-600" aria-hidden="true" />
+          <span className="sr-only">{t('Preferred date')}</span>
+          <input
+            id={`evento-fecha-${slug}`}
+            type="date"
+            value={fecha}
+            min={hoyISO}
+            onChange={(e) => setFecha(e.target.value)}
+            aria-label={t('Preferred date')}
+            className="w-full bg-transparent text-paragraph-sm text-text-strong-950 outline-none"
+          />
+        </label>
+
         <div
           role="group"
           aria-label={t('Number of guests')}
@@ -368,7 +395,11 @@ export function CalculadoraEvento({
           el desktop que dibujó Samuel. */}
       {varianteOdoo ? (
         <FancyButton.Root variant="primary" className="w-full max-lg:h-11" asChild>
-          <Link to={`/book/${slug}?variante=${varianteOdoo}&personas=${personas}`}>
+          <Link
+            to={`/book/${slug}?variante=${varianteOdoo}&personas=${personas}${
+              fecha ? `&fecha=${fecha}` : ''
+            }`}
+          >
             {t('Book this package')}
           </Link>
         </FancyButton.Root>
