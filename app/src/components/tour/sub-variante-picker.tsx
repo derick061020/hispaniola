@@ -44,6 +44,27 @@ import { t } from '@/lib/i18n'
 // opción ni un dato: siguen los cinco barcos, su foto, su duración, su aforo y
 // su precio — solo que en una línea en vez de dos.
 
+// [2026-08-31] EL SALTO DE IPHONE. Al tocar un barco, Safari de iOS lleva el
+// foco al boton y de paso desplaza la pagina un poco —arriba o abajo segun donde
+// estuviera la fila—, sobre todo con la cabecera sticky por encima. En Android y
+// en escritorio no pasa.
+//
+// No se quita el foco: estos botones son un `radiogroup` y el teclado lo
+// necesita. Lo que se hace es guardar la posicion y devolverla en el mismo
+// cuadro, antes de que se pinte, asi que el salto no llega a verse. Solo si algo
+// la movio de verdad, para no pelearse con un scroll legitimo del usuario.
+function sinSaltoDeFoco(accion: () => void) {
+  if (typeof window === 'undefined') {
+    accion()
+    return
+  }
+  const y = window.scrollY
+  accion()
+  requestAnimationFrame(() => {
+    if (Math.abs(window.scrollY - y) > 1) window.scrollTo({ top: y })
+  })
+}
+
 export function SubVariantePicker({
   subVariantes,
   activa,
@@ -91,7 +112,7 @@ export function SubVariantePicker({
             type="button"
             role="radio"
             aria-checked={activo}
-            onClick={() => onChange(s.id)}
+            onClick={() => sinSaltoDeFoco(() => onChange(s.id))}
             // [2026-07-28, 3ª vuelta] PADDING PAREJO Y RADIOS CONCÉNTRICOS.
             // Samuel: «ajusta el padding izquierdo y el border radius de la
             // imagen, está disparejo». Las dos cosas eran ciertas:
