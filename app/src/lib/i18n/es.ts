@@ -1455,10 +1455,6 @@ export const ES: Record<string, string> = {
   "Not included": "No incluido",
   "Not included:": "No incluido:",
   "Not included: ": "No incluido: ",
-  "Not included: HD photo album (US$ 20/group via Dropbox) · professional photographer (on request, extra cost) · transportation surcharge from Casa de Campo.": "No incluido: álbum de fotos HD (US$ 20/grupo vía Dropbox) · fotógrafo profesional (con aviso previo, coste extra) · suplemento de transporte desde Casa de Campo.",
-  "Not included: HD photo album (US$ 20/group via Dropbox) · transportation surcharge from Casa de Campo.": "No incluido: álbum de fotos HD (US$ 20/grupo vía Dropbox) · suplemento de transporte desde Casa de Campo.",
-  "Not included: premium lobster (US$ 30/person, optional add-on at checkout) · transportation from Casa de Campo (surcharge) · professional photographer (on request, extra cost).": "No incluido: langosta premium (US$ 30/persona, extra opcional al reservar) · transporte desde Casa de Campo (suplemento) · fotógrafo profesional (con aviso previo, coste extra).",
-  "Not included: premium lobster (US$ 30/person, optional add-on at checkout) · transportation from Casa de Campo (surcharge).": "No incluido: langosta premium (US$ 30/persona, extra opcional al reservar) · transporte desde Casa de Campo (suplemento).",
   "Not one plastic bottle comes aboard our boats": "Ni una botella de plástico sube a nuestros barcos",
   "Not sure which catamaran is right for your group? Our sales team will be happy to help you choose the perfect option.": "¿No sabes qué catamarán le va mejor a tu grupo? Nuestro equipo comercial te ayuda encantado a elegir.",
   "Noted:": "Anotado:",
@@ -2644,4 +2640,6 @@ export const ES: Record<string, string> = {
   "Open photo {n} of {total} in the gallery": "Abrir la foto {n} de {total} de la galería",
   "Open photo {n} of {total} of the {zona}": "Abrir la foto {n} de {total} de {zona}",
   "Free pick-up at hotels in Bávaro and Punta Cana for the {hora} departure": "Recogida gratuita en hoteles de Bávaro y Punta Cana para la salida de las {hora}",
+  "Not included: transportation surcharge from Casa de Campo.": "No incluido: suplemento de transporte desde Casa de Campo.",
+  "Not included: transportation from Casa de Campo (surcharge). Optional add-on at checkout: premium lobster (US$ 30/person).": "No incluido: transporte desde Casa de Campo (suplemento). Extra opcional al reservar: langosta premium (US$ 30/persona).",
 }

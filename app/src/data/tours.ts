@@ -360,7 +360,7 @@ const INCLUYE_MARINE_PARK: BeneficioIncluido[] = [
 // portados del tarifario y de la web, solo cambian de idioma. Compartidos por
 // las dos fichas del Marine Park por el mismo motivo que los 8 ítems.
 const NO_INCLUIDO_MARINE_PARK =
-  'Not included: HD photo album (US$ 20/group via Dropbox) · professional photographer (on request, extra cost) · transportation surcharge from Casa de Campo.'
+  'Not included: transportation surcharge from Casa de Campo.'
 
 const QUE_LLEVAR_MARINE_PARK = [
   'Swimsuit',
@@ -573,15 +573,6 @@ export const FICHAS: Record<string, FichaTour> = traducible({
     // per group»). Aquí SÍ se puede decir «álbum completo»: lo gratis son
     // «los mejores momentos», no todas las fotos.
     addOns: [
-      {
-        id: 'album-fotos',
-        etiqueta: 'The full album, at top quality',
-        descripcion:
-          'The whole album from the day, at original resolution and uncropped, for US$ 20 for the entire group.',
-        base: 'grupo',
-        precio: 20,
-        porDefecto: true,
-      },
     ],
   },
 
@@ -794,7 +785,7 @@ export const FICHAS: Record<string, FichaTour> = traducible({
     // —si se toca una, hay que mirar la otra—, pero el fotógrafo no se anuncia
     // aquí. Mismo cambio en Saona.
     noIncluido:
-      'Not included: HD photo album (US$ 20/group via Dropbox) · transportation surcharge from Casa de Campo.',
+      'Not included: transportation surcharge from Casa de Campo.',
     queLlevar: QUE_LLEVAR_MARINE_PARK,
     recomendaciones: RECOMENDACIONES_V3,
     faqTour: [
@@ -814,15 +805,6 @@ export const FICHAS: Record<string, FichaTour> = traducible({
     // Samuel decidió el 07-27 extenderlo a los 6 productos: la política del
     // negocio es uniforme y son sus otras páginas las que no lo tienen escrito.
     addOns: [
-      {
-        id: 'album-fotos',
-        etiqueta: 'The full album, at top quality',
-        descripcion:
-          'The whole album from the day, at original resolution and uncropped, for US$ 20 for the entire group.',
-        base: 'grupo',
-        precio: 20,
-        porDefecto: true,
-      },
     ],
   },
 
@@ -1297,7 +1279,7 @@ export const FICHAS: Record<string, FichaTour> = traducible({
       'Free photos uploaded to Facebook',
     ],
     noIncluido:
-      'Not included: premium lobster (US$ 30/person, optional add-on at checkout) · transportation from Casa de Campo (surcharge) · professional photographer (on request, extra cost).',
+      'Not included: transportation from Casa de Campo (surcharge). Optional add-on at checkout: premium lobster (US$ 30/person).',
     queLlevar: [
       'Swimsuit',
       'Towel',
@@ -1347,15 +1329,6 @@ export const FICHAS: Record<string, FichaTour> = traducible({
         precio: 30,
         soloSubVariantes: ['maite', 'santa-maria', 'forever-teresa-4h'],
         nota: 'From March to June lobster may be unavailable; in that case it is replaced with jumbo shrimp.',
-      },
-      {
-        id: 'album-fotos',
-        etiqueta: 'Your photos at top quality',
-        descripcion:
-          'The original files, uncompressed and at full resolution, for US$ 20 for the entire group.',
-        base: 'grupo',
-        precio: 20,
-        porDefecto: true,
       },
     ],
   },
@@ -1565,7 +1538,7 @@ export const FICHAS: Record<string, FichaTour> = traducible({
     // [v3 2026-08-07, pedido de Samuel] SIN «professional photographer (on
     // request, extra cost)», igual que en snorkel-lovers.
     noIncluido:
-      'Not included: premium lobster (US$ 30/person, optional add-on at checkout) · transportation from Casa de Campo (surcharge).',
+      'Not included: transportation from Casa de Campo (surcharge). Optional add-on at checkout: premium lobster (US$ 30/person).',
     queLlevar: [
       'Swimsuit',
       'Towel',
@@ -1603,15 +1576,6 @@ export const FICHAS: Record<string, FichaTour> = traducible({
         base: 'persona',
         precio: 30,
         nota: 'From March to June lobster may be unavailable; if so it is replaced with jumbo shrimp.',
-      },
-      {
-        id: 'album-fotos',
-        etiqueta: 'The full album, at top quality',
-        descripcion:
-          'The whole album from the day, at original resolution and uncropped, for US$ 20 for the entire group.',
-        base: 'grupo',
-        precio: 20,
-        porDefecto: true,
       },
     ],
   },
