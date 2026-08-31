@@ -187,8 +187,13 @@ export function TourPage() {
               preexistente de T-F3, cazado en el QA móvil de la etapa A).
               minmax(0,1fr) del grid-cols-1 de Tailwind es lo que permite al
               scroll interno de los chips hacer su trabajo. */}
+            {/* En movil la columna de reservar va PRIMERO y el contenido
+                despues: el visitante que llega a la ficha quiere el precio y el
+                boton, no bajarse toda la galeria y el texto para encontrarlos.
+                En escritorio no cambia nada — ahi son dos columnas de verdad y
+                el widget es sticky al lado. */}
           <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-[minmax(0,1fr)_var(--spacing-ficha-widget)]">
-            <div className="flex flex-col gap-6 lg:gap-8">
+            <div className="order-2 flex flex-col gap-6 lg:order-1 lg:gap-8">
               {/* Iteración 2026-07-17, 2ª vuelta: el mosaico se muda aquí
                   desde el hero — un bloque MÁS de esta columna (a su ancho,
                   no ancho completo), no una sección aparte por encima del
@@ -395,7 +400,7 @@ export function TourPage() {
                 caja del propio widget (ver el comentario en widget-reserva.tsx).
                 Con el overflow en este envoltorio, el `ring` de la caja —que se
                 dibuja por fuera de su borde— quedaba recortado a los lados. */}
-            <div className="lg:sticky lg:top-sticky-top">
+            <div className="order-1 lg:order-2 lg:sticky lg:top-sticky-top">
               <WidgetReserva
                 tour={tour}
                 ficha={ficha}

@@ -156,8 +156,13 @@ export function EventoPage() {
           widget sticky al lado. */}
       <div className="bg-papel">
         <div className="mx-auto max-w-contenido px-5 py-8 sm:px-10 sm:py-12">
+            {/* En movil la columna de reservar va PRIMERO y el contenido
+                despues: el visitante que llega a la ficha quiere el precio y el
+                boton, no bajarse toda la galeria y el texto para encontrarlos.
+                En escritorio no cambia nada — ahi son dos columnas de verdad y
+                el widget es sticky al lado. */}
           <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-[minmax(0,1fr)_var(--spacing-ficha-widget)]">
-            <div className="flex flex-col gap-6 lg:gap-8">
+            <div className="order-2 flex flex-col gap-6 lg:order-1 lg:gap-8">
               {/* Mosaico de fotos — mismo componente que la ficha de
                   tour. 1ª celda: `evento.foto` (portada), el resto
                   viene de `galeriaCompleta`-equivalente. Aquí usamos
@@ -347,7 +352,7 @@ export function EventoPage() {
                 formulario de cotización, que ahora además llega plegado. */}
             <div
               id="evento-widget"
-              className="scroll-sutil flex scroll-mt-sticky-top flex-col gap-4 [&>*]:shrink-0 lg:sticky lg:top-sticky-top lg:max-h-[calc(100svh-var(--spacing-sticky-top)-1.5rem)] lg:overflow-y-auto lg:overscroll-contain"
+              className="scroll-sutil order-1 flex scroll-mt-sticky-top flex-col gap-4 [&>*]:shrink-0 lg:order-2 lg:sticky lg:top-sticky-top lg:max-h-[calc(100svh-var(--spacing-sticky-top)-1.5rem)] lg:overflow-y-auto lg:overscroll-contain"
             >
               {/* [v2 2026-07-27, plan 03 §1 — slides 14 y 15] «Agregar reserva
                   online y DEBAJO el formulario de cotización». El orden es
