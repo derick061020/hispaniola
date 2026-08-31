@@ -109,18 +109,23 @@ export function WhyDirect() {
         </div>
 
         <div className="wd-banner-inner mx-auto grid max-w-contenido grid-cols-1 items-center gap-10 px-6 sm:px-10 lg:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)] lg:gap-12">
-          {/* Izquierda — título, descripción y CTA, en blanco sobre la foto */}
-          <div className="text-white">
+          {/* Izquierda — título, descripción y CTA, en blanco sobre la foto.
+              [2026-08-31] Centrado por debajo de lg (Derick, sobre la captura):
+              en móvil esta columna deja de ser «la izquierda» —va apilada sobre
+              los boletos, y el toggle de abajo ya venía centrado—, así que
+              alineada a la izquierda quedaba descolgada de todo lo que tiene
+              debajo. En dos columnas se sigue leyendo desde el margen. */}
+          <div className="text-white max-lg:text-center">
             {/* [v3 2026-08-06, WEBSITE - INICIO pág. 3] Título y bajada
                 APROBADOS por el cliente. */}
             <Etiqueta sobreOscuro>{t('Book direct')}</Etiqueta>
             <h2 className="mt-3 text-balance font-display text-h2 font-semibold">
               {t('Book Direct. Experience More.')}
             </h2>
-            <p className="mt-4 max-w-md text-lead text-white/80">
+            <p className="mt-4 max-w-md text-lead text-white/80 max-lg:mx-auto">
               {t('Everything the portals can’t offer.')}
             </p>
-            <div className="mt-7">
+            <div className="mt-7 max-lg:flex max-lg:justify-center">
               {/* [2026-08-24, barrido de enlaces] ERA UN BOTÓN MUERTO: `href="#"`
                   con `onClick={e => e.preventDefault()}`, o sea que ni navegaba
                   ni scrolleaba. Y no era un placeholder declarado — para eso

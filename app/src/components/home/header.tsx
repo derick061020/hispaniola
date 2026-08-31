@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { t } from '@/lib/i18n'
 import { Link, useLocation } from 'react-router-dom'
 import { Menu } from 'lucide-react'
@@ -147,27 +148,46 @@ export function Header({
           <span className="hidden sm:inline-flex">
             <Boton href={ctaHref}>{t('Book now')}</Boton>
           </span>
+          {/* En 'sobreVideo' el de aquí solo vive de sm a md: por debajo manda
+              el fijo del portal, justo abajo. */}
           <button
             type="button"
             onClick={() => setMovilAbierto(true)}
             aria-label="Menu"
             className={`grid size-10 place-items-center rounded-lg transition-colors md:hidden ${
-              sobreVideo ? 'text-white hover:bg-white/10' : 'text-navy hover:bg-papel-hueso'
-            } ${
-              // Solo por debajo de sm. De sm a md reaparecen el Topbar y el
-              // «Book now», y un botón fijo en esa esquina se les montaría
-              // encima; ahí sigue yéndose con el scroll, como hasta ahora.
-              sobreVideo ? 'max-sm:fixed max-sm:right-5 max-sm:top-3 max-sm:z-40' : ''
-            } ${
-              sobreVideo && scrolleado
-                ? 'max-sm:rounded-full max-sm:bg-white max-sm:text-navy max-sm:shadow-card max-sm:hover:bg-white'
-                : ''
+              sobreVideo ? 'text-white hover:bg-white/10 max-sm:hidden' : 'text-navy hover:bg-papel-hueso'
             }`}
           >
             <Menu className="size-5" />
           </button>
         </div>
       </div>
+
+      {/* EL FIJO DE MÓVIL, FUERA DEL HERO. Vivía dentro de la cabecera, y la
+          cabecera vive dentro del `relative z-10` del hero (hero.tsx): eso es un
+          contexto de apilamiento, así que su `z-40` no valía nada fuera de él y
+          cualquier sección posterior con z-index propio —`.wd-section` es z-20,
+          puesto para tapar el catamarán de «Incluye»— le pasaba por encima. Se
+          veía literalmente por debajo del banner de «Reserva directo».
+          Un portal a <body> lo saca de esa cárcel: mismo botón, misma hoja, pero
+          apilado contra la raíz, donde su z-index sí manda. */}
+      {sobreVideo && typeof document !== 'undefined'
+        ? createPortal(
+            <button
+              type="button"
+              onClick={() => setMovilAbierto(true)}
+              aria-label="Menu"
+              className={`fixed right-5 top-3 z-50 grid size-10 place-items-center transition-colors sm:hidden ${
+                scrolleado
+                  ? 'rounded-full bg-white text-navy shadow-card'
+                  : 'rounded-lg text-white hover:bg-white/10'
+              }`}
+            >
+              <Menu className="size-5" />
+            </button>,
+            document.body,
+          )
+        : null}
 
       <MenuMovil abierto={movilAbierto} onCerrar={() => setMovilAbierto(false)} ctaHref={ctaHref} />
     </header>
