@@ -2642,4 +2642,7 @@ export const ES: Record<string, string> = {
   "Free pick-up at hotels in Bávaro and Punta Cana for the {hora} departure": "Recogida gratuita en hoteles de Bávaro y Punta Cana para la salida de las {hora}",
   "Not included: transportation surcharge from Casa de Campo.": "No incluido: suplemento de transporte desde Casa de Campo.",
   "Not included: transportation from Casa de Campo (surcharge). Optional add-on at checkout: premium lobster (US$ 30/person).": "No incluido: transporte desde Casa de Campo (suplemento). Extra opcional al reservar: langosta premium (US$ 30/persona).",
+  "Meal on board": "Comida a bordo",
+  "Lunch cooked on board. Included from 9 guests up.": "Comida hecha a bordo. Incluida a partir de 9 personas.",
+  "Lunch cooked on board. Included from 14 guests up.": "Comida hecha a bordo. Incluida a partir de 14 personas.",
 }
