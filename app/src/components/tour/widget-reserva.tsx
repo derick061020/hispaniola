@@ -23,7 +23,7 @@ import { AddOnsWidget } from '@/components/tour/add-ons-widget'
 import { useCotizacion } from '@/components/tour/use-cotizacion'
 import { NumeroEditable } from '@/components/ui/numero-editable'
 import { PasajerosPopover, FilasPasajeros } from '@/components/tour/pasajeros-popover'
-import { numero, t } from '@/lib/i18n'
+import { numero, t, tp } from '@/lib/i18n'
 
 // «El widget ES la página» (wireframe A2): sticky en desktop, con el precio en
 // el primer viewport — en la web actual ese precio está a 6 pantallas de
@@ -938,7 +938,11 @@ export function WidgetReserva({
                     type="button"
                     onClick={() => setHorario(i)}
                     aria-pressed={elegido}
-                    aria-label={`Departure ${h.hora}${h.regreso ? `, back at ${h.regreso}` : ''}`}
+                    aria-label={
+                      h.regreso
+                        ? tp('Departure {salida}, back at {vuelta}', { salida: h.hora, vuelta: h.regreso })
+                        : tp('Departure {salida}', { salida: h.hora })
+                    }
                     // `text-papel` y NO `text-white`: el blanco de Tailwind es un
                     // valor fijo, no un token, así que en el tema oscuro se
                     // quedaba blanco sobre el crema de `bg-navy` remapeado — la

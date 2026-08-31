@@ -2,13 +2,14 @@ import { useRef, useState } from 'react'
 import { BadgeCheck } from 'lucide-react'
 import { Etiqueta } from '@/components/ui/etiqueta'
 import { Estrellas } from '@/components/ui/estrellas'
-import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
 import { BotonSonido } from '@/components/ui/boton-sonido'
 import { useFilaArrastrable } from '@/components/home/use-fila-arrastrable'
 import {
   RESENAS_MURO,
   VIDEO_TESTIMONIOS,
   PLATAFORMAS_RESENAS,
+  URL_RESENA_GOOGLE,
+  URL_RESENAS_GOOGLE,
   RESENAS_AGREGADO,
   type Review,
   type VideoTestimonio,
@@ -355,18 +356,30 @@ export function Reviews() {
         </div>
 
         {/* Cierre: ver todas + dejar la tuya (correcciones v1, slide 11:
-            «botón agregar reseña»). Los dos son EnlacePrototipo porque el
-            destino real es un perfil público del cliente (Google/TripAdvisor)
-            y esas URLs siguen pendientes — misma regla que los PREMIOS, que
-            tampoco enlazan a nada inventado. En cuanto lleguen, esto pasa a
-            ser un <a> normal con target="_blank". */}
+            «botón agregar reseña»).
+
+            [2026-08-31] LOS DOS YA TIENEN DESTINO, y los dos son Google:
+            «Leave us a review» abre el formulario de reseña directamente
+            (URL_RESENA_GOOGLE) y «See all …» la ficha de Maps, que es donde
+            están publicadas (URL_RESENAS_GOOGLE) — las dos en data/home.ts.
+            Dejan de ser EnlacePrototipo: ya no hay ninguno en esta sección. */}
         <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-          <EnlacePrototipo className="inline-flex items-center justify-center rounded-btn px-5 py-3 text-sm font-semibold text-navy ring-1 ring-linea transition-colors hover:bg-papel-hueso">
+          <a
+            href={URL_RESENAS_GOOGLE}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center rounded-btn px-5 py-3 text-sm font-semibold text-navy ring-1 ring-linea transition-colors hover:bg-papel-hueso"
+          >
             {t('See all')}{' '}{numero(RESENAS_AGREGADO.total)} {t('reviews')}
-          </EnlacePrototipo>
-          <EnlacePrototipo className="inline-flex items-center justify-center rounded-btn bg-coral px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-coral-dark">
+          </a>
+          <a
+            href={URL_RESENA_GOOGLE}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center rounded-btn bg-coral px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-coral-dark"
+          >
             {t('Leave us a review')}
-          </EnlacePrototipo>
+          </a>
         </div>
       </div>
     </section>

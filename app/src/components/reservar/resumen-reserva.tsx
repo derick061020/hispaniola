@@ -7,7 +7,7 @@ import type { MenuReserva } from '@/lib/menu-reserva'
 import { PasajerosPopover, FilasPasajeros } from '@/components/tour/pasajeros-popover'
 import { formatoUSD, monedaActiva } from '@/lib/moneda'
 import { nombreSinPaquete } from '@/lib/nombre-tour'
-import { t } from '@/lib/i18n'
+import { t, tp } from '@/lib/i18n'
 
 // Columna DERECHA del funnel (Fase C, layout Viator): «qué estás comprando»,
 // sticky, siempre visible mientras se rellena el formulario de la izquierda.
@@ -280,7 +280,11 @@ export function ResumenReserva({
                     type="button"
                     onClick={() => onHorario(i)}
                     aria-pressed={elegido}
-                    aria-label={`Departure ${h.hora}${h.regreso ? `, back at ${h.regreso}` : ''}`}
+                    aria-label={
+                      h.regreso
+                        ? tp('Departure {salida}, back at {vuelta}', { salida: h.hora, vuelta: h.regreso })
+                        : tp('Departure {salida}', { salida: h.hora })
+                    }
                     className={`rounded-full px-3.5 py-2 text-sm tabular-nums transition-colors ${
                       elegido
                         ? 'bg-navy font-semibold text-papel shadow-sm'

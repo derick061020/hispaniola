@@ -1,3 +1,4 @@
+import { traducible } from '@/lib/i18n'
 // Página de Instalaciones (correcciones v2, plan 06) — 2026-07-27.
 //
 // El argumento de la página, en palabras del propio cliente: «Mucho más que una
@@ -125,7 +126,7 @@ export type ZonaInstalacion = {
   tour360?: string
 }
 
-export const INSTALACIONES = {
+export const INSTALACIONES = traducible({
   // [v3 2026-08-06, WEBSITE - NOSOTROS pags. 10-11] Copy APROBADO, literal.
   // El cliente remata el titular con ⭐⭐⭐: es su marca de enfasis en el
   // documento, no parte del texto — el enfasis lo pone la tipografia.
@@ -176,7 +177,7 @@ export const INSTALACIONES = {
   // dos bloques más abajo, en el propio footer, y las dos entrarían en cuadro de
   // una sola pasada.
   cierreFoto: 'hero-catamaran-1-v2',
-} as const
+} as const)
 
 // Banda de CTA intercalada (slide 48). La maqueta pone TRES bandas a ancho
 // completo entre las zonas — coral («¿Listo para vivir todo esto?»), verde
@@ -219,7 +220,7 @@ const V_BIOLOGIA = { video: '/video/instalaciones/biologia.mp4', poster: 'instal
 const V_COCINAS = { video: '/video/instalaciones/cocinas.mp4', poster: 'instalacion-cocinas-poster' }
 const V_OFICINAS = { video: '/video/instalaciones/oficinas.mp4', poster: 'instalacion-oficinas-poster' }
 
-export const ZONAS: ZonaInstalacion[] = [
+export const ZONAS: ZonaInstalacion[] = traducible([
   {
     id: 'recibimiento',
     chip: 'Welcome',
@@ -421,7 +422,7 @@ export const ZONAS: ZonaInstalacion[] = [
       },
     ],
   },
-]
+])
 
 // El carril de verticales del slide 45, DERIVADO de las zonas: mismo video,
 // mismo pie y misma foto de portada que la celda grande del bento de más

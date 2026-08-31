@@ -23,9 +23,20 @@ import { useDevFlag } from '@/dev/use-dev-flag'
 // título va arriba y un toggle [En un portal | Aquí] alterna el CUERPO de un
 // solo boleto (el encabezado es idéntico → el precio no se mueve al cambiar).
 
-const VARIANTES: Array<{ id: VarianteBoleto; label: string }> = [
-  { id: 'portal', label: 'En un portal' },
-  { id: 'directo', label: 'Aquí' },
+// [2026-08-31] Derick: «En un portal» pasa a «En otros portales» y «Aquí» a
+// «Con nosotros» — dice quién es cada columna sin que haya que deducirlo.
+//
+// Y de paso dejan de ser texto fijo en español: eran de lo poco que quedaba sin
+// pasar por `t()`, así que el sitio en inglés enseñaba este toggle —y solo
+// este— en español. La fuente es el inglés, como en el resto del sitio, y la
+// traducción vive en lib/i18n/es.ts.
+//
+// Se calculan DENTRO del componente: `t()` lee el idioma en el momento de la
+// llamada, y un array a nivel de módulo se evaluaría una vez al importar,
+// congelando el idioma con el que se cargó la página.
+const variantes = (): Array<{ id: VarianteBoleto; label: string }> => [
+  { id: 'portal', label: t('On other portals') },
+  { id: 'directo', label: t('With us') },
 ]
 
 export function WhyDirect() {
@@ -137,7 +148,7 @@ export function WhyDirect() {
                   aria-label="Compare how to book"
                   className="inline-flex rounded-chip bg-white/15 p-1 ring-1 ring-white/25 backdrop-blur-sm"
                 >
-                  {VARIANTES.map((v) => (
+                  {variantes().map((v) => (
                     <button
                       key={v.id}
                       type="button"

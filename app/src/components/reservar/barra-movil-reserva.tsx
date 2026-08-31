@@ -1,5 +1,6 @@
 import * as FancyButton from '@/components/alignui/fancy-button'
 import { t } from '@/lib/i18n'
+import { Spinner } from '@/components/ui/spinner'
 import { formatoDinero } from '@/data/home'
 
 // Barra inferior fija del funnel de reserva en móvil.
@@ -35,6 +36,7 @@ export function BarraMovilReserva({
   total,
   texto,
   habilitado,
+  cargando = false,
   onAccion,
 }: {
   deposito: number
@@ -42,6 +44,8 @@ export function BarraMovilReserva({
   /** Copy del CTA del paso activo (cambia en el paso del menú y en el de pago). */
   texto: string
   habilitado: boolean
+  /** Cobro en curso: rueda de carga y botón bloqueado hasta que Stripe conteste. */
+  cargando?: boolean
   onAccion: () => void
 }) {
   return (
@@ -57,10 +61,20 @@ export function BarraMovilReserva({
       <FancyButton.Root
         variant="primary"
         className="h-11 shrink-0"
-        disabled={!habilitado}
+        disabled={!habilitado || cargando}
         onClick={onAccion}
       >
-        {texto}
+        {cargando ? (
+          // En móvil esta barra es el ÚNICO botón de pagar (el de dentro del
+          // paso lleva `max-lg:hidden`), así que es aquí donde tiene que verse
+          // que el cobro está en marcha. Y bloqueado: sin esto se vuelve a
+          // pulsar a los dos segundos creyendo que no ha hecho nada.
+          <span className="inline-flex items-center gap-2">
+            <Spinner /> {t('Processing…')}
+          </span>
+        ) : (
+          texto
+        )}
       </FancyButton.Root>
     </div>
   )

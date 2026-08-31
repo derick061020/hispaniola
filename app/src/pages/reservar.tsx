@@ -22,7 +22,7 @@ import { menuDeLaReserva } from '@/lib/menu-reserva'
 import { useCheckout } from '@/lib/api/use-checkout'
 import type { ErrorApi } from '@/lib/api/cliente'
 import { cargarStripe, mensajeDeError } from '@/lib/pagos/stripe'
-import { t, traducible } from '@/lib/i18n'
+import { t, tp, traducible } from '@/lib/i18n'
 import { escuchaMoneda, instantaneaMoneda } from '@/lib/moneda'
 import { SelectorIdioma } from '@/components/ui/selector-idioma'
 import { SelectorMoneda } from '@/components/ui/selector-moneda'
@@ -522,7 +522,7 @@ function FlujoReserva({
   // permite que la barra fija de abajo lo lleve sin duplicar ninguna regla:
   // los botones de dentro y el de la barra leen EXACTAMENTE lo mismo, así que
   // no pueden desincronizarse.
-  const ctaPaso: { texto: string; habilitado: boolean; accion: () => void } =
+  const ctaPaso: { texto: string; habilitado: boolean; accion: () => void; cargando?: boolean } =
     pasoActivo === 'contacto'
       ? {
           texto: 'Continue',
@@ -546,7 +546,10 @@ function FlujoReserva({
             }
           : {
               texto: `Pay deposit · ${formatoDinero(deposito)}`,
-              habilitado: fechaISO !== null,
+              habilitado: fechaISO !== null && !pagando,
+              // El cobro tarda: crear el intento en Odoo, confirmarlo con
+              // Stripe y avisar de vuelta. La barra lo enseña girando.
+              cargando: pagando,
               // [2026-08-25] NO es `handlePagar`: ese pide los datos de la
               // tarjeta y la barra no los tiene (vive fuera del paso de pago).
               // Se dispara el mismo `lanzar` que el botón de dentro, que sí
@@ -582,7 +585,9 @@ function FlujoReserva({
   // La FECHA ya la pinta el propio campo de calendario del resumen (con su hora
   // de salida), así que esta línea solo añade lo que allí no cabe: el regreso.
   const horarioTxt = horario
-    ? `Departure ${horario.hora}${horario.regreso ? ` · back at ${horario.regreso}` : ''}`
+    ? horario.regreso
+      ? tp('Departure {salida} · back at {vuelta}', { salida: horario.hora, vuelta: horario.regreso })
+      : tp('Departure {salida}', { salida: horario.hora })
     : t('Schedule to be confirmed')
 
   const cambiarPlato = (persona: number, plato: string) =>
@@ -888,6 +893,7 @@ function FlujoReserva({
         total={total}
         texto={ctaPaso.texto}
         habilitado={ctaPaso.habilitado}
+        cargando={ctaPaso.cargando}
         onAccion={ctaPaso.accion}
       />
     </div>

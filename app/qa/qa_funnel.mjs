@@ -99,13 +99,11 @@ await page.getByRole('button', { name: /pick the menu later/ }).click()
 await page.waitForTimeout(300)
 
 // 8. Recogida
-await page.evaluate(() => {
-  const l = [...document.querySelectorAll('label')].find((l) => /Hotel|pickup point/i.test(l.textContent))
-  const el = document.getElementById(l.htmlFor)
-  const s = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set
-  s.call(el, 'Meliá Caribe Beach')
-  el.dispatchEvent(new Event('input', { bubbles: true }))
-})
+// El punto de recogida ya no es un <input>: es un combobox con buscador
+// (ui/selector-hotel.tsx), así que se elige de la lista como lo haría alguien.
+await page.getByRole('button', { name: /Select your hotel|Hotel or pick-up point/ }).first().click()
+await page.getByPlaceholder('Search your hotel…').fill('Melia')
+await page.locator('[role="listbox"] [role="option"]').first().click()
 await page.getByRole('button', { name: /^Continue/ }).click()
 await page.waitForTimeout(400)
 

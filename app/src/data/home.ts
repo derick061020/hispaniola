@@ -93,7 +93,20 @@ export type Tour = {
 // `galeria-snorkel-lovers-*`, `tour-semi-privado`). No se tocan: son el registro
 // fechado de por qué se hizo cada cosa y reescribirlos borraría la pista. Esta
 // tabla es la que los traduce.
-export const TOURS: Tour[] = [
+// [2026-08-31] ENVUELTO EN `traducible`, COMO EL RESTO DEL CATÁLOGO.
+//
+// Derick: «la traducción de los tours, y sus descripciones, igual los tags, no
+// funcionan bien». No era el diccionario: los textos de aquí —«Adults only»,
+// «Limited guests», las descripciones cortas enteras— ya estaban traducidos en
+// lib/i18n/es.ts desde la migración, incluidos los nombres propios como
+// identidad («Caribbean Escape» → «Caribbean Escape», que es lo correcto: es
+// una marca). Lo que faltaba era el envoltorio: TOURS era el ÚNICO export de
+// este fichero sin `traducible()`, así que sus cadenas nunca pasaban por `t()`
+// y la home en español enseñaba las tarjetas de tour en inglés.
+//
+// Lo que se GUARDA no cambia: al checkout viaja `tour.slug` (reservar.tsx), y
+// las reservas del navegador ya se serializan con `crudo()` (lib/reservas.ts).
+export const TOURS: Tour[] = traducible([
   {
     slug: 'semi-private-premium',
     nombre: 'Caribbean Escape',
@@ -220,8 +233,7 @@ export const TOURS: Tour[] = [
     ],
     destacados: ['Speedboat or catamaran', 'Natural pool + buffet', 'Full day'],
   },
-]
-
+])
 export const bookingCta: Record<Tour['booking'], string> = traducible({
   completo: 'Book now',
   cotizacion: 'Get a quote',
@@ -1158,6 +1170,27 @@ export type PlataformaResena = {
   url: string | null
 }
 
+// [2026-08-31] EL ENLACE REAL PARA DEJAR RESEÑA EN GOOGLE.
+//
+// Derick: «en la home, el link de dejar reseña cambiarlo y deja el de google».
+// Es la MISMA url que ya usan los correos de post-tour del back office, y es la
+// forma canónica —`writereview` con el `placeid` de la ficha— que abre el
+// formulario directamente, sin pasar por la ficha ni por una búsqueda: en un
+// móvil, Google la entrega a la app si está instalada.
+//
+// El id es el de la ficha de Hispaniola Aquatic Adventures en Bávaro. Si algún
+// día hay que rehacerlo: se saca del Place ID Finder de Google Maps, no de la
+// url corta que comparte la app (esa caduca y no sirve aquí).
+// El perfil público donde están TODAS: la ficha de Google Maps. Es el enlace
+// corto que comparte la propia app —Derick lo pasó así—, y a diferencia del de
+// `writereview` no lleva place id: resuelve del lado de Google. Aquí sirve
+// porque solo tiene que abrir la ficha; para el formulario de reseña hace falta
+// el place id, por eso son dos urls y no una.
+export const URL_RESENAS_GOOGLE = 'https://maps.app.goo.gl/ZgScRsMrn2LGXLEz6'
+
+export const URL_RESENA_GOOGLE =
+  'https://search.google.com/local/writereview?placeid=ChIJU8NnvMHsqI4RmKmS5FtgKEw'
+
 export const PLATAFORMAS_RESENAS: PlataformaResena[] = traducible([
   {
     id: 'google',
@@ -1427,7 +1460,7 @@ export type Reel = {
 // Los `id` (martes-a-bordo, snorkel-coral, sunset…) NO se tocan: ya estaban
 // desalineados con los pies antes de esta ronda y solo son key de React.
 // Renombrarlos ensuciaría el diff sin arreglar nada visible.
-export const REELS: Reel[] = [
+export const REELS: Reel[] = traducible([
   {
     id: 'martes-a-bordo',
     titulo: 'Just another day in paradise',
@@ -1476,7 +1509,7 @@ export const REELS: Reel[] = [
     video: '/video/reels/reel-5.mp4',
     red: 'instagram',
   },
-]
+])
 
 /** Hashtag de la campaña de contenido generado por el cliente (maqueta). */
 export const REELS_HASHTAG = '#HispaniolaMoments'

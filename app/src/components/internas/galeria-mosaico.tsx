@@ -5,7 +5,7 @@ import { useOrigenExpansion } from '@/lib/use-expansion-flip'
 import { SliderComida } from '@/components/internas/slider-comida'
 import { VideoLightbox } from '@/components/tour/video-lightbox'
 import { useDevFlag } from '@/dev/use-dev-flag'
-import { t } from '@/lib/i18n'
+import { t, tp } from '@/lib/i18n'
 
 // Mosaico de fotos reales del tour/evento — vive DENTRO del contenido, no en
 // el hero (2026-07-17: la iteración que lo incrustó en el hero desalineaba el
@@ -220,7 +220,7 @@ export function GaleriaMosaico({
         // lector de pantalla), pero eso dejaba al BOTON sin nombre accesible -
         // se anunciaba solo como «boton». El nombre va aqui, y dice lo que el
         // boton HACE, no lo que la foto muestra.
-        aria-label={`Open photo ${pieza.i + 1} of ${fotos.length} in the gallery`}
+        aria-label={tp('Open photo {n} of {total} in the gallery', { n: pieza.i + 1, total: fotos.length })}
         className={`group relative overflow-hidden bg-papel-hueso ${span}`}
       >
         <img

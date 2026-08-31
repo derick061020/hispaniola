@@ -1,3 +1,4 @@
+import { traducible } from '@/lib/i18n'
 // Página de Tripulación / Equipo (correcciones v2, plan 05) — 2026-07-27.
 //
 // [2026-08-21] LOS RETRATOS YA SON REALES. El cliente entregó la carpeta
@@ -51,7 +52,7 @@ export type Departamento = {
 // El copy de cocina, oficina y fundación es CONTENIDO REAL del cliente (slides
 // 37-42 del PDF v2, reconfirmado en el WEBSITE - NOSOTROS de v3). Se copia
 // palabra por palabra desde la versión anterior de este archivo.
-export const DEPARTAMENTOS: Departamento[] = [
+export const DEPARTAMENTOS: Departamento[] = traducible([
   // Los tres de mar. Antes eran un solo departamento, «Marine Operations», y
   // su párrafo describía a los tres juntos; al separarlos se quedan sin él.
   { id: 'capitanes', nombre: 'Captains' },
@@ -78,7 +79,7 @@ export const DEPARTAMENTOS: Departamento[] = [
     descripcion:
       'Driven by a passion for the ocean, our multidisciplinary conservation team works every day to protect coral reefs, restore marine life, and preserve the Caribbean for future generations.',
   },
-]
+])
 
 export type MiembroEquipoV2 = {
   id: string
@@ -135,7 +136,7 @@ export function contarPorDepartamento(id: DepartamentoId): number {
   return EQUIPO_COMPLETO.filter((m) => m.departamento === id).length
 }
 
-export const EQUIPO_PAGINA = {
+export const EQUIPO_PAGINA = traducible({
   // [v3 2026-08-06, WEBSITE - NOSOTROS pags. 1-2] Copy APROBADO. El cliente
   // escribe el titular en dos pisos («THE PEOPLE BEHIND THE SCENES» / «MORE
   // THAN A CREW, A TEAM DEDICATED TO YOU»): el primero es el H1 y el segundo
@@ -204,4 +205,4 @@ export const EQUIPO_PAGINA = {
   // no las da es la clase de promesa pequeña que este proyecto evita, así que
   // se usa la frase que el propio cliente escribió debajo.
   cierreCta: 'Tell us who you are',
-} as const
+} as const)

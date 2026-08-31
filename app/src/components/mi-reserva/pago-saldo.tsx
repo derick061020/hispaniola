@@ -6,6 +6,7 @@ import { confirmarPago, pagarSaldo } from '@/lib/api/api'
 import { cargarStripe, estiloCampoTarjeta, mensajeDeError, type CampoTarjeta } from '@/lib/pagos/stripe'
 import { formatoDinero } from '@/data/home'
 import { t } from '@/lib/i18n'
+import { Spinner } from '@/components/ui/spinner'
 
 // [2026-08-18] COBRO DEL SALDO DESDE «MI RESERVA».
 //
@@ -164,7 +165,11 @@ export function PagoSaldo({
             ref={contenedor}
             className="mt-1.5 w-full rounded-btn bg-papel px-4 py-3 ring-1 ring-linea focus-within:ring-2 focus-within:ring-aqua"
           />
-          {preparando ? <p className="mt-1.5 text-xs text-navy-soft">{t('Preparing the payment…')}</p> : null}
+          {preparando ? (
+            <p className="mt-1.5 flex items-center gap-1.5 text-xs text-navy-soft">
+              <Spinner /> {t('Preparing the payment…')}
+            </p>
+          ) : null}
         </div>
       </fieldset>
 
@@ -179,9 +184,15 @@ export function PagoSaldo({
           type="button"
           onClick={pagar}
           disabled={procesando || preparando || !completa || titular.trim() === ''}
-          className="flex-1 rounded-btn bg-coral px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-coral-dark disabled:cursor-not-allowed disabled:opacity-50"
+          className="flex flex-1 items-center justify-center gap-2 rounded-btn bg-coral px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-coral-dark disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {procesando ? 'Processing…' : `Pay ${formatoDinero(saldo)}`}
+          {procesando ? (
+            <>
+              <Spinner /> {t('Processing…')}
+            </>
+          ) : (
+            `Pay ${formatoDinero(saldo)}`
+          )}
         </button>
         <button
           type="button"

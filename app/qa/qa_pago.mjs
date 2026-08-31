@@ -73,11 +73,19 @@ await pagina.goto(`${BASE}/book/saona-island?fecha=2026-09-20`, { waitUntil: 'ne
 
 await pagina.getByLabel('First name').fill('Ana')
 await pagina.getByLabel('Last name').fill('Pérez')
-await pagina.getByLabel('Email').fill('ana@example.com')
+// `getByLabel('Email')` dejó de ser único cuando el paso de contacto ganó el
+// selector «Language for your booking» (45d904e): el <select> responde también
+// a ese nombre y Playwright aborta por ambigüedad. Se pide el campo de texto.
+await pagina.getByRole('textbox', { name: 'Email' }).fill('ana@example.com')
 await pagina.getByLabel('WhatsApp / phone').fill('+1 809 000 0000')
 await pagina.getByRole('button', { name: 'Continue' }).click()
 
-await pagina.getByLabel('Hotel or pick-up point').fill('Meliá Caribe Beach')
+// El punto de recogida dejó de ser un <input> suelto: hoy es un combobox
+// (ui/selector-hotel.tsx) con su propio campo de texto libre debajo, así que se
+// rellena ese, no la etiqueta del grupo.
+await pagina.getByRole('button', { name: /Select your hotel|Hotel or pick-up point/ }).first().click()
+await pagina.getByPlaceholder('Search your hotel…').fill('Melia')
+await pagina.locator('[role="listbox"] [role="option"]').first().click()
 await pagina.getByRole('button', { name: 'Continue' }).click()
 
 await pagina.getByText('Credit or debit card').waitFor({ timeout: 10_000 })
@@ -128,14 +136,62 @@ await pagina.route('**/api/web/v1/config', (ruta) =>
 await pagina.goto(`${BASE}/book/saona-island?fecha=2026-09-20`, { waitUntil: 'networkidle' })
 await pagina.getByLabel('First name').fill('Ana')
 await pagina.getByLabel('Last name').fill('Pérez')
-await pagina.getByLabel('Email').fill('ana@example.com')
+await pagina.getByRole('textbox', { name: 'Email' }).fill('ana@example.com')
 await pagina.getByLabel('WhatsApp / phone').fill('+1 809 000 0000')
 await pagina.getByRole('button', { name: 'Continue' }).click()
-await pagina.getByLabel('Hotel or pick-up point').fill('Meliá Caribe Beach')
+// El punto de recogida dejó de ser un <input> suelto: hoy es un combobox
+// (ui/selector-hotel.tsx) con su propio campo de texto libre debajo, así que se
+// rellena ese, no la etiqueta del grupo.
+await pagina.getByRole('button', { name: /Select your hotel|Hotel or pick-up point/ }).first().click()
+await pagina.getByPlaceholder('Search your hotel…').fill('Melia')
+await pagina.locator('[role="listbox"] [role="option"]').first().click()
 await pagina.getByRole('button', { name: 'Continue' }).click()
 await pagina.getByText(/Online payment is temporarily unavailable/i).waitFor({ timeout: 10_000 })
 ok('sin claves en Odoo se avisa y no se pinta un método que iba a fallar')
 check(await pagina.getByRole('button', { name: /Pay deposit/ }).isDisabled(), 'y el CTA queda bloqueado')
+
+// ── RUEDA DE CARGA AL PAGAR ──────────────────────────────────────────────
+// [2026-08-31] Derick: «cuando le doy a pagar, que haya una animación de carga
+// en lo que se procesa el pago». Confirmar un cobro son dos o tres segundos, y
+// hasta hoy el único aviso era que el texto del botón cambiaba: en un móvil eso
+// se lee tarde y se vuelve a pulsar. Se comprueba con la llamada de cobro
+// COLGADA a propósito —nunca contesta—, que es exactamente el rato en el que el
+// visitante se queda mirando el botón.
+console.log('== Rueda de carga al pagar ==')
+const pestana = await navegador.newPage({ locale: 'en-US' })
+await pestana.route('**/api/web/v1/**', (ruta) => {
+  const url = ruta.request().url()
+  if (url.includes('/pay')) return              // colgada: se queda «procesando»
+  const cuerpo = url.includes('/config') ? CONFIG : PEDIDO
+  return ruta.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    headers: { 'Access-Control-Allow-Origin': '*' },
+    body: JSON.stringify({ ok: true, data: cuerpo }),
+  })
+})
+await pestana.goto(`${BASE}/book/saona-island?fecha=2026-09-20`, { waitUntil: 'networkidle' })
+await pestana.getByLabel('First name').fill('Ana')
+await pestana.getByLabel('Last name').fill('Pérez')
+await pestana.getByRole('textbox', { name: 'Email' }).fill('ana@example.com')
+await pestana.getByLabel('WhatsApp / phone').fill('+1 809 000 0000')
+await pestana.getByRole('button', { name: 'Continue' }).click()
+await pestana.getByRole('button', { name: /Select your hotel|Hotel or pick-up point/ }).first().click()
+await pestana.getByPlaceholder('Search your hotel…').fill('Melia')
+await pestana.locator('[role="listbox"] [role="option"]').first().click()
+await pestana.getByRole('button', { name: 'Continue' }).click()
+// PayPal: es el camino que se habilita sin rellenar la tarjeta de Stripe.
+await pestana.getByRole('radio', { name: /PayPal/ }).check()
+const ctaCobro = pestana.getByRole('button', { name: /Continue with PayPal/ })
+check((await pestana.locator('svg.animate-spin').count()) === 0, 'antes de pulsar no hay ninguna rueda')
+await ctaCobro.click()
+await pestana.locator('svg.animate-spin').first().waitFor({ timeout: 8_000 })
+ok('al pulsar aparece la rueda girando')
+check(await pestana.getByText('Processing…').first().isVisible(), 'y el botón dice «Processing…»')
+check(
+  await pestana.getByRole('button', { name: /Processing/ }).first().isDisabled(),
+  'con el botón bloqueado, para que no se cobre dos veces',
+)
 
 await navegador.close()
 console.log(fallos === 0 ? '\n\x1b[32mTODO OK\x1b[0m' : `\n\x1b[31m${fallos} fallo(s)\x1b[0m`)

@@ -1,7 +1,7 @@
 import { Campo } from '@/components/ui/campo'
 import { SelectorHotel } from '@/components/ui/selector-hotel'
 import type { DatosRecogida } from '@/components/reservar/tipos'
-import { t } from '@/lib/i18n'
+import { t, tp } from '@/lib/i18n'
 
 // Paso 2 del funnel: dónde recogemos al huésped. La web actual promete
 // «recogida gratis desde tu hotel» pero la hora exacta depende del hotel y se
@@ -27,7 +27,10 @@ export function PasoRecogida({
       <div>
         <h2 className="font-display text-h3 font-semibold text-navy">{t('Where do we pick you up?')}</h2>
         <p className="mt-1 text-sm text-navy-sub">
-          {t('Free pick-up at hotels in Bávaro and Punta Cana')}{horaSalida ? ` for the ${horaSalida} departure` : ''}{t('. We confirm the exact time over WhatsApp depending on your hotel.')}
+          {horaSalida
+            ? tp('Free pick-up at hotels in Bávaro and Punta Cana for the {hora} departure', { hora: horaSalida })
+            : t('Free pick-up at hotels in Bávaro and Punta Cana')}
+          {t('. We confirm the exact time over WhatsApp depending on your hotel.')}
         </p>
       </div>
 

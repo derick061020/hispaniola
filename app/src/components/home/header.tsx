@@ -67,6 +67,35 @@ export function Header({
 
   const sobreVideo = variante === 'sobreVideo'
 
+  // [2026-08-31] EL HAMBURGUESA, FIJO EN MÓVIL.
+  //
+  // Derick: «dejar fijo en mobile el menú hamburguesa, que se le ponga el fondo
+  // blanco con bordes redondeados e icono negro. Al volver al principio vuelva a
+  // ponerse transparente».
+  //
+  // Solo hace falta en 'sobreVideo' (la home y las fichas): ahí la cabecera vive
+  // DENTRO del hero, en flujo normal, y se va con el scroll — a los dos dedos de
+  // bajar no queda ni un acceso al menú en toda la pantalla. La variante
+  // 'solida' ya es `sticky top-0`, con su barra blanca detrás, y no se toca.
+  //
+  // Arriba del todo no cambia de sitio ni un píxel: el Topbar es `hidden
+  // sm:block`, así que en móvil esta cabecera es lo primero de la página y
+  // `top-3 right-5` cae justo donde lo pone el `py-3 px-5` del contenedor. Lo
+  // único que cambia al bajar es el vestido: fondo blanco, esquinas redondas e
+  // icono negro, porque a partir del hero lo que hay detrás es la página y el
+  // icono blanco desaparecía sobre fondo claro.
+  //
+  // El umbral son 24 px y no 0: con 0, el rebote del scroll de iOS enciende y
+  // apaga el fondo estando quieto arriba del todo.
+  const [scrolleado, setScrolleado] = useState(false)
+  useEffect(() => {
+    if (!sobreVideo) return
+    const alScroll = () => setScrolleado(window.scrollY > 24)
+    alScroll()
+    window.addEventListener('scroll', alScroll, { passive: true })
+    return () => window.removeEventListener('scroll', alScroll)
+  }, [sobreVideo])
+
   return (
     <header className={sobreVideo ? '' : 'sticky top-0 z-40 bg-papel'}>
       {/* Topbar (WhatsApp + teléfono + idioma) vive aparte, FUERA de este
@@ -122,7 +151,18 @@ export function Header({
             type="button"
             onClick={() => setMovilAbierto(true)}
             aria-label="Menu"
-            className={`grid size-10 place-items-center rounded-lg md:hidden ${sobreVideo ? 'text-white hover:bg-white/10' : 'text-navy hover:bg-papel-hueso'}`}
+            className={`grid size-10 place-items-center rounded-lg transition-colors md:hidden ${
+              sobreVideo ? 'text-white hover:bg-white/10' : 'text-navy hover:bg-papel-hueso'
+            } ${
+              // Solo por debajo de sm. De sm a md reaparecen el Topbar y el
+              // «Book now», y un botón fijo en esa esquina se les montaría
+              // encima; ahí sigue yéndose con el scroll, como hasta ahora.
+              sobreVideo ? 'max-sm:fixed max-sm:right-5 max-sm:top-3 max-sm:z-40' : ''
+            } ${
+              sobreVideo && scrolleado
+                ? 'max-sm:rounded-full max-sm:bg-white max-sm:text-navy max-sm:shadow-card max-sm:hover:bg-white'
+                : ''
+            }`}
           >
             <Menu className="size-5" />
           </button>

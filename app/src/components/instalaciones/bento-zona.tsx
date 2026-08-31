@@ -1,5 +1,5 @@
 import { useState, type CSSProperties } from 'react'
-import { t } from '@/lib/i18n'
+import { t, tp } from '@/lib/i18n'
 import { Play, Volume2 } from 'lucide-react'
 import { GaleriaLightbox } from '@/components/tour/galeria-lightbox'
 import { VideoLightbox } from '@/components/tour/video-lightbox'
@@ -175,7 +175,7 @@ export function BentoZona({ zona, espejo = false }: { zona: ZonaInstalacion; esp
         aria-label={
           avisa
             ? `Open all ${todas.length} photos of the ${zona.nombre}`
-            : `Open photo ${indice + 1} of ${todas.length} of the ${zona.nombre}`
+            : tp('Open photo {n} of {total} of the {zona}', { n: indice + 1, total: todas.length, zona: zona.nombre })
         }
         style={estilo}
         className={`group relative min-h-0 overflow-hidden rounded-card bg-papel-hueso ${clases}`}
@@ -260,7 +260,7 @@ export function BentoZona({ zona, espejo = false }: { zona: ZonaInstalacion; esp
           foto.abrirDesde(e.currentTarget)
           setLightbox(0)
         }}
-        aria-label={`Open photo 1 of ${todas.length} of the ${zona.nombre}`}
+        aria-label={tp('Open photo {n} of {total} of the {zona}', { n: 1, total: todas.length, zona: zona.nombre })}
         className={`group relative overflow-hidden bg-papel-hueso ${clases}`}
       >
         <img

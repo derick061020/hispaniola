@@ -7,6 +7,7 @@ import { obtenerConfig } from '@/lib/api/api'
 import { cargarStripe, estiloCampoTarjeta, type CampoTarjeta } from '@/lib/pagos/stripe'
 import { formatoDinero } from '@/data/home'
 import { t } from '@/lib/i18n'
+import { Spinner } from '@/components/ui/spinner'
 
 // Sección 4 del funnel (Fase C, layout Viator): «Pago». El desglose completo
 // del precio vive en la columna derecha (ResumenReserva), así que aquí solo van
@@ -273,7 +274,14 @@ export function PasoPago({
           campo de tarjeta siguen aquí, que es donde se rellenan. */}
       <FancyButton.Root variant="primary" className="w-full max-lg:hidden" disabled={!puedePagar} onClick={lanzar}>
         {procesando
-          ? 'Processing…'
+          ? (
+            // La ruedita Y el texto: el texto solo ya estaba y no bastaba —ver
+            // el porqué en components/ui/spinner.tsx—, y la ruedita sola no
+            // dice qué está pasando.
+            <span className="inline-flex items-center gap-2">
+              <Spinner /> {t('Processing…')}
+            </span>
+          )
           : metodo === 'paypal'
             ? `Continue with PayPal · ${formatoDinero(deposito)}`
             : `Pay deposit · ${formatoDinero(deposito)}`}

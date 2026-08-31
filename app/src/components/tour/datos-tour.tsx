@@ -1,3 +1,4 @@
+import { t, tp } from '@/lib/i18n'
 import { Clock3, CarFront, Smartphone, Languages } from 'lucide-react'
 import type { Tour } from '@/data/home'
 import type { FichaTour } from '@/data/tours'
@@ -41,16 +42,22 @@ export function DatosTour({ tour, ficha }: { tour: Tour; ficha: FichaTour }) {
   // las cuatro columnas rimen: cuatro etiquetas cortas en la misma línea y
   // cuatro valores en la de abajo, en vez de cuatro frases de longitudes
   // dispares. Nada nuevo se promete.
+  // [2026-08-31] Esta tira era de lo que quedó fuera de la migración al inglés:
+  // cuatro etiquetas escritas en español a mano («Duración», «Entrada»,
+  // «Idiomas») y dos valores en inglés («Pickup», «Pickup available»). O sea que
+  // salía mezclada en los DOS idiomas: media tira en español leyendo en inglés,
+  // y la de recogida en inglés leyendo en español. Ahora la fuente es el inglés
+  // y la traducción vive en lib/i18n/es.ts, como en el resto del sitio.
   const datos = [
-    { icono: Clock3, etiqueta: 'Duración', valor: `${ficha.duracion} (aprox.)` },
+    { icono: Clock3, etiqueta: t('Duration'), valor: tp('{duracion} (approx.)', { duracion: ficha.duracion }) },
     ...(tour.booking === 'completo'
-      ? [{ icono: CarFront, etiqueta: 'Pickup', valor: 'Pickup available' }]
+      ? [{ icono: CarFront, etiqueta: t('Pickup'), valor: t('Pickup available') }]
       : []),
     // [v2 2026-07-27] «Para dispositivos móviles» → «Para móviles» (pedido de
     // Samuel: ahorrar espacio y palabras). Dice exactamente lo mismo y deja de
     // ser el único valor de la fila que ocupa dos líneas.
-    { icono: Smartphone, etiqueta: 'Entrada', valor: 'Para móviles' },
-    { icono: Languages, etiqueta: 'Idiomas', valor: 'Español e inglés' },
+    { icono: Smartphone, etiqueta: t('Ticket'), valor: t('On your phone') },
+    { icono: Languages, etiqueta: t('Languages'), valor: t('Spanish and English') },
   ]
 
   // Nº de columnas = nº de datos, para que la fila no deje un hueco suelto

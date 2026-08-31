@@ -101,7 +101,10 @@ console.log('== Pasos del acordeón ==')
 // (que es como los encuentra también un lector de pantalla).
 await pagina.getByLabel('First name').fill('QA')
 await pagina.getByLabel('Last name').fill('Tester')
-await pagina.getByLabel('Email').fill('qa@example.com')
+// `getByLabel('Email')` dejó de ser único cuando el paso de contacto ganó el
+// selector «Language for your booking» (45d904e): el <select> responde también
+// a ese nombre y Playwright aborta por ambigüedad. Se pide el campo de texto.
+await pagina.getByRole('textbox', { name: 'Email' }).fill('qa@example.com')
 await pagina.getByRole('button', { name: /continue/i }).first().click()
 await pagina.waitForTimeout(1200)
 

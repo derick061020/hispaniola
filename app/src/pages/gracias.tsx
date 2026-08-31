@@ -12,7 +12,7 @@ import { confirmarPago, enviarFormulario, leerCheckout } from '@/lib/api/api'
 import { BotonCalendario } from '@/components/ui/boton-calendario'
 import { olvidarSesionCheckout, sesionCheckoutGuardada } from '@/lib/api/use-checkout'
 import { formatoDinero } from '@/data/home'
-import { t, traducible } from '@/lib/i18n'
+import { t, tp, traducible } from '@/lib/i18n'
 
 // «¡Nos vemos a bordo!» — pantalla post-checkout (2026-07-17, pedido de
 // Pedro). Se muestra DESPUÉS de que el funnel de reserva completa el
@@ -397,7 +397,13 @@ export function GraciasPage() {
             <FilaResumen label={t('Date')} valor={fechaLarga(reserva.fechaISO)} />
             <FilaResumen
               label={t('Schedule')}
-              valor={horario ? `${horario.hora}${horario.regreso ? ` · back at ${horario.regreso}` : ''}` : '—'}
+              valor={
+                horario
+                  ? horario.regreso
+                    ? tp('{salida} · back at {vuelta}', { salida: horario.hora, vuelta: horario.regreso })
+                    : horario.hora
+                  : '—'
+              }
             />
             {/* El nombre del menú solo acompaña al nº de personas cuando hay
                 elección («3 · Premium»): ahí la fila «Menu» lista platos y no

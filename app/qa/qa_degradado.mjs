@@ -61,9 +61,17 @@ check(
 )
 
 await pagina.getByLabel('First name').fill('Ana')
-await pagina.getByLabel('Email').fill('ana@example.com')
+// `getByLabel('Email')` dejó de ser único cuando el paso de contacto ganó el
+// selector «Language for your booking» (45d904e): el <select> responde también
+// a ese nombre y Playwright aborta por ambigüedad. Se pide el campo de texto.
+await pagina.getByRole('textbox', { name: 'Email' }).fill('ana@example.com')
 await pagina.getByRole('button', { name: 'Continue' }).click()
-await pagina.getByLabel('Hotel or pick-up point').fill('Meliá Caribe Beach')
+// El punto de recogida dejó de ser un <input> suelto: hoy es un combobox
+// (ui/selector-hotel.tsx) con su propio campo de texto libre debajo, así que se
+// rellena ese, no la etiqueta del grupo.
+await pagina.getByRole('button', { name: /Select your hotel|Hotel or pick-up point/ }).first().click()
+await pagina.getByPlaceholder('Search your hotel…').fill('Melia')
+await pagina.locator('[role="listbox"] [role="option"]').first().click()
 await pagina.getByRole('button', { name: 'Continue' }).click()
 
 console.log('== Paso de pago ==')
@@ -94,7 +102,7 @@ console.log('== Formularios ==')
 await pagina.goto(`${BASE}/travel-agents`, { waitUntil: 'networkidle' })
 await pagina.getByLabel('Agency / DMC name').fill('Test DMC')
 await pagina.getByLabel('Contact person').fill('Ana Pérez')
-await pagina.getByLabel('Email').fill('ana@example.com')
+await pagina.getByRole('textbox', { name: 'Email' }).fill('ana@example.com')
 await pagina.getByLabel('Phone / WhatsApp').fill('+1 809 000 0000')
 await pagina.getByRole('button', { name: /Send registration/i }).click()
 check(
