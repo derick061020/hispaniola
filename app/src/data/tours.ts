@@ -944,7 +944,11 @@ export const FICHAS: Record<string, FichaTour> = traducible({
           { desde: 1, hasta: 8, precio: 625, tipo: 'grupo', extra: 'Optional meal: + US$ 25 per person' },
           // ⚡ El tramo se recorta a 15: con el aforo aprobado, las plazas
           // 16-20 que vendia esta tabla no existen.
-          { desde: 9, hasta: 15, precio: 99, tipo: 'persona' },
+          // [2026-08-31] ALINEADO CON ODOO. Derick: «todo con la config de
+          // Odoo». Esta tabla es la que se PINTA cuando el backend no contesta
+          // (y la que imprime la ficha); el precio que se cobra sale del
+          // servidor. Tenerlas distintas era anunciar una cosa y cobrar otra.
+          { desde: 9, hasta: 20, precio: 99, tipo: 'persona' },
         ],
       },
       {
@@ -1021,7 +1025,11 @@ export const FICHAS: Record<string, FichaTour> = traducible({
           { desde: 1, hasta: 18, precio: 1600, tipo: 'grupo' },
           { desde: 19, hasta: 25, precio: 85, tipo: 'persona' },
           { desde: 26, hasta: 29, precio: 2225, tipo: 'grupo' },
-          { desde: 30, hasta: 85, precio: 75, tipo: 'persona' }, // ⚡ techo 85, no 120
+          // [2026-08-31] ALINEADO CON ODOO. Derick: «todo con la config de
+          // Odoo». Esta tabla es la que se PINTA cuando el backend no contesta
+          // (y la que imprime la ficha); el precio que se cobra sale del
+          // servidor. Tenerlas distintas era anunciar una cosa y cobrar otra.
+          { desde: 30, hasta: 120, precio: 75, tipo: 'persona' },
         ],
       },
       {
@@ -1044,7 +1052,11 @@ export const FICHAS: Record<string, FichaTour> = traducible({
           { desde: 1, hasta: 18, precio: 1600, tipo: 'grupo', extra: 'Optional meal: + US$ 25 per person' },
           { desde: 19, hasta: 25, precio: 110, tipo: 'persona' },
           { desde: 26, hasta: 28, precio: 2775, tipo: 'grupo', extra: 'Optional meal: + US$ 25 per person' },
-          { desde: 29, hasta: 85, precio: 99, tipo: 'persona' }, // ⚡ techo 85, no 120
+          // [2026-08-31] ALINEADO CON ODOO. Derick: «todo con la config de
+          // Odoo». Esta tabla es la que se PINTA cuando el backend no contesta
+          // (y la que imprime la ficha); el precio que se cobra sale del
+          // servidor. Tenerlas distintas era anunciar una cosa y cobrar otra.
+          { desde: 29, hasta: 120, precio: 99, tipo: 'persona' },
         ],
       },
     ],
@@ -1404,9 +1416,18 @@ export const FICHAS: Record<string, FichaTour> = traducible({
           { desde: 7, hasta: 7, precio: 1160, tipo: 'grupo' },
           { desde: 8, hasta: 8, precio: 1220, tipo: 'grupo' },
           { desde: 9, hasta: 9, precio: 1280, tipo: 'grupo' },
-          // Fuera los tramos de 10 y de 11-25: por encima de 9 personas este
-          // barco ya no se vende (aforo aprobado).
-        
+          // [2026-08-31] ALINEADO CON ODOO. Derick: «todo con la config de
+          // Odoo». Esta tabla es la que se PINTA cuando el backend no contesta
+          // (y la que imprime la ficha); el precio que se cobra sale del
+          // servidor. Tenerlas distintas era anunciar una cosa y cobrar otra.
+          // Vuelven los tramos de 10 y de 11-25, que el tarifario si
+          // tiene. OJO: aqui habia una nota que decia que por encima de 9
+          // personas este barco «ya no se vende (aforo aprobado)». Si ese tope
+          // sigue vigente, el sitio donde ponerlo es Odoo —quitando esos dos
+          // tramos del tarifario y bajando el max-pax—, no aqui: de lo
+          // contrario la web anuncia 9 y el servidor cobra 25.
+          { desde: 10, hasta: 10, precio: 1340, tipo: 'grupo' },
+          { desde: 11, hasta: 25, precio: 130, tipo: 'persona' },
         ],
       },
       {

@@ -435,7 +435,9 @@ export function WidgetReserva({
   // `addOnsDisponibles` (lib/tarifas) porque la franja de la langosta del
   // bloque de menú aplica EXACTAMENTE la misma regla — si no, el panel, el
   // desglose, el total y la franja podrían discrepar sobre si aplica.
-  const addOns = addOnsDisponibles(ficha, variante)
+  // `totalPersonas` tambien: hay add-ons con condicion de tamano de grupo (la
+  // comida del Maite, que solo existe por debajo de 8). Ver `addOnsDisponibles`.
+  const addOns = addOnsDisponibles(ficha, variante, totalPersonas)
 
   // [2026-08-18] EL PRECIO BUENO LO PONE ODOO (ver use-cotizacion.ts). Hasta
   // hoy la ficha calculaba en el navegador y el checkout preguntaba a Odoo:

@@ -99,6 +99,14 @@ export type AddOn = {
    *  en la lista filtrada, y un id huérfano en la selección no encuentra
    *  pareja. */
   soloSubVariantes?: string[]
+  /** [2026-08-31] Condicion por tamano de grupo, la trae Odoo.
+   *
+   *  Derick: «en el Maite, en la web, si quieren comida y estan en menos de 8
+   *  personas, son 20$ mas por persona». Por encima de ese numero la comida va
+   *  incluida, asi que el add-on no debe ni aparecer. Sin campo, el add-on vale
+   *  para cualquier grupo, que es el caso de siempre. */
+  desdePax?: number
+  hastaPax?: number
 }
 
 export function precioAddOn(addOn: AddOn, personas: number): number {
@@ -258,10 +266,22 @@ export function addOnsDeFicha(ficha: FichaTour): AddOn[] {
  *  no pudieran discrepar. Sube aquí porque ahora hay un segundo sitio donde se
  *  marcan add-ons —la franja de la langosta del bloque de menú
  *  (tour/banner-langosta.tsx)— y la regla tiene que seguir siendo una. */
-export function addOnsDisponibles(ficha: FichaTour, variante?: string | null): AddOn[] {
-  return addOnsDeFicha(ficha).filter(
-    (a) => !a.soloSubVariantes || (variante != null && a.soloSubVariantes.includes(variante)),
-  )
+export function addOnsDisponibles(
+  ficha: FichaTour,
+  variante?: string | null,
+  personas?: number,
+): AddOn[] {
+  return addOnsDeFicha(ficha).filter((a) => {
+    if (a.soloSubVariantes && !(variante != null && a.soloSubVariantes.includes(variante))) {
+      return false
+    }
+    // El tamano del grupo solo descarta si se conoce: sin `personas` se ofrece
+    // todo, que es como se comportaba antes de existir esta condicion.
+    if (personas == null) return true
+    if (a.desdePax && personas < a.desdePax) return false
+    if (a.hastaPax && personas > a.hastaPax) return false
+    return true
+  })
 }
 
 /** Lo que el bloque de menú necesita saber de la reserva para que su franja de

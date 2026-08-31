@@ -53,6 +53,9 @@ function aTramo(t: Tramo): TramoPrecio {
 // ingles, como en el resto del sitio.
 function aAddOn(a: AddOnOdoo, estatico?: AddOn): AddOn {
   return {
+    // Condicion por tamano de grupo (la comida del Maite): manda Odoo.
+    ...(a.min_pax ? { desdePax: a.min_pax } : estatico?.desdePax ? { desdePax: estatico.desdePax } : {}),
+    ...(a.max_pax ? { hastaPax: a.max_pax } : estatico?.hastaPax ? { hastaPax: estatico.hastaPax } : {}),
     // El id es el contrato con el resto del front (la franja de la langosta
     // apunta a un add-on por id), y es el mismo slug en los dos lados.
     id: a.slug,

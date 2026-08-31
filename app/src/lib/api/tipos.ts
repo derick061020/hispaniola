@@ -67,6 +67,9 @@ export type AddOn = {
   default_on: boolean
   /** Slugs de variante a las que aplica. Vacio = a todas. */
   only_variants: string[]
+  /** Condicion por tamano de grupo. null = sin limite por ese lado. */
+  min_pax?: number | null
+  max_pax?: number | null
 }
 
 export type Tour = {

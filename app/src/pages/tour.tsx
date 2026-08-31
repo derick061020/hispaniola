@@ -280,7 +280,7 @@ export function TourPage() {
                   // ofrecer algo que esa cocina no puede servir.
                   seleccionAddOns={{
                     elegidos: addOnsElegidos,
-                    disponibles: addOnsDisponibles(ficha, variante).map((a) => a.id),
+                    disponibles: addOnsDisponibles(ficha, variante, personas ?? undefined).map((a) => a.id),
                     alternar: (id) =>
                       setAddOnsElegidos((prev) =>
                         prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
