@@ -33,6 +33,10 @@ export type Tramo = {
   price: number
   kind: 'group' | 'person'
   note: string | null
+  /** Suplemento POR PERSONA que acompaña a la tarifa de grupo — el «Extra
+   *  Price» de Odoo. Solo viene relleno en los tramos `group`: cuando el precio
+   *  pasa a ser por cabeza, el extra ya no se cobra. */
+  extra_per_pax?: number | null
 }
 
 export type Horario = {

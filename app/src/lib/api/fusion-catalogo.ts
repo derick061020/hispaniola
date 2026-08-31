@@ -26,6 +26,7 @@ import type { FichaTour, Horario, TramoPrecio, SubVarianteTour } from '@/data/to
 import type { AddOn } from '@/lib/tarifas'
 import type { Tour as TarjetaTour } from '@/data/home'
 import { t } from '@/lib/i18n'
+import { respaldoDeOdoo } from '@/data/catalogo-odoo.generado'
 
 function aHorario(h: HorarioOdoo): Horario {
   return { hora: h.departure, regreso: h.back ?? '' }
@@ -38,6 +39,7 @@ function aTramo(t: Tramo): TramoPrecio {
     precio: t.price,
     tipo: t.kind === 'group' ? 'grupo' : 'persona',
     ...(t.note ? { extra: t.note } : {}),
+    ...(t.extra_per_pax ? { extraPorPax: t.extra_per_pax } : {}),
   }
 }
 
@@ -100,7 +102,19 @@ function aSubVariante(v: Variante, estatica?: SubVarianteTour): SubVarianteTour 
 
 /** La ficha del front con los números de Odoo encima. `odoo === null`
  *  (cargando, o el servidor no contesta) devuelve la ficha tal cual. */
-export function fusionarFicha(ficha: FichaTour, odoo: TourOdoo | null): FichaTour {
+export function fusionarFicha(
+  ficha: FichaTour,
+  odoo: TourOdoo | null,
+  slug?: string,
+): FichaTour {
+  // [2026-08-31] SI ODOO NO CONTESTA, SE USA SU FOTO — no las tablas escritas a
+  // mano. Derick: «no quiero lo actualices, quiero esté realmente conectado».
+  //
+  // Lo que se pinta con Odoo vivo ya salía de Odoo. Lo que no, era este camino:
+  // caía en `ficha`, cuyas tablas alguien tenía que venir a copiar a mano cada
+  // vez que cambiaba una tarifa. Ahora cae en la foto que genera
+  // `npm run sync:tarifas`, así que también ese respaldo viene del backend.
+  odoo = odoo ?? (slug ? respaldoDeOdoo(slug) : null)
   if (!odoo) return ficha
 
   const addOnsPorId = new Map((ficha.addOns ?? []).map((a) => [a.id, a]))
@@ -153,6 +167,8 @@ export function fusionarFicha(ficha: FichaTour, odoo: TourOdoo | null): FichaTou
 /** La tarjeta del tour (nombre, «desde US$», aforo) con los precios de Odoo.
  *  Es lo que ancla el «from US$ 99» del home y de la cabecera de la ficha. */
 export function fusionarTarjeta(tarjeta: TarjetaTour, odoo: TourOdoo | null): TarjetaTour {
+  // Mismo motivo que en `fusionarFicha`: el respaldo también sale de Odoo.
+  odoo = odoo ?? respaldoDeOdoo(tarjeta.slug)
   if (!odoo) return tarjeta
   return {
     ...tarjeta,

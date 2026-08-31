@@ -64,8 +64,8 @@ export function TourPage() {
     [tourEstatico, odoo],
   )
   const ficha = useMemo(
-    () => (fichaEstatica ? fusionarFicha(fichaEstatica, odoo) : undefined),
-    [fichaEstatica, odoo],
+    () => (fichaEstatica ? fusionarFicha(fichaEstatica, odoo, slug) : undefined),
+    [fichaEstatica, odoo, slug],
   )
 
   // v3 (2026-07-17, charter): la sub-variante (bote) vive en `tour.tsx` y

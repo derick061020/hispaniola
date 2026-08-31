@@ -32,7 +32,13 @@ export function tramoDe(tabla: TramoPrecio[], personas: number): TramoPrecio | n
 
 /** Precio base de un tramo para N personas, aplicando sustitución. */
 export function precioDeTramo(tramo: TramoPrecio, personas: number): number {
-  return tramo.tipo === 'grupo' ? tramo.precio : tramo.precio * personas
+  // El suplemento por persona solo acompaña a la tarifa de GRUPO — en cuanto el
+  // tramo se cobra por cabeza ya va dentro del precio. Misma regla que aplica
+  // el servidor (haa.excursion.transfer_price), que es quien manda.
+  if (tramo.tipo === 'grupo') {
+    return tramo.precio + (tramo.extraPorPax ?? 0) * Math.max(personas, 0)
+  }
+  return tramo.precio * personas
 }
 
 /** Aforo máximo real de una tabla de tramos: el `hasta` del último tramo.

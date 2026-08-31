@@ -56,6 +56,11 @@ export type TramoPrecio = {
   precio: number
   tipo: 'grupo' | 'persona'
   extra?: string
+  /** [2026-08-31] Suplemento por persona de la tarifa de grupo (el «Extra
+   *  Price» de Odoo). Sin él, el total que se pinta mientras llega la respuesta
+   *  del servidor salía por debajo del que se cobra: Maite con 6 personas son
+   *  625 + 25 × 6 = 775, y aquí decía 625. */
+  extraPorPax?: number
 }
 
 /** Una sub-variante seleccionable en el widget (Saona: Speedboat/Fishing/
@@ -1004,14 +1009,14 @@ export const FICHAS: Record<string, FichaTour> = traducible({
         // us$»); la tarifa real de grupo es 1600. Los otros 3 tramos ya
         // estaban bien. Esta es la variante de 3h — la de 4h vive abajo.
         tabla: [
-          { desde: 1, hasta: 18, precio: 1600, tipo: 'grupo' },
-          { desde: 19, hasta: 25, precio: 85, tipo: 'persona' },
-          { desde: 26, hasta: 29, precio: 2225, tipo: 'grupo' },
-          // [2026-08-31] ALINEADO CON ODOO. Derick: «todo con la config de
-          // Odoo». Esta tabla es la que se PINTA cuando el backend no contesta
-          // (y la que imprime la ficha); el precio que se cobra sale del
-          // servidor. Tenerlas distintas era anunciar una cosa y cobrar otra.
-          { desde: 30, hasta: 120, precio: 75, tipo: 'persona' },
+          // [2026-08-31, 2ª vuelta] TARIFA NUEVA, PUESTA POR DERICK EN ODOO.
+          // Esta tabla es la copia que se pinta si el backend no contesta; el
+          // precio que se cobra lo pone el servidor. Ya no hace falta venir a
+          // tocarla a mano: el barco de la web lee del tarifario de la ficha
+          // (`rate_excursion_id`), asi que en adelante se actualiza solo desde
+          // Odoo y este fichero solo es la red de seguridad.
+          { desde: 1, hasta: 30, precio: 2250, tipo: 'grupo' },
+          { desde: 31, hasta: 85, precio: 75, tipo: 'persona' },
         ],
       },
       {
@@ -1031,14 +1036,14 @@ export const FICHAS: Record<string, FichaTour> = traducible({
           { hora: '2:00 PM', regreso: '6:00 PM' },
         ],
         tabla: [
-          { desde: 1, hasta: 18, precio: 1600, tipo: 'grupo', extra: 'Optional meal: + US$ 25 per person' },
-          { desde: 19, hasta: 25, precio: 110, tipo: 'persona' },
-          { desde: 26, hasta: 28, precio: 2775, tipo: 'grupo', extra: 'Optional meal: + US$ 25 per person' },
-          // [2026-08-31] ALINEADO CON ODOO. Derick: «todo con la config de
-          // Odoo». Esta tabla es la que se PINTA cuando el backend no contesta
-          // (y la que imprime la ficha); el precio que se cobra sale del
-          // servidor. Tenerlas distintas era anunciar una cosa y cobrar otra.
-          { desde: 29, hasta: 120, precio: 99, tipo: 'persona' },
+          // [2026-08-31, 2ª vuelta] TARIFA NUEVA, PUESTA POR DERICK EN ODOO.
+          // Esta tabla es la copia que se pinta si el backend no contesta; el
+          // precio que se cobra lo pone el servidor. Ya no hace falta venir a
+          // tocarla a mano: el barco de la web lee del tarifario de la ficha
+          // (`rate_excursion_id`), asi que en adelante se actualiza solo desde
+          // Odoo y este fichero solo es la red de seguridad.
+          { desde: 1, hasta: 25, precio: 2475, tipo: 'grupo' },
+          { desde: 26, hasta: 85, precio: 99, tipo: 'persona' },
         ],
       },
     ],
@@ -1321,14 +1326,28 @@ export const FICHAS: Record<string, FichaTour> = traducible({
       // Precio y nota de veda: los mismos que la langosta de Saona (US$ 30 por
       // persona, sustitución por camarón gigante de marzo a junio). Es el
       // mismo producto de la misma cocina, no un precio inventado para aquí.
+      // [2026-08-31] La langosta se retiro del charter —Derick: «eso es solo
+      // para Saona»— y en su lugar entran las dos comidas a bordo. Cada una
+      // vale mientras su barco cobra tarifa de GRUPO: en cuanto el precio pasa
+      // a ser por cabeza, la comida ya va incluida y el extra desaparece. El
+      // tope sale del tarifario de Odoo (Maite hasta 8, Santa Maria hasta 13).
       {
-        id: 'langosta',
-        etiqueta: 'Fresh lobster upgrade',
-        descripcion: 'Add fresh lobster to your dish, freshly grilled on board. US$ 30 per person.',
+        id: 'comida-maite',
+        etiqueta: 'Meal on board',
+        descripcion: 'Lunch cooked on board. Included from 9 guests up.',
         base: 'persona',
-        precio: 30,
-        soloSubVariantes: ['maite', 'santa-maria', 'forever-teresa-4h'],
-        nota: 'From March to June lobster may be unavailable; in that case it is replaced with jumbo shrimp.',
+        precio: 20,
+        soloSubVariantes: ['maite'],
+        hastaPax: 8,
+      },
+      {
+        id: 'comida-santa-maria',
+        etiqueta: 'Meal on board',
+        descripcion: 'Lunch cooked on board. Included from 14 guests up.',
+        base: 'persona',
+        precio: 25,
+        soloSubVariantes: ['santa-maria'],
+        hastaPax: 13,
       },
     ],
   },
