@@ -358,6 +358,18 @@ function FlujoReserva({
   // el equipo los ve en «Web Orders → Unpaid / abandoned».
   /** Disparador del cobro que publica `PasoPago`. Lo usa la barra móvil. */
   const lanzarPago = useRef<(() => void) | null>(null)
+  // [2026-08-31] EL 5% POR PAGAR EN EFECTIVO, ELEGIBLE EN EL CHECKOUT.
+  //
+  // Derick: «el cash discount tambien en el proceso de checkout... y que se
+  // aplique de la misma forma que en odoo». Existia como promesa —el chip de
+  // «ahorra hasta 15%» y el bloque «Como pagar menos»— pero no habia forma de
+  // elegirlo: `descuentos` era un parametro del cliente de API que nadie
+  // rellenaba nunca.
+  //
+  // El importe NO se calcula aqui: se manda la eleccion al servidor y el se
+  // encarga, con la misma cuenta que el CRM (5% sobre el SALDO, no sobre el
+  // total, porque el deposito ya entro por tarjeta).
+  const [pagaEnEfectivo, setPagaEnEfectivo] = useState(false)
   const [pagando, setPagando] = useState(false)
   const [errorPago, setErrorPago] = useState<string | null>(null)
 
@@ -451,6 +463,8 @@ function FlujoReserva({
     pickup: { hotel: recogida.hotel.trim(), notes: recogida.notas.trim() },
     dishes: hayPasoMenu ? platos : [],
     addons: addonsIniciales,
+    // Lo decide el servidor: aqui solo se dice que el cliente lo eligio.
+    discounts: pagaEnEfectivo ? ['efectivo'] : [],
     ...(celebracion.ocasion && celebracion.ocasion !== 'ninguna'
       ? { occasion: celebracion.ocasion, occasion_note: celebracion.nota.trim() }
       : {}),
@@ -589,6 +603,14 @@ function FlujoReserva({
       ? tp('Departure {salida} · back at {vuelta}', { salida: horario.hora, vuelta: horario.regreso })
       : tp('Departure {salida}', { salida: horario.hora })
     : t('Schedule to be confirmed')
+
+  // Igual que la fecha y el horario: se guarda al momento. Si esperara al
+  // volcado final, el resumen enseñaria el total sin descuento hasta el segundo
+  // antes de cobrar, que es justo cuando nadie quiere sorpresas.
+  const cambiarEfectivo = (activo: boolean) => {
+    setPagaEnEfectivo(activo)
+    checkout.sincronizar({ discounts: activo ? ['efectivo'] : [] })
+  }
 
   const cambiarPlato = (persona: number, plato: string) =>
     setPlatos((prev) => prev.map((p, i) => (i === persona ? plato : p)))
@@ -806,6 +828,8 @@ function FlujoReserva({
                   registraLanzar={(fn) => { lanzarPago.current = fn }}
                   procesando={pagando}
                   error={errorPago}
+                  pagaEnEfectivo={pagaEnEfectivo}
+                  onEfectivoChange={cambiarEfectivo}
                 />
               </SeccionPaso>
             </div>

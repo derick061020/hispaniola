@@ -2645,4 +2645,9 @@ export const ES: Record<string, string> = {
   "Meal on board": "Comida a bordo",
   "Lunch cooked on board. Included from 9 guests up.": "Comida hecha a bordo. Incluida a partir de 9 personas.",
   "Lunch cooked on board. Included from 14 guests up.": "Comida hecha a bordo. Incluida a partir de 14 personas.",
+  "I’ll pay the balance in cash on board": "Pagaré el resto en efectivo a bordo",
+  "You save 5% on the balance. The deposit is still paid by card to hold your spot.": "Ahorras un 5% sobre el saldo. El depósito se sigue pagando con tarjeta para guardar tu plaza.",
+  "Bavaro": "Bávaro",
+  "Up to 12 guests included": "Hasta 12 personas incluidas",
+  "3 hours on board": "3 horas a bordo",
 }

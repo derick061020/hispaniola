@@ -165,6 +165,11 @@ function ficheros(dir, out = []) {
   for (const n of readdirSync(dir)) {
     const p = join(dir, n)
     if (statSync(p).isDirectory()) ficheros(p, out)
+    // El catalogo que genera `npm run sync:tarifas` es la FOTO de Odoo, no
+    // copy del front: lleva valores tecnicos (am, pm, flat, group…) que nadie
+    // pinta como texto. Lo que si se pinta —zonas, etiquetas de barco— pasa por
+    // `t()` al fusionar (lib/api/fusion-catalogo.ts) y se traduce por ahi.
+    else if (/catalogo-odoo\.generado\.ts$/.test(p)) continue
     else if (/\.tsx?$/.test(p)) out.push(p)
   }
   return out

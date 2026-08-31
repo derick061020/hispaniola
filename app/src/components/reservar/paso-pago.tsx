@@ -49,6 +49,8 @@ export function PasoPago({
   fechaElegida,
   onPagar,
   registraLanzar,
+  pagaEnEfectivo = false,
+  onEfectivoChange,
   procesando = false,
   error = null,
 }: {
@@ -74,6 +76,9 @@ export function PasoPago({
   registraLanzar?: (lanzar: () => void) => void
   /** [2026-08-10] El pago dejó de ser instantáneo: viaja a Odoo y a la
    *  pasarela. Sin esto se puede pulsar dos veces. */
+  /** [2026-08-31] El 5% por pagar el resto en efectivo. */
+  pagaEnEfectivo?: boolean
+  onEfectivoChange?: (activo: boolean) => void
   procesando?: boolean
   /** Mensaje si el cobro no se pudo iniciar o la tarjeta se rechazó. La reserva
    *  NO se pierde: sigue registrada como pendiente en el CRM. */
@@ -267,6 +272,35 @@ export function PasoPago({
           ) : null}
         </fieldset>
       )}
+
+      {/* [2026-08-31] EL 5% POR PAGAR EL RESTO EN EFECTIVO.
+          Va aquí, pegado al botón de pagar, porque es una decisión sobre CÓMO
+          se paga, no un extra que se contrata: la toma quien ya está mirando
+          los métodos de pago.
+
+          Lo que se elige es el saldo, no el depósito. El depósito se sigue
+          cobrando con tarjeta —es lo que garantiza la reserva— y el descuento
+          cae sobre lo que se paga a bordo. Es la misma cuenta que hace el CRM,
+          y el importe lo pone el servidor: aquí solo se marca la casilla. */}
+      {onEfectivoChange ? (
+        <label className="flex cursor-pointer items-start gap-3 rounded-card border border-linea bg-papel px-4 py-3">
+          <input
+            type="checkbox"
+            className="mt-0.5 size-4 shrink-0 accent-aqua"
+            checked={pagaEnEfectivo}
+            disabled={procesando}
+            onChange={(e) => onEfectivoChange(e.target.checked)}
+          />
+          <span className="text-sm">
+            <span className="font-semibold text-navy">
+              {t('I’ll pay the balance in cash on board')}
+            </span>
+            <span className="mt-0.5 block text-xs text-navy-sub">
+              {t('You save 5% on the balance. The deposit is still paid by card to hold your spot.')}
+            </span>
+          </span>
+        </label>
+      ) : null}
 
       {/* [2026-08-21, auditoría móvil] En móvil este botón se esconde: la
           acción del paso vive en la barra fija de abajo, con el importe al
