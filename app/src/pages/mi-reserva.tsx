@@ -758,7 +758,27 @@ function BloqueReserva({
         <h2 className="font-display text-lg font-semibold text-navy">{t('Your booking')}</h2>
       </div>
       <dl className="mt-4 space-y-2 text-sm">
-        <Fila label={t('Tour total')} valor={formatoDinero(reserva.total)} />
+        {/* [2026-09-01, Derick: «que se incluyan los descuentos en el link de
+            pago, para que el cliente sea consciente de cuanto se le esta
+            descontando y por que»] Antes solo se veia el total ya rebajado, sin
+            decir de donde salia: un numero mas bajo del esperado y sin
+            explicacion es lo que hace que la gente escriba preguntando si hay
+            un error. Cada descuento va con su nombre. */}
+        {(reserva.desglose ?? []).map((l, i) => (
+          <div key={`${l.key}-${i}`} className="flex items-baseline justify-between gap-3">
+            <dt className={l.amount < 0 ? 'text-aqua-dark' : 'text-navy-soft'}>
+              {t(l.label)}
+              {l.detail ? <span className="ml-1 text-xs text-navy-soft">({l.detail})</span> : null}
+            </dt>
+            <dd className={l.amount < 0 ? 'font-medium text-aqua-dark' : 'text-navy'}>
+              {l.amount < 0 ? `− ${formatoDinero(-l.amount)}` : formatoDinero(l.amount)}
+            </dd>
+          </div>
+        ))}
+        <div className="flex items-center justify-between border-t border-linea pt-2">
+          <dt className="font-medium text-navy">{t('Tour total')}</dt>
+          <dd className="font-semibold text-navy">{formatoDinero(reserva.total)}</dd>
+        </div>
         <Fila label={t('Already paid')} valor={formatoDinero(reserva.deposito)} />
         {/* [2026-09-01] «Ya pagado US$ 171» junto a «Saldo pendiente US$ 581»
             eran dos cifras que se contradecian en el mismo recuadro, y encima

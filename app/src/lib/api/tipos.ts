@@ -233,6 +233,10 @@ export type Reserva = {
   amounts: {
     currency: Moneda; total: number; deposit: number; balance: number
     balance_total?: number; refunded: number
+    /** Desglose: lo que suma en positivo y cada descuento, con su nombre. */
+    lines?: { key: string; label: string; amount: number; detail: string | null }[]
+    /** Como esta el cobro, con las mismas palabras que usa la oficina. */
+    due_label?: string
   }
   balance_due: string | null
   contact: { name: string; email: string; phone: string }

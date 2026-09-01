@@ -72,6 +72,7 @@ export function reservaDesdeOdoo(odoo: ReservaOdoo): ReservaLocal {
     deposito: odoo.amounts.deposit,
     saldo: odoo.amounts.balance,
     saldoTotal: odoo.amounts.balance_total ?? odoo.amounts.balance,
+    desglose: odoo.amounts.lines ?? [],
     fechaCreacionISO: odoo.created_at ?? new Date().toISOString(),
   }
 }

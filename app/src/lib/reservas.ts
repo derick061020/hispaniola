@@ -43,6 +43,8 @@ export type Reserva = {
   saldo: number
   /** Todo lo que queda por pagar, si es mas que lo que se cobra ahora. */
   saldoTotal?: number
+  /** El desglose del precio, descuentos incluidos. */
+  desglose?: { key: string; label: string; amount: number; detail: string | null }[]
   fechaCreacionISO: string
   comoNosConociste?: string
   /** «¿Celebras algo especial?» del paso de contacto (2026-08-07). Opcional
