@@ -1,5 +1,6 @@
 import * as FancyButton from '@/components/alignui/fancy-button'
 import { formatoDinero } from '@/data/home'
+import type { MetodoPago } from '@/lib/tarifas'
 
 // Barra inferior fija del funnel de reserva en móvil.
 //
@@ -32,24 +33,35 @@ import { formatoDinero } from '@/data/home'
 export function BarraMovilReserva({
   deposito,
   total,
+  metodoPago,
   texto,
   habilitado,
   onAccion,
 }: {
   deposito: number
   total: number
+  /** [2026-09-01] Pagando en efectivo hoy no se cobra nada, así que la barra
+   *  deja de anunciar «You pay today · US$ 0 of US$ 400» —que se lee como un
+   *  error— y pasa a enseñar el total, que es la cifra que importa en ese
+   *  camino. El importe sigue llegando calculado desde el funnel. */
+  metodoPago: MetodoPago
   /** Copy del CTA del paso activo (cambia en el paso del menú y en el de pago). */
   texto: string
   habilitado: boolean
   onAccion: () => void
 }) {
+  const enEfectivo = metodoPago === 'efectivo'
   return (
     <div className="fixed inset-x-0 bottom-0 z-30 flex items-center justify-between gap-3 border-t border-linea bg-papel px-5 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-card lg:hidden">
       <div className="min-w-0">
-        <p className="text-xs text-navy-soft">You pay today</p>
+        <p className="text-xs text-navy-soft">{enEfectivo ? 'Total, in cash' : 'You pay today'}</p>
         <p className="font-display text-base font-semibold text-navy">
-          {formatoDinero(deposito)}
-          <span className="ml-1.5 text-xs font-normal text-navy-soft">of {formatoDinero(total)}</span>
+          {enEfectivo ? formatoDinero(total) : formatoDinero(deposito)}
+          {enEfectivo ? (
+            <span className="ml-1.5 text-xs font-normal text-navy-soft">on the day</span>
+          ) : (
+            <span className="ml-1.5 text-xs font-normal text-navy-soft">of {formatoDinero(total)}</span>
+          )}
         </p>
       </div>
 

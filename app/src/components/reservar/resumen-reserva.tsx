@@ -1,9 +1,11 @@
 import { Check, Lock, MessageCircle, Minus, Plus, ShieldCheck, UtensilsCrossed, Users } from 'lucide-react'
 import * as CompactButton from '@/components/alignui/compact-button'
 import { CalendarioWidget } from '@/components/tour/calendario-widget'
+import { BannerGrupo } from '@/components/tour/banner-grupo'
 import { NumeroEditable } from '@/components/ui/numero-editable'
 import { formatoDinero, type Tour } from '@/data/home'
 import type { MenuReserva } from '@/lib/menu-reserva'
+import { DESCUENTO_EFECTIVO, type MetodoPago } from '@/lib/tarifas'
 
 // Columna DERECHA del funnel (Fase C, layout Viator): «qué estás comprando»,
 // sticky, siempre visible mientras se rellena el formulario de la izquierda.
@@ -61,6 +63,8 @@ export function ResumenReserva({
   conceptoBase,
   precioBase,
   upgrade,
+  metodoPago,
+  descuentoEfectivo,
   total,
   deposito,
   saldo,
@@ -89,14 +93,21 @@ export function ResumenReserva({
   precioBase: number
   /** Sobrecoste por persona del Premium; 0 si la reserva es Light. */
   upgrade: number
+  /** [2026-09-01] Cómo eligió pagar. Decide si el desglose lleva línea de
+   *  descuento y qué dice el bloque de «cómo se paga». */
+  metodoPago: MetodoPago
+  /** Lo que rebaja pagar en efectivo; 0 con tarjeta. Llega ya calculado
+   *  (`desglosePago`) en vez de recalcularse aquí: es el mismo número que
+   *  enseñan el paso de pago y la barra de móvil. */
+  descuentoEfectivo: number
+  /** El total YA con el descuento aplicado, si lo hay. */
   total: number
   deposito: number
   saldo: number
   /** [2026-08-21] El funnel lo usa para el orden en móvil. Ver reservar.tsx. */
   className?: string
 }) {
-  const enEfectivo = Math.round(saldo * 0.95)
-  const ahorro = saldo - enEfectivo
+  const enEfectivo = metodoPago === 'efectivo'
 
   return (
     <div className={className}>
@@ -234,6 +245,14 @@ export function ResumenReserva({
           <p className="text-xs text-navy-soft">
             {fechaISO ? horarioTxt : 'Choose the date to confirm your spot.'}
           </p>
+
+          {/* [2026-09-01, pedido de Samuel: «y en checkout que aparezca esto
+              igual»] El MISMO banner de descuento por grupo que el widget de la
+              ficha, y en la misma posición relativa: pegado al contador de
+              personas, que es lo único que decide si aplica. Aquí importa más
+              todavía, porque el stepper de esta tarjeta es el último sitio donde
+              se puede cambiar el tamaño del grupo antes de pagar. */}
+          <BannerGrupo personas={personas} maxPersonas={maxPersonas} />
         </div>
 
         {/* DESGLOSE. Se pinta SIEMPRE, también sin extras: ver de dónde sale el
@@ -265,27 +284,57 @@ export function ResumenReserva({
               importe={upgrade * personas}
             />
           ) : null}
+          {/* [2026-09-01] EL DESCUENTO DE EFECTIVO, COMO LÍNEA PROPIA. Antes se
+              explicaba en una frase debajo del total («pagando en efectivo el
+              saldo baja a X»); ahora que es una elección del checkout, tiene que
+              verse restando dentro de la cuenta — si no, el total cambia solo al
+              tocar el selector de más abajo y no hay nada que lo explique. */}
+          {descuentoEfectivo > 0 ? (
+            <div className="flex items-baseline justify-between gap-3 py-0.5">
+              <span className="text-menta-texto">Cash payment · −{DESCUENTO_EFECTIVO}%</span>
+              <span className="shrink-0 tabular-nums font-medium text-menta-texto">
+                −{formatoDinero(descuentoEfectivo)}
+              </span>
+            </div>
+          ) : null}
           <div className="mt-3 flex items-center justify-between border-t border-linea pt-3">
             <span className="font-semibold text-navy">Total</span>
             <span className="font-display text-precio font-semibold text-navy">{formatoDinero(total)}</span>
           </div>
         </div>
 
-        {/* CÓMO SE PAGA. Dos líneas que suman el total de arriba, y la frase que
-            evita la duda de siempre: el depósito no se suma, se descuenta. */}
+        {/* CÓMO SE PAGA. Dos líneas que suman el total de arriba.
+            [2026-09-01] Las dos cambian con el método elegido en el paso de
+            pago: en efectivo hoy no se cobra nada y todo va al día del tour; con
+            tarjeta sigue el depósito del 25%. La frase de debajo también cambia,
+            porque la duda que evita es distinta en cada caso — con tarjeta, que
+            el depósito no es un cargo extra; en efectivo, que no hay que dar
+            ninguna tarjeta. */}
         <div className="rounded-b-card border-t border-linea bg-papel-hueso p-4 text-sm">
           <div className="flex items-center justify-between">
-            <span className="font-semibold text-navy">You pay today (25%)</span>
+            <span className="font-semibold text-navy">
+              {enEfectivo ? 'You pay today' : 'You pay today (25%)'}
+            </span>
             <span className="font-semibold text-navy">{formatoDinero(deposito)}</span>
           </div>
           <div className="mt-1.5 flex items-center justify-between">
-            <span className="text-navy-sub">On the day of the tour</span>
+            <span className="text-navy-sub">
+              {enEfectivo ? 'On the day, in cash' : 'On the day of the tour'}
+            </span>
             <span className="text-navy">{formatoDinero(saldo)}</span>
           </div>
           <p className="mt-2.5 text-xs leading-relaxed text-navy-soft">
-            The deposit is not an extra charge: it comes off the total. Paying cash on board brings the balance down to{' '}
-            <span className="font-semibold text-navy">{formatoDinero(enEfectivo)}</span>. You save{' '}
-            {formatoDinero(ahorro)}.
+            {enEfectivo ? (
+              <>
+                Nothing is charged today and no card is needed. You pay the full amount in cash on
+                the day of the tour, with the {DESCUENTO_EFECTIVO}% discount already applied.
+              </>
+            ) : (
+              <>
+                The deposit is not an extra charge: it comes off the total. Choose to pay in cash and
+                the whole booking drops by {DESCUENTO_EFECTIVO}%.
+              </>
+            )}
           </p>
           <p className="mt-2 flex items-center gap-1.5 text-xs font-medium text-menta-texto">
             <Check className="size-3.5 shrink-0" aria-hidden="true" />

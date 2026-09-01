@@ -106,12 +106,22 @@ export const TOURS: Tour[] = [
     rating: 4.9,
     resenas: 1782,
     // v3 (2026-07-17): el «Max. Capacity: 30» de la web del cliente + precio
-    // tarifa dual Adulto US$ 114 / Niño US$ 65 (la web publica 2 tarifas
-    // separadas solo para este tour familiar — el resto del catálogo es 1
-    // precio por persona). El widget detecta `precioNino` y pinta 2 steppers
-    // «Adultos» + «Niños» con icono Baby en el de niños.
+    // tarifa dual Adulto / Niño (la web publica 2 tarifas separadas solo para
+    // este tour familiar — el resto del catálogo es 1 precio por persona). El
+    // widget detecta `precioNino` y pinta 2 steppers «Adultos» + «Niños» con
+    // icono Baby en el de niños.
+    //
+    // ⚡ [2026-09-01, Samuel] «Coral Quest: los precios son 114 premium y 99 en
+    // light». `precioLight` baja de 114 a 99 y el upgrade de la ficha (US$ 15,
+    // en FICHAS.coral) hace el resto: 99 + 15 = 114. O sea que el 114 que la
+    // web del cliente publicaba como tarifa ÚNICA pasa a ser el precio del
+    // Premium, y aparece un Light por debajo. Con eso, además, este tour deja
+    // de ser el único con un `upgradePremium` supuesto y sin confirmar: los dos
+    // extremos de la horquilla los da ahora el cliente.
+    // ⚠️ La tarifa de NIÑO (65) no la tocó: se queda como está, y su Premium
+    // sigue siendo 65 + 15 = 80.
     maxPax: 30,
-    precioLight: 114,
+    precioLight: 99,
     precioNino: 65,
     booking: 'completo',
     // [v3] Copy APROBADO (WEBSITE - INICIO, pág. 2).

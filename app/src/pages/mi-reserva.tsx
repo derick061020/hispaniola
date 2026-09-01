@@ -377,6 +377,11 @@ function DetalleReserva({ codigoIngresado }: { codigoIngresado: string }) {
 
 function BloqueReserva({ reserva }: { reserva: Reserva }) {
   const [pagado, setPagado] = useState(false)
+  // [2026-09-01] Reserva pagada íntegramente en efectivo: no hay depósito
+  // cobrado y el 5% ya está dentro del total. Ofrecerle «pagar el saldo online»
+  // sería empujarle a perder el descuento que acaba de elegir — así que esa
+  // reserva no ve el botón, ve la instrucción de lo que tiene que llevar.
+  const pagoEnEfectivo = reserva.metodoPago === 'efectivo'
 
   return (
     <section className="mt-8 rounded-card-grande border border-linea bg-papel p-5 sm:p-6">
@@ -386,13 +391,23 @@ function BloqueReserva({ reserva }: { reserva: Reserva }) {
       </div>
       <dl className="mt-4 space-y-2 text-sm">
         <Fila label="Tour total" valor={formatoDinero(reserva.total)} />
-        <Fila label="Already paid" valor={formatoDinero(reserva.deposito)} />
+        <Fila
+          label={pagoEnEfectivo ? 'Paid so far' : 'Already paid'}
+          valor={formatoDinero(reserva.deposito)}
+        />
         <div className="flex items-center justify-between border-t border-linea pt-3 text-sm">
-          <dt className="font-medium text-navy">Balance due</dt>
+          <dt className="font-medium text-navy">
+            {pagoEnEfectivo ? 'To pay in cash on board' : 'Balance due'}
+          </dt>
           <dd className="text-base font-semibold text-navy">{formatoDinero(reserva.saldo)}</dd>
         </div>
       </dl>
-      {reserva.saldo > 0 && !pagado && (
+      {pagoEnEfectivo ? (
+        <p className="mt-4 rounded-lg bg-menta px-3.5 py-2.5 text-xs leading-relaxed text-menta-texto">
+          You chose to pay in cash, so the 5% discount is already in the amount above. Bring it on
+          the day and there’s nothing to do here.
+        </p>
+      ) : reserva.saldo > 0 && !pagado ? (
         <div className="mt-4">
           <button
             type="button"
@@ -405,7 +420,7 @@ function BloqueReserva({ reserva }: { reserva: Reserva }) {
             Or pay in cash on board, nothing to do here.
           </p>
         </div>
-      )}
+      ) : null}
       {pagado && (
         <p className="mt-4 inline-flex items-center gap-1.5 rounded-chip bg-menta px-3 py-1.5 text-sm font-semibold text-menta-texto">
           <Check className="size-4" aria-hidden="true" />

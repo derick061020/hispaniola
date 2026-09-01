@@ -1,58 +1,47 @@
-import { useState } from 'react'
-import { Check, Sparkles } from 'lucide-react'
+import { Check } from 'lucide-react'
 import { formatoDinero } from '@/data/home'
 import { precioAddOn, type AddOn } from '@/lib/tarifas'
 
 // Add-ons del widget de reserva (correcciones v2, 2026-07-27).
 //
-// Los tres extras del negocio (langosta, comida opcional y álbum de fotos) se
-// venden aquí como UPSELL: superficie de venta con peso visual, no letra
-// pequeña. Decisión de Samuel del 07-27: «un check fácil de clickar y
-// atractivo, piensa en él como un upsell».
+// Los extras del negocio se venden aquí como UPSELL: superficie de venta con
+// peso visual, no letra pequeña. Decisión de Samuel del 07-27: «un check fácil
+// de clickar y atractivo, piensa en él como un upsell».
 //
 // Cómo se cobran (TARIFARIO-WEB-ORIGINAL.md §4-C):
 //  · base 'persona' → un solo check que multiplica por TODAS las personas de
-//    la reserva (no se elige comensal a comensal). Langosta US$ 30, comida
-//    opcional US$ 25/45.
-//  · base 'grupo'   → precio fijo que no escala. Solo el álbum, US$ 20.
+//    la reserva (no se elige comensal a comensal). Es el caso de los tres que
+//    quedan vivos: la langosta de Saona (US$ 30) y las dos comidas opcionales
+//    del charter (US$ 20 en Maite, US$ 25 en Santa Maria).
+//  · base 'grupo'   → precio fijo que no escala. Hoy no lo usa ninguno.
 //
-// ⚠️ EL ÁLBUM ARRANCA MARCADO (`porDefecto: true`). Es una decisión de negocio
-// de Samuel del 2026-07-27, tomada sabiendo que un extra de pago premarcado
-// contraviene la Directiva 2011/83/UE art. 22 (consentimiento expreso para
-// pagos adicionales; derecho a reembolso cuando se infiere de una casilla que
-// hay que desmarcar). El riesgo está registrado en TARIFARIO §4-C y el
-// comportamiento vive en DOS BOOLEANOS de lib/tarifas.ts (ALBUM_UPSELL) a
-// propósito: desactivarlo o variarlo por mercado tiene que ser una línea, no
-// una refactorización de este componente. NO cablees esa lógica aquí.
+// [2026-09-01, Samuel] AQUÍ VIVÍA LA CONFIRMACIÓN AL DESMARCAR («¿Seguro? Estas
+// fotos no se repiten»), la pareja del único add-on premarcado que tuvo el
+// sitio: el álbum de fotos. Con el álbum retirado no queda ningún `porDefecto`,
+// así que ese diálogo era inalcanzable — y encima estaba en español dentro de
+// una UI en inglés. Se va entero, junto con la prop `mensajeAlDesmarcar` y el
+// estado que lo gobernaba. El porqué del cambio, en lib/tarifas.ts.
+//
+// ⚠️ Si algún día vuelve un extra premarcado, que vuelva SIN esta fricción:
+// poner un obstáculo para gastar menos, y ninguno para gastar más, es el patrón
+// inverso al que este proyecto quiere — y el riesgo legal de la casilla
+// premarcada (Directiva 2011/83/UE art. 22) sigue anotado en TARIFARIO §4-C.
 
 export function AddOnsWidget({
   addOns,
   personas,
   elegidos,
   onCambiar,
-  mensajeAlDesmarcar,
 }: {
   addOns: AddOn[]
   personas: number
   elegidos: string[]
   onCambiar: (ids: string[]) => void
-  mensajeAlDesmarcar: boolean
 }) {
-  // Qué add-on está pidiendo confirmación al desmarcarse. Solo uno a la vez.
-  const [confirmando, setConfirmando] = useState<string | null>(null)
-
   if (addOns.length === 0) return null
 
   function alternar(addOn: AddOn) {
     const activo = elegidos.includes(addOn.id)
-    // Al DESMARCAR un add-on que lo pide, se interpone una confirmación en vez
-    // de quitarlo directamente. Solo aplica al desmarcado: marcar es siempre
-    // inmediato — poner fricción para gastar más y no para gastar menos sería
-    // el patrón inverso al que queremos.
-    if (activo && mensajeAlDesmarcar && addOn.porDefecto) {
-      setConfirmando(addOn.id)
-      return
-    }
     onCambiar(activo ? elegidos.filter((i) => i !== addOn.id) : [...elegidos, addOn.id])
   }
 
@@ -61,48 +50,6 @@ export function AddOnsWidget({
       {addOns.map((a) => {
         const activo = elegidos.includes(a.id)
         const importe = precioAddOn(a, personas)
-        const enConfirmacion = confirmando === a.id
-
-        // [v2 2026-07-27, 2ª vuelta] La confirmación SUSTITUYE el contenido de
-        // la tarjeta en vez de añadirse debajo. Antes crecía hacia abajo y el
-        // widget —que es sticky y ya va justo de alto— empujaba el CTA fuera
-        // de pantalla justo en el momento de decidir. Ocupando el mismo hueco,
-        // el alto del widget no cambia al abrirse.
-        if (enConfirmacion) {
-          return (
-            <div key={a.id} className="rounded-xl border border-aqua bg-aqua/5 p-3">
-              <p className="flex items-start gap-2 text-sm font-semibold text-navy">
-                <Sparkles size={16} className="mt-0.5 shrink-0 text-aqua" aria-hidden="true" />
-                ¿Seguro? Estas fotos no se repiten.
-              </p>
-              <p className="mt-1 text-xs leading-relaxed text-navy-sub">
-                El álbum completo en máxima calidad (todas, sin recortar) por{' '}
-                {formatoDinero(a.precio)} para todo el grupo.
-              </p>
-              <div className="mt-3 flex gap-2">
-                <button
-                  type="button"
-                  onClick={() => setConfirmando(null)}
-                  // `text-papel` y no `text-white`: ver calendario-widget.tsx —
-                  // el blanco fijo desaparece sobre el navy remapeado a crema.
-                  className="rounded-full bg-navy px-4 py-2 text-xs font-semibold text-papel transition hover:brightness-110"
-                >
-                  Quedármelo
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    onCambiar(elegidos.filter((i) => i !== a.id))
-                    setConfirmando(null)
-                  }}
-                  className="rounded-full px-4 py-2 text-xs font-medium text-navy-sub underline transition hover:text-navy"
-                >
-                  No, gracias
-                </button>
-              </div>
-            </div>
-          )
-        }
 
         return (
           <div
@@ -144,9 +91,14 @@ export function AddOnsWidget({
                     En los add-ons POR PERSONA sí se queda: ahí no es una
                     repetición, es la cuenta (US$ 30 × 4) que explica de dónde
                     sale el importe de la derecha. */}
+                {/* [2026-09-01] En inglés, como el resto de la UI. Estaba en
+                    español y hasta hoy casi no se veía: el único add-on por
+                    persona era la langosta, y solo en dos fichas. Con las
+                    comidas opcionales del charter, esta línea es la que explica
+                    de dónde sale el importe de la derecha. */}
                 {a.base === 'persona' ? (
                   <span className="mt-1 block text-[11px] font-medium uppercase tracking-wide text-aqua">
-                    {formatoDinero(a.precio)} por persona × {personas}
+                    {formatoDinero(a.precio)} per guest × {personas}
                   </span>
                 ) : null}
                 {/* Nota honesta del cliente (ej. la langosta de marzo a junio).

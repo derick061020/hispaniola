@@ -17,6 +17,7 @@ import { formatoDinero, TOURS, type Tour } from '@/data/home'
 import { FICHAS, type FichaTour } from '@/data/tours'
 import { guardarReserva, generarCodigoReserva, type Reserva } from '@/lib/reservas'
 import { menuDeLaReserva } from '@/lib/menu-reserva'
+import { desglosePago, type MetodoPago } from '@/lib/tarifas'
 
 // Funnel de reserva (/reservar/:slug, Fase C). El widget de la ficha es el
 // CONFIGURADOR (paquete · fecha · hora · personas); «Continuar» abre aquí, con
@@ -147,9 +148,24 @@ function FlujoReserva({
   const [celebracion, setCelebracion] = useState<DatosCelebracion>({ ocasion: null, nota: '' })
 
   const upgrade = paquete === 'premium' && ficha.upgradePremium !== null ? ficha.upgradePremium : 0
-  const total = (precioLight + upgrade) * personas
-  const deposito = Math.round(total * 0.25)
-  const saldo = total - deposito
+  // El precio del tour ANTES de decidir cómo se paga.
+  const totalBruto = (precioLight + upgrade) * personas
+
+  // [2026-09-01, pedido de Samuel] CÓMO SE PAGA es ahora una decisión del
+  // checkout, y cambia lo que se cobra: en efectivo se paga todo el día del
+  // tour con el 5% de descuento; con tarjeta, el 25% hoy y el resto luego, sin
+  // descuento. Arranca en 'tarjeta' porque es lo que el flujo hacía hasta hoy
+  // —cambiar el defecto sería una decisión de negocio, no de implementación— y
+  // el efectivo se presenta primero en la lista, con su ahorro a la vista.
+  //
+  // El reparto lo hace `desglosePago` (lib/tarifas.ts) y de ahí salen los tres
+  // números que esta página reparte: el paso de pago, la tarjeta del resumen y
+  // la barra fija de móvil leen EL MISMO objeto, así que no pueden discrepar.
+  const [metodoPago, setMetodoPago] = useState<MetodoPago>('tarjeta')
+  const pago = desglosePago(totalBruto, metodoPago)
+  const total = pago.total
+  const deposito = pago.hoy
+  const saldo = pago.pendiente
 
   // QUÉ COME ESTE GRUPO. Resuelto en un solo sitio (lib/menu-reserva.ts) a
   // partir del paquete, del bote y del aforo — los tres datos que pueden
@@ -252,6 +268,13 @@ function FlujoReserva({
       ...(celebracion.ocasion && celebracion.ocasion !== 'ninguna'
         ? { celebracion: { ocasion: celebracion.ocasion, nota: celebracion.nota.trim() } }
         : {}),
+      // [2026-09-01] `total` ya es el importe DESPUÉS del descuento por pagar en
+      // efectivo, si se eligió. Se guarda además el método y lo que rebajó, para
+      // que «Gracias» y «Mi reserva» puedan explicar el número en vez de
+      // enseñarlo a secas — y para que el equipo sepa qué esperar el día del
+      // tour: una reserva en efectivo llega SIN depósito cobrado.
+      metodoPago,
+      descuentoEfectivo: pago.descuento,
       total,
       deposito,
       saldo,
@@ -292,7 +315,13 @@ function FlujoReserva({
               accion: () => setPaso(siguienteDe('recogida')),
             }
           : {
-              texto: `Pay deposit · ${formatoDinero(deposito)}`,
+              // [2026-09-01] Con efectivo no se cobra nada hoy, así que «Pay
+              // deposit · US$ 0» sería falso. Mismo copy que el botón de dentro
+              // del paso, que es la regla de esta pareja desde que existe.
+              texto:
+                metodoPago === 'efectivo'
+                  ? 'Confirm booking'
+                  : `Pay deposit · ${formatoDinero(deposito)}`,
               habilitado: fechaISO !== null,
               accion: handlePagar,
             }
@@ -476,8 +505,9 @@ function FlujoReserva({
 
               <SeccionPaso id="pago" numero={indiceDe('pago') + 1} titulo={TITULOS.pago} estado={estadoDe('pago')}>
                 <PasoPago
-                  deposito={deposito}
-                  saldo={saldo}
+                  metodo={metodoPago}
+                  onMetodo={setMetodoPago}
+                  desglose={pago}
                   fechaElegida={fechaISO !== null}
                   onPagar={handlePagar}
                 />
@@ -538,6 +568,8 @@ function FlujoReserva({
                 }
                 precioBase={precioLight}
                 upgrade={upgrade}
+                metodoPago={metodoPago}
+                descuentoEfectivo={pago.descuento}
                 total={total}
                 deposito={deposito}
                 saldo={saldo}
@@ -555,6 +587,7 @@ function FlujoReserva({
       <BarraMovilReserva
         deposito={deposito}
         total={total}
+        metodoPago={metodoPago}
         texto={ctaPaso.texto}
         habilitado={ctaPaso.habilitado}
         onAccion={ctaPaso.accion}

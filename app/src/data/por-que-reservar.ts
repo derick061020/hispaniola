@@ -17,11 +17,16 @@ import { TOURS, STATS, RESENAS_AGREGADO } from './home'
 //  ESCANEARSE (fotos + cifras + tabla), no para leerse de corrido.
 // ─────────────────────────────────────────────────────────────────────────────
 
-/** El precio que la página defiende. Sale del catálogo (Snorkel Lovers, la
- *  tarifa adulto que también publica Viator), no de una constante suelta: si
- *  mañana cambia el precio del tour, cambia aquí y en el desglose a la vez. */
+/** El precio que la página defiende. Sale del catálogo (Coral Quest, la tarifa
+ *  adulto de entrada), no de una constante suelta: si mañana cambia el precio
+ *  del tour, cambia aquí y en el desglose a la vez.
+ *
+ *  [2026-09-01] Y eso es justo lo que ha pasado: Samuel bajó el Light de Coral
+ *  Quest de 114 a 99 (ver data/home.ts), así que esta página pasa a defender
+ *  US$ 99 sola, sin tocar nada. El recibo y el cierre de las 19 razones
+ *  recalculan su ahorro con el número nuevo. */
 export const PRECIO_TODO_INCLUIDO =
-  TOURS.find((t) => t.slug === 'coral')?.precioLight ?? 114
+  TOURS.find((t) => t.slug === 'coral')?.precioLight ?? 99
 
 export type Kpi = { valor: string; label: string }
 

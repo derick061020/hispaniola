@@ -1,6 +1,7 @@
 import type { Tour } from '@/data/home'
 import type { FichaTour } from '@/data/tours'
 import type { DatosCelebracion, DatosContacto, DatosRecogida, Paquete } from '@/components/reservar/tipos'
+import type { MetodoPago } from '@/lib/tarifas'
 
 // Capa de datos de la reserva completada. Como el proyecto no tiene
 // backend (Bloque A del PLAN-LANZAMIENTO), la reserva vive en
@@ -33,7 +34,18 @@ export type Reserva = {
   platos: string[]
   recogida: DatosRecogida
   contacto: DatosContacto
+  /** [2026-09-01] Cómo se paga: 'efectivo' (todo el día del tour, con el 5% de
+   *  descuento y SIN cobro hoy) o 'tarjeta' (depósito del 25% y el resto luego).
+   *  Opcional para no invalidar las reservas ya guardadas en localStorage de
+   *  antes de este cambio; sin el campo se leen como 'tarjeta', que es lo que
+   *  eran. Cuando exista backend, este campo es parte del contrato: una reserva
+   *  en efectivo llega sin depósito cobrado y el equipo tiene que saberlo. */
+  metodoPago?: MetodoPago
+  /** Lo que rebajó pagar en efectivo. 0 o ausente con tarjeta. */
+  descuentoEfectivo?: number
+  /** El importe final, YA con el descuento de efectivo si lo hubo. */
   total: number
+  /** Lo que se cobra al reservar. 0 pagando en efectivo. */
   deposito: number
   saldo: number
   fechaCreacionISO: string

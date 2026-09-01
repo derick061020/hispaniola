@@ -3,7 +3,7 @@ import { chromium } from 'playwright'
 const navegador = await chromium.launch()
 const ctx = await navegador.newContext({ viewport: { width: 390, height: 844 } })
 const page = await ctx.newPage()
-await page.goto('http://localhost:5173/', { waitUntil: 'load' })
+await page.goto('http://localhost:5173/', { waitUntil: 'domcontentloaded' })
 await page.waitForTimeout(1500)
 
 const r = await page.evaluate(() => {

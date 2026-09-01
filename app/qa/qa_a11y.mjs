@@ -8,7 +8,7 @@ const navegador = await chromium.launch()
 const page = await navegador.newPage()
 
 for (const ruta of ['/facilities', '/tours/semi-private-premium', '/', '/fleet']) {
-  await page.goto('http://localhost:5173' + ruta, { waitUntil: 'load' })
+  await page.goto('http://localhost:5173' + ruta, { waitUntil: 'domcontentloaded' })
   await page.waitForTimeout(800)
   const res = await page.evaluate(() => {
     // Aproximación al algoritmo de accname suficiente para este caso:

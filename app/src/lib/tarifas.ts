@@ -68,9 +68,9 @@ export function precioDesde(tabla: TramoPrecio[]): number {
  *
  *  `base` decide cómo se multiplica:
  *   - 'persona' → precio × nº de personas (langosta, comida opcional)
- *   - 'grupo'   → precio fijo, no escala (álbum de fotos)
+ *   - 'grupo'   → precio fijo, no escala
  *
- *  Los tres son UPSELL: superficie de venta con peso visual, no letra pequeña
+ *  Son UPSELL: superficie de venta con peso visual, no letra pequeña
  *  (decisión de Samuel 2026-07-27). */
 export type AddOn = {
   id: string
@@ -78,7 +78,10 @@ export type AddOn = {
   descripcion?: string
   base: 'persona' | 'grupo'
   precio: number
-  /** Arranca marcado. Hoy solo el álbum de fotos — ver ALBUM_UPSELL. */
+  /** Arranca marcado. Hoy ninguno lo usa: el único que lo tenía era el álbum
+   *  de fotos, retirado el 2026-09-01 (ver la nota de `addOnsDeFicha`). Se
+   *  conserva el campo porque la mecánica de premarcado sigue implementada en
+   *  el panel de add-ons y volver a usarla es poner esta línea, no reescribirlo. */
   porDefecto?: boolean
   /** Nota honesta del cliente que hay que mostrar junto al add-on
    *  (ej. la langosta no está disponible de marzo a junio). */
@@ -98,6 +101,21 @@ export type AddOn = {
    *  en la lista filtrada, y un id huérfano en la selección no encuentra
    *  pareja. */
   soloSubVariantes?: string[]
+  /** [2026-09-01, pedido de Samuel] Tope de AFORO por encima del cual el add-on
+   *  DEJA DE OFRECERSE, porque a partir de ahí la tarifa ya lo incluye.
+   *
+   *  Nace con la comida opcional del charter, que es el primer extra que no es
+   *  un capricho sino la mitad de un tramo de precio: en el Maite el tramo de
+   *  1-8 personas (US$ 625 el barco) va SIN comida y se puede añadir por US$ 20
+   *  por cabeza, pero desde 9 personas la tarifa pasa a US$ 99 por persona y esa
+   *  ya lleva la comida dentro. Seguir ofreciéndola ahí sería cobrar dos veces
+   *  lo mismo. Igual en el Santa Maria (US$ 25, corte en 13).
+   *
+   *  Se filtra en `addOnsDisponibles`, o sea en el MISMO sitio que
+   *  `soloSubVariantes`, para que el panel, el desglose y el total no puedan
+   *  discrepar: al cruzar el tramo el extra desaparece del panel Y deja de
+   *  sumar, aunque su id siguiera en la selección. */
+  soloHastaPersonas?: number
 }
 
 export function precioAddOn(addOn: AddOn, personas: number): number {
@@ -110,23 +128,52 @@ export function totalAddOns(addOns: AddOn[], elegidos: string[], personas: numbe
     .reduce((suma, a) => suma + precioAddOn(a, personas), 0)
 }
 
-/** Configuración del upsell del álbum de fotos (US$ 20 por grupo).
+/** [2026-09-01, pedido de Samuel: «eliminar el upsell del álbum completo máxima
+ *  calidad»] EL ÁLBUM DE FOTOS YA NO SE VENDE. Con él desaparece `ALBUM_UPSELL`,
+ *  que era la pareja de booleanos que gobernaba el único add-on premarcado del
+ *  sitio (`porDefecto: true` + confirmación al desmarcar).
  *
- *  ⚠️ DECISIÓN DE NEGOCIO CON RIESGO LEGAL REGISTRADO (Samuel, 2026-07-27).
- *  `porDefecto: true` = la casilla arranca MARCADA. Eso contraviene la
- *  Directiva 2011/83/UE art. 22, que exige consentimiento EXPRESO para todo
- *  pago adicional y da derecho a reembolso cuando se infiere de una casilla
- *  premarcada que el usuario debe rechazar. Punta Cana recibe mucho turismo
- *  europeo y el cobro será real en cuanto Odoo esté conectado.
+ *  De paso se cierra el riesgo legal que ese upsell tenía anotado desde el
+ *  2026-07-27: una casilla de pago premarcada contraviene la Directiva
+ *  2011/83/UE art. 22 (consentimiento EXPRESO para todo pago adicional), y
+ *  Punta Cana recibe mucho turismo europeo. No es el motivo del cambio —Samuel
+ *  lo pidió por producto—, pero conviene que quede escrito por si alguien
+ *  propone recuperarlo: el detalle completo sigue en TARIFARIO-WEB-ORIGINAL.md
+ *  §4-C. Si vuelve, vuelve SIN premarcar.
  *
- *  Se implementa como pidió el cliente, pero AISLADO EN DOS BOOLEANOS a
- *  propósito: si hay que desactivarlo (o variar por mercado) es una línea, no
- *  una refactorización del widget. NO cablear esta lógica en los componentes.
- *  Detalle completo en TARIFARIO-WEB-ORIGINAL.md §4-C. */
-export const ALBUM_UPSELL = {
-  porDefecto: true,
-  mensajeAlDesmarcar: true,
-} as const
+ *  Hoy ningún add-on arranca marcado, así que la selección inicial de la ficha
+ *  es una lista vacía. La mecánica de premarcado sigue en el componente
+ *  (`porDefecto` + `mensajeAlDesmarcar` en add-ons-widget.tsx) porque quitarla
+ *  sería tirar código que costó dos vueltas afinar. */
+
+// ── Descuento por grupo ────────────────────────────────────────────────────
+
+/** [2026-09-01, pedido de Samuel] Descuento por reservar en grupo, anunciado en
+ *  el widget de todos los tours y en el checkout.
+ *
+ *  ⚠️ [placeholder] EL PORCENTAJE NO ESTÁ DECIDIDO. Samuel lo pidió así,
+ *  literalmente: «los grupos de más de 6 personas tienen un X descuento, el
+ *  descuento se decide luego». Mientras `porcentaje` sea `null`, el banner
+ *  anuncia que el descuento EXISTE y que el equipo lo aplica al confirmar,
+ *  pero NO enseña una cifra — inventarla aquí sería publicar un precio que
+ *  nadie ha aprobado, que es justo lo que este proyecto no hace.
+ *
+ *  Cuando llegue el número: se escribe aquí y ya. El banner del widget, el del
+ *  checkout y el texto que los acompaña leen los dos campos de este objeto, así
+ *  que ninguno puede quedarse con la cifra vieja.
+ *
+ *  «Más de 6» = a partir de 7. El umbral se guarda como el PRIMER número que ya
+ *  tiene descuento, no como el último que no lo tiene, porque así es como se
+ *  compara (`personas >= desdePersonas`) y no hay que acordarse de sumar uno. */
+export const DESCUENTO_GRUPO: { desdePersonas: number; porcentaje: number | null } = {
+  desdePersonas: 7,
+  porcentaje: null,
+}
+
+/** ¿Este grupo llega al descuento? */
+export function aplicaDescuentoGrupo(personas: number): boolean {
+  return personas >= DESCUENTO_GRUPO.desdePersonas
+}
 
 // ── Descuentos ─────────────────────────────────────────────────────────────
 
@@ -168,6 +215,53 @@ export const DESCUENTOS: Descuento[] = [
 ]
 
 export const DESCUENTO_MAXIMO = DESCUENTOS.reduce((s, d) => s + d.porcentaje, 0)
+
+// ── Método de pago ─────────────────────────────────────────────────────────
+
+/** [2026-09-01, pedido de Samuel] Cómo se paga la reserva. Hasta hoy solo había
+ *  UNA forma —depósito del 25% con tarjeta y el resto a bordo— y el 5% de
+ *  efectivo se anunciaba como algo que pasaría el día del tour, sobre el saldo.
+ *
+ *  Ahora son dos caminos que se ELIGEN, y el descuento depende de cuál:
+ *   · 'efectivo' → se paga TODO en efectivo, no hay cobro con tarjeta y el 5%
+ *     se aplica sobre el total.
+ *   · 'tarjeta'  → depósito del 25% por pasarela y el resto el día del tour.
+ *     Sin descuento: es la contrapartida de no adelantar el dinero en mano.
+ *
+ *  El descuento sale de DESCUENTOS (el mismo array que explica el bloque «Cómo
+ *  pagar menos» de la ficha) en vez de escribirse aquí: si el negocio cambia el
+ *  5%, cambia en los dos sitios a la vez o en ninguno. */
+export type MetodoPago = 'efectivo' | 'tarjeta'
+
+export const DESCUENTO_EFECTIVO =
+  DESCUENTOS.find((d) => d.id === 'efectivo')?.porcentaje ?? 0
+
+export type DesglosePago = {
+  /** Lo que rebaja pagar en efectivo. 0 con tarjeta. */
+  descuento: number
+  /** El total ya con el descuento aplicado (o el mismo total con tarjeta). */
+  total: number
+  /** Lo que se cobra HOY. Con efectivo es 0: no hay nada que cobrar online. */
+  hoy: number
+  /** Lo que queda por pagar el día del tour. */
+  pendiente: number
+}
+
+/** Reparte un total entre «hoy» y «el día del tour» según el método elegido.
+ *
+ *  Vive aquí y no en el checkout porque son tres pantallas las que tienen que
+ *  decir el mismo número —el desglose de la derecha, el paso de pago y la barra
+ *  fija de móvil— y antes cada una calculaba su parte. Redondeo a dólar entero,
+ *  igual que hacía el depósito: los importes se enseñan sin decimales. */
+export function desglosePago(totalBruto: number, metodo: MetodoPago): DesglosePago {
+  if (metodo === 'efectivo') {
+    const descuento = Math.round((totalBruto * DESCUENTO_EFECTIVO) / 100)
+    const total = totalBruto - descuento
+    return { descuento, total, hoy: 0, pendiente: total }
+  }
+  const hoy = Math.round(totalBruto * 0.25)
+  return { descuento: 0, total: totalBruto, hoy, pendiente: totalBruto - hoy }
+}
 
 /** Aplica los descuentos SUMADOS (15% plano si aplican los tres), no
  *  encadenados. Redondea a 2 decimales para no arrastrar flotantes. */
@@ -237,30 +331,44 @@ export function saltoDeTramo(
   }
 }
 
-/** Los add-ons que aplican a una ficha concreta. El álbum de fotos NO es
- *  global: la web original solo lo ofrece en semi-privado y charter, pero
- *  Samuel decidió el 07-27 extenderlo a los 6 productos porque la política
- *  real del negocio es uniforme (las mejores fotos gratis en su Facebook, el
- *  álbum completo en máxima calidad por US$ 20). El TEXTO sí cambia por
- *  producto — en charter ya regalan «todas» las fotos, así que ahí solo se
- *  vende la calidad, no el «álbum completo». */
+/** Los add-ons que aplican a una ficha concreta.
+ *
+ *  [2026-09-01] Aquí vivía la nota del álbum de fotos, que Samuel había
+ *  extendido el 07-27 a los 6 productos. El álbum se retira ese día, así que
+ *  hoy los únicos extras son la langosta (solo Saona, ver abajo) y la comida
+ *  opcional de los dos charters cuyo tramo de grupo no la incluye. */
 export function addOnsDeFicha(ficha: FichaTour): AddOn[] {
   return ficha.addOns ?? []
 }
 
-/** Los add-ons que se pueden elegir AHORA: los de la ficha menos los que su
- *  `soloSubVariantes` deja fuera del barco activo (la langosta del charter solo
- *  existe en los barcos de 4 h — ver `soloSubVariantes` arriba).
+/** Los add-ons que se pueden elegir AHORA: los de la ficha menos los que quedan
+ *  fuera por el barco activo (`soloSubVariantes`) o por el número de personas
+ *  (`soloHastaPersonas`, la comida que el tramo alto ya incluye).
  *
  *  [2026-08-07] El filtro vivía dentro de widget-reserva.tsx, con una nota que
  *  pedía mantenerlo en UN solo sitio para que el panel, el desglose y el total
  *  no pudieran discrepar. Sube aquí porque ahora hay un segundo sitio donde se
  *  marcan add-ons —la franja de la langosta del bloque de menú
- *  (tour/banner-langosta.tsx)— y la regla tiene que seguir siendo una. */
-export function addOnsDisponibles(ficha: FichaTour, variante?: string | null): AddOn[] {
-  return addOnsDeFicha(ficha).filter(
-    (a) => !a.soloSubVariantes || (variante != null && a.soloSubVariantes.includes(variante)),
-  )
+ *  (tour/banner-langosta.tsx)— y la regla tiene que seguir siendo una.
+ *
+ *  `personas` es opcional: sin ese dato (la ficha antes de que el widget
+ *  publique su contador) no se filtra por aforo. Mostrar de más y que el extra
+ *  desaparezca al primer render es preferible a esconder un extra que sí
+ *  aplica. */
+export function addOnsDisponibles(
+  ficha: FichaTour,
+  variante?: string | null,
+  personas?: number | null,
+): AddOn[] {
+  return addOnsDeFicha(ficha).filter((a) => {
+    if (a.soloSubVariantes && !(variante != null && a.soloSubVariantes.includes(variante))) {
+      return false
+    }
+    if (a.soloHastaPersonas != null && personas != null && personas > a.soloHastaPersonas) {
+      return false
+    }
+    return true
+  })
 }
 
 /** Lo que el bloque de menú necesita saber de la reserva para que su franja de

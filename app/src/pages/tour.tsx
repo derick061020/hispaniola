@@ -21,7 +21,7 @@ import { ComparadorPremium } from '@/components/tour/comparador-premium'
 import { BandaPremium } from '@/components/tour/banda-premium'
 import { SeccionModalidad } from '@/components/tour/seccion-modalidad'
 import { fotosComidaDe } from '@/data/tours'
-import { ALBUM_UPSELL, addOnsDisponibles } from '@/lib/tarifas'
+import { addOnsDisponibles } from '@/lib/tarifas'
 import { VideoAcompanante } from '@/components/tour/video-acompanante'
 import { AntesDeReservar } from '@/components/tour/antes-de-reservar'
 import { TambienTeGusta } from '@/components/internas/tambien-te-gusta'
@@ -74,11 +74,14 @@ export function TourPage() {
   // de doble sentido: lo escriben el panel de add-ons del widget (columna
   // derecha) Y la franja de la langosta del bloque de menú (columna izquierda),
   // y las dos tienen que estar mirando la misma reserva.
-  // El valor inicial replica el del widget: los add-ons `porDefecto` (hoy solo
-  // el álbum de fotos) arrancan marcados, y ese comportamiento sigue viviendo
-  // en ALBUM_UPSELL — un booleano, no una condición cableada aquí.
+  // El valor inicial replica el del widget: arrancan marcados los add-ons
+  // `porDefecto`.
+  // [2026-09-01] Hoy eso es una lista VACÍA: el único extra premarcado que
+  // existió fue el álbum de fotos, retirado por Samuel junto con la constante
+  // ALBUM_UPSELL que lo gobernaba (ver lib/tarifas.ts). La regla se deja
+  // escrita —no un `[]` a secas— porque es la que vale si vuelve a haber uno.
   const [addOnsElegidos, setAddOnsElegidos] = useState<string[]>(() =>
-    (ficha?.addOns ?? []).filter((a) => a.porDefecto && ALBUM_UPSELL.porDefecto).map((a) => a.id),
+    (ficha?.addOns ?? []).filter((a) => a.porDefecto).map((a) => a.id),
   )
 
   // Slug desconocido → a la home. Un 404 diseñado es otra pantalla (y otro
@@ -250,7 +253,11 @@ export function TourPage() {
                   // ofrecer algo que esa cocina no puede servir.
                   seleccionAddOns={{
                     elegidos: addOnsElegidos,
-                    disponibles: addOnsDisponibles(ficha, variante).map((a) => a.id),
+                    // [2026-09-01] Con `personas`, para que la regla de aforo
+                    // (`soloHastaPersonas`) valga también aquí: el filtro tiene
+                    // que ser EL MISMO que el del widget o las dos columnas
+                    // discreparían sobre qué extras existen.
+                    disponibles: addOnsDisponibles(ficha, variante, personas).map((a) => a.id),
                     alternar: (id) =>
                       setAddOnsElegidos((prev) =>
                         prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
