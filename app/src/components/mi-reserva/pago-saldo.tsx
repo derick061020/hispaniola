@@ -191,7 +191,7 @@ export function PagoSaldo({
               <Spinner /> {t('Processing…')}
             </>
           ) : (
-            `Pay ${formatoDinero(saldo)}`
+            `${t('Pay')} ${formatoDinero(saldo)}`
           )}
         </button>
         <button
