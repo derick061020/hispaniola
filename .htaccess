@@ -4,7 +4,7 @@
 Options -MultiViews
 RewriteEngine On
 
-# --- 37 redirecciones de las URLs viejas en espanol ---
+# --- 43 redirecciones de las URLs viejas en espanol ---
 RewriteRule "^tours/semi-privado/?$" "/tours/semi-private-premium" [R=301,L]
 RewriteRule "^tours/charter-privado/?$" "/tours/private-charter" [R=301,L]
 RewriteRule "^tours/isla-saona/?$" "/tours/saona-island" [R=301,L]
@@ -42,6 +42,12 @@ RewriteRule "^reservar/:slug/gracias/?$" "/book/:slug/thank-you" [R=301,L]
 RewriteRule "^reservar/:slug/?$" "/book/:slug" [R=301,L]
 RewriteRule "^eventos/:slug/gracias/?$" "/events/:slug/thank-you" [R=301,L]
 RewriteRule "^eventos/:slug/?$" "/events/:slug" [R=301,L]
+RewriteRule "^index\.php/?$" "/" [R=301,L,QSD]
+RewriteRule "^private-catamaran-charter-excursion\.php/?$" "/tours/private-charter" [R=301,L,QSD]
+RewriteRule "^semi-private-catamaran-excursion\.php/?$" "/tours/semi-private-premium" [R=301,L,QSD]
+RewriteRule "^party-boat\.php/?$" "/events/party-boat" [R=301,L,QSD]
+RewriteRule "^weddings\.php/?$" "/events/weddings" [R=301,L,QSD]
+RewriteRule "^contact\.php/?$" "/contact" [R=301,L,QSD]
 
 # --- SPA: toda ruta que no sea un fichero real la pinta React ---
 RewriteCond %{REQUEST_FILENAME} !-f
