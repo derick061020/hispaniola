@@ -879,6 +879,7 @@ function FlujoReserva({
               <SeccionPaso id="pago" numero={indiceDe('pago') + 1} titulo={TITULOS.pago} estado={estadoDe('pago')}>
                 <PasoPago
                   deposito={deposito}
+                  porcentajeDeposito={checkout.pedido?.quote?.deposit_pct}
                   saldo={saldo}
                   pedidoListo={checkout.pedido !== null}
                   fechaElegida={fechaISO !== null}
@@ -959,6 +960,7 @@ function FlujoReserva({
                 descuentos={checkout.pedido?.quote?.discounts}
                 importeDescuento={checkout.pedido?.quote?.discount_amount}
                 importeEfectivo={checkout.pedido?.quote?.cash_discount}
+                porcentajeDeposito={checkout.pedido?.quote?.deposit_pct}
                 desglose={
                   tour.precioNino != null || ninos > 0 || bebes > 0
                     ? { adultos, ninos, bebes }

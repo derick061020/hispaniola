@@ -44,6 +44,7 @@ type Medios = { tarjeta: boolean; paypal: boolean }
 
 export function PasoPago({
   deposito,
+  porcentajeDeposito,
   saldo,
   pedidoListo,
   fechaElegida,
@@ -55,6 +56,8 @@ export function PasoPago({
   error = null,
 }: {
   deposito: number
+  /** El % real del tarifario: no todos los tours cobran 25. */
+  porcentajeDeposito?: number
   saldo: number
   /** Sin fecha no se puede pagar — ver el aviso de abajo. */
   fechaElegida: boolean
@@ -183,7 +186,10 @@ export function PasoPago({
   return (
     <div className="flex flex-col gap-4">
       <p className="text-sm text-navy-sub">
-        {t('Confirm your spot by paying only the')}{' '}<strong className="font-semibold text-navy">{t('25% deposit')}</strong> {t('today')}{' '}
+        {t('Confirm your spot by paying only the')}{' '}
+        <strong className="font-semibold text-navy">
+          {porcentajeDeposito ? `${porcentajeDeposito}%` : '25%'} {t('deposit')}
+        </strong>{' '}{t('today')}{' '}
         ({formatoDinero(deposito)}{t('). You pay the remaining')}{' '}{formatoDinero(saldo)} {t('on the day of the tour, with a 5% discount if you pay cash on board.')}
       </p>
 

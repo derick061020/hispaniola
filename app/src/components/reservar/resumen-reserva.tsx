@@ -75,6 +75,7 @@ export function ResumenReserva({
   importeEfectivo,
   total,
   deposito,
+  porcentajeDeposito,
   saldo,
   precioProvisional = false,
   variante = null,
@@ -125,6 +126,8 @@ export function ResumenReserva({
   importeEfectivo?: number
   total: number
   deposito: number
+  /** El % que se cobra hoy. Sale del tarifario, no es siempre 25. */
+  porcentajeDeposito?: number
   saldo: number
   /** [2026-08-18] true = Odoo todavía no ha contestado (o no contesta) y el
    *  número de arriba es una ESTIMACIÓN local. Se dice en pantalla: el precio
@@ -485,7 +488,15 @@ export function ResumenReserva({
             evita la duda de siempre: el depósito no se suma, se descuenta. */}
         <div className="rounded-b-card border-t border-linea bg-papel-hueso p-4 text-sm">
           <div className="flex items-center justify-between">
-            <span className="font-semibold text-navy">{t('You pay today (25%)')}</span>
+            {/* [2026-09-01, Derick: «ya se calcula bien, pero el texto sigue
+                diciendo 25%»] El rotulo llevaba el 25 escrito dentro. Cada
+                tarifario tiene el suyo —15% Forever Teresa, 20% Maite y Santa
+                Maria— y el importe ya salia bien: lo que mentia era el
+                parentesis. */}
+            <span className="font-semibold text-navy">
+              {t('You pay today')}
+              {porcentajeDeposito ? ` (${porcentajeDeposito}%)` : null}
+            </span>
             <span className="font-semibold text-navy">{formatoDinero(deposito)}</span>
           </div>
           <div className="mt-1.5 flex items-center justify-between">
