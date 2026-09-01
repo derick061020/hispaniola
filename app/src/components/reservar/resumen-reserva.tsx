@@ -330,7 +330,7 @@ export function ResumenReserva({
                   : t('Discount applied')}
                 {importeDescuento ? ` · − ${formatoDinero(importeDescuento)}` : null}
               </p>
-              <p className="mt-0.5 text-xs text-navy-soft">
+              <p className="mt-0.5 truncate text-xs text-navy-soft">
                 {aplicados.map((d) => `${t(d.label)} (−${d.pct}%)`).join(' · ')}
               </p>
             </div>
@@ -420,19 +420,27 @@ export function ResumenReserva({
               aplica»] Cada oferta con su nombre y su porcentaje, en verde y en
               negativo. Un total mas bajo del esperado y sin explicacion es lo
               que hace escribir preguntando si hay un error. */}
-          {(descuentos ?? [])
-            .filter((d) => d.granted && d.id !== 'efectivo')
-            .map((d) => (
-              <div key={d.id} className="flex items-baseline justify-between gap-3">
-                <dt className="text-aqua-dark">
-                  {t(d.label)}{' '}
-                  <span className="text-xs">−{d.pct}%</span>
-                </dt>
-                <dd className="font-medium text-aqua-dark">
-                  {importeDescuento ? `− ${formatoDinero(importeDescuento / (descuentos ?? []).filter((x) => x.granted && x.id !== 'efectivo').length)}` : `−${d.pct}%`}
+          {(() => {
+            const aplicados = (descuentos ?? []).filter(
+              (d) => d.granted && d.id !== 'efectivo',
+            )
+            const sumaPct = aplicados.reduce((n, d) => n + d.pct, 0)
+            return aplicados.map((d) => (
+              <div key={d.id} className="flex items-baseline justify-between gap-2">
+                {/* Una línea por descuento y NUNCA dos: el nombre se recorta con
+                    puntos suspensivos si no cabe. Antes el rótulo llevaba el
+                    porcentaje dentro —«Descuento de grupo (5% desde 6 personas)
+                    −5%»— y saltaba de línea. */}
+                <dt className="min-w-0 truncate text-aqua-dark">{t(d.label)}</dt>
+                <dd className="shrink-0 whitespace-nowrap font-medium text-aqua-dark">
+                  <span className="mr-1 text-xs opacity-70">−{d.pct}%</span>
+                  {importeDescuento && sumaPct
+                    ? `− ${formatoDinero((importeDescuento * d.pct) / sumaPct)}`
+                    : null}
                 </dd>
               </div>
-            ))}
+            ))
+          })()}
           <div className="mt-3 flex items-center justify-between border-t border-linea pt-3">
             <span className="font-semibold text-navy">{t('Total')}</span>
             <span className="font-display text-precio font-semibold text-navy">{formatoDinero(total)}</span>
