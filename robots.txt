@@ -1,9 +1,25 @@
-# Dominio asumido = el de la web actual del cliente (hispaniolaaquaticadventures.com),
-# a confirmar como parte de PLAN-LANZAMIENTO.md Bloque 0.5 (hosting/dominio de destino).
-# Si el dominio final es otro, actualizar la línea Sitemap de abajo.
+# hispaniolaaquaticadventures.com — dominio definitivo desde el 2026-09-01
+# (antes se servia en hispaniola.botizate.com, que sigue en pie).
+#
+# Lo que se cierra y por que:
+#
+#   · El funnel de reserva y la zona del cliente son PANTALLAS DE TRABAJO, no
+#     contenido: no aportan nada en un buscador y, indexadas, mandarian visitas
+#     al paso 3 de un checkout sin contexto. Ya van `noindex` en su propio
+#     <Meta>; esto es el segundo cinturon, para el rastreador que ni llega a
+#     ejecutar el JavaScript.
+#   · /fundaciones vive en el prototipo, no es parte del sitio publicado.
+#
+# Las paginas legales NO se listan aqui: van `noindex` y con eso basta. Meterlas
+# en Disallow impediria a Google leer esa etiqueta, y una pagina bloqueada por
+# robots puede acabar indexada igual, solo que sin titulo ni descripcion.
 
 User-agent: *
 Allow: /
+
+Disallow: /book/
+Disallow: /my-booking
+Disallow: /account
 Disallow: /fundaciones
 
 Sitemap: https://hispaniolaaquaticadventures.com/sitemap.xml
