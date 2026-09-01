@@ -953,6 +953,8 @@ function FlujoReserva({
                 upgrade={upgrade}
                 lineas={checkout.pedido?.quote?.lines}
                 lineasAddOns={checkout.pedido?.quote?.addons}
+                descuentos={checkout.pedido?.quote?.discounts}
+                importeDescuento={checkout.pedido?.quote?.discount_amount}
                 desglose={
                   tour.precioNino != null || ninos > 0 || bebes > 0
                     ? { adultos, ninos, bebes }

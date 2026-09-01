@@ -70,6 +70,8 @@ export function ResumenReserva({
   upgrade,
   lineas,
   lineasAddOns,
+  descuentos,
+  importeDescuento,
   total,
   deposito,
   saldo,
@@ -115,6 +117,9 @@ export function ResumenReserva({
    *  ver qué parte del total eligió añadir — y poder reconocer el álbum que
    *  viene premarcado. */
   lineasAddOns?: { label: string; quantity: number; amount: number }[]
+  /** Las ofertas que el servidor ha aplicado a este pedido. */
+  descuentos?: { id: string; label: string; pct: number; granted: boolean }[]
+  importeDescuento?: number
   total: number
   deposito: number
   saldo: number
@@ -306,6 +311,32 @@ export function ResumenReserva({
           </p>
         </div>
 
+        {/* EL AVISO DEL DESCUENTO.
+            [2026-09-01, Derick: «que no solo se aplique, sino que el cliente
+            sepa que se aplica»] El descuento ya se restaba del total, pero en
+            silencio: quien no hace la cuenta no se entera de que le han hecho
+            precio, y eso es justo lo que hay que contarle. Va arriba del
+            desglose, donde se mira antes de pagar. */}
+        {(() => {
+          const aplicados = (descuentos ?? []).filter(
+            (d) => d.granted && d.id !== 'efectivo',
+          )
+          if (!aplicados.length) return null
+          return (
+            <div className="mx-4 mb-1 mt-3 rounded-btn border border-aqua/30 bg-aqua/10 px-3 py-2 sm:mx-5">
+              <p className="text-xs font-semibold text-aqua-dark">
+                {aplicados.length > 1
+                  ? t('Discounts applied')
+                  : t('Discount applied')}
+                {importeDescuento ? ` · − ${formatoDinero(importeDescuento)}` : null}
+              </p>
+              <p className="mt-0.5 text-xs text-navy-soft">
+                {aplicados.map((d) => `${t(d.label)} (−${d.pct}%)`).join(' · ')}
+              </p>
+            </div>
+          )
+        })()}
+
         {/* DESGLOSE. Se pinta SIEMPRE, también sin extras: ver de dónde sale el
             total es la mitad del argumento de reservar directo (mismo criterio
             que la calculadora de eventos). El upgrade Premium va en su propia
@@ -384,6 +415,24 @@ export function ResumenReserva({
               importe={extra.amount}
             />
           ))}
+          {/* [2026-09-01, Derick: «que aparezcan los descuentos en el checkout»
+              y «que no solo se aplique, sino que el cliente sepa que se
+              aplica»] Cada oferta con su nombre y su porcentaje, en verde y en
+              negativo. Un total mas bajo del esperado y sin explicacion es lo
+              que hace escribir preguntando si hay un error. */}
+          {(descuentos ?? [])
+            .filter((d) => d.granted && d.id !== 'efectivo')
+            .map((d) => (
+              <div key={d.id} className="flex items-baseline justify-between gap-3">
+                <dt className="text-aqua-dark">
+                  {t(d.label)}{' '}
+                  <span className="text-xs">−{d.pct}%</span>
+                </dt>
+                <dd className="font-medium text-aqua-dark">
+                  {importeDescuento ? `− ${formatoDinero(importeDescuento / (descuentos ?? []).filter((x) => x.granted && x.id !== 'efectivo').length)}` : `−${d.pct}%`}
+                </dd>
+              </div>
+            ))}
           <div className="mt-3 flex items-center justify-between border-t border-linea pt-3">
             <span className="font-semibold text-navy">{t('Total')}</span>
             <span className="font-display text-precio font-semibold text-navy">{formatoDinero(total)}</span>
