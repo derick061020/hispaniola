@@ -760,10 +760,26 @@ function BloqueReserva({
       <dl className="mt-4 space-y-2 text-sm">
         <Fila label={t('Tour total')} valor={formatoDinero(reserva.total)} />
         <Fila label={t('Already paid')} valor={formatoDinero(reserva.deposito)} />
+        {/* [2026-09-01] «Ya pagado US$ 171» junto a «Saldo pendiente US$ 581»
+            eran dos cifras que se contradecian en el mismo recuadro, y encima
+            la primera era falsa: no habia pagado nada. Ahora esta fila dice lo
+            que se cobra AHORA —la inicial, si aun no ha pagado— y debajo, en
+            pequeno, lo que quedara para el dia del tour. */}
         <div className="flex items-center justify-between border-t border-linea pt-3 text-sm">
-          <dt className="font-medium text-navy">{t('Balance due')}</dt>
+          <dt className="font-medium text-navy">
+            {reserva.saldoTotal && reserva.saldoTotal > reserva.saldo
+              ? t('Due now')
+              : t('Balance due')}
+          </dt>
           <dd className="text-base font-semibold text-navy">{formatoDinero(reserva.saldo)}</dd>
         </div>
+        {reserva.saldoTotal && reserva.saldoTotal > reserva.saldo ? (
+          <p className="pt-1 text-right text-xs text-navy-soft">
+            {t('The remaining')}{' '}
+            {formatoDinero(reserva.saldoTotal - reserva.saldo)}{' '}
+            {t('is paid on the day of the tour.')}
+          </p>
+        ) : null}
       </dl>
       {reserva.saldo > 0 ? (
         token ? (

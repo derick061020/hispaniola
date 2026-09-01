@@ -41,6 +41,8 @@ export type Reserva = {
   total: number
   deposito: number
   saldo: number
+  /** Todo lo que queda por pagar, si es mas que lo que se cobra ahora. */
+  saldoTotal?: number
   fechaCreacionISO: string
   comoNosConociste?: string
   /** «¿Celebras algo especial?» del paso de contacto (2026-08-07). Opcional

@@ -228,7 +228,12 @@ export type Reserva = {
   dishes: { guest: number; dish: string }[]
   addons: { name: string; quantity: number; amount: number }[]
   pickup: { hotel: string; room: string }
-  amounts: { currency: Moneda; total: number; deposit: number; balance: number; refunded: number }
+  /** `balance` es lo que se cobra AHORA (la inicial si no ha pagado nada);
+   *  `balance_total` es todo lo que queda por pagar. */
+  amounts: {
+    currency: Moneda; total: number; deposit: number; balance: number
+    balance_total?: number; refunded: number
+  }
   balance_due: string | null
   contact: { name: string; email: string; phone: string }
   created_at: string | null
