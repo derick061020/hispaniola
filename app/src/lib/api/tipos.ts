@@ -157,6 +157,9 @@ export type Cotizacion = {
   discounts: DescuentoAplicado[]
   discount_pct: number
   discount_amount: number
+  /** El 5% por pagar en efectivo. Va aparte porque se calcula sobre el SALDO
+   *  —lo que se paga el dia del tour—, no sobre el total. */
+  cash_discount?: number
   promo: { code: string; amount: number } | null
   total: number
   deposit_pct: number

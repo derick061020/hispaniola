@@ -72,6 +72,7 @@ export function ResumenReserva({
   lineasAddOns,
   descuentos,
   importeDescuento,
+  importeEfectivo,
   total,
   deposito,
   saldo,
@@ -120,6 +121,8 @@ export function ResumenReserva({
   /** Las ofertas que el servidor ha aplicado a este pedido. */
   descuentos?: { id: string; label: string; pct: number; granted: boolean }[]
   importeDescuento?: number
+  /** El 5% por pagar en efectivo: se calcula sobre el saldo, no sobre el total. */
+  importeEfectivo?: number
   total: number
   deposito: number
   saldo: number
@@ -421,11 +424,22 @@ export function ResumenReserva({
               negativo. Un total mas bajo del esperado y sin explicacion es lo
               que hace escribir preguntando si hay un error. */}
           {(() => {
-            const aplicados = (descuentos ?? []).filter(
+            // El de efectivo entra TAMBIEN en el desglose.
+            //
+            // [2026-09-01, Derick: «me esta aplicando un descuento raro al
+            // Maite»] Estaba fuera de esta lista, asi que el total bajaba de
+            // 625 a 601,56 sin una linea que lo explicara: parecia un
+            // descuento inventado. Se calcula distinto —5% sobre el saldo, no
+            // sobre el total— y por eso su importe viene aparte, pero se
+            // enseña igual que los demas.
+            const auto = (descuentos ?? []).filter(
               (d) => d.granted && d.id !== 'efectivo',
             )
-            const sumaPct = aplicados.reduce((n, d) => n + d.pct, 0)
-            return aplicados.map((d) => (
+            const sumaPct = auto.reduce((n, d) => n + d.pct, 0)
+            const efectivo = (descuentos ?? []).filter(
+              (d) => d.granted && d.id === 'efectivo' && (importeEfectivo ?? 0) > 0,
+            )
+            return [...auto, ...efectivo].map((d) => (
               <div key={d.id} className="flex items-baseline justify-between gap-2">
                 {/* Una línea por descuento y NUNCA dos: el nombre se recorta con
                     puntos suspensivos si no cabe. Antes el rótulo llevaba el
@@ -434,9 +448,11 @@ export function ResumenReserva({
                 <dt className="min-w-0 truncate text-aqua-dark">{t(d.label)}</dt>
                 <dd className="shrink-0 whitespace-nowrap font-medium text-aqua-dark">
                   <span className="mr-1 text-xs opacity-70">−{d.pct}%</span>
-                  {importeDescuento && sumaPct
-                    ? `− ${formatoDinero((importeDescuento * d.pct) / sumaPct)}`
-                    : null}
+                  {d.id === 'efectivo'
+                    ? `− ${formatoDinero(importeEfectivo ?? 0)}`
+                    : importeDescuento && sumaPct
+                      ? `− ${formatoDinero((importeDescuento * d.pct) / sumaPct)}`
+                      : null}
                 </dd>
               </div>
             ))
