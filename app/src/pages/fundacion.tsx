@@ -3,7 +3,10 @@ import { HeroInterna } from '@/components/internas/hero-interna'
 import { Etiqueta } from '@/components/ui/etiqueta'
 import { Meta } from '@/components/seo/meta'
 import { FrentesFundacion } from '@/components/fundacion/frentes-fundacion'
-import { FundadoresFundacion } from '@/components/fundacion/fundadores-fundacion'
+// [2026-09-01] `FundadoresFundacion` deja de importarse al retirar sus cards
+// (ver el ⚠️ de más abajo). El componente sigue en
+// components/fundacion/fundadores-fundacion.tsx, sin montar: volver a ponerlo
+// es recuperar este import y su línea.
 import { FundacionTeaser } from '@/components/sostenibilidad/fundacion-teaser'
 import { CierreDoble } from '@/components/sostenibilidad/cierre-doble'
 import { FUNDACION } from '@/data/fundacion'
@@ -123,7 +126,29 @@ export function FundacionPage() {
               la operación diaria que lo vio— y sus tres fotos submarinas. Si
               ese arranque hace falta, la historia está viva en
               `SOSTENIBILIDAD.historia` (/competitive-advantage). */}
-          <FundadoresFundacion />
+          {/* ⚡ [2026-09-01, pedido de Samuel: «en foundation quita esto», sobre
+              las tres cards] SE VAN LAS CARDS DE FUNDADORES, NO EL BLOQUE.
+              Eran tres tarjetas grandes ocupadas por un monograma gigante —FS ·
+              MR · HAA— porque ninguno de los tres tiene retrato: los dos
+              cofundadores nunca lo mandaron y el tercero es la empresa, que no
+              es una persona. Tenía sentido como espera de las fotos, pero a
+              tamaño de card el resultado eran tres huecos con iniciales.
+              Lo que SÍ se queda es el copy, que es del cliente y está aprobado
+              (WEBSITE-SOSTENIBILIDAD pág. 8): el titular y el párrafo que
+              cuentan de dónde sale la fundación. Se pintan con la MISMA
+              estructura que la sección de proyectos de aquí abajo — etiqueta,
+              H2 y lead—, así que las dos riman en vez de parecer dos formatos.
+              ⚠️ `FundadoresFundacion` y `FUNDACION.fundadores` se conservan sin
+              montar, criterio de la casa (igual que la cronología de arriba y
+              que CocinaYParadas en /fleet): el día que lleguen los retratos,
+              volver a montarlo es una línea. */}
+          <section>
+            <Etiqueta>{FUNDACION.fundadoresEyebrow}</Etiqueta>
+            <h2 className="mt-2 font-display text-h2 font-semibold text-navy">
+              {FUNDACION.fundadoresTitulo}
+            </h2>
+            <p className="mt-3 max-w-2xl text-lead text-navy-sub">{FUNDACION.fundadoresIntro}</p>
+          </section>
 
           <section id="proyectos" className="scroll-mt-header-alto">
             <Etiqueta>{FUNDACION.proyectosEyebrow}</Etiqueta>

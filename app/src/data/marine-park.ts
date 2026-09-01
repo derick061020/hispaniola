@@ -33,6 +33,20 @@ export type BloqueMarinePark = {
   parrafos: string[]
   /** Los ✔ del documento. Ausente donde el cliente no los puso. */
   checks?: string[]
+  /** [2026-09-01, UPDATES 09/01 pág. 2: «PONER PARENTISIS (LAUNCHING NOVEMBER
+   *  1ST, 2026)» sobre el museo, y «TAMBIEN PARA» la pulsera] Aviso de que lo
+   *  que describe el bloque TODAVÍA NO ESTÁ ABIERTO.
+   *
+   *  Es un campo y no texto pegado al título porque cambia de naturaleza: los
+   *  dos bloques hablan en presente («Discover one of Punta Cana's most unique
+   *  underwater attractions») de algo que aún no se puede visitar, y esa
+   *  contradicción hay que resolverla EN PANTALLA, no confiando en que el
+   *  visitante ate cabos. Cuando el museo abra, se borran las dos líneas y los
+   *  bloques quedan como estaban.
+   *
+   *  El texto va tal cual lo escribe el cliente, con sus paréntesis, que es
+   *  literalmente lo que pidió. */
+  lanzamiento?: string
   foto: string
   fotoAlt: string
 }
@@ -61,6 +75,7 @@ export const MARINE_PARK = {
         'More than 70 reef restoration structures',
         'Coral gardening & marine habitat creation',
       ],
+      lanzamiento: 'Launching November 1st, 2026',
       foto: 'marine-park-museo',
       fotoAlt: 'A diver next to one of the sculptures of the underwater museum',
     },
@@ -71,6 +86,9 @@ export const MARINE_PARK = {
         'Access to the Underwater Museum is included through a Foundation conservation bracelet. Every bracelet directly supports the operation of The Bávaro Reef Foundation and contributes to the protection, restoration, and monitoring of Punta Cana’s marine ecosystems.',
         "Your visit doesn't just create memories. It helps create a healthier ocean.",
       ],
+      // «TAMBIEN PARA» — la pulsera da acceso al museo, así que si el museo
+      // abre el 1 de noviembre, la pulsera tampoco se vende antes.
+      lanzamiento: 'Launching November 1st, 2026',
       foto: 'marine-park-pulsera',
       fotoAlt: 'Guests tying coral fragments to a nursery structure on deck',
     },

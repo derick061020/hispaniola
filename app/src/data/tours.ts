@@ -477,6 +477,18 @@ export const FICHAS: Record<string, FichaTour> = {
     // fotos de antes, quítalas». Las `galeria-semi-privado-*` de antes salen de aquí; siguen
     // vivas en las páginas que también las usaban.
     // El orden es EDITORIAL: las primeras son las que se ven sin abrir el visor.
+    // [2026-09-01, 3ª entrega] 11 → 16: entran las 5 de `CARIBBEAN SCAPE/AGREGAR`.
+    // Van AL FINAL y no intercaladas: las primeras posiciones son las que se ven
+    // sin abrir el visor y ya las decidió Samuel en la entrega anterior.
+    // ⚠️ TENSIÓN CON LO QUE VENDE ESTA FICHA, para que Samuel decida. El
+    // producto se anuncia como semi-privado —«no more than 35% of the
+    // catamaran's capacity», «Limited Participants», «plenty of personal
+    // space»— y tres de las cinco lo contradicen o lo despistan:
+    //   · `tour-escape-14` y `tour-escape-15` enseñan un barco LLENO de gente.
+    //     La 14 es además del «SANTA MARIA», que es un barco del charter.
+    //   · `tour-escape-16` está tomada en una LANCHA, no en el catamarán.
+    // Se publican porque el cliente las manda para esta ficha, y el último
+    // lugar limita el daño. Si alguna sobra, son esas tres.
     galeriaCompleta: [
       'tour-escape-5',
       'tour-escape-1',
@@ -489,6 +501,11 @@ export const FICHAS: Record<string, FichaTour> = {
       'tour-escape-2',
       'tour-escape-4',
       'tour-escape-6',
+      'tour-escape-12',
+      'tour-escape-13',
+      'tour-escape-14',
+      'tour-escape-15',
+      'tour-escape-16',
     ],
     videoGaleria: '/video/hero.mp4',
     quoteDestacada: 'The coral was the highlight of the trip. The biologist explained everything to us.',
@@ -1228,6 +1245,17 @@ export const FICHAS: Record<string, FichaTour> = {
     // charter a la vez). Sale, por tanto, en /events/weddings y aquí. Tiene
     // sentido —una boda a bordo de un charter privado es las dos cosas— pero
     // queda anotado por si algún día molesta verla repetida.
+    // [2026-09-01, 3ª entrega] 12 → 18: entran las 6 de `PRIVATE CHARTER/AGREGAR`.
+    // Las seis son de GRUPO, que es exactamente lo que vende esta ficha («the
+    // whole catamaran for your group»), así que aquí no hay la tensión que sí
+    // tienen las de Caribbean Escape. `tour-charter-13` (la proa bajo el
+    // arcoíris) abre el bloque nuevo: es la mejor foto de toda la entrega.
+    // ⚠️ `tour-charter-18` es BYTE A BYTE la misma imagen que `tour-escape-13`
+    // (md5 abb59445): el cliente puso `_DSC0082.jpg` en las dos carpetas, así
+    // que sale en los dos tours. Es el segundo caso —`tour-charter-11` ya era
+    // idéntica a `ev-weddings-6`— y queda anotado por si molesta verla repetida.
+    // ⚠️ `tour-charter-17` es de una boda a bordo (hay novia con vestido). Cabe
+    // en un charter privado, pero si se quiere separar bodas de charter, es esa.
     galeriaCompleta: [
       'tour-charter-8',
       'tour-charter-6',
@@ -1241,6 +1269,12 @@ export const FICHAS: Record<string, FichaTour> = {
       'tour-charter-4',
       'tour-charter-7',
       'tour-charter-10',
+      'tour-charter-13',
+      'tour-charter-14',
+      'tour-charter-15',
+      'tour-charter-16',
+      'tour-charter-17',
+      'tour-charter-18',
     ],
     videoGaleria: '/video/hero.mp4',
     quoteDestacada: 'They tailored everything for us, the whole boat just for the family.',

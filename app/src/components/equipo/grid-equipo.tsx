@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Anchor, ChefHat, Compass, Headset, Ship, Waves } from 'lucide-react'
+import { Anchor, ChefHat, Compass, Handshake, Headset, Ship, Waves } from 'lucide-react'
 import {
   DEPARTAMENTOS,
   EQUIPO_COMPLETO,
@@ -64,6 +64,12 @@ const ICONOS: Record<DepartamentoId, typeof Anchor> = {
   marinos: Anchor,
   cocina: ChefHat,
   oficina: Headset,
+  // [2026-09-01, 3ª entrega] El departamento nuevo. El `Record` lo exigió al
+  // compilar, que es justo para lo que está tipado así: añadir un departamento
+  // sin darle icono no llega al navegador.
+  // `Handshake` y no un carrito: aquí no se vende en tienda, se acompaña una
+  // reserva.
+  ventas: Handshake,
   fundacion: Waves,
 }
 

@@ -79,6 +79,18 @@ export function MarineParkPage() {
               >
                 {b.titulo}
               </h2>
+              {/* [2026-09-01, UPDATES 09/01] El aviso de que esto TODAVÍA NO
+                  ABRE. Va aquí —entre el título y el claim— y no dentro del H2:
+                  metido en el titular alargaría un `text-h2` hasta partirlo en
+                  dos líneas en móvil, y además el dato no es parte del nombre
+                  del sitio, es su estado.
+                  Se pinta con sus PARÉNTESIS, que es como lo pidió el cliente, y
+                  en coral: es el color con el que este sitio dice «atención a
+                  esto», y el único punto de la página donde se usa. Con el aqua
+                  del claim justo debajo se distinguen a la primera. */}
+              {b.lanzamiento ? (
+                <p className="mt-1 text-sm font-semibold text-coral">({b.lanzamiento})</p>
+              ) : null}
               <p className="mt-1 font-display text-lg font-semibold text-aqua-dark">{b.claim}</p>
 
               <div className="mt-4 flex flex-col gap-3">
