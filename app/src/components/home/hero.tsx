@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react'
+import { useVideoDiferido } from '@/lib/use-video-diferido'
 import { ArrowRight } from 'lucide-react'
 import { Boton } from '@/components/ui/boton'
 import { InsigniaConfianza } from '@/components/ui/insignia-confianza'
@@ -21,6 +22,12 @@ import { t } from '@/lib/i18n'
 // el header y el contenido viven en la capa de encima, sin recorte.
 export function Hero() {
   const videoRef = useRef<HTMLVideoElement>(null)
+
+  // [2026-09-01] El vídeo no se descarga hasta que la página ha pintado: con
+  // `autoPlay` el navegador se traía los 3,9 MB compitiendo con el primer
+  // pintado, que es lo que puntúan las pruebas de velocidad. Hasta entonces se
+  // ve el `poster`, que pesa 48 KB. Ver lib/use-video-diferido.ts.
+  useVideoDiferido(videoRef, '/video/hero.mp4', 'tras-carga')
   // [dev-mode] ?dev-hero=poster congela el video en el poster — es el frame
   // que viaja a Figma (a Figma no va video, va el poster). Ver dev-registry.ts
   const [forzarPoster, setForzarPoster] = useState(false)
@@ -118,11 +125,9 @@ export function Hero() {
               muted
               loop
               playsInline
-              preload="metadata"
+              preload="none"
               aria-hidden="true"
-            >
-              <source src="/video/hero.mp4" type="video/mp4" />
-            </video>
+            />
             {/* Overlay uniforme (ya no lateral: el contenido va centrado,
                 PLAN-v3.md §6) + gradiente vertical inferior para asentar el
                 ticker (PLAN-v3.md §7). Solo tokens — si el contraste falla

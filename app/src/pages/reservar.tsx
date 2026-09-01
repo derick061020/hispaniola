@@ -21,6 +21,7 @@ import { guardarReserva, type Reserva } from '@/lib/reservas'
 import { menuDeLaReserva } from '@/lib/menu-reserva'
 import { useCheckout } from '@/lib/api/use-checkout'
 import type { ErrorApi } from '@/lib/api/cliente'
+import type { ParcheCheckout } from '@/lib/api/tipos'
 import { cargarStripe, mensajeDeError } from '@/lib/pagos/stripe'
 import { t, tp, traducible } from '@/lib/i18n'
 import { escuchaMoneda, instantaneaMoneda } from '@/lib/moneda'
@@ -536,12 +537,41 @@ function FlujoReserva({
   // permite que la barra fija de abajo lo lleve sin duplicar ninguna regla:
   // los botones de dentro y el de la barra leen EXACTAMENTE lo mismo, así que
   // no pueden desincronizarse.
+  // [2026-09-01] AL PASAR DE PASO SE GUARDA LO QUE SE ACABA DE RELLENAR.
+  //
+  // Derick: «el cliente no se guarda cuando deja la reserva a medias: se guarda
+  // la info de la reserva, pero no el nombre ni email, ni nada». Y era cierto,
+  // pero el fallo estaba AQUI, no en Odoo: el servidor guarda el contacto en
+  // cuanto se lo mandan —comprobado creando un pedido y sincronizando—, solo
+  // que el front no se lo mandaba hasta pulsar «Pagar».
+  //
+  // Resultado: una reserva abandonada llegaba a la oficina con fecha, horario y
+  // personas… y un cliente llamado «Guest HSP-1234-5678». Justo lo que hace
+  // falta para recuperarla —nombre, correo, telefono— era lo unico que faltaba.
+  //
+  // Ahora cada «Continuar» manda su paso. No se espera al final ni se sincroniza
+  // en cada tecla: se guarda cuando la persona da por bueno lo que escribio.
+  const guardaYAvanza = (paso: PasoId, datos: ParcheCheckout) => {
+    checkout.sincronizar(datos)
+    setPaso(siguienteDe(paso))
+  }
+
   const ctaPaso: { texto: string; habilitado: boolean; accion: () => void; cargando?: boolean } =
     pasoActivo === 'contacto'
       ? {
           texto: 'Continue',
           habilitado: contacto.nombre.trim() !== '' && contacto.email.trim() !== '',
-          accion: () => setPaso(siguienteDe('contacto')),
+          accion: () =>
+            guardaYAvanza('contacto', {
+              step: 'contact',
+              contact: {
+                first_name: contacto.nombre.trim(),
+                last_name: contacto.apellidos.trim(),
+                email: contacto.email.trim(),
+                phone: telefonoDe(contacto),
+                language: contacto.idioma,
+              },
+            }),
         }
       : pasoActivo === 'menu'
         ? {
@@ -550,13 +580,18 @@ function FlujoReserva({
             // haber elegido — si no, se avanza creyendo que ya está hecho.
             texto: platos.every((p) => p) ? 'Continue' : 'Continue and pick the menu later',
             habilitado: true,
-            accion: () => setPaso(siguienteDe('menu')),
+            accion: () =>
+              guardaYAvanza('menu', { step: 'menu', dishes: hayPasoMenu ? platos : [] }),
           }
         : pasoActivo === 'recogida'
           ? {
               texto: 'Continue',
               habilitado: recogida.hotel.trim() !== '',
-              accion: () => setPaso(siguienteDe('recogida')),
+              accion: () =>
+                guardaYAvanza('recogida', {
+                  step: 'pickup',
+                  pickup: { hotel: recogida.hotel.trim(), notes: recogida.notas.trim() },
+                }),
             }
           : {
               texto: `Pay deposit · ${formatoDinero(deposito)}`,

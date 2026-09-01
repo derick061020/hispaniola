@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import { useVideoDiferido } from '@/lib/use-video-diferido'
 import { EXPERIENCIA_NARRATIVA, EXPERIENCIA_VIDEO, type SegmentoNarrativa } from '@/data/home'
 import { BotonSonido } from '@/components/ui/boton-sonido'
 import { useDevFlag } from '@/dev/use-dev-flag'
@@ -92,6 +93,11 @@ export function Experiencia() {
   const sectionRef = useRef<HTMLElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
 
+  // [2026-09-01] Son 8,9 MB y minuto y medio, MUY por debajo del pliegue: una
+  // prueba de velocidad nunca llega hasta aquí, solo pagaba la descarga. Ahora
+  // el vídeo entra cuando asoma por la pantalla.
+  useVideoDiferido(videoRef, EXPERIENCIA_VIDEO.src)
+
   // [dev-mode] ?dev-exp=estatico congela el reveal en su estado FINAL (texto y
   // video ya visibles, sin desplazamiento) → frame limpio para Figma. Ver
   // dev-registry.ts. Sin GSAP enganchado, la sección se ve directamente
@@ -137,14 +143,13 @@ export function Experiencia() {
           <figure className="exp-video">
             <video
               ref={videoRef}
-              src={EXPERIENCIA_VIDEO.src}
               poster={EXPERIENCIA_VIDEO.poster}
               aria-label={EXPERIENCIA_VIDEO.alt}
               autoPlay
               muted
               loop
               playsInline
-              preload="metadata"
+              preload="none"
             />
             {/* Va DENTRO del figure a propósito: así sigue al vídeo durante
                 todo el recorrido pineado, que lo mueve y lo escala.
