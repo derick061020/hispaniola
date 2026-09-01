@@ -98,7 +98,13 @@ export function MiReservaPage() {
   const navigate = useNavigate()
   // `codigo` es el parámetro histórico (enlaces ya compartidos); `q` es el
   // nuevo, que acompaña a `modo`. Cualquiera de los dos abre el DETALLE.
-  const consulta = params.get('q') ?? params.get('codigo')
+  // Tres nombres para lo mismo, y los tres tienen que valer: `q` es el de la
+  // pantalla de busqueda, `codigo` el del area privada, y `code` el que llevan
+  // los enlaces «gestiona tu reserva» de LOS TRECE correos (`manage_link` en
+  // mail_sender.py). Ese ultimo no se leia: el cliente pulsaba el enlace de su
+  // correo de confirmacion y aterrizaba en el buscador vacio, como si el
+  // enlace no llevara nada.
+  const consulta = params.get('q') ?? params.get('codigo') ?? params.get('code')
   const modoUrl = params.get('modo')
   const modoInicial: Modo = MODOS.some((m) => m.id === modoUrl) ? (modoUrl as Modo) : 'email'
 
