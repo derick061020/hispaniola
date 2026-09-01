@@ -27,9 +27,18 @@ const lineas = [
 ]
 
 for (const r of vercel.redirects) {
-  const origen = r.source.replace(/^\//, '')
+  // El punto se escapa: sin esto, `/index.php` seria una regex donde el punto
+  // vale por cualquier caracter. Da igual en la practica, pero una regla de
+  // redireccion que dice algo distinto de lo que parece es una trampa futura.
+  const origen = r.source.replace(/^\//, '').replace(/\./g, '\\.')
   const codigo = r.permanent === false ? 302 : 301
-  lineas.push(`RewriteRule "^${origen}/?$" "${r.destination}" [R=${codigo},L]`)
+  // QSD (Query String Discard) tira la query de origen. Hace falta para las
+  // URLs del sitio viejo: eran `/index.php?lang=en&hotel_id=100&tour=...` —
+  // miles de combinaciones de hotel y palabra clave sobre seis paginas reales—
+  // y arrastrar esos parametros a la web nueva no sirve de nada: no los lee
+  // nadie y ensucian la analitica. La ruta limpia es la que hereda el SEO.
+  const flags = r.source.includes('.php') ? `R=${codigo},L,QSD` : `R=${codigo},L`
+  lineas.push(`RewriteRule "^${origen}/?$" "${r.destination}" [${flags}]`)
 }
 
 lineas.push(

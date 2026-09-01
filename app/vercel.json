@@ -5,54 +5,237 @@
   "outputDirectory": "dist",
   "installCommand": "npm ci",
   "redirects": [
-    { "source": "/tours/semi-privado", "destination": "/tours/semi-private-premium", "permanent": true },
-    { "source": "/tours/charter-privado", "destination": "/tours/private-charter", "permanent": true },
-    { "source": "/tours/isla-saona", "destination": "/tours/saona-island", "permanent": true },
-    { "source": "/tours/snorkel-lovers", "destination": "/tours/coral", "permanent": true },
-    { "source": "/book/snorkel-lovers", "destination": "/book/coral", "permanent": true },
-    { "source": "/book/snorkel-lovers/thank-you", "destination": "/book/coral/thank-you", "permanent": true },
-
-    { "source": "/eventos/bodas/gracias", "destination": "/events/weddings/thank-you", "permanent": true },
-    { "source": "/eventos/empresas/gracias", "destination": "/events/corporate/thank-you", "permanent": true },
-    { "source": "/eventos/bodas", "destination": "/events/weddings", "permanent": true },
-    { "source": "/eventos/empresas", "destination": "/events/corporate", "permanent": true },
-
-    { "source": "/reservar/semi-privado/gracias", "destination": "/book/semi-private-premium/thank-you", "permanent": true },
-    { "source": "/reservar/charter-privado/gracias", "destination": "/book/private-charter/thank-you", "permanent": true },
-    { "source": "/reservar/isla-saona/gracias", "destination": "/book/saona-island/thank-you", "permanent": true },
-    { "source": "/reservar/semi-privado", "destination": "/book/semi-private-premium", "permanent": true },
-    { "source": "/reservar/charter-privado", "destination": "/book/private-charter", "permanent": true },
-    { "source": "/reservar/isla-saona", "destination": "/book/saona-island", "permanent": true },
-
-    { "source": "/legal/politica-de-cancelacion", "destination": "/legal/cancellation-policy", "permanent": true },
-    { "source": "/legal/privacidad", "destination": "/legal/privacy", "permanent": true },
-    { "source": "/legal/terminos", "destination": "/legal/terms", "permanent": true },
-
-    { "source": "/sostenibilidad", "destination": "/competitive-advantage", "permanent": true },
-    { "source": "/ventaja-competitiva", "destination": "/competitive-advantage", "permanent": true },
-    { "source": "/nosotros", "destination": "/crew", "permanent": true },
-    { "source": "/tripulacion", "destination": "/crew", "permanent": true },
-    { "source": "/instalaciones", "destination": "/facilities", "permanent": true },
-    { "source": "/flota", "destination": "/fleet", "permanent": true },
-    { "source": "/fundacion", "destination": "/foundation", "permanent": true },
-    { "source": "/guias", "destination": "/guides", "permanent": true },
-    { "source": "/agentes-de-viaje", "destination": "/travel-agents", "permanent": true },
-    { "source": "/trabaja-con-nosotros", "destination": "/careers", "permanent": true },
-    { "source": "/por-que-reservar", "destination": "/why-book-direct", "permanent": true },
-    { "source": "/reserva-directa", "destination": "/why-book-direct", "permanent": true },
-    { "source": "/contacto", "destination": "/contact", "permanent": true },
-    { "source": "/mi-reserva", "destination": "/my-booking", "permanent": true },
-
-    { "source": "/reservar/:slug/gracias", "destination": "/book/:slug/thank-you", "permanent": true },
-    { "source": "/reservar/:slug", "destination": "/book/:slug", "permanent": true },
-    { "source": "/eventos/:slug/gracias", "destination": "/events/:slug/thank-you", "permanent": true },
-    { "source": "/eventos/:slug", "destination": "/events/:slug", "permanent": true }
+    {
+      "source": "/tours/semi-privado",
+      "destination": "/tours/semi-private-premium",
+      "permanent": true
+    },
+    {
+      "source": "/tours/charter-privado",
+      "destination": "/tours/private-charter",
+      "permanent": true
+    },
+    {
+      "source": "/tours/isla-saona",
+      "destination": "/tours/saona-island",
+      "permanent": true
+    },
+    {
+      "source": "/tours/snorkel-lovers",
+      "destination": "/tours/coral",
+      "permanent": true
+    },
+    {
+      "source": "/book/snorkel-lovers",
+      "destination": "/book/coral",
+      "permanent": true
+    },
+    {
+      "source": "/book/snorkel-lovers/thank-you",
+      "destination": "/book/coral/thank-you",
+      "permanent": true
+    },
+    {
+      "source": "/eventos/bodas/gracias",
+      "destination": "/events/weddings/thank-you",
+      "permanent": true
+    },
+    {
+      "source": "/eventos/empresas/gracias",
+      "destination": "/events/corporate/thank-you",
+      "permanent": true
+    },
+    {
+      "source": "/eventos/bodas",
+      "destination": "/events/weddings",
+      "permanent": true
+    },
+    {
+      "source": "/eventos/empresas",
+      "destination": "/events/corporate",
+      "permanent": true
+    },
+    {
+      "source": "/reservar/semi-privado/gracias",
+      "destination": "/book/semi-private-premium/thank-you",
+      "permanent": true
+    },
+    {
+      "source": "/reservar/charter-privado/gracias",
+      "destination": "/book/private-charter/thank-you",
+      "permanent": true
+    },
+    {
+      "source": "/reservar/isla-saona/gracias",
+      "destination": "/book/saona-island/thank-you",
+      "permanent": true
+    },
+    {
+      "source": "/reservar/semi-privado",
+      "destination": "/book/semi-private-premium",
+      "permanent": true
+    },
+    {
+      "source": "/reservar/charter-privado",
+      "destination": "/book/private-charter",
+      "permanent": true
+    },
+    {
+      "source": "/reservar/isla-saona",
+      "destination": "/book/saona-island",
+      "permanent": true
+    },
+    {
+      "source": "/legal/politica-de-cancelacion",
+      "destination": "/legal/cancellation-policy",
+      "permanent": true
+    },
+    {
+      "source": "/legal/privacidad",
+      "destination": "/legal/privacy",
+      "permanent": true
+    },
+    {
+      "source": "/legal/terminos",
+      "destination": "/legal/terms",
+      "permanent": true
+    },
+    {
+      "source": "/sostenibilidad",
+      "destination": "/competitive-advantage",
+      "permanent": true
+    },
+    {
+      "source": "/ventaja-competitiva",
+      "destination": "/competitive-advantage",
+      "permanent": true
+    },
+    {
+      "source": "/nosotros",
+      "destination": "/crew",
+      "permanent": true
+    },
+    {
+      "source": "/tripulacion",
+      "destination": "/crew",
+      "permanent": true
+    },
+    {
+      "source": "/instalaciones",
+      "destination": "/facilities",
+      "permanent": true
+    },
+    {
+      "source": "/flota",
+      "destination": "/fleet",
+      "permanent": true
+    },
+    {
+      "source": "/fundacion",
+      "destination": "/foundation",
+      "permanent": true
+    },
+    {
+      "source": "/guias",
+      "destination": "/guides",
+      "permanent": true
+    },
+    {
+      "source": "/agentes-de-viaje",
+      "destination": "/travel-agents",
+      "permanent": true
+    },
+    {
+      "source": "/trabaja-con-nosotros",
+      "destination": "/careers",
+      "permanent": true
+    },
+    {
+      "source": "/por-que-reservar",
+      "destination": "/why-book-direct",
+      "permanent": true
+    },
+    {
+      "source": "/reserva-directa",
+      "destination": "/why-book-direct",
+      "permanent": true
+    },
+    {
+      "source": "/contacto",
+      "destination": "/contact",
+      "permanent": true
+    },
+    {
+      "source": "/mi-reserva",
+      "destination": "/my-booking",
+      "permanent": true
+    },
+    {
+      "source": "/reservar/:slug/gracias",
+      "destination": "/book/:slug/thank-you",
+      "permanent": true
+    },
+    {
+      "source": "/reservar/:slug",
+      "destination": "/book/:slug",
+      "permanent": true
+    },
+    {
+      "source": "/eventos/:slug/gracias",
+      "destination": "/events/:slug/thank-you",
+      "permanent": true
+    },
+    {
+      "source": "/eventos/:slug",
+      "destination": "/events/:slug",
+      "permanent": true
+    },
+    {
+      "source": "/index.php",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/private-catamaran-charter-excursion.php",
+      "destination": "/tours/private-charter",
+      "permanent": true
+    },
+    {
+      "source": "/semi-private-catamaran-excursion.php",
+      "destination": "/tours/semi-private-premium",
+      "permanent": true
+    },
+    {
+      "source": "/party-boat.php",
+      "destination": "/events/party-boat",
+      "permanent": true
+    },
+    {
+      "source": "/weddings.php",
+      "destination": "/events/weddings",
+      "permanent": true
+    },
+    {
+      "source": "/contact.php",
+      "destination": "/contact",
+      "permanent": true
+    }
   ],
   "headers": [
     {
       "source": "/assets/(.*)",
-      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
     }
   ],
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
 }
