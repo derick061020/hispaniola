@@ -520,7 +520,21 @@ function DetalleReserva({
   // [2026-08-18] El token que devuelve `lookup` SE GUARDA. Antes se tiraba, y
   // por eso todo lo de esta pantalla acababa en localStorage: sin él no se
   // puede ni cobrar el saldo ni escribir un cambio en Odoo.
-  const [token, setToken] = useState<string | null>(accesoInicial?.token ?? null)
+  // [2026-09-01] EL TOKEN TAMBIEN PUEDE VENIR EN LA URL — es lo que hace que el
+  // enlace de pago funcione de un clic.
+  //
+  // Derick pidio un enlace de pago para mandarle al cliente. Sin esto, ese
+  // enlace le llevaba a la misma pantalla de siempre pidiendole su correo antes
+  // de poder pagar; un enlace de pago que empieza pidiendo credenciales es un
+  // enlace que la mitad de la gente abandona.
+  //
+  // No es un agujero: el token es el mismo que ya usaba la pantalla despues de
+  // buscar por contacto, va por reserva, lo genera `secrets.token_urlsafe(32)`
+  // y sigue siendo Odoo quien decide si vale. Lo unico que cambia es de donde
+  // se lee. Por eso el enlace no se publica: se manda al cliente y punto.
+  const [token, setToken] = useState<string | null>(
+    accesoInicial?.token ?? (paramsDetalle.get('token') || null),
+  )
   const [recargas, setRecargas] = useState(0)
 
   const codigo = codigoIngresado.toUpperCase()
