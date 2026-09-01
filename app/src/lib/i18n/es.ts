@@ -1599,6 +1599,7 @@ export const ES: Record<string, string> = {
   "Pasta salad": "Ensalada de pasta",
   "pax": "pax",
   "Pay": "Pagar",
+  "up to {n} guests": "hasta {n} invitados",
   "Tour": "Tour",
   "Extra": "Extra",
   "Comida a bordo": "Comida a bordo",

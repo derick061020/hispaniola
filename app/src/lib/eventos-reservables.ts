@@ -59,10 +59,32 @@ export function slugOdooDePaquete(id: string | null): string | null {
   return id ? SLUG_ODOO[id] ?? null : null
 }
 
+/** Las personas que cubre el precio base de un paquete de eventos.
+ *  Los cuatro paquetes dicen «1-12 guests» y a partir de ahi se cobra el
+ *  extra por invitado; el numero vive en Odoo (`marginal_base_pax`) y aqui
+ *  solo se usa para estimar mientras el servidor contesta. */
+const PAX_INCLUIDOS_EVENTO = 12
+
+/** El extra por invitado, sacado del texto «US$ 55.00 per extra guest». */
+function extraPorInvitado(texto: string | undefined): number {
+  const m = /([\d,.]+)/.exec(texto ?? '')
+  return m ? Number(m[1].replace(/,/g, '')) : 0
+}
+
 function subVariantesDe(slug: SlugEventoReservable) {
   return (EVENTOS[slug]?.paquetes?.items ?? []).map((p) => ({
     id: SLUG_ODOO[p.id] ?? p.id,
     nombre: p.nombreCorto || p.nombre,
+    // [2026-09-01, Derick: «que el contador de personas actualice el precio
+    // correctamente en la web cuando pasas a checkout; solo en eventos no
+    // funciona»] El checkout estimaba `precio por persona x personas` mientras
+    // el servidor contestaba, y en eventos ESO NO ES EL PRECIO: son una base
+    // que cubre a 12 y un extra por cada invitado de mas. Con 12 personas
+    // pintaba 7.920 en vez de 660. Aqui viajan los tres numeros que hacen
+    // falta para estimarlo bien.
+    precioBase: p.precioBase ?? null,
+    extraPorInvitado: extraPorInvitado(p.extraPrecio),
+    paxIncluidos: PAX_INCLUIDOS_EVENTO,
     descripcion: p.meta ?? '',
     capacidad: p.capacidad ?? '',
     // Premium son 4 h; el resto, 3. Sale del propio dato de la landing en vez

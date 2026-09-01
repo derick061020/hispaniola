@@ -263,9 +263,29 @@ function FlujoReserva({
   })
 
   const upgrade = paquete === 'premium' && ficha.upgradePremium !== null ? ficha.upgradePremium : 0
+  // EL PAQUETE ELEGIDO, para estimar bien y para poder enseñarlo.
+  //
+  // [2026-09-01, Derick: «que el contador de personas actualice el precio
+  // correctamente, solo en eventos no funciona; que se marque en el checkout
+  // el paquete que se elige»] En eventos el precio NO es por cabeza: es una
+  // base que cubre a doce invitados y un extra por cada uno de más. La
+  // estimación de aquí abajo multiplicaba por persona y con doce pintaba
+  // 7.920 en vez de 660, hasta que Odoo contestaba —y si el pedido aún no
+  // existía, se quedaba así—.
+  const paqueteElegido = (ficha.subVariantes ?? []).find(
+    (v: { id: string }) => v.id === varianteInicial,
+  ) as
+    | { id: string; nombre: string; precioBase?: number | null
+        extraPorInvitado?: number; paxIncluidos?: number }
+    | undefined
+  const esEvento = !!paqueteElegido?.precioBase
   // Mientras la primera respuesta viaja, se pinta la estimación local para que
   // el resumen no parpadee en cero. En cuanto Odoo contesta, manda Odoo.
-  const estimacionLocal = (precioLight + upgrade) * personas
+  const estimacionLocal = esEvento
+    ? (paqueteElegido!.precioBase ?? 0) +
+      (paqueteElegido!.extraPorInvitado ?? 0) *
+        Math.max(personas - (paqueteElegido!.paxIncluidos ?? 12), 0)
+    : (precioLight + upgrade) * personas
   const total = checkout.pedido?.amounts.total ?? estimacionLocal
   const deposito = checkout.pedido?.amounts.deposit ?? Math.round(estimacionLocal * 0.25)
   const saldo = checkout.pedido?.amounts.balance ?? total - deposito
@@ -917,9 +937,16 @@ function FlujoReserva({
                 maxPersonas={maxPersonas}
                 onPersonas={cambiarPersonas}
                 conceptoBase={
-                  ficha.upgradePremium !== null
-                    ? `${upgrade > 0 ? 'Light' : paquete === 'premium' ? 'Premium' : 'Light'} menu`
-                    : t('Tour fare')
+                  // En eventos el concepto ES el paquete: «Starfish Package
+                  // (hasta 12 invitados)». Asi el cliente ve en el checkout
+                  // cual eligio, que es lo que pidio Derick, y de paso el
+                  // desglose deja de decir «Tour fare» sobre un precio que no
+                  // es por persona.
+                  paqueteElegido?.precioBase
+                    ? `${paqueteElegido.nombre} (${tp('up to {n} guests', { n: paqueteElegido.paxIncluidos ?? 12 })})`
+                    : ficha.upgradePremium !== null
+                      ? `${upgrade > 0 ? 'Light' : paquete === 'premium' ? 'Premium' : 'Light'} menu`
+                      : t('Tour fare')
                 }
                 precioBase={precioLight}
                 upgrade={upgrade}
