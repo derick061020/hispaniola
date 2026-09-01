@@ -65,6 +65,7 @@ export function ResumenReserva({
   desglose,
   onDesglose,
   conceptoBase,
+  basePorPersona = true,
   precioBase,
   upgrade,
   lineas,
@@ -99,6 +100,8 @@ export function ResumenReserva({
    *  paquete («Light menu»); sin ellos (Saona, charter) es la tarifa del tour —
    *  llamarla «Island buffet» daría a entender que la comida se paga aparte. */
   conceptoBase: string
+  /** false en eventos: la base cubre a N invitados, no es por cabeza. */
+  basePorPersona?: boolean
   /** Tarifa por persona del paquete base (Light). */
   precioBase: number
   /** Sobrecoste por persona del Premium; 0 si la reserva es Light. */
@@ -340,12 +343,17 @@ export function ResumenReserva({
                 concepto={
                   <>
                     {conceptoBase}{' '}
-                    <span className="text-navy-soft">
-                      {formatoDinero(precioBase)} × {personas}
-                    </span>
+                    {/* En eventos el precio NO es por cabeza: es una base que
+                        cubre a doce invitados. Escribir «US$ 660 × 15» al lado
+                        seria una cuenta que no da el importe de la derecha. */}
+                    {basePorPersona ? (
+                      <span className="text-navy-soft">
+                        {formatoDinero(precioBase)} × {personas}
+                      </span>
+                    ) : null}
                   </>
                 }
-                importe={precioBase * personas}
+                importe={basePorPersona ? precioBase * personas : precioBase}
               />
               {upgrade > 0 ? (
                 <FilaPrecio

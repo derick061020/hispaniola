@@ -948,7 +948,8 @@ function FlujoReserva({
                       ? `${upgrade > 0 ? 'Light' : paquete === 'premium' ? 'Premium' : 'Light'} menu`
                       : t('Tour fare')
                 }
-                precioBase={precioLight}
+                precioBase={esEvento ? estimacionLocal : precioLight}
+                basePorPersona={!esEvento}
                 upgrade={upgrade}
                 lineas={checkout.pedido?.quote?.lines}
                 lineasAddOns={checkout.pedido?.quote?.addons}
