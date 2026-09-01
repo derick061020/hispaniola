@@ -19,6 +19,27 @@ const CLAVE = 'hsp:checkout:v1'
 
 type Guardado = { codigo: string; token: string; tour: string; abierto: string }
 
+/** Un identificador estable de ESTE navegador, para la clave de idempotencia.
+ *  No identifica a nadie: es un numero al azar que vive en su localStorage y
+ *  solo sirve para que dos visitantes no compartan pedido. */
+const CLAVE_NAVEGADOR = 'haa.checkout.navegador'
+
+function idDeEsteNavegador(): string {
+  if (typeof window === 'undefined') return Math.random().toString(36).slice(2)
+  try {
+    let id = window.localStorage.getItem(CLAVE_NAVEGADOR)
+    if (!id) {
+      id = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`
+      window.localStorage.setItem(CLAVE_NAVEGADOR, id)
+    }
+    return id
+  } catch {
+    // Sin almacenamiento (modo privado): una clave nueva por carga. Peor para
+    // la idempotencia, pero nunca compartida con otro visitante.
+    return Math.random().toString(36).slice(2)
+  }
+}
+
 function leerGuardado(): Guardado | null {
   if (typeof window === 'undefined') return null
   try {
@@ -159,8 +180,22 @@ export function useCheckout(inicio: InicioCheckout) {
           }
           escribirGuardado(null)
         }
-        // Clave de idempotencia por pestana: recargar no crea un pedido nuevo.
-        const clave = `${inicio.tour}-${guardado?.abierto ?? new Date().toISOString().slice(0, 13)}`
+        // Clave de idempotencia por NAVEGADOR, no por hora.
+        //
+        // [2026-09-01, Derick: «el contador de personas no actualiza el precio
+        // en el checkout, solo en eventos»] La clave era
+        // `tour + fecha-y-hora`, o sea la MISMA para todo el que entrara al
+        // mismo tour dentro de la misma hora. El segundo visitante no creaba su
+        // pedido: el servidor reconocia la clave y le devolvia el del primero,
+        // con su paquete, su fecha y su numero de personas. En eventos se veia
+        // a simple vista —pedias Tide para 15 y salia Starfish para 12— porque
+        // ahi cada paquete tiene un precio muy distinto; en el resto de tours
+        // pasaba igual de callado.
+        //
+        // Ahora la clave lleva un identificador aleatorio propio de este
+        // navegador. Sigue cumpliendo lo que buscaba —recargar la pagina no
+        // crea un pedido nuevo— sin mezclar a dos personas distintas.
+        const clave = `${inicio.tour}-${idDeEsteNavegador()}`
         const pedido = await abrirCheckout(inicio, clave)
         if (cancelado) return
         const nuevo: Guardado = {
