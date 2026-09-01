@@ -86,6 +86,10 @@ export type InicioCheckout = {
   scheduleIndex?: number
   /** Extras elegidos en la ficha. Odoo descarta los que ese barco no ofrece. */
   addons?: string[]
+  /** Los descuentos que el visitante ha elegido (hoy solo «efectivo»). Se
+   *  manda SIEMPRE, vacio incluido: el pedido se reutiliza entre visitas y sin
+   *  esto arrastraba el efectivo de una sesion anterior. */
+  descuentos?: string[]
 }
 
 /** Abre el pedido. **Llamar al ENTRAR en /book/:slug, no al pagar.**
@@ -108,6 +112,13 @@ export function abrirCheckout(inicio: InicioCheckout, idempotencia?: string) {
       date: inicio.fecha ?? null,
       schedule_index: inicio.scheduleIndex ?? 0,
       addons: inicio.addons ?? [],
+      // [2026-09-01, Derick: «el porcentaje del efectivo todavia no le habia
+      // dado click»] El pedido se reutiliza entre visitas, y si en una sesion
+      // anterior se marco «pago en efectivo» el servidor seguia aplicandolo
+      // aunque la casilla saliera desmarcada. Se manda siempre el estado
+      // actual —vacio incluido— para que el pedido diga lo mismo que la
+      // pantalla.
+      discounts: inicio.descuentos ?? [],
       step: 'start',
       meta: metaOrigen(),
     },

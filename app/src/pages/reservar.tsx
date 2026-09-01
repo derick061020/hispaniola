@@ -260,6 +260,9 @@ function FlujoReserva({
     fecha: fechaInicialISO,
     scheduleIndex: horarioInicial,
     addons: addonsIniciales,
+    // Al abrir, sin efectivo: es una casilla que el cliente marca, no algo que
+    // se arrastre de una visita anterior.
+    descuentos: [],
   })
 
   const upgrade = paquete === 'premium' && ficha.upgradePremium !== null ? ficha.upgradePremium : 0
