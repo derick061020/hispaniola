@@ -1482,7 +1482,9 @@ export const REELS: Reel[] = traducible([
   {
     id: 'piscina-natural',
     titulo: 'Lunch on board, Caribbean style',
-    foto: 'reel-2',
+    // -v2: la fusión también reemplazó esta portada y su vídeo sin cambiar
+    // la ruta. Mismo problema de caché que el retrato del CEO, misma cura.
+    foto: 'reel-2-v2',
     // [2026-09-01, 3ª entrega] El alt cambia porque cambia LA FOTO: el póster
     // nuevo es un cenital de una huésped comiendo langosta sobre la red del
     // catamarán, no un camarero sirviendo. El alt describe la imagen que hay
@@ -1506,7 +1508,7 @@ export const REELS: Reel[] = traducible([
     // ⚠️ Y cierra con una cartela de logos (Fundación Bávaro Reefs + Hispaniola)
     // en los últimos ~2s. Es su propia marca y va tal cual, pero será el único
     // de los cinco que termine en un cartel.
-    video: '/video/reels/reel-2.mp4',
+    video: '/video/reels/reel-2-v2.mp4',
     red: 'tiktok',
   },
   {

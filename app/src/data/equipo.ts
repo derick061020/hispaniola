@@ -47,7 +47,7 @@ export type DepartamentoId =
   // («Management») con la única foto de la carpeta «AGREGAR - CEO». Samuel lo
   // corrigió el mismo día: «quita el apartado management ya que ese es el ceo».
   // Esa foto no era un departamento, era el RETRATO REAL DEL CEO — que ya
-  // existe en el sitio como `equipo-omar` (id 'fernando' desde el 2026-09-02,
+  // existe en el sitio como `equipo-fernando` (renombrado el 2026-09-02,
   // «CEO» en data/nosotros.ts) y llevaba hasta hoy una foto de stock. La foto
   // pasó a sobrescribir ese hueco, y así sale en las cinco superficies donde
   // aparece el CEO sin tocar ninguna de ellas. El nombre del archivo se quedó
@@ -149,7 +149,7 @@ const RETRATOS_POR_DEPARTAMENTO: Record<DepartamentoId, number> = {
   // pasaba —una misma persona posaba con los brazos caídos y con los cruzados,
   // y solo entraba una toma—, que es el bug que se arregló en el commit 308114d.
   // La tercera foto de la entrega (la del CEO) NO está aquí: es el retrato de
-  // Fernando y vive en `equipo-omar`. Ver la nota de `DepartamentoId`.
+  // Fernando y vive en `equipo-fernando`. Ver la nota de `DepartamentoId`.
   ventas: 2,
   fundacion: 2,
 }

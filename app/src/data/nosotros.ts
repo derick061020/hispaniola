@@ -72,7 +72,7 @@ import { traducible } from '@/lib/i18n'
 //      ahí no basta con cambiar la foto — no hay ninguna persona detrás. O se
 //      sustituye la entrada entera por alguien real que el cliente confirme, o
 //      se borra. Ver el flag `placeholder` en el tipo, más abajo.
-// Archivos: /public/fotos/equipo-{omar,lola,eva,capitan,biologa}.webp
+// Archivos: /public/fotos/equipo-{fernando,lola,eva,capitan,biologa}.webp
 // (recorte transparente, object-fit: cover en la card). La foto de Blanka (el
 // archivo `equipo-eva`, ver su entrada) se RESUSTITUYÓ el mismo día
 // (2ª vuelta, pedido de Samuel: "la de eva se ve mas lejos y se ve mas cuerpo
@@ -159,10 +159,15 @@ export const EQUIPO: MiembroEquipo[] = traducible([
     // funcionaría, pero es exactamente así como una ficha acaba con dos
     // nombres y nadie sabe cuál manda.
     //
-    // ⚠️ La FOTO sigue llamándose `equipo-omar`: es el retrato real del CEO
-    // —la tercera de la entrega del 09/01, ver data/equipo.ts— y el nombre del
-    // archivo no lo ve nadie. Renombrarlo obliga a mover el fichero en
-    // /public/fotos y en el deploy sin ganar nada.
+    // ⚠️ LA FOTO CAMBIA DE NOMBRE, y no es cosmética: `equipo-omar.webp` se
+    // quedó con el retrato de la 3ª entrega (el real del CEO) pero conservando
+    // la ruta, y el hosting sirve las imágenes con `max-age=604800`. Resultado:
+    // quien hubiera abierto la web antes seguía viendo el retrato anterior una
+    // semana más —Derick incluido, con captura—, aunque el fichero del servidor
+    // ya era el bueno. Los bundles no sufren esto porque Vite les pone un hash;
+    // lo de /public no lo lleva, así que la ruta ES la versión.
+    // Regla: si se REEMPLAZA un archivo de /public por otro contenido, se
+    // renombra. Igual que en c38845f.
     id: 'fernando',
     nombre: 'Fernando',
     // ⚡ [2026-09-01, UPDATES 09/01 pág. 1: «DEBE DE DECIR CEO SOLAMENTE»]
@@ -188,7 +193,7 @@ export const EQUIPO: MiembroEquipo[] = traducible([
       "I started this company as its very first captain. Over the years, I've worked in nearly every role, from leading tours at sea to building the team that now makes it all possible. Watching people grow alongside the company has been one of the greatest rewards. In fact, our Operations Manager, Jose, learned to swim with me years ago, and today he leads one of the most important departments in the company. He is my right wing man.",
       'No matter how much we grow, I believe the best leaders never stop learning, never stop listening, and never stop getting their feet wet.',
     ],
-    foto: 'equipo-omar',
+    foto: 'equipo-fernando',
     cta: { label: 'Our story', tipo: 'historia' },
   },
   {
