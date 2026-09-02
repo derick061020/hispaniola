@@ -49,7 +49,8 @@ import { traducible } from '@/lib/i18n'
 // suenan bien pero nadie las ha dicho: hay que validarlas o sustituirlas por
 // frases reales. Mientras tanto se pintan porque el cliente las propuso él.
 //
-// ⚠️ FOTOS — PLACEHOLDER DE STOCK, NO SON OMAR/LOLA/EVA REALES (2026-07-22,
+// ⚠️ FOTOS — PLACEHOLDER DE STOCK, NO SON LOLA/EVA REALES (2026-07-22,
+// el CEO ya no: su retrato real llegó en la 3ª entrega, el 09/01)
 // pedido explícito de Samuel: "saca fotos de stock y recórtales el fondo",
 // al rediseñar las cards de equipo-teaser.tsx con retrato grande + gradiente).
 // Esto SE SALTA A PROPÓSITO la regla de CLAUDE.md "Fotos: reales de la web
@@ -77,7 +78,7 @@ import { traducible } from '@/lib/i18n'
 // (2ª vuelta, pedido de Samuel: "la de eva se ve mas lejos y se ve mas cuerpo
 // completo, cosa que no deberia") — la primera elección quedaba de cuerpo
 // entero y lejana; la actual es un plano de busto con los brazos cruzados,
-// mismo encuadre que Omar y Lola.
+// mismo encuadre que el CEO y Lola.
 //
 // Esta es la ÚNICA fuente del equipo: la consumen /nosotros (bloque
 // completo), la home (teaser, equipo-teaser.tsx) y la card de persona de la
@@ -85,7 +86,7 @@ import { traducible } from '@/lib/i18n'
 //
 // 2ª vuelta (2026-07-22, pedido de Samuel): el teaser de la home pasa de 3 a
 // 5 cards para poder tener 3 niveles de altura en el efecto de scroll (con 3
-// cards solo hay sitio para 2: centro y extremos). Omar/Lola/Blanka son las
+// cards solo hay sitio para 2: centro y extremos). CEO/Lola/Blanka son las
 // ÚNICAS personas confirmadas por el cliente (maqueta real, ver el comentario
 // de arriba) — inventar 2 nombres/cargos/quotes nuevos habría sido fabricar
 // personas que no existen. Las 2 de relleno NO son personas: reusan tal cual
@@ -145,8 +146,25 @@ export type MiembroEquipo = {
 
 export const EQUIPO: MiembroEquipo[] = traducible([
   {
-    id: 'omar',
-    nombre: 'Omar',
+    // ⚡ [2026-09-02, Derick: «cambia omar por fernando es el CEO»] El nombre
+    // que llevaba esta ficha no era el del CEO. Es Fernando —Fernando Sánchez
+    // Fernández, que ya aparecía con nombre y apellidos como cofundador de la
+    // Bávaro Reefs Foundation en data/fundacion.ts—, así que la bio en primera
+    // persona («empecé como el primer capitán de la empresa») encaja con quien
+    // firma: es la misma persona contando lo mismo.
+    //
+    // El `id` se renombra con él y no se queda en 'omar': lo consultan por
+    // igualdad los 5 artículos del blog (`autorId`), la ficha de artículo, la
+    // card de autor y el bloque de contacto de la home. Dejar el id viejo
+    // funcionaría, pero es exactamente así como una ficha acaba con dos
+    // nombres y nadie sabe cuál manda.
+    //
+    // ⚠️ La FOTO sigue llamándose `equipo-omar`: es el retrato real del CEO
+    // —la tercera de la entrega del 09/01, ver data/equipo.ts— y el nombre del
+    // archivo no lo ve nadie. Renombrarlo obliga a mover el fichero en
+    // /public/fotos y en el deploy sin ganar nada.
+    id: 'fernando',
+    nombre: 'Fernando',
     // ⚡ [2026-09-01, UPDATES 09/01 pág. 1: «DEBE DE DECIR CEO SOLAMENTE»]
     // Era «Founder & CEO». El cliente quita el «Founder».
     // ⚠️ Ojo si algún día se revisa: su propia `bio` sigue contando que empezó

@@ -103,7 +103,7 @@ export function TripulacionPage() {
 
           {/* [v3 2026-08-06, WEBSITE - NOSOTROS pag. 2] LA HISTORIA DEL CEO.
               El cliente escribe un texto largo en primera persona y no tenia
-              sitio: la ficha de Omar solo daba para una frase. Va entre la
+              sitio: la ficha del CEO solo daba para una frase. Va entre la
               franja de datos y la rejilla de departamentos porque es lo que
               los une — la empresa la monto el primer capitan, y los seis
               departamentos son en lo que se convirtio. */}

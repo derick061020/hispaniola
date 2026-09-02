@@ -25,8 +25,9 @@ import { traducible } from '@/lib/i18n'
 // una nota honesta de "en redacción" en vez de fingir un cuerpo que no existe.
 // Cuando se escriban, basta con rellenar `cuerpo` y la página se completa sola.
 //
-// Autores: los del EQUIPO real (data/nosotros.ts) — Omar, Lola y Blanka, los
-// mismos nombres que el propio cliente dio en sus maquetas.
+// Autores: los del EQUIPO real (data/nosotros.ts) — Fernando, Lola y Blanka,
+// los mismos nombres que el propio cliente dio en sus maquetas. (El CEO
+// figuraba como «Omar» hasta el 2026-09-02; ver la nota en nosotros.ts.)
 
 export type CategoriaBlog =
   | 'Punta Cana guides'
@@ -84,7 +85,7 @@ export const ARTICULOS: Articulo[] = traducible([
     extracto:
       'For pure diving there are better spots in the Caribbean. For seeing turtles, few places beat it. Here’s why, with no marketing.',
     categoria: 'Punta Cana guides',
-    autorId: 'omar',
+    autorId: 'fernando',
     fecha: 'Jul 12, 2026',
     minutos: 6,
     foto: 'galeria-semi-privado-1-v2',
@@ -174,7 +175,7 @@ export const ARTICULOS: Articulo[] = traducible([
     extracto:
       'Inside the coral project the Ministry ranks among the 3 largest in the country.',
     categoria: 'Sustainability',
-    autorId: 'omar',
+    autorId: 'fernando',
     fecha: 'Jun 28, 2026',
     minutos: 7,
     foto: 'arrecife-fondo-cenital-v2',
@@ -255,7 +256,7 @@ export const ARTICULOS: Articulo[] = traducible([
     titulo: 'Private Charter vs. shared tour: how to choose yours',
     extracto: 'Group, budget and how much you want the day to be yours: the questions that really decide it.',
     categoria: 'Punta Cana guides',
-    autorId: 'omar',
+    autorId: 'fernando',
     fecha: 'May 10, 2026',
     minutos: 6,
     foto: 'galeria-charter-privado-5',
@@ -342,7 +343,7 @@ export const ARTICULOS: Articulo[] = traducible([
     titulo: 'Zero plastic on board: how we did it',
     extracto: 'The concrete changes we made to get single-use plastic off our catamarans.',
     categoria: 'Sustainability',
-    autorId: 'omar',
+    autorId: 'fernando',
     fecha: 'Apr 5, 2026',
     minutos: 6,
     foto: 'cocina-flotante-plataforma',
@@ -354,7 +355,7 @@ export const ARTICULOS: Articulo[] = traducible([
     titulo: 'Why we don’t feed the fish (even when guests ask)',
     extracto: 'A frequent question on board, and the ecological reason behind our “no”.',
     categoria: 'Sustainability',
-    autorId: 'omar',
+    autorId: 'fernando',
     fecha: 'Mar 15, 2026',
     minutos: 5,
     foto: 'galeria-snorkel-lovers-9-v2',

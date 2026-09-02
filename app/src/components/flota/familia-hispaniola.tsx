@@ -89,7 +89,8 @@ export function FamiliaHispaniola() {
 
           {/* EL DUEÑO. Sale de EQUIPO para que su frase no viva en dos sitios
               (la home ya la usa en su card de equipo).
-              ⚠️ El retrato de Omar es STOCK recortado, no es él — ver el aviso
+              ⚠️ [desfasado] El retrato del CEO ya es el suyo real (3ª entrega,
+              09/01). El resto de las caras del equipo sí siguen siendo stock — ver el aviso
               largo en data/nosotros.ts. Sustituir antes de publicar. */}
           {fundador ? (
             <figure className="mt-6 flex items-center gap-4">

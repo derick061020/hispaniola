@@ -105,9 +105,12 @@ export const FAMILIA_FLOTA = traducible({
   // El slide 27 (y la reunión del 07-24, 28:46: «la foto de él, una frase que
   // va a hacer él, y esto 2022») pide que la historia se cuente con la cara y
   // la voz del fundador. La cita y el retrato salen de EQUIPO (data/nosotros)
-  // — fuente única: si Omar cambia su frase, cambia en la home también.
+  // — fuente única: si el CEO cambia su frase, cambia en la home también.
   //
-  // ⚠️ El retrato de Omar sigue siendo STOCK recortado, no es él (ver el
+  // ⚠️ [desfasado desde el 09/01] Este aviso decía que el retrato del CEO
+  //    era stock; ya no lo es, la 3ª entrega trajo el suyo real. Se deja
+  //    la nota porque el resto de las caras del equipo SÍ siguen siendo
+  //    stock recortado (ver el
   // aviso largo en data/nosotros.ts). Sustituir antes de publicar.
   duenoRolLargo: 'founder and director of Hispaniola',
 

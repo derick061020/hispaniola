@@ -32,7 +32,7 @@ const FUERA = /^dev\/|^components\/alignui\/|^lib\/alignui\/|^lib\/i18n\/|^pages
 
 // Claves cuyo valor es maquinaria, no texto (misma lista que el Proxy de
 // nucleo.ts: si cambia una, cambia la otra).
-const NO_ES_TEXTO = new Set(['id','slug','href','src','to','url','ruta','ancla','key','tipo','icono','icon','color','video','poster','imagen','foto','clase','className','variante','formato','moneda','rot','posicion','pos'])
+const NO_ES_TEXTO = new Set(['id','autorId','slug','href','src','to','url','ruta','ancla','key','tipo','icono','icon','color','video','poster','imagen','foto','clase','className','variante','formato','moneda','rot','posicion','pos'])
 
 // ── LO QUE NO ES COPY ────────────────────────────────────────────────────
 // Cadenas que el recorrido encuentra pero que NO se traducen nunca, revisadas
@@ -102,7 +102,7 @@ const NO_ES_COPY = new Set([
   "Mastercard",
   "Michelle T.",
   "Nicole R.",
-  "Omar",
+  "Fernando",
   "Patricia N.",
   "PayPal",
   "Pedro Martín",
