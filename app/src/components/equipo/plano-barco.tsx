@@ -27,6 +27,12 @@ import { DEPARTAMENTOS, contarPorDepartamento, type DepartamentoId } from '@/dat
 // habiendo dos zonas declaradas y sigue sin colocarse en cubierta a nadie que
 // no navegue.
 //
+// ⚠️ [2026-09-01] Y vuelve a moverse: con `ventas` son 4 a bordo contra 3 en
+// tierra. La metáfora aguanta —las de tierra siguen siendo las que no
+// navegan— pero cada departamento nuevo la aprieta un poco más, porque los que
+// llegan trabajan en oficina. Es un argumento más para decidir de una vez cuál
+// de las dos variantes se queda.
+//
 // Si gana, el trabajo pendiente es de ilustración: hoy el barco es el recorte
 // real que ya había en el repo (catamaran-recorte.webp) y la tierra es una
 // columna de puntos. Con una ilustración propia —el complejo dibujado como el
@@ -50,8 +56,16 @@ const A_BORDO: { id: DepartamentoId; x: string; y: string; zona: string }[] = [
   { id: 'marinos', x: '16%', y: '93%', zona: 'Bow' },
 ]
 
+// ⚠️ [2026-09-01] ESTE ARRAY Y `A_BORDO` NO SON EXHAUSTIVOS y por eso el
+// compilador no avisa cuando falta un departamento: son listas, no un
+// `Record<DepartamentoId, …>` como los iconos de grid-equipo.tsx. Al entrar
+// `ventas` con la 3ª entrega se habría quedado FUERA del plano sin que nada
+// fallara — el typecheck cazó el icono que faltaba y esto no.
+// Si algún día se decide que esta variante se queda, conviene tiparlas para que
+// el próximo departamento no pueda olvidarse en silencio.
 const EN_TIERRA: { id: DepartamentoId; zona: string }[] = [
   { id: 'oficina', zona: 'Offices' },
+  { id: 'ventas', zona: 'Sales desk' },
   { id: 'fundacion', zona: 'Marine lab' },
 ]
 

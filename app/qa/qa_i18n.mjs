@@ -265,7 +265,7 @@ const sobran = Object.keys(ES).filter((k) => !pedidas.has(k))
 console.log(`cadenas que la web puede pedir: ${pedidas.size}`)
 console.log(`entradas en el diccionario:      ${Object.keys(ES).length}`)
 console.log(`\nFALTAN (saldrán en inglés): ${faltan.length}`)
-for (const [txt, donde] of faltan.slice(0, process.argv.includes("--todo") ? 999 : 60)) console.log(`  [${donde}] ${txt.slice(0, 90)}`)
+for (const [txt, donde] of faltan.slice(0, process.argv.includes("--todo") ? 999 : 60)) console.log(process.argv.includes("--json") ? JSON.stringify(txt) : `  [${donde}] ${txt.slice(0, 90)}`)
 if (faltan.length > 60 && !process.argv.includes("--todo")) console.log(`  … y ${faltan.length - 60} más`)
 
 console.log(`\nSOBRAN (traducción huérfana): ${sobran.length}`)

@@ -364,6 +364,16 @@ const INCLUYE_MARINE_PARK: BeneficioIncluido[] = [
 // Traducción NUESTRA (el cliente no da estos dos bloques): son datos reales
 // portados del tarifario y de la web, solo cambian de idioma. Compartidos por
 // las dos fichas del Marine Park por el mismo motivo que los 8 ítems.
+//
+// ⚠️ [2026-09-01] PENDIENTE DE SAMUEL: esta línea sigue nombrando el «HD photo
+// album (US$ 20/group via Dropbox)» y el upsell del álbum se retiró hoy del
+// widget y del checkout. No se borra por decisión: «no incluido» es un dato del
+// cliente sobre lo que la tarifa NO cubre, y el álbum puede seguir vendiéndose
+// fuera de la web (por WhatsApp, a bordo) aunque ya no se pueda marcar aquí.
+// Pero tal como está, el sitio publica el precio de algo que no se puede
+// comprar en el sitio. Si Samuel confirma que el álbum desaparece del negocio y
+// no solo de la web, se quita la mención de esta constante y de la línea gemela
+// de `coral` — son las dos únicas que quedan.
 const NO_INCLUIDO_MARINE_PARK =
   'Not included: transportation surcharge from Casa de Campo.'
 
@@ -454,12 +464,18 @@ export const FICHAS: Record<string, FichaTour> = traducible({
       'To complete the experience, our signature Floating Kitchen serves an unforgettable gourmet lunch prepared fresh on board. Enjoy certified Angus beef, fresh lobster, premium seafood and show cooking, replacing the typical buffet with restaurant-quality cuisine in the middle of the Caribbean Sea.',
       "More than just another Punta Cana catamaran excursion, this is an experience where nature, marine conservation, gourmet dining and personalized service come together to create memories you'll never forget.",
     ],
-    // [v3 2026-08-06, WEBSITE-TOURS pág. 8] Las horas del itinerario aprobado
-    // mandan: zarpe 9:15 / 13:15 y regreso 13:15 / 17:15 (antes 9:00→13:00 y
-    // 13:00→17:00). Son los mismos dos turnos de siempre, corridos 15 minutos.
+    // ⚡ [2026-09-01, Samuel: «los horarios donde sean 9:15 AM y 1:15 PM que
+    // sean 9:00 AM y 1:00 PM»] LOS TURNOS VUELVEN A LA HORA EN PUNTO. Esto
+    // REVIERTE el corrimiento de 15 minutos que entró con el copy v3 (WEBSITE-
+    // TOURS pág. 8, 2026-08-06): son los mismos dos turnos, otra vez a
+    // 9:00→13:00 y 13:00→17:00 como estaban antes de agosto.
+    // El regreso de la tarde baja también (5:15 → 5:00): Samuel nombró las dos
+    // horas de SALIDA, y dejar el regreso a las 5:15 convertiría el turno de
+    // tarde en uno de 4 h 15 min mientras el de mañana dura 4. La duración
+    // publicada de la ficha es «4 hours», así que los dos turnos la respetan.
     horarios: [
-      { hora: '9:15 AM', regreso: '1:15 PM' },
-      { hora: '1:15 PM', regreso: '5:15 PM' },
+      { hora: '9:00 AM', regreso: '1:00 PM' },
+      { hora: '1:00 PM', regreso: '5:00 PM' },
     ],
     upgradePremium: 15,
     // Menú POR PAQUETE, portado de la web aprobada. Light: 2 platos a la
@@ -475,6 +491,18 @@ export const FICHAS: Record<string, FichaTour> = traducible({
     // fotos de antes, quítalas». Las `galeria-semi-privado-*` de antes salen de aquí; siguen
     // vivas en las páginas que también las usaban.
     // El orden es EDITORIAL: las primeras son las que se ven sin abrir el visor.
+    // [2026-09-01, 3ª entrega] 11 → 16: entran las 5 de `CARIBBEAN SCAPE/AGREGAR`.
+    // Van AL FINAL y no intercaladas: las primeras posiciones son las que se ven
+    // sin abrir el visor y ya las decidió Samuel en la entrega anterior.
+    // ⚠️ TENSIÓN CON LO QUE VENDE ESTA FICHA, para que Samuel decida. El
+    // producto se anuncia como semi-privado —«no more than 35% of the
+    // catamaran's capacity», «Limited Participants», «plenty of personal
+    // space»— y tres de las cinco lo contradicen o lo despistan:
+    //   · `tour-escape-14` y `tour-escape-15` enseñan un barco LLENO de gente.
+    //     La 14 es además del «SANTA MARIA», que es un barco del charter.
+    //   · `tour-escape-16` está tomada en una LANCHA, no en el catamarán.
+    // Se publican porque el cliente las manda para esta ficha, y el último
+    // lugar limita el daño. Si alguna sobra, son esas tres.
     galeriaCompleta: [
       'tour-escape-5',
       'tour-escape-1',
@@ -487,6 +515,11 @@ export const FICHAS: Record<string, FichaTour> = traducible({
       'tour-escape-2',
       'tour-escape-4',
       'tour-escape-6',
+      'tour-escape-12',
+      'tour-escape-13',
+      'tour-escape-14',
+      'tour-escape-15',
+      'tour-escape-16',
     ],
     videoGaleria: '/video/hero.mp4',
     quoteDestacada: 'The coral was the highlight of the trip. The biologist explained everything to us.',
@@ -508,7 +541,8 @@ export const FICHAS: Record<string, FichaTour> = traducible({
           "Air-conditioned transportation. Your exact pickup time will be confirmed according to your hotel's location.",
       },
       {
-        hora: '9:15 AM / 1:15 PM',
+        // ⚡ [2026-09-01, Samuel] 9:15/1:15 → 9:00/1:00, igual que `horarios`.
+        hora: '9:00 AM / 1:00 PM',
         titulo: 'Departure from Bávaro',
         texto:
           "Check in at our private marina before cruising along Punta Cana's spectacular coastline toward Cabo Engaño.",
@@ -532,7 +566,10 @@ export const FICHAS: Record<string, FichaTour> = traducible({
           "Swim in Punta Cana's famous crystal-clear natural pool before enjoying your freshly prepared gourmet lunch from our signature Floating Kitchen. No buffets. Every meal is cooked fresh on board.",
       },
       {
-        hora: '1:15 PM / 5:15 PM',
+        // ⚡ [2026-09-01, Samuel] El regreso acompaña a la salida: 1:15/5:15 →
+        // 1:00/5:00. Así la última parada del turno de mañana coincide otra vez
+        // con el zarpe del de tarde, que es lo que hace legible la doble columna.
+        hora: '1:00 PM / 5:00 PM',
         titulo: 'Return to the Marina & Hotel Transfer',
         texto: 'Cruise back to our private marina before your comfortable transfer to your hotel.',
       },
@@ -573,12 +610,11 @@ export const FICHAS: Record<string, FichaTour> = traducible({
       'Vegetarian options and seafood cocktail',
       'Your tour photos, included',
     ],
-    // [v2] Upsells del semi-privado. El álbum es el único que la web original
-    // documenta aquí literalmente («the full album via Dropbox for just $20
-    // per group»). Aquí SÍ se puede decir «álbum completo»: lo gratis son
-    // «los mejores momentos», no todas las fotos.
-    addOns: [
-    ],
+    // ⚡ [2026-09-01, Samuel: «eliminar el upsell del álbum completo máxima
+    // calidad»] ESTA FICHA SE QUEDA SIN EXTRAS. El álbum de fotos era el único
+    // que tenía —y el único add-on premarcado del sitio—; sale de las 4 fichas
+    // a la vez. Sin `addOns`, el widget no pinta el panel de upsells.
+    // El porqué y qué pasa con la mecánica de premarcado, en lib/tarifas.ts.
   },
 
   coral: {
@@ -618,11 +654,12 @@ export const FICHAS: Record<string, FichaTour> = traducible({
       'To complete the day, enjoy our signature Floating Kitchen, where every meal is freshly prepared on board using premium ingredients. Choose from our Premium Menu featuring certified Angus beef, fresh lobster, Surf & Turf and other gourmet options, while relaxing with our open bar in the heart of the Caribbean.',
       "This isn't simply a snorkeling excursion. It's an opportunity to explore, learn, contribute and experience one of the most unique marine conservation projects in Punta Cana. Don't just discover the reef. Become part of its future.",
     ],
-    // Mismos dos turnos, corridos 15 min para casar con el itinerario
-    // aprobado (igual que el semi-privado).
+    // ⚡ [2026-09-01, Samuel] Los mismos dos turnos que el semi-privado, y de
+    // vuelta a la hora en punto por el mismo pedido — ver la nota larga de
+    // `horarios` en la ficha de arriba.
     horarios: [
-      { hora: '9:15 AM', regreso: '1:15 PM' },
-      { hora: '1:15 PM', regreso: '5:15 PM' },
+      { hora: '9:00 AM', regreso: '1:00 PM' },
+      { hora: '1:00 PM', regreso: '5:00 PM' },
     ],
     // ── LIGHT / PREMIUM, DE VUELTA (2026-07-28, pedido de Samuel: «al tour
     // snorkel también ponle selector Premium/Light, igual que semi-privado,
@@ -752,7 +789,8 @@ export const FICHAS: Record<string, FichaTour> = traducible({
         texto: 'Comfortable air-conditioned transportation from your hotel.',
       },
       {
-        hora: '9:15 AM / 1:15 PM',
+        // ⚡ [2026-09-01, Samuel] 9:15/1:15 → 9:00/1:00, igual que `horarios`.
+        hora: '9:00 AM / 1:00 PM',
         titulo: 'Private Marina & Marine Interpretation Center',
         texto:
           "Check in at our private marina before visiting our Marine Interpretation Center, where you'll meet our Foundation Conservation Team and discover how we're restoring and protecting Punta Cana's coral reefs through one of the Dominican Republic's leading marine conservation projects.",
@@ -776,7 +814,8 @@ export const FICHAS: Record<string, FichaTour> = traducible({
           'Return on board to enjoy a freshly prepared gourmet lunch from our signature Floating Kitchen, featuring premium ingredients and restaurant-quality cuisine in the middle of the Caribbean.',
       },
       {
-        hora: '1:15 PM / 5:15 PM',
+        // ⚡ [2026-09-01, Samuel] 1:15/5:15 → 1:00/5:00, igual que el gemelo.
+        hora: '1:00 PM / 5:00 PM',
         titulo: 'Return to the Marina & Hotel Transfer',
         texto: 'Cruise back to our private marina before your comfortable transfer to your hotel.',
       },
@@ -789,6 +828,9 @@ export const FICHAS: Record<string, FichaTour> = traducible({
     // NO_INCLUIDO_MARINE_PARK y escribe su propia línea: el resto es idéntico
     // —si se toca una, hay que mirar la otra—, pero el fotógrafo no se anuncia
     // aquí. Mismo cambio en Saona.
+    // ⚠️ [2026-09-01] La otra mención del álbum de fotos que sobrevive al
+    // retirar su upsell. Ver la nota de NO_INCLUIDO_MARINE_PARK: las dos se
+    // tocan juntas o ninguna.
     noIncluido:
       'Not included: transportation surcharge from Casa de Campo.',
     queLlevar: QUE_LLEVAR_MARINE_PARK,
@@ -806,11 +848,8 @@ export const FICHAS: Record<string, FichaTour> = traducible({
       },
     ],
     tambienTeGusta: ['semi-private-premium', 'private-charter'],
-    // [v2] Snorkel Lovers. La web original NO ofrece aquí el álbum, pero
-    // Samuel decidió el 07-27 extenderlo a los 6 productos: la política del
-    // negocio es uniforme y son sus otras páginas las que no lo tienen escrito.
-    addOns: [
-    ],
+    // ⚡ [2026-09-01, Samuel] Sin extras: el álbum de fotos sale de las 4
+    // fichas. Ver la nota del semi-privado y lib/tarifas.ts.
   },
 
   'private-charter': {
@@ -866,7 +905,13 @@ export const FICHAS: Record<string, FichaTour> = traducible({
       'Santa Maria – 4 hours · Up to 45 guests',
       'Forever Teresa – 3 or 4 hours · Up to 85 guests',
       "Departing from our private marina in Bávaro, you'll cruise along Punta Cana's spectacular coastline toward Cabeza de Toro, where you'll discover our exclusive Marine Park. Snorkel among the Underwater Museum, coral restoration gardens and artificial reefs before relaxing in the famous crystal-clear Natural Pool.",
-      'Our 4-hour charters include our signature Floating Kitchen, where every meal is freshly prepared on board. Guests can choose from seven gourmet menu options, including seafood, certified Angus beef, Surf & Turf, vegetarian dishes and more. Fresh lobster is available as an optional upgrade.',
+      // ⚡ [2026-09-01, Samuel] Sin la frase final del copy aprobado («Fresh
+      // lobster is available as an optional upgrade»): la langosta deja de
+      // venderse en el charter y solo se ofrece en Saona. Es el único retoque
+      // al párrafo — el resto sigue literal de WEBSITE-TOURS pág. 17. Anunciar
+      // aquí un extra que el widget ya no deja marcar sería peor que no
+      // anunciarlo.
+      'Our 4-hour charters include our signature Floating Kitchen, where every meal is freshly prepared on board. Guests can choose from seven gourmet menu options, including seafood, certified Angus beef, Surf & Turf, vegetarian dishes and more.',
       'For 3-hour charters, we serve our popular Taste of Hispaniola Menu, featuring freshly prepared grilled skewers with your choice of chicken, beef or shrimp, accompanied by sides and our open bar.',
       "Every private charter is tailored to your group. Whether you're planning a birthday, family gathering, corporate event or celebration, our team will help you choose the perfect catamaran, route and menu for an unforgettable day at sea.",
       'Not sure which catamaran is right for your group? Our sales team will be happy to help you choose the perfect option.',
@@ -918,24 +963,31 @@ export const FICHAS: Record<string, FichaTour> = traducible({
         //     no entra en el precio base, se modela como add-on y solo suma si
         //     el usuario la elige». Pintarlo como un «+» pegado al precio del
         //     tramo lo leía como obligatorio, que es justo lo contrario.
-        // ⚠️ PENDIENTE (no es un olvido de este cambio, es deuda anterior): el
-        // add-on `comida` NO existe todavía en `addOns` de la ficha, así que el
-        // widget no permite elegirlo — hoy solo se ANUNCIA aquí. Antes de
-        // cablearlo hay que resolver dos cosas con el cliente, porque el
-        // modelo actual de AddOn no da para las dos: (a) el importe cambia por
-        // BARCO (25 en charter, 45 en el catamarán de Saona) y los add-ons hoy
-        // son de la ficha entera, no de la sub-variante; y (b) el tarifario
-        // solo lo lista en los tramos de GRUPO — falta confirmar si en los
-        // tramos por persona la comida ya va incluida en la tarifa por cabeza.
+        // ⚡ [2026-09-01, Samuel] LA DEUDA DE ARRIBA QUEDA SALDADA, y con ella
+        // las dos preguntas que la bloqueaban: «en Maite el tramo hasta 8
+        // personas es sin comida, si quieren comida es 20$ por persona […] a
+        // partir de 9 personas con el precio de 99$ por persona ya incluye
+        // comida». O sea:
+        //  (a) el importe cambia por barco → se resuelve con un add-on POR
+        //      BARCO (`comida-maite`, US$ 20; `comida-santa-maria`, US$ 25),
+        //      atado con `soloSubVariantes`. No hizo falta un precio por
+        //      sub-variante: son dos productos distintos con dos precios.
+        //  (b) en los tramos por persona la comida VA INCLUIDA → confirmado, y
+        //      por eso el add-on lleva `soloHastaPersonas` y desaparece al
+        //      cruzar el tramo, en vez de dejar que se pague dos veces.
+        // ⚡ Y el precio de la comida de este barco baja de 25 a 20.
         tabla: [
-          { desde: 1, hasta: 8, precio: 625, tipo: 'grupo', extra: 'Optional meal: + US$ 25 per person' },
+          { desde: 1, hasta: 8, precio: 625, tipo: 'grupo', extra: 'Meal not included · optional, + US$ 20 per person' },
           // ⚡ El tramo se recorta a 15: con el aforo aprobado, las plazas
           // 16-20 que vendia esta tabla no existen.
           // [2026-08-31] ALINEADO CON ODOO. Derick: «todo con la config de
           // Odoo». Esta tabla es la que se PINTA cuando el backend no contesta
           // (y la que imprime la ficha); el precio que se cobra sale del
           // servidor. Tenerlas distintas era anunciar una cosa y cobrar otra.
-          { desde: 9, hasta: 20, precio: 99, tipo: 'persona' },
+          // El tramo llega a 20, que es lo que dice el tarifario; la etiqueta
+          // «Meal included» es de Samuel y explica por que ahi ya no se ofrece
+          // la comida como extra.
+          { desde: 9, hasta: 20, precio: 99, tipo: 'persona', extra: 'Meal included' },
         ],
       },
       {
@@ -981,9 +1033,16 @@ export const FICHAS: Record<string, FichaTour> = traducible({
         // tarifa. Ojo — en Santa Maria el «from» (1150) era MAYOR que su
         // propio precio de grupo real (1000): la web del cliente anuncia un
         // «desde» más caro que su tarifa. Otro motivo para no usar los «from».
+        // ⚡ [2026-09-01, Samuel] Misma regla que en Maite y con sus palabras:
+        // «el tramo de 1000$ de las primeras 13 personas es sin comida, añadir
+        // el upsell de comida, aquí cuesta 25$. Ya a partir de 14 personas que
+        // es 99$ por persona sí incluye comida, por lo tanto ocultar upsell de
+        // comida». Los importes de la tabla no cambian: lo que cambia es que la
+        // comida deja de ser solo un texto y pasa a ser elegible (add-on
+        // `comida-santa-maria`, con `soloHastaPersonas: 13`).
         tabla: [
-          { desde: 1, hasta: 13, precio: 1000, tipo: 'grupo', extra: 'Optional meal: + US$ 25 per person' },
-          { desde: 14, hasta: 45, precio: 99, tipo: 'persona' },
+          { desde: 1, hasta: 13, precio: 1000, tipo: 'grupo', extra: 'Meal not included · optional, + US$ 25 per person' },
+          { desde: 14, hasta: 45, precio: 99, tipo: 'persona', extra: 'Meal included' },
         ],
       },
       {
@@ -1006,8 +1065,18 @@ export const FICHAS: Record<string, FichaTour> = traducible({
           { hora: '3:00 PM', regreso: '6:00 PM' },
         ],
         // [tarifa-v2] Corregido 2026-07-27: el primer tramo era 1750 («from
-        // us$»); la tarifa real de grupo es 1600. Los otros 3 tramos ya
-        // estaban bien. Esta es la variante de 3h — la de 4h vive abajo.
+        // us$»); la tarifa real de grupo es 1600. Esta es la variante de 3h —
+        // la de 4h vive abajo.
+        //
+        // ⚡ [2026-09-01, Samuel] TARIFARIO NUEVO Y MUCHO MÁS SIMPLE: «en Forever
+        // Teresa 3h de 1 a 30 personas es 2250$, a partir de 31 75$ por persona,
+        // es decir, ya si son 31 personas serían 31 × 75$ = 2325$». Los CUATRO
+        // tramos de antes (1600 grupo · 85/pax · 2225 grupo · 75/pax) se
+        // sustituyen por DOS. Que Samuel diera él mismo la cuenta del salto
+        // (2.250 → 2.325) confirma que el modelo sigue siendo el de sustitución
+        // de tramo, no el marginal: la persona 31 no «cuesta 75», hace saltar
+        // toda la reserva a tarifa por cabeza. Es exactamente lo que hace
+        // `precioDeTramo`, así que no hay nada que cambiar en el motor.
         tabla: [
           // [2026-08-31, 2ª vuelta] TARIFA NUEVA, PUESTA POR DERICK EN ODOO.
           // Esta tabla es la copia que se pinta si el backend no contesta; el
@@ -1016,7 +1085,7 @@ export const FICHAS: Record<string, FichaTour> = traducible({
           // (`rate_excursion_id`), asi que en adelante se actualiza solo desde
           // Odoo y este fichero solo es la red de seguridad.
           { desde: 1, hasta: 30, precio: 2250, tipo: 'grupo' },
-          { desde: 31, hasta: 85, precio: 75, tipo: 'persona' },
+          { desde: 31, hasta: 85, precio: 75, tipo: 'persona' }, // ⚡ techo 85, no 120
         ],
       },
       {
@@ -1091,16 +1160,12 @@ export const FICHAS: Record<string, FichaTour> = traducible({
           // cliente las pone, y sin ellas la carta se quedaba en 4 — no en los
           // «seven» que promete su propio texto.
           platos: MENU_PREMIUM_CASA,
-          // [2026-08-07] `addOnId` conecta esta franja con el add-on 'langosta'
-          // de `addOns` (abajo): la franja del menú ya no solo lo anuncia, lo
-          // MARCA en el widget. El precio no se repite en la descripción — la
-          // franja lo pinta a su derecha.
-          addOn: {
-            nombre: 'Premium lobster',
-            precio: 30,
-            descripcion: 'Add fresh lobster to your dish, grilled on board.',
-            addOnId: 'langosta',
-          },
+          // ⚡ [2026-09-01, Samuel] SIN FRANJA DE LANGOSTA. Aquí vivía el banner
+          // dorado que desde el 2026-08-07 servía además para marcar el add-on
+          // en el widget; con la langosta fuera del charter, la franja se
+          // quedaría anunciando un extra que no se puede comprar. La pieza
+          // (tour/banner-langosta.tsx) sigue en uso en Saona, que es donde el
+          // producto se vende de verdad.
         },
         {
           id: '3h',
@@ -1216,6 +1281,17 @@ export const FICHAS: Record<string, FichaTour> = traducible({
     // charter a la vez). Sale, por tanto, en /events/weddings y aquí. Tiene
     // sentido —una boda a bordo de un charter privado es las dos cosas— pero
     // queda anotado por si algún día molesta verla repetida.
+    // [2026-09-01, 3ª entrega] 12 → 18: entran las 6 de `PRIVATE CHARTER/AGREGAR`.
+    // Las seis son de GRUPO, que es exactamente lo que vende esta ficha («the
+    // whole catamaran for your group»), así que aquí no hay la tensión que sí
+    // tienen las de Caribbean Escape. `tour-charter-13` (la proa bajo el
+    // arcoíris) abre el bloque nuevo: es la mejor foto de toda la entrega.
+    // ⚠️ `tour-charter-18` es BYTE A BYTE la misma imagen que `tour-escape-13`
+    // (md5 abb59445): el cliente puso `_DSC0082.jpg` en las dos carpetas, así
+    // que sale en los dos tours. Es el segundo caso —`tour-charter-11` ya era
+    // idéntica a `ev-weddings-6`— y queda anotado por si molesta verla repetida.
+    // ⚠️ `tour-charter-17` es de una boda a bordo (hay novia con vestido). Cabe
+    // en un charter privado, pero si se quiere separar bodas de charter, es esa.
     galeriaCompleta: [
       'tour-charter-8',
       'tour-charter-6',
@@ -1229,6 +1305,12 @@ export const FICHAS: Record<string, FichaTour> = traducible({
       'tour-charter-4',
       'tour-charter-7',
       'tour-charter-10',
+      'tour-charter-13',
+      'tour-charter-14',
+      'tour-charter-15',
+      'tour-charter-16',
+      'tour-charter-17',
+      'tour-charter-18',
     ],
     videoGaleria: '/video/hero.mp4',
     quoteDestacada: 'They tailored everything for us, the whole boat just for the family.',
@@ -1283,14 +1365,21 @@ export const FICHAS: Record<string, FichaTour> = traducible({
       'Marine biologist as your guide on the reef',
       'Free photos uploaded to Facebook',
     ],
+    // ⚡ [2026-09-01, Samuel] Fuera la langosta (ya no se vende aquí) y fuera el
+    // álbum de fotos, que además nunca estuvo en esta línea. Lo que queda son
+    // los dos cargos reales que siguen sin ir incluidos.
     noIncluido:
-      'Not included: transportation from Casa de Campo (surcharge). Optional add-on at checkout: premium lobster (US$ 30/person).',
+      'Not included: transportation from Casa de Campo (surcharge) · professional photographer (on request, extra cost).',
     queLlevar: [
       'Swimsuit',
       'Towel',
       'Biodegradable sunscreen',
       'Camera',
-      'Cash (for the lobster add-on or tips)',
+      // ⚡ [2026-09-01] Era «Cash (for the lobster add-on or tips)». Sin
+      // langosta, el efectivo sigue haciendo falta —propinas, y desde hoy la
+      // opción de pagar la reserva entera en efectivo con su 5%— pero ya no por
+      // ese extra.
+      'Cash (for tips or to pay your booking in cash)',
     ],
     faqTour: [
       // [v3 2026-08-06] Capacidades segun el copy aprobado (WEBSITE-TOURS
@@ -1302,52 +1391,60 @@ export const FICHAS: Record<string, FichaTour> = traducible({
         r: 'Maite up to 15 · GrandMa up to 50 · Santa Maria up to 45 · Forever Teresa up to 85.',
       },
       { p: 'Is there a minimum number of guests?', r: 'Maite starts at 1 guest (the US$ 625 rate covers up to 8). The others have no formal minimum. Ask us on WhatsApp for groups under 6.' },
-      { p: 'Can I choose the menu?', r: 'Yes, we agree the seven dishes with you (seafood, meat, Surf & Turf, vegetarian and the chicken, beef or shrimp skewers). Premium lobster is an optional add-on.' },
+      // ⚡ [2026-09-01, Samuel] Sin la coletilla de la langosta — ya no es un
+      // add-on de este tour.
+      { p: 'Can I choose the menu?', r: 'Yes, we agree the seven dishes with you (seafood, meat, Surf & Turf, vegetarian and the chicken, beef or shrimp skewers).' },
       { p: 'Do you accept corporate payments?', r: 'Yes, see the Corporate & MICE page for formal invoicing.' },
       { p: 'What if it rains?', r: 'Full refund or a date change, at no cost.' },
     ],
     tambienTeGusta: ['semi-private-premium', 'coral'],
-    // [v2] Charter privado. OJO con el texto del álbum: la web original de
-    // este tour promete que «TODAS las fotos» se suben gratis a Facebook, así
-    // que aquí NO se puede vender «el álbum completo» — solo la máxima
-    // calidad. Si no, contradice lo que ellos mismos prometen.
+    // ⚡⚡ [2026-09-01, Samuel] LOS DOS ADD-ONS QUE HABÍA AQUÍ SE VAN, Y ENTRAN
+    // OTROS DOS. Es la reescritura completa de los extras del charter:
+    //
+    //  · LA LANGOSTA SALE. «El upsell de la langosta que esté solo en el tour
+    //    de Saona, quita de private charter». Esto REVIERTE la decisión del
+    //    2026-08-06, que había hecho ganar al documento WEBSITE-TOURS pág. 17
+    //    («Fresh lobster is available as an optional upgrade») sobre la slide 73
+    //    del PowerPoint, donde el cliente decía que la langosta solo va en
+    //    Saona. La slide tenía razón: hoy manda ella. La langosta sigue viva y
+    //    sin tocar en FICHAS['saona-island'].
+    //    ⚠️ Con ella se van sus tres menciones de esta ficha: la frase del
+    //    párrafo de descripción, la línea de `noIncluido`, el efectivo de
+    //    `queLlevar` y la coletilla de la FAQ del menú. Van marcadas una a una.
+    //
+    //  · EL ÁLBUM SALE. «Eliminar el upsell del álbum completo máxima calidad»
+    //    — en las 4 fichas, no solo aquí. Ver lib/tarifas.ts (donde vivía
+    //    ALBUM_UPSELL) para el porqué y para qué pasa con el premarcado.
+    //
+    //  · ENTRA LA COMIDA OPCIONAL, uno por barco. Es el extra que llevaba desde
+    //    julio anunciado en la tabla de precios sin poder elegirse (ver la nota
+    //    de la tabla de Maite). Son DOS add-ons y no uno con precio variable
+    //    porque el importe lo fija el barco: US$ 20 en Maite, US$ 25 en Santa
+    //    Maria. Cada uno se apaga solo al cruzar al tramo por persona, que ya
+    //    lleva la comida dentro (`soloHastaPersonas`).
+    //    ⚠️ El Forever Teresa · 4h también anuncia «+ US$ 25 por persona» en sus
+    //    dos tramos de grupo y NO recibe add-on: Samuel nombró Maite y Santa
+    //    Maria, y solo esos dos. Queda pedido, no supuesto.
     addOns: [
-      // [v3 2026-08-06, WEBSITE-TOURS pág. 17: «Fresh lobster is available as
-      // an optional upgrade»] ⚡ DECISIÓN DE SAMUEL: el documento WEBSITE gana
-      // sobre la slide 73 del PowerPoint («la langosta solo va en Saona»),
-      // porque los 5 WEBSITE están totalmente aprobados. Y no se queda en
-      // texto: el cliente pidió expresamente que el upsell se pueda elegir en
-      // el widget.
-      //
-      // Solo en los barcos de 4 h — son los que navegan con la cocina
-      // flotante; los de 3 h llevan el Taste of Hispaniola (brochetas), así
-      // que ofrecerla ahí sería vender algo que no se puede servir.
-      //
-      // Precio y nota de veda: los mismos que la langosta de Saona (US$ 30 por
-      // persona, sustitución por camarón gigante de marzo a junio). Es el
-      // mismo producto de la misma cocina, no un precio inventado para aquí.
-      // [2026-08-31] La langosta se retiro del charter —Derick: «eso es solo
-      // para Saona»— y en su lugar entran las dos comidas a bordo. Cada una
-      // vale mientras su barco cobra tarifa de GRUPO: en cuanto el precio pasa
-      // a ser por cabeza, la comida ya va incluida y el extra desaparece. El
-      // tope sale del tarifario de Odoo (Maite hasta 8, Santa Maria hasta 13).
       {
         id: 'comida-maite',
-        etiqueta: 'Meal on board',
-        descripcion: 'Lunch cooked on board. Included from 9 guests up.',
+        etiqueta: 'Add the on-board meal',
+        descripcion:
+          'The Maite group rate covers the boat. Add lunch freshly grilled on board for US$ 20 per guest.',
         base: 'persona',
         precio: 20,
         soloSubVariantes: ['maite'],
-        hastaPax: 8,
+        soloHastaPersonas: 8,
       },
       {
         id: 'comida-santa-maria',
-        etiqueta: 'Meal on board',
-        descripcion: 'Lunch cooked on board. Included from 14 guests up.',
+        etiqueta: 'Add the on-board meal',
+        descripcion:
+          'The Santa Maria group rate covers the boat. Add lunch freshly grilled on board for US$ 25 per guest.',
         base: 'persona',
         precio: 25,
         soloSubVariantes: ['santa-maria'],
-        hastaPax: 13,
+        soloHastaPersonas: 13,
       },
     ],
   },
@@ -1596,6 +1693,9 @@ export const FICHAS: Record<string, FichaTour> = traducible({
         precio: 30,
         nota: 'From March to June lobster may be unavailable; if so it is replaced with jumbo shrimp.',
       },
+      // ⚡ [2026-09-01, Samuel] Aquí estaba el álbum de fotos, retirado de las 4
+      // fichas. Saona se queda con la langosta, que desde hoy es el único sitio
+      // donde se vende («que esté solo en el tour de Saona»).
     ],
   },
 })

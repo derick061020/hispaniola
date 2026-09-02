@@ -172,6 +172,15 @@ export function ZonasInstalaciones() {
                         Vacation Starts Before You Board»): sin ella, la zona
                         se presenta con una etiqueta administrativa y un
                         parrafo largo. */}
+                    {/* [2026-09-01, UPDATES 09/01] El aviso de que la zona
+                        todavía no abre. Va ANTES del claim y en coral, igual
+                        que en /marine-park (pages/marine-park.tsx): son el
+                        mismo aviso y tienen que leerse igual en las dos
+                        páginas. El coral es lo que este sitio usa para «atención
+                        a esto», y contra el aqua del claim se distingue solo. */}
+                    {z.lanzamiento ? (
+                      <p className="mt-1 text-sm font-semibold text-coral">({z.lanzamiento})</p>
+                    ) : null}
                     {z.claim ? (
                       <p className="mt-1 font-display text-lg font-semibold text-aqua-dark">
                         {z.claim}

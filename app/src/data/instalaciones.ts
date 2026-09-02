@@ -89,6 +89,19 @@ export type ZonaInstalacion = {
    *  («Your Vacation Starts Before You Board»). Antes no existia: sus zonas
    *  tenian nombre y parrafo, y el claim es lo que las vende. */
   claim?: string
+  /** [2026-09-01, UPDATES 09/01 pág. 2] Aviso de que la zona TODAVÍA NO ESTÁ
+   *  ABIERTA. Mismo campo y mismo texto que el de `BloqueMarinePark` en
+   *  data/marine-park.ts — sería el mismo aviso en dos páginas, no dos cosas
+   *  parecidas: si la fecha cambia, hay que tocar los dos sitios.
+   *
+   *  ⚠️ HOY NO LO USA NINGUNA ZONA. Se puso en el Culinary Center y Samuel lo
+   *  retiró el mismo día por precaución (ver el ⚠️ de esa zona). El campo y su
+   *  render se quedan porque el 1 de noviembre está cerca y es probable que
+   *  alguna zona lo necesite: entonces es escribir una línea, no rehacer esto.
+   *  Si en diciembre sigue sin usarse, se puede borrar sin más.
+   *
+   *  Va con sus paréntesis, que es como lo escribió el cliente. */
+  lanzamiento?: string
   /** Copy REAL del cliente. */
   descripcion: string
   /** [v3 2026-08-06] Frase de cierre tras los checks, en tres de las cinco
@@ -290,6 +303,17 @@ export const ZONAS: ZonaInstalacion[] = traducible([
     icono: 'cocinas',
     nombre: 'Professional Culinary Center',
     claim: 'Fresh Starts Here',
+    // ⚠️ [2026-09-01] AQUÍ NO VA EL AVISO DE LANZAMIENTO, y conviene saber por
+    // qué para no volver a ponerlo. La captura de esta zona venía en el PDF de
+    // UPDATES 09/01 junto a la instrucción del paréntesis, con una anotación
+    // cortada («pone»); Samuel confirmó primero que sí lo llevaba y lo retiró
+    // el mismo día: «quítale el (Launching November 1st, 2026), por si acaso
+    // mejor». La duda de fondo sigue abierta —si el centro culinario está
+    // operativo o no— y ante la duda no se publica una fecha: decir que algo
+    // abre en noviembre cuando ya funciona espanta reservas, y al revés promete
+    // algo que no hay.
+    // El aviso SÍ se queda en /marine-park (museo y pulsera), que es donde el
+    // cliente lo pidió sin ambigüedad.
     descripcion:
       'Every meal begins in our professional land-based kitchen, where fresh ingredients are carefully selected, stored, and prepared under strict quality standards before reaching our floating kitchen. From our cold storage to the grill on board, every dish follows one promise: fresh food, prepared the right way.',
     bullets: [

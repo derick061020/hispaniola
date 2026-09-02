@@ -13,7 +13,7 @@ const navegador = await chromium.launch()
 const ctx = await navegador.newContext({ viewport: { width: 1440, height: 900 }, locale: 'en-US' })
 const page = await ctx.newPage()
 for (const ruta of ['/tours/semi-private-premium', '/facilities', '/tours/saona-island']) {
-  await page.goto(BASE + ruta, { waitUntil: 'load' })
+  await page.goto(BASE + ruta, { waitUntil: 'domcontentloaded' })
   await page.waitForTimeout(600)
   const botones = await page.evaluate(() =>
     [...document.querySelectorAll('button')]
@@ -32,7 +32,7 @@ for (const ruta of ['/tours/semi-private-premium', '/facilities', '/tours/saona-
 // 2. Overflow horizontal en móvil
 const ctxM = await navegador.newContext({ viewport: { width: 390, height: 844 }, locale: 'en-US' })
 const pageM = await ctxM.newPage()
-await pageM.goto(BASE + '/', { waitUntil: 'load' })
+await pageM.goto(BASE + '/', { waitUntil: 'domcontentloaded' })
 await pageM.waitForTimeout(1200)
 const culpables = await pageM.evaluate(() => {
   const limite = document.documentElement.clientWidth
