@@ -109,24 +109,36 @@ export function TripulacionPage() {
               departamentos son en lo que se convirtio. */}
           {ceo?.bio ? (
             <section className={BLOQUE_FICHA}>
-              <div className="grid gap-6 sm:grid-cols-[auto_1fr] sm:items-start sm:gap-8">
+              <div className="grid gap-6 sm:grid-cols-[minmax(0,17rem)_1fr] sm:items-start sm:gap-8">
                 {/* [2026-09-01, pedido de Samuel: «que no sea redonda, que sea
-                    cuadrada con bordes redondeados»] Deja de ser un avatar
-                    circular y pasa a ser una foto con el radio de card del
-                    sistema (`rounded-card`, el mismo de las cards de plato y de
-                    los iconos de departamento), que además es lo que ya hacen
-                    los 30 retratos del muro de aquí abajo — así la ficha del
-                    CEO y su equipo hablan la misma lengua.
+                    cuadrada con bordes redondeados»] Dejó de ser un avatar
+                    circular para hablar la misma lengua que los 32 retratos del
+                    muro de aquí abajo.
+
+                    ⚡ [2026-09-02, Derick: «la foto de Fernando parece tener muy
+                    poco protagonismo a diferencia del resto»] Hablaba la misma
+                    lengua pero en voz mucho más baja: era un cuadrado de 144 px
+                    junto a un muro de cards a 4/5 que ocupan su columna entera.
+                    El único retrato de la página con nombre, cargo y una
+                    historia en primera persona era el más pequeño de todos.
+                    Ahora es el MISMO formato del muro —4/5 y
+                    `rounded-card-grande`— en una columna propia de 17rem: mide
+                    alrededor del doble y ancla el bloque.
+
                     `object-top` y no el centrado por defecto: la fuente es 2:3 y
-                    la caja es 1:1, así que hay que recortar alto, y con el
-                    recorte centrado la cabeza se va fuera. Es el mismo criterio
-                    que ya aplica el muro (grid-equipo.tsx). */}
+                    la caja 4/5, así que sigue habiendo que recortar alto —menos
+                    que antes— y con el recorte centrado la cabeza se va fuera.
+                    Mismo criterio que el muro (grid-equipo.tsx).
+
+                    En móvil NO va a ancho completo: a 4/5 se comería la pantalla
+                    entera antes de llegar al texto. 11rem sigue siendo bastante
+                    más que los 112 px que tenía. */}
                 {ceo.foto ? (
                   <img
                     src={`/fotos/${ceo.foto}.webp`}
                     alt={`${ceo.nombre}, ${ceo.rol}`}
                     loading="lazy"
-                    className="size-28 rounded-card object-cover object-top sm:size-36"
+                    className="aspect-[4/5] w-44 rounded-card-grande object-cover object-top sm:w-full"
                   />
                 ) : null}
                 <div>
