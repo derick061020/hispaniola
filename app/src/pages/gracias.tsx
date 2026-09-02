@@ -229,7 +229,19 @@ export function GraciasPage() {
   // Platos realmente elegidos: el funnel ya deja reservar sin decidirlos.
   const platosElegidos = reserva.platos.filter(Boolean)
   const faltanPlatos = seEligeMenu && platosElegidos.length < reserva.platos.length
-  const totalCon5Pct = Math.round(reserva.saldo * 0.95)
+  // [2026-09-01] CÓMO SE PAGÓ. Con el método elegible en el checkout, esta
+  // pantalla tiene que dejar de dar por hecho el 5% de efectivo: si el cliente
+  // YA lo eligió, el servidor lo ha restado del saldo y volver a restarlo aquí
+  // prometería un precio que nadie va a cobrar.
+  //
+  // Lo que NO cambia es el depósito: se cobra con tarjeta en los dos caminos
+  // (`deposit: 47.03` en la cotización con `['efectivo']`), así que el recibo de
+  // hoy y la fila de «ya pagado» son las mismas. El efectivo solo toca el saldo.
+  // Las reservas guardadas antes del cambio no traen el campo: se leen como
+  // 'tarjeta', que es lo que eran.
+  const pagoEnEfectivo = reserva.metodoPago === 'efectivo'
+  // Solo se usa en el camino de tarjeta, donde el saldo sigue sin descontar.
+  const saldoEnEfectivo = Math.round(reserva.saldo * 0.95)
   const horario = reserva.ficha.horarios[reserva.horarioIdx]
   // sumarDias ya devuelve ISO string (formato 'YYYY-MM-DD'), listo para fechaLarga.
   const fechaRecordatorioISO = sumarDias(reserva.fechaISO, -1)
@@ -348,8 +360,15 @@ export function GraciasPage() {
               cuando={t('Today')}
               descripcion={
                 <>
+                  {/* El mismo texto en los dos caminos: elegir efectivo NO
+                      quita el depósito —se cobra con tarjeta igual, es lo que
+                      guarda la plaza— así que el recibo de hoy llega también.
+                      Lo que el efectivo rebaja es el saldo de a bordo, y eso se
+                      cuenta en el paso 3. */}
                   {t('You get the voucher + the receipt for your')}{' '}
-                  <strong className="font-semibold text-navy">{formatoDinero(reserva.deposito)}</strong>{' '}
+                  <strong className="font-semibold text-navy">
+                    {formatoDinero(reserva.deposito)}
+                  </strong>{' '}
                   {t('deposit by email and on WhatsApp.')}
                   {/* La promesa que sostiene el «puedes elegirlo luego» del
                       funnel: si quedó menú sin decidir, aquí se dice cuándo
@@ -380,9 +399,28 @@ export function GraciasPage() {
               cuando={fechaLarga(reserva.fechaISO)}
               descripcion={
                 <>
-                  {t('Bring a swimsuit, a towel and biodegradable sunscreen. You pay the balance of')}{' '}
-                  <strong className="font-semibold text-navy">{formatoDinero(reserva.saldo)}</strong> {t('on board. In cash it comes to')}{' '}
-                  <strong className="font-semibold text-navy">{formatoDinero(totalCon5Pct)}</strong> {t('with the 5% discount.')}
+                  {t('Bring a swimsuit, a towel and biodegradable sunscreen.')}{' '}
+                  {pagoEnEfectivo ? (
+                    <>
+                      {t('You pay')}{' '}
+                      <strong className="font-semibold text-navy">
+                        {formatoDinero(reserva.saldo)}
+                      </strong>{' '}
+                      {t('in cash on board — the 5% discount is already in that amount.')}
+                    </>
+                  ) : (
+                    <>
+                      {t('You pay the balance of')}{' '}
+                      <strong className="font-semibold text-navy">
+                        {formatoDinero(reserva.saldo)}
+                      </strong>{' '}
+                      {t('on board. In cash it comes to')}{' '}
+                      <strong className="font-semibold text-navy">
+                        {formatoDinero(saldoEnEfectivo)}
+                      </strong>{' '}
+                      {t('with the 5% discount.')}
+                    </>
+                  )}
                 </>
               }
             />
@@ -421,7 +459,15 @@ export function GraciasPage() {
             <FilaResumen label={t('Menu')} valor={resumenMenu} />
             <FilaResumen label={t('Pickup')} valor={reserva.recogida.hotel || '—'} />
             <div className="!mt-3 flex items-center justify-between border-t border-linea pt-3 text-sm">
-              <span className="text-navy-soft">{cobro && cobro.pagado > 0 ? t('Already paid (deposit)') : t('Deposit — pending')}</span>
+              {/* Lo COBRADO manda sobre lo prometido: `cobro` viene de Odoo y
+                  dice si el deposito entro de verdad. */}
+              <span className="text-navy-soft">
+                {/* Lo COBRADO manda también en efectivo: el depósito se
+                    cobra igual, y si no ha entrado hay que decirlo. */}
+                {cobro && cobro.pagado > 0
+                  ? t('Already paid (deposit)')
+                  : t('Deposit — pending')}
+              </span>
               <span className="font-semibold text-navy">
                 {formatoDinero(cobro && cobro.pagado > 0 ? cobro.pagado : reserva.deposito)}
               </span>
@@ -436,8 +482,14 @@ export function GraciasPage() {
               </p>
             ) : null}
             <div className="flex items-center justify-between text-sm">
-              <span className="text-navy-soft">{t('Balance on board (cash, −5%)')}</span>
-              <span className="font-semibold text-navy">{formatoDinero(totalCon5Pct)}</span>
+              <span className="text-navy-soft">
+                {pagoEnEfectivo
+                  ? t('To pay on board (cash, −5% applied)')
+                  : t('Balance on board (cash, −5%)')}
+              </span>
+              <span className="font-semibold text-navy">
+                {formatoDinero(pagoEnEfectivo ? reserva.saldo : saldoEnEfectivo)}
+              </span>
             </div>
           </dl>
           <Link

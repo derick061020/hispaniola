@@ -38,6 +38,20 @@ export type DepartamentoId =
   | 'marinos'
   | 'cocina'
   | 'oficina'
+  // [2026-09-01, 3ª entrega del cliente: «agregar las fotos de las carpetas CEO
+  // y Sales and Marketing»] UN grupo nuevo. No se mete dentro de `oficina`
+  // porque el cliente lo manda en carpeta separada, que es como ha venido
+  // separando los departamentos de esta página desde el principio.
+  //
+  // ⚠️ Y NO SON DOS. En el primer pase se creó también un `direccion`
+  // («Management») con la única foto de la carpeta «AGREGAR - CEO». Samuel lo
+  // corrigió el mismo día: «quita el apartado management ya que ese es el ceo».
+  // Esa foto no era un departamento, era el RETRATO REAL DE OMAR — que ya
+  // existe en el sitio como `equipo-omar` (id 'omar', «Founder & CEO» en
+  // data/nosotros.ts) y llevaba hasta hoy una foto de stock. La foto pasó a
+  // sobrescribir ese hueco, y así sale en las cinco superficies donde aparece
+  // Omar sin tocar ninguna de ellas.
+  | 'ventas'
   | 'fundacion'
 
 export type Departamento = {
@@ -69,6 +83,18 @@ export const DEPARTAMENTOS: Departamento[] = traducible([
     nombre: 'Office Operations',
     descripcion:
       'From the moment you arrive, we welcome you to our facilities, guide you through check-in, introduce your adventure, and provide personalized support throughout your experience.',
+  },
+  // [2026-09-01, 3ª entrega] El grupo nuevo va AQUÍ, entre el equipo de tierra
+  // y la fundación: la página se titula «The people behind the scenes» y abre
+  // por el mar, que es lo que se compra. El orden queda mar → tierra → fundación.
+  // ⚠️ SIN `descripcion`, como los tres de mar: el cliente mandó las fotos pero
+  // no escribió párrafo para este grupo. La cabecera se pinta sin él, no con
+  // uno inventado — misma regla que ya aplican capitanes, guías y marinos.
+  {
+    id: 'ventas',
+    // «Sales and Marketing» es como los nombra el cliente en su carpeta. Se
+    // mantiene tal cual: es su nombre, no una traducción nuestra.
+    nombre: 'Sales & Marketing',
   },
   {
     id: 'fundacion',
@@ -116,6 +142,14 @@ const RETRATOS_POR_DEPARTAMENTO: Record<DepartamentoId, number> = {
   // 8 retratos publicados).
   cocina: 10,
   oficina: 8,
+  // [2026-09-01, 3ª entrega] El grupo nuevo. Es la PRIMERA entrega de retratos
+  // en la que el nº de archivos coincide con el de personas: las dos fotos son
+  // dos personas distintas, comprobado abriéndolas. En las dos anteriores no
+  // pasaba —una misma persona posaba con los brazos caídos y con los cruzados,
+  // y solo entraba una toma—, que es el bug que se arregló en el commit 308114d.
+  // La tercera foto de la entrega (la del CEO) NO está aquí: es el retrato de
+  // Omar y vive en `equipo-omar`. Ver la nota de `DepartamentoId`.
+  ventas: 2,
   fundacion: 2,
 }
 
@@ -148,7 +182,16 @@ export const EQUIPO_PAGINA = traducible({
   // contigo». El dato RD + España SÍ se publica ahora (ver `datos`, pedido de
   // Samuel 2026-07-28), pero como dato de la franja, no como frase del hero:
   // aquí sigue el lead que dice solo lo que describe la página.
-  lead: 'More than a crew, a team dedicated to you. More than 70 passionate professionals across six specialized departments work together every day to make your Caribbean adventure unforgettable.',
+  // ⚠️ [2026-09-01] «six» → «seven». El copy es del cliente y va literal salvo
+  // este número, que su propio encargo dejó desfasado: al entrar Sales &
+  // Marketing con la 3ª entrega, la página pasó a enseñar SIETE cabeceras de
+  // departamento mientras esta frase seguía diciendo seis, con la franja de
+  // datos —que sí deriva el número de `DEPARTAMENTOS`— desmintiéndola tres
+  // líneas más abajo. No es reescribir su texto: es que siga siendo verdad.
+  // ⚠️ Va ESCRITO A MANO y en letra, así que no se actualiza solo. Si mañana
+  // entra otro departamento, hay que tocar esta línea Y el titular de
+  // pages/tripulacion.tsx, que dice el mismo número.
+  lead: 'More than a crew, a team dedicated to you. More than 70 passionate professionals across seven specialized departments work together every day to make your Caribbean adventure unforgettable.',
   // Franja compacta bajo el hero (slide 37 del PDF v2 — los cuatro datos y su
   // redacción son del cliente). Los dos primeros valores se DERIVAN del array,
   // como todos los contadores de esta página; los dos últimos son texto fijo.

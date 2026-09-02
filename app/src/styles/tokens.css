@@ -78,6 +78,30 @@
   --color-linea: #dfe6ea; /* bordes hairline */
   --color-linea-fuerte: #c3ced4;
 
+  /* ── VIOLETA DEL DESCUENTO POR GRUPO (2026-09-01, pedido de Samuel: «que
+     tenga un color diferente para romper el esquema y que sea llamativo») ──
+     EL ÚNICO COLOR DE LA PALETA QUE NO ES DE LA MARCA, y es a propósito: su
+     trabajo es exactamente ese, romper. El banner de grupo tiene que verse
+     dentro de un widget donde ya compiten cuatro señales —coral (CTA y chips
+     de urgencia), menta (ahorro), aqua (marca) y oro (premium)—, y cualquiera
+     de esas cuatro lo habría fundido con lo que ya hay. El coral, además, es
+     el color de la acción de reservar: usarlo aquí sería poner a competir el
+     banner con el botón que queremos que se pulse.
+     Se eligió violeta y no otro por descarte: es la única familia que no está
+     ocupada, sobrevive sobre papel blanco y sobre el negro del widget premium,
+     y en e-commerce lee como «oferta especial» sin gritar rebaja.
+
+     ⚠️ SU ÚNICO USO LEGÍTIMO ES EL BANNER DE GRUPO (tour/banner-grupo.tsx).
+     Si aparece en otro sitio deja de romper el esquema y pasa a SER el
+     esquema, que es justo lo contrario de lo que pidió Samuel. Si el violeta
+     no convence, cambiar estos cuatro valores es todo lo que hay que tocar:
+     el componente no conoce ningún hex.
+     Los pares claro/oscuro se voltean en `.widget-premium` (componentes.css). */
+  --color-grupo: #7c3aed; /* relleno del disco y del estado conseguido */
+  --color-grupo-fuerte: #6d28d9; /* el extremo hundido del degradado */
+  --color-grupo-tenue: #f4efff; /* fondo del estado de invitación */
+  --color-grupo-texto: #5b21b6; /* texto sobre el fondo tenue */
+
   /* ── VERDE DE WHATSAPP (2026-08-07, pedido de Samuel: «el botón de chat now
      de WhatsApp… que tenga el color de WhatsApp») ────────────────────────
      MARCA DE TERCEROS, NO PALETA HISPANIOLA. Mismo estatus que los logos de

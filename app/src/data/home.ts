@@ -141,12 +141,22 @@ export const TOURS: Tour[] = traducible([
     rating: 4.9,
     resenas: 1782,
     // v3 (2026-07-17): el «Max. Capacity: 30» de la web del cliente + precio
-    // tarifa dual Adulto US$ 114 / Niño US$ 65 (la web publica 2 tarifas
-    // separadas solo para este tour familiar — el resto del catálogo es 1
-    // precio por persona). El widget detecta `precioNino` y pinta 2 steppers
-    // «Adultos» + «Niños» con icono Baby en el de niños.
+    // tarifa dual Adulto / Niño (la web publica 2 tarifas separadas solo para
+    // este tour familiar — el resto del catálogo es 1 precio por persona). El
+    // widget detecta `precioNino` y pinta 2 steppers «Adultos» + «Niños» con
+    // icono Baby en el de niños.
+    //
+    // ⚡ [2026-09-01, Samuel] «Coral Quest: los precios son 114 premium y 99 en
+    // light». `precioLight` baja de 114 a 99 y el upgrade de la ficha (US$ 15,
+    // en FICHAS.coral) hace el resto: 99 + 15 = 114. O sea que el 114 que la
+    // web del cliente publicaba como tarifa ÚNICA pasa a ser el precio del
+    // Premium, y aparece un Light por debajo. Con eso, además, este tour deja
+    // de ser el único con un `upgradePremium` supuesto y sin confirmar: los dos
+    // extremos de la horquilla los da ahora el cliente.
+    // ⚠️ La tarifa de NIÑO (65) no la tocó: se queda como está, y su Premium
+    // sigue siendo 65 + 15 = 80.
     maxPax: 30,
-    precioLight: 114,
+    precioLight: 99,
     precioNino: 65,
     booking: 'completo',
     // [v3] Copy APROBADO (WEBSITE - INICIO, pág. 2).
@@ -1473,15 +1483,29 @@ export const REELS: Reel[] = traducible([
     id: 'piscina-natural',
     titulo: 'Lunch on board, Caribbean style',
     foto: 'reel-2',
-    fotoAlt: 'A crew member serving lunch to a guest on deck',
-    // ⚠️ ESTE ES EL UNICO REEL QUE NO ES EL CLIP DEL CLIENTE TAL CUAL. Del
-    // original («3 PAGINA INICIO.mp4», 33,2s) se quitan 2,2 segundos, de 10,9s
-    // a 13,1s: ahi el recorrido del barco entra en el bano y se ven un
-    // urinario y un lavabo. Los dos cortes caen en los limites de plano del
-    // propio original (a 10,9 acaba la barra, a 13,1 ya esta resuelto el
-    // fundido al almuerzo), asi que el empalme no se nota. El resto del clip
-    // esta entero. Si algun dia hay que rehacerlo, el corte es:
-    //   trim=0:10.9 + trim=13.1  ->  concat
+    // [2026-09-01, 3ª entrega] El alt cambia porque cambia LA FOTO: el póster
+    // nuevo es un cenital de una huésped comiendo langosta sobre la red del
+    // catamarán, no un camarero sirviendo. El alt describe la imagen que hay
+    // puesta, no el pie de la tarjeta.
+    fotoAlt: 'Overhead view of a guest eating grilled lobster on the catamaran net',
+    // ⚡ [2026-09-01, 3ª entrega del cliente: «cambiar video número 2»] CLIP
+    // NUEVO, y con él DESAPARECE EL ÚNICO APAÑO DE VÍDEO DEL SITIO.
+    //
+    // Lo que había aquí: este era el único de los cinco reels que no era el clip
+    // del cliente tal cual. Del original («3 PAGINA INICIO.mp4», 33,2s) hubo que
+    // quitar 2,2 segundos —de 10,9s a 13,1s— porque el recorrido del barco
+    // entraba en el baño y se veían un urinario y un lavabo.
+    //
+    // El clip nuevo («CAMBIOS/2.mp4», 30,2s) se revisó fotograma a fotograma y
+    // no tiene ese problema, así que entra ENTERO. Los cinco reels vuelven a ser
+    // material del cliente sin editar.
+    //
+    // ⚠️ Su póster es la única excepción a la regla de sacarlo del segundo 1,2:
+    // ahí el clip abre con un cenital del barco navegando y este pie promete
+    // almuerzo. Se saca del segundo 22. El porqué, en scripts/video-entrega-3.sh.
+    // ⚠️ Y cierra con una cartela de logos (Fundación Bávaro Reefs + Hispaniola)
+    // en los últimos ~2s. Es su propia marca y va tal cual, pero será el único
+    // de los cinco que termine en un cartel.
     video: '/video/reels/reel-2.mp4',
     red: 'tiktok',
   },

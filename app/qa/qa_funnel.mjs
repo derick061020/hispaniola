@@ -25,7 +25,7 @@ page.on('pageerror', (e) => errores.push('PAGEERROR ' + String(e).slice(0, 120))
 
 const paso = (t) => console.log('  ·', t)
 
-await page.goto(`${BASE}/book/semi-private-premium?paquete=light&personas=2`, { waitUntil: 'load' })
+await page.goto(`${BASE}/book/semi-private-premium?paquete=light&personas=2`, { waitUntil: 'domcontentloaded' })
 await page.waitForTimeout(600)
 
 // 1. Sin fecha: el pago tiene que estar bloqueado al final del flujo

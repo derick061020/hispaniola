@@ -88,12 +88,17 @@ export function TripulacionPage() {
               debajo pone «DEBAJO DE ESTO → ONE COMPANY, SIX DEPARTMENTS AND
               ONE SHARED PASSION». Estaba encabezando la rejilla (que es lo que
               describe), pero leida contra la franja hace algo mejor: los
-              cuatro datos son cifras sueltas —70 personas, 6 departamentos,
+              cuatro datos son cifras sueltas —70 personas, 7 departamentos,
               2010, RD + España— y esta linea es la frase que los suma. Lo que
-              viene despues (la historia del CEO y los seis departamentos) es
+              viene despues (la historia del CEO y los departamentos) es
               el desarrollo de esa frase, no otra cosa. */}
+          {/* ⚠️ [2026-09-01] «six» → «seven», por lo mismo que el lead de
+              data/equipo.ts: la 3ª entrega añadió Sales & Marketing y este
+              titular se quedó contando seis mientras la franja de datos, que
+              sí lo deriva, decía siete. El número está ESCRITO A MANO en los
+              dos sitios y no se actualiza solo. */}
           <p className="text-center font-display text-h3 font-semibold text-navy">
-            {t('One company, six departments and one shared passion')}
+            {t('One company, seven departments and one shared passion')}
           </p>
 
           {/* [v3 2026-08-06, WEBSITE - NOSOTROS pag. 2] LA HISTORIA DEL CEO.
@@ -105,12 +110,23 @@ export function TripulacionPage() {
           {ceo?.bio ? (
             <section className={BLOQUE_FICHA}>
               <div className="grid gap-6 sm:grid-cols-[auto_1fr] sm:items-start sm:gap-8">
+                {/* [2026-09-01, pedido de Samuel: «que no sea redonda, que sea
+                    cuadrada con bordes redondeados»] Deja de ser un avatar
+                    circular y pasa a ser una foto con el radio de card del
+                    sistema (`rounded-card`, el mismo de las cards de plato y de
+                    los iconos de departamento), que además es lo que ya hacen
+                    los 30 retratos del muro de aquí abajo — así la ficha del
+                    CEO y su equipo hablan la misma lengua.
+                    `object-top` y no el centrado por defecto: la fuente es 2:3 y
+                    la caja es 1:1, así que hay que recortar alto, y con el
+                    recorte centrado la cabeza se va fuera. Es el mismo criterio
+                    que ya aplica el muro (grid-equipo.tsx). */}
                 {ceo.foto ? (
                   <img
                     src={`/fotos/${ceo.foto}.webp`}
                     alt={`${ceo.nombre}, ${ceo.rol}`}
                     loading="lazy"
-                    className="size-28 rounded-full object-cover sm:size-36"
+                    className="size-28 rounded-card object-cover object-top sm:size-36"
                   />
                 ) : null}
                 <div>

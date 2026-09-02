@@ -27,6 +27,7 @@ import { t, tp, traducible } from '@/lib/i18n'
 import { escuchaMoneda, instantaneaMoneda } from '@/lib/moneda'
 import { SelectorIdioma } from '@/components/ui/selector-idioma'
 import { SelectorMoneda } from '@/components/ui/selector-moneda'
+import type { MetodoPago } from '@/lib/tarifas'
 
 // Funnel de reserva (/reservar/:slug, Fase C). El widget de la ficha es el
 // CONFIGURADOR (paquete · fecha · hora · personas); «Continuar» abre aquí, con
@@ -394,6 +395,12 @@ function FlujoReserva({
   // encarga, con la misma cuenta que el CRM (5% sobre el SALDO, no sobre el
   // total, porque el deposito ya entro por tarjeta).
   const [pagaEnEfectivo, setPagaEnEfectivo] = useState(false)
+  // [2026-09-01, fusion con Samuel] «Como se paga» ya era una decision de este
+  // checkout: esta casilla, que sincroniza `discounts: ['efectivo']` con Odoo.
+  // Su reparto local (`desglosePago`) no se usa —el importe lo pone el
+  // servidor— pero si su idea de que la pantalla entera cambie con la
+  // eleccion, y para eso basta con traducir la casilla a su vocabulario.
+  const metodoPago: MetodoPago = pagaEnEfectivo ? 'efectivo' : 'tarjeta'
   const [pagando, setPagando] = useState(false)
   const [errorPago, setErrorPago] = useState<string | null>(null)
 
@@ -544,6 +551,13 @@ function FlujoReserva({
       ...(celebracion.ocasion && celebracion.ocasion !== 'ninguna'
         ? { celebracion: { ocasion: celebracion.ocasion, nota: celebracion.nota.trim() } }
         : {}),
+      // [2026-09-01] `total` ya es el importe DESPUÉS del descuento por pagar en
+      // efectivo, si se eligió. Se guarda además el método y lo que rebajó, para
+      // que «Gracias» y «Mi reserva» puedan explicar el número en vez de
+      // enseñarlo a secas — y para que el equipo sepa qué esperar el día del
+      // tour: una reserva en efectivo llega SIN depósito cobrado.
+      metodoPago,
+      descuentoEfectivo: checkout.pedido?.quote?.cash_discount ?? 0,
       total,
       deposito,
       saldo,
@@ -617,7 +631,10 @@ function FlujoReserva({
                 }),
             }
           : {
-              texto: `Pay deposit · ${formatoDinero(deposito)}`,
+              texto:
+                metodoPago === 'efectivo'
+                  ? t('Confirm booking')
+                  : `${t('Pay deposit')} · ${formatoDinero(deposito)}`,
               habilitado: fechaISO !== null && !pagando,
               // El cobro tarda: crear el intento en Odoo, confirmarlo con
               // Stripe y avisar de vuelta. La barra lo enseña girando.
@@ -967,6 +984,8 @@ function FlujoReserva({
                     : null
                 }
                 onDesglose={cambiarGrupo}
+                metodoPago={metodoPago}
+                descuentoEfectivo={checkout.pedido?.quote?.cash_discount ?? 0}
                 total={total}
                 deposito={deposito}
                 saldo={saldo}
@@ -986,6 +1005,7 @@ function FlujoReserva({
       <BarraMovilReserva
         deposito={deposito}
         total={total}
+        metodoPago={metodoPago}
         texto={ctaPaso.texto}
         habilitado={ctaPaso.habilitado}
         cargando={ctaPaso.cargando}

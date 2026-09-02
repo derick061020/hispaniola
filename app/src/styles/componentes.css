@@ -3693,9 +3693,13 @@
    botón pálido dentro de una interfaz oscura se lee como deshabilitado. En el
    tema claro la acción primaria es el navy sólido; en el oscuro es el oro, que
    es además lo que ya hace el CTA «Continuar». Se les da el mismo metal.
-   Se targetea la utilidad `.bg-navy` porque es el denominador común de los
-   cuatro botones (Aplicar, Quedármelo, día elegido del calendario y píldora de
-   horario) sin tener que pasarles una prop a cuatro componentes distintos. */
+   Se targetea la utilidad `.bg-navy` porque es el denominador común de esos
+   botones (Aplicar, día elegido del calendario y píldora de horario) sin tener
+   que pasarles una prop a tres componentes distintos.
+   ⚠️ [2026-09-01] Eran CUATRO: el que falta es «Quedármelo», del diálogo que
+   confirmaba al desmarcar el álbum de fotos. Ese upsell se retiró y con él el
+   diálogo (add-ons-widget.tsx), así que la regla cubre uno menos — el selector
+   no cambia. */
 .widget-premium button.bg-navy,
 .widget-premium a.bg-navy {
   background: linear-gradient(
@@ -4182,4 +4186,132 @@
   textarea {
     font-size: max(16px, 1em);
   }
+}
+
+/* ============================================================
+   BANNER DE DESCUENTO POR GRUPO (2026-09-01, pedido de Samuel: «hazlo un poco
+   más llamativo con alguna animación infinita, que tenga un color diferente
+   para romper el esquema y que sea llamativo»).
+
+   Vive aquí y no en clases de Tailwind porque son tres cosas que Tailwind no
+   da: un degradado con dos paradas de token, un pseudo-elemento animado y un
+   keyframe. El componente (tour/banner-grupo.tsx) solo pone las clases.
+
+   EL BRILLO NO ES CONSTANTE, Y ESO ES EL DISEÑO. Barre una vez y descansa
+   ~3 s (el tramo 0-65% del keyframe es la pausa). Un shimmer continuo dentro
+   del widget —que es donde se decide pagar y ya tiene los chips de urgencia
+   moviéndose— compite con la lectura del precio; uno que pasa cada tanto se
+   nota por el rabillo del ojo y no secuestra la atención. Es el mismo criterio
+   con el que el ticker de garantías no se pausa al hover: la señal tiene que
+   servir al widget, no al revés.
+
+   El halo del disco late en contrafase (5 s contra 4,5 s del brillo) a
+   propósito: dos animaciones sincronizadas se leen como UN parpadeo, y el
+   objetivo es lo contrario — que el banner parezca vivo, no que pestañee.
+   ============================================================ */
+
+.banner-grupo {
+  position: relative;
+  overflow: hidden;
+  /* `isolation` crea contexto de apilamiento propio: el ::after del brillo se
+     queda dentro del banner y no puede pasar por encima del contenido del
+     widget que tenga z-index (el pie fijo del CTA, el calendario). */
+  isolation: isolate;
+}
+
+/* El barrido de luz. Va en ::after y no en el fondo del elemento para poder
+   moverlo con `transform` —que se compone en GPU— en vez de animar el
+   `background-position`, que repinta en cada frame. */
+.banner-grupo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    105deg,
+    transparent 42%,
+    rgb(255 255 255 / 42%) 50%,
+    transparent 58%
+  );
+  transform: translateX(-110%);
+  animation: banner-grupo-brillo 4.5s ease-in-out infinite;
+}
+
+/* Sobre el estado de INVITACIÓN el fondo es casi blanco, así que un brillo
+   blanco no se vería: ahí el barrido se tiñe del propio violeta.
+   Va bastante más cargado que el del estado conseguido (48% contra 42% de
+   blanco) y con el haz más ancho: sobre un lavado de violeta al 4% un barrido
+   sutil sencillamente no existe — medido en pantalla, al 22% no se apreciaba. */
+.banner-grupo--invita::after {
+  background: linear-gradient(
+    105deg,
+    transparent 35%,
+    color-mix(in srgb, var(--color-grupo) 48%, transparent) 50%,
+    transparent 65%
+  );
+}
+
+@keyframes banner-grupo-brillo {
+  0%,
+  65% {
+    transform: translateX(-110%);
+  }
+  100% {
+    transform: translateX(110%);
+  }
+}
+
+/* El disco del icono respira. `box-shadow` y no `transform`: el disco es un
+   punto focal de 24px y escalarlo movería el texto de al lado; el halo crece
+   sin desplazar nada. */
+.banner-grupo-disco {
+  animation: banner-grupo-halo 5s ease-in-out infinite;
+}
+
+@keyframes banner-grupo-halo {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-grupo) 45%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 0 5px color-mix(in srgb, var(--color-grupo) 0%, transparent);
+  }
+}
+
+/* El estado CONSEGUIDO se enciende del todo: relleno sólido en degradado, en
+   vez del lavado del estado de invitación. El cambio de peso es la recompensa
+   — el banner pasa de sugerir a confirmar. */
+.banner-grupo--conseguido {
+  background-image: linear-gradient(
+    135deg,
+    var(--color-grupo) 0%,
+    var(--color-grupo-fuerte) 100%
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .banner-grupo::after,
+  .banner-grupo-disco {
+    animation: none;
+  }
+  /* Sin movimiento, el brillo se retira entero en vez de quedarse congelado a
+     mitad del barrido como una franja clara sin explicación. */
+  .banner-grupo::after {
+    display: none;
+  }
+}
+
+/* En la piel oscura del widget (Saona y charter) el violeta claro es el que
+   contrasta, igual que pasa con el aqua. Se voltea el par: el relleno sube a
+   un violeta pastel y el fondo de invitación baja a un violeta hundido sobre
+   el negro. El texto acompaña.
+   ⚠️ Este es el único acento que NO se remapea a oro dentro de
+   `.widget-premium`. Es deliberado: siendo la única mancha no dorada del
+   widget, el banner destaca todavía más ahí que en la piel clara. */
+.widget-premium {
+  --color-grupo: #a78bfa;
+  --color-grupo-fuerte: #8b5cf6;
+  --color-grupo-tenue: color-mix(in srgb, #a78bfa 16%, transparent);
+  --color-grupo-texto: #ddd0ff;
 }

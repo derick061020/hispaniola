@@ -7,7 +7,7 @@ const navegador = await chromium.launch()
 // fallaría por un motivo que no tiene nada que ver con lo que comprueba.
 const ctx = await navegador.newContext({ viewport: { width: 390, height: 844 }, locale: 'en-US' })
 const page = await ctx.newPage()
-await page.goto('http://localhost:5173/', { waitUntil: 'load' })
+await page.goto('http://localhost:5173/', { waitUntil: 'domcontentloaded' })
 await page.waitForTimeout(1500)
 
 const r = await page.evaluate(() => {

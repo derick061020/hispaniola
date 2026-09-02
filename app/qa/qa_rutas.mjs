@@ -72,7 +72,7 @@ const ctx = await navegador.newContext({ viewport: { width: vp.width, height: vp
     page.on('response', onResponse)
     page.on('pageerror', onPageError)
     try {
-      await page.goto(BASE + ruta, { waitUntil: 'load', timeout: 20000 })
+      await page.goto(BASE + ruta, { waitUntil: 'domcontentloaded', timeout: 20000 })
       await page.waitForTimeout(700)
     } catch (e) {
       errores.push('NAV ' + String(e).slice(0, 100))

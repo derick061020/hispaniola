@@ -147,7 +147,12 @@ export const EQUIPO: MiembroEquipo[] = traducible([
   {
     id: 'omar',
     nombre: 'Omar',
-    rol: 'Founder & CEO',
+    // ⚡ [2026-09-01, UPDATES 09/01 pág. 1: «DEBE DE DECIR CEO SOLAMENTE»]
+    // Era «Founder & CEO». El cliente quita el «Founder».
+    // ⚠️ Ojo si algún día se revisa: su propia `bio` sigue contando que empezó
+    // como el primer capitán de la empresa, así que el dato de fundador no se
+    // pierde — solo deja de estar en el cargo.
+    rol: 'CEO',
     // [v3 2026-08-06] 2010, no 2012: la timeline aprobada fecha el primer
     // barco —y con el, la empresa— en 2010.
     desde: '2010',

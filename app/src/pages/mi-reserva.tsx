@@ -751,6 +751,22 @@ function BloqueReserva({
   token: string | null
   onPagado: () => void
 }) {
+  // [2026-09-01, de Samuel, corregido] Reserva con el saldo elegido en
+  // efectivo: el 5% YA está dentro del importe que se ve arriba, así que aquí
+  // se le dice —o volvería a preguntar por qué el número no cuadra con el del
+  // checkout.
+  //
+  // ⚠️ Lo que NO se hace es esconderle el botón de pagar. La versión de Samuel
+  // lo quitaba entero («no hay nada que hacer aquí»), y eso solo es verdad si
+  // el depósito entró: elegir efectivo no lo elimina —el servidor sigue
+  // devolviendo `deposit: 47.03` con `['efectivo']`, y la casilla del checkout
+  // promete «the deposit is still paid by card»—. Si ese cobro falló, o la
+  // reserva se creó sin cobrarlo, `reserva.saldo` es justo el depósito
+  // pendiente: dejar a ese cliente sin forma de pagarlo es dejarlo tirado con
+  // la plaza sin garantizar. El aviso del efectivo va JUNTO al botón, no en su
+  // lugar.
+  const pagoEnEfectivo = reserva.metodoPago === 'efectivo'
+
   return (
     <section className="mt-8 rounded-card-grande border border-linea bg-papel p-5 sm:p-6">
       <div className="flex items-center gap-2">
@@ -801,6 +817,11 @@ function BloqueReserva({
           </p>
         ) : null}
       </dl>
+      {pagoEnEfectivo ? (
+        <p className="mt-4 rounded-lg bg-menta px-3.5 py-2.5 text-xs leading-relaxed text-menta-texto">
+          {t('You chose to pay in cash, so the 5% discount is already in the amount above. Bring it on the day of the tour.')}
+        </p>
+      ) : null}
       {reserva.saldo > 0 ? (
         token ? (
           <PagoSaldo

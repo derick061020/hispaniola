@@ -13,7 +13,6 @@ import { hoyISO, sumarDias } from '@/lib/fechas'
 import { formatoDinero, QUOTES, type Tour } from '@/data/home'
 import { WHATSAPP_URL, calcularTotalTour, type FichaTour } from '@/data/tours'
 import {
-  ALBUM_UPSELL,
   DESCUENTO_MAXIMO,
   addOnsDisponibles,
   totalAddOns,
@@ -21,6 +20,7 @@ import {
 } from '@/lib/tarifas'
 import { AddOnsWidget } from '@/components/tour/add-ons-widget'
 import { useCotizacion } from '@/components/tour/use-cotizacion'
+import { BannerGrupo } from '@/components/tour/banner-grupo'
 import { NumeroEditable } from '@/components/ui/numero-editable'
 import { PasajerosPopover, FilasPasajeros } from '@/components/tour/pasajeros-popover'
 import { numero, t, tp } from '@/lib/i18n'
@@ -437,7 +437,11 @@ export function WidgetReserva({
   // desglose, el total y la franja podrían discrepar sobre si aplica.
   // `totalPersonas` tambien: hay add-ons con condicion de tamano de grupo (la
   // comida del Maite, que solo existe por debajo de 8). Ver `addOnsDisponibles`.
-  const addOns = addOnsDisponibles(ficha, variante, totalPersonas)
+  // [2026-09-01, fusion con Samuel] Su regla de pax para los add-ons —los
+  // opcionales del charter desaparecen al cruzar al tramo que ya los
+  // incluye— pero declarada AQUI, que es donde la necesita la cotizacion.
+  const paxParaAddOns = esDual ? totalPersonas : personas
+  const addOns = addOnsDisponibles(ficha, variante, paxParaAddOns)
 
   // [2026-08-18] EL PRECIO BUENO LO PONE ODOO (ver use-cotizacion.ts). Hasta
   // hoy la ficha calculaba en el navegador y el checkout preguntaba a Odoo:
@@ -511,19 +515,22 @@ export function WidgetReserva({
   // izquierda pinta el highlight del bote activo y el desglose del
   // widget muestra la fórmula correcta (US$/pax × N para tramos por
   // persona, "precio fijo de grupo" para tramos por grupo).
-  //  - 'forever-teresa' (default recomendado): el tramo ALTO por persona
-  //    (30-120, US$ 75/pax) — 30 pax × 75 = US$ 2.250.
+  //  - 'forever-teresa' (default recomendado): el tramo ALTO por persona.
+  //    ⚡ [2026-09-01] Con el tarifario nuevo de este barco (1-30 grupo · 31+
+  //    por persona) las 30 personas de antes caen en el tramo de GRUPO, así que
+  //    el flag sube a 31 para seguir enseñando lo que quería enseñar:
+  //    31 × US$ 75 = US$ 2.325.
   //  - 'maite-8': el tramo grupo de Maite (1-8 pax, US$ 625 fijo) — el
   //    usuario ve el caso "precio fijo de grupo", no multiplica.
-  //  - 'maite-12': el tramo persona de Maite (9-19, US$ 99/pax) — el
+  //  - 'maite-12': el tramo persona de Maite (9-15, US$ 99/pax) — el
   //    usuario ve el caso "US$ 99 × 12 = US$ 1.188".
-  //  - 'grandma-5': el único tramo de GrandMa (1-20 pax, US$ 825 fijo).
+  //  - 'grandma-5': el tramo de grupo de GrandMa (1-12 pax, US$ 900 fijo).
   useDevFlag('dev-charter', (v) => {
     const fechaManana = sumarDias(hoyISO(), 1)
     if (v === 'forever-teresa') {
       setFecha(fechaManana)
       setVariante('forever-teresa')
-      setPersonas(30)
+      setPersonas(31)
       return
     }
     if (v === 'maite-8') {
@@ -613,12 +620,24 @@ export function WidgetReserva({
   // muestran como línea aparte en el desglose, nunca fundidos en el precio
   // base — así el visitante siempre ve qué parte del total es el tour y qué
   // parte eligió añadir.
-  // (La lista de add-ons de este barco se calcula arriba, con la cotización.)
+  // [v3 2026-08-06] Los add-ons pueden estar atados a sub-variantes concretas
+  // (`soloSubVariantes`): la langosta del charter solo existe en los barcos de
+  // 4 h, que son los que navegan con la cocina flotante. El filtro estaba
+  // escrito aquí; desde el 2026-08-07 vive en `addOnsDisponibles` (lib/tarifas)
+  // porque la franja de la langosta del bloque de menú también marca add-ons y
+  // tiene que aplicar EXACTAMENTE la misma regla — si no, el panel, el desglose,
+  // el total y la franja podrían discrepar sobre si la langosta aplica.
+  // [2026-09-01] El filtro recibe además el nº de personas: las comidas
+  // opcionales del charter desaparecen al cruzar al tramo que ya las incluye
+  // (`soloHastaPersonas`). Se pasa el mismo pax que se usa para cobrarlas, así
+  // que el panel y el total no pueden discrepar.
   // ¿Hay algún extra que el visitante haya PEDIDO, en vez de venir marcado de
   // fábrica? Decide si el panel de upsells se adelanta a la fecha — ver la
-  // puerta más abajo.
+  // puerta más abajo. Hoy ninguno viene marcado (el álbum de fotos, que era el
+  // único `porDefecto`, se retiró el 2026-09-01), así que basta con que haya
+  // uno elegido; la condición se deja escrita entera porque es la regla, no el
+  // estado actual del catálogo.
   const hayAddOnPedido = addOns.some((a) => addOnsElegidos.includes(a.id) && !a.porDefecto)
-  const paxParaAddOns = esDual ? totalPersonas : personas
   const importeAddOns = totalAddOns(addOns, addOnsElegidos, paxParaAddOns)
   const totalLocal = totalTour === null ? null : totalTour + importeAddOns
   // Odoo si ha contestado; el cálculo local mientras tanto.
@@ -1085,6 +1104,19 @@ export function WidgetReserva({
         )}
       </div>
 
+      {/* [2026-09-01, pedido de Samuel] BANNER DE DESCUENTO POR GRUPO, en el
+          widget de TODOS los tours. Va PEGADO AL CONTADOR DE PERSONAS, que es
+          lo único que puede cambiar si aplica o no: el banner reacciona al
+          número que hay justo encima (invita mientras falten personas, celebra
+          cuando ya llega), así que separarlo del stepper lo convertiría en un
+          cartel suelto. Ver banner-grupo.tsx para los tres estados y para el
+          placeholder del porcentaje, que Samuel decide más adelante. */}
+      <BannerGrupo
+        personas={paxActuales}
+        maxPersonas={maxPersonas}
+        contactoUrl={WHATSAPP_URL}
+      />
+
       {/* [v2 2026-07-27] CAJA DE UPSELL A PREMIUM (slide 5: «agregar algo así
           como un upsell para que el usuario escoja la versión premium»).
           Miguel insistió en la reunión (17:45): «siempre está el bloque que te
@@ -1166,7 +1198,6 @@ export function WidgetReserva({
           personas={paxParaAddOns}
           elegidos={addOnsElegidos}
           onCambiar={onAddOnsChange}
-          mensajeAlDesmarcar={ALBUM_UPSELL.mensajeAlDesmarcar}
         />
       ) : null}
 
