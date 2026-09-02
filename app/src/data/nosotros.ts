@@ -128,6 +128,14 @@ export type MiembroEquipo = {
    */
   iniciales?: string
   /**
+   * true = en vez de retrato o monograma, la card pinta el LOGO de la casa.
+   * Existe por la tercera card de /fundacion, que no es una persona sino la
+   * empresa que respalda la fundacion: unas siglas («HAA») son un placeholder
+   * de alguien que falta, y aqui no falta nadie — la marca esta, y es lo que
+   * identifica a esa firma. Se ignora si hay `foto`.
+   */
+  esLaMarca?: true
+  /**
    * true = NO es una persona real, es un rol de relleno para maquetar (ver el
    * comentario largo de arriba). Con foto de stock puesta ya no se distingue a
    * simple vista — este flag es lo único que lo dice. Se filtran en /nosotros;

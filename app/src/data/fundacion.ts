@@ -126,13 +126,19 @@ export const FUNDACION = traducible({
   // componente que ya se reutiliza en /nosotros. Por eso llevan `id`, `rol` y
   // `foto`, que es el contrato de esa card.
   //
-  // ⚠️ `foto: null` EN LOS TRES, a propósito. No hay retrato de ninguno de
-  // los dos cofundadores, y las caras de /fotos/equipo-*.webp son STOCK
-  // recortado (así está avisado en data/nosotros.ts): ponerle una cara de
-  // stock a una persona real CON NOMBRE Y APELLIDOS no es maquetar, es
-  // inventarle un retrato a alguien que existe. La card cae sola a su
-  // fallback de monograma (`iniciales`) hasta que el cliente mande fotos —
-  // ese día es cambiar `null` por el nombre del archivo y nada más.
+  // ⚠️ NACIERON LAS TRES CON `foto: null`, a propósito: no había retrato de
+  // ninguno de los dos cofundadores y las caras de /fotos/equipo-*.webp eran
+  // stock recortado, y ponerle una cara de stock a una persona real CON NOMBRE
+  // Y APELLIDOS no es maquetar, es inventarle un retrato a alguien que existe.
+  // La condición para llenarlas quedó escrita: «cambiar `null` por el nombre
+  // del archivo y nada más» el día que llegaran fotos.
+  //
+  // ⚡ [2026-09-02] Ese día llegó, pero solo para dos de las tres:
+  //   · Fernando  → su retrato real vino en la 3ª entrega (el mismo del CEO).
+  //   · Hispaniola → no es una persona; lleva el logo (`esLaMarca`).
+  //   · Manuel     → SIGUE SIN FOTO y sigue en monograma. No hay ni una suya
+  //     en ninguna entrega, y la regla de arriba no ha cambiado por que ahora
+  //     desentone al lado de las otras dos.
   // [v3 2026-08-07, WEBSITE-SOSTENIBILIDAD pag. 8] Titular y párrafo
   // APROBADOS. Dicen lo mismo que la redacción de la casa («dos personas y la
   // empresa cuya operación diaria vio el problema») con dos ganancias: el
@@ -152,7 +158,12 @@ export const FUNDACION = traducible({
       nombre: 'Fernando Sánchez Fernández',
       rol: 'Co-founder',
       iniciales: 'FS',
-      foto: null,
+      // ⚡ [2026-09-02] Estrena retrato. Es EL MISMO que la ficha del CEO en
+      // /crew: el cofundador de la fundación y el CEO de la empresa son la
+      // misma persona —lo sospechaba el plan 08 §3 y Derick lo confirmó al
+      // pedir el cambio de nombre—, así que compartir archivo no es un atajo,
+      // es que es una sola cara.
+      foto: 'equipo-fernando',
     },
     {
       id: 'manuel',
@@ -166,6 +177,9 @@ export const FUNDACION = traducible({
       nombre: 'Hispaniola Aquatic Adventures',
       rol: 'Company backing the foundation',
       iniciales: 'HAA',
+      // No es una persona: es la empresa. Un monograma es la espera de un
+      // retrato que no va a llegar nunca, así que aquí va la marca.
+      esLaMarca: true,
       foto: null,
     },
   ],

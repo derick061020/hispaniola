@@ -31,12 +31,18 @@ import { FUNDACION } from '@/data/fundacion'
 // nombre y apellidos es inventarle un retrato a alguien que existe. La card
 // cae a su fallback de monograma (FS · MR · HAA) hasta que el cliente mande
 // fotos: ese día es cambiar `foto: null` en data/fundacion.ts y ya.
+// El mapeo va campo a campo y no con spread: `MiembroEquipo` tiene cosas que
+// estas tres cards no deben heredar nunca (`cta`, `bio`, `placeholder`).
+// ⚠️ Por eso mismo hay que ACORDARSE de añadir aquí cada campo nuevo — el de la
+// marca se quedó fuera en el primer intento y la card de la empresa siguió
+// pintando «HAA».
 const MIEMBROS: MiembroEquipo[] = FUNDACION.fundadores.map((f) => ({
   id: f.id,
   nombre: f.nombre,
   rol: f.rol,
   iniciales: f.iniciales,
   foto: f.foto,
+  ...('esLaMarca' in f && f.esLaMarca ? { esLaMarca: true as const } : {}),
 }))
 
 export function FundadoresFundacion() {

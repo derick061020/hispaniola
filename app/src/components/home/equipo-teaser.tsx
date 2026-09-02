@@ -2,6 +2,7 @@ import { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight } from 'lucide-react'
 import { Etiqueta } from '@/components/ui/etiqueta'
+import { Logo } from '@/components/ui/logo'
 import { EQUIPO, type MiembroEquipo } from '@/data/nosotros'
 import { WHATSAPP_URL } from '@/data/tours'
 import { useDevFlag } from '@/dev/use-dev-flag'
@@ -89,6 +90,18 @@ function Retrato({ miembro }: { miembro: MiembroEquipo }) {
         loading="lazy"
         className="absolute inset-0 size-full object-cover object-top"
       />
+    )
+  }
+  // La card de la EMPRESA no espera ningún retrato: pinta la marca. Es la
+  // tercera de /fundacion —«Hispaniola Aquatic Adventures, empresa que respalda
+  // la fundación»—, y unas siglas ahí decían «falta una foto» cuando no falta
+  // nada. Va sobre el mismo fondo tintado que el monograma, para que las tres
+  // cards sigan siendo la misma card.
+  if (miembro.esLaMarca) {
+    return (
+      <div className="absolute inset-0 flex items-center justify-center bg-aqua-tint px-8">
+        <Logo className="w-full max-w-[15rem]" />
+      </div>
     )
   }
   // Sin foto: mismo placeholder honesto que las reseñas de la home, pero a
