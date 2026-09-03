@@ -21,6 +21,28 @@
       })(window, document, 'script', 'dataLayer', 'GTM-K9NWXZ7G')
     </script>
     <!-- End Google Tag Manager -->
+
+    <!-- Google tag (gtag.js) — G-M99L0GE3VK, pedido por Miguel el 2026-09-03.
+         Va DESPUES del contenedor de GTM y no antes: los dos escriben en el
+         mismo `dataLayer`, y el snippet de gtag lo crea solo si no existe
+         (`window.dataLayer || []`), asi que dejando primero a GTM ninguno pisa
+         al otro.
+         ⚠️ Es una etiqueta DIRECTA de GA4, aparte del contenedor. Si dentro de
+         GTM-K9NWXZ7G ya hay configurada una etiqueta de GA4 con esta misma ID,
+         cada visita se contaria dos veces: hay que mirarlo en el propio GTM,
+         desde aqui no se puede saber. -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-M99L0GE3VK"></script>
+    <script>
+      window.dataLayer = window.dataLayer || []
+      function gtag() {
+        dataLayer.push(arguments)
+      }
+      gtag('js', new Date())
+
+      gtag('config', 'G-M99L0GE3VK')
+    </script>
+    <!-- End Google tag -->
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#0b2545" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
