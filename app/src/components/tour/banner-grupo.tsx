@@ -1,6 +1,7 @@
 import { Check, Users } from 'lucide-react'
 import { t, tp } from '@/lib/i18n'
-import { DESCUENTO_GRUPO, aplicaDescuentoGrupo } from '@/lib/tarifas'
+import { aplicaDescuentoGrupo } from '@/lib/tarifas'
+import { useDescuentoGrupo } from '@/lib/api/use-descuento-grupo'
 
 // Banner de DESCUENTO POR GRUPO. Va en el widget de reserva de todos los tours
 // y en el checkout (pedido de Samuel, 2026-09-01: «en el widget de reserva de
@@ -31,17 +32,30 @@ import { DESCUENTO_GRUPO, aplicaDescuentoGrupo } from '@/lib/tarifas'
 //     explicado por qué el brillo NO es continuo y por qué las dos animaciones
 //     van desincronizadas a propósito.
 //
-// ⚠️ [placeholder] LA CIFRA NO EXISTE TODAVÍA. Samuel lo dijo así: «el descuento
-// se decide luego». Mientras `DESCUENTO_GRUPO.porcentaje` sea null, el copy
-// habla del descuento sin ponerle número — inventar un 10% aquí sería publicar
-// un precio que nadie ha aprobado. En cuanto el número llegue, se escribe en
-// lib/tarifas.ts y las dos frases lo recogen solas.
+// [2026-09-03, Derick: «esto debe estar correctamente conectado con el group
+// discount del sistema, porque en realidad son 6, y si cambio el número debe
+// reflejarse en la web, lo mismo si lo elimino»]
+//
+// EL BANNER YA NO TIENE NÚMEROS PROPIOS. El umbral y el porcentaje salen de la
+// oferta `kind: 'group'` de Odoo, la misma que aplica el CRM y que cobra
+// `/quote` (`useDescuentoGrupo`). Antes estaban escritos a mano —7, y sin
+// porcentaje— mientras el motor descontaba un 5% desde 6: la web anunciaba una
+// regla que no era la que se cobraba.
+//
+// Y si la oferta se desactiva o se borra en Odoo, el hook devuelve `null` y
+// este componente NO PINTA NADA. Un descuento retirado tiene que desaparecer
+// del sitio sin desplegar nada, igual que un tour despublicado.
+//
+// El copy sigue sabiendo vivir sin porcentaje (`pct === null`): si algún día se
+// configura una oferta de grupo sin cifra, se anuncia que existe y que el
+// equipo la aplica al confirmar, en vez de inventar un número.
 //
 // ⚠️ EL CASO RARO, Y POR QUÉ TIENE SU PROPIO TEXTO: hay tours cuyo contador no
 // LLEGA al umbral. El semi-privado y Coral Quest topan en 6 personas
-// (MAX_PERSONAS_DEFAULT, widget-reserva.tsx), así que en su widget el descuento
-// de 7+ es inalcanzable por definición. Anunciarlo ahí con un «te faltan 2»
-// sería mandar al visitante a pulsar un + que está deshabilitado. En esos tours
+// (MAX_PERSONAS_DEFAULT, widget-reserva.tsx), así que si el umbral de Odoo
+// queda por encima de ese tope el descuento es inalcanzable por definición.
+// Anunciarlo ahí con un «te faltan 2» sería mandar al visitante a pulsar un +
+// que está deshabilitado. En esos tours
 // el banner dice la verdad completa: el descuento existe, y un grupo de ese
 // tamaño se reserva hablando con el equipo — que es lo que ya contesta la FAQ
 // del charter para los grupos que no encajan en un formulario.
@@ -61,11 +75,16 @@ export function BannerGrupo({
   /** El widget y el checkout lo colocan distinto; el aspecto es el mismo. */
   className?: string
 }) {
-  const conseguido = aplicaDescuentoGrupo(personas)
-  const faltan = DESCUENTO_GRUPO.desdePersonas - personas
-  const pct = DESCUENTO_GRUPO.porcentaje
-  const fueraDeAlcance =
-    maxPersonas !== undefined && maxPersonas < DESCUENTO_GRUPO.desdePersonas
+  const regla = useDescuentoGrupo()
+  // `null` = Odoo dice que ya no hay descuento de grupo. Nada que anunciar.
+  // `undefined` = todavía viajando; el hook devuelve el respaldo en cuanto
+  // falle, así que aquí solo se llega con una regla o con nada.
+  if (!regla) return null
+
+  const conseguido = aplicaDescuentoGrupo(personas, regla)
+  const faltan = regla.desdePersonas - personas
+  const pct = regla.porcentaje
+  const fueraDeAlcance = maxPersonas !== undefined && maxPersonas < regla.desdePersonas
 
   return (
     <div
@@ -119,8 +138,8 @@ export function BannerGrupo({
           <>
             <strong className="font-semibold text-grupo-texto">
               {pct === null
-                ? tp('Groups of {n}+ get a group discount.', { n: DESCUENTO_GRUPO.desdePersonas })
-                : tp('Groups of {n}+ save {pct}%.', { n: DESCUENTO_GRUPO.desdePersonas, pct })}
+                ? tp('Groups of {n}+ get a group discount.', { n: regla.desdePersonas })
+                : tp('Groups of {n}+ save {pct}%.', { n: regla.desdePersonas, pct })}
             </strong>{' '}
             {fueraDeAlcance ? (
               // El contador de este tour no llega al umbral: en vez de una

@@ -108,6 +108,9 @@ export function ReservarPage() {
   const adultosUrl = Number(params.get('adultos')) || 0
   const ninosUrl = Number(params.get('ninos')) || 0
   const bebesUrl = Number(params.get('bebes')) || 0
+  // [2026-09-04] Los niños al menú Premium de adulto. Igual que los bebés:
+  // solo viene en la URL si se pidió en la ficha.
+  const ninosPremiumUrl = params.get('ninosPremium') === '1'
   // La SUB-VARIANTE (el bote, en Saona y en el charter). El widget la manda
   // desde siempre; hasta hoy el funnel la ignoraba. Ahora hace falta: es lo que
   // decide qué carta del charter se come (3 h, 4 h o buffet de pinchos).
@@ -154,6 +157,7 @@ export function ReservarPage() {
       adultosIniciales={adultosUrl || personas}
       ninosIniciales={ninosUrl}
       bebesIniciales={bebesUrl}
+      ninosPremiumInicial={ninosPremiumUrl}
     />
   )
 }
@@ -173,6 +177,7 @@ function FlujoReserva({
   fechaInicialISO,
   adultosIniciales,
   ninosIniciales,
+  ninosPremiumInicial,
   bebesIniciales,
   addonsIniciales,
   onConfigurar,
@@ -193,6 +198,7 @@ function FlujoReserva({
    *  lo usa de verdad; en el resto, `adultos` es el total. */
   adultosIniciales: number
   ninosIniciales: number
+  ninosPremiumInicial: boolean
   bebesIniciales: number
   /** Slugs de los extras elegidos en la ficha. */
   addonsIniciales: string[]
@@ -257,6 +263,7 @@ function FlujoReserva({
     tour: tour.slug,
     variante: varianteInicial,
     paquete: paqueteInicial,
+    ninosPremium: ninosPremiumInicial,
     pax: { adults: adultosIniciales, children: ninosIniciales, infants: bebesIniciales },
     fecha: fechaInicialISO,
     scheduleIndex: horarioInicial,

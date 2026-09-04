@@ -3,7 +3,8 @@ import { ChevronDown, Minus, Plus, Users } from 'lucide-react'
 import * as CompactButton from '@/components/alignui/compact-button'
 import { PistaInfo } from '@/components/ui/pista-info'
 import { NumeroEditable } from '@/components/ui/numero-editable'
-import { t } from '@/lib/i18n'
+import { formatoDinero } from '@/data/home'
+import { t, tp } from '@/lib/i18n'
 
 // Selector de pasajeros plegable (correcciones v2, 2026-07-27; rediseñado el
 // 07-28 siguiendo la captura de Viator que pasó Samuel).
@@ -168,6 +169,7 @@ export function FilasPasajeros({
   onAdultos,
   onNinos,
   onBebes,
+  precioNino = null,
   sobreOscuro = false,
 }: {
   adultos: number
@@ -178,6 +180,11 @@ export function FilasPasajeros({
   onAdultos: (n: number) => void
   onNinos: (n: number) => void
   onBebes: (n: number) => void
+  /** Tarifa de niño de ESTE tour, en dólares. Cuando la hay se anuncia debajo
+   *  de la fila (ver la franja más abajo); `null`/ausente = este tour no cobra
+   *  distinto al niño y no se dice nada. Nunca se escribe una cifra aquí: sale
+   *  del catálogo de Odoo, igual que el precio del adulto. */
+  precioNino?: number | null
   /** Piel premium: solo la usa el widget de la ficha. */
   sobreOscuro?: boolean
 }) {
@@ -233,14 +240,14 @@ export function FilasPasajeros({
 
             <FilaPasajero
               titulo={t('Children')}
-              edades="4-7"
+              edades="3-12"
               minimo={0}
               maximo={maxPersonas - 1}
               pista={
                 <PistaInfo
                   sobreOscuro={sobreOscuro}
                   etiqueta={t('What age counts as a child')}
-                  texto={t('Ages 4 to 7 pay a reduced fare. Under 4s do not pay: add them as infants.')}
+                  texto={t('Ages 3 to 12 pay a reduced fare. Under 3s do not pay: add them as infants.')}
                 />
               }
             >
@@ -276,12 +283,44 @@ export function FilasPasajeros({
                 </CompactButton.Root>
             </FilaPasajero>
 
+            {/* [2026-09-03, Derick: «debe haber un banner informativo que diga
+                en la web, abajito de niños, que los niños pagan 65»]
+                
+                Va PEGADO a la fila de niños y no en la pista de ayuda porque
+                la pista hay que abrirla: el precio del niño es justo lo que se
+                está decidiendo mientras se pulsa ese «+», y esconderlo detrás
+                de un clic es esconderlo.
+                
+                La cifra NO está escrita aquí. Sale de `precioNino`, que viene
+                del catálogo de Odoo (`child_price`) por el mismo camino que el
+                precio del adulto: si la oficina la cambia en la ficha del
+                tour, cambia aquí sin desplegar nada. Y si el tour no cobra
+                distinto al niño, no hay franja — que es lo que pasa en el
+                semi-privado y en los charters. */}
+            {precioNino !== null && precioNino !== undefined ? (
+              <p
+                className={`px-1 py-2 text-xs leading-relaxed ${
+                  sobreOscuro ? 'text-white/80' : 'text-navy-sub'
+                }`}
+              >
+                <span
+                  aria-hidden="true"
+                  className={`mr-1.5 inline-block size-1.5 shrink-0 rounded-full align-middle ${
+                    sobreOscuro ? 'bg-aqua-claro' : 'bg-aqua'
+                  }`}
+                />
+                {tp('Children (ages 3-12) pay {precio} each.', {
+                  precio: formatoDinero(precioNino),
+                })}
+              </p>
+            ) : null}
+
             {/* Los bebés NO restan del aforo (decisión de Samuel del 07-27:
                 «los bebés no suman»), por eso su máximo no depende de
                 `maxPersonas` ni deshabilita el «+». */}
             <FilaPasajero
               titulo={t('Infants')}
-              edades="0-3"
+              edades="0-2"
               minimo={0}
               maximo={maxPersonas}
               pista={

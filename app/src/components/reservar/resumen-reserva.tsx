@@ -244,6 +244,7 @@ export function ResumenReserva({
                 onAdultos={(n) => onDesglose({ adultos: n })}
                 onNinos={(n) => onDesglose({ ninos: n })}
                 onBebes={(n) => onDesglose({ bebes: n })}
+                precioNino={tour.precioNino}
               />
             </PasajerosPopover>
           ) : (

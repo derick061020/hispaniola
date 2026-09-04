@@ -186,6 +186,7 @@ export type Pedido = {
   variant: string | null
   variant_name: string | null
   package: Paquete
+  children_premium: boolean
   date: string | null
   schedule_index: number
   departure: string | null
@@ -301,7 +302,19 @@ export type ConfigPublica = {
     stripe: { enabled: boolean; publishable_key: string; environment: 'test' | 'live' }
     paypal: { enabled: boolean; client_id: string; environment: 'sandbox' | 'live' }
   }
-  discounts: { id: string; label: string; pct: number; auto: boolean }[]
+  /** Las ofertas tal y como están en Odoo. `kind` es la clase de la oferta
+   *  (`group`, `early_booking`, `cash`…) y `min_pax` / `days_in_advance` la
+   *  condición: con eso la web redacta la regla («Groups of 6+ save 5%») sin
+   *  guardarse ninguna cifra propia. Ver `useDescuentoGrupo`. */
+  discounts: {
+    id: string
+    label: string
+    pct: number
+    auto: boolean
+    kind?: string
+    min_pax?: number
+    days_in_advance?: number
+  }[]
   discount_cap_pct: number
 }
 
@@ -311,6 +324,9 @@ export type ParcheCheckout = {
   step?: 'start' | 'contact' | 'menu' | 'pickup' | 'payment'
   variant?: string | null
   package?: Paquete
+  /** Los niños comen del menú Premium de adulto (+`upgradePremium` cada uno).
+   *  Todo o nada: no hay medio grupo. */
+  children_premium?: boolean
   date?: string | null
   schedule_index?: number
   pax?: Partial<Pax>

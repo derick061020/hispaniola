@@ -3,7 +3,7 @@
 // Es la foto del catálogo de Odoo que el front pinta cuando el backend no
 // contesta. Para actualizarla: `npm run sync:tarifas`.
 //
-// Última sincronía: 2026-08-31 19:06 UTC
+// Última sincronía: 2026-09-03 13:07 UTC
 import type { Tour } from '@/lib/api/tipos'
 
 export const CATALOGO_ODOO: Tour[] = [
@@ -30,13 +30,13 @@ export const CATALOGO_ODOO: Tour[] = [
     "max_days_ahead": 365,
     "schedules": [
       {
-        "departure": "9:15 AM",
-        "back": "1:15 PM",
+        "departure": "9:00 AM",
+        "back": "1:00 PM",
         "slot": "am"
       },
       {
-        "departure": "1:15 PM",
-        "back": "5:15 PM",
+        "departure": "1:00 PM",
+        "back": "5:00 PM",
         "slot": "pm"
       }
     ],
@@ -60,7 +60,7 @@ export const CATALOGO_ODOO: Tour[] = [
     "booking_mode": "full",
     "pricing_model": "dual",
     "max_pax": 30,
-    "adult_price": 114,
+    "adult_price": 99,
     "child_price": 65,
     "premium_upgrade": 15,
     "deposit_pct": 25,
@@ -69,13 +69,13 @@ export const CATALOGO_ODOO: Tour[] = [
     "max_days_ahead": 365,
     "schedules": [
       {
-        "departure": "9:15 AM",
-        "back": "1:15 PM",
+        "departure": "9:00 AM",
+        "back": "1:00 PM",
         "slot": "am"
       },
       {
-        "departure": "1:15 PM",
-        "back": "5:15 PM",
+        "departure": "1:00 PM",
+        "back": "5:00 PM",
         "slot": "pm"
       }
     ],
@@ -124,7 +124,7 @@ export const CATALOGO_ODOO: Tour[] = [
             "to": 8,
             "price": 625,
             "kind": "group",
-            "extra_per_pax": 25,
+            "extra_per_pax": null,
             "note": null
           },
           {
@@ -211,7 +211,7 @@ export const CATALOGO_ODOO: Tour[] = [
             "to": 13,
             "price": 1000,
             "kind": "group",
-            "extra_per_pax": 25,
+            "extra_per_pax": null,
             "note": null
           },
           {
@@ -326,7 +326,7 @@ export const CATALOGO_ODOO: Tour[] = [
         "description": "Lunch cooked on board. Included from 9 guests up.",
         "note": null,
         "base": "person",
-        "price": 20,
+        "price": 25,
         "default_on": false,
         "only_variants": [
           "maite"

@@ -48,6 +48,9 @@ export type PeticionCotizacion = {
   variante?: string | null
   pax: Pax
   paquete?: Paquete
+  /** Los niños al menú Premium de adulto. El servidor cobra el mismo salto que
+   *  al adulto por cada uno, en su propia línea del desglose. */
+  ninosPremium?: boolean
   addons?: string[]
   descuentos?: string[]
   promo?: string
@@ -67,6 +70,7 @@ export function cotizar(peticion: PeticionCotizacion, signal?: AbortSignal) {
       variant: peticion.variante ?? null,
       pax: peticion.pax,
       package: peticion.paquete ?? 'light',
+      children_premium: peticion.ninosPremium ?? false,
       addons: peticion.addons ?? [],
       discounts: peticion.descuentos ?? [],
       promo_code: peticion.promo,
@@ -81,6 +85,7 @@ export type InicioCheckout = {
   tour: string
   variante?: string | null
   paquete?: Paquete
+  ninosPremium?: boolean
   pax?: Pax
   fecha?: string | null
   scheduleIndex?: number
@@ -108,6 +113,7 @@ export function abrirCheckout(inicio: InicioCheckout, idempotencia?: string) {
       tour: inicio.tour,
       variant: inicio.variante ?? null,
       package: inicio.paquete ?? 'light',
+      children_premium: inicio.ninosPremium ?? false,
       pax: inicio.pax ?? { adults: 2 },
       date: inicio.fecha ?? null,
       schedule_index: inicio.scheduleIndex ?? 0,

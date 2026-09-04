@@ -163,31 +163,39 @@ export function totalAddOns(addOns: AddOn[], elegidos: string[], personas: numbe
 
 // ── Descuento por grupo ────────────────────────────────────────────────────
 
-/** [2026-09-01, pedido de Samuel] Descuento por reservar en grupo, anunciado en
- *  el widget de todos los tours y en el checkout.
+/** Descuento por reservar en grupo, anunciado en el widget de todos los tours
+ *  y en el checkout (pedido de Samuel, 2026-09-01).
  *
- *  ⚠️ [placeholder] EL PORCENTAJE NO ESTÁ DECIDIDO. Samuel lo pidió así,
- *  literalmente: «los grupos de más de 6 personas tienen un X descuento, el
- *  descuento se decide luego». Mientras `porcentaje` sea `null`, el banner
- *  anuncia que el descuento EXISTE y que el equipo lo aplica al confirmar,
- *  pero NO enseña una cifra — inventarla aquí sería publicar un precio que
- *  nadie ha aprobado, que es justo lo que este proyecto no hace.
+ *  ⚠️ ESTO ES SOLO EL RESPALDO. La cifra buena vive en Odoo, en la oferta
+ *  `kind: 'group'` del catálogo de Special Offers, y llega por `/config`
+ *  (`useDescuentoGrupo`). Aquí queda lo mínimo para que el banner no mienta
+ *  mientras esa petición viaja, ni desaparezca si Odoo no contesta.
  *
- *  Cuando llegue el número: se escribe aquí y ya. El banner del widget, el del
- *  checkout y el texto que los acompaña leen los dos campos de este objeto, así
- *  que ninguno puede quedarse con la cifra vieja.
+ *  [2026-09-03, Derick: «esto debe estar correctamente conectado con el group
+ *  discount del sistema, porque en realidad son 6, y si cambio el número debe
+ *  reflejarse en la web, lo mismo si lo elimino»] Hasta hoy el 7 y el «sin
+ *  porcentaje» estaban escritos aquí a mano: la web anunciaba un umbral que el
+ *  motor de precios no usaba —Odoo lo aplica desde 6 y con un 5%—, y cambiar
+ *  la oferta en el back-office no movía el cartel. Ahora la única cifra propia
+ *  es este respaldo, y coincide con lo que hay configurado hoy.
  *
- *  «Más de 6» = a partir de 7. El umbral se guarda como el PRIMER número que ya
- *  tiene descuento, no como el último que no lo tiene, porque así es como se
- *  compara (`personas >= desdePersonas`) y no hay que acordarse de sumar uno. */
-export const DESCUENTO_GRUPO: { desdePersonas: number; porcentaje: number | null } = {
-  desdePersonas: 7,
-  porcentaje: null,
+ *  El umbral se guarda como el PRIMER número que ya tiene descuento, no como
+ *  el último que no lo tiene, porque así es como se compara
+ *  (`personas >= desdePersonas`) y no hay que acordarse de sumar uno. */
+export type DescuentoGrupo = { desdePersonas: number; porcentaje: number | null }
+
+export const DESCUENTO_GRUPO: DescuentoGrupo = {
+  desdePersonas: 6,
+  porcentaje: 5,
 }
 
-/** ¿Este grupo llega al descuento? */
-export function aplicaDescuentoGrupo(personas: number): boolean {
-  return personas >= DESCUENTO_GRUPO.desdePersonas
+/** ¿Este grupo llega al descuento? Con la regla que se le pase (la de Odoo);
+ *  sin ella, con el respaldo. */
+export function aplicaDescuentoGrupo(
+  personas: number,
+  regla: DescuentoGrupo | null = DESCUENTO_GRUPO,
+): boolean {
+  return regla !== null && personas >= regla.desdePersonas
 }
 
 // ── Descuentos ─────────────────────────────────────────────────────────────

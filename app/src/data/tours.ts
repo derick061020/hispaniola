@@ -551,7 +551,7 @@ export const FICHAS: Record<string, FichaTour> = traducible({
         hora: '10:00 AM / 2:00 PM',
         titulo: 'Snorkeling at the Marine Park',
         texto:
-          'Explore our exclusive Marine Park, home to the Underwater Museum, coral restoration gardens and artificial reefs that attract abundant tropical marine life.',
+          'Explore our exclusive Marine Park, home to the Underwater Museum (launch date: Nov 1st), coral restoration gardens and artificial reefs that attract abundant tropical marine life.',
       },
       {
         hora: '11:15 AM / 3:15 PM',
@@ -805,7 +805,7 @@ export const FICHAS: Record<string, FichaTour> = traducible({
         hora: '10:45 AM / 2:45 PM',
         titulo: 'Snorkeling at the Marine Park',
         texto:
-          'Explore our protected Marine Park, home to the Underwater Museum, coral restoration gardens and thriving reef ecosystems. Keep an eye out for sea turtles, which are frequently spotted during this part of the journey.',
+          'Explore our protected Marine Park, home to the Underwater Museum (launch date: Nov 1st), coral restoration gardens and thriving reef ecosystems. Keep an eye out for sea turtles, which are frequently spotted during this part of the journey.',
       },
       {
         hora: '11:45 AM / 3:45 PM',
@@ -1732,10 +1732,11 @@ export function fotosComidaDe(ficha: FichaTour): string[] {
  *  - SubVariantes (Saona, v3 2026-07-17): busca el tramo que contiene
  *    `personas` en la tabla de la sub-variante; tramo 'grupo' es el total,
  *    'persona' se multiplica.
- *  - Tarifa dual (Snorkel Lovers, v3 2026-07-17): `adultos × precioLight +
- *    niños × precioNino` (+ upgrade si Premium en ambos casos — el menú
- *    Premium es el mismo para adultos y niños). Pasa por el objeto
- *    `rol` { adultos, ninos }.
+ *  - Tarifa dual (Coral Quest, v3 2026-07-17): `adultos × precioLight +
+ *    niños × precioNino`. El upgrade Premium se suma SOLO al adulto
+ *    (2026-09-03): la tarifa de niño es cerrada. Pasa por el objeto
+ *    `rol` { adultos, ninos }. Salvo que se pida `ninosPremium`, que es la
+ *    opción de que los niños coman del menú de adulto (2026-09-04).
  *  - Light/Premium clásico (semi-privado): `precioLight × personas`
  *    (+ upgrade si Premium).
  *  Devuelve `null` cuando no hay forma de calcularlo (charter cotiza a
@@ -1749,6 +1750,7 @@ export function calcularTotalTour(
   precioNino: number | null | undefined,
   paquete: 'light' | 'premium',
   rol?: { adultos: number; ninos: number },
+  ninosPremium = false,
 ): number | null {
   // SubVariantes: tramo por pax total (no por rol).
   if (ficha.subVariantes && ficha.subVariantes.length > 0) {
@@ -1763,9 +1765,26 @@ export function calcularTotalTour(
   }
   if (precioLight === null) return null
   // Tarifa dual (Snorkel Lovers): adultos + niños × su tarifa.
+  // [2026-09-03, Derick: «el costo de niños es de 65 y está cobrando 80»]
+  // EL UPGRADE ES SOLO DEL ADULTO. Antes se sumaba a los dos, y como este tour
+  // se vende siempre con `paquete: 'premium'` —el toggle Light/Premium no se
+  // pinta para él, pero el estado nace en 'premium'— el niño de 65 salía a 80.
+  // Los 15 no son un menú más caro para todos: son la diferencia entre el
+  // tarifario de la casa (99) y el precio de calle de la web (114). El niño
+  // tiene su propia tarifa cerrada y no lleva ese recargo.
+  // El servidor calcula exactamente igual (services/pricing.py, `_dual`): esto
+  // es el espejo para pintar mientras Odoo contesta, y los dos tienen que
+  // decir lo mismo.
+  //
+  // [2026-09-04, Derick: «poner una opción de que los niños puedan hacer un
+  // upgrade a menú Premium de adulto por 15$US más cada uno»] Es OPCIONAL y va
+  // aparte de la tarifa: el niño sigue costando 65 y solo paga el salto si su
+  // acompañante lo pide. El servidor lo cobra igual y en su propia línea
+  // (`services/pricing.py`, `_dual`).
   if (rol && precioNino !== null && precioNino !== undefined) {
     const upgrade = paquete === 'premium' ? ficha.upgradePremium ?? 0 : 0
-    return (precioLight + upgrade) * rol.adultos + (precioNino + upgrade) * rol.ninos
+    const upgradeNinos = ninosPremium ? upgrade : 0
+    return (precioLight + upgrade) * rol.adultos + (precioNino + upgradeNinos) * rol.ninos
   }
   // Light/Premium clásico.
   const upgrade = paquete === 'premium' ? ficha.upgradePremium ?? 0 : 0

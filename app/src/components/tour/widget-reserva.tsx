@@ -316,9 +316,13 @@ export function WidgetReserva({
   const esDual = tour.precioNino !== null && tour.precioNino !== undefined
   const [adultos, setAdultos] = useState(2)
   const [ninos, setNinos] = useState(0)
-  // [v2 2026-07-27] Tercer tramo de edad: bebés 1-3, gratis. Viaja al funnel
+  // [v2 2026-07-27] Tercer tramo de edad: bebés 0-2, gratis. Viaja al funnel
   // para que la tripulación sepa cuántos van a bordo, aunque no paguen.
   const [bebes, setBebes] = useState(0)
+  // [2026-09-04, Derick: «poner una opción de que los niños puedan hacer un
+  // upgrade a menú Premium de adulto por 15$US más cada uno»] Todo o nada, que
+  // es como se pidió: o suben todos los niños de la reserva o ninguno.
+  const [ninosPremium, setNinosPremium] = useState(false)
   const [personas, setPersonas] = useState(2)
   // [v2 2026-07-27] ABRE EN PREMIUM. Cambio pedido explícitamente por el
   // cliente (slide 4 del PDF v2: «poner aquí por defecto el premium») y
@@ -418,6 +422,13 @@ export function WidgetReserva({
     onPersonasChange?.(esDual ? adultos + ninos : personas)
   }, [esDual, adultos, ninos, personas, onPersonasChange])
 
+  // Quitar los niños tiene que apagar su upgrade: si no, el interruptor
+  // desaparece de la pantalla con el estado en `true` y el checkout cobraría un
+  // salto de menú para cero niños.
+  useEffect(() => {
+    if (ninos === 0 && ninosPremium) setNinosPremium(false)
+  }, [ninos, ninosPremium])
+
   // Tope del stepper de personas — misma fórmula que el funnel (ver
   // maxPersonasDe, arriba): aforo del tour si la tarifa es dual, el tramo más
   // alto si hay sub-variantes, y 6 en el resto.
@@ -464,6 +475,7 @@ export function WidgetReserva({
             ? { adults: adultos, children: ninos, infants: 0 }
             : { adults: personas, children: 0, infants: 0 },
           paquete,
+          ninosPremium,
           addons: addOnsElegidos.filter((id) => addOns.some((a) => a.id === id)),
         },
   )
@@ -614,6 +626,7 @@ export function WidgetReserva({
     tour.precioNino,
     paquete,
     esDual ? { adultos, ninos } : undefined,
+    ninosPremium,
   )
 
   // [v2 2026-07-27] Add-ons: se suman DESPUÉS del precio del tour y se
@@ -1016,15 +1029,17 @@ export function WidgetReserva({
           //
           // Solo aquí: los tours sin tramos de edad tienen un único stepper y
           // meterlo en un popover añadiría un clic sin ahorrar nada.
+          <>
           <PasajerosPopover total={totalPersonas} max={maxPersonas}>
             {/* [v2 2026-07-28] Filas SIN borde, con el rango de edad en el
                 propio título y el mínimo/máximo debajo — patrón de Viator, que
                 Samuel pasó como referencia. Antes eran tres cajas con borde
                 dentro de otra caja con borde.
-                ⚠️ Los rangos de edad los fijó Samuel el 07-28: adultos 13-99,
-                niños 4-7, bebés 0-3. El tope de 7 sigue sin confirmar por
-                escrito con Fernando (salió de la reunión, donde el cliente no
-                recordaba el rango) — y ahora es copy visible. */}
+                ⚠️ Los rangos de edad los fijó Derick el 2026-09-04, y
+                corrigen los que puso Samuel el 07-28 (niños 4-7, bebés 0-3):
+                adultos 13-99, niños 3-12, bebés 0-2. El tope de 7 dejaba fuera
+                de la tarifa reducida a cualquier niño de 8 a 12, que acababa
+                pagando 114 de adulto. */}
             <FilasPasajeros
               adultos={adultos}
               ninos={ninos}
@@ -1033,9 +1048,44 @@ export function WidgetReserva({
               onAdultos={setAdultos}
               onNinos={setNinos}
               onBebes={setBebes}
+              precioNino={tour.precioNino}
               sobreOscuro={pielOscura}
             />
           </PasajerosPopover>
+          {/* [2026-09-04, Derick: «poner una opción de que los niños puedan
+              hacer un upgrade a menú Premium de adulto por 15$US más cada
+              uno»] Fuera del popover a propósito: no es cuánta gente viaja,
+              es qué comen — y dentro del desplegable nadie lo vería.
+              Solo aparece si hay niños Y el tour tiene salto de menú; si no,
+              es una casilla que no cambia el precio. */}
+          {ninos > 0 && ficha.upgradePremium ? (
+            <label
+              className={`mt-2 flex cursor-pointer items-start gap-3 rounded-card border px-3 py-2.5 ${
+                pielOscura ? 'border-white/15 bg-white/5' : 'border-linea bg-papel'
+              }`}
+            >
+              <input
+                type="checkbox"
+                className="mt-0.5 size-4 shrink-0 accent-aqua"
+                checked={ninosPremium}
+                onChange={(e) => setNinosPremium(e.target.checked)}
+              />
+              <span className="text-sm">
+                <span className={`font-semibold ${pielOscura ? 'text-papel' : 'text-navy'}`}>
+                  {t('Kids on the adult Premium menu')}
+                </span>
+                <span
+                  className={`mt-0.5 block text-xs ${
+                    pielOscura ? 'text-papel/70' : 'text-navy-sub'
+                  }`}
+                >
+                  {t('Instead of the Kid’s Meal.')}{' '}
+                  {tp('+{precio} per child', { precio: formatoDinero(ficha.upgradePremium) })}
+                </span>
+              </span>
+            </label>
+          ) : null}
+          </>
         ) : (
           // CLÁSICO: 1 input «Personas» (semi-privado, charter, Saona)
           <>
@@ -1291,6 +1341,12 @@ export function WidgetReserva({
                       // (chalecos, sillas). Solo se añade si hay alguno, para no
                       // ensuciar la URL del caso normal.
                       ...(bebes > 0 ? { bebes: String(bebes) } : {}),
+                      // [2026-09-04] El upgrade de menú de los niños viaja al
+                      // funnel como los bebés: solo si está pedido, para no
+                      // ensuciar la URL del caso normal. Sin esto, marcar la
+                      // casilla en la ficha no llegaba al checkout y Odoo
+                      // cobraba sin el salto.
+                      ...(ninosPremium ? { ninosPremium: '1' } : {}),
                       personas: String(totalPersonas),
                     }
                   : { personas: String(personas) }),
