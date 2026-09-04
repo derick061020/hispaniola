@@ -88,14 +88,16 @@ export const DEPARTAMENTOS: Departamento[] = traducible([
   // [2026-09-01, 3ª entrega] El grupo nuevo va AQUÍ, entre el equipo de tierra
   // y la fundación: la página se titula «The people behind the scenes» y abre
   // por el mar, que es lo que se compra. El orden queda mar → tierra → fundación.
-  // ⚠️ SIN `descripcion`, como los tres de mar: el cliente mandó las fotos pero
-  // no escribió párrafo para este grupo. La cabecera se pinta sin él, no con
-  // uno inventado — misma regla que ya aplican capitanes, guías y marinos.
+  // [2026-09-04] Ya tiene párrafo: el cliente lo escribió y lo mandó hoy. Nació
+  // sin él —igual que capitanes, guías y marinos, que siguen esperando el suyo—
+  // porque la regla es no inventar copy que el cliente no haya escrito.
   {
     id: 'ventas',
     // «Sales and Marketing» es como los nombra el cliente en su carpeta. Se
     // mantiene tal cual: es su nombre, no una traducción nuestra.
     nombre: 'Sales & Marketing',
+    descripcion:
+      'Behind every unforgettable adventure is a connection waiting to happen. Our Sales & Marketing team combines creativity, passion, and strategy to inspire travelers, build lasting relationships, and bring the magic of the Caribbean to the world.',
   },
   {
     id: 'fundacion',
