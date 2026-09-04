@@ -3,11 +3,32 @@
   <head>
     <meta charset="UTF-8" />
 
+    <!-- Google Tag Manager (GTM-TXSXRZN5, pedido por Miguel el 2026-09-04).
+         Es un SEGUNDO contenedor: convive con GTM-K9NWXZ7G, que sigue abajo.
+         Los dos empujan al mismo `dataLayer` y ninguno pisa al otro (cada
+         snippet lo crea solo si no existe).
+         ⚠️ Si dentro de los dos contenedores hay una etiqueta de GA4, las
+         visitas se contarian dos veces. Eso solo se ve desde el propio GTM. -->
+    <script>
+      ;(function (w, d, s, l, i) {
+        w[l] = w[l] || []
+        w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' })
+        var f = d.getElementsByTagName(s)[0],
+          j = d.createElement(s),
+          dl = l != 'dataLayer' ? '&l=' + l : ''
+        j.async = true
+        j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl
+        f.parentNode.insertBefore(j, f)
+      })(window, document, 'script', 'dataLayer', 'GTM-TXSXRZN5')
+    </script>
+    <!-- End Google Tag Manager -->
+
     <!-- Google Tag Manager (GTM-K9NWXZ7G, pedido por Miguel el 2026-08-31).
-         Va lo más arriba que se puede: justo después del charset, que tiene que
-         ir primero de todo o el navegador reinterpreta lo ya leído. Antes que
-         Clarity a propósito — el contenedor de GTM es el que puede acabar
-         cargando el resto de etiquetas y conviene que arranque primero. -->
+         Segundo contenedor por orden, detrás de GTM-TXSXRZN5; los dos van lo
+         más arriba que se puede, tras el charset, que tiene que ir primero de
+         todo o el navegador reinterpreta lo ya leído. Antes que Clarity a
+         propósito — el contenedor de GTM es el que puede acabar cargando el
+         resto de etiquetas y conviene que arranque primero. -->
     <script>
       ;(function (w, d, s, l, i) {
         w[l] = w[l] || []
@@ -131,6 +152,17 @@
     </script>
   </head>
   <body>
+    <!-- Google Tag Manager (noscript) — GTM-TXSXRZN5 -->
+    <noscript
+      ><iframe
+        src="https://www.googletagmanager.com/ns.html?id=GTM-TXSXRZN5"
+        height="0"
+        width="0"
+        style="display: none; visibility: hidden"
+      ></iframe
+    ></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
     <!-- Google Tag Manager (noscript). Es el respaldo para quien navega sin
          JavaScript. Ojo: esta web ES una SPA, asi que sin JS no se ve nada de
          todos modos; el iframe se deja porque es lo que pide Google y porque
