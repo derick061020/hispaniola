@@ -36,16 +36,15 @@ export type Kpi = { valor: string; label: string }
 // años seguidos» con la imagen del premio — una cifra de texto al lado del
 // sello real sería decir lo mismo dos veces y con menos fuerza.
 //
-// ⚠️ CIFRAS: la maqueta del cliente pone 302.997 clientes / 4.466 días. El
-// repo dice 91.607 / 4.454 (STATS, data/home.ts). No es un descuido de
-// ninguno de los dos: la web actual del cliente SE CONTRADICE A SÍ MISMA
-// desde la auditoría del 2026-07-13 — «90.498 clientes / 1.336 días» en el
-// encabezado de why-book-with-us.php y «301.661 / 4.456» en el párrafo de
-// debajo. Su maqueta tomó el par grande; el repo, el chico.
-// Se pintan las de STATS a propósito: son las MISMAS que la home, así que en
-// todo el sitio hay UNA sola verdad. Poner 302.997 aquí mientras la home dice
-// 91.607 sería peor que cualquiera de las dos por separado. Si Fernando
-// confirma las grandes, se cambian en STATS y se propagan solas.
+// CIFRAS: se pintan las de STATS (data/home.ts), que son las MISMAS que la
+// home — en todo el sitio hay UNA sola verdad, y por eso van por getter.
+// [2026-09-04] La duda que vivía aquí YA ESTÁ RESUELTA. La web del cliente se
+// contradecía a sí misma desde la auditoría del 2026-07-13 («90.498 clientes /
+// 1.336 días» en el encabezado de why-book-with-us.php y «301.661 / 4.456» en
+// el párrafo de debajo), su maqueta tomaba el par grande y el repo el chico.
+// Miguel dio las buenas desglosadas y el par grande era el que iba bien
+// encaminado: 351.078 clientes y 5.454 días. Están en STATS y llegan aquí
+// solas, que es justo lo que esta nota decía que pasaría.
 // [2026-08-19] Los tres van con GETTER, no con valor. Este módulo se evalúa
 // UNA vez, al importarse, y tanto `STATS` como el formato del número dependen
 // del idioma que se esté leyendo: resueltos aquí se congelarían en el idioma

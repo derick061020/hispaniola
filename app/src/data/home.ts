@@ -542,9 +542,27 @@ export const NAV_AYUDA: ItemNav[] = traducible([
 export type Stat = { valor: string; label: string }
 // [v3 2026-08-06] Labels en inglés y separador de miles con COMA — en un
 // sitio en inglés «91.607» se lee como noventa y uno con seiscientos siete.
+//
+// [2026-09-04, Miguel] LAS CIFRAS BUENAS, POR FIN. Hasta hoy aquí vivía el par
+// pequeño (91.607 / 4.454) porque la web del cliente se contradecía a sí misma
+// y no había forma de saber cuál de los dos pares era el real — está contado en
+// data/por-que-reservar.ts. Miguel las dio desglosadas:
+//
+//   · desde 2014, que es desde cuando hay registros:
+//       306.359 Hispaniola + 29.719 Karaya = 336.078
+//   · de 2010 a 2013, sin registros: «seguro 15.000 más»
+//   ────────────────────────────────────────────────────
+//     351.078 clientes, y es un SUELO, no un techo.
+//
+//   · días navegados: «puedes añadir otros 1000» sobre los 4.454 = 5.454.
+//
+// Los tres últimos dígitos salen de registros reales; los 15.000 son la
+// estimación de Miguel para los cuatro años sin datos. Si se prefiere no
+// aparentar precisión sobre esa parte, el cambio es poner «350,000+» aquí y se
+// propaga solo: la home y los KPIs de «por qué reservar» leen los dos de aquí.
 export const STATS: Stat[] = traducible([
-  { valor: '91,607', label: 'happy guests' },
-  { valor: '4,454', label: 'days at sea' },
+  { valor: '351,078', label: 'happy guests' },
+  { valor: '5,454', label: 'days at sea' },
   // v3-F13 (PLAN-v3.md §15.7): "de la capacidad del barco" (24 car.) partía en
   // 2 líneas contra los otros 3 labels — "aforo" ya es vocabulario del
   // proyecto (aforo máx. en las cards del ticker y en el megamenú de Tours),
