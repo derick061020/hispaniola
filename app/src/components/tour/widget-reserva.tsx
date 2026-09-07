@@ -1162,6 +1162,7 @@ export function WidgetReserva({
           cartel suelto. Ver banner-grupo.tsx para los tres estados y para el
           placeholder del porcentaje, que Samuel decide más adelante. */}
       <BannerGrupo
+        tourSlug={tour.slug}
         personas={paxActuales}
         maxPersonas={maxPersonas}
         contactoUrl={WHATSAPP_URL}

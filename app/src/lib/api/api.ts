@@ -10,8 +10,17 @@ import type {
 
 // ── Catalogo ───────────────────────────────────────────────────────────────
 
-export function obtenerConfig(signal?: AbortSignal) {
-  return llamar<ConfigPublica>('/config', { signal })
+/** La configuracion publica. Con `tour` (el slug), los `discounts` que llegan
+ *  son los de ESE tour; sin el, solo los que valen para todos.
+ *
+ *  [2026-09-07, Derick: «los group discount son solo para los compartidos, o
+ *  sea Coral Quest y Caribbean en la web, quitalo en el resto»] El descuento de
+ *  grupo dejo de ser general en Odoo, asi que preguntar sin tour ya no lo
+ *  devuelve — que es lo que apaga el cartel en el charter y en Saona. El resto
+ *  de la respuesta (claves de pago, deposito, moneda) no depende del tour. */
+export function obtenerConfig(signal?: AbortSignal, tour?: string | null) {
+  const ruta = tour ? `/config?tour=${encodeURIComponent(tour)}` : '/config'
+  return llamar<ConfigPublica>(ruta, { signal })
 }
 
 export function obtenerCatalogo(signal?: AbortSignal) {

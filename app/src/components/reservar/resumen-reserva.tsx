@@ -336,7 +336,7 @@ export function ResumenReserva({
               personas, que es lo único que decide si aplica. Aquí importa más
               todavía, porque el stepper de esta tarjeta es el último sitio donde
               se puede cambiar el tamaño del grupo antes de pagar. */}
-          <BannerGrupo personas={personas} maxPersonas={maxPersonas} />
+          <BannerGrupo tourSlug={tour.slug} personas={personas} maxPersonas={maxPersonas} />
         </div>
 
         {/* EL AVISO DEL DESCUENTO.

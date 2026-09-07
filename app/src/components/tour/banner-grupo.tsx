@@ -46,6 +46,17 @@ import { useDescuentoGrupo } from '@/lib/api/use-descuento-grupo'
 // este componente NO PINTA NADA. Un descuento retirado tiene que desaparecer
 // del sitio sin desplegar nada, igual que un tour despublicado.
 //
+// [2026-09-07, Derick: «los group discount son solo para los compartidos, o sea
+// Coral Quest y Caribbean en la web, porfavor, quitalo en el resto»]
+//
+// EL BANNER YA NO VA EN TODOS LOS TOURS: va donde Odoo diga. La oferta pasó a
+// estar atada a las dos experiencias COMPARTIDAS, y por eso este componente
+// pide ahora el `tourSlug` — con él pregunta por ESE tour (`/config?tour=…`) y
+// en el charter privado y en Saona el hook contesta `null`, o sea que no se
+// pinta nada. Si mañana se le añade otro tour en el back-office, aparece solo.
+// El slug NO es opcional a propósito: sin él la pregunta no tiene respuesta
+// buena, y un banner por defecto es justo lo que se acaba de quitar.
+//
 // El copy sigue sabiendo vivir sin porcentaje (`pct === null`): si algún día se
 // configura una oferta de grupo sin cifra, se anuncia que existe y que el
 // equipo la aplica al confirmar, en vez de inventar un número.
@@ -60,11 +71,15 @@ import { useDescuentoGrupo } from '@/lib/api/use-descuento-grupo'
 // tamaño se reserva hablando con el equipo — que es lo que ya contesta la FAQ
 // del charter para los grupos que no encajan en un formulario.
 export function BannerGrupo({
+  tourSlug,
   personas,
   maxPersonas,
   contactoUrl,
   className = '',
 }: {
+  /** El tour que se está mirando. Decide si hay descuento de grupo que
+   *  anunciar: la oferta de Odoo está atada a unos tours concretos. */
+  tourSlug: string
   personas: number
   /** Tope del contador de ESTE tour. Si no llega al umbral, el banner cambia de
    *  mensaje en vez de prometer algo que el widget no deja alcanzar. */
@@ -75,8 +90,9 @@ export function BannerGrupo({
   /** El widget y el checkout lo colocan distinto; el aspecto es el mismo. */
   className?: string
 }) {
-  const regla = useDescuentoGrupo()
-  // `null` = Odoo dice que ya no hay descuento de grupo. Nada que anunciar.
+  const regla = useDescuentoGrupo(tourSlug)
+  // `null` = Odoo dice que este tour no tiene descuento de grupo (o que ya no
+  // existe la oferta). Nada que anunciar.
   // `undefined` = todavía viajando; el hook devuelve el respaldo en cuanto
   // falle, así que aquí solo se llega con una regla o con nada.
   if (!regla) return null

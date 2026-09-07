@@ -189,6 +189,23 @@ export const DESCUENTO_GRUPO: DescuentoGrupo = {
   porcentaje: 5,
 }
 
+/** Los tours que HOY tienen descuento de grupo configurado en Odoo, por slug.
+ *
+ *  [2026-09-07, Derick: «los group discount son solo para los compartidos, o
+ *  sea Coral Quest y Caribbean en la web, porfavor, quitalo en el resto»] La
+ *  oferta paso de «todos los tours» a esos dos —las dos experiencias
+ *  COMPARTIDAS—, y el charter privado y Saona dejaron de tenerla.
+ *
+ *  ⚠️ ESTO TAMBIEN ES SOLO EL RESPALDO, igual que el umbral de arriba: quien
+ *  manda es Odoo, y `/config?tour=<slug>` ya contesta por tour. Esta lista se
+ *  usa UNICAMENTE cuando esa peticion falla, para decidir si se pinta el
+ *  respaldo o no se pinta nada. Sin ella, un Odoo caido volveria a anunciar el
+ *  descuento de grupo en el charter — y prometer un descuento que luego no se
+ *  aplica es peor que no ofrecerlo. Si en el back-office se anade la oferta a
+ *  otro tour, la web lo refleja sola; esta lista solo se queda corta mientras
+ *  Odoo no conteste. */
+export const TOURS_CON_DESCUENTO_GRUPO = ['semi-private-premium', 'coral']
+
 /** ¿Este grupo llega al descuento? Con la regla que se le pase (la de Odoo);
  *  sin ella, con el respaldo. */
 export function aplicaDescuentoGrupo(
