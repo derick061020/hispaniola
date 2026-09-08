@@ -49,6 +49,10 @@ async function datos(fichero, nombres) {
 //     redirigen.
 const FIJAS = [
   ['/', 1.0, 'weekly'],
+  // [2026-09-08] El catalogo de tours en su propia pagina. Prioridad 0.9,
+  // la misma que cada ficha: es la puerta de entrada de quien busca
+  // «hispaniola tours» y hasta hoy caia en un 404.
+  ['/tours', 0.9, 'weekly'],
   ['/competitive-advantage', 0.8, 'monthly'],
   ['/foundation', 0.6, 'monthly'],
   ['/crew', 0.6, 'monthly'],

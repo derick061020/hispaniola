@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate, useParams } from 'react-router-dom'
 import { HomePage } from '@/pages/home'
 import { TourPage } from '@/pages/tour'
+import { ToursPage } from '@/pages/tours'
 import { ReservarPage } from '@/pages/reservar'
 import { GraciasPage } from '@/pages/gracias'
 import { CuentaPage } from '@/pages/cuenta'
@@ -163,6 +164,11 @@ function App() {
       <NavFlotante />
       <Routes>
         <Route path="/" element={<HomePage />} />
+        {/* [2026-09-08] El catalogo en su propia pagina. Va ANTES de
+            `/tours/:slug` por legibilidad; React Router puntua las rutas y
+            la estatica gana igualmente, pero leidas en orden se entiende
+            que `/tours` es la lista y `/tours/algo` la ficha. */}
+        <Route path="/tours" element={<ToursPage />} />
         <Route path="/tours/:slug" element={<TourPorSlug />} />
         <Route path="/book/:slug" element={<ReservarPage />} />
         <Route path="/book/:slug/thank-you" element={<GraciasPage />} />

@@ -14,7 +14,11 @@ import { t } from '@/lib/i18n'
 // solo leen `TOURS`, no este filtro), y ahora también aquí.
 const TOURS_ESCAPARATE = TOURS.filter((tour) => tour.galeria && tour.galeria.length > 0)
 
-export function ToursGrid() {
+// `sinCabecera` (2026-09-08, /tours): la página propia de tours pone el
+// título y la descripción en el hero, así que aquí sobran — repetirlos deja
+// dos H1/H2 diciendo lo mismo con dos dedos de separación. Es opt-in: la home
+// no pasa la prop y la sección se ve exactamente igual que siempre.
+export function ToursGrid({ sinCabecera = false }: { sinCabecera?: boolean } = {}) {
   // [dev-mode] ?dev-tours=estatico congela los carruseles en su 1ª foto (sin
   // auto-avance) y ?dev-tours=descripcion abre las 4 descripciones («See
   // more») → frames limpios para Figma. Ver dev-registry.ts.
@@ -38,13 +42,15 @@ export function ToursGrid() {
             por el lado del centrado, que es el patrón de cabecera que ya usan
             Reviews y EquipoTeaser: mismo `<div className="text-center">`
             envolviendo eyebrow + h2 + lead. */}
-        <div className="text-center">
-          <Etiqueta>{t('Our tours')}</Etiqueta>
-          <h2 className="mt-3 font-display text-h2 font-semibold text-navy">{t('Choose your Caribbean experience')}</h2>
-          <p className="mx-auto mt-3 max-w-2xl text-lead text-navy-sub">
-            {t('Shared tours and private charters designed for unforgettable Caribbean experiences.')}
-          </p>
-        </div>
+        {sinCabecera ? null : (
+          <div className="text-center">
+            <Etiqueta>{t('Our tours')}</Etiqueta>
+            <h2 className="mt-3 font-display text-h2 font-semibold text-navy">{t('Choose your Caribbean experience')}</h2>
+            <p className="mx-auto mt-3 max-w-2xl text-lead text-navy-sub">
+              {t('Shared tours and private charters designed for unforgettable Caribbean experiences.')}
+            </p>
+          </div>
+        )}
 
         {/* tours-cards: activa el hover de GRUPO de las cards (:has(), ver
             componentes.css) — v3-F17.2.
@@ -53,7 +59,9 @@ export function ToursGrid() {
             dejaba 1ª fila 3 + 2ª fila 1 card suelta, feo). En xl la fila de
             4 funciona porque la TourCard ya tenía tamaño cómodo para grids
             de 3 — el ancho por card se reduce un poco, sigue legible. */}
-        <div className="tours-cards mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4">
+        <div
+          className={`tours-cards grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 ${sinCabecera ? '' : 'mt-8'}`}
+        >
           {TOURS_ESCAPARATE.map((tour) => (
             <TourCard key={tour.slug} tour={tour} autoAvance={!estatico} descripcionDesplegada={descripciones} /> // [dev-mode] gate
           ))}
