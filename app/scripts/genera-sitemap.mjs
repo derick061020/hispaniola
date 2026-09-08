@@ -53,6 +53,8 @@ const FIJAS = [
   // la misma que cada ficha: es la puerta de entrada de quien busca
   // «hispaniola tours» y hasta hoy caia en un 404.
   ['/tours', 0.9, 'weekly'],
+  // Y el de eventos, por lo mismo (prioridad 0.8, la de sus landings).
+  ['/events', 0.8, 'weekly'],
   ['/competitive-advantage', 0.8, 'monthly'],
   ['/foundation', 0.6, 'monthly'],
   ['/crew', 0.6, 'monthly'],

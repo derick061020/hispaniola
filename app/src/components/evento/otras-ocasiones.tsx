@@ -1,7 +1,6 @@
-import { Link } from 'react-router-dom'
 import { Etiqueta } from '@/components/ui/etiqueta'
-import { FotosFundido } from '@/components/ui/fotos-fundido'
 import { EVENTOS } from '@/data/eventos'
+import { CardEvento } from './card-evento'
 import { t } from '@/lib/i18n'
 
 // "Otras ocasiones" (PLAN-EVENTOS.md) — mini-cards con los OTROS 2
@@ -19,6 +18,9 @@ import { t } from '@/lib/i18n'
 // entre las 3 landings de eventos (era EnlacePrototipo en la versión
 // anterior, antes de que las 3 tuvieran landing propia).
 
+// [2026-09-08] La card se fue a `card-evento.tsx`: la comparte con la rejilla
+// de /events. Aqui solo queda lo propio de esta seccion — el eyebrow, el
+// filtro del evento actual y las dos columnas.
 export function OtrasOcasiones({ slugActual }: { slugActual: string }) {
   const otras = Object.values(EVENTOS).filter((e) => e.slug !== slugActual)
   if (otras.length === 0) return null
@@ -29,24 +31,7 @@ export function OtrasOcasiones({ slugActual }: { slugActual: string }) {
 
       <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
         {otras.map((e) => (
-          <Link
-            key={e.slug}
-            to={`/events/${e.slug}`}
-            className="group relative flex h-tambien-alto items-end overflow-hidden rounded-card-grande"
-          >
-            <div className="absolute inset-0 transition-transform duration-300 group-hover:scale-105">
-              <FotosFundido
-                fotos={[e.foto]}
-                etiqueta={e.nombre}
-                className="absolute inset-0 size-full"
-              />
-            </div>
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-navy/85 via-navy/25 to-transparent" />
-            <div className="relative z-10 p-5 text-white sm:p-6">
-              <p className="font-display text-lg font-semibold sm:text-xl">{e.nombre}</p>
-              <p className="mt-1 text-sm text-white/85">{e.eyebrow}</p>
-            </div>
-          </Link>
+          <CardEvento key={e.slug} evento={e} />
         ))}
       </div>
     </section>

@@ -7,6 +7,7 @@ import { GraciasPage } from '@/pages/gracias'
 import { CuentaPage } from '@/pages/cuenta'
 import { MiReservaPage } from '@/pages/mi-reserva'
 import { EventoPage } from '@/pages/evento'
+import { EventsPage } from '@/pages/events'
 import { GraciasEventoPage } from '@/pages/gracias-evento'
 import { VentajaCompetitivaPage } from '@/pages/ventaja-competitiva'
 import { FlotaPage } from '@/pages/flota'
@@ -176,6 +177,8 @@ function App() {
         {/* [2026-08-18] El área privada. `/mi-cuenta` queda como alias en
             español, igual que /mi-reserva → /my-booking. */}
         <Route path="/account" element={<CuentaPage />} />
+        {/* [2026-09-08] Las tres ocasiones juntas, igual que /tours. */}
+        <Route path="/events" element={<EventsPage />} />
         <Route path="/events/:slug" element={<EventoPorSlug />} />
         <Route path="/events/:slug/thank-you" element={<GraciasEventoPage />} />
         {/* [v2 2026-07-28] `/sostenibilidad` → `/competitive-advantage`: el
