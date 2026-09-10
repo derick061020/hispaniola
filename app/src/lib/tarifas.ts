@@ -204,7 +204,7 @@ export const DESCUENTO_GRUPO: DescuentoGrupo = {
  *  aplica es peor que no ofrecerlo. Si en el back-office se anade la oferta a
  *  otro tour, la web lo refleja sola; esta lista solo se queda corta mientras
  *  Odoo no conteste. */
-export const TOURS_CON_DESCUENTO_GRUPO = ['semi-private-premium', 'coral']
+export const TOURS_CON_DESCUENTO_GRUPO = ['caribbean-escape', 'coral-quest']
 
 /** ¿Este grupo llega al descuento? Con la regla que se le pase (la de Odoo);
  *  sin ella, con el respaldo. */

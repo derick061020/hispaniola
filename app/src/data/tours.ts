@@ -412,7 +412,7 @@ const MENU_PREMIUM_CASA: PlatoMenu[] = [
 ]
 
 export const FICHAS: Record<string, FichaTour> = traducible({
-  'semi-private-premium': {
+  'caribbean-escape': {
     // [2026-08-12, Samuel] EL NOMBRE NUEVO, LITERAL. Sustituye a
     // «Semi-Private Premium · adults-only catamaran», que era construcción
     // nuestra (nombre del producto + coletilla). Éste lo da el cliente entero
@@ -594,7 +594,7 @@ export const FICHAS: Record<string, FichaTour> = traducible({
         r: 'Only if you choose to pay the 25% deposit, the balance gets a 5% discount when paid in cash.',
       },
     ],
-    tambienTeGusta: ['coral', 'private-charter'],
+    tambienTeGusta: ['coral-quest', 'private-charter'],
     // [v2 2026-07-27] Las 4 ventajas del comparador (slide 17) y de la caja de
     // upsell del widget (slide 5). Salen de menuPremium/incluye de esta misma
     // ficha: langosta y Angus están en los platos Premium, la variedad de 7 vs
@@ -617,7 +617,7 @@ export const FICHAS: Record<string, FichaTour> = traducible({
     // El porqué y qué pasa con la mecánica de premarcado, en lib/tarifas.ts.
   },
 
-  coral: {
+  'coral-quest': {
     // [2026-08-12, Samuel] El nombre nuevo, literal — ver el gemelo del
     // semi-privado y la tabla de renombres en data/home.ts.
     tituloLargo: 'Coral Quest: A Marine Conservation Experience (All Ages)',
@@ -847,7 +847,7 @@ export const FICHAS: Record<string, FichaTour> = traducible({
         r: 'Only if you choose to pay the 25% deposit, the balance gets a 5% discount when paid in cash.',
       },
     ],
-    tambienTeGusta: ['semi-private-premium', 'private-charter'],
+    tambienTeGusta: ['caribbean-escape', 'private-charter'],
     // ⚡ [2026-09-01, Samuel] Sin extras: el álbum de fotos sale de las 4
     // fichas. Ver la nota del semi-privado y lib/tarifas.ts.
   },
@@ -1397,7 +1397,7 @@ export const FICHAS: Record<string, FichaTour> = traducible({
       { p: 'Do you accept corporate payments?', r: 'Yes, see the Corporate & MICE page for formal invoicing.' },
       { p: 'What if it rains?', r: 'Full refund or a date change, at no cost.' },
     ],
-    tambienTeGusta: ['semi-private-premium', 'coral'],
+    tambienTeGusta: ['caribbean-escape', 'coral-quest'],
     // ⚡⚡ [2026-09-01, Samuel] LOS DOS ADD-ONS QUE HABÍA AQUÍ SE VAN, Y ENTRAN
     // OTROS DOS. Es la reescritura completa de los extras del charter:
     //
@@ -1676,7 +1676,7 @@ export const FICHAS: Record<string, FichaTour> = traducible({
         r: 'No minimum age. We carry life jackets in every size on both the speedboat and the catamaran.',
       },
     ],
-    tambienTeGusta: ['semi-private-premium', 'private-charter'],
+    tambienTeGusta: ['caribbean-escape', 'private-charter'],
     // [v2] Saona. La langosta SÍ está documentada en su web para los 3 botes
     // («Optional add-on during check-out: Lobster 30$US per person») y es el
     // único add-on por PERSONA: se marca una vez y multiplica por todo el

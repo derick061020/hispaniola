@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, Check, ChevronDown, ChevronRight, Mail, MapPin, MessageCircle, Phone, Ticket } from 'lucide-react'
+import { ArrowRight, Check, ChevronDown, ChevronRight, Copy, Mail, MapPin, MessageCircle, Phone, Ticket } from 'lucide-react'
 import { Etiqueta } from '@/components/ui/etiqueta'
 import { Boton } from '@/components/ui/boton'
 import { Campo } from '@/components/ui/campo'
@@ -215,33 +215,71 @@ function Persona() {
 // que tenían que ceder el paso.
 function FilaContacto({ card }: { card: ContactoCard }) {
   const Icono = ICONOS[card.id]
+  const [copiado, setCopiado] = useState(false)
+
+  // [2026-09-10, Derick: «el correo en la web debe poderse copiar»]
+  //
+  // No había ninguna regla de CSS impidiéndolo: el problema es que el dato
+  // vivía DENTRO del `<a href="mailto:…">`, y el navegador trata el arrastre
+  // sobre un enlace como «arrastrar el enlace», no como «seleccionar texto».
+  // Al intentar barrer el correo con el ratón no se seleccionaba nada, y en
+  // el móvil la pulsación larga ofrecía copiar la DIRECCIÓN DEL ENLACE
+  // («mailto:info@…»), que no es lo que se quiere pegar.
+  //
+  // Se arregla por los dos lados: `draggable={false}` devuelve la selección
+  // con el ratón dentro del enlace, y el botón de copiar —fuera del `<a>`,
+  // que un botón dentro de un enlace es HTML inválido y además no se puede
+  // pulsar sin disparar el mailto— lo resuelve de un toque, también en móvil.
+  const copiar = async () => {
+    try {
+      await navigator.clipboard.writeText(card.dato)
+      setCopiado(true)
+      window.setTimeout(() => setCopiado(false), 2000)
+    } catch {
+      // Sin permiso de portapapeles (o sin HTTPS) no hay nada que hacer desde
+      // aquí; el texto sigue siendo seleccionable a mano, que es el otro
+      // camino que abre este cambio.
+    }
+  }
+
   return (
-    <a
-      href={card.href}
-      className="group flex items-center gap-3.5 px-6 py-3.5 transition-colors hover:bg-papel sm:px-7"
-    >
-      <Icono className="size-4 shrink-0 text-aqua-dark" strokeWidth={2} aria-hidden="true" />
-      <span className="min-w-0 flex-1">
-        <span className="block text-eyebrow font-semibold uppercase tracking-[0.08em] text-navy-soft">
-          {card.titulo}
+    <div className="group flex items-center gap-3.5 px-6 py-3.5 transition-colors hover:bg-papel sm:px-7">
+      <a href={card.href} draggable={false} className="flex min-w-0 flex-1 items-center gap-3.5">
+        <Icono className="size-4 shrink-0 text-aqua-dark" strokeWidth={2} aria-hidden="true" />
+        <span className="min-w-0 flex-1">
+          <span className="block text-eyebrow font-semibold uppercase tracking-[0.08em] text-navy-soft">
+            {card.titulo}
+          </span>
+          {/* break-words y no truncate: el email del cliente mide 32 caracteres
+              y en el ancho del carril se cortaba en «info@catamarantourspuntac…»
+              — un dato de contacto truncado no sirve para nada. Prefiere partir
+              en dos líneas antes que esconder la mitad. */}
+          <span className="mt-0.5 block select-text break-words text-sm font-medium leading-snug text-navy">
+            {card.dato}
+          </span>
         </span>
-        {/* break-words y no truncate: el email del cliente mide 32 caracteres
-            y en el ancho del carril se cortaba en «info@catamarantourspuntac…»
-            — un dato de contacto truncado no sirve para nada. Prefiere partir
-            en dos líneas antes que esconder la mitad. */}
-        <span className="mt-0.5 block break-words text-sm font-medium leading-snug text-navy">
-          {card.dato}
-        </span>
-      </span>
-      {/* El verbo de la acción (correcciones v1, slide 14) sigue estando: ya
-          no como línea coral propia sino como el título accesible de la fila
-          — el chevron dice «lleva a algún sitio» sin gastar una línea. */}
-      <span className="sr-only">{card.cta}</span>
-      <ChevronRight
-        aria-hidden="true"
-        className="size-4 shrink-0 text-navy-soft transition group-hover:translate-x-0.5 group-hover:text-aqua-dark"
-      />
-    </a>
+        {/* El verbo de la acción (correcciones v1, slide 14) sigue estando: ya
+            no como línea coral propia sino como el título accesible de la fila
+            — el chevron dice «lleva a algún sitio» sin gastar una línea. */}
+        <span className="sr-only">{card.cta}</span>
+        <ChevronRight
+          aria-hidden="true"
+          className="size-4 shrink-0 text-navy-soft transition group-hover:translate-x-0.5 group-hover:text-aqua-dark"
+        />
+      </a>
+      <button
+        type="button"
+        onClick={copiar}
+        aria-label={`${copiado ? t('Copied') : t('Copy')}: ${card.dato}`}
+        className="grid size-8 shrink-0 place-items-center rounded-full text-navy-soft transition-colors hover:bg-linea hover:text-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-aqua-dark"
+      >
+        {copiado ? (
+          <Check className="size-4 text-aqua-dark" aria-hidden="true" />
+        ) : (
+          <Copy className="size-4" aria-hidden="true" />
+        )}
+      </button>
+    </div>
   )
 }
 

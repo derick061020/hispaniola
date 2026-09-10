@@ -62,9 +62,7 @@ export const TIPS_GUIAS: TipGuia[] = traducible([
     fotoAlt: 'Snorkelers swimming over the reef next to the catamaran in Cabeza de Toro',
     fotoPie: 'Coral Quest · Cabeza de Toro reef',
     stat: { valor: '≈100%', texto: 'of our trips see turtles · Top 3 coral project in the country' },
-    // ⚠️ El `to` conserva el slug viejo a propósito: el renombre del 2026-08-12
-    // no toca URLs (ver la tabla en data/home.ts).
-    ctaPrimario: { texto: 'See Coral Quest', to: '/tours/coral' },
+    ctaPrimario: { texto: 'See Coral Quest', to: '/tours/coral-quest' },
     ctaEnlace: { texto: 'The full foundation story', to: '/foundation' },
   },
   {

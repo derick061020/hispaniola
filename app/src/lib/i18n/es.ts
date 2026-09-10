@@ -629,6 +629,8 @@ export const ES: Record<string, string> = {
   "Cooking happens while we sail, in front of the guests. Nothing on board is reheated.": "Se cocina durante la navegación, frente al pasaje. No hay comida recalentada a bordo.",
   "Cooking on board": "Cocina a bordo",
   "Coordinator": "Coordinadora",
+  "Copied": "Copiado",
+  "Copy": "Copiar",
   "Copy link": "Copiar enlace",
   "Coral": "Coral",
   "coral": "coral",

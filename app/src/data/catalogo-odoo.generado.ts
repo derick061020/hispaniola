@@ -8,7 +8,7 @@ import type { Tour } from '@/lib/api/tipos'
 
 export const CATALOGO_ODOO: Tour[] = [
   {
-    "slug": "semi-private-premium",
+    "slug": "caribbean-escape",
     "id": 26,
     "name": "Semi-Private Premium",
     "short_description": "An intimate adults-only Caribbean experience featuring protected reef snorkeling, an exclusive underwater museum, a secluded beach, and chef-prepared cuisine from our floating kitchen.",
@@ -47,7 +47,7 @@ export const CATALOGO_ODOO: Tour[] = [
     "terms": []
   },
   {
-    "slug": "coral",
+    "slug": "coral-quest",
     "id": 27,
     "name": "Snorkel Lovers",
     "short_description": "An all-ages experience where coral restoration, symbolic coral planting, an exclusive underwater museum, and protected reefs inspire unforgettable memories.",

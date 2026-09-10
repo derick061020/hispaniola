@@ -6,8 +6,38 @@
   "installCommand": "npm ci",
   "redirects": [
     {
+      "source": "/tours/semi-private-premium",
+      "destination": "/tours/caribbean-escape",
+      "permanent": true
+    },
+    {
+      "source": "/book/semi-private-premium",
+      "destination": "/book/caribbean-escape",
+      "permanent": true
+    },
+    {
+      "source": "/book/semi-private-premium/thank-you",
+      "destination": "/book/caribbean-escape/thank-you",
+      "permanent": true
+    },
+    {
+      "source": "/tours/coral",
+      "destination": "/tours/coral-quest",
+      "permanent": true
+    },
+    {
+      "source": "/book/coral",
+      "destination": "/book/coral-quest",
+      "permanent": true
+    },
+    {
+      "source": "/book/coral/thank-you",
+      "destination": "/book/coral-quest/thank-you",
+      "permanent": true
+    },
+    {
       "source": "/tours/semi-privado",
-      "destination": "/tours/semi-private-premium",
+      "destination": "/tours/caribbean-escape",
       "permanent": true
     },
     {
@@ -22,17 +52,17 @@
     },
     {
       "source": "/tours/snorkel-lovers",
-      "destination": "/tours/coral",
+      "destination": "/tours/coral-quest",
       "permanent": true
     },
     {
       "source": "/book/snorkel-lovers",
-      "destination": "/book/coral",
+      "destination": "/book/coral-quest",
       "permanent": true
     },
     {
       "source": "/book/snorkel-lovers/thank-you",
-      "destination": "/book/coral/thank-you",
+      "destination": "/book/coral-quest/thank-you",
       "permanent": true
     },
     {
@@ -57,7 +87,7 @@
     },
     {
       "source": "/reservar/semi-privado/gracias",
-      "destination": "/book/semi-private-premium/thank-you",
+      "destination": "/book/caribbean-escape/thank-you",
       "permanent": true
     },
     {
@@ -72,7 +102,7 @@
     },
     {
       "source": "/reservar/semi-privado",
-      "destination": "/book/semi-private-premium",
+      "destination": "/book/caribbean-escape",
       "permanent": true
     },
     {
@@ -202,7 +232,7 @@
     },
     {
       "source": "/semi-private-catamaran-excursion.php",
-      "destination": "/tours/semi-private-premium",
+      "destination": "/tours/caribbean-escape",
       "permanent": true
     },
     {

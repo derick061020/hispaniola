@@ -14,7 +14,7 @@
 type Props = {
   titulo: string
   descripcion: string
-  /** Ruta absoluta desde la raíz, p. ej. '/tours/semi-private-premium'. */
+  /** Ruta absoluta desde la raíz, p. ej. '/tours/caribbean-escape'. */
   ruta: string
   /** false = noindex,nofollow (páginas internas tipo /fundaciones). */
   indexable?: boolean

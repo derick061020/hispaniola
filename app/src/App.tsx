@@ -39,7 +39,7 @@ import { DevMode } from '@/dev/dev-mode'
 //
 // La causa no estaba en la tabla ni en el widget, sino aquí. React Router
 // REUTILIZA el mismo componente cuando solo cambia el parámetro de la ruta
-// (/tours/semi-private-premium → /tours/private-charter es la misma <Route>), y los
+// (/tours/caribbean-escape → /tours/private-charter es la misma <Route>), y los
 // inicializadores de `useState` solo corren al MONTAR. Resultado: se llegaba a
 // la ficha del charter con el `variante` de la ficha anterior — `null` viniendo
 // del semi-privado (que no tiene botes), o `'speedboat'` viniendo de Saona, que
@@ -132,13 +132,19 @@ const REDIRECCIONES_ES_EN: [string, string][] = [
 // mapearlos — si no, `/eventos/bodas` aterrizaría en `/events/bodas`, que ya
 // no existe y daría 404.
 const SLUGS_VIEJOS: Record<string, string> = {
-  'semi-privado': 'semi-private-premium',
+  // [2026-09-10, Derick: «los slugs de los tours sean del nombre del tour»] La
+  // URL decía el nombre INTERNO del tarifario —`semi-private-premium`, y
+  // `coral` a secas— y el cliente compra «Caribbean Escape» y «Coral Quest».
+  // Las tres generaciones de cada URL siguen resolviendo: el nombre en
+  // español de la web vieja, el nombre interno, y el comercial de ahora.
+  // Hay enlaces repartidos por WhatsApp, en correos ya enviados y en pedidos
+  // guardados; ninguno puede empezar a dar 404.
+  'semi-privado': 'caribbean-escape',
+  'semi-private-premium': 'caribbean-escape',
   'charter-privado': 'private-charter',
   'isla-saona': 'saona-island',
-  // [2026-08-21] El tour se llama El Coral desde v3 y la URL seguía
-  // diciendo el nombre viejo. La vieja se sigue atendiendo: hay enlaces
-  // repartidos por WhatsApp y una entrada en el sitemap indexada.
-  'snorkel-lovers': 'coral',
+  'snorkel-lovers': 'coral-quest',
+  coral: 'coral-quest',
   bodas: 'weddings',
   empresas: 'corporate',
   'politica-de-cancelacion': 'cancellation-policy',

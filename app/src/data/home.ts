@@ -77,16 +77,22 @@ export type Tour = {
 // producto, `tituloLargo` es cómo se presenta— así que el renombre no inventa
 // nada: parte el nombre nuevo por donde el propio nombre se parte.
 //
-// ⚠️ LOS SLUGS. `semi-private-premium` sigue diciendo el nombre viejo: es una
-// URL indexada y enlazada desde fuera, y cambiarla es tocar App.tsx +
-// public/sitemap.xml + vercel.json con sus 301. Samuel no lo ha pedido.
+// ⚠️ LOS SLUGS DICEN EL NOMBRE COMERCIAL. [2026-09-10, Derick: «los slugs de
+// los tours y eventos sean del nombre del tour o evento»] `semi-private-premium`
+// pasó a `caribbean-escape` y `coral` a `coral-quest`: la URL enseñaba el
+// nombre INTERNO del tarifario y el cliente compra Caribbean Escape y Coral
+// Quest. Los otros dos ya coincidían con su nombre.
 //
-// `snorkel-lovers` SÍ cambió, a `coral` (Samuel, 2026-08-21). Se hicieron las
-// cuatro cosas en el mismo commit: el slug aquí, la clave de FICHAS en
-// tours.ts, la entrada del sitemap, y los 301 de vercel.json para /tours y
-// /book. La URL vieja además se sigue atendiendo dentro de la SPA, vía
-// SLUGS_VIEJOS en App.tsx, porque el 301 del host no cubre la navegación
-// interna.
+// Renombrar uno son CINCO cosas en el mismo commit, y ninguna es opcional: el
+// slug aquí, la clave de FICHAS en tours.ts, la entrada del sitemap, los 301
+// de vercel.json para /tours y /book —de ahí sale también el .htaccess de
+// Hostinger, que es el hosting real—, y la entrada en SLUGS_VIEJOS de
+// App.tsx, porque el 301 del host NO cubre la navegación interna de la SPA.
+//
+// Y en Odoo: `web_slug` de la excursión y su tabla SLUGS_VIEJOS
+// (hispaniola_web/models/excursion.py). El slug viaja dentro de los pedidos
+// guardados, así que quien reabra su reserva con el enlace de su correo la
+// busca por el nombre de entonces.
 //
 // ⚠️ Y LOS COMENTARIOS ANTIGUOS DEL PROYECTO SIGUEN DICIENDO «Snorkel Lovers» y
 // «semi-privado» (menu-tour.tsx, widget-reserva.tsx, tokens, nombres de foto
@@ -108,7 +114,7 @@ export type Tour = {
 // las reservas del navegador ya se serializan con `crudo()` (lib/reservas.ts).
 export const TOURS: Tour[] = traducible([
   {
-    slug: 'semi-private-premium',
+    slug: 'caribbean-escape',
     nombre: 'Caribbean Escape',
     audienciaChip: 'Adults only',
     duracionCorta: '4 h',
@@ -134,7 +140,7 @@ export const TOURS: Tour[] = traducible([
     destacados: ['Limited guests', 'Underwater museum', 'Floating kitchen'],
   },
   {
-    slug: 'coral',
+    slug: 'coral-quest',
     nombre: 'Coral Quest',
     audienciaChip: 'All ages',
     duracionCorta: '4 h',

@@ -27,7 +27,7 @@ import { numero, t, traducible } from '@/lib/i18n'
  *  US$ 99 sola, sin tocar nada. El recibo y el cierre de las 19 razones
  *  recalculan su ahorro con el número nuevo. */
 export const PRECIO_TODO_INCLUIDO =
-  TOURS.find((t) => t.slug === 'coral')?.precioLight ?? 99
+  TOURS.find((t) => t.slug === 'coral-quest')?.precioLight ?? 99
 
 export type Kpi = { valor: string; label: string }
 
