@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from 'react'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { ArrowLeft, Check, ChevronRight, CreditCard, KeyRound, MapPin, Pencil, Ticket, Users, Utensils } from 'lucide-react'
 import * as FancyButton from '@/components/alignui/fancy-button'
@@ -699,10 +699,17 @@ function DetalleReserva({
             al reabrirlo enseñaría lo tecleado en vez de lo guardado. */}
 
         {/* 3. MENÚ POR PERSONA */}
+        {/* [2026-09-12] `step=menu` es lo que trae el boton «Choose my menu»
+            del correo 02 (mail_sender.py: `menu_link`). Nadie lo leia: el
+            cliente aterrizaba arriba del todo, con el bloque cerrado, y tenia
+            que encontrar «Editar» el solo. Ahora el bloque se abre ya en modo
+            edicion y la pagina baja hasta el. Solo la PRIMERA carga: tras
+            guardar, el `key` remonta el bloque y no debe reabrirse. */}
         <BloqueMenu
           key={`menu-${reservaParaMostrar.platos.join('|')}`}
           reserva={reservaParaMostrar}
           guardar={guardarEnOdoo}
+          abrirAlEntrar={paramsDetalle.get('step') === 'menu' && recargas === 0}
         />
 
         {/* 4. RECOGIDA */}
@@ -938,13 +945,13 @@ function Fila({ label, valor }: { label: string; valor: string }) {
 function BloqueMenu({
   reserva,
   guardar,
+  abrirAlEntrar = false,
 }: {
   reserva: Reserva
   guardar: (cambios: Parameters<typeof actualizarReserva>[2]) => Promise<void>
+  /** Arrancar ya en modo edición y hacer scroll hasta aquí (enlace del correo). */
+  abrirAlEntrar?: boolean
 }) {
-  const [edit, setEdit] = useState(false)
-  const [platos, setPlatos] = useState(reserva.platos)
-  const { guardando, error, enviar } = useGuardado(guardar)
   const menuReserva = menuDeLaReserva({
     ficha: reserva.ficha,
     paquete: reserva.paquete,
@@ -953,6 +960,20 @@ function BloqueMenu({
   })
   const menu = menuReserva?.platos ?? []
   const seElige = menuReserva?.modo === 'eleccion'
+
+  const [edit, setEdit] = useState(abrirAlEntrar && seElige)
+  // [2026-09-12] Defensa por si la reserva llega con MENOS huecos que personas
+  // (la traduccion de Odoo ya rellena, pero una copia antigua en localStorage
+  // no): sin esto, «Editar» pintaba un desplegable por plato guardado y a
+  // quien no habia elegido nada no le salia ninguno.
+  const [platos, setPlatos] = useState(() =>
+    Array.from({ length: Math.max(reserva.personas, reserva.platos.length) }, (_, i) => reserva.platos[i] ?? ''),
+  )
+  const { guardando, error, enviar } = useGuardado(guardar)
+  const seccion = useRef<HTMLElement>(null)
+  useEffect(() => {
+    if (abrirAlEntrar) seccion.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }, [abrirAlEntrar])
 
   // Los platos van POR COMENSAL y se manda el array entero, huecos incluidos:
   // el servidor descarta los vacíos, que es lo que quiere decir «este todavía
@@ -964,7 +985,7 @@ function BloqueMenu({
   }
 
   return (
-    <section className="mt-6 rounded-card-grande border border-linea bg-papel p-5 sm:p-6">
+    <section id="menu" ref={seccion} className="mt-6 scroll-mt-24 rounded-card-grande border border-linea bg-papel p-5 sm:p-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Utensils className="size-5 text-aqua" aria-hidden="true" />

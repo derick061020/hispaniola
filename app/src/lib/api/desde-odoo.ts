@@ -56,7 +56,15 @@ export function reservaDesdeOdoo(odoo: ReservaOdoo): ReservaLocal {
       0,
     ),
     fechaISO: odoo.date ?? '',
-    platos: odoo.dishes.map((d) => d.dish),
+    // [2026-09-12] UN HUECO POR COMENSAL, siempre. Odoo solo guarda los platos
+    // elegidos (los vacios se descartan al escribir), asi que `dishes` puede
+    // venir corto o directamente vacio: desde agosto se reserva sin elegir y el
+    // correo «Choose what you will eat» manda al cliente aqui a completarlo.
+    // Con `map` a secas la lista salia con CERO invitados —«Your menu» sin una
+    // sola fila y «Editar» sin un solo desplegable— y si el invitado 1 no habia
+    // elegido y el 2 si, el plato del 2 se pintaba como del 1. Se coloca cada
+    // plato en su `guest_index` y se rellena hasta el total de personas.
+    platos: platosPorComensal(odoo.dishes, odoo.pax.total),
     recogida: {
       hotel: odoo.pickup.hotel,
       notas: odoo.pickup.room ? `Room ${odoo.pickup.room}` : '',
@@ -75,6 +83,13 @@ export function reservaDesdeOdoo(odoo: ReservaOdoo): ReservaLocal {
     desglose: odoo.amounts.lines ?? [],
     fechaCreacionISO: odoo.created_at ?? new Date().toISOString(),
   }
+}
+
+function platosPorComensal(dishes: ReservaOdoo['dishes'], personas: number): string[] {
+  const largo = Math.max(personas, ...dishes.map((d) => d.guest + 1), 0)
+  const platos = Array.from({ length: largo }, () => '')
+  for (const d of dishes) if (d.guest >= 0) platos[d.guest] = d.dish
+  return platos
 }
 
 function partirNombre(completo: string, email: string, telefono: string) {
