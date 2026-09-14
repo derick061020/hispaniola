@@ -410,7 +410,8 @@ function FlujoReserva({
   const [pagando, setPagando] = useState(false)
   // Stripe cobra dentro de su formulario; aquí solo se sabe que está en ello,
   // para que la barra móvil gire y no se pueda pulsar dos veces.
-  const [pagandoStripe, setPagandoStripe] = useState(false)
+  const [estadoPago, setEstadoPago] = useState({ procesando: false, puedePagar: false })
+  const pagandoStripe = estadoPago.procesando
   const [errorPago, setErrorPago] = useState<string | null>(null)
 
   // [2026-08-14] AQUÍ SE COBRA DE VERDAD. Lo que había antes creaba el intento
@@ -653,7 +654,10 @@ function FlujoReserva({
                 metodoPago === 'efectivo'
                   ? t('Confirm booking')
                   : `${t('Pay deposit')} · ${formatoDinero(deposito)}`,
-              habilitado: fechaISO !== null && !pagando && !pagandoStripe,
+              // [2026-09-14] Y solo cuando el paso de pago dice que se puede:
+              // con Payment Element, «Pay» con la tarjeta a medias solo
+              // devuelve un error de Stripe; mejor no dejar pulsar.
+              habilitado: fechaISO !== null && !pagando && !pagandoStripe && estadoPago.puedePagar,
               // El cobro tarda: crear el intento en Odoo, confirmarlo con
               // Stripe y avisar de vuelta. La barra lo enseña girando.
               cargando: pagando || pagandoStripe,
@@ -920,7 +924,7 @@ function FlujoReserva({
                   fechaElegida={fechaISO !== null}
                   onPagar={handlePagar}
                   stripe={enlaceStripe}
-                  onProcesandoStripe={setPagandoStripe}
+                  onEstadoPago={setEstadoPago}
                   registraLanzar={(fn) => { lanzarPago.current = fn }}
                   procesando={pagando}
                   error={errorPago}

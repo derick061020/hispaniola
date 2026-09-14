@@ -65,7 +65,7 @@ export function PasoPago({
   fechaElegida,
   onPagar,
   stripe,
-  onProcesandoStripe,
+  onEstadoPago,
   registraLanzar,
   pagaEnEfectivo = false,
   onEfectivoChange,
@@ -86,8 +86,9 @@ export function PasoPago({
   onPagar: (datos: DatosPago) => void
   /** El enlace con el funnel para cobrar con Stripe (ver `EnlaceStripe`). */
   stripe: EnlaceStripe
-  /** Avisa al padre de que Stripe está cobrando (la barra móvil lo enseña). */
-  onProcesandoStripe?: (procesando: boolean) => void
+  /** Avisa al padre de cómo va el cobro: si Stripe está en ello (la barra
+   *  móvil gira) y si ya se puede pulsar «Pagar» (la barra se habilita). */
+  onEstadoPago?: (estado: { procesando: boolean; puedePagar: boolean }) => void
   /** [2026-08-25, al integrar la barra móvil de Samuel] Publica hacia arriba el
    *  disparador del cobro.
    *
@@ -140,10 +141,6 @@ export function PasoPago({
   // disparador de su cobro, para el botón de aquí y para la barra móvil.
   const [estadoStripe, setEstadoStripe] = useState<EstadoFormularioStripe | null>(null)
   const pagarConStripe = useRef<(() => void) | null>(null)
-  const avisaProcesando = onProcesandoStripe
-  useEffect(() => {
-    avisaProcesando?.(!!estadoStripe?.procesando)
-  }, [estadoStripe?.procesando, avisaProcesando])
 
   // ── Estado del CTA ──────────────────────────────────────────────────────
   const sinPasarela = medios !== null && !medios.tarjeta && !medios.paypal
@@ -160,6 +157,12 @@ export function PasoPago({
     if (metodo === 'paypal') return onPagar({ metodo })
     pagarConStripe.current?.()
   }
+
+  const avisaEstado = onEstadoPago
+  const procesandoStripe = !!estadoStripe?.procesando
+  useEffect(() => {
+    avisaEstado?.({ procesando: procesandoStripe, puedePagar })
+  }, [procesandoStripe, puedePagar, avisaEstado])
 
   // La barra móvil dispara ESTE `lanzar`, no `onPagar`: así el cobro sale con
   // el método y la tarjeta que se acaban de rellenar aquí dentro. Se vuelve a

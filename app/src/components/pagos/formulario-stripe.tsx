@@ -247,7 +247,10 @@ export function FormularioStripe({
           const express = elements.create('expressCheckout', {
             buttonType: { applePay: 'book', googlePay: 'book' },
             buttonHeight: 48,
-            layout: { maxColumns: 2, maxRows: 1, overflow: 'auto' },
+            // Dos filas: en móvil Stripe pinta una columna, y con una sola
+            // fila el segundo wallet (Link, tras Apple Pay) se escondía en
+            // «See more». Apilados se ven los dos sin un toque más.
+            layout: { maxColumns: 2, maxRows: 2, overflow: 'auto' },
             paymentMethods: { applePay: 'always', googlePay: 'always', link: 'auto', amazonPay: 'never', paypal: 'never' },
           })
           express.on('ready', ({ availablePaymentMethods }) => {
