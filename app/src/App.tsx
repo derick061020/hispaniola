@@ -26,7 +26,6 @@ import { PorQueReservarPage } from '@/pages/por-que-reservar'
 import { ContactoPage } from '@/pages/contacto'
 import { LegalPage } from '@/pages/legal'
 import { FundacionesPage } from '@/pages/fundaciones'
-import { NoEncontradoPage } from '@/pages/no-encontrado'
 import { ScrollAlNavegar } from '@/lib/scroll-al-navegar'
 import { NavFlotante } from '@/components/home/nav-flotante'
 import { Topbar } from '@/components/home/topbar'
@@ -258,7 +257,14 @@ function App() {
           ),
         )}
 
-        <Route path="*" element={<NoEncontradoPage />} />
+        {/* [2026-09-14, Samuel: «todos los 404 de hispaniola que redirijan a la
+            home»] La ruta comodin deja de pintar la pagina 404 (pages/
+            no-encontrado.tsx, que se conserva por si se vuelve atras) y manda
+            a la home, igual que ya hacian tour, evento y legal con un slug
+            desconocido. En el hosting el .htaccess ya sirve index.html para
+            cualquier ruta, asi que este <Navigate> es el unico sitio donde se
+            decide que ve el visitante perdido. */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       {import.meta.env.DEV ? <DevMode /> : null}
     </>

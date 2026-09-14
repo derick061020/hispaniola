@@ -1,4 +1,4 @@
-import { Link, useParams } from 'react-router-dom'
+import { Link, Navigate, useParams } from 'react-router-dom'
 import { ArrowRight } from 'lucide-react'
 import { Footer } from '@/components/home/footer'
 import { Boton } from '@/components/ui/boton'
@@ -11,7 +11,6 @@ import { Newsletter } from '@/components/blog/lista-articulos'
 import { Meta } from '@/components/seo/meta'
 import { ARTICULOS } from '@/data/blog'
 import { EQUIPO } from '@/data/nosotros'
-import { NoEncontradoPage } from '@/pages/no-encontrado'
 import { t } from '@/lib/i18n'
 
 // Página de artículo (/blog/:slug) — correcciones v1 del cliente
@@ -73,7 +72,9 @@ export function ArticuloPage() {
   const { slug } = useParams()
   const articulo = ARTICULOS.find((a) => a.slug === slug)
 
-  if (!articulo) return <NoEncontradoPage />
+  // [2026-09-14, Samuel] Un articulo que no existe manda a la home, como el
+  // resto de rutas desconocidas (ver la ruta comodin de App.tsx).
+  if (!articulo) return <Navigate to="/" replace />
 
   const autor = EQUIPO.find((m) => m.id === articulo.autorId)
   const relacionados = ARTICULOS.filter((a) => a.slug !== articulo.slug).slice(0, 2)
