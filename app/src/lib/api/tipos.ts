@@ -358,5 +358,11 @@ export type MetaOrigen = {
   utm_source?: string
   utm_medium?: string
   utm_campaign?: string
+  /** Meta: nombre del anuncio. */
+  utm_content?: string
+  /** Meta: conjunto de anuncios. */
+  utm_term?: string
+  /** Página de aterrizaje de la visita (con sus parámetros). */
+  landing?: string
   language?: string
 }

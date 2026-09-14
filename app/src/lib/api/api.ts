@@ -1,5 +1,6 @@
 import { llamar, llamarSobre, enviarBaliza } from './cliente'
 import { idiomaDelNavegador } from '@/lib/idioma'
+import { origenVisita } from '@/lib/origen-visita'
 import type {
   ConfigPublica, Cotizacion, Disponibilidad, Hotel, IntencionPago, ParcheCheckout,
   Paquete, Pax, Pedido, Reserva, Tour,
@@ -372,13 +373,20 @@ export function suscribirNewsletter(email: string, honeypot?: string) {
  *  tiene respuesta en Odoo. */
 export function metaOrigen() {
   if (typeof window === 'undefined') return {}
-  const params = new URLSearchParams(window.location.search)
+  // [2026-09-14] Los UTM ya no se leen solo de la URL de ESTA página: vienen
+  // de lib/origen-visita.ts, que los guardó al aterrizar. Sin eso, el
+  // visitante que llega de un anuncio a la ficha y pulsa «Book» ya había
+  // perdido los parámetros al llegar al checkout (y la campaña, con ellos).
+  const origen = origenVisita()
   return {
     url: window.location.href,
     referrer: document.referrer || undefined,
-    utm_source: params.get('utm_source') ?? undefined,
-    utm_medium: params.get('utm_medium') ?? undefined,
-    utm_campaign: params.get('utm_campaign') ?? undefined,
+    utm_source: origen.utm_source,
+    utm_medium: origen.utm_medium,
+    utm_campaign: origen.utm_campaign,
+    utm_content: origen.utm_content,
+    utm_term: origen.utm_term,
+    landing: origen.landing,
     // El idioma REAL del visitante, no el `lang` del <html> (que es fijo:
     // el sitio está en inglés). Es lo que decide en qué lengua recibe sus
     // correos si no elige otra cosa en el paso de contacto.

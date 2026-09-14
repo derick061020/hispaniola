@@ -5,6 +5,12 @@ import './index.css'
 import App from './App.tsx'
 import { ProveedorIdioma } from '@/lib/i18n'
 import { ProveedorMoneda } from '@/lib/proveedor-moneda'
+import { recordarOrigenVisita } from '@/lib/origen-visita'
+
+// Antes de pintar nada: si la URL trae la campaña (`?utm_campaign=…` de un
+// anuncio de Meta), se guarda para que llegue a Odoo aunque el visitante
+// navegue tres páginas antes de reservar. Ver lib/origen-visita.ts.
+recordarOrigenVisita()
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
