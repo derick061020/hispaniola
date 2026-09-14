@@ -1320,6 +1320,9 @@ export const VIDEO_TESTIMONIOS: VideoTestimonio[] = traducible([
 // 2026-07-17: dirección "Oficina Hispaniola Aquatic Adventures, C. P.º del
 // Sol, Punta Cana 23500, República Dominicana" (coordenadas 18.669740,
 // -68.401262) y correo "info@catamarantourspuntacana.com".
+// [2026-09-14, Samuel: «queremos cambiar el correo principal a
+// info@hispaniolaaquaticadventures.com»] El buzón nuevo ya existía en
+// Workspace con la misma gente; el viejo sigue llegando a los mismos.
 export type ContactoCard = {
   id: 'whatsapp' | 'telefono' | 'email' | 'oficina'
   titulo: string
@@ -1344,7 +1347,7 @@ export const CONTACTO = traducible({
   lead: 'Our local specialists work exclusively for Hispaniola Aquatic Adventures and are here to help you.',
   titulo: 'Speak with local experts',
   direccion: 'Hispaniola Aquatic Adventures office, C. P.º del Sol, Punta Cana 23500, Dominican Republic',
-  email: 'info@catamarantourspuntacana.com',
+  email: 'info@hispaniolaaquaticadventures.com',
   mapaEmbedUrl: 'https://www.google.com/maps?q=18.669740,-68.401262&z=16&output=embed',
   confirmacion: 'We got your message. We reply within 24 hours (sooner on WhatsApp).',
   microcopy: 'Already booked? Have your code handy (HSP-XXXX-XXXX) and we can help you faster.',
@@ -1418,8 +1421,8 @@ export const CONTACTO = traducible({
     {
       id: 'email',
       titulo: 'Email',
-      dato: 'info@catamarantourspuntacana.com',
-      href: 'mailto:info@catamarantourspuntacana.com',
+      dato: 'info@hispaniolaaquaticadventures.com',
+      href: 'mailto:info@hispaniolaaquaticadventures.com',
       cta: 'Write to us',
     },
     {

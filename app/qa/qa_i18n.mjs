@@ -137,7 +137,7 @@ const NO_ES_COPY = new Set([
   "grande",
   "grupo",
   "idiomas",
-  "info@catamarantourspuntacana.com",
+  "info@hispaniolaaquaticadventures.com",
   "instagram",
   "langosta",
   "lola",
