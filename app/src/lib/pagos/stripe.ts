@@ -17,6 +17,19 @@ import { t } from '@/lib/i18n'
 
 const URL_SDK = 'https://js.stripe.com/v3/'
 
+// [2026-09-14, pedido del cliente: «Apple Pay, Google Pay, Link, Cash App
+// Pay… que Stripe muestre automáticamente los métodos compatibles según el
+// dispositivo… confirmen que usan Payment Element y no una integración
+// antigua»] Hasta hoy ERA la integración antigua: `elements().create('card')`
+// + `confirmCardPayment`, que solo sabe de tarjeta. Los wallets solo existen
+// en la generación nueva de Stripe.js: PAYMENT ELEMENT (un solo elemento que
+// pinta tarjeta, Link, Cash App… según lo que la cuenta tenga activo y el
+// navegador soporte) y EXPRESS CHECKOUT ELEMENT (los botones de Apple Pay /
+// Google Pay / Link arriba del todo, para pagar en un toque sin teclear una
+// tarjeta). Aquí se añaden los tipos de las dos y `confirmPayment`, que es el
+// cierre común. `CampoTarjeta`/`confirmCardPayment` se quedan declarados por
+// si hay que volver atrás, pero ya nadie los monta.
+
 // ── Tipos mínimos ──────────────────────────────────────────────────────────
 // Solo lo que tocamos. Stripe.js no trae tipos si no instalas su paquete, y
 // declarar la superficie entera para usar tres métodos sería peor.
@@ -36,18 +49,74 @@ export type CambioTarjeta = {
   error?: { message: string; code?: string }
 }
 
-type Elements = {
+/** Payment Element: tarjeta + Link + Cash App + lo que la cuenta tenga. */
+export type ElementoPago = {
+  mount(nodo: HTMLElement | string): void
+  unmount(): void
+  destroy(): void
+  collapse(): void
+  on(evento: 'change', cb: (e: CambioPago) => void): void
+  on(evento: 'ready' | 'loaderror', cb: (e: { error?: { message?: string } }) => void): void
+}
+
+export type CambioPago = {
+  complete: boolean
+  empty: boolean
+  /** 'card', 'link', 'cashapp', 'apple_pay'… — lo que el visitante tiene abierto. */
+  value?: { type?: string }
+}
+
+/** Express Checkout Element: los botones de Apple Pay / Google Pay / Link. */
+export type ElementoExpress = {
+  mount(nodo: HTMLElement | string): void
+  unmount(): void
+  destroy(): void
+  on(evento: 'ready', cb: (e: { availablePaymentMethods?: Record<string, boolean> }) => void): void
+  on(evento: 'click', cb: (e: EventoClickExpress) => void): void
+  on(evento: 'confirm', cb: (e: EventoConfirmExpress) => void): void
+  on(evento: 'cancel', cb: () => void): void
+  on(evento: 'loaderror', cb: (e: { error?: { message?: string } }) => void): void
+}
+
+export type EventoClickExpress = {
+  expressPaymentType: string
+  /** Hay que llamarlo SÍNCRONO (Apple Pay no abre la hoja si se tarda). */
+  resolve(opciones?: Record<string, unknown>): void
+}
+
+export type EventoConfirmExpress = {
+  expressPaymentType: string
+  billingDetails?: { name?: string; email?: string; phone?: string }
+  paymentFailed(opciones?: { reason?: 'fail' | 'invalid_shipping_address' | 'invalid_billing_address' }): void
+}
+
+export type Elements = {
   create(tipo: 'card', opciones?: Record<string, unknown>): CampoTarjeta
+  create(tipo: 'payment', opciones?: Record<string, unknown>): ElementoPago
+  create(tipo: 'expressCheckout', opciones?: Record<string, unknown>): ElementoExpress
+  /** Cambiar el importe (o el modo) sin remontar. */
+  update(opciones: Record<string, unknown>): void
+  /** Valida lo tecleado ANTES de crear el intento en el servidor. */
+  submit(): Promise<{ error?: { message?: string; code?: string } }>
 }
 
 export type ResultadoPago = {
-  error?: { message?: string; code?: string; decline_code?: string }
+  error?: { message?: string; code?: string; decline_code?: string; type?: string }
   paymentIntent?: { id: string; status: string }
 }
 
 export type Stripe = {
   elements(opciones?: Record<string, unknown>): Elements
   confirmCardPayment(clientSecret: string, datos?: Record<string, unknown>): Promise<ResultadoPago>
+  /** Cierre común de Payment Element y Express Checkout. Con
+   *  `redirect: 'if_required'` solo sale del sitio para los métodos que lo
+   *  exigen (Cash App en móvil abre la app y vuelve por `return_url`). */
+  confirmPayment(opciones: {
+    elements: Elements
+    clientSecret?: string
+    confirmParams: Record<string, unknown>
+    redirect?: 'if_required' | 'always'
+  }): Promise<ResultadoPago>
 }
 
 declare global {
@@ -134,6 +203,51 @@ export function estiloCampoTarjeta(): Record<string, unknown> {
     invalid: {
       color: token('--color-coral'),
       iconColor: token('--color-coral'),
+    },
+  }
+}
+
+/** Apariencia de Payment Element / Express Checkout con los tokens de marca.
+ *
+ *  Los elementos viven en iframes de Stripe: no ven nuestro CSS, así que se
+ *  les pasan los colores y radios como VALORES, leídos de `tokens.css` (el hex
+ *  sigue viviendo solo allí). Tema `stripe` como base y encima lo nuestro:
+ *  aqua para el foco y las selecciones, coral para errores, navy para el texto,
+ *  los mismos bordes hairline y el radio de los botones del sitio.
+ *
+ *  Tipografía: sistema, por lo mismo que `estiloCampoTarjeta`. */
+export function aparienciaStripe(): Record<string, unknown> {
+  const linea = token('--color-linea')
+  return {
+    theme: 'stripe',
+    labels: 'above',
+    variables: {
+      colorPrimary: token('--color-aqua-dark'),
+      colorBackground: token('--color-papel'),
+      colorText: token('--color-navy'),
+      colorTextSecondary: token('--color-navy-sub'),
+      colorTextPlaceholder: token('--color-navy-soft'),
+      colorDanger: token('--color-coral'),
+      colorIcon: token('--color-navy-soft'),
+      fontFamily: 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
+      fontSizeBase: '16px', // <16px hace que iOS haga zoom al enfocar
+      borderRadius: token('--radius-btn'),
+      spacingUnit: '4px',
+      focusBoxShadow: 'none',
+      focusOutline: `2px solid ${token('--color-aqua') ?? 'currentColor'}`,
+    },
+    rules: {
+      '.Input': { border: `1px solid ${linea}`, boxShadow: 'none', padding: '12px 16px' },
+      '.Input:focus': { border: `1px solid ${token('--color-aqua')}` },
+      '.Input--invalid': { border: `1px solid ${token('--color-coral')}`, boxShadow: 'none' },
+      '.Label': { fontWeight: '500', fontSize: '14px', marginBottom: '6px' },
+      '.Tab': { border: `1px solid ${linea}`, boxShadow: 'none' },
+      '.Tab--selected': { border: `1px solid ${token('--color-aqua')}`, backgroundColor: token('--color-aqua-tint'), boxShadow: 'none' },
+      '.Tab:focus': { boxShadow: 'none' },
+      '.AccordionItem': { border: `1px solid ${linea}`, boxShadow: 'none', padding: '12px 16px' },
+      '.AccordionItem--selected': { border: `1px solid ${token('--color-aqua')}`, backgroundColor: token('--color-aqua-tint') },
+      '.Block': { border: `1px solid ${linea}`, boxShadow: 'none' },
+      '.Error': { fontSize: '12px' },
     },
   }
 }

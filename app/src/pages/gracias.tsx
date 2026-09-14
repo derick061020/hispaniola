@@ -109,34 +109,51 @@ export function GraciasPage() {
   }, [codigo, recargas])
 
   const ordenPaypal = params.get('token')
+  // [2026-09-14] LA VUELTA DE STRIPE. Con Payment Element, los métodos que
+  // sacan al visitante del sitio (Cash App Pay en móvil abre la app) vuelven
+  // por `return_url` con `payment_intent` y `redirect_status` en la URL, igual
+  // que PayPal vuelve con `token`. Tarjeta, Apple Pay, Google Pay y Link no
+  // pasan por aquí: se confirman sin salir de la página del checkout.
+  const intentoStripe = params.get('payment_intent')
+  const estadoRedireccion = params.get('redirect_status')
   const [capturando, setCapturando] = useState(false)
   const [avisoPago, setAvisoPago] = useState<string | null>(null)
 
   useEffect(() => {
-    if (!ordenPaypal || !codigo) return
+    const proveedor = ordenPaypal ? 'paypal' : intentoStripe ? 'stripe' : null
+    if (!proveedor || !codigo) return
+    const nombre = proveedor === 'paypal' ? 'PayPal' : 'Stripe'
     const sesion = sesionCheckoutGuardada()
     // Sin la sesión no hay token de reserva y la API no autoriza la captura.
     // Pasa si vuelve en otro navegador o tras limpiar el almacenamiento.
     if (!sesion || sesion.codigo !== codigo) {
-      setAvisoPago(t('We could not confirm the PayPal payment from this browser. Our team will check it and email you.'))
+      setAvisoPago(t('We could not confirm the payment from this browser. Our team will check it and email you.'))
+      return
+    }
+    // Stripe ya dice en la URL si el cliente canceló en la app: no hace falta
+    // preguntar para saber que no se cobró.
+    if (proveedor === 'stripe' && estadoRedireccion === 'failed') {
+      setAvisoPago(t('The payment was not completed. Your booking is saved — you can pay it from “My booking” or our team will contact you.'))
       return
     }
     let vivo = true
     setCapturando(true)
-    confirmarPago(codigo, sesion.token, { paypalOrderId: ordenPaypal })
+    confirmarPago(codigo, sesion.token, proveedor === 'paypal'
+      ? { paypalOrderId: ordenPaypal ?? undefined }
+      : { paymentIntentId: intentoStripe ?? undefined })
       .then((resultado) => {
         if (!vivo) return
         // Se vuelve a preguntar por el cobro ANTES de olvidar la sesión: la
-        // captura de PayPal acaba de cambiar el estado del pedido.
+        // captura acaba de cambiar el estado del pedido.
         setRecargas((n) => n + 1)
         olvidarSesionCheckout()
         if (!['paid', 'confirmed'].includes(resultado.state)) {
-          setAvisoPago(t('PayPal is still processing the payment. We’ll email you as soon as it clears.'))
+          setAvisoPago(`${nombre} ${t('is still processing the payment. We’ll email you as soon as it clears.')}`)
         }
       })
       .catch(() => {
         if (!vivo) return
-        setAvisoPago(t('We could not confirm the PayPal payment right now. Our team will check it and email you.'))
+        setAvisoPago(`${t('We could not confirm the')} ${nombre} ${t('payment right now. Our team will check it and email you.')}`)
       })
       .finally(() => {
         if (vivo) setCapturando(false)
@@ -144,7 +161,7 @@ export function GraciasPage() {
     return () => {
       vivo = false
     }
-  }, [ordenPaypal, codigo])
+  }, [ordenPaypal, intentoStripe, estadoRedireccion, codigo])
 
   // «¿Cómo nos encontraste?» — la respuesta VIAJA (2026-08-18). Estos chips
   // cambiaban un color y ya: ni al CRM ni a localStorage, pese a lo que decía

@@ -9,7 +9,7 @@ import { PasoRecogida } from '@/components/reservar/paso-recogida'
 import { BannerPremium } from '@/components/reservar/banner-premium'
 import { PasoContacto } from '@/components/reservar/paso-contacto'
 import { idiomaDelNavegador } from '@/lib/idioma'
-import { PasoPago, type DatosPago } from '@/components/reservar/paso-pago'
+import { PasoPago, type DatosPago, type EnlaceStripe } from '@/components/reservar/paso-pago'
 import { ResumenReserva } from '@/components/reservar/resumen-reserva'
 import { BarraMovilReserva } from '@/components/reservar/barra-movil-reserva'
 import { etiquetaOcasion, telefonoDe, PREFIJO_INICIAL, type DatosCelebracion, type DatosContacto, type DatosRecogida, type Paquete } from '@/components/reservar/tipos'
@@ -22,7 +22,6 @@ import { menuDeLaReserva } from '@/lib/menu-reserva'
 import { useCheckout } from '@/lib/api/use-checkout'
 import type { ErrorApi } from '@/lib/api/cliente'
 import type { ParcheCheckout } from '@/lib/api/tipos'
-import { cargarStripe, mensajeDeError } from '@/lib/pagos/stripe'
 import { t, tp, traducible } from '@/lib/i18n'
 import { escuchaMoneda, instantaneaMoneda } from '@/lib/moneda'
 import { SelectorIdioma } from '@/components/ui/selector-idioma'
@@ -409,6 +408,9 @@ function FlujoReserva({
   // eleccion, y para eso basta con traducir la casilla a su vocabulario.
   const metodoPago: MetodoPago = pagaEnEfectivo ? 'efectivo' : 'tarjeta'
   const [pagando, setPagando] = useState(false)
+  // Stripe cobra dentro de su formulario; aquí solo se sabe que está en ello,
+  // para que la barra móvil gire y no se pueda pulsar dos veces.
+  const [pagandoStripe, setPagandoStripe] = useState(false)
   const [errorPago, setErrorPago] = useState<string | null>(null)
 
   // [2026-08-14] AQUÍ SE COBRA DE VERDAD. Lo que había antes creaba el intento
@@ -422,67 +424,76 @@ function FlujoReserva({
   //             «Gracias», porque el navegador se va de esta página.
   //
   // El importe no viaja en ningún caso: lo pone el servidor.
+  //
+  // [2026-09-14, pedido del cliente: Apple Pay / Google Pay / Link / Cash App]
+  // El camino de Stripe cambia de dueño. Antes este handler montaba la tarjeta
+  // y llamaba a `confirmCardPayment` (solo tarjeta). Ahora el formulario de
+  // Stripe (components/pagos/formulario-stripe.tsx) tiene los Elements y es
+  // quien confirma —tarjeta, wallet o Cash App—; de aquí solo salen las tres
+  // piezas que necesita: crear el intento (`enlaceStripe.obtenerSecreto`,
+  // que sincroniza y pide el PaymentIntent igual que antes), a dónde volver si
+  // el método se lleva el navegador, y qué hacer al terminar. PayPal sigue
+  // aquí tal cual.
+  const codigoPedido = checkout.codigo ?? ''
+  const rutaGracias = `/book/${tour.slug}/thank-you?codigo=${codigoPedido}`
+
   const handlePagar = async (datos: DatosPago) => {
-    if (pagando) return
+    if (pagando || datos.metodo !== 'paypal') return
     setPagando(true)
     setErrorPago(null)
 
-    const codigo = checkout.codigo ?? ''
     try {
       // Se ESPERA de verdad: `sincronizar` devuelve promesa desde el 2026-08-18
       // (antes era void y este `await` no esperaba a nada, así que el guardado
       // y el cobro salían a la vez). Odoo cobra con lo que tenga guardado.
       await checkout.sincronizar(datosDelFormulario(), true)
+      const intento = await checkout.pagar({ proveedor: 'paypal' })
+      if (!intento.approve_url) throw new Error(t('PayPal did not return an approval link.'))
+      // La copia local se guarda ANTES de salir del sitio: al volver, la
+      // pantalla de gracias pinta al instante mientras se captura el cobro.
+      guardarReserva(reservaLocal(codigoPedido))
+      window.location.assign(intento.approve_url)
+    } catch (error) {
+      // Falta configurar la pasarela en Odoo (503) o el cobro no se pudo
+      // iniciar. La reserva SIGUE registrada como pendiente, así que se avisa
+      // sin perderla y el equipo puede rematarla por teléfono.
+      setErrorPago(error instanceof Error ? error.message : t('Payment could not be started.'))
+      setPagando(false)
+    }
+  }
 
-      if (datos.metodo === 'paypal') {
-        const intento = await checkout.pagar({ proveedor: 'paypal' })
-        if (!intento.approve_url) throw new Error(t('PayPal did not return an approval link.'))
-        // La copia local se guarda ANTES de salir del sitio: al volver, la
-        // pantalla de gracias pinta al instante mientras se captura el cobro.
-        guardarReserva(reservaLocal(codigo))
-        window.location.assign(intento.approve_url)
-        return
-      }
-
+  const enlaceStripe: EnlaceStripe = {
+    facturacion: {
+      nombre: `${contacto.nombre.trim()} ${contacto.apellidos.trim()}`.trim(),
+      email: contacto.email.trim() || undefined,
+      telefono: telefonoDe(contacto) || undefined,
+      pais: contacto.prefijo ? contacto.prefijo.toUpperCase() : undefined,
+    },
+    obtenerSecreto: async () => {
+      setErrorPago(null)
+      await checkout.sincronizar(datosDelFormulario(), true)
       const intento = await checkout.pagar({ proveedor: 'stripe' })
-      if (!intento.client_secret) throw new Error(t('Stripe did not return a payment secret.'))
-      if (!datos.tarjeta) throw new Error(t('The card form is not ready. Reload the page and try again.'))
-
-      const stripe = await cargarStripe(intento.publishable_key || datos.clavePublicable)
-      const { error, paymentIntent } = await stripe.confirmCardPayment(intento.client_secret, {
-        payment_method: {
-          card: datos.tarjeta,
-          billing_details: {
-            name: datos.titular,
-            email: contacto.email.trim() || undefined,
-            phone: telefonoDe(contacto) || undefined,
-          },
-        },
-      })
-      // Tarjeta rechazada: NO es un error de la aplicación. El pedido queda en
-      // Odoo como «Payment failed» con el motivo real (lo escribe el webhook) y
-      // el visitante puede reintentar con otra tarjeta sin perder nada.
-      if (error) throw new Error(mensajeDeError(error))
-
+      return { client_secret: intento.client_secret, amount: intento.amount }
+    },
+    returnUrl: `${window.location.origin}${rutaGracias}`,
+    antesDeConfirmar: () => guardarReserva(reservaLocal(codigoPedido)),
+    onPagado: async (paymentIntentId) => {
       // Odoo vuelve a preguntarle a Stripe: no se fía de lo que diga el
       // navegador. Si esto falla, el pago está hecho igual y el webhook lo
       // cerrará — por eso no se trata como un fallo de cobro.
       try {
-        await checkout.confirmar({ paymentIntentId: paymentIntent?.id })
+        await checkout.confirmar({ paymentIntentId })
       } catch {
         // Sin ruido: el estado real llega por webhook.
       }
-    } catch (error) {
-      // Falta configurar la pasarela en Odoo (503), el cobro no se pudo iniciar
-      // o la tarjeta se rechazó. La reserva SIGUE registrada como pendiente, así
-      // que se avisa sin perderla y el equipo puede rematarla por teléfono.
-      setErrorPago(error instanceof Error ? error.message : t('Payment could not be started.'))
-      setPagando(false)
-      return
-    }
-
-    guardarReserva(reservaLocal(codigo))
-    navigate(`/book/${tour.slug}/thank-you?codigo=${codigo}`)
+      guardarReserva(reservaLocal(codigoPedido))
+      navigate(rutaGracias)
+    },
+    // Tarjeta rechazada, wallet cancelado, etc.: NO es un error de la
+    // aplicación. El pedido queda en Odoo como «Payment failed» con el motivo
+    // real (lo escribe el webhook) y el visitante puede reintentar sin perder
+    // nada.
+    onError: (mensaje) => setErrorPago(mensaje),
   }
 
   /** Todo lo que el visitante ha rellenado, en el formato de la API. */
@@ -642,10 +653,10 @@ function FlujoReserva({
                 metodoPago === 'efectivo'
                   ? t('Confirm booking')
                   : `${t('Pay deposit')} · ${formatoDinero(deposito)}`,
-              habilitado: fechaISO !== null && !pagando,
+              habilitado: fechaISO !== null && !pagando && !pagandoStripe,
               // El cobro tarda: crear el intento en Odoo, confirmarlo con
               // Stripe y avisar de vuelta. La barra lo enseña girando.
-              cargando: pagando,
+              cargando: pagando || pagandoStripe,
               // [2026-08-25] NO es `handlePagar`: ese pide los datos de la
               // tarjeta y la barra no los tiene (vive fuera del paso de pago).
               // Se dispara el mismo `lanzar` que el botón de dentro, que sí
@@ -908,6 +919,8 @@ function FlujoReserva({
                   pedidoListo={checkout.pedido !== null}
                   fechaElegida={fechaISO !== null}
                   onPagar={handlePagar}
+                  stripe={enlaceStripe}
+                  onProcesandoStripe={setPagandoStripe}
                   registraLanzar={(fn) => { lanzarPago.current = fn }}
                   procesando={pagando}
                   error={errorPago}
