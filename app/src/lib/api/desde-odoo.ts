@@ -65,6 +65,13 @@ export function reservaDesdeOdoo(odoo: ReservaOdoo): ReservaLocal {
     // elegido y el 2 si, el plato del 2 se pintaba como del 1. Se coloca cada
     // plato en su `guest_index` y se rellena hasta el total de personas.
     platos: platosPorComensal(odoo.dishes, odoo.pax.total),
+    // [2026-09-18] Los extras llegaban a la API y se tiraban aqui: la pantalla
+    // no los pintaba porque este traductor no los pasaba.
+    extras: (odoo.addons ?? []).map((a) => ({
+      nombre: a.name,
+      cantidad: a.quantity || 1,
+      importe: a.amount || 0,
+    })),
     recogida: {
       hotel: odoo.pickup.hotel,
       notas: odoo.pickup.room ? `Room ${odoo.pickup.room}` : '',

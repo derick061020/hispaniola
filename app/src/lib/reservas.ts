@@ -57,6 +57,11 @@ export type Reserva = {
   saldoTotal?: number
   /** El desglose del precio, descuentos incluidos. */
   desglose?: { key: string; label: string; amount: number; detail: string | null }[]
+  /** [2026-09-18, el cliente: «los extras deben aparecer para el cliente en su
+   *  pagina de reserva»] Lo que lleva la reserva ademas del tour: lo que se
+   *  añadio en el checkout (comida a bordo, fotos) y lo que añade la oficina
+   *  despues (el brindis, el bizcocho). */
+  extras?: { nombre: string; cantidad: number; importe: number }[]
   fechaCreacionISO: string
   comoNosConociste?: string
   /** «¿Celebras algo especial?» del paso de contacto (2026-08-07). Opcional

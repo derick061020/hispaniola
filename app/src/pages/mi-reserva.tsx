@@ -812,6 +812,27 @@ function BloqueReserva({
             </dd>
           </div>
         ))}
+        {/* [2026-09-18, el cliente: «los extras deben aparecer para el cliente
+            en su pagina de reserva»] Lo que lleva ademas del tour: lo que
+            añadio al reservar y lo que le añadio la oficina despues (el
+            brindis, el bizcocho). Sin esto, el cliente pagaba un extra que no
+            veia por ninguna parte. */}
+        {(reserva.extras ?? []).length ? (
+          <div className="border-t border-linea pt-2">
+            <p className="text-xs font-semibold uppercase tracking-wide text-navy-soft">
+              {t('Extras')}
+            </p>
+            {(reserva.extras ?? []).map((e, i) => (
+              <div key={`${e.nombre}-${i}`} className="mt-1.5 flex items-baseline justify-between gap-3">
+                <dt className="text-navy-sub">
+                  {e.nombre}
+                  {e.cantidad > 1 ? <span className="ml-1 text-xs text-navy-soft">× {e.cantidad}</span> : null}
+                </dt>
+                {e.importe ? <dd className="text-navy">{formatoDinero(e.importe)}</dd> : null}
+              </div>
+            ))}
+          </div>
+        ) : null}
         <div className="flex items-center justify-between border-t border-linea pt-2">
           <dt className="font-medium text-navy">{t('Tour total')}</dt>
           <dd className="font-semibold text-navy">{formatoDinero(reserva.total)}</dd>
