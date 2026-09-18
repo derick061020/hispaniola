@@ -192,13 +192,23 @@ export function FormularioStripe({
       //    Del domicilio no viaja NADA: lo recoge el propio Payment Element
       //    (`fields.billingDetails.address: 'auto'`), y lo que Stripe recoge
       //    no se le manda desde aquí.
-      const { nombre, email, telefono } = ultimo.current.facturacion
+      const { nombre, email, telefono, pais } = ultimo.current.facturacion
       const confirmParams: Record<string, unknown> = { return_url: ultimo.current.returnUrl }
       if (via === 'boton') {
         confirmParams.payment_method_data = {
           billing_details: {
             name: nombre?.trim() || email?.trim() || 'Guest',
             ...(telefono?.trim() ? { phone: telefono.trim() } : {}),
+            // Los que se ocultan hay que mandarlos SÍ O SÍ, aunque no se
+            // tengan: van vacíos, que es la verdad —no se piden en ningún
+            // paso— y es lo que deja el formulario en un solo campo extra.
+            address: {
+              country: pais?.trim().toUpperCase() || 'US',
+              line1: '',
+              line2: '',
+              city: '',
+              state: '',
+            },
           },
         }
       }
@@ -321,7 +331,16 @@ export function FormularioStripe({
             billingDetails: {
               name: 'never',
               phone: facturacion.telefono ? 'never' : 'auto',
-              address: 'auto',
+              address: {
+                line1: 'never',
+                line2: 'never',
+                city: 'never',
+                state: 'never',
+                country: 'never',
+                // El ÚNICO que se pide: es el de la comprobación AVS del
+                // banco y no lo tenemos de ningún paso anterior.
+                postalCode: 'auto',
+              },
             },
           },
         })
