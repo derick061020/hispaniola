@@ -188,6 +188,11 @@ export function FormularioStripe({
       //    un error de integración que el visitante lee como «no se pudo
       //    completar el pago». Pasaba en «Mi reserva», donde no se mandaba el
       //    país. Por eso los tres llevan respaldo y ninguno viaja vacío.
+      //
+      //    Del domicilio solo viaja el PAÍS: el código postal lo recoge el
+      //    propio Payment Element (`fields.billingDetails.address`), y lo que
+      //    Stripe recoge NO se manda desde aquí — mandarlo daría el error
+      //    contrario («no puedes pasar un campo que estás recogiendo»).
       const { nombre, email, telefono, pais } = ultimo.current.facturacion
       const confirmParams: Record<string, unknown> = { return_url: ultimo.current.returnUrl }
       if (via === 'boton') {
@@ -301,11 +306,29 @@ export function FormularioStripe({
           // en `billing_details` al confirmar (ver el aviso de `confirmar`).
           // El teléfono solo se oculta si lo tenemos: si no, que lo pida
           // Stripe — es preferible un campo más que un cobro que no arranca.
+          //
+          // ⚠️ [2026-09-18, Derick probando en botizate] LA DIRECCIÓN VA CAMPO
+          // A CAMPO, y el CÓDIGO POSTAL lo pide Stripe. Con `address: 'never'`
+          // entero, Stripe exige que se le mande la dirección COMPLETA al
+          // confirmar —incluido `postal_code`— y el cobro moría antes de
+          // empezar con «you did not pass … billing_details.address.
+          // postal_code». Ese dato no se pide en ningún paso del checkout y no
+          // se puede inventar: es el que usa la comprobación AVS del banco.
+          // Así que se ocultan calle, ciudad y provincia (que no hacen falta),
+          // el país se manda desde aquí, y el postal lo teclea el visitante:
+          // un solo campo, el mismo que pide cualquier checkout de EE. UU.
           fields: {
             billingDetails: {
               name: 'never',
               phone: facturacion.telefono ? 'never' : 'auto',
-              address: 'never',
+              address: {
+                line1: 'never',
+                line2: 'never',
+                city: 'never',
+                state: 'never',
+                country: 'never',
+                postalCode: 'auto',
+              },
             },
           },
         })
