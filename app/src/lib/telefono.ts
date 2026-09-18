@@ -118,3 +118,26 @@ export function parteTelefono(telefono: string): { prefijo: string; numero: stri
   if (!elegido) return { prefijo: PREFIJO_POR_DEFECTO, numero: valor }
   return { prefijo: elegido.id, numero: sinEspacios.slice(elegido.codigo.length) }
 }
+
+// DE QUE PAIS ES ESTE TELEFONO.
+//
+// [2026-09-18] Stripe lo necesita: el Payment Element oculta los campos de
+// facturacion (ya se piden en el paso de contacto) y, cuando se ocultan, hay
+// que MANDARLOS al confirmar. Sin pais, el cobro del saldo desde «Mi reserva»
+// —donde solo se guarda el telefono ya compuesto— fallaba antes de empezar.
+//
+// El +1 lo comparten EE. UU., Canada y R. Dominicana: los tres prefijos de
+// area dominicanos (809, 829, 849) se miran aparte, y el resto se queda en US,
+// que es de donde viene la mayoria de los clientes.
+export function paisDeTelefono(telefono?: string | null, porDefecto = 'US'): string {
+  const limpio = (telefono || '').replace(/[^\d+]/g, '')
+  if (!limpio.startsWith('+')) return porDefecto
+  if (limpio.startsWith('+1')) {
+    return /^\+1(809|829|849)/.test(limpio) ? 'DO' : 'US'
+  }
+  // El codigo mas largo que encaje: +34 antes que +3, +351 antes que +35.
+  const encaja = PREFIJOS
+    .filter((p) => limpio.startsWith(p.codigo))
+    .sort((a, b) => b.codigo.length - a.codigo.length)[0]
+  return encaja?.id || porDefecto
+}

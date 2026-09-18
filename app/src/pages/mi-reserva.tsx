@@ -8,7 +8,7 @@ import { fechaLarga } from '@/lib/fechas'
 import { guardarReserva, type Reserva } from '@/lib/reservas'
 import {
   actualizarReserva, buscarReserva as buscarReservaOdoo,
-  buscarReservaPorContacto as buscarPorContacto,
+  buscarReservaPorContacto as buscarPorContacto, confirmarPago,
 } from '@/lib/api/api'
 import { BotonCalendario } from '@/components/ui/boton-calendario'
 import { PagoSaldo } from '@/components/mi-reserva/pago-saldo'
@@ -18,6 +18,7 @@ import { menuDeLaReserva } from '@/lib/menu-reserva'
 import { formatoDinero } from '@/data/home'
 import { Campo } from '@/components/ui/campo'
 import { crudo, t, tp, traducible } from '@/lib/i18n'
+import { paisDeTelefono } from '@/lib/telefono'
 
 // «Mi reserva» — vista de la reserva ya pagada con edición local (2026-07-17,
 // pedido de Pedro). El usuario pidió que las ediciones se guarden en
@@ -545,6 +546,19 @@ function DetalleReserva({
 
   const codigo = codigoIngresado.toUpperCase()
 
+  // [2026-09-14] LA VUELTA DE STRIPE al pagar el saldo con un método que sale
+  // del sitio (Cash App Pay en móvil): Stripe vuelve a `/my-booking?code=…&
+  // token=…&payment_intent=…`. Se le confirma a Odoo —que vuelve a preguntar a
+  // Stripe— y se recarga la reserva para que el saldo salga ya cobrado. Si el
+  // aviso falla, el webhook cierra el estado igual.
+  const intentoStripe = paramsDetalle.get('payment_intent')
+  const rematado = useRef<string | null>(null)
+  useEffect(() => {
+    if (!intentoStripe || !token || rematado.current === intentoStripe) return
+    rematado.current = intentoStripe
+    actualizarReservaTrasStripe(codigo, token, intentoStripe).finally(() => setRecargas((n) => n + 1))
+  }, [intentoStripe, token, codigo])
+
   // Con `token` basta: es la llave que devuelve la búsqueda por contacto y la
   // única que sirve para recargar una reserva sin email (las que entran por
   // teléfono). Sin ninguna de las dos no hay nada que pedir.
@@ -835,6 +849,17 @@ function BloqueReserva({
             codigo={reserva.codigo}
             token={token}
             saldo={reserva.saldo}
+            facturacion={{
+              nombre: `${reserva.contacto.nombre} ${reserva.contacto.apellidos}`.trim(),
+              email: reserva.contacto.email || undefined,
+              telefono: reserva.contacto.telefono || undefined,
+              // [2026-09-18] EL PAIS, que faltaba. El Payment Element oculta
+              // los campos de facturacion y entonces hay que mandarlos al
+              // confirmar: sin pais, Stripe rechazaba el cobro del saldo
+              // antes de intentarlo. Aqui solo se guarda el telefono ya
+              // compuesto («+1 809…»), asi que el pais se deduce de el.
+              pais: paisDeTelefono(reserva.contacto.telefono),
+            }}
             onPagado={onPagado}
           />
         ) : null
@@ -1219,4 +1244,12 @@ function BotonEditar({ onClick }: { onClick: () => void }) {
       {t('Edit')}
     </button>
   )
+}
+
+async function actualizarReservaTrasStripe(codigo: string, token: string, paymentIntentId: string) {
+  try {
+    await confirmarPago(codigo, token, { paymentIntentId })
+  } catch {
+    // El estado real llega por webhook.
+  }
 }

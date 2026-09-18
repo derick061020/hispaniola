@@ -2,9 +2,8 @@ import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { Lock } from 'lucide-react'
 import { RiMastercardFill, RiPaypalFill, RiVisaFill } from '@remixicon/react'
 import * as FancyButton from '@/components/alignui/fancy-button'
-import { Campo } from '@/components/ui/campo'
 import { obtenerConfig } from '@/lib/api/api'
-import { cargarStripe, estiloCampoTarjeta, type CampoTarjeta } from '@/lib/pagos/stripe'
+import { FormularioStripe, type EstadoFormularioStripe, type FacturacionStripe } from '@/components/pagos/formulario-stripe'
 import { formatoDinero } from '@/data/home'
 import { t } from '@/lib/i18n'
 import { Spinner } from '@/components/ui/spinner'
@@ -28,16 +27,32 @@ import { Spinner } from '@/components/ui/spinner'
 // Qué medios se ENSEÑAN lo decide Odoo, no este archivo: `GET /config` publica
 // `payments.stripe.enabled` / `payments.paypal.enabled`, que son true cuando el
 // equipo ha puesto las claves. Sin claves no se pinta un método que va a fallar.
+//
+// [2026-09-14, pedido del cliente: Apple Pay, Google Pay, Link, Cash App Pay,
+// menos pasos en móvil] La opción «tarjeta» deja de ser un Card Element (solo
+// tarjeta, y el nombre del titular aparte) y pasa a ser el FORMULARIO DE
+// STRIPE compartido (components/pagos/formulario-stripe.tsx): Apple/Google
+// Pay/Link en un toque arriba, y debajo tarjeta, Link y Cash App según el
+// dispositivo y la cuenta. El cobro ya no lo remata el padre: lo remata el
+// formulario, que es quien tiene los Elements; el padre solo le da el intento
+// (`stripe.obtenerSecreto`) y recibe el resultado (`stripe.onPagado`). PayPal
+// sigue igual: es el único camino que pasa por `onPagar`.
 
 export type MetodoPago = 'card' | 'paypal'
 
 export type DatosPago = {
   metodo: MetodoPago
-  /** El elemento de Stripe, para que el padre remate el cobro. Solo en tarjeta. */
-  tarjeta: CampoTarjeta | null
-  /** Nombre del titular, tal y como está impreso en la tarjeta. */
-  titular: string
-  clavePublicable: string
+}
+
+/** Lo que el formulario de Stripe necesita del funnel. */
+export type EnlaceStripe = {
+  facturacion: FacturacionStripe
+  /** Sincroniza el pedido y crea el intento en Odoo. Devuelve su secreto e importe. */
+  obtenerSecreto: () => Promise<{ client_secret?: string; amount?: number }>
+  returnUrl: string
+  antesDeConfirmar?: () => void
+  onPagado: (paymentIntentId?: string) => void | Promise<void>
+  onError: (mensaje: string) => void
 }
 
 type Medios = { tarjeta: boolean; paypal: boolean }
@@ -49,6 +64,8 @@ export function PasoPago({
   pedidoListo,
   fechaElegida,
   onPagar,
+  stripe,
+  onEstadoPago,
   registraLanzar,
   pagaEnEfectivo = false,
   onEfectivoChange,
@@ -67,6 +84,11 @@ export function PasoPago({
    *  no podía salir bien, con un mensaje genérico como única pista. */
   pedidoListo: boolean
   onPagar: (datos: DatosPago) => void
+  /** El enlace con el funnel para cobrar con Stripe (ver `EnlaceStripe`). */
+  stripe: EnlaceStripe
+  /** Avisa al padre de cómo va el cobro: si Stripe está en ello (la barra
+   *  móvil gira) y si ya se puede pulsar «Pagar» (la barra se habilita). */
+  onEstadoPago?: (estado: { procesando: boolean; puedePagar: boolean }) => void
   /** [2026-08-25, al integrar la barra móvil de Samuel] Publica hacia arriba el
    *  disparador del cobro.
    *
@@ -114,65 +136,33 @@ export function PasoPago({
     return () => abortador.abort()
   }, [])
 
-  // ── Campo de tarjeta ────────────────────────────────────────────────────
-  const contenedor = useRef<HTMLDivElement | null>(null)
-  const elemento = useRef<CampoTarjeta | null>(null)
-  const [titular, setTitular] = useState('')
-  const [tarjetaCompleta, setTarjetaCompleta] = useState(false)
-  const [errorTarjeta, setErrorTarjeta] = useState<string | null>(null)
-  const [errorSdk, setErrorSdk] = useState<string | null>(null)
-
-  useEffect(() => {
-    if (!pedidoListo || metodo !== 'card' || !clave || !medios?.tarjeta) return
-    let vivo = true
-
-    cargarStripe(clave)
-      .then((stripe) => {
-        if (!vivo || !contenedor.current) return
-        const campo = stripe.elements({ locale: 'en' }).create('card', {
-          style: estiloCampoTarjeta(),
-          // El CP no se pide: Stripe solo lo usa para la comprobación AVS de
-          // tarjetas de EE. UU. y aquí el cliente es turista internacional —
-          // un campo más que falla para lo que rara vez aporta.
-          hidePostalCode: true,
-        })
-        campo.on('change', (e) => {
-          setTarjetaCompleta(e.complete)
-          setErrorTarjeta(e.error?.message ?? null)
-        })
-        campo.mount(contenedor.current)
-        elemento.current = campo
-        setErrorSdk(null)
-      })
-      .catch(() => {
-        if (!vivo) return
-        // Casi siempre un bloqueador de anuncios: js.stripe.com está en varias
-        // listas. Se dice qué hacer en vez de dejar un hueco vacío.
-        setErrorSdk(t('We could not load the card form. Disable your ad blocker or pay with PayPal.'))
-      })
-
-    return () => {
-      vivo = false
-      elemento.current?.destroy()
-      elemento.current = null
-      setTarjetaCompleta(false)
-      setErrorTarjeta(null)
-    }
-  }, [pedidoListo, metodo, clave, medios?.tarjeta])
+  // ── Formulario de Stripe ────────────────────────────────────────────────
+  // Estado que publica el formulario (relleno, procesando, hay wallets) y el
+  // disparador de su cobro, para el botón de aquí y para la barra móvil.
+  const [estadoStripe, setEstadoStripe] = useState<EstadoFormularioStripe | null>(null)
+  const pagarConStripe = useRef<(() => void) | null>(null)
 
   // ── Estado del CTA ──────────────────────────────────────────────────────
   const sinPasarela = medios !== null && !medios.tarjeta && !medios.paypal
-  const tarjetaLista = tarjetaCompleta && titular.trim() !== '' && elemento.current !== null
+  const stripeListo = !!estadoStripe?.completo && !estadoStripe.procesando
   const puedePagar =
     pedidoListo &&
     fechaElegida &&
     !procesando &&
     medios !== null &&
     !sinPasarela &&
-    (metodo === 'paypal' ? medios.paypal : tarjetaLista)
+    (metodo === 'paypal' ? medios.paypal : stripeListo)
 
-  const lanzar = () =>
-    onPagar({ metodo, tarjeta: elemento.current, titular: titular.trim(), clavePublicable: clave })
+  const lanzar = () => {
+    if (metodo === 'paypal') return onPagar({ metodo })
+    pagarConStripe.current?.()
+  }
+
+  const avisaEstado = onEstadoPago
+  const procesandoStripe = !!estadoStripe?.procesando
+  useEffect(() => {
+    avisaEstado?.({ procesando: procesandoStripe, puedePagar })
+  }, [procesandoStripe, puedePagar, avisaEstado])
 
   // La barra móvil dispara ESTE `lanzar`, no `onPagar`: así el cobro sale con
   // el método y la tarjeta que se acaban de rellenar aquí dentro. Se vuelve a
@@ -230,7 +220,7 @@ export function PasoPago({
               id="card"
               seleccionado={metodo === 'card'}
               onElegir={() => setMetodo('card')}
-              etiqueta={t('Credit or debit card')}
+              etiqueta={t('Card, Apple Pay, Google Pay, Link or Cash App')}
               marcas={
                 <>
                   <RiVisaFill className="size-6 text-navy-soft" aria-hidden="true" />
@@ -238,28 +228,22 @@ export function PasoPago({
                 </>
               }
             >
-              <Campo
-                etiqueta={t('Name on card')}
-                autoComplete="cc-name"
-                placeholder={t('As printed on the card')}
-                value={titular}
-                onChange={(e) => setTitular(e.target.value)}
+              {/* Los iframes de Stripe se montan aquí dentro: Express Checkout
+                  (wallets) y Payment Element. Qué métodos salen lo decide
+                  Stripe con el navegador y la cuenta; el recuadro es nuestro. */}
+              <FormularioStripe
+                clave={clave}
+                importe={deposito}
+                facturacion={stripe.facturacion}
+                obtenerSecreto={stripe.obtenerSecreto}
+                returnUrl={stripe.returnUrl}
+                antesDeConfirmar={stripe.antesDeConfirmar}
+                onPagado={stripe.onPagado}
+                onError={stripe.onError}
+                onEstado={setEstadoStripe}
+                registraPagar={(fn) => { pagarConStripe.current = fn }}
+                desactivado={procesando}
               />
-              <div className="mt-3">
-                <span className="text-sm font-medium text-navy">{t('Card details')}</span>
-                {/* El iframe de Stripe se monta AQUÍ. El recuadro y el foco son
-                    nuestros (mismas clases que `Campo`); dentro no pintamos
-                    nada. */}
-                <div
-                  ref={contenedor}
-                  className="mt-1.5 w-full rounded-btn bg-papel px-4 py-3 ring-1 ring-linea focus-within:ring-2 focus-within:ring-aqua"
-                />
-                {errorTarjeta || errorSdk ? (
-                  <p role="alert" className="mt-1.5 text-xs text-coral">
-                    {errorTarjeta ?? errorSdk}
-                  </p>
-                ) : null}
-              </div>
             </OpcionPago>
           ) : null}
 
@@ -313,7 +297,7 @@ export function PasoPago({
           lado. Se esconde el BOTÓN, no la pasarela — los métodos de pago y el
           campo de tarjeta siguen aquí, que es donde se rellenan. */}
       <FancyButton.Root variant="primary" className="w-full max-lg:hidden" disabled={!puedePagar} onClick={lanzar}>
-        {procesando
+        {procesando || estadoStripe?.procesando
           ? (
             // La ruedita Y el texto: el texto solo ya estaba y no bastaba —ver
             // el porqué en components/ui/spinner.tsx—, y la ruedita sola no

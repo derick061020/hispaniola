@@ -1,9 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { Lock } from 'lucide-react'
 import { RiMastercardFill, RiVisaFill } from '@remixicon/react'
-import { Campo } from '@/components/ui/campo'
 import { confirmarPago, pagarSaldo } from '@/lib/api/api'
-import { cargarStripe, estiloCampoTarjeta, mensajeDeError, type CampoTarjeta } from '@/lib/pagos/stripe'
+import { FormularioStripe, type EstadoFormularioStripe, type FacturacionStripe } from '@/components/pagos/formulario-stripe'
 import { formatoDinero } from '@/data/home'
 import { t } from '@/lib/i18n'
 import { Spinner } from '@/components/ui/spinner'
@@ -25,65 +24,58 @@ import { Spinner } from '@/components/ui/spinner'
 // Solo tarjeta: PayPal necesita salir del sitio y volver, y aquí no hay una
 // pantalla de retorno donde capturar. Quien quiera pagar con PayPal lo hace a
 // bordo o por WhatsApp, que es lo que dice el pie del bloque.
+//
+// [2026-09-14, pedido del cliente: Apple Pay / Google Pay / Link / Cash App]
+// El Card Element se sustituye por el formulario de Stripe compartido
+// (components/pagos/formulario-stripe.tsx), el mismo del funnel. Aquí el
+// intento YA existe al abrir, así que se le pasa `clientSecret` y el importe
+// lo manda el intento. Cash App en móvil puede salir y volver: vuelve a esta
+// misma pantalla con `payment_intent` en la URL, y `mi-reserva.tsx` remata.
 export function PagoSaldo({
   codigo,
   token,
   saldo,
+  facturacion,
   onPagado,
 }: {
   codigo: string
   token: string
   saldo: number
+  /** Nombre, correo, teléfono y país de la reserva: no se vuelven a pedir,
+   *  pero Stripe los exige al confirmar (ver `formulario-stripe.tsx`). */
+  facturacion: FacturacionStripe
   /** El saldo ya está cobrado: la pantalla recarga la reserva desde Odoo. */
   onPagado: () => void
 }) {
   const [abierto, setAbierto] = useState(false)
   const [preparando, setPreparando] = useState(false)
-  const [procesando, setProcesando] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [titular, setTitular] = useState('')
-  const [completa, setCompleta] = useState(false)
-
-  const contenedor = useRef<HTMLDivElement | null>(null)
-  const elemento = useRef<CampoTarjeta | null>(null)
-  const secreto = useRef<string | null>(null)
-  const claveStripe = useRef<string>('')
+  const [intento, setIntento] = useState<{ secreto: string; clave: string } | null>(null)
+  const [estadoStripe, setEstadoStripe] = useState<EstadoFormularioStripe | null>(null)
+  const pagarConStripe = useRef<(() => void) | null>(null)
 
   // El intento de cobro se crea al ABRIR el formulario, no al pulsar «Pay».
-  // Así el campo de la tarjeta ya está montado y validado cuando el visitante
-  // decide, y un fallo de configuración (Stripe apagado) se ve antes de teclear
-  // un número de tarjeta.
+  // Así el formulario ya está montado y validado cuando el visitante decide,
+  // y un fallo de configuración (Stripe apagado) se ve antes de teclear nada.
   useEffect(() => {
     if (!abierto) return
     let vivo = true
     setPreparando(true)
     setError(null)
+    setIntento(null)
 
     pagarSaldo(codigo, token)
-      .then(async (intento) => {
+      .then((respuesta) => {
         if (!vivo) return
-        if (!intento.client_secret) throw new Error(t('Stripe did not return a payment secret.'))
-        secreto.current = intento.client_secret
-        claveStripe.current = intento.publishable_key || ''
-        const stripe = await cargarStripe(claveStripe.current)
-        if (!vivo || !contenedor.current) return
-        const campo = stripe.elements({ locale: 'en' }).create('card', {
-          style: estiloCampoTarjeta(),
-          hidePostalCode: true,
-        })
-        campo.on('change', (e) => {
-          setCompleta(e.complete)
-          setError(e.error?.message ?? null)
-        })
-        campo.mount(contenedor.current)
-        elemento.current = campo
+        if (!respuesta.client_secret) throw new Error(t('Stripe did not return a payment secret.'))
+        setIntento({ secreto: respuesta.client_secret, clave: respuesta.publishable_key || '' })
       })
       .catch((e: unknown) => {
         if (!vivo) return
         setError(
           e instanceof Error && e.message
             ? e.message
-            : t('We could not open the card form. Try again in a moment.'),
+            : t('We could not open the payment form. Try again in a moment.'),
         )
       })
       .finally(() => {
@@ -92,34 +84,24 @@ export function PagoSaldo({
 
     return () => {
       vivo = false
-      elemento.current?.destroy()
-      elemento.current = null
-      secreto.current = null
-      setCompleta(false)
     }
   }, [abierto, codigo, token])
 
-  const pagar = async () => {
-    if (procesando || !secreto.current || !elemento.current) return
-    setProcesando(true)
-    setError(null)
+  const procesando = !!estadoStripe?.procesando
+  const completa = !!estadoStripe?.completo
+
+  const pagado = async (paymentIntentId?: string) => {
     try {
-      const stripe = await cargarStripe(claveStripe.current)
-      const { error: fallo, paymentIntent } = await stripe.confirmCardPayment(secreto.current, {
-        payment_method: { card: elemento.current, billing_details: { name: titular.trim() } },
-      })
-      if (fallo) throw new Error(mensajeDeError(fallo))
-      try {
-        await confirmarPago(codigo, token, { paymentIntentId: paymentIntent?.id })
-      } catch {
-        // El cobro está hecho; el estado real llega por webhook.
-      }
-      onPagado()
-    } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : t('The payment could not be completed.'))
-      setProcesando(false)
+      await confirmarPago(codigo, token, { paymentIntentId })
+    } catch {
+      // El cobro está hecho; el estado real llega por webhook.
     }
+    onPagado()
   }
+
+  // Si Cash App se lleva el navegador, vuelve a ESTA reserva. `token` va en la
+  // URL porque es la llave con la que la pantalla recarga sin pedir el correo.
+  const returnUrl = `${window.location.origin}/my-booking?code=${encodeURIComponent(codigo)}&token=${encodeURIComponent(token)}`
 
   if (!abierto) {
     return (
@@ -141,37 +123,34 @@ export function PagoSaldo({
   return (
     <div className="mt-4 rounded-card border border-linea bg-papel-hueso p-4">
       <div className="flex items-center justify-between gap-3">
-        <p className="text-sm font-semibold text-navy">{t('Pay')}{' '}{formatoDinero(saldo)} {t('by card')}</p>
+        <p className="text-sm font-semibold text-navy">{t('Pay')}{' '}{formatoDinero(saldo)}</p>
         <span className="flex items-center gap-1.5">
           <RiVisaFill className="size-6 text-navy-soft" aria-hidden="true" />
           <RiMastercardFill className="size-6 text-navy-soft" aria-hidden="true" />
         </span>
       </div>
 
-      <fieldset className="mt-3 flex flex-col gap-3" disabled={procesando}>
-        <legend className="sr-only">{t('Card details')}</legend>
-        <Campo
-          etiqueta={t('Name on card')}
-          autoComplete="cc-name"
-          placeholder={t('As printed on the card')}
-          value={titular}
-          onChange={(e) => setTitular(e.target.value)}
-        />
-        <div>
-          <span className="text-sm font-medium text-navy">{t('Card details')}</span>
-          {/* El iframe de Stripe se monta aquí: el recuadro es nuestro, lo de
-              dentro es suyo. */}
-          <div
-            ref={contenedor}
-            className="mt-1.5 w-full rounded-btn bg-papel px-4 py-3 ring-1 ring-linea focus-within:ring-2 focus-within:ring-aqua"
+      <div className="mt-3">
+        {preparando ? (
+          <p className="flex items-center gap-1.5 text-xs text-navy-soft">
+            <Spinner /> {t('Preparing the payment…')}
+          </p>
+        ) : null}
+        {intento ? (
+          <FormularioStripe
+            clave={intento.clave}
+            clientSecret={intento.secreto}
+            importe={saldo}
+            facturacion={facturacion}
+            obtenerSecreto={async () => ({ client_secret: intento.secreto })}
+            returnUrl={returnUrl}
+            onPagado={pagado}
+            onError={setError}
+            onEstado={setEstadoStripe}
+            registraPagar={(fn) => { pagarConStripe.current = fn }}
           />
-          {preparando ? (
-            <p className="mt-1.5 flex items-center gap-1.5 text-xs text-navy-soft">
-              <Spinner /> {t('Preparing the payment…')}
-            </p>
-          ) : null}
-        </div>
-      </fieldset>
+        ) : null}
+      </div>
 
       {error ? (
         <p role="alert" className="mt-3 rounded-lg border border-coral/40 bg-coral/5 px-3 py-2 text-xs leading-relaxed text-navy-sub">
@@ -182,8 +161,8 @@ export function PagoSaldo({
       <div className="mt-4 flex flex-wrap gap-2">
         <button
           type="button"
-          onClick={pagar}
-          disabled={procesando || preparando || !completa || titular.trim() === ''}
+          onClick={() => pagarConStripe.current?.()}
+          disabled={procesando || preparando || !completa}
           className="flex flex-1 items-center justify-center gap-2 rounded-btn bg-coral px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-coral-dark disabled:cursor-not-allowed disabled:opacity-50"
         >
           {procesando ? (
