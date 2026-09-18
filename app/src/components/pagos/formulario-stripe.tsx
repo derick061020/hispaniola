@@ -189,18 +189,16 @@ export function FormularioStripe({
       //    completar el pago». Pasaba en «Mi reserva», donde no se mandaba el
       //    país. Por eso los tres llevan respaldo y ninguno viaja vacío.
       //
-      //    Del domicilio solo viaja el PAÍS: el código postal lo recoge el
-      //    propio Payment Element (`fields.billingDetails.address`), y lo que
-      //    Stripe recoge NO se manda desde aquí — mandarlo daría el error
-      //    contrario («no puedes pasar un campo que estás recogiendo»).
-      const { nombre, email, telefono, pais } = ultimo.current.facturacion
+      //    Del domicilio no viaja NADA: lo recoge el propio Payment Element
+      //    (`fields.billingDetails.address: 'auto'`), y lo que Stripe recoge
+      //    no se le manda desde aquí.
+      const { nombre, email, telefono } = ultimo.current.facturacion
       const confirmParams: Record<string, unknown> = { return_url: ultimo.current.returnUrl }
       if (via === 'boton') {
         confirmParams.payment_method_data = {
           billing_details: {
             name: nombre?.trim() || email?.trim() || 'Guest',
-            phone: telefono?.trim() || undefined,
-            address: { country: pais?.trim().toUpperCase() || 'US' },
+            ...(telefono?.trim() ? { phone: telefono.trim() } : {}),
           },
         }
       }
@@ -299,36 +297,31 @@ export function FormularioStripe({
               address: facturacion.pais ? { country: facturacion.pais } : undefined,
             },
           },
-          // Ya se pidieron en el paso de contacto: no se vuelven a pedir.
-          // Viajan en `billing_details` al confirmar. El correo sí se enseña
-          // (prellenado): es lo que hace funcionar Link.
-          // Lo que ya se pidió en el paso de contacto no se vuelve a pedir; va
-          // en `billing_details` al confirmar (ver el aviso de `confirmar`).
+          // El correo sí se enseña (prellenado): es lo que hace funcionar Link.
           // El teléfono solo se oculta si lo tenemos: si no, que lo pida
           // Stripe — es preferible un campo más que un cobro que no arranca.
           //
-          // ⚠️ [2026-09-18, Derick probando en botizate] LA DIRECCIÓN VA CAMPO
-          // A CAMPO, y el CÓDIGO POSTAL lo pide Stripe. Con `address: 'never'`
-          // entero, Stripe exige que se le mande la dirección COMPLETA al
-          // confirmar —incluido `postal_code`— y el cobro moría antes de
-          // empezar con «you did not pass … billing_details.address.
-          // postal_code». Ese dato no se pide en ningún paso del checkout y no
-          // se puede inventar: es el que usa la comprobación AVS del banco.
-          // Así que se ocultan calle, ciudad y provincia (que no hacen falta),
-          // el país se manda desde aquí, y el postal lo teclea el visitante:
-          // un solo campo, el mismo que pide cualquier checkout de EE. UU.
+          // ⚠️ [2026-09-18, Derick probando en botizate] LA DIRECCIÓN LA
+          // RECOGE STRIPE, no nosotros.
+          //
+          // La regla de Stripe es dura: CADA campo que se marca «never» hay
+          // que mandárselo al confirmar. Se intentó ocultar el domicilio
+          // entero y pidió `postal_code`; se ocultó campo a campo dejando
+          // solo el postal y entonces pidió `state`, y detrás vendrían
+          // `line1` y `city`. Ninguno de esos datos se pide en el checkout ni
+          // se puede inventar —el postal es el que usa la comprobación AVS
+          // del banco—, así que la única salida honesta es dejar que los pida
+          // el propio formulario: con 'auto' enseña lo justo para la tarjeta
+          // (país y código postal) y nada más. Con Apple Pay o Google Pay ni
+          // eso: esos datos los da la hoja del sistema.
+          //
+          // El nombre y el teléfono SÍ se ocultan, porque esos sí los tenemos
+          // del paso de contacto y viajan en `billing_details`.
           fields: {
             billingDetails: {
               name: 'never',
               phone: facturacion.telefono ? 'never' : 'auto',
-              address: {
-                line1: 'never',
-                line2: 'never',
-                city: 'never',
-                state: 'never',
-                country: 'never',
-                postalCode: 'auto',
-              },
+              address: 'auto',
             },
           },
         })
