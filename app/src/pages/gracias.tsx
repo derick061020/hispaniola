@@ -316,7 +316,7 @@ export function GraciasPage() {
             <Check className="size-8" strokeWidth={2.5} aria-hidden="true" />
           </div>
           <h1 className="mt-6 font-display text-3xl font-semibold text-navy sm:text-4xl">
-            {t('See you on board,')}{' '}{reserva.contacto.nombre}!
+            {t('See you on board,')}{' '}{reserva.contacto.nombre} {reserva.contacto.apellidos}!
           </h1>
           <p className="mt-3 text-base text-navy-sub sm:text-lg">
             {t('Your booking is confirmed. We’re sending the voucher to')}{' '}
