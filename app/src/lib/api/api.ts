@@ -2,8 +2,8 @@ import { llamar, llamarSobre, enviarBaliza } from './cliente'
 import { idiomaDelNavegador } from '@/lib/idioma'
 import { origenVisita } from '@/lib/origen-visita'
 import type {
-  ConfigPublica, Cotizacion, Disponibilidad, Hotel, IntencionPago, ParcheCheckout,
-  Paquete, Pax, Pedido, Reserva, Tour,
+  BarcoPropina, ConfigPublica, Cotizacion, Disponibilidad, Hotel, IntencionPago,
+  IntencionPropina, ParcheCheckout, Paquete, Pax, Pedido, Reserva, Tour,
 } from './tipos'
 
 // Superficie completa de la API. Una funcion por endpoint, sin logica de UI.
@@ -211,6 +211,45 @@ export function pagarSaldo(codigo: string, token: string) {
     token,
     cuerpo: {},
   })
+}
+
+// ── Propinas por QR ──────────────────────────────────────────────────────
+
+/** El barco y su tripulacion, a partir del slug que trae la URL del QR. */
+export function obtenerBarcoPropina(slug: string, signal?: AbortSignal) {
+  return llamar<BarcoPropina>(`/tips/${encodeURIComponent(slug)}`, { signal })
+}
+
+/** Crea el cobro. Sin token ni codigo de reserva: es publico, y lo unico que
+ *  hace falta para cobrar (empleado, monto, correo) se valida en el servidor. */
+export function pagarPropina(
+  slug: string,
+  datos: { employeeId: number; amount: number; guestEmail: string; guestName?: string },
+) {
+  return llamar<IntencionPropina>(`/tips/${encodeURIComponent(slug)}/pay`, {
+    metodo: 'POST',
+    cuerpo: {
+      employee_id: datos.employeeId,
+      amount: datos.amount,
+      guest_email: datos.guestEmail,
+      guest_name: datos.guestName,
+      consent: true,
+    },
+  })
+}
+
+/** Confirmacion tras el pago, igual que `confirmarPago`: el servidor vuelve a
+ *  preguntarle a Stripe, no se fia del navegador. Con `reference` (el caso
+ *  normal) o, si Cash App se llevo el navegador y solo vuelve con
+ *  `payment_intent` en la URL, con eso solo. */
+export function confirmarPropina(
+  slug: string,
+  ids: { reference?: string; paymentIntentId?: string },
+) {
+  return llamar<{ reference: string; state: string }>(
+    `/tips/${encodeURIComponent(slug)}/confirm`,
+    { metodo: 'POST', cuerpo: { reference: ids.reference, payment_intent_id: ids.paymentIntentId } },
+  )
 }
 
 // ── Mi reserva ─────────────────────────────────────────────────────────────
