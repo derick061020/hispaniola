@@ -9,7 +9,6 @@ import { MiReservaPage } from '@/pages/mi-reserva'
 import { EventoPage } from '@/pages/evento'
 import { EventsPage } from '@/pages/events'
 import { GraciasEventoPage } from '@/pages/gracias-evento'
-import { PropinaPage } from '@/pages/propina'
 import { VentajaCompetitivaPage } from '@/pages/ventaja-competitiva'
 import { FlotaPage } from '@/pages/flota'
 import { TripulacionPage } from '@/pages/tripulacion'
@@ -180,9 +179,6 @@ function App() {
         <Route path="/book/:slug" element={<ReservarPage />} />
         <Route path="/book/:slug/thank-you" element={<GraciasPage />} />
         <Route path="/my-booking" element={<MiReservaPage />} />
-        {/* [2026-09-21] QR de propinas: uno por barco, sin token ni codigo de
-            reserva -- es publica por diseno, como el resto del sitio. */}
-        <Route path="/tip/:barco" element={<PropinaPage />} />
         {/* [2026-08-18] El área privada. `/mi-cuenta` queda como alias en
             español, igual que /mi-reserva → /my-booking. */}
         <Route path="/account" element={<CuentaPage />} />

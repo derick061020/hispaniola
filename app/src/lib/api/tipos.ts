@@ -275,25 +275,6 @@ export type IntencionPago = {
   approve_url?: string
 }
 
-// ── Propinas por QR ──────────────────────────────────────────────────────
-
-export type TripulanteBarco = { id: number; name: string }
-
-export type BarcoPropina = {
-  boat: { name: string; slug: string }
-  crew: TripulanteBarco[]
-}
-
-/** Solo Stripe: la propina no ofrece PayPal (no hay pantalla de vuelta a la
- *  que capturar el redirect). */
-export type IntencionPropina = {
-  reference: string
-  client_secret: string
-  publishable_key: string
-  amount: number
-  currency: Moneda
-}
-
 export type DiaDisponible = {
   date: string
   available: boolean

@@ -2726,23 +2726,4 @@ export const ES: Record<string, string> = {
   "aboard a": "en",
   "catamaran": "catamarán",
   "Much more than a tour!": "¡Mucho más que un tour!",
-  "This tip page is not available right now.": "Esta página de propinas no está disponible en este momento.",
-  "Voluntary tip to {name}, crew of {boat}. No goods or services are exchanged in return. Not refundable except as required by law.":
-    "Propina voluntaria a {name}, tripulación de {boat}. No hay bienes ni servicios a cambio. No reembolsable salvo que la ley lo exija.",
-  "Back to hispaniolaaquaticadventures.com": "Volver a hispaniolaaquaticadventures.com",
-  "Thank you!": "¡Gracias!",
-  "Tip sent to the crew.": "Propina enviada a la tripulación.",
-  "Your tip for {name} on {boat} is on its way. A receipt was sent to":
-    "Tu propina para {name} en {boat} ya va en camino. Se envió un recibo a",
-  "Tip the crew": "Dale una propina a la tripulación",
-  "Send a tip to the crew of {boat}.": "Envía una propina a la tripulación de {boat}.",
-  "Tip the crew of {boat}": "Dale una propina a la tripulación de {boat}",
-  "100% goes to your crew member. Thank you for the support!": "El 100% es para la persona que elijas. ¡Gracias por el apoyo!",
-  "Who are you tipping?": "¿A quién le das la propina?",
-  "Amount": "Monto",
-  "E-mail (for your receipt)": "Correo (para tu recibo)",
-  "Your name (optional)": "Tu nombre (opcional)",
-  "Choose who you are tipping, an amount and your e-mail to continue.": "Elige a quién le das la propina, un monto y tu correo para continuar.",
-  "Nothing was charged.": "No se cobró nada.",
-  "Send tip ·": "Enviar propina ·",
 }
