@@ -8,7 +8,7 @@ import { Header } from './header'
 import { TickerHero } from './ticker-hero'
 import { useDevFlag } from '@/dev/use-dev-flag'
 import { STATS } from '@/data/home'
-import { t } from '@/lib/i18n'
+import { idiomaUI, t } from '@/lib/i18n'
 
 // Hero v3 — «inmersivo» (app/PLAN-v3.md). Cambios frente a v2: el Header pasa
 // a vivir DENTRO del box del hero (antes era una barra hermana sticky), y la
@@ -210,18 +210,52 @@ export function Hero() {
                     había, y eso obligó a ensanchar el carril a max-w-7xl para
                     conservar las 2 líneas de desktop — ver el comentario del
                     contenedor, justo arriba. */}
+                {/* [2026-09-22, reportado por Reimon y por una compañera del
+                    equipo, visto por el cliente estando de vacaciones] La
+                    traducción al español salía LITERAL, palabra por palabra
+                    en el mismo orden que el inglés («Redefiniendo la Caribe
+                    Catamarán Experiencia»): el inglés antepone los
+                    adjetivos al sustantivo («Caribbean Catamaran
+                    Experience»), el español los pospone, y las 4 piezas
+                    (prefijo + 2 palabras subrayadas + sufijo) se traducían
+                    cada una por separado sin poder reordenarse entre sí —
+                    swapping solo el VALOR del diccionario no alcanza cuando
+                    el problema es el ORDEN de las palabras. Por eso aquí se
+                    ramifica por idioma: el inglés queda igual que antes (es
+                    el titular aprobado por el cliente, literal), y el
+                    español reconstruye la frase en su propio orden, con
+                    "en catamarán" como el par subrayado — más natural que
+                    forzar "Caribbean"/"Catamaran" a la fuerza. */}
                 <h1 className="text-balance font-display text-hero-movil font-semibold text-white sm:text-hero">
-                  {t('Redefining the')}{' '}
-                  <span className="titulo-subrayado">
-                    <span className="titulo-palabra" style={{ '--i': 0 } as CSSProperties}>
-                      {t('Caribbean')}
-                    </span>{' '}
-                    <span className="titulo-palabra" style={{ '--i': 1 } as CSSProperties}>
-                      {t('Catamaran')}
-                    </span>
-                    <span className="titulo-ola" aria-hidden="true" />
-                  </span>{' '}
-                  {t('Experience. More than just a tour!')}
+                  {idiomaUI() === 'es' ? (
+                    <>
+                      {t('Redefine your Caribbean experience')}{' '}
+                      <span className="titulo-subrayado">
+                        <span className="titulo-palabra" style={{ '--i': 0 } as CSSProperties}>
+                          {t('aboard a')}
+                        </span>{' '}
+                        <span className="titulo-palabra" style={{ '--i': 1 } as CSSProperties}>
+                          {t('catamaran')}.
+                        </span>
+                        <span className="titulo-ola" aria-hidden="true" />
+                      </span>{' '}
+                      {t('Much more than a tour!')}
+                    </>
+                  ) : (
+                    <>
+                      {t('Redefining the')}{' '}
+                      <span className="titulo-subrayado">
+                        <span className="titulo-palabra" style={{ '--i': 0 } as CSSProperties}>
+                          {t('Caribbean')}
+                        </span>{' '}
+                        <span className="titulo-palabra" style={{ '--i': 1 } as CSSProperties}>
+                          {t('Catamaran')}
+                        </span>
+                        <span className="titulo-ola" aria-hidden="true" />
+                      </span>{' '}
+                      {t('Experience. More than just a tour!')}
+                    </>
+                  )}
                 </h1>
                 {/* [v3] Esta lead NO viene en el documento del cliente (el
                     párrafo largo que él aprueba para la pág. 1 es el de la

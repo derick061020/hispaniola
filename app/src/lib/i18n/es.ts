@@ -2722,6 +2722,10 @@ export const ES: Record<string, string> = {
   "We could not confirm the": "No hemos podido confirmar el pago de",
   "payment right now. Our team will check it and email you.": "ahora mismo. Nuestro equipo lo revisará y te escribirá.",
   "We could not open the payment form. Try again in a moment.": "No hemos podido abrir el formulario de pago. Inténtalo de nuevo en un momento.",
+  "Redefine your Caribbean experience": "Redefiniendo tu experiencia caribeña",
+  "aboard a": "en",
+  "catamaran": "catamarán",
+  "Much more than a tour!": "¡Mucho más que un tour!",
   "This tip page is not available right now.": "Esta página de propinas no está disponible en este momento.",
   "Voluntary tip to {name}, crew of {boat}. No goods or services are exchanged in return. Not refundable except as required by law.":
     "Propina voluntaria a {name}, tripulación de {boat}. No hay bienes ni servicios a cambio. No reembolsable salvo que la ley lo exija.",
