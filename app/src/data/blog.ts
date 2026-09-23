@@ -63,6 +63,20 @@ export type Articulo = {
   destacado?: boolean
   /** Cuerpo del artículo. null = propuesto pero SIN ESCRIBIR (ver arriba). */
   cuerpo: BloqueArticulo[] | null
+  // [2026-09-23, Raymond: «necesito una sección de Blog… para poder crear,
+  // subir y publicar artículos directamente»] Los artículos de aquí abajo
+  // están escritos a mano en este archivo; los que escribe Raymond desde Odoo
+  // llegan por la API y traen estos dos campos en vez de `foto` y `cuerpo`.
+  // Ver `lib/blog-remoto.ts`.
+  /** URL completa de la portada (los de Odoo). Manda sobre `foto`. */
+  fotoUrl?: string
+  /** Cuerpo en HTML (los de Odoo). Manda sobre `cuerpo`. */
+  cuerpoHtml?: string
+}
+
+/** La portada del artículo, venga de /fotos o de Odoo. */
+export function fotoDeArticulo(a: Pick<Articulo, 'foto' | 'fotoUrl'>): string {
+  return a.fotoUrl ?? `/fotos/${a.foto}.webp`
 }
 
 /** Bloque del cuerpo de un artículo (pages/articulo.tsx). Los 3 niveles de

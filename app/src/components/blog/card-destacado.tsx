@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { ArrowRight } from 'lucide-react'
 import { EQUIPO } from '@/data/nosotros'
-import type { Articulo, CategoriaBlog } from '@/data/blog'
+import { fotoDeArticulo, type Articulo, type CategoriaBlog } from '@/data/blog'
 import { t } from '@/lib/i18n'
 
 // CardDestacado y sus piezas — en su propio archivo (y no en lista-articulos.tsx,
@@ -110,7 +110,7 @@ export function CardDestacado({ articulo }: { articulo: Articulo }) {
           card entera (ver `clases` más abajo). */}
       <div className="relative -mb-px lg:mb-0 lg:h-full lg:-mr-px">
         <img
-          src={`/fotos/${articulo.foto}.webp`}
+          src={fotoDeArticulo(articulo)}
           alt={articulo.fotoAlt}
           className="h-56 w-full rounded-t-card object-cover sm:h-72 lg:h-full lg:rounded-tr-none lg:rounded-bl-card"
           loading="lazy"

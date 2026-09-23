@@ -9,7 +9,8 @@ import { IndiceArticulo } from '@/components/blog/indice-articulo'
 import { ComentariosArticulo } from '@/components/blog/comentarios-articulo'
 import { Newsletter } from '@/components/blog/lista-articulos'
 import { Meta } from '@/components/seo/meta'
-import { ARTICULOS } from '@/data/blog'
+import { useArticulo } from '@/lib/blog-remoto'
+import { ARTICULOS, fotoDeArticulo } from '@/data/blog'
 import { EQUIPO } from '@/data/nosotros'
 import { t } from '@/lib/i18n'
 
@@ -70,7 +71,13 @@ import { t } from '@/lib/i18n'
 // redacción" en vez de fingir un texto que no existe.
 export function ArticuloPage() {
   const { slug } = useParams()
-  const articulo = ARTICULOS.find((a) => a.slug === slug)
+  // [2026-09-23, Raymond] Busca primero entre los de siempre y, si no esta,
+  // lo pide a Odoo: los que publica el equipo no viven en este repo.
+  const { articulo, cargando } = useArticulo(slug)
+
+  // Mientras se pregunta a Odoo no se decide nada: mandar a la home aqui
+  // tiraria al visitante fuera de un articulo que SI existe.
+  if (cargando) return null
 
   // [2026-09-14, Samuel] Un articulo que no existe manda a la home, como el
   // resto de rutas desconocidas (ver la ruta comodin de App.tsx).
@@ -85,7 +92,7 @@ export function ArticuloPage() {
 
       <HeroInterna
         ctaHref="/#tours"
-        imagen={{ src: `/fotos/${articulo.foto}.webp`, alt: articulo.fotoAlt }}
+        imagen={{ src: fotoDeArticulo(articulo), alt: articulo.fotoAlt }}
         pie={<CompartirArticulo articulo={articulo} sobreOscuro />}
       >
         <CabeceraArticulo articulo={articulo} autor={autor} />
@@ -110,6 +117,16 @@ export function ArticuloPage() {
               lugar, mismo criterio que el resto del proyecto con contenido
               pendiente. `scroll-mt-28` en los encabezados: que el salto del
               índice no los deje pegados al borde superior del viewport. */}
+          {/* [2026-09-23] El articulo escrito en Odoo trae el cuerpo en HTML
+              (el editor de Odoo), no en bloques tipados. Se pinta tal cual:
+              Odoo ya lo limpia al guardarlo (`sanitize=True`). */}
+          {articulo.cuerpoHtml ? (
+            <div
+              className="prosa-articulo mt-8 flex flex-col gap-4"
+              dangerouslySetInnerHTML={{ __html: articulo.cuerpoHtml }}
+            />
+          ) : null}
+
           {articulo.cuerpo ? (
             <div className="mt-8 flex flex-col gap-4">
               {articulo.cuerpo.map((bloque, i) => {

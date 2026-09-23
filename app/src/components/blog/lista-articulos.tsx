@@ -4,7 +4,8 @@ import { ArrowRight } from 'lucide-react'
 import { gsap } from 'gsap'
 import { Flip } from 'gsap/Flip'
 import { Etiqueta } from '@/components/ui/etiqueta'
-import { ARTICULOS, CATEGORIAS_BLOG, type Articulo, type CategoriaBlog } from '@/data/blog'
+import { useArticulos } from '@/lib/blog-remoto'
+import { CATEGORIAS_BLOG, type Articulo, type CategoriaBlog, fotoDeArticulo } from '@/data/blog'
 import { RESENAS_AGREGADO } from '@/data/home'
 import { MetaArticulo, ChipCategoria, fundePapel } from './card-destacado'
 import { CarruselDestacados } from './carrusel-destacados'
@@ -47,7 +48,7 @@ function CardArticulo({ articulo }: { articulo: Articulo }) {
       <div className="p-2">
         <div className="relative overflow-hidden rounded-t-card">
           <img
-            src={`/fotos/${articulo.foto}.webp`}
+            src={fotoDeArticulo(articulo)}
             alt={articulo.fotoAlt}
             className="h-56 w-full object-cover transition-transform duration-300 group-hover:scale-105"
             loading="lazy"
@@ -102,8 +103,12 @@ export function ListaArticulos() {
   // hero + listado — antes «destacado» excluía del resto porque solo había
   // uno; con varios, esconderlos también de la rejilla los dejaría solo
   // accesibles mientras el carrusel los tuviera activos.
-  const destacados = ARTICULOS.filter((a) => a.destacado)
-  const visibles = activa ? ARTICULOS.filter((a) => a.categoria === activa) : ARTICULOS
+  // [2026-09-23, Raymond] A los 20 de siempre se les suman los que el equipo
+  // publica desde Odoo (ver `lib/blog-remoto.ts`). Si la API no contesta,
+  // `useArticulos` devuelve solo los de siempre y el blog se ve igual.
+  const { articulos: todos } = useArticulos()
+  const destacados = todos.filter((a) => a.destacado)
+  const visibles = activa ? todos.filter((a) => a.categoria === activa) : todos
 
   // Filtrado animado con GSAP Flip — MISMO patrón que CategoriasFaq
   // (components/faq/categorias-faq.tsx, pedido de Samuel: reusar aquí el
