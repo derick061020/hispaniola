@@ -169,8 +169,34 @@ export const EQUIPO_COMPLETO: MiembroEquipoV2[] = DEPARTAMENTOS.flatMap((d) =>
  *  Se deriva del array, como todos los contadores de esta página. */
 export const TOTAL_EQUIPO = EQUIPO_COMPLETO.length
 
+/** LA PLANTILLA REAL, que no es la de los retratos.
+ *
+ *  [2026-09-19, Fernando vía Rossanna: «que vayan cambiando la cantidad de
+ *  empleado en cada categoría AUNQUE NO TENGAMOS TODAS LAS FOTOS»] Y ese
+ *  «aunque» es el encargo entero: el plano decía «Deckhands 1» porque hay un
+ *  retrato, no porque haya un marinero. Son los números que él mismo dio.
+ *
+ *  ⚠️ Cocina no está: Fernando no dio su número y aquí no se inventa ninguno
+ *  (regla del proyecto). Mientras no lo mande, cocina sigue contando retratos,
+ *  que es lo único cierto que tenemos de ese departamento.
+ *
+ *  ⚠️ NO se alimenta solo todavía, y se pidió el mismo día. Odoo tiene los 70
+ *  empleados en `hr.employee`, pero sus departamentos no son estas categorías
+ *  —«Operaciones Marítimas» son 27 y aquí capitanes + marinos suman 39— así
+ *  que derivarlo hoy publicaría en la web unos números que contradicen los que
+ *  dio Fernando. Primero hay que cuadrar los departamentos de Odoo con estas
+ *  siete categorías; hasta entonces, mandan estos. */
+const PLANTILLA_POR_DEPARTAMENTO: Partial<Record<DepartamentoId, number>> = {
+  capitanes: 9,
+  guias: 8,
+  marinos: 30,
+  oficina: 9,
+  ventas: 4,
+  fundacion: 5,
+}
+
 export function contarPorDepartamento(id: DepartamentoId): number {
-  return EQUIPO_COMPLETO.filter((m) => m.departamento === id).length
+  return PLANTILLA_POR_DEPARTAMENTO[id] ?? EQUIPO_COMPLETO.filter((m) => m.departamento === id).length
 }
 
 export const EQUIPO_PAGINA = traducible({
