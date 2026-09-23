@@ -39,7 +39,7 @@ export type MenuReserva = {
   /** 'eleccion' = cada persona escoge plato; 'fijo' = todos comen lo mismo. */
   modo: 'eleccion' | 'fijo'
   /** Nombre corto, para la línea de producto y el desglose («Premium»,
-   *  «4-hour menu», «Island buffet»). */
+   *  «4-hour menu», «Beach buffet»). */
   etiqueta: string
   titulo: string
   texto?: string
@@ -153,8 +153,8 @@ export function menuDeLaReserva({
   if (ficha.menuBuffet) {
     return {
       modo: 'fijo',
-      etiqueta: t('Island buffet'),
-      titulo: t('Island buffet'),
+      etiqueta: t('Beach buffet'),
+      titulo: t('Beach buffet'),
       texto: t('Served on the beach for the whole group. There is no dish to pick per guest.'),
       platos: ficha.menuBuffet.platos,
     }

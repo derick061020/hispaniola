@@ -1578,7 +1578,10 @@ export const FICHAS: Record<string, FichaTour> = traducible({
       addOn: {
         nombre: 'Premium lobster',
         precio: 30,
-        descripcion: 'Lobster for everyone on board, on top of the buffet.',
+        // [2026-09-12, Rossanna: «para las excursiones de Saona poner MENU:
+        // BEACH BUFFET y quitar boat»] En Saona se come en la playa, no a
+        // bordo: «on board» describia el tour equivocado.
+        descripcion: 'Lobster for everyone, on top of the buffet.',
         addOnId: 'langosta',
       },
     },

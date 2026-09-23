@@ -1173,7 +1173,7 @@ export const ES: Record<string, string> = {
   "Is there a minimum age for children?": "¿Hay edad mínima para los niños?",
   "Is there a minimum number of guests?": "¿Hay un mínimo de personas?",
   "Is there a restroom on board?": "¿Hay baño a bordo?",
-  "Island buffet": "Buffet en la isla",
+  "Beach buffet": "Buffet en la playa",
   "It covers every person on board for the whole excursion, not just the sailing part.": "Cubre a cada persona a bordo durante toda la excursión, no solo la navegación.",
   "It depends on the tour and on how the sea is that day. Message us on WhatsApp before booking and we’ll tell you which one suits you.": "Depende del tour y de cómo esté el mar ese día. Escríbenos por WhatsApp antes de reservar y te decimos cuál te conviene.",
   "It depends on the tour and on the sea that day. Write to us on WhatsApp before booking and we’ll tell you which one suits you.": "Depende del tour y de cómo esté el mar ese día. Escríbenos por WhatsApp antes de reservar y te decimos cuál te conviene.",
