@@ -303,7 +303,9 @@ function FlujoReserva({
   // QUÉ COME ESTE GRUPO. Resuelto en un solo sitio (lib/menu-reserva.ts) a
   // partir del paquete, del bote y del aforo — los tres datos que pueden
   // cambiarlo, y los tres editables sin salir de esta pantalla.
-  const menu = menuDeLaReserva({ ficha, paquete, variante: varianteInicial, personas })
+  const menu = menuDeLaReserva({
+    ficha, paquete, variante: varianteInicial, personas, addonsSeleccionados: addonsIniciales,
+  })
   // El paso «Your menu» SOLO existe si hay algo que elegir. Con buffet (Saona,
   // charter de 21+) o con una carta de un plato no se le pide una decisión a
   // quien no tiene ninguna: la comida se enseña en la tarjeta de la derecha.
@@ -352,7 +354,9 @@ function FlujoReserva({
     // Se recalcula con el aforo NUEVO: en el charter, crecer hasta 21 elimina
     // el paso del menú (pasa a buffet), así que devolver el flujo ahí sería
     // mandarlo a una sección que ya no existe.
-    const menuNuevo = menuDeLaReserva({ ficha, paquete, variante: varianteInicial, personas: n })
+    const menuNuevo = menuDeLaReserva({
+      ficha, paquete, variante: varianteInicial, personas: n, addonsSeleccionados: addonsIniciales,
+    })
     if (n > personas && menuNuevo?.modo === 'eleccion' && indiceDe(pasoActivo) > indiceDe('menu')) {
       setPaso('menu')
     }
@@ -545,6 +549,10 @@ function FlujoReserva({
         menuBuffet: ficha.menuBuffet,
         menuCharter: ficha.menuCharter,
         subVariantes: ficha.subVariantes,
+        // [2026-09-22] Sin esto, «Gracias» y «Mi reserva» no pueden saber si
+        // el charter llevaba la comida opcional contratada o no, y volvían a
+        // ofrecer plato en reservas sin comida. Ver lib/menu-reserva.ts.
+        addOns: ficha.addOns,
         horarios: ficha.horarios,
         upgradePremium: ficha.upgradePremium,
       },

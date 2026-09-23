@@ -241,6 +241,7 @@ export function GraciasPage() {
     paquete: reserva.paquete,
     variante: reserva.variante,
     personas: reserva.personas,
+    addonsSeleccionados: (reserva.extras ?? []).map((e) => e.nombre),
   })
   const seEligeMenu = menu?.modo === 'eleccion'
   // Platos realmente elegidos: el funnel ya deja reservar sin decidirlos.

@@ -33,7 +33,7 @@ import { t } from '@/lib/i18n'
 /** Los campos de menú que necesita el resolutor. Subconjunto de `FichaTour`
  *  para que valga igual sobre la ficha completa y sobre `Reserva.ficha`. */
 export type FichaConMenu = Pick<FichaTour, 'menuLight' | 'menuPremium'> &
-  Partial<Pick<FichaTour, 'menuBuffet' | 'menuCharter' | 'subVariantes'>>
+  Partial<Pick<FichaTour, 'menuBuffet' | 'menuCharter' | 'subVariantes' | 'addOns'>>
 
 export type MenuReserva = {
   /** 'eleccion' = cada persona escoge plato; 'fijo' = todos comen lo mismo. */
@@ -91,15 +91,38 @@ export function menuDeLaReserva({
   paquete,
   variante,
   personas,
+  addonsSeleccionados,
 }: {
   ficha: FichaConMenu
   paquete: Paquete
   /** Sub-variante elegida en el widget (el BARCO, en el charter). */
   variante?: string | null
   personas?: number | null
+  /** Ids (funnel, vienen de la URL) o nombres (`Reserva.addons[].name`,
+   *  pantallas post-compra) de los add-ons contratados. Sirve para saber si
+   *  se pagó la comida opcional del charter — ver la nota de `comidaMaite`
+   *  más abajo. */
+  addonsSeleccionados?: string[] | null
 }): MenuReserva | null {
   // 1. CHARTER — la carta la deciden el barco y el aforo, no un paquete.
   if (ficha.menuCharter) {
+    // [2026-09-22, reporte de staff: reserva de Maite «sin comida» dejaba
+    // igual elegir plato.] Por debajo de `soloHastaPersonas`, Maite y Santa
+    // Maria NO llevan comida en la tarifa de grupo — es un add-on opcional
+    // (`comida-maite`/`comida-santa-maria`, ver data/tours.ts) — y si no se
+    // contrató, no hay nada que comer: ni carta, ni paso de menú, ni tarjeta.
+    const addonComida = (ficha.addOns ?? []).find(
+      (a) => a.soloHastaPersonas != null && (a.soloSubVariantes ?? []).includes(variante ?? ''),
+    )
+    if (
+      addonComida &&
+      personas != null &&
+      personas <= addonComida.soloHastaPersonas! &&
+      !(addonsSeleccionados ?? []).some((s) => s === addonComida.id || s === addonComida.etiqueta)
+    ) {
+      return null
+    }
+
     const carta = cartaCharterDe(ficha.menuCharter, ficha.subVariantes, variante, personas)
     const hayBuffet = ficha.menuCharter.cartas.some((c) => c.id === '21+')
     return {

@@ -1003,6 +1003,7 @@ function BloqueMenu({
     paquete: reserva.paquete,
     variante: reserva.variante,
     personas: reserva.personas,
+    addonsSeleccionados: (reserva.extras ?? []).map((e) => e.nombre),
   })
   const menu = menuReserva?.platos ?? []
   const seElige = menuReserva?.modo === 'eleccion'

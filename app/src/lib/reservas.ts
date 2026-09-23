@@ -22,7 +22,7 @@ export type Reserva = {
    *  `menuLight`/`menuPremium` —vacíos en Saona y en el charter— y ofrecían
    *  «cambiar el menú» de un menú que no existe. */
   ficha: Pick<FichaTour, 'menuLight' | 'menuPremium' | 'horarios' | 'upgradePremium'> &
-    Partial<Pick<FichaTour, 'menuBuffet' | 'menuCharter' | 'subVariantes'>>
+    Partial<Pick<FichaTour, 'menuBuffet' | 'menuCharter' | 'subVariantes' | 'addOns'>>
   paquete: Paquete
   /** Sub-variante elegida (el BARCO en el charter, la modalidad en Saona).
    *  Decide qué carta se come — ver `cartaCharterDe`. */
