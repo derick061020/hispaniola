@@ -3,6 +3,43 @@
   <head>
     <meta charset="UTF-8" />
 
+    <!-- EL IDIOMA, ANTES DE QUE PINTE NADA.
+         [2026-09-24, Derick: «intenta capturarlo y mostrar nuestra traducción
+         para que el texto no se distorsione»]
+
+         El `<html lang="en">` de arriba es el del fichero, y React no lo
+         corrige hasta que arranca. En esa rendija —HTML en inglés, visitante
+         con el navegador en español— Chrome ya ha decidido traducir la página
+         entera, y lo hace ENCIMA de una web que tiene su propio español
+         escrito a mano. Resultado: el titular del hero, que va partido en
+         spans por palabra con su subrayado en ola, sale descolocado.
+
+         Este script corre en el `<head>`, antes del primer pintado, y declara
+         el idioma de verdad. Con `lang="es"` Chrome ya no ofrece traducir: ve
+         una página que ya está en el idioma del visitante.
+
+         La regla es la MISMA que `lib/i18n/nucleo.ts` (primero lo que el
+         visitante eligió a mano, luego lo que trae el navegador). Si algún día
+         cambia allí, hay que cambiarla aquí: son dos copias a propósito,
+         porque esta tiene que existir antes de que exista el bundle. -->
+    <script>
+      (function () {
+        try {
+          var guardado = window.localStorage.getItem('hispaniola.idioma')
+          if (guardado === 'es' || guardado === 'en') {
+            document.documentElement.lang = guardado
+            return
+          }
+        } catch (e) {
+          /* Safari en privado tira al leer localStorage: se cae al navegador. */
+        }
+        var idiomas = (navigator.languages || [navigator.language || '']).join(',')
+        if (idiomas.toLowerCase().split(',').some(function (c) { return c.indexOf('es') === 0 })) {
+          document.documentElement.lang = 'es'
+        }
+      })()
+    </script>
+
     <!-- Google Tag Manager (GTM-TXSXRZN5, pedido por Miguel el 2026-09-04).
          Es un SEGUNDO contenedor: convive con GTM-K9NWXZ7G, que sigue abajo.
          Los dos empujan al mismo `dataLayer` y ninguno pisa al otro (cada
@@ -150,7 +187,7 @@
         y.parentNode.insertBefore(t, y)
       })(window, document, 'clarity', 'script', 'y71bfoscr7')
     </script>
-    <script type="module" crossorigin src="/assets/index-NXTTXS8n.js"></script>
+    <script type="module" crossorigin src="/assets/index-B5RPUNvl.js"></script>
     <link rel="stylesheet" crossorigin href="/assets/index-C6fmooBK.css">
   </head>
   <body>
