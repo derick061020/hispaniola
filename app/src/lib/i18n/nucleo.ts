@@ -93,6 +93,44 @@ export function escuchaIdioma(f: () => void) {
   return () => oyentes.delete(f)
 }
 
+// SI PIDEN TRADUCIR AL ESPAÑOL, SE LO DAMOS NOSOTROS.
+//
+// [2026-09-24, Derick: «cuando intentan traducirlo al español es posible que
+// la página también cambie a español, pero con mi traducción nativa»]
+//
+// Marcar el hero como `notranslate` evita que Google lo destroce, pero deja al
+// visitante con el titular en inglés dentro de una página traducida a medias.
+// Lo que de verdad quiere quien pulsa «Traducir» es leer en español — y el
+// español bueno lo tenemos escrito a mano, no hay que pedírselo a una máquina.
+//
+// Chrome no avisa de que va a traducir, pero se delata: al hacerlo le pone a
+// `<html>` la clase `translated-ltr` (o `translated-rtl`). Se vigila ese
+// atributo y, en cuanto aparece, se cambia el sitio a NUESTRO español. Como
+// entonces el contenido ya está en español y `lang` pasa a `es`, la traducción
+// de Chrome se queda sin nada que hacer.
+//
+// No hay bucle: `fijaIdiomaUI` vuelve a disparar el observador, pero para
+// entonces `actual` ya es 'es' y la condición no se cumple.
+function vigilaAlTraductor() {
+  if (typeof document === 'undefined' || typeof MutationObserver === 'undefined') return
+  const html = document.documentElement
+  const loEstanTraduciendo = () =>
+    /\btranslated-(ltr|rtl)\b/.test(html.className || '') ||
+    // El widget clásico de Google Translate no toca la clase: deja su cookie
+    // con el par de idiomas («/en/es»).
+    /(^|;)\s*googtrans=\/[a-z-]+\/es\b/i.test(document.cookie || '')
+
+  const observador = new MutationObserver(() => {
+    if (actual !== 'es' && loEstanTraduciendo()) fijaIdiomaUI('es')
+  })
+  observador.observe(html, { attributes: true, attributeFilter: ['class', 'lang'] })
+  // Y una comprobación de entrada, por si llegan con la traducción ya puesta
+  // (la cookie del widget sobrevive a la recarga).
+  if (actual !== 'es' && loEstanTraduciendo()) fijaIdiomaUI('es')
+}
+
+vigilaAlTraductor()
+
 /** Traduce un texto de la interfaz. Si no está en el diccionario devuelve el
  *  inglés tal cual — deliberadamente, ver la cabecera. */
 export function t(texto: string): string {
