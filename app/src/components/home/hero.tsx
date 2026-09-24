@@ -86,7 +86,29 @@ export function Hero() {
       {/* pt-hero-margen SOLO en móvil: desde sm: el Topbar (components/home/topbar.tsx)
           vive justo encima, blanco y sin borde — sm:pt-0 pega el hero a su borde
           inferior sin espaciado, en vez de repetir el margen general del box. */}
-      <section id="hero" className="px-hero-margen pt-hero-margen sm:px-hero-margen-sm sm:pt-0">
+      {/* EL TRADUCTOR DE GOOGLE NO ENTRA AQUÍ.
+          [2026-09-24, Derick: «deshabilita la traducción de Google en el hero,
+          intenta capturarlo y mostrar nuestra traducción para que el texto no
+          se distorsione»]
+
+          El titular no es un texto corrido: va partido en `<span>` por palabra
+          (`titulo-palabra`, con su `--i` para entrar escalonadas) y lleva el
+          subrayado en ola (`titulo-ola`) medido sobre esas palabras. Cuando
+          Chrome traduce, reescribe esos nodos: las palabras pierden su índice,
+          la ola se descoloca y el titular sale roto. Y encima traduciría un
+          texto que YA tenemos traducido a mano — el `idiomaUI() === 'es'` de
+          más abajo no es el titular en inglés pasado por una máquina, es una
+          frase reescrita en español, con otro orden y otro par subrayado.
+
+          `translate="no"` es el atributo estándar y `notranslate` la clase que
+          mira Google: se ponen los dos porque no todos los navegadores
+          respetan el mismo. Solo cubre el hero, que es lo que se pidió; el
+          resto de la web se sigue pudiendo traducir. */}
+      <section
+        id="hero"
+        translate="no"
+        className="notranslate px-hero-margen pt-hero-margen sm:px-hero-margen-sm sm:pt-0"
+      >
         {/* v3-F13 (PLAN-v3.md §15.5): flex-col + min-h-hero-alto (solo desde
             sm — en móvil el contenido manda). svh, no vh/dvh: vh es el
             viewport GRANDE en móvil (la barra de URL escondida) y dvh baila
