@@ -14,11 +14,15 @@ export function CampoTelefono({
   prefijo,
   numero,
   onCambio,
+  onSalir,
 }: {
   etiqueta: string
   prefijo: string
   numero: string
   onCambio: (parcial: { prefijo?: string; numero?: string }) => void
+  /** Al salir del campo. Lo usa el checkout para guardar el telefono sin
+   *  esperar a que la persona pulse «Continue» — ver `paso-contacto.tsx`. */
+  onSalir?: () => void
 }) {
   const id = useId()
   const elegido = prefijoPorId(prefijo)
@@ -60,6 +64,7 @@ export function CampoTelefono({
           placeholder={elegido?.id === 'ES' ? '612 345 678' : '809 000 0000'}
           value={numero}
           onChange={(e) => onCambio({ numero: e.target.value })}
+          onBlur={() => onSalir?.()}
         />
       </div>
     </div>

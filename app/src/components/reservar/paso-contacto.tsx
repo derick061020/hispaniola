@@ -22,14 +22,33 @@ import { t } from '@/lib/i18n'
 // type="email" y la pantalla de gracias ya dejan ver. El resumen del paso 1
 // imprime el correo tal cual se escribió, así que sigue habiendo dónde
 // revisarlo antes de pagar.
+// [2026-09-25, auditoria CRO del 21 de septiembre] GUARDAR AL SALIR DEL CAMPO.
+//
+// El pedido nacia al ENTRAR en /book/:slug —con su precio, su fecha y sus
+// personas— pero el contacto no viajaba hasta que la persona pulsaba
+// «Continue». Quien escribia su email y se iba antes de pulsar dejaba un
+// pedido con importe y sin un solo dato para contactarle.
+//
+// Medido del 15 al 21 de septiembre sobre el export de Web Orders: 65 pedidos
+// sin completar por 42.233 US$, y solo 9 de ellos —el 14%— tenian contacto.
+// Los otros 56, 37.802 US$, se fueron anonimos. De los 9 con contacto, 3
+// volvieron y compraron.
+//
+// `onBlur` y no `onChange`: se guarda cuando la persona termina de escribir el
+// campo, no en cada tecla. `sincronizar` ya acumula los parches y espera 600 ms,
+// asi que esto no multiplica las llamadas ni pisa lo que ya habia.
 export function PasoContacto({
   datos,
   onCambio,
+  onGuardarContacto,
   celebracion,
   onCambioCelebracion,
 }: {
   datos: DatosContacto
   onCambio: (parcial: Partial<DatosContacto>) => void
+  /** Se llama al SALIR de email o telefono. Manda solo ese dato: el backend
+   *  escribe unicamente los campos que recibe, asi que no borra el resto. */
+  onGuardarContacto?: (parcial: { email?: string; phone?: string }) => void
   celebracion: DatosCelebracion
   onCambioCelebracion: (parcial: Partial<DatosCelebracion>) => void
 }) {
@@ -39,6 +58,13 @@ export function PasoContacto({
         <h2 className="font-display text-h3 font-semibold text-navy">{t('Contact details')}</h2>
         <p className="mt-1 text-sm text-navy-sub">
           {t('We’ll use this information to send you your confirmation and to let you know about anything new with your booking. No spam.')}
+        </p>
+        {/* [2026-09-25] Se dice que el dato se guarda al escribirlo, porque a
+            partir de ahora es verdad: el email viaja al salir del campo, no al
+            pulsar «Continue». Si se va a usar para contactar, hay que avisarlo
+            donde se escribe y no enterrado en la politica de privacidad. */}
+        <p className="mt-2 text-xs text-navy-soft">
+          {t('We save your email and phone as you type them, so we can get in touch if you don’t finish your booking. You can ask us to delete them at any time.')}
         </p>
       </div>
 
@@ -66,6 +92,14 @@ export function PasoContacto({
             placeholder={t('you@email.com')}
             value={datos.email}
             onChange={(e) => onCambio({ email: e.target.value })}
+            onBlur={(e) => {
+              const email = e.target.value.trim()
+              // Solo si parece un correo: guardar «juan@» no sirve para nada y
+              // dejaria un dato roto en el pedido.
+              if (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                onGuardarContacto?.({ email })
+              }
+            }}
           />
           <p className="mt-1.5 text-xs text-navy-soft">{t('We’ll send your booking confirmation to this address.')}</p>
         </div>
@@ -84,6 +118,13 @@ export function PasoContacto({
                 ...(parcial.numero !== undefined ? { telefono: parcial.numero } : {}),
               })
             }
+            onSalir={() => {
+              const numero = datos.telefono.trim()
+              // Seis digitos es el minimo que puede ser un telefono de verdad.
+              if (numero.replace(/\D/g, '').length >= 6) {
+                onGuardarContacto?.({ phone: `${datos.prefijo} ${numero}`.trim() })
+              }
+            }}
           />
           <p className="mt-1.5 text-xs text-navy-soft">
             {t('Only to let you know about last-minute changes, for example if the weather forces us to move the tour.')}

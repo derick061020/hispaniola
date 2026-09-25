@@ -826,6 +826,18 @@ function FlujoReserva({
                 <PasoContacto
                   datos={contacto}
                   onCambio={(parcial) => setContacto((c) => ({ ...c, ...parcial }))}
+                  // [2026-09-25, auditoria CRO] El email y el telefono se
+                  // guardan al salir del campo, sin esperar a «Continue».
+                  // Antes, quien escribia su correo y se iba dejaba un pedido
+                  // con precio y sin forma de contactarle: 56 de 65 pedidos sin
+                  // completar en una semana, 37.802 US$, eran anonimos.
+                  //
+                  // Solo viaja el dato que se acaba de escribir. El backend
+                  // escribe unicamente los campos que recibe, asi que esto no
+                  // pisa el nombre ni nada de lo demas.
+                  onGuardarContacto={(parcial) =>
+                    checkout.sincronizar({ step: 'contact', contact: parcial })
+                  }
                   celebracion={celebracion}
                   onCambioCelebracion={(parcial) => setCelebracion((c) => ({ ...c, ...parcial }))}
                 />
