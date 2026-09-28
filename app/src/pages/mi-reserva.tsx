@@ -539,8 +539,13 @@ function DetalleReserva({
   // buscar por contacto, va por reserva, lo genera `secrets.token_urlsafe(32)`
   // y sigue siendo Odoo quien decide si vale. Lo unico que cambia es de donde
   // se lee. Por eso el enlace no se publica: se manda al cliente y punto.
+  //
+  // [2026-09-28] `acceso` es el MISMO token con otro nombre, y existe por
+  // PayPal: la vuelta de PayPal trae su propio `token=<id de la orden>`, así
+  // que en esa vuelta el token de la reserva viaja como `acceso`. Los enlaces
+  // de pago que ya están mandados siguen usando `token`, y siguen valiendo.
   const [token, setToken] = useState<string | null>(
-    accesoInicial?.token ?? (paramsDetalle.get('token') || null),
+    accesoInicial?.token ?? (paramsDetalle.get('acceso') || paramsDetalle.get('token') || null),
   )
   const [recargas, setRecargas] = useState(0)
 
@@ -552,12 +557,20 @@ function DetalleReserva({
   // Stripe— y se recarga la reserva para que el saldo salga ya cobrado. Si el
   // aviso falla, el webhook cierra el estado igual.
   const intentoStripe = paramsDetalle.get('payment_intent')
+  // [2026-09-28] LA VUELTA DE PAYPAL. `pp=1` lo pone el backend solo en la URL
+  // de aprobación: si el cliente cancela, PayPal le devuelve aquí sin esa
+  // marca y no se intenta capturar nada. El id de la orden es el `token` que
+  // añade PayPal —por eso el de la reserva llega como `acceso`—, y quien
+  // decide si se cobró es Odoo preguntándole a PayPal, no esta URL.
+  const ordenPaypal = paramsDetalle.get('pp') === '1' ? paramsDetalle.get('token') : null
+  const remate = ordenPaypal ?? intentoStripe
   const rematado = useRef<string | null>(null)
   useEffect(() => {
-    if (!intentoStripe || !token || rematado.current === intentoStripe) return
-    rematado.current = intentoStripe
-    actualizarReservaTrasStripe(codigo, token, intentoStripe).finally(() => setRecargas((n) => n + 1))
-  }, [intentoStripe, token, codigo])
+    if (!remate || !token || rematado.current === remate) return
+    rematado.current = remate
+    const ids = ordenPaypal ? { paypalOrderId: ordenPaypal } : { paymentIntentId: remate }
+    actualizarReservaTrasPago(codigo, token, ids).finally(() => setRecargas((n) => n + 1))
+  }, [remate, ordenPaypal, token, codigo])
 
   // Con `token` basta: es la llave que devuelve la búsqueda por contacto y la
   // única que sirve para recargar una reserva sin email (las que entran por
@@ -1268,9 +1281,13 @@ function BotonEditar({ onClick }: { onClick: () => void }) {
   )
 }
 
-async function actualizarReservaTrasStripe(codigo: string, token: string, paymentIntentId: string) {
+async function actualizarReservaTrasPago(
+  codigo: string,
+  token: string,
+  ids: { paymentIntentId?: string; paypalOrderId?: string },
+) {
   try {
-    await confirmarPago(codigo, token, { paymentIntentId })
+    await confirmarPago(codigo, token, ids)
   } catch {
     // El estado real llega por webhook.
   }

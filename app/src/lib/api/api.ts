@@ -205,11 +205,17 @@ export function confirmarPago(
   )
 }
 
-export function pagarSaldo(codigo: string, token: string) {
+export function pagarSaldo(
+  codigo: string,
+  token: string,
+  // [2026-09-28] PayPal tambien cobra el saldo. Sin este campo Odoo asume
+  // Stripe, que es lo que hacia la unica llamada que existia.
+  proveedor: 'stripe' | 'paypal' = 'stripe',
+) {
   return llamar<IntencionPago>(`/bookings/${encodeURIComponent(codigo)}/pay-balance`, {
     metodo: 'POST',
     token,
-    cuerpo: {},
+    cuerpo: { provider: proveedor },
   })
 }
 
