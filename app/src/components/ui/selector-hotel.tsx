@@ -19,9 +19,21 @@ import { t } from '@/lib/i18n'
 //
 // Por qué combobox y no un `<select>` pelado: son ~270 hoteles. Un desplegable
 // nativo con 270 opciones se recorre a ciegas; aquí se escriben tres letras.
-// Y se conserva la salida de emergencia («My hotel isn’t on the list»), que es
-// texto libre: la lista no cubre cada villa de Bávaro y perder la recogida por
-// no estar en el catálogo sería peor que un nombre sin ficha.
+// [2026-09-29, Derick: «no deben poder colocar un hotel manualmente»] SE QUITÓ
+// la salida de emergencia («My hotel isn’t on the list»), que era texto libre.
+//
+// Lo que parecía una red resultó ser un agujero: cuando el nombre escrito no
+// casaba con ninguna ficha, `web_order._ensure_hotel()` CREABA el hotel con la
+// zona de la excursión. Así entraron 13 fichas por la web, entre ellas
+// «fdlkjsdafdfsdfdsf», «Hotel x», «puerto plata» —que no es un hotel sino una
+// provincia a cuatro horas— y «Zemi miches», que quedó archivado en Bávaro
+// estando en Miches. Y todas salen luego en ESTE selector, al cliente
+// siguiente.
+//
+// Un hotel sin ficha tampoco tiene tabla de recogidas, así que la hora había
+// que buscarla persona a persona: la red no salvaba la recogida, solo la
+// escondía. Quien se aloje donde no figura en el catálogo tiene que escribir,
+// y la oficina da de alta la ficha de verdad.
 
 /** Una sola carga por sesión: el paso de recogida se monta y se desmonta cada
  *  vez que el visitante navega entre pasos del funnel. */
@@ -66,8 +78,6 @@ function plano(texto: string): string {
     .trim()
 }
 
-const OTRO = '__otro__'
-
 // Orden de las zonas en el desplegable: primero donde se aloja casi todo el
 // mundo. Una zona que Odoo traiga y no este aqui cae al final, no se pierde.
 const ZONAS = ['Bavaro', 'Punta Cana', 'Cap Cana', 'Uvero Alto', 'Bayahibe', 'Macao']
@@ -86,21 +96,12 @@ export function SelectorHotel({
   const id = useId()
   const [abierto, setAbierto] = useState(false)
   const [busqueda, setBusqueda] = useState('')
-  // «Otro» es pegajoso a propósito: si se activa y luego se borra el texto, el
-  // campo libre tiene que seguir ahí en vez de saltar de vuelta a la lista.
-  const [otro, setOtro] = useState(false)
   const contenedor = useRef<HTMLDivElement>(null)
 
-  const enLista = useMemo(
-    () => hoteles.some((h) => plano(h.name) === plano(value)),
-    [hoteles, value],
-  )
-
-  // Una reserva reanudada puede traer un hotel escrito a mano antes de que
-  // existiera este selector: se abre en modo libre para no borrárselo.
-  useEffect(() => {
-    if (value && !enLista) setOtro(true)
-  }, [value, enLista])
+  // [2026-09-29] Una reserva reanudada puede traer un hotel escrito a mano de
+  // cuando el campo libre existía. No se borra —es lo que el cliente puso y
+  // sigue siendo su punto de recogida—, simplemente se enseña en el botón: si
+  // quiere cambiarlo, elige de la lista como todo el mundo.
 
   useEffect(() => {
     if (!abierto) return
@@ -148,43 +149,9 @@ export function SelectorHotel({
   }, [filtrados])
 
   function elige(nombre: string) {
-    if (nombre === OTRO) {
-      setOtro(true)
-      onChange('')
-    } else {
-      setOtro(false)
-      onChange(nombre)
-    }
+    onChange(nombre)
     setAbierto(false)
     setBusqueda('')
-  }
-
-  if (otro) {
-    return (
-      <div>
-        <label htmlFor={id} className="text-sm font-medium text-navy">
-          {etiqueta}
-        </label>
-        <input
-          id={id}
-          autoFocus
-          className="mt-1.5 w-full rounded-btn bg-papel px-4 py-3 text-sm text-navy ring-1 ring-linea placeholder:text-navy-soft focus:outline-none focus:ring-2 focus:ring-aqua"
-          placeholder={t('Hotel, villa or address where we pick you up')}
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-        />
-        <button
-          type="button"
-          className="mt-1.5 text-xs font-medium text-aqua-dark underline underline-offset-2"
-          onClick={() => {
-            setOtro(false)
-            onChange('')
-          }}
-        >
-          {t('Choose from the list instead')}
-        </button>
-      </div>
-    )
   }
 
   return (
@@ -252,13 +219,12 @@ export function SelectorHotel({
             ) : null}
           </ul>
 
-          <button
-            type="button"
-            onClick={() => elige(OTRO)}
-            className="w-full border-t border-linea px-4 py-3 text-left text-sm font-medium text-aqua-dark hover:bg-aqua-tint"
-          >
-            {t('My hotel isn’t on the list')}
-          </button>
+          {/* Ya no hay campo libre, así que este aviso es la única salida de
+              quien no se encuentre: se le dice a dónde escribir en vez de
+              dejarle un cuadro de texto que acababa creando fichas falsas. */}
+          <p className="border-t border-linea px-4 py-3 text-xs leading-relaxed text-navy-sub">
+            {t('Can’t find your hotel? Write to us on WhatsApp and we’ll arrange your pickup.')}
+          </p>
         </div>
       ) : null}
     </div>

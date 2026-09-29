@@ -672,6 +672,7 @@ export const ES: Record<string, string> = {
   "Creating the ecological conditions needed for the restoration and growth of coral reefs, through environmental monitoring and protection.": "Crear las condiciones ecológicas necesarias para la restauración y el desarrollo de arrecifes coralinos, a través de la vigilancia y protección ambiental.",
   "Credit or debit card": "Tarjeta de crédito o débito",
   "Card": "Tarjeta",
+  "Can’t find your hotel? Write to us on WhatsApp and we’ll arrange your pickup.": "¿No encuentras tu hotel? Escríbenos por WhatsApp y organizamos tu recogida.",
   "Crew": "Tripulación",
   "Crew (variant: the boat as an index)": "Tripulación (variante: el barco como índice)",
   "Crew certification": "Titulación de la tripulación",
