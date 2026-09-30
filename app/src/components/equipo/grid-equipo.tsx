@@ -4,7 +4,8 @@ import { Anchor, ChefHat, Compass, Handshake, Headset, Ship, Waves } from 'lucid
 import {
   DEPARTAMENTOS,
   EQUIPO_COMPLETO,
-  TOTAL_EQUIPO,
+  TOTAL_PLANTILLA,
+  contarPorDepartamento,
   type Departamento,
   type DepartamentoId,
   type MiembroEquipoV2,
@@ -104,6 +105,8 @@ function CardMiembro({ miembro }: { miembro: MiembroEquipoV2 }) {
 
 function SeccionDepartamento({ departamento }: { departamento: Departamento }) {
   const gente = EQUIPO_COMPLETO.filter((m) => m.departamento === departamento.id)
+  // Cuánta gente HAY en el departamento, que no es cuántos retratos tenemos.
+  const plantilla = contarPorDepartamento(departamento.id)
   const Icono = ICONOS[departamento.id]
 
   return (
@@ -118,10 +121,18 @@ function SeccionDepartamento({ departamento }: { departamento: Departamento }) {
         <div>
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
             <h2 className="font-display text-h3 font-semibold text-navy">{departamento.nombre}</h2>
-            {/* Singular de verdad: marinos es 1 sola persona y «1 people» se
-                lee como un bug. */}
+            {/* [2026-09-30, la oficina: «estoy aquí y siguen sin mostrarse»]
+                CUENTA PERSONAS, NO FOTOS. Este contador decía `gente.length`,
+                que son los retratos que hay: por eso Deckhands ponía 1 cuando
+                son 30. El encargo de Fernando era justo ese —«que vayan
+                cambiando la cantidad de empleado en cada categoría AUNQUE NO
+                TENGAMOS TODAS LAS FOTOS»— y se había aplicado solo en el plano
+                del barco.
+
+                Singular de verdad: un departamento de una persona con «1
+                people» se lee como un bug. */}
             <span className="rounded-chip bg-aqua-tint px-2.5 py-0.5 text-xs font-semibold text-aqua-dark">
-              {gente.length} {gente.length === 1 ? 'person' : 'people'}
+              {plantilla} {plantilla === 1 ? 'person' : 'people'}
             </span>
           </div>
           {/* Este copy SÍ es real: lo escribió el cliente en su PowerPoint.
@@ -177,10 +188,10 @@ export function GridEquipo({
               : 'border-linea text-navy hover:bg-papel-hueso'
           }`}
         >
-          {t('All')} <span className="opacity-60">{TOTAL_EQUIPO}</span>
+          {t('All')} <span className="opacity-60">{TOTAL_PLANTILLA}</span>
         </button>
         {DEPARTAMENTOS.map((d) => {
-          const n = EQUIPO_COMPLETO.filter((m) => m.departamento === d.id).length
+          const n = contarPorDepartamento(d.id)
           return (
             <button
               key={d.id}

@@ -195,6 +195,16 @@ const PLANTILLA_POR_DEPARTAMENTO: Partial<Record<DepartamentoId, number>> = {
   fundacion: 5,
 }
 
+/** La plantilla entera: la suma de lo que dijo Fernando, y los retratos de los
+ *  departamentos cuyo número no dio (hoy, solo cocina).
+ *
+ *  [2026-09-30] Sustituye a `TOTAL_EQUIPO` en la pestaña «All». Ese contaba
+ *  fotos —32— y decir «All 32» encima de unas pestañas que suman 65 personas
+ *  era contradecirse en la misma línea. */
+export const TOTAL_PLANTILLA = DEPARTAMENTOS.reduce(
+  (suma, d) => suma + contarPorDepartamento(d.id), 0,
+)
+
 export function contarPorDepartamento(id: DepartamentoId): number {
   return PLANTILLA_POR_DEPARTAMENTO[id] ?? EQUIPO_COMPLETO.filter((m) => m.departamento === id).length
 }
