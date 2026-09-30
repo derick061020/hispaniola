@@ -7,7 +7,7 @@ import { Pajaros } from '@/components/ui/pajaros'
 import { Header } from './header'
 import { TickerHero } from './ticker-hero'
 import { useDevFlag } from '@/dev/use-dev-flag'
-import { STATS } from '@/data/home'
+import { useCifras } from '@/lib/api/use-cifras'
 import { idiomaUI, t } from '@/lib/i18n'
 
 // Hero v3 — «inmersivo» (app/PLAN-v3.md). Cambios frente a v2: el Header pasa
@@ -21,6 +21,8 @@ import { idiomaUI, t } from '@/lib/i18n'
 // vive en una capa interna propia (`absolute inset-0 overflow-hidden`);
 // el header y el contenido viven en la capa de encima, sin recorte.
 export function Hero() {
+  // Los dos primeros números vienen de Odoo; los otros dos son fijos.
+  const cifras = useCifras()
   const videoRef = useRef<HTMLVideoElement>(null)
 
   // [2026-09-01] El vídeo no se descarga hasta que la página ha pintado: con
@@ -292,7 +294,7 @@ export function Hero() {
                 </p>
 
                 <div className="mt-6 flex flex-wrap items-start justify-center gap-x-10 gap-y-4">
-                  {STATS.map((s) => (
+                  {cifras.map((s) => (
                     <div key={s.label} className="text-center">
                       <p className="font-display text-stat font-semibold text-white">{s.valor}</p>
                       {/* v3-F13 (PLAN-v3.md §15.7): whitespace-nowrap (antes
