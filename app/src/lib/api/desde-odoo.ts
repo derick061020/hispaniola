@@ -18,6 +18,37 @@ import { TOURS } from '@/data/home'
 // catálogo local (un tour retirado, una reserva antigua), se devuelven menús
 // vacíos: la pantalla se degrada, no se rompe.
 
+/** La posición del horario del tour dentro de la lista local. */
+function indiceDeHorario(
+  horarios: Array<{ hora: string }>,
+  odoo: { start_time?: string | null; time_slot?: string | null; pickup_time?: string | null },
+): number {
+  if (!horarios.length) return 0
+  const limpia = (h: string | null | undefined) =>
+    (h ?? '').toUpperCase().replace(/\s+/g, '').replace(/^0/, '')
+
+  // 1. La hora de salida que manda Odoo. Es el dato bueno.
+  const porSalida = horarios.findIndex((h) => limpia(h.hora) === limpia(odoo.start_time))
+  if (porSalida >= 0) return porSalida
+
+  // 2. El turno. Antes del mediodía es 'am'; a partir de las 12, 'pm'.
+  if (odoo.time_slot === 'am' || odoo.time_slot === 'pm') {
+    const esTarde = (h: string) => {
+      const t = limpia(h)
+      const pm = t.endsWith('PM')
+      const hora = parseInt(t, 10) || 0
+      return pm && hora !== 12 ? true : pm && hora === 12
+    }
+    const porTurno = horarios.findIndex((h) =>
+      odoo.time_slot === 'pm' ? esTarde(h.hora) : !esTarde(h.hora),
+    )
+    if (porTurno >= 0) return porTurno
+  }
+
+  // 3. Lo de antes, por si una reserva vieja no trae ni salida ni turno.
+  return Math.max(horarios.findIndex((h) => limpia(h.hora) === limpia(odoo.pickup_time)), 0)
+}
+
 export function reservaDesdeOdoo(odoo: ReservaOdoo): ReservaLocal {
   const slug = odoo.tour.slug ?? ''
   const ficha = FICHAS[slug]
@@ -49,12 +80,20 @@ export function reservaDesdeOdoo(odoo: ReservaOdoo): ReservaLocal {
     // devuelve el total, que es lo que estas pantallas pintan.
     personas: odoo.pax.total,
     // El índice de horario no viaja a Odoo —Odoo guarda la HORA, no la
-    // posición en un array que puede reordenarse—, así que se recalcula
-    // buscando la hora de salida en la ficha local.
-    horarioIdx: Math.max(
-      (ficha?.horarios ?? []).findIndex((h) => h.hora === odoo.pickup_time),
-      0,
-    ),
+    // posición en un array que puede reordenarse—, así que se recalcula.
+    //
+    // [2026-10-01, Derick: «en Odoo es de la tarde y al cliente le sale 9»]
+    // Esto comparaba contra `pickup_time`, que es la hora en que el autobús
+    // pasa por el hotel —«12:05 PM»—, y la lista local tiene horas de SALIDA
+    // —«9:00 AM», «1:00 PM»—. No casaban NUNCA: `findIndex` devolvía -1, el
+    // `Math.max(-1, 0)` lo convertía en 0, y todas las reservas de tarde han
+    // estado enseñando «9:00 AM» al cliente. A Matthew Fehrmann su página le
+    // decía las 9 para un tour de la 1 con recogida a las 12:05.
+    //
+    // Ahora se mira, en este orden: la hora de salida real que manda Odoo, el
+    // turno (am/pm), y solo al final la recogida, por si una reserva vieja no
+    // trae ninguna de las dos.
+    horarioIdx: indiceDeHorario(ficha?.horarios ?? [], odoo),
     fechaISO: odoo.date ?? '',
     // [2026-09-12] UN HUECO POR COMENSAL, siempre. Odoo solo guarda los platos
     // elegidos (los vacios se descartan al escribir), asi que `dishes` puede

@@ -52,11 +52,14 @@ function GridMensual({
   fecha,
   onSeleccionar,
   agotados,
+  minimo,
 }: {
   fecha: string | null
   onSeleccionar: (iso: string) => void
   /** Días sin plazas, tal y como los devuelve Odoo. */
   agotados: Set<string>
+  /** El primer día reservable. Nada anterior se puede elegir. */
+  minimo: string
 }) {
   const hoy = hoyISO()
   const hoyDate = parseFechaISO(hoy)
@@ -117,7 +120,11 @@ function GridMensual({
         {celdas.map((c, i) => {
           if (c === null) return <span key={`vacio-${i}`} aria-hidden="true" />
           const agotado = agotados.has(c.iso)
-          const pasado = c.iso < hoy
+          // [2026-10-01] Antes era `c.iso < hoy`, y por eso HOY se podía
+          // elegir: a las 11 de la mañana la web seguía vendiendo la salida de
+          // las 9. El suelo no es hoy, es el primer día que Odoo vende
+          // (`min_days_ahead`), y lo dice la propia respuesta.
+          const pasado = c.iso < minimo
           const deshabilitado = agotado || pasado
           const elegido = fecha === c.iso
           return (
@@ -202,6 +209,11 @@ export function CalendarioWidget({
     if (v === 'agotado') setAgotadosDemo(fechasAgotadasDemo(hoyISO()))
   }) // [dev-mode]
   const agotados = agotadosDemo ? new Set(agotadosDemo) : disponibilidad.agotados
+  // El suelo del calendario. Odoo manda; si no contesta, se cae a MAÑANA y no
+  // a hoy: fallar abierto esta bien para el aforo —mejor una reserva que el
+  // equipo confirma a mano que una venta que no empieza— pero el mismo dia no
+  // lo vende NINGUN tour, asi que ahi no hay nada que dejar abierto.
+  const minimo = disponibilidad.primerDia ?? sumarDias(hoyISO(), 1)
 
   // [dev-mode] deep-link del Glosario Dev — ver src/dev/dev-registry.ts.
   // ?dev-widget=calendario fuerza el popover abierto → frame limpio para
@@ -280,6 +292,7 @@ export function CalendarioWidget({
           <GridMensual
             fecha={fecha}
             agotados={agotados}
+            minimo={minimo}
             onSeleccionar={(iso) => {
               onSeleccionar(iso)
               setAbierto(false)

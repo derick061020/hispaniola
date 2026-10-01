@@ -27,6 +27,20 @@ export type Disponibilidad = {
   cargando: boolean
   /** false = no se pudo consultar. El calendario deja elegir igualmente. */
   consultada: boolean
+  /**
+   * El primer día que se puede reservar, tal y como lo dice Odoo.
+   *
+   * [2026-10-01, Rossanna: «no debiera la página dejarte reservar para el
+   * mismo día, y menos para el tour de esta mañana, que obvio ya pasó»]
+   *
+   * A las 11:08 de la mañana la web vendía la salida de las 9:00 de ESE día.
+   * Odoo no tenía la culpa: `/availability` respeta `min_days_ahead` y ya
+   * devolvía los días DESDE MAÑANA. El fallo estaba aquí — el calendario solo
+   * bloqueaba los días que la respuesta marcaba agotados, y los que la
+   * respuesta NO MENCIONABA los daba por buenos. «No te lo ofrezco» se leía
+   * como «está libre».
+   */
+  primerDia: string | null
 }
 
 export function useDisponibilidad(
@@ -38,11 +52,12 @@ export function useDisponibilidad(
     agotados: new Set(),
     cargando: !!tour,
     consultada: false,
+    primerDia: null,
   })
 
   useEffect(() => {
     if (!tour) {
-      setEstado({ agotados: new Set(), cargando: false, consultada: false })
+      setEstado({ agotados: new Set(), cargando: false, consultada: false, primerDia: null })
       return
     }
     const abortador = new AbortController()
@@ -58,11 +73,12 @@ export function useDisponibilidad(
           agotados: new Set(respuesta.days.filter((d) => !d.available).map((d) => d.date)),
           cargando: false,
           consultada: true,
+          primerDia: respuesta.from || null,
         })
       })
       .catch((error: unknown) => {
         if ((error as Error)?.name === 'AbortError') return
-        setEstado({ agotados: new Set(), cargando: false, consultada: false })
+        setEstado({ agotados: new Set(), cargando: false, consultada: false, primerDia: null })
       })
 
     return () => abortador.abort()

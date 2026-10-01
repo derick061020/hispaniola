@@ -227,6 +227,11 @@ export type Reserva = {
   variant: string | null
   package: Paquete | null
   date: string | null
+  /** 'am' | 'pm' — el turno real del tour, tal y como está en Odoo. */
+  time_slot: 'am' | 'pm' | null
+  /** Hora de SALIDA del tour ('1:00 PM'). No confundir con la de recogida. */
+  start_time: string | null
+  end_time: string | null
   pickup_time: string | null
   pax: { adults: number; children: number; infants: number; total: number }
   dishes: { guest: number; dish: string }[]
