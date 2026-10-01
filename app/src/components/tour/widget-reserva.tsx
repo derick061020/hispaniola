@@ -6,6 +6,7 @@ import * as CompactButton from '@/components/alignui/compact-button'
 import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
 import { ChecksTicker } from '@/components/ui/checks-ticker'
 import { CalendarioWidget } from '@/components/tour/calendario-widget'
+import { useDisponibilidad } from '@/components/tour/use-disponibilidad'
 import { ChipsUrgencia } from '@/components/tour/chips-urgencia'
 import { SubVariantePicker } from '@/components/tour/sub-variante-picker'
 import { useDevFlag } from '@/dev/use-dev-flag'
@@ -703,6 +704,41 @@ export function WidgetReserva({
   // dato en sitios distintos se desincronizan; una sola no.
   const horariosActivos =
     subActiva?.horarios && subActiva.horarios.length > 0 ? subActiva.horarios : ficha.horarios
+  // [2026-10-01, Rossanna: «que sí se pueda reservar hasta 4 horas antes del
+  // tour; los privados, 24 horas» / Derick: «se deshabilita el select de
+  // fecha, para evitar errores»]
+  //
+  // El día ya no es la unidad: a las 10 de la mañana la salida de las 9 está
+  // cerrada y la de la 1 sigue a la venta. Si aquí solo se mirara el día, el
+  // cliente podría elegir las 9 y estrellarse al pagar — que es justo lo que
+  // le pasó al cliente que pagó a las 11 de la mañana un tour de esa mañana.
+  //
+  // Quién está abierto lo dice Odoo, turno a turno. El turno de cada horario
+  // se deduce de su hora con la MISMA regla que el servidor: PM y no las 12.
+  const dispo = useDisponibilidad(tour.slug, subActiva?.id ?? null, paxActuales)
+  const turnoDe = (hora: string) => {
+    const t = (hora || '').toUpperCase().replace(/\s+/g, '')
+    return t.includes('PM') && !t.startsWith('12') ? 'pm' : 'am'
+  }
+  const turnoAbierto = (hora: string) => {
+    if (!fecha || !dispo.consultada) return true   // sin respuesta no se bloquea nada
+    const delDia = dispo.turnos[fecha]
+    if (!delDia) return true
+    const abierto = delDia[turnoDe(hora)]
+    return abierto === undefined ? true : abierto
+  }
+
+  // Si el horario elegido se cierra —se pasó la hora mientras miraba, o cambió
+  // de fecha— se salta solo al primero que siga abierto.
+  useEffect(() => {
+    if (!fecha || !dispo.consultada) return
+    if (horariosActivos.length && !turnoAbierto(horariosActivos[horario]?.hora ?? '')) {
+      const libre = horariosActivos.findIndex((h) => turnoAbierto(h.hora))
+      if (libre >= 0) setHorario(libre)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fecha, dispo.consultada, dispo.turnos, horariosActivos.length])
+
   const horaElegida = horariosActivos[horario]?.hora ?? null
 
   // [v2] ¿La siguiente persona cruza de tramo? Se calcula aquí y se pinta
@@ -966,12 +1002,16 @@ export function WidgetReserva({
             <div className="flex flex-wrap gap-2">
               {horariosActivos.map((h, i) => {
                 const elegido = horario === i
+                const abierto = turnoAbierto(h.hora)
                 return (
                   <button
                     key={h.hora}
                     type="button"
-                    onClick={() => setHorario(i)}
+                    disabled={!abierto}
+                    title={abierto ? undefined : t('That departure is no longer available')}
+                    onClick={() => abierto && setHorario(i)}
                     aria-pressed={elegido}
+                    aria-disabled={!abierto}
                     aria-label={
                       h.regreso
                         ? tp('Departure {salida}, back at {vuelta}', { salida: h.hora, vuelta: h.regreso })
@@ -985,9 +1025,11 @@ export function WidgetReserva({
                     // que el par se mantiene legible en los dos temas sin una
                     // sola condición.
                     className={`rounded-full px-3.5 py-2 text-sm tabular-nums transition-colors ${
-                      elegido
-                        ? 'bg-navy font-semibold text-papel shadow-sm'
-                        : 'bg-papel-hueso text-navy-sub hover:bg-papel-hueso/70 hover:text-navy'
+                      !abierto
+                        ? 'cursor-not-allowed bg-papel-hueso/50 text-navy-soft line-through opacity-60'
+                        : elegido
+                          ? 'bg-navy font-semibold text-papel shadow-sm'
+                          : 'bg-papel-hueso text-navy-sub hover:bg-papel-hueso/70 hover:text-navy'
                     }`}
                   >
                     {h.hora}

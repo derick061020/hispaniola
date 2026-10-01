@@ -28,6 +28,15 @@ export type Disponibilidad = {
   /** false = no se pudo consultar. El calendario deja elegir igualmente. */
   consultada: boolean
   /**
+   * Por día, qué turnos siguen a la venta: `{'2026-10-02': {am: true, pm: false}}`.
+   *
+   * [2026-10-01, Rossanna: «que sí se pueda reservar hasta 3 horas antes del
+   * tour; los privados, 24 horas»] El día ya no es la unidad: a las 10 de la
+   * mañana la salida de las 9 está cerrada y la de la 1 todavía se vende. Si
+   * el widget solo mira el día, ofrece la de las 9 igualmente.
+   */
+  turnos: Record<string, Record<string, boolean>>
+  /**
    * El primer día que se puede reservar, tal y como lo dice Odoo.
    *
    * [2026-10-01, Rossanna: «no debiera la página dejarte reservar para el
@@ -53,11 +62,12 @@ export function useDisponibilidad(
     cargando: !!tour,
     consultada: false,
     primerDia: null,
+    turnos: {},
   })
 
   useEffect(() => {
     if (!tour) {
-      setEstado({ agotados: new Set(), cargando: false, consultada: false, primerDia: null })
+      setEstado({ agotados: new Set(), cargando: false, consultada: false, primerDia: null, turnos: {} })
       return
     }
     const abortador = new AbortController()
@@ -69,16 +79,23 @@ export function useDisponibilidad(
       abortador.signal,
     )
       .then((respuesta) => {
+        const turnos: Record<string, Record<string, boolean>> = {}
+        for (const d of respuesta.days) {
+          turnos[d.date] = Object.fromEntries(
+            Object.entries(d.slots ?? {}).map(([slot, info]) => [slot, !!info?.available]),
+          )
+        }
         setEstado({
           agotados: new Set(respuesta.days.filter((d) => !d.available).map((d) => d.date)),
           cargando: false,
           consultada: true,
           primerDia: respuesta.from || null,
+          turnos,
         })
       })
       .catch((error: unknown) => {
         if ((error as Error)?.name === 'AbortError') return
-        setEstado({ agotados: new Set(), cargando: false, consultada: false, primerDia: null })
+        setEstado({ agotados: new Set(), cargando: false, consultada: false, primerDia: null, turnos: {} })
       })
 
     return () => abortador.abort()
