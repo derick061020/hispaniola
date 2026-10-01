@@ -2731,4 +2731,11 @@ export const ES: Record<string, string> = {
   "aboard a": "en",
   "catamaran": "catamarán",
   "Much more than a tour!": "¡Mucho más que un tour!",
+
+  // [2026-10-01] El aviso del party boat (ui/aviso-party-boat.tsx).
+  "Looking for a party boat?": "¿Buscas un barco de fiesta?",
+  "Celebrating something? Take the whole boat.": "¿Hay algo que celebrar? Llévate el barco entero.",
+  "Private party charters in Punta Cana — the deck is only yours, the kitchen cooks on board and the bar never stops.": "Charters privados de fiesta en Punta Cana: la cubierta es solo vuestra, la cocina trabaja a bordo y la barra no para.",
+  "See party boats": "Ver barcos de fiesta",
+  "Dismiss": "Cerrar",
 }
