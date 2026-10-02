@@ -6,6 +6,7 @@ import { EcoFriendly } from '@/components/home/eco-friendly'
 import { Experiencia } from '@/components/home/experiencia'
 import { ToursGrid } from '@/components/home/tours-grid'
 import { WhyDirect } from '@/components/home/why-direct'
+import { OperadorDirecto } from '@/components/home/operador-directo'
 import { IncluyeCrucero } from '@/components/home/incluye-crucero'
 import { Reviews } from '@/components/home/reviews'
 import { Contacto } from '@/components/home/contacto'
@@ -112,6 +113,10 @@ export function HomePage() {
           posición de «Ayuda». */}
       <Hero />
       <Premios />
+      {/* [2026-10-02, Fernando] Justo aquí: los premios son lo que dicen
+          otros de nosotros, y esto es lo que decimos nosotros. Después ya
+          empieza la playa. */}
+      <OperadorDirecto />
       <EcoFriendly />
       <Experiencia />
       <ToursGrid />

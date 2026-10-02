@@ -2732,10 +2732,11 @@ export const ES: Record<string, string> = {
   "catamaran": "catamarán",
   "Much more than a tour!": "¡Mucho más que un tour!",
 
-  // [2026-10-01] El aviso del party boat (ui/aviso-party-boat.tsx).
-  "Looking for a party boat?": "¿Buscas un barco de fiesta?",
-  "Celebrating something? Take the whole boat.": "¿Hay algo que celebrar? Llévate el barco entero.",
-  "Private party charters in Punta Cana — the deck is only yours, the kitchen cooks on board and the bar never stops.": "Charters privados de fiesta en Punta Cana: la cubierta es solo vuestra, la cocina trabaja a bordo y la barra no para.",
-  "See party boats": "Ver barcos de fiesta",
-  "Dismiss": "Cerrar",
+  // [2026-10-02, Fernando] El bloque «Operador directo» de la home.
+  "Direct operator": "Operador directo",
+  "You book with the company that runs the boat.": "Reservas con la empresa que opera el barco.",
+  "Hispaniola owns the boats, employs the crew, and prepares the food on board. You are booking directly with the company that organizes the experience:": "Los barcos son de Hispaniola, la tripulación es nuestra y la comida se prepara a bordo. Estás reservando directamente con la empresa que organiza la experiencia:",
+  "no resellers, no middlemen": "sin reventa, sin intermediarios",
+  ", and with the guarantee that your reservation will never be handed over to third parties.": ", y con la garantía de que tu reserva no se le pasa a nadie.",
+  "The name on the boat is the name on your booking.": "El nombre del barco es el nombre de tu reserva.",
 }

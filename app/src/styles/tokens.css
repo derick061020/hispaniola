@@ -138,29 +138,16 @@
      titulares. Un fondo naranja obliga a renunciar al escalón de gris del
      texto secundario en toda la sección. */
 
-  /* ── AVISO DEL PARTY BOAT (2026-10-01) ──────────────────────────────────
-     Derick: «quiero que en la web de Hispaniola agregues una notificación
-     inferior, entras a la web y entra desplazándose, para que si un cliente
-     quiere un evento más de fiesta o diversión vaya ahí (…) el fondo de la
-     notificación tal vez un negro, con algo de transparencia muy poca».
+  /* [2026-10-02, Fernando] El resalte del bloque «Operador directo»: la
+     frase que no puede pasarse por alto («sin reventa, sin intermediarios»)
+     va sobre un trazo de color, como un subrayador.
 
-     Es un PUENTE a hispaniolapartyboat.com, que es la misma casa: los mismos
-     barcos, la misma tripulación y la misma cocina, vendiendo el charter
-     privado de fiesta. Quien entra buscando una despedida o un cumpleaños no
-     tiene por qué adivinar que existe otra web.
-
-     NO se reutilizan los tokens `premium-*`: aquellos son un MODO DE PRODUCTO
-     acotado a donde se vende el paquete Premium —lo dice su propio comentario
-     ahí abajo— y colarlos aquí los convertiría en paleta de marca. Este
-     negro es casi opaco a propósito: el aviso se apoya sobre fotos y texto, y
-     con más transparencia el contenido de debajo lo vuelve ilegible.
-
-     El acento es --color-coral, el mismo de los CTA, para que el botón se lea
-     como lo que es: algo que se pulsa. */
-  --color-fiesta-fondo: rgb(10 12 16 / 94%);
-  --color-fiesta-borde: rgb(255 255 255 / 12%);
-  --color-fiesta-texto: #f3f6f8; /* blanco frío; sobre este negro da ~15:1 */
-  --color-fiesta-texto-suave: #a9b4bf; /* la segunda línea — ~7:1, AA de sobra */
+     Es el aqua de marca al 14 %, no un amarillo nuevo. En el sitio del party
+     boat ese resalte es amarillo, pero aqui habria que inventar un color de
+     marca solo para una frase — y el guardarrail de la direccion visual dice
+     que el aqua es el acento y que el color lo ponen las fotos. Al 14 % el
+     texto navy encima sigue dando 11:1. */
+  --color-resalte: color-mix(in srgb, var(--color-aqua) 14%, transparent);
 
   /* ── MODO PREMIUM (correcciones v2, 2026-07-27) ─────────────────────────
      La familia oscura/oro con la que se vende el paquete Premium. Sale del
