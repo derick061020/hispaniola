@@ -25,9 +25,20 @@ import { t } from '@/lib/i18n'
 // H2 + lead) que la de tours, para que las dos secciones se lean como
 // hermanas. Opt-in: /events no pasa la prop y se ve igual que siempre.
 // Los textos son los del hero de /events, no copy nuevo.
-export function EventosGrid({ conCabecera = false }: { conCabecera?: boolean } = {}) {
+//
+// `compacta` (2026-10-02, misma página, mismo pedido de Samuel): la otra mitad
+// del ajuste de `ToursGrid compacta`. Como la rejilla de tours ya no deja
+// padding abajo, el `pt-seccion-sm` de aquí (4rem, en todos los anchos) ES el
+// gap entre tours y eventos. El de abajo, hasta el footer, no cambia.
+export function EventosGrid({
+  conCabecera = false,
+  compacta = false,
+}: { conCabecera?: boolean; compacta?: boolean } = {}) {
   return (
-    <section id="events" className="scroll-mt-20 px-5 py-seccion-sm sm:px-10 sm:py-seccion">
+    <section
+      id="events"
+      className={`scroll-mt-20 px-5 sm:px-10 ${compacta ? 'pt-seccion-sm pb-seccion-sm sm:pb-seccion' : 'py-seccion-sm sm:py-seccion'}`}
+    >
       <div className="mx-auto max-w-contenido">
         {conCabecera ? (
           <div className="text-center">

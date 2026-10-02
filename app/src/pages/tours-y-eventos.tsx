@@ -80,8 +80,11 @@ export function ToursYEventosPage() {
         />
       </HeroInterna>
 
-      <ToursGrid />
-      <EventosGrid conCabecera />
+      {/* `compacta` en las dos: el aire entre hero, tours y eventos es el de
+          un solo catálogo, no el de tres secciones sueltas (Samuel,
+          2026-10-02). El detalle, en la cabecera de cada rejilla. */}
+      <ToursGrid compacta />
+      <EventosGrid conCabecera compacta />
 
       <Footer />
 
