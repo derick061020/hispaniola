@@ -8,6 +8,7 @@ import { CuentaPage } from '@/pages/cuenta'
 import { MiReservaPage } from '@/pages/mi-reserva'
 import { EventoPage } from '@/pages/evento'
 import { EventsPage } from '@/pages/events'
+import { ToursYEventosPage } from '@/pages/tours-y-eventos'
 import { GraciasEventoPage } from '@/pages/gracias-evento'
 import { VentajaCompetitivaPage } from '@/pages/ventaja-competitiva'
 import { FlotaPage } from '@/pages/flota'
@@ -192,6 +193,11 @@ function App() {
         <Route path="/events" element={<EventsPage />} />
         <Route path="/events/:slug" element={<EventoPorSlug />} />
         <Route path="/events/:slug/thank-you" element={<GraciasEventoPage />} />
+        {/* [2026-10-02, pedido de marketing] Tours y eventos en UNA página,
+            los dos a la vista a la vez. En la raíz y no bajo /tours ni
+            /events: no es hija de ninguna. El porqué de la URL, en la
+            cabecera de pages/tours-y-eventos.tsx. */}
+        <Route path="/tours-and-events" element={<ToursYEventosPage />} />
         {/* [v2 2026-07-28] `/sostenibilidad` → `/competitive-advantage`: el
             cliente encuadra esta página como su VENTAJA COMPETITIVA (slides
             57-64) y el slug sigue al encuadre. La vieja es URL indexada y

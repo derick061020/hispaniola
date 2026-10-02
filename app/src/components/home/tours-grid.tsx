@@ -1,18 +1,12 @@
 import { useState } from 'react'
-import { TOURS } from '@/data/home'
+import { TOURS_ESCAPARATE } from '@/data/home'
 import { Etiqueta } from '@/components/ui/etiqueta'
 import { TourCard } from './tour-card'
 import { useDevFlag } from '@/dev/use-dev-flag'
 import { t } from '@/lib/i18n'
 
-// El escaparate: 4 productos con galería propia (semi-privado, snorkel-lovers,
-// charter-privado, isla-saona). v3 (2026-07-17): Saona deja de ser
-// "pendiente de confirmar" y se publica con contenido real de la web del
-// cliente (3 sub-variantes speedboat/fishing/catamarán, galería de 11 fotos,
-// itinerario real, menú buffet) — entra al escaparate como un producto más.
-// Sigue viva en el ticker, el megamenú, el footer y el menú móvil (que
-// solo leen `TOURS`, no este filtro), y ahora también aquí.
-const TOURS_ESCAPARATE = TOURS.filter((tour) => tour.galeria && tour.galeria.length > 0)
+// El escaparate (`TOURS_ESCAPARATE`) vive en data/home.ts desde 2026-10-02 —
+// su historia, allí.
 
 // `sinCabecera` (2026-09-08, /tours): la página propia de tours pone el
 // título y la descripción en el hero, así que aquí sobran — repetirlos deja

@@ -1,4 +1,4 @@
-/** DICCIONARIO INGLÉS → ESPAÑOL DE LA WEB.  2493 entradas.
+/** DICCIONARIO INGLÉS → ESPAÑOL DE LA WEB.  2503 entradas.
  *
  *  Se indexa por el texto EN INGLÉS, que es el que está escrito en los
  *  componentes y en `data/*.ts`; el porqué de esa decisión está en
@@ -2753,4 +2753,18 @@ export const ES: Record<string, string> = {
   "See the experience": "Ver experiencia",
   "A Hispaniola party boat anchored over turquoise water in Punta Cana": "Un party boat de Hispaniola fondeado sobre agua turquesa en Punta Cana",
   "Dismiss": "Cerrar",
+
+  // [2026-10-02, Samuel, pedido de marketing] La página /tours-and-events
+  // (pages/tours-y-eventos.tsx). Las cuatro últimas son también de /events,
+  // que salía en inglés con el selector en español.
+  "Tours & events": "Tours y eventos",
+  "Tours and events in Punta Cana": "Tours y eventos en Punta Cana",
+  "Shared tours, private charters and celebrations on board: every way to live the Caribbean with us, on one page.": "Tours compartidos, chárters privados y celebraciones a bordo: todas las formas de vivir el Caribe con nosotros, en una sola página.",
+  "Tours & events in Punta Cana": "Tours y eventos en Punta Cana",
+  "Shared tours, private charters, party boats, weddings and corporate events on the Caribbean, all in one place. Book direct from Punta Cana.": "Tours compartidos, chárters privados, party boats, bodas y eventos de empresa en el Caribe, todo en un mismo sitio. Reserva directo desde Punta Cana.",
+  "Page sections": "Secciones de la página",
+  "Private events": "Eventos privados",
+  "Celebrate on board": "Celebra a bordo",
+  "Party boats, weddings and corporate charters: the whole catamaran for your group, on the Caribbean.": "Party boats, bodas y chárters de empresa: el catamarán entero para tu grupo, en el Caribe.",
+  "Private events & party boats": "Eventos privados y party boats",
 }
