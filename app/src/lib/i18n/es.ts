@@ -2745,7 +2745,7 @@ export const ES: Record<string, string> = {
   "Party boat · Punta Cana": "Party boat · Punta Cana",
   "The whole boat. Your crowd. One night they’ll keep bringing up.": "El barco entero. Tu gente. Una noche que seguirán recordando.",
   "Private party boat charters: open bar, music, a kitchen cooking on board and a crew that runs the day. 4.9 on TripAdvisor.": "Party boats privados: barra libre, música, cocina trabajando a bordo y una tripulación que lleva el día. 4.9 en TripAdvisor.",
-  "See our party boats": "Ver nuestros party boats",
-  "Guests celebrating on board a Hispaniola party boat in Punta Cana": "Invitados celebrando a bordo de un party boat de Hispaniola en Punta Cana",
+  "See party boats": "Ver party boats",
+  "A Hispaniola party boat anchored over turquoise water in Punta Cana": "Un party boat de Hispaniola fondeado sobre agua turquesa en Punta Cana",
   "Dismiss": "Cerrar",
 }
