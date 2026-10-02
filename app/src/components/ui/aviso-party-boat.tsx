@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { X } from 'lucide-react'
 import { t } from '@/lib/i18n'
@@ -35,6 +35,16 @@ const FOTO = '/fotos/ev-partyboat-11.webp'
 // hero, y un cartel que aparece encima a los 300 ms se cierra sin mirarlo.
 const RETRASO_MS = 5000
 
+// [2026-10-02, Derick: «que aparezca y 5 segundos después desaparezca
+// animada»] Y se va sola. Antes se quedaba hasta que alguien la cerraba, que
+// en móvil es tapar una franja de pantalla hasta el final de la visita.
+// Retirarse sola sale más barato: dice lo que tiene que decir y devuelve el
+// sitio.
+//
+// Se va por el mismo camino por el que vino —la transición de `visible`—, así
+// que la salida se ve. Desaparecer de golpe se lee como un fallo de la web.
+const VISIBLE_MS = 5000
+
 // Cerrado una vez, calla dos semanas. Un aviso que vuelve en cada visita deja
 // de ser una invitación y pasa a ser un estorbo.
 const CLAVE = 'haa_aviso_party_boat_cerrado'
@@ -70,15 +80,38 @@ export function AvisoPartyBoat() {
   // después entra. Sin ese tick el navegador pinta el estado final de una vez
   // y no se ve nada moverse.
   const [visible, setVisible] = useState(false)
+  // Puntero encima o foco dentro: el contador de salida se para.
+  const [retenido, setRetenido] = useState(false)
+  // Sale UNA vez por visita. Sin esto, pasar por /events —donde calla— y
+  // volver la haría reaparecer, y un aviso que vuelve es un aviso que molesta.
+  const yaSalio = useRef(false)
 
   useEffect(() => {
-    if (callada || fueCerradoHacePoco()) return
+    if (callada || yaSalio.current || fueCerradoHacePoco()) return
     const aparece = window.setTimeout(() => {
+      yaSalio.current = true
       setMontado(true)
       window.requestAnimationFrame(() => setVisible(true))
     }, RETRASO_MS)
     return () => window.clearTimeout(aparece)
   }, [callada])
+
+  // Se retira sola a los VISIBLE_MS. `retenido` congela la cuenta: si alguien
+  // está leyéndola o llevando el ratón hacia el botón, quitársela de debajo es
+  // lo peor que puede hacer un aviso — y encima se lleva por delante el clic.
+  // Al soltar vuelve a contar de cero: acaban de terminar de leer.
+  //
+  // NO escribe la marca de «cerrado»: irse sola no es que la hayan cerrado.
+  // Los catorce días de silencio se los gana solo la ✕, que sí es una
+  // respuesta de la persona.
+  useEffect(() => {
+    if (!visible || retenido) return
+    const seVa = window.setTimeout(() => {
+      setVisible(false)
+      window.setTimeout(() => setMontado(false), 450)
+    }, VISIBLE_MS)
+    return () => window.clearTimeout(seVa)
+  }, [visible, retenido])
 
   if (!montado || callada) return null
 
@@ -102,6 +135,13 @@ export function AvisoPartyBoat() {
       aria-label={t('Party boat in Punta Cana')}
     >
       <div
+        // El contador se para con el puntero encima y con el foco dentro: a
+        // teclado se llega por tabulación, y que se esfume justo al llegar al
+        // enlace lo dejaría inalcanzable.
+        onPointerEnter={() => setRetenido(true)}
+        onPointerLeave={() => setRetenido(false)}
+        onFocusCapture={() => setRetenido(true)}
+        onBlurCapture={() => setRetenido(false)}
         className={`pointer-events-auto w-full max-w-[40rem] overflow-hidden rounded-2xl
                     border border-fiesta-borde bg-fiesta-fondo shadow-2xl backdrop-blur-sm
                     transition-all duration-500 ease-out ${
