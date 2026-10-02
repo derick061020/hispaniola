@@ -2739,4 +2739,13 @@ export const ES: Record<string, string> = {
   "no resellers, no middlemen": "sin reventa, sin intermediarios",
   ", and with the guarantee that your reservation will never be handed over to third parties.": ", y con la garantía de que tu reserva no se le pasa a nadie.",
   "The name on the boat is the name on your booking.": "El nombre del barco es el nombre de tu reserva.",
+
+  // [2026-10-02] El aviso del party boat (ui/aviso-party-boat.tsx).
+  "Party boat in Punta Cana": "Party boat en Punta Cana",
+  "Party boat · Punta Cana": "Party boat · Punta Cana",
+  "The whole boat. Your crowd. One night they’ll keep bringing up.": "El barco entero. Tu gente. Una noche que seguirán recordando.",
+  "Private party boat charters: open bar, music, a kitchen cooking on board and a crew that runs the day. 4.9 on TripAdvisor.": "Party boats privados: barra libre, música, cocina trabajando a bordo y una tripulación que lleva el día. 4.9 en TripAdvisor.",
+  "See our party boats": "Ver nuestros party boats",
+  "Guests celebrating on board a Hispaniola party boat in Punta Cana": "Invitados celebrando a bordo de un party boat de Hispaniola en Punta Cana",
+  "Dismiss": "Cerrar",
 }

@@ -149,6 +149,23 @@
      texto navy encima sigue dando 11:1. */
   --color-resalte: color-mix(in srgb, var(--color-aqua) 14%, transparent);
 
+  /* ── AVISO DEL PARTY BOAT (2026-10-02, 2ª versión) ──────────────────────
+     Derick: «aplica el estilo de notificación (…) orientado específicamente
+     al concepto Party Boat (…) que represente la experiencia, el ambiente, la
+     diversión y el tipo de público que queremos atraer».
+
+     Es un PUENTE a hispaniolapartyboat.com, que es la misma casa. El negro va
+     casi opaco a propósito: la tarjeta lleva foto, y con más transparencia lo
+     que hay debajo se mezcla con la imagen y las dos se vuelven ilegibles.
+
+     NO se reutilizan los tokens `premium-*`: aquellos son un modo de producto
+     acotado a donde se vende el paquete Premium, y colarlos aquí los
+     convertiría en paleta de marca. */
+  --color-fiesta-fondo: rgb(10 12 16 / 94%);
+  --color-fiesta-borde: rgb(255 255 255 / 12%);
+  --color-fiesta-texto: #f3f6f8; /* blanco frío; sobre este negro da ~15:1 */
+  --color-fiesta-texto-suave: #a9b4bf; /* la segunda línea — ~7:1, AA de sobra */
+
   /* ── MODO PREMIUM (correcciones v2, 2026-07-27) ─────────────────────────
      La familia oscura/oro con la que se vende el paquete Premium. Sale del
      pedido del cliente en el slide 4 del PDF v2: «el Premium que tenga

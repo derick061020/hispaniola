@@ -28,6 +28,7 @@ import { LegalPage } from '@/pages/legal'
 import { FundacionesPage } from '@/pages/fundaciones'
 import { ScrollAlNavegar } from '@/lib/scroll-al-navegar'
 import { NavFlotante } from '@/components/home/nav-flotante'
+import { AvisoPartyBoat } from '@/components/ui/aviso-party-boat'
 import { Topbar } from '@/components/home/topbar'
 import { DevMode } from '@/dev/dev-mode'
 
@@ -168,6 +169,11 @@ function App() {
           fondo blanco — nunca dentro de la caja del hero. */}
       <Topbar />
       <NavFlotante />
+      {/* [2026-10-02] El puente al party boat, 2ª versión: al rincón y con
+          foto. La 1ª iba centrada abajo y tapaba las tarjetas de tours. Fuera
+          de <Routes> porque es de todo el sitio; el propio componente decide
+          dónde callarse. */}
+      <AvisoPartyBoat />
       <Routes>
         <Route path="/" element={<HomePage />} />
         {/* [2026-09-08] El catalogo en su propia pagina. Va ANTES de
