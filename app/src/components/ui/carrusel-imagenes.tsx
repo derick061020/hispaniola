@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { t } from '@/lib/i18n'
 
@@ -27,6 +28,7 @@ export function CarruselImagenes({
   imagenes,
   etiqueta,
   autoAvance = true,
+  enlace,
   className = '',
 }: {
   imagenes: string[]
@@ -34,6 +36,8 @@ export function CarruselImagenes({
   etiqueta: string
   /** [dev-mode] false congela el carrusel en su 1ª foto (frame para Figma) */
   autoAvance?: boolean
+  /** destino al que navega un clic en la FOTO (no en las flechas ni los puntos) */
+  enlace?: string
   className?: string
 }) {
   const [indice, setIndice] = useState(0)
@@ -74,6 +78,28 @@ export function CarruselImagenes({
           />
         ))}
       </div>
+
+      {/* [2026-10-02, Samuel: «basicamente que las imagenes en las tarjetas de
+          los tours sean clickeables»]
+          
+          La card ya navegaba entera por un enlace estirado, pero la foto no:
+          el bloque de la foto vive en z-20 —por encima de ese enlace— porque
+          si no, las flechas y los puntos del carrusel no recibirian el
+          puntero. Resultado: lo unico que NO se podia pulsar era justo lo que
+          mas invita a pulsar.
+          
+          Este enlace va DENTRO del carrusel y en z-10: tapa la foto, y las
+          flechas y los puntos (z-20, abajo) le siguen ganando. No se puede
+          envolver el carrusel entero en un <a> —hay botones dentro, y un
+          boton dentro de un enlace es HTML invalido—, que es por lo que el
+          enlace de la card se quedo fuera desde el principio.
+          
+          `aria-hidden` + `tabIndex={-1}`: el enlace de verdad es el CTA «View
+          tour» de la card. Este es un atajo del raton, no una parada de tab
+          mas ni una entrada repetida para quien usa lector de pantalla. */}
+      {enlace && (
+        <Link to={enlace} tabIndex={-1} aria-hidden="true" className="absolute inset-0 z-10" />
+      )}
 
       {n > 1 && (
         <>

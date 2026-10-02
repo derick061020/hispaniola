@@ -448,7 +448,7 @@ export function NavFlotante() {
           {fusionMontada && !cedeElTope ? (
             <Boton
               ref={botonRef}
-              to="/#tours"
+              to="/tours"
               tamaño="sm"
               className="ml-1 shrink-0"
               style={{ transformOrigin: 'left center' }}

@@ -68,7 +68,15 @@ export function TourCard({
           conservar sus 12px de margen contra el borde de la FOTO (que ahora
           empieza 8px adentro). */}
       <div className="relative z-20 h-64 p-2">
-        <CarruselImagenes imagenes={galeria} etiqueta={tour.nombre} autoAvance={autoAvance} className="h-full rounded-card" />
+        <CarruselImagenes
+          imagenes={galeria}
+          etiqueta={tour.nombre}
+          autoAvance={autoAvance}
+          // [2026-10-02, Samuel] Sin esto la foto era el unico trozo muerto de
+          // la card: la tapa el bloque z-20 que necesitan las flechas.
+          enlace={`/tours/${tour.slug}`}
+          className="h-full rounded-card"
+        />
         <span className="pointer-events-none absolute left-5 top-5 z-10 rounded-chip bg-papel/90 px-3 py-1 text-xs font-medium text-navy shadow-sm backdrop-blur-sm">
           {tour.audienciaChip}
         </span>

@@ -172,7 +172,7 @@ export function Hero() {
             {/* `#tours` explicito, no el default: el hero SOLO vive en la
                 home, y ahi el ancla nativa scrollea siempre (un <Link> al
                 mismo hash no re-dispara ScrollAlNavegar). Ver header.tsx. */}
-            <Header variante="sobreVideo" ctaHref="#tours" />
+            <Header variante="sobreVideo" ctaHref="/tours" />
 
             {/* La pirámide de confianza (PLAN-v3.md §14): el eyebrow de
                 localización que vivía arriba del título se retira — la

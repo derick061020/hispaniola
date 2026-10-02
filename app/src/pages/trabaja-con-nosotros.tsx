@@ -22,7 +22,7 @@ export function TrabajaConNosotrosPage() {
         descripcion={t('Activity providers, content creators and affiliates: tell us who you are and let’s talk. We reply on WhatsApp within 24 hours.')}
         ruta="/careers"
       />
-      <HeroInterna ctaHref="/#tours">
+      <HeroInterna ctaHref="/tours">
         <CabeceraTrabaja />
       </HeroInterna>
 

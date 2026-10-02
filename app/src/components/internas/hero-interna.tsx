@@ -65,7 +65,13 @@ import { useDevFlag } from '@/dev/use-dev-flag'
 // una ficha SÍ quiere una columna estrecha para no leerse a 1400px de ancho.
 export function HeroInterna({
   // Mismo motivo que el default de Header: ver components/home/header.tsx.
-  ctaHref = '/#tours',
+  // [2026-10-02, Samuel: «el boton Book Now debe dirigir a esta pagina:
+  // /tours/»] Era `/#tours`: un ancla que devolvia a la HOME y bajaba al
+  // escaparate de cuatro tarjetas. El catalogo de verdad esta en /tours, y es
+  // ahi donde se elige. Los CTA que apuntan al widget de reserva de su propia
+  // pagina (la ficha, el evento) NO cambian: mandarlos a una lista desde una
+  // pagina donde ya se puede reservar seria un paso atras.
+  ctaHref = '/tours',
   imagen,
   pie,
   anchoCompleto = false,

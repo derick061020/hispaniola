@@ -62,7 +62,7 @@ export function TripulacionPage() {
         descripcion={t('The people behind every Hispaniola Aquatic Adventures tour: captains, guides, kitchen, marine biology, office and the foundation.')}
         ruta="/crew"
       />
-      <HeroInterna ctaHref="/#tours">
+      <HeroInterna ctaHref="/tours">
         <CabeceraInterna
           eyebrow={EQUIPO_PAGINA.eyebrow}
           titulo={EQUIPO_PAGINA.titulo}

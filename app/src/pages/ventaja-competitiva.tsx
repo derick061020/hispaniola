@@ -99,7 +99,7 @@ export function VentajaCompetitivaPage() {
         descripcion={t('Coral reef restoration, support for local communities and responsible operations: the Bávaro Reefs Foundation behind every tour.')}
         ruta="/competitive-advantage"
       />
-      <HeroInterna ctaHref="/#tours">
+      <HeroInterna ctaHref="/tours">
         <CabeceraSostenibilidad />
       </HeroInterna>
 

@@ -59,7 +59,7 @@ export function PorQueReservarPage() {
       {/* anchoCompleto: el CTA vive en una columna derecha (pedido de Samuel),
           y con la caja de max-w-4xl del hero compartido quedaba a media
           pantalla en vez de en el borde derecho. */}
-      <HeroInterna ctaHref="/#tours" anchoCompleto>
+      <HeroInterna ctaHref="/tours" anchoCompleto>
         <CabeceraPorQueReservar />
       </HeroInterna>
 

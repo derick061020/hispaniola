@@ -16,7 +16,7 @@ export function FaqPage() {
         descripcion={t('Bookings and payments, what to bring, food, weather and children: the 17 most frequently asked questions about Hispaniola’s tours.')}
         ruta="/faq"
       />
-      <HeroInterna ctaHref="/#tours">
+      <HeroInterna ctaHref="/tours">
         <CabeceraFaq />
       </HeroInterna>
 

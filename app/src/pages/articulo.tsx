@@ -91,7 +91,7 @@ export function ArticuloPage() {
       <Meta titulo={articulo.titulo} descripcion={articulo.extracto} ruta={`/blog/${articulo.slug}`} />
 
       <HeroInterna
-        ctaHref="/#tours"
+        ctaHref="/tours"
         imagen={{ src: fotoDeArticulo(articulo), alt: articulo.fotoAlt }}
         pie={<CompartirArticulo articulo={articulo} sobreOscuro />}
       >
