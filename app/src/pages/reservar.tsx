@@ -54,9 +54,16 @@ import type { MetodoPago } from '@/lib/tarifas'
 // puede APARECER Y DESAPARECER sin recargar, porque el nº de personas se edita
 // en la tarjeta de al lado. Con índices, subir de 20 a 21 personas movía el
 // flujo al paso equivocado; con ids, la numeración se recalcula sola.
+// [2026-10-02] 'recogida' ya no es un paso —vive dentro de 'contacto'— pero se
+// queda en el tipo: `setPaso('recogida')` puede llegar de una reserva a medias
+// guardada antes de hoy, y `pasoActivo` lo reconduce a un paso que sí existe.
+// Quitarlo del tipo convertiría ese caso en un acordeón sin nada abierto.
 type PasoId = 'contacto' | 'menu' | 'recogida' | 'pago'
 const TITULOS: Record<PasoId, string> = traducible({
-  contacto: 'Contact',
+  // [2026-10-02] «Contact» se queda corto desde que la recogida vive dentro:
+  // el título tiene que prometer lo que hay en la sección, o quien la pliega
+  // no sabe que ahí dentro eligió su hotel.
+  contacto: 'Your details',
   menu: 'Your menu',
   recogida: 'Pickup',
   pago: 'Payment',
@@ -310,11 +317,23 @@ function FlujoReserva({
   // charter de 21+) o con una carta de un plato no se le pide una decisión a
   // quien no tiene ninguna: la comida se enseña en la tarjeta de la derecha.
   const hayPasoMenu = menu?.modo === 'eleccion'
-  const pasos: PasoId[] = ['contacto', ...(hayPasoMenu ? (['menu'] as const) : []), 'recogida', 'pago']
+  // [2026-10-02, Marketing: «debemos reducir la cantidad de pasos necesarios
+  // antes de finalizar la reserva»] FUERA EL PASO DE RECOGIDA — no los datos,
+  // el PASO.
+  //
+  // Eran dos campos, y uno opcional: el hotel y unas notas. Un paso entero
+  // —con su cabecera, su número, su resumen plegado y su botón «Continue»—
+  // para pedir un desplegable. Ahora van dentro de «Your details», debajo del
+  // contacto, que es la misma pregunta: quién eres y dónde te recogemos.
+  //
+  // Así el checkout pasa de 4 pasos a 3, y de 3 a 2 en los tours sin carta
+  // (Saona, los charters de 21+), que son la mitad del catálogo. El paso que
+  // no existe no se abandona.
+  const pasos: PasoId[] = ['contacto', ...(hayPasoMenu ? (['menu'] as const) : []), 'pago']
   // Si el paso activo deja de existir —subir a 21 personas en el charter quita
   // el del menú— el flujo cae al siguiente que sí existe en vez de quedarse en
   // un acordeón sin ninguna sección abierta.
-  const pasoActivo: PasoId = pasos.includes(paso) ? paso : 'recogida'
+  const pasoActivo: PasoId = pasos.includes(paso) ? paso : 'pago'
   const indiceDe = (id: PasoId) => pasos.indexOf(id)
   const siguienteDe = (id: PasoId): PasoId => pasos[indiceDe(id) + 1] ?? 'pago'
   const estadoDe = (id: PasoId): EstadoSeccion => {
@@ -624,8 +643,18 @@ function FlujoReserva({
     pasoActivo === 'contacto'
       ? {
           texto: 'Continue',
-          habilitado: contacto.nombre.trim() !== '' && contacto.email.trim() !== '',
-          accion: () =>
+          habilitado:
+            contacto.nombre.trim() !== '' &&
+            contacto.email.trim() !== '' &&
+            recogida.hotel.trim() !== '',
+          accion: () => {
+            // Dos parches, no uno: `sincronizar` los acumula, y el back escribe
+            // solo los campos que recibe. Mandarlos juntos en un `step` que no
+            // existe haría que el servidor ignorara la mitad.
+            checkout.sincronizar({
+              step: 'pickup',
+              pickup: { hotel: recogida.hotel.trim(), notes: recogida.notas.trim() },
+            })
             guardaYAvanza('contacto', {
               step: 'contact',
               contact: {
@@ -635,7 +664,8 @@ function FlujoReserva({
                 phone: telefonoDe(contacto),
                 language: contacto.idioma,
               },
-            }),
+            })
+          },
         }
       : pasoActivo === 'menu'
         ? {
@@ -647,17 +677,7 @@ function FlujoReserva({
             accion: () =>
               guardaYAvanza('menu', { step: 'menu', dishes: hayPasoMenu ? platos : [] }),
           }
-        : pasoActivo === 'recogida'
-          ? {
-              texto: 'Continue',
-              habilitado: recogida.hotel.trim() !== '',
-              accion: () =>
-                guardaYAvanza('recogida', {
-                  step: 'pickup',
-                  pickup: { hotel: recogida.hotel.trim(), notes: recogida.notas.trim() },
-                }),
-            }
-          : {
+        : {
               texto:
                 metodoPago === 'efectivo'
                   ? t('Confirm booking')
@@ -814,6 +834,16 @@ function FlujoReserva({
                       {contacto.email ? ` · ${contacto.email}` : ''}
                       {contacto.telefono ? ` · ${telefonoDe(contacto)}` : ''}
                     </p>
+                    {/* [2026-10-02] La recogida vive aquí dentro, así que
+                        también tiene que salir en el resumen plegado: si no,
+                        se pliega la sección y el hotel elegido desaparece de
+                        la pantalla hasta la de gracias. */}
+                    {recogida.hotel.trim() ? (
+                      <p className="mt-0.5">
+                        <span className="text-navy-soft">{t('Pickup')}:</span>{' '}
+                        <span className="font-medium text-navy">{recogida.hotel.trim()}</span>
+                      </p>
+                    ) : null}
                     {etiquetaOcasion(celebracion.ocasion) ? (
                       <p className="mt-0.5 text-coral">
                         {etiquetaOcasion(celebracion.ocasion)}
@@ -841,9 +871,32 @@ function FlujoReserva({
                   celebracion={celebracion}
                   onCambioCelebracion={(parcial) => setCelebracion((c) => ({ ...c, ...parcial }))}
                 />
+                {/* [2026-10-02, Marketing: «reducir la cantidad de pasos»]
+                    La recogida ya no es un paso: son dos campos más de esta
+                    misma sección, separados por una línea. Es la misma
+                    pregunta —quién eres y dónde te recogemos— y pedirla en dos
+                    pantallas era cobrar un clic por cada desplegable. */}
+                <div className="mt-6 border-t border-linea pt-6">
+                  <PasoRecogida
+                    datos={recogida}
+                    onCambio={(parcial) => setRecogida((r) => ({ ...r, ...parcial }))}
+                    horaSalida={horario?.hora ?? null}
+                  />
+                </div>
                 <Continuar
-                  habilitado={contacto.nombre.trim() !== '' && contacto.email.trim() !== ''}
+                  habilitado={
+                    contacto.nombre.trim() !== '' &&
+                    contacto.email.trim() !== '' &&
+                    recogida.hotel.trim() !== ''
+                  }
                   onClick={() => {
+                    // La recogida va en su propio parche: el back enruta por
+                    // `step` y escribe solo lo que le llega, así que meterla
+                    // dentro del de contacto la perdería por el camino.
+                    checkout.sincronizar({
+                      step: 'pickup',
+                      pickup: { hotel: recogida.hotel.trim(), notes: recogida.notas.trim() },
+                    })
                     checkout.sincronizar({
                       step: 'contact',
                       contact: {
@@ -905,35 +958,6 @@ function FlujoReserva({
                   />
                 </SeccionPaso>
               ) : null}
-
-              <SeccionPaso
-                id="recogida"
-                numero={indiceDe('recogida') + 1}
-                titulo={TITULOS.recogida}
-                estado={estadoDe('recogida')}
-                onEditar={() => setPaso('recogida')}
-                resumen={
-                  <p>
-                    <span className="font-medium text-navy">{recogida.hotel || '—'}</span>
-                  </p>
-                }
-              >
-                <PasoRecogida
-                  datos={recogida}
-                  onCambio={(parcial) => setRecogida((r) => ({ ...r, ...parcial }))}
-                  horaSalida={horario?.hora ?? null}
-                />
-                <Continuar
-                  habilitado={recogida.hotel.trim() !== ''}
-                  onClick={() => {
-                    checkout.sincronizar({
-                      step: 'pickup',
-                      pickup: { hotel: recogida.hotel.trim(), notes: recogida.notas.trim() },
-                    })
-                    setPaso(siguienteDe('recogida'))
-                  }}
-                />
-              </SeccionPaso>
 
               <SeccionPaso id="pago" numero={indiceDe('pago') + 1} titulo={TITULOS.pago} estado={estadoDe('pago')}>
                 <PasoPago

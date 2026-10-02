@@ -1,5 +1,5 @@
 import { useEffect, useId, useMemo, useRef, useState } from 'react'
-import { Check, ChevronDown, Search } from 'lucide-react'
+import { Check, ChevronDown, MapPin, Search } from 'lucide-react'
 import { obtenerHoteles } from '@/lib/api/api'
 import type { Hotel } from '@/lib/api/tipos'
 import { HOTELES } from '@/lib/api/hoteles'
@@ -32,8 +32,26 @@ import { t } from '@/lib/i18n'
 //
 // Un hotel sin ficha tampoco tiene tabla de recogidas, así que la hora había
 // que buscarla persona a persona: la red no salvaba la recogida, solo la
-// escondía. Quien se aloje donde no figura en el catálogo tiene que escribir,
-// y la oficina da de alta la ficha de verdad.
+// escondía.
+//
+// [2026-10-02, Marketing: «en la sección de recogida, que el usuario pueda
+// agregar de manera personalizada el lugar donde se encuentra»] VUELVE LA
+// SALIDA LIBRE, y ahora sí se puede.
+//
+// Lo que se arregló en septiembre no fue el campo de texto: fue que ese texto
+// CREABA fichas de hotel. Eso ya no pasa —`_ensure_hotel()` tiene el candado
+// desde el 29/09— y desde hoy el texto aterriza en `hotel_custom` de la
+// reserva, que es el camino que el back ya tenía para esto: no toca el
+// catálogo y aun así sale en el informe de transporte. O sea que la basura, si
+// la hay, se queda en UNA reserva en vez de contaminar el selector del
+// cliente siguiente.
+//
+// Y hay gente que legítimamente no está en ningún hotel: villas de alquiler,
+// apartamentos, Airbnb, un punto de encuentro. Hasta hoy la única salida era
+// escribir por WhatsApp, o sea abandonar el checkout para reservar.
+//
+// Es OPT-IN y va al final de la lista, no es el estado por defecto: lo primero
+// que se ofrece sigue siendo el catálogo, que es lo que trae tabla de horarios.
 
 /** Una sola carga por sesión: el paso de recogida se monta y se desmonta cada
  *  vez que el visitante navega entre pasos del funnel. */
@@ -97,6 +115,19 @@ export function SelectorHotel({
   const [abierto, setAbierto] = useState(false)
   const [busqueda, setBusqueda] = useState('')
   const contenedor = useRef<HTMLDivElement>(null)
+  // Escribiendo el sitio a mano en vez de elegirlo de la lista.
+  const [libre, setLibre] = useState(false)
+  const campoLibre = useRef<HTMLInputElement>(null)
+
+  // Una reserva reanudada puede volver con un sitio que no está en el catálogo
+  // —lo escribió esta misma persona hace dos días—. Se abre en modo libre para
+  // que lo vea escrito, en lugar de enseñarle «Select your hotel» como si no
+  // hubiera puesto nada. Solo cuando la lista ya llegó: antes, cualquier valor
+  // parecería de fuera del catálogo.
+  useEffect(() => {
+    if (!value || libre || hoteles === HOTELES) return
+    if (!hoteles.some((h) => plano(h.name) === plano(value))) setLibre(true)
+  }, [value, hoteles, libre])
 
   // [2026-09-29] Una reserva reanudada puede traer un hotel escrito a mano de
   // cuando el campo libre existía. No se borra —es lo que el cliente puso y
@@ -159,19 +190,49 @@ export function SelectorHotel({
       <label htmlFor={id} className="text-sm font-medium text-navy">
         {etiqueta}
       </label>
-      <button
-        id={id}
-        type="button"
-        aria-haspopup="listbox"
-        aria-expanded={abierto}
-        onClick={() => setAbierto((a) => !a)}
-        className="mt-1.5 flex w-full items-center justify-between gap-2 rounded-btn bg-papel px-4 py-3 text-left text-sm ring-1 ring-linea focus:outline-none focus:ring-2 focus:ring-aqua"
-      >
-        <span className={value ? 'truncate text-navy' : 'truncate text-navy-soft'}>
-          {value || t('Select your hotel')}
-        </span>
-        <ChevronDown className="size-4 shrink-0 text-navy-soft" aria-hidden="true" />
-      </button>
+      {libre ? (
+        <>
+          <input
+            id={id}
+            ref={campoLibre}
+            type="text"
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            placeholder={t('Villa, apartment or meeting point — with the address')}
+            className="mt-1.5 w-full rounded-btn bg-papel px-4 py-3 text-sm text-navy ring-1 ring-linea placeholder:text-navy-soft focus:outline-none focus:ring-2 focus:ring-aqua"
+          />
+          {/* La dirección importa de verdad: a un hotel del catálogo la guagua
+              sabe ir sola, a una villa no. Se pide aquí y no después por
+              WhatsApp, que es una conversación que hoy hay que tener igual. */}
+          <p className="mt-1.5 text-xs leading-relaxed text-navy-sub">
+            {t('Add the address or a nearby landmark. We’ll confirm your pickup time over WhatsApp.')}{' '}
+            <button
+              type="button"
+              onClick={() => {
+                setLibre(false)
+                onChange('')
+              }}
+              className="font-medium text-aqua-dark underline underline-offset-2 hover:text-navy"
+            >
+              {t('Choose a hotel from the list instead')}
+            </button>
+          </p>
+        </>
+      ) : (
+        <button
+          id={id}
+          type="button"
+          aria-haspopup="listbox"
+          aria-expanded={abierto}
+          onClick={() => setAbierto((a) => !a)}
+          className="mt-1.5 flex w-full items-center justify-between gap-2 rounded-btn bg-papel px-4 py-3 text-left text-sm ring-1 ring-linea focus:outline-none focus:ring-2 focus:ring-aqua"
+        >
+          <span className={value ? 'truncate text-navy' : 'truncate text-navy-soft'}>
+            {value || t('Select your hotel')}
+          </span>
+          <ChevronDown className="size-4 shrink-0 text-navy-soft" aria-hidden="true" />
+        </button>
+      )}
 
       {abierto ? (
         <div className="absolute left-0 right-0 z-30 mt-1 overflow-hidden rounded-btn border border-linea bg-papel shadow-lg">
@@ -219,12 +280,26 @@ export function SelectorHotel({
             ) : null}
           </ul>
 
-          {/* Ya no hay campo libre, así que este aviso es la única salida de
-              quien no se encuentre: se le dice a dónde escribir en vez de
-              dejarle un cuadro de texto que acababa creando fichas falsas. */}
-          <p className="border-t border-linea px-4 py-3 text-xs leading-relaxed text-navy-sub">
-            {t('Can’t find your hotel? Write to us on WhatsApp and we’ll arrange your pickup.')}
-          </p>
+          {/* [2026-10-02, Marketing] Antes esto decía «escríbenos por WhatsApp»,
+              que en mitad de un checkout es pedirle a alguien que se vaya a
+              otra aplicación para poder pagar. Ahora el callejón tiene salida y
+              se sale sin abandonar la reserva. */}
+          <button
+            type="button"
+            onClick={() => {
+              setLibre(true)
+              setAbierto(false)
+              setBusqueda('')
+              onChange('')
+              // El foco va al campo: quien pulsa esto ya sabe lo que va a
+              // escribir, y dejarle buscando dónde hacerlo cuesta un abandono.
+              window.requestAnimationFrame(() => campoLibre.current?.focus())
+            }}
+            className="flex w-full items-start gap-2 border-t border-linea px-4 py-3 text-left text-sm font-medium text-aqua-dark hover:bg-aqua-tint"
+          >
+            <MapPin className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
+            <span>{t('I’m not at a hotel — enter my pickup point')}</span>
+          </button>
         </div>
       ) : null}
     </div>
