@@ -392,7 +392,7 @@ export const INCLUYE_CRUCERO: IncluyeItem[] = traducible([
   {
     id: 'fotos',
     titulo: 'GoPro Memories',
-    texto: 'GoPro photos and videos uploaded to Facebook for free download after your tour.',
+    texto: 'GoPro photos and videos uploaded to our online photo gallery for free download after your tour.',
   },
 ])
 

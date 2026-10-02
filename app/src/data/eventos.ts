@@ -497,8 +497,11 @@ const PARTY_BOAT: FichaEvento = {
     { titulo: 'Private Check-In Lobby', texto: 'Private reception at our facilities before you set sail.' },
     { titulo: 'Floating Kitchen', texto: 'A floating kitchen for freshly made food on board.' },
     { titulo: 'Snorkeling Equipment', texto: 'Sanitized gear, every size.' },
-    { titulo: 'Photos (Facebook)', texto: 'We upload the tour photos to our Facebook. Free.' },
-    { titulo: 'Underwater Photos (Facebook)', texto: 'From the snorkeling too, on our Facebook.' },
+    // [2026-10-02, cliente vía Rossanna] Las variantes 2 y 3 que mandaron,
+    // literales. Los títulos pierden el «(Facebook)»: nombraba la plataforma
+    // dos veces en la misma tarjeta, y ya no es esa.
+    { titulo: 'Tour Photos', texto: 'We upload your tour photos to our online gallery. Free.' },
+    { titulo: 'Underwater Photos', texto: 'From the snorkeling tour, available in our online photo gallery.' },
     { titulo: 'WiFi & AUX port', texto: 'WiFi on board and an AUX port for your music.' },
     { titulo: 'Music & Dance', texto: 'Sound system and a crew with energy.' },
     { titulo: 'National Open Bar', texto: 'National beer, rum, vodka, juices and sodas.' },
@@ -669,7 +672,7 @@ const BODAS: FichaEvento = {
     // sacarla escondería una parada que sí se vende, y dejarla sin condición
     // prometía tres paradas en los paquetes de 3 h.
     { titulo: 'Deserted beach', texto: 'Private stop with a coco loco. 4-hour Premium package only.' },
-    { titulo: 'Photos', texto: 'Of the whole event, uploaded to our Facebook. Free.' },
+    { titulo: 'Photos', texto: 'Of the whole event, uploaded to our online photo gallery. Free.' },
     { titulo: 'Food', texto: 'Freshly made in our floating kitchen, custom menu.' },
     { titulo: 'Coordinator', texto: 'One person just for you, from start to finish.' },
     // 8º ítem, y es EL dato que separa bodas de party boat: las dos

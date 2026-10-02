@@ -254,9 +254,22 @@ for (const f of ficheros(RAIZ)) {
 // `es.ts` es TypeScript y esto corre en Node pelado, así que se lee como texto.
 // El fichero lo genera un script y su cuerpo es JSON válido salvo por la coma
 // final, que es la que se quita aquí.
+//
+// [2026-10-02] Y salvo por los comentarios. El diccionario ya no lo escribe
+// solo el generador: desde que se añaden bloques a mano, llevan su `//` con la
+// fecha y quién lo pidió, como el resto del proyecto. `JSON.parse` moría en el
+// primero —«Expected double-quoted property name», línea 2707— y este control
+// llevaba roto desde entonces sin que nadie lo notase, porque un script de
+// `qa/` que revienta se parece bastante a uno que pasa.
+//
+// Se quitan solo los `//` que empiezan una línea: un `//` dentro de una cadena
+// (una URL, por ejemplo) va sangrado detrás de unas comillas, no al principio.
 const bruto = readFileSync(join(RAIZ, 'lib/i18n/es.ts'), 'utf8')
 const ES = JSON.parse(
-  bruto.slice(bruto.indexOf('{'), bruto.lastIndexOf('}') + 1).replace(/,(\s*})/g, '$1'),
+  bruto
+    .slice(bruto.indexOf('{'), bruto.lastIndexOf('}') + 1)
+    .replace(/^[ \t]*\/\/.*$/gm, '')
+    .replace(/,(\s*})/g, '$1'),
 )
 
 const faltan = [...pedidas].filter(([txt]) => !(txt in ES) && !NO_ES_COPY.has(txt))

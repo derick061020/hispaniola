@@ -358,7 +358,12 @@ const INCLUYE_MARINE_PARK: BeneficioIncluido[] = [
     titulo: 'Floating Bar at the Natural Pool',
     texto: "Enjoy drinks while relaxing in Punta Cana's crystal-clear natural pool.",
   },
-  { titulo: 'Complimentary Tour Photos', texto: 'Go PRO photos uploaded after your tour to our Facebook page.' },
+  // [2026-10-02, cliente vía Rossanna: «las fotos ya no se suben a Facebook,
+  // se suben a Pixieset; eliminar la palabra Facebook y no poner fotos
+  // profesionales»] Texto literal de la variante 1 que mandaron. La
+  // plataforma no se nombra —ellos mismos no la nombran en sus variantes—:
+  // si mañana cambian de proveedor, «our online photo gallery» sigue valiendo.
+  { titulo: 'Complimentary Tour Photos', texto: 'GoPro photos uploaded after your tour to our online photo gallery.' },
 ]
 
 // Traducción NUESTRA (el cliente no da estos dos bloques): son datos reales
@@ -1363,7 +1368,7 @@ export const FICHAS: Record<string, FichaTour> = traducible({
       'WiFi on board',
       'Snorkeling gear (every size)',
       'Marine biologist as your guide on the reef',
-      'Free photos uploaded to Facebook',
+      'Free photos uploaded to our online photo gallery',
     ],
     // ⚡ [2026-09-01, Samuel] Fuera la langosta (ya no se vende aquí) y fuera el
     // álbum de fotos, que además nunca estuvo en esta línea. Lo que queda son
