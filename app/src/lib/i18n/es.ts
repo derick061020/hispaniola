@@ -2742,10 +2742,9 @@ export const ES: Record<string, string> = {
 
   // [2026-10-02] El aviso del party boat (ui/aviso-party-boat.tsx).
   "Party boat in Punta Cana": "Party boat en Punta Cana",
-  "Party boat · Punta Cana": "Party boat · Punta Cana",
-  "The whole boat. Your crowd. One night they’ll keep bringing up.": "El barco entero. Tu gente. Una noche que seguirán recordando.",
-  "Private party boat charters: open bar, music, a kitchen cooking on board and a crew that runs the day. 4.9 on TripAdvisor.": "Party boats privados: barra libre, música, cocina trabajando a bordo y una tripulación que lleva el día. 4.9 en TripAdvisor.",
-  "See party boats": "Ver party boats",
+  "Party Boat in Punta Cana": "Party Boat en Punta Cana",
+  "Music, open bar and the whole boat for you.": "Música, barra libre y el barco entero.",
+  "See the experience": "Ver experiencia",
   "A Hispaniola party boat anchored over turquoise water in Punta Cana": "Un party boat de Hispaniola fondeado sobre agua turquesa en Punta Cana",
   "Dismiss": "Cerrar",
 }

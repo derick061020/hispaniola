@@ -102,79 +102,87 @@ export function AvisoPartyBoat() {
       aria-label={t('Party boat in Punta Cana')}
     >
       <div
-        className={`pointer-events-auto w-full max-w-[46rem] rounded-2xl border border-fiesta-borde
-                    bg-fiesta-fondo p-3 shadow-2xl backdrop-blur-sm transition-all duration-500
-                    ease-out sm:p-3.5 ${
+        className={`pointer-events-auto w-full max-w-[40rem] overflow-hidden rounded-2xl
+                    border border-fiesta-borde bg-fiesta-fondo shadow-2xl backdrop-blur-sm
+                    transition-all duration-500 ease-out ${
                       visible
                         ? 'translate-y-0 opacity-100'
                         : 'translate-y-[130%] opacity-0'
                     }`}
       >
-        <div className="flex items-center gap-3 sm:gap-4">
-          {/* La foto ocupa el sitio del icono de la 1ª versión: mismo hueco,
-              mismo eje. En móvil NO se esconde — se pidió el mismo diseño en
-              los dos, y es lo único que distingue esto de un banner de texto. */}
-          <img
-            src={FOTO}
-            alt={t('A Hispaniola party boat anchored over turquoise water in Punta Cana')}
-            loading="lazy"
-            decoding="async"
-            className="size-14 shrink-0 rounded-xl object-cover sm:size-16"
-          />
-
-          <div className="min-w-0 flex-1">
-            <p className="text-[0.625rem] font-bold uppercase tracking-[0.12em] text-coral sm:text-[0.6875rem]">
-              {t('Party boat · Punta Cana')}
-            </p>
-            <p className="mt-0.5 font-display text-[0.9375rem] font-bold leading-snug text-fiesta-texto sm:text-base">
-              {t('The whole boat. Your crowd. One night they’ll keep bringing up.')}
-            </p>
-            <p className="mt-0.5 hidden text-[0.8125rem] leading-snug text-fiesta-texto-suave sm:block">
-              {t('Private party boat charters: open bar, music, a kitchen cooking on board and a crew that runs the day. 4.9 on TripAdvisor.')}
-            </p>
+        {/* `items-stretch`: es lo que hace que la foto llegue de borde a borde
+            por arriba y por abajo. Con `items-center` se quedaria flotando en
+            medio con aire alrededor, que es justo lo que no se queria. */}
+        <div className="relative flex items-stretch">
+          {/* La foto A SANGRE: sin bordes propios ni margen. Las esquinas
+              redondas se las da el `overflow-hidden` de la tarjeta, asi que
+              encaja con ella en vez de ser un cuadrito pegado encima.
+              35 % del ancho, con tope para que en pantallas anchas no se coma
+              el espacio del texto. */}
+          {/* La foto va DENTRO de un hueco sin alto propio, y ella se
+              posiciona absoluta. Si estuviera suelta en la fila, su proporcion
+              natural mandaria: a 208 px de ancho pedia 141 de alto y estiraba
+              la tarjeta muy por encima del texto. Asi el alto lo pone el texto
+              —como en el diseno— y la foto recorta para llenarlo. */}
+          <div className="relative w-[35%] max-w-[13rem] shrink-0">
+            <img
+              src={FOTO}
+              alt={t('A Hispaniola party boat anchored over turquoise water in Punta Cana')}
+              loading="lazy"
+              decoding="async"
+              className="absolute inset-0 size-full object-cover"
+            />
           </div>
 
-          <a
-            href={DESTINO}
-            // Sale del sitio: pestaña aparte para no tumbar una reserva que el
-            // visitante pueda tener a medias. `noopener` es obligatorio con
-            // `_blank` — sin él la pestaña nueva puede manipular esta.
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hidden shrink-0 whitespace-nowrap rounded-full bg-coral px-5 py-2.5 text-[0.8125rem]
-                       font-semibold text-papel transition-colors hover:bg-coral-dark
-                       focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-coral
-                       sm:block"
-          >
-            {t('See party boats')}
-          </a>
+          {/* [2026-10-02] En movil NO cabe todo en una fila: con la foto
+              ocupando el 35 %, al texto le quedan ~200 px y el titulo partia en
+              tres lineas con el subtitulo cortado a «Musica, barra…». Asi que
+              en movil se apila (titulo, linea, boton) y la fila del diseno
+              original vuelve desde `sm`, que es donde hay sitio de sobra. */}
+          <div className="flex min-w-0 flex-1 flex-col justify-center gap-2 py-2.5 pl-3 pr-8
+                          sm:flex-row sm:items-center sm:gap-3 sm:py-3 sm:pl-4 sm:pr-9">
+            <div className="min-w-0 flex-1">
+              <p className="font-display text-[0.875rem] font-bold leading-tight text-fiesta-texto sm:text-[0.9375rem]">
+                {t('Party Boat in Punta Cana')}
+              </p>
+              {/* UNA linea, y corta. Es un aviso, no un folleto: si hay que
+                  leerlo dos veces, se cierra sin leerlo ninguna. */}
+              <p className="mt-0.5 line-clamp-2 text-[0.75rem] leading-snug text-fiesta-texto-suave sm:text-[0.8125rem]">
+                {t('Music, open bar and the whole boat for you.')}
+              </p>
+            </div>
 
+            <a
+              href={DESTINO}
+              // Sale del sitio: pestana aparte para no tumbar una reserva que
+              // el visitante pueda tener a medias. `noopener` es obligatorio
+              // con `_blank` — sin el la pestana nueva puede manipular esta.
+              target="_blank"
+              rel="noopener noreferrer"
+              className="shrink-0 self-start whitespace-nowrap rounded-full bg-coral px-3 py-1.5 text-[0.75rem]
+                         font-semibold text-papel transition-colors hover:bg-coral-dark
+                         focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-coral
+                         sm:self-auto sm:px-4 sm:py-2.5 sm:text-[0.8125rem]"
+            >
+              {t('See the experience')}
+            </a>
+          </div>
+
+          {/* La ✕ sale del flujo y se ancla a la esquina: en la fila de `sm`
+              ocupaba sitio del texto, y apilada en movil no tenia donde ir. El
+              `pr-8`/`pr-9` del bloque de texto le reserva el hueco. */}
           <button
             type="button"
             onClick={cerrar}
             aria-label={t('Dismiss')}
-            className="-mr-0.5 shrink-0 self-start rounded-full p-1.5 text-fiesta-texto-suave
-                       transition-colors hover:bg-papel/10 hover:text-fiesta-texto
+            className="absolute right-1.5 top-1.5 rounded-full p-1 text-fiesta-texto-suave transition-colors
+                       hover:bg-papel/10 hover:text-fiesta-texto
                        focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-papel/40
-                       sm:self-center"
+                       sm:right-2 sm:top-2"
           >
             <X className="size-4" />
           </button>
         </div>
-
-        {/* En móvil el botón no cabe en la fila: baja entero debajo, a lo
-            ancho, que además es donde el pulgar llega sin estirarse. */}
-        <a
-          href={DESTINO}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-3 flex items-center justify-center rounded-full bg-coral px-4 py-2.5
-                     text-[0.8125rem] font-semibold text-papel transition-colors hover:bg-coral-dark
-                     focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-coral
-                     sm:hidden"
-        >
-          {t('See party boats')}
-        </a>
       </div>
     </div>
   )
