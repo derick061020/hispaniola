@@ -42,6 +42,8 @@ import { t } from '@/lib/i18n'
 // footer no quede debajo de la barra. 5rem y no los 4rem de la ficha: el
 // segmentado mide 77 px (12 + 4 + 44 de área táctil + 4 + 12 + el borde), y
 // con 4.5rem el final del footer quedaba 5 px por debajo — medido.
+// [2ª vuelta, switcher flotante] Ahora ocupa 70 px desde el borde (54 de
+// píldora + 16 de aire debajo): los 5rem siguen cubriéndolo con margen.
 //
 // ⚠️ PENDIENTE DE APROBAR: el eyebrow, el H1, el lead y la meta description
 // del hero son copy NUEVO (redactado el 2026-10-02 para esta página, no sale
