@@ -250,6 +250,20 @@ export const TOURS: Tour[] = traducible([
     destacados: ['Speedboat or catamaran', 'Natural pool + buffet', 'Full day'],
   },
 ])
+
+// El escaparate: 4 productos con galería propia (semi-privado, snorkel-lovers,
+// charter-privado, isla-saona). v3 (2026-07-17): Saona deja de ser
+// "pendiente de confirmar" y se publica con contenido real de la web del
+// cliente (3 sub-variantes speedboat/fishing/catamarán, galería de 11 fotos,
+// itinerario real, menú buffet) — entra al escaparate como un producto más.
+// Sigue viva en el ticker, el megamenú, el footer y el menú móvil (que
+// solo leen `TOURS`, no este filtro), y también en la rejilla.
+//
+// [2026-10-02] Se muda aquí desde home/tours-grid.tsx: /tours-and-events
+// necesita contar y listar (barra móvil, JSON-LD) los MISMOS tours que pinta
+// la rejilla, y exportarla desde el archivo del componente rompía el Fast
+// Refresh (regla only-export-components de oxlint).
+export const TOURS_ESCAPARATE = TOURS.filter((tour) => tour.galeria && tour.galeria.length > 0)
 export const bookingCta: Record<Tour['booking'], string> = traducible({
   completo: 'Book now',
   cotizacion: 'Get a quote',

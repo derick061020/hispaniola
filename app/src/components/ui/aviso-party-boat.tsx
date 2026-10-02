@@ -54,6 +54,10 @@ const DIAS_DE_SILENCIO = 14
 // mitad de otra cosa y cualquier interrupción cuesta dinero.
 const RUTAS_CALLADAS = [
   /^\/events/,
+  // [2026-10-02] La página combinada ya enseña el party boat en su rejilla
+  // de eventos, y en móvil tiene su propia barra fija abajo: el aviso
+  // saldría encima de ella.
+  /^\/tours-and-events/,
   /^\/tours\/party-boat/,
   /^\/book\//,
   /^\/my-booking/,
