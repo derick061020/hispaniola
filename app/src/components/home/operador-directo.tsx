@@ -23,14 +23,20 @@ export function OperadorDirecto() {
   return (
     <section className="w-full bg-papel px-5 py-seccion-sm sm:px-10 sm:py-seccion">
       <div className="mx-auto max-w-contenido">
-        <div className="max-w-3xl">
+        {/* [2026-10-02, Derick: «ponlo mejor, capaz centrado se veria mejor»]
+            Y se ve: alineado a la izquierda dejaba media pantalla vacia a la
+            derecha, y el bloque quedaba colgando. Centrado se lee como lo que
+            es —una declaracion de la casa, no un parrafo mas— y ademas encaja
+            con los premios de arriba y la cinta eco de abajo, que tambien van
+            centrados. */}
+        <div className="mx-auto max-w-3xl text-center">
           <Etiqueta>{t('Direct operator')}</Etiqueta>
 
           <h2 className="mt-3 font-display text-3xl font-bold leading-tight text-navy sm:text-4xl">
             {t('You book with the company that runs the boat.')}
           </h2>
 
-          <p className="mt-4 text-base leading-relaxed text-navy-sub sm:text-lg">
+          <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-navy-sub sm:text-lg">
             {t('Hispaniola owns the boats, employs the crew, and prepares the food on board. You are booking directly with the company that organizes the experience:')}{' '}
             {/* El resalte va SOLO en esta frase. Es la que resume el bloque, y
                 la que un cliente que compara portales necesita ver sin leer el
@@ -41,7 +47,9 @@ export function OperadorDirecto() {
             {t(', and with the guarantee that your reservation will never be handed over to third parties.')}
           </p>
 
-          <p className="mt-6 border-l-[3px] border-aqua pl-4 font-display text-base font-semibold text-navy sm:text-lg">
+          {/* Centrado, la barra lateral no tiene de que colgar: se cambia por
+              una linea fina encima, que separa igual sin romper el eje. */}
+          <p className="mx-auto mt-7 max-w-xl border-t border-linea pt-5 font-display text-base font-semibold text-navy sm:text-lg">
             {t('The name on the boat is the name on your booking.')}
           </p>
         </div>
