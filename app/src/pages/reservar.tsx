@@ -8,11 +8,10 @@ import { PasoMenu } from '@/components/reservar/paso-menu'
 import { PasoRecogida } from '@/components/reservar/paso-recogida'
 import { BannerPremium } from '@/components/reservar/banner-premium'
 import { PasoContacto } from '@/components/reservar/paso-contacto'
-import { idiomaDelNavegador } from '@/lib/idioma'
 import { PasoPago, type DatosPago, type EnlaceStripe } from '@/components/reservar/paso-pago'
 import { ResumenReserva } from '@/components/reservar/resumen-reserva'
 import { BarraMovilReserva } from '@/components/reservar/barra-movil-reserva'
-import { etiquetaOcasion, telefonoDe, PREFIJO_INICIAL, type DatosCelebracion, type DatosContacto, type DatosRecogida, type Paquete } from '@/components/reservar/tipos'
+import { etiquetaOcasion, nombreCompletoValido, partesDelNombre, telefonoDe, PREFIJO_INICIAL, type DatosCelebracion, type DatosContacto, type DatosRecogida, type Paquete } from '@/components/reservar/tipos'
 import { maxPersonasDe } from '@/components/tour/widget-reserva'
 import { formatoDinero, TOURS, type Tour } from '@/data/home'
 import { TOURS_EVENTO, FICHAS_EVENTO } from '@/lib/eventos-reservables'
@@ -24,7 +23,6 @@ import type { ErrorApi } from '@/lib/api/cliente'
 import type { ParcheCheckout } from '@/lib/api/tipos'
 import { t, tp, traducible } from '@/lib/i18n'
 import { escuchaMoneda, instantaneaMoneda } from '@/lib/moneda'
-import { SelectorIdioma } from '@/components/ui/selector-idioma'
 import { SelectorMoneda } from '@/components/ui/selector-moneda'
 import type { MetodoPago } from '@/lib/tarifas'
 
@@ -237,16 +235,11 @@ function FlujoReserva({
   const [recogida, setRecogida] = useState<DatosRecogida>({ hotel: '', notas: '' })
   const [contacto, setContacto] = useState<DatosContacto>({
     nombre: '',
-    apellidos: '',
     email: '',
     // [2026-08-25] El pais del telefono va aparte del numero: lo que se guarda
     // en la reserva es el compuesto (`telefonoDe`), nunca `contacto.telefono`.
     prefijo: PREFIJO_INICIAL,
     telefono: '',
-    // Se propone el idioma del navegador; el cliente lo cambia en el paso de
-    // contacto si prefiere otro. Es lo que decide en que lengua le llegan sus
-    // correos, no el idioma de esta pantalla.
-    idioma: idiomaDelNavegador(),
   })
   const [celebracion, setCelebracion] = useState<DatosCelebracion>({ ocasion: null, nota: '' })
 
@@ -488,7 +481,7 @@ function FlujoReserva({
 
   const enlaceStripe: EnlaceStripe = {
     facturacion: {
-      nombre: `${contacto.nombre.trim()} ${contacto.apellidos.trim()}`.trim(),
+      nombre: contacto.nombre.trim(),
       email: contacto.email.trim() || undefined,
       telefono: telefonoDe(contacto) || undefined,
       pais: contacto.prefijo ? contacto.prefijo.toUpperCase() : undefined,
@@ -527,11 +520,9 @@ function FlujoReserva({
     schedule_index: horarioIdx,
     package: paquete,
     contact: {
-      first_name: contacto.nombre.trim(),
-      last_name: contacto.apellidos.trim(),
+      ...partesDelNombre(contacto.nombre),
       email: contacto.email.trim(),
       phone: telefonoDe(contacto),
-      language: contacto.idioma,
     },
     pickup: { hotel: recogida.hotel.trim(), notes: recogida.notas.trim() },
     dishes: hayPasoMenu ? platos : [],
@@ -587,10 +578,8 @@ function FlujoReserva({
       recogida: { hotel: recogida.hotel.trim(), notas: recogida.notas.trim() },
       contacto: {
         nombre: contacto.nombre.trim(),
-        apellidos: contacto.apellidos.trim(),
         email: contacto.email.trim(),
         telefono: telefonoDe(contacto),
-        idioma: contacto.idioma,
       },
       // Solo viaja si hay algo que celebrar: `ninguna` es una respuesta válida
       // en pantalla, pero guardarla no aporta nada a la tripulación.
@@ -644,7 +633,7 @@ function FlujoReserva({
       ? {
           texto: 'Continue',
           habilitado:
-            contacto.nombre.trim() !== '' &&
+            nombreCompletoValido(contacto.nombre) &&
             contacto.email.trim() !== '' &&
             recogida.hotel.trim() !== '',
           accion: () => {
@@ -658,11 +647,9 @@ function FlujoReserva({
             guardaYAvanza('contacto', {
               step: 'contact',
               contact: {
-                first_name: contacto.nombre.trim(),
-                last_name: contacto.apellidos.trim(),
+                ...partesDelNombre(contacto.nombre),
                 email: contacto.email.trim(),
                 phone: telefonoDe(contacto),
-                language: contacto.idioma,
               },
             })
           },
@@ -788,7 +775,7 @@ function FlujoReserva({
               vivía en el pie —que aquí no se pinta—: de ahí el «el cambio de
               monedas en el checkout no funciona». El resumen sigue diciendo el
               importe exacto en dólares que se va a cobrar. */}
-          <SelectorIdioma />
+          {/* [2026-10-03, Derick: «déjame la web en inglés solamente»] Aquí vivía el selector de idioma. */}
           <SelectorMoneda />
           </div>
         </div>
@@ -829,7 +816,7 @@ function FlujoReserva({
                   <>
                     <p>
                       <span className="font-medium text-navy">
-                        {[contacto.nombre, contacto.apellidos].filter(Boolean).join(' ') || '—'}
+                        {contacto.nombre.trim() || '—'}
                       </span>
                       {contacto.email ? ` · ${contacto.email}` : ''}
                       {contacto.telefono ? ` · ${telefonoDe(contacto)}` : ''}
@@ -885,7 +872,7 @@ function FlujoReserva({
                 </div>
                 <Continuar
                   habilitado={
-                    contacto.nombre.trim() !== '' &&
+                    nombreCompletoValido(contacto.nombre) &&
                     contacto.email.trim() !== '' &&
                     recogida.hotel.trim() !== ''
                   }
@@ -900,11 +887,9 @@ function FlujoReserva({
                     checkout.sincronizar({
                       step: 'contact',
                       contact: {
-                        first_name: contacto.nombre.trim(),
-                        last_name: contacto.apellidos.trim(),
+                        ...partesDelNombre(contacto.nombre),
                         email: contacto.email.trim(),
                         phone: telefonoDe(contacto),
-                        language: contacto.idioma,
                       },
                       ...(celebracion.ocasion && celebracion.ocasion !== 'ninguna'
                         ? { occasion: celebracion.ocasion, occasion_note: celebracion.nota.trim() }

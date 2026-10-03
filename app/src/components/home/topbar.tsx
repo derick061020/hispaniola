@@ -2,7 +2,6 @@ import { useLocation } from 'react-router-dom'
 import { MessageCircle, Phone } from 'lucide-react'
 import { WHATSAPP_URL } from '@/data/tours'
 import { CONTACTO } from '@/data/home'
-import { SelectorIdioma } from '@/components/ui/selector-idioma'
 import { t } from '@/lib/i18n'
 
 // Topbar (2026-07-17, pedido de Samuel): banda delgada de contacto/idioma
@@ -57,7 +56,7 @@ export function Topbar() {
             {t('Bookings:')}{' '}{telefono?.dato}
           </a>
 
-          <SelectorIdioma />
+          {/* [2026-10-03, Derick: «déjame la web en inglés solamente»] Aquí vivía el selector de idioma. */}
         </div>
       </div>
     </div>

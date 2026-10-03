@@ -49,20 +49,23 @@ const CLAVE = 'hispaniola.idioma'
 let actual: IdiomaUI = 'en'
 const oyentes = new Set<() => void>()
 
-/** El inglés es el idioma del sitio; el español solo se propone a quien lo
- *  trae en el navegador. Una vez elige a mano, manda su elección: por eso se
- *  mira primero el almacenamiento. */
+/** [2026-10-03, Derick: «déjame la web en inglés solamente»] LA WEB ES EN
+ *  INGLÉS, Y PUNTO.
+ *
+ *  Antes esto miraba el almacenamiento y, si no, el idioma del navegador: quien
+ *  llegaba con el Chrome en español veía el sitio en español sin pedirlo. Ya no.
+ *
+ *  Lo que NO se ha tocado, a propósito: el diccionario (`es.ts`, 2.700 textos
+ *  con el copy original del cliente), `t()`, `tp()` y `numero()`. Todo eso sigue
+ *  en pie y devolviendo el inglés, que es lo que `t()` hace cuando el idioma es
+ *  'en'. Borrarlo habría sido tirar el trabajo de la traducción entera para
+ *  ahorrar unos kilobytes, y volver a encenderlo es cambiar esta función.
+ *
+ *  Tampoco se ha quitado `fijaIdiomaUI`: ya no la llama nadie —el selector se
+ *  fue de las cuatro pantallas donde estaba— pero sigue siendo la puerta por la
+ *  que volvería el español el día que se quiera. */
 function inicial(): IdiomaUI {
-  if (typeof window === 'undefined') return 'en'
-  try {
-    const guardado = window.localStorage.getItem(CLAVE)
-    if (guardado === 'en' || guardado === 'es') return guardado
-  } catch {
-    // Safari en privado tira al leer localStorage. No es motivo para no pintar
-    // la web: se cae al idioma del navegador.
-  }
-  const navegador = [...(navigator.languages ?? []), navigator.language].filter(Boolean)
-  return navegador.some((c) => c.toLowerCase().startsWith('es')) ? 'es' : 'en'
+  return 'en'
 }
 
 actual = inicial()
@@ -129,7 +132,16 @@ function vigilaAlTraductor() {
   if (actual !== 'es' && loEstanTraduciendo()) fijaIdiomaUI('es')
 }
 
-vigilaAlTraductor()
+// [2026-10-03] APAGADO. Vigilaba al traductor de Chrome para servirle NUESTRO
+// español en vez del suyo automático, y era lo correcto mientras el sitio tenía
+// dos idiomas. Con la web en inglés solamente, saltaría a español justo lo que
+// se acaba de pedir que no pase.
+//
+// Se queda escrito, no borrado: el día que el español vuelva, esta llamada es
+// lo único que hay que descomentar — y el porqué de la clase `translated-ltr`
+// no es algo que apetezca volver a averiguar.
+// vigilaAlTraductor()
+void vigilaAlTraductor;
 
 /** Traduce un texto de la interfaz. Si no está en el diccionario devuelve el
  *  inglés tal cual — deliberadamente, ver la cabecera. */

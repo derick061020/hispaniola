@@ -1,4 +1,3 @@
-import { idiomaDelNavegador } from '@/lib/idioma'
 import type { Reserva as ReservaLocal } from '@/lib/reservas'
 import type { Reserva as ReservaOdoo } from './tipos'
 import { FICHAS } from '@/data/tours'
@@ -115,13 +114,7 @@ export function reservaDesdeOdoo(odoo: ReservaOdoo): ReservaLocal {
       hotel: odoo.pickup.hotel,
       notas: odoo.pickup.room ? `Room ${odoo.pickup.room}` : '',
     },
-    // El idioma no viaja en la reserva que devuelve Odoo (vive en la ficha del
-    // cliente, que es privada). Para pintar la pantalla da igual; se repone el
-    // del navegador para que el tipo cuadre y un reenvio no lo pise.
-    contacto: {
-      ...partirNombre(odoo.contact.name, odoo.contact.email, odoo.contact.phone),
-      idioma: idiomaDelNavegador(),
-    },
+    contacto: partirNombre(odoo.contact.name, odoo.contact.email, odoo.contact.phone),
     total: odoo.amounts.total,
     deposito: odoo.amounts.deposit,
     saldo: odoo.amounts.balance,
@@ -138,12 +131,9 @@ function platosPorComensal(dishes: ReservaOdoo['dishes'], personas: number): str
   return platos
 }
 
+// [2026-10-03] Ya no se parte: el nombre se guarda y se enseña entero, igual
+// que lo escribio el cliente. Odoo lo devuelve ya junto en `contact.name`, asi
+// que partirlo aqui solo servia para volver a pegarlo en cada pantalla.
 function partirNombre(completo: string, email: string, telefono: string) {
-  const partes = (completo || '').trim().split(/\s+/)
-  return {
-    nombre: partes[0] ?? '',
-    apellidos: partes.slice(1).join(' '),
-    email,
-    telefono,
-  }
+  return { nombre: (completo || '').trim(), email, telefono }
 }

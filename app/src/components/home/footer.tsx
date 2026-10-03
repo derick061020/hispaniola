@@ -11,7 +11,6 @@ import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
 import { Logo } from '@/components/ui/logo'
 import { Boton } from '@/components/ui/boton'
 import { MarcaPago } from '@/components/ui/marcas-pago'
-import { SelectorIdioma } from '@/components/ui/selector-idioma'
 import { PERFILES_TRABAJO } from '@/data/trabaja'
 import {
   IconoFacebook,
@@ -367,10 +366,7 @@ export function Footer({ cta = t('Ready for an unforgettable day?') }: { cta?: s
         </div>
 
         <div className="flex flex-col gap-3">
-          <div>
-            <p className="mb-2 text-sm font-semibold text-white">{t('Language')}</p>
-            <SelectorIdioma />
-          </div>
+          {/* [2026-10-03, Derick: «déjame la web en inglés solamente»] Aquí vivía el selector de idioma. */}
           <div>
             <label htmlFor="footer-moneda" className="mb-2 block text-sm font-semibold text-white">
               {t('Currency')}

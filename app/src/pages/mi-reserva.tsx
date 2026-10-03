@@ -6,6 +6,7 @@ import { Logo } from '@/components/ui/logo'
 import { Meta } from '@/components/seo/meta'
 import { fechaLarga } from '@/lib/fechas'
 import { guardarReserva, type Reserva } from '@/lib/reservas'
+import { partesDelNombre } from '@/components/reservar/tipos'
 import {
   actualizarReserva, buscarReserva as buscarReservaOdoo,
   buscarReservaPorContacto as buscarPorContacto, confirmarPago,
@@ -884,7 +885,7 @@ function BloqueReserva({
             token={token}
             saldo={reserva.saldo}
             facturacion={{
-              nombre: `${reserva.contacto.nombre} ${reserva.contacto.apellidos}`.trim(),
+              nombre: reserva.contacto.nombre.trim(),
               email: reserva.contacto.email || undefined,
               telefono: reserva.contacto.telefono || undefined,
               // [2026-09-18] EL PAIS, que faltaba. El Payment Element oculta
@@ -1200,7 +1201,6 @@ function BloqueContacto({
   const [edit, setEdit] = useState(false)
   const [contacto, setContacto] = useState({
     nombre: reserva.contacto.nombre,
-    apellidos: reserva.contacto.apellidos,
     telefono: reserva.contacto.telefono,
   })
   const { guardando, error, enviar } = useGuardado(guardar)
@@ -1214,8 +1214,9 @@ function BloqueContacto({
     void enviar(
       {
         contact: {
-          first_name: contacto.nombre.trim(),
-          last_name: contacto.apellidos.trim(),
+          // Mismo reparto que en el checkout: Odoo guarda nombre y apellido
+          // por separado, el cliente escribe uno solo.
+          ...partesDelNombre(contacto.nombre),
           phone: contacto.telefono.trim(),
         },
       },
@@ -1224,7 +1225,6 @@ function BloqueContacto({
   const cancelar = () => {
     setContacto({
       nombre: reserva.contacto.nombre,
-      apellidos: reserva.contacto.apellidos,
       telefono: reserva.contacto.telefono,
     })
     setEdit(false)
@@ -1243,8 +1243,7 @@ function BloqueContacto({
       {edit ? (
         <div className="mt-4 space-y-3">
           <div className="grid gap-3 sm:grid-cols-2">
-            <Campo etiqueta={t('First name')} value={contacto.nombre} onChange={(e) => setContacto((c) => ({ ...c, nombre: e.target.value }))} required />
-            <Campo etiqueta={t('Last name')} value={contacto.apellidos} onChange={(e) => setContacto((c) => ({ ...c, apellidos: e.target.value }))} />
+            <Campo etiqueta={t('Full name')} placeholder="John Doe" value={contacto.nombre} onChange={(e) => setContacto((c) => ({ ...c, nombre: e.target.value }))} required />
             <Campo etiqueta={t('Phone')} type="tel" value={contacto.telefono} onChange={(e) => setContacto((c) => ({ ...c, telefono: e.target.value }))} />
           </div>
           <p className="text-xs text-navy-soft">
@@ -1259,7 +1258,7 @@ function BloqueContacto({
         </div>
       ) : (
         <dl className="mt-4 space-y-1 text-sm">
-          <Fila label={t('Name')} valor={`${reserva.contacto.nombre} ${reserva.contacto.apellidos}`.trim()} />
+          <Fila label={t('Name')} valor={reserva.contacto.nombre.trim()} />
           <Fila label={t('Email')} valor={reserva.contacto.email} />
           <Fila label={t('Phone')} valor={reserva.contacto.telefono} />
         </dl>

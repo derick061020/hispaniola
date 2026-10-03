@@ -1,4 +1,3 @@
-import type { IdiomaCliente } from '@/lib/idioma'
 import { componTelefono, PREFIJO_POR_DEFECTO } from '@/lib/telefono'
 import { traducible } from '@/lib/i18n'
 // Tipos compartidos del funnel de reserva (/reservar/:slug, Fase C). Viven
@@ -18,12 +17,37 @@ export type DatosRecogida = { hotel: string; notas: string }
 // Lo que viaja a Odoo es siempre el compuesto — `telefonoDe()`, nunca
 // `datos.telefono` a secas, o se manda un numero sin prefijo.
 export type DatosContacto = {
+  /** [2026-10-03, Derick: «junta nombre y apellido en uno solo como nombre
+   *  completo»] UN solo campo. Eran dos —First name / Last name— y en un
+   *  checkout eso es un salto de tabulación más y dos sitios donde dudar: hay
+   *  quien pone los dos apellidos en el primero, quien pone el nombre entero.
+   *  Se pide como se dice, «John Doe», y el sistema lo parte al mandarlo a
+   *  Odoo, que sí guarda nombre y apellido por separado. */
   nombre: string
-  apellidos: string
   email: string
   prefijo: string
   telefono: string
-  idioma: IdiomaCliente
+}
+
+/** La primera palabra es el nombre; el resto, los apellidos.
+ *
+ *  Odoo guarda `first_name` y `last_name` por separado y eso no cambia: lo que
+ *  cambia es que ya no se le pide al cliente que haga él la separación. Con dos
+ *  palabras sale lo obvio; con tres o más —«Ana María García López»— el nombre
+ *  es la primera y lo demás apellidos, que es como se reparte en el mundo
+ *  hispano y como lo hacía ya `desde-odoo.ts` al leer una reserva. */
+export function partesDelNombre(completo: string): { first_name: string; last_name: string } {
+  const partes = completo.trim().split(/\s+/).filter(Boolean)
+  return { first_name: partes[0] ?? '', last_name: partes.slice(1).join(' ') }
+}
+
+/** Dos palabras como mínimo: nombre y apellido.
+ *
+ *  Una reserva a nombre de «John» no sirve para la lista de embarque ni para
+ *  buscarla cuando el cliente llama. Antes lo garantizaban dos campos
+ *  separados; con uno solo hay que pedirlo. */
+export function nombreCompletoValido(completo: string): boolean {
+  return completo.trim().split(/\s+/).filter((p) => p.length >= 2).length >= 2
 }
 
 export const PREFIJO_INICIAL = PREFIJO_POR_DEFECTO

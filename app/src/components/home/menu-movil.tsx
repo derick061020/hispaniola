@@ -8,7 +8,6 @@ import { TOURS, OCASIONES, NAV_NOSOTROS, NAV_SOSTENIBILIDAD, NAV_AYUDA, bookingC
 import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
 import { Boton } from '@/components/ui/boton'
 import { t, traducible } from '@/lib/i18n'
-import { SelectorIdioma } from '@/components/ui/selector-idioma'
 
 type Seccion = 'tours' | 'eventos' | 'nosotros' | 'sostenibilidad' | 'ayuda'
 
@@ -298,7 +297,7 @@ export function MenuMovil({
               justo a la mitad del tráfico que llega de un QR en el muelle.
               Aquí, junto al CTA, es el único sitio del móvil por el que pasa
               todo el mundo. */}
-          <SelectorIdioma className="shrink-0" />
+          {/* [2026-10-03, Derick: «déjame la web en inglés solamente»] Aquí vivía el selector de idioma. */}
           {/* `#tours` solo existe en la home; en la ficha este botón no haría
               nada. Se resuelve contra la página actual: en la ficha manda al
               widget de reserva (el mismo destino que el «Reservar» del header),
