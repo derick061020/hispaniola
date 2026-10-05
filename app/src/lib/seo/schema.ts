@@ -169,3 +169,25 @@ export function schemaFaq(items: PreguntaTour[] | { p: string; r: string }[]) {
     })),
   }
 }
+
+/** ItemList — la página índice /tours-and-events (2026-10-02, pedido de
+ *  marketing por SEO). Le dice a Google que esa URL es un CATÁLOGO y cuáles
+ *  son sus fichas, en el orden en que se pintan; es lo que habilita el
+ *  carrusel de resultados para listados. Cada elemento es solo nombre + URL:
+ *  el detalle (precio, rating) ya lo declara la propia ficha con
+ *  `schemaTour`, y repetirlo aquí sería mantenerlo en dos sitios. */
+export function schemaListado(nombre: string, items: { nombre: string; ruta: string }[]) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: nombre,
+    inLanguage: idiomaUI(),
+    numberOfItems: items.length,
+    itemListElement: items.map((item, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: item.nombre,
+      url: `${SITIO()}${item.ruta}`,
+    })),
+  }
+}

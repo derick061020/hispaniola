@@ -55,6 +55,10 @@ const FIJAS = [
   ['/tours', 0.9, 'weekly'],
   // Y el de eventos, por lo mismo (prioridad 0.8, la de sus landings).
   ['/events', 0.8, 'weekly'],
+  // [2026-10-02, pedido de marketing] Tours y eventos en una sola pagina.
+  // 0.9, como /tours: es la pagina de destino de campañas y la que recoge
+  // la busqueda general («tours and events punta cana»).
+  ['/tours-and-events', 0.9, 'weekly'],
   ['/competitive-advantage', 0.8, 'monthly'],
   ['/foundation', 0.6, 'monthly'],
   ['/crew', 0.6, 'monthly'],

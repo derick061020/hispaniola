@@ -1,24 +1,31 @@
 import { useState } from 'react'
-import { TOURS } from '@/data/home'
+import { TOURS_ESCAPARATE } from '@/data/home'
 import { Etiqueta } from '@/components/ui/etiqueta'
 import { TourCard } from './tour-card'
 import { useDevFlag } from '@/dev/use-dev-flag'
 import { t } from '@/lib/i18n'
 
-// El escaparate: 4 productos con galería propia (semi-privado, snorkel-lovers,
-// charter-privado, isla-saona). v3 (2026-07-17): Saona deja de ser
-// "pendiente de confirmar" y se publica con contenido real de la web del
-// cliente (3 sub-variantes speedboat/fishing/catamarán, galería de 11 fotos,
-// itinerario real, menú buffet) — entra al escaparate como un producto más.
-// Sigue viva en el ticker, el megamenú, el footer y el menú móvil (que
-// solo leen `TOURS`, no este filtro), y ahora también aquí.
-const TOURS_ESCAPARATE = TOURS.filter((tour) => tour.galeria && tour.galeria.length > 0)
+// El escaparate (`TOURS_ESCAPARATE`) vive en data/home.ts desde 2026-10-02 —
+// su historia, allí.
 
 // `sinCabecera` (2026-09-08, /tours): la página propia de tours pone el
 // título y la descripción en el hero, así que aquí sobran — repetirlos deja
 // dos H1/H2 diciendo lo mismo con dos dedos de separación. Es opt-in: la home
 // no pasa la prop y la sección se ve exactamente igual que siempre.
-export function ToursGrid({ sinCabecera = false }: { sinCabecera?: boolean } = {}) {
+//
+// `compacta` (2026-10-02, Samuel: «reduce gap entre hero y tours y reduce el
+// gap entre tours y eventos», en /tours-and-events): el `py-seccion` de 7rem
+// es el aire de una sección que va SOLA entre otras distintas. En la página
+// combinada esta rejilla y la de eventos son dos mitades del mismo catálogo,
+// y 7rem + 7rem entre ellas (224 px en desktop) las leía como dos páginas.
+// Arriba pasa a un escalón menos; abajo, nada — el hueco hasta los eventos lo
+// pone la rejilla de eventos (ver `compacta` en evento/eventos-grid.tsx), así
+// el gap entre las dos se controla desde un solo sitio. Opt-in: la home y
+// /tours no pasan la prop.
+export function ToursGrid({
+  sinCabecera = false,
+  compacta = false,
+}: { sinCabecera?: boolean; compacta?: boolean } = {}) {
   // [dev-mode] ?dev-tours=estatico congela los carruseles en su 1ª foto (sin
   // auto-avance) y ?dev-tours=descripcion abre las 4 descripciones («See
   // more») → frames limpios para Figma. Ver dev-registry.ts.
@@ -30,7 +37,10 @@ export function ToursGrid({ sinCabecera = false }: { sinCabecera?: boolean } = {
   }) // [dev-mode]
 
   return (
-    <section id="tours" className="scroll-mt-20 px-5 py-seccion-sm sm:px-10 sm:py-seccion">
+    <section
+      id="tours"
+      className={`scroll-mt-20 px-5 sm:px-10 ${compacta ? 'pt-10 sm:pt-seccion-sm' : 'py-seccion-sm sm:py-seccion'}`}
+    >
       <div className="mx-auto max-w-contenido">
         {/* [v3 2026-08-06, WEBSITE - INICIO pág. 2] Título y subtítulo
             APROBADOS por el cliente. El subtítulo es nuevo: antes esta
