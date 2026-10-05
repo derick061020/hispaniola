@@ -71,12 +71,11 @@ export function HeroInterna({
   // ahi donde se elige. Los CTA que apuntan al widget de reserva de su propia
   // pagina (la ficha, el evento) NO cambian: mandarlos a una lista desde una
   // pagina donde ya se puede reservar seria un paso atras.
-  // [2026-10-05, Derick: «hay una nueva página de /tours-and-events, y que se
-  // abra con ese botón»] Hace dos días este CTA pasó de `/#tours` —el ancla de
-  // la home— a `/tours`. Ahora existe la página que Marketing pedía de
-  // verdad: tours Y eventos juntos, sin pestañas que escondan la mitad. El
-  // botón de reservar lleva ahí.
-  ctaHref = '/tours-and-events',
+  // [2026-10-02, Samuel: «el botón Book Now debe dirigir a /tours/»] Y ahí se
+  // queda: el 05/10 llegó a apuntar a /tours-and-events por un malentendido
+  // mío —el botón que abre esa página es «See availability», no este— y se
+  // devolvió el mismo día.
+  ctaHref = '/tours',
   imagen,
   pie,
   anchoCompleto = false,

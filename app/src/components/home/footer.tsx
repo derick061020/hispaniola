@@ -91,7 +91,7 @@ export function Footer({ cta = t('Ready for an unforgettable day?') }: { cta?: s
             hizo. Por eso va perfilado y no en coral — mismo alto y mismo
             radio, pero sin competir con el principal. */}
         <div className="flex flex-wrap items-center justify-center gap-3">
-          <Boton to="/#tours">{t('See availability')}</Boton>
+          <Boton to="/tours-and-events">{t('See availability')}</Boton>
           <Link
             to="/account"
             className="inline-flex items-center justify-center gap-2 rounded-btn border border-white/40 px-5 py-3 text-sm font-semibold text-white transition hover:border-white hover:bg-white/10"
@@ -237,9 +237,9 @@ export function Footer({ cta = t('Ready for an unforgettable day?') }: { cta?: s
           <h5 className="text-sm font-semibold uppercase tracking-wide text-white/50">{t('Bookings & help')}</h5>
           <ul className="mt-3 flex flex-col gap-2 text-sm text-white/80">
             <li>
-              {/* [2026-10-05] Al catálogo combinado: tours y eventos en la
-                  misma página, que es donde se elige. */}
-              <Link to="/tours-and-events" className="hover:text-white">
+              {/* El enlace «Book now» del pie va al catálogo de tours. El que
+                  abre la página combinada es «See availability», arriba. */}
+              <Link to="/tours" className="hover:text-white">
                 {t('Book now')}
               </Link>
             </li>

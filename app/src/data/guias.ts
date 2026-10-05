@@ -117,7 +117,7 @@ export const GUIAS_CIERRE = traducible({
   titulo: 'More guides on the way',
   texto:
     'We keep answering what really matters before you book: the best time to travel, what to bring, going with kids and more.',
-  cta: { texto: 'See availability', to: '/#tours' },
+  cta: { texto: 'See availability', to: '/tours-and-events' },
 })
 
 export const GUIAS_HERO = traducible({

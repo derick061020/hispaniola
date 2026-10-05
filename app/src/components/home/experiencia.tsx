@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useVideoDiferido } from '@/lib/use-video-diferido'
 import { EXPERIENCIA_NARRATIVA, EXPERIENCIA_VIDEO, type SegmentoNarrativa } from '@/data/home'
 import { BotonSonido } from '@/components/ui/boton-sonido'
@@ -196,15 +197,15 @@ export function Experiencia() {
           {/* CTA sutil en coral (el color de "Ver disponibilidad"): estilo
               enlace, no botón sólido — no compite con los CTA sólidos del hero
               y el cierre. Lleva al grid de tours (#tours), justo debajo. */}
-          <a
-            href="#tours"
+          <Link
+            to="/tours-and-events"
             className="exp-linea group mt-8 inline-flex items-center gap-1.5 text-lead font-semibold text-coral transition-colors hover:text-coral-dark"
           >
             {t('See availability')}
             <span aria-hidden className="transition-transform duration-200 motion-safe:group-hover:translate-x-1">
               →
             </span>
-          </a>
+          </Link>
         </div>
       </div>
     </section>

@@ -49,7 +49,7 @@ export function GuiasPage() {
         descripcion={t('Real tips on snorkeling and sailing in Punta Cana: what the reef is like, how much of the trip is under sail, whether the sea is safe and what seafood we serve on board.')}
         ruta="/guides"
       />
-      <HeroInterna ctaHref="/tours-and-events">
+      <HeroInterna ctaHref="/tours">
         <CabeceraGuias />
       </HeroInterna>
 

@@ -172,7 +172,7 @@ export function Hero() {
             {/* `#tours` explicito, no el default: el hero SOLO vive en la
                 home, y ahi el ancla nativa scrollea siempre (un <Link> al
                 mismo hash no re-dispara ScrollAlNavegar). Ver header.tsx. */}
-            <Header variante="sobreVideo" ctaHref="/tours-and-events" />
+            <Header variante="sobreVideo" ctaHref="/tours" />
 
             {/* La pirámide de confianza (PLAN-v3.md §14): el eyebrow de
                 localización que vivía arriba del título se retira — la
@@ -337,7 +337,11 @@ export function Hero() {
                       mecánica (ventana de recorte asimétrica, olas con mask,
                       reduced-motion) vive en componentes.css. */}
                   <Boton
-                    href="#tours"
+                    // [2026-10-05, Derick: «es el de See availability»] Abre
+                    // la página combinada. Antes bajaba al escaparate de
+                    // cuatro tarjetas de esta misma home; ahora lleva al
+                    // catálogo entero, tours y eventos juntos.
+                    to="/tours-and-events"
                     tamaño="lg"
                     className={`cta-mar relative ${forzarCatamaran ? 'cta-mar--forzado' : ''}`} // [dev-mode]
                   >
@@ -440,7 +444,9 @@ export function Hero() {
           ctaHeroFuera ? 'translate-y-0 opacity-100' : 'invisible translate-y-full opacity-0'
         }`}
       >
-        <Boton href="#tours" className="w-full">
+        {/* El mismo destino que el CTA grande del hero, que es al que
+            sustituye cuando se sale de pantalla. */}
+        <Boton to="/tours-and-events" className="w-full">
           {t('See availability')}
         </Boton>
       </div>

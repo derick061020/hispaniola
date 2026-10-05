@@ -116,7 +116,7 @@ export function Duelo() {
         <p className="max-w-lg text-lead text-navy-sub">
           {t('None of these six things is an extra. They all come inside the same price.')}
         </p>
-        <Boton to="/#tours" className="shrink-0">
+        <Boton to="/tours-and-events" className="shrink-0">
           {t('See availability')}
         </Boton>
       </div>

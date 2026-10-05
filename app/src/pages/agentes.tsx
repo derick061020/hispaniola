@@ -15,7 +15,7 @@ export function AgentesPage() {
         descripcion={t('Registration for travel agencies and DMCs: direct coordination, formal invoicing and real availability.')}
         ruta="/travel-agents"
       />
-      <HeroInterna ctaHref="/tours-and-events">
+      <HeroInterna ctaHref="/tours">
         <CabeceraAgentes />
       </HeroInterna>
 

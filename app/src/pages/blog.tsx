@@ -43,7 +43,7 @@ export function BlogPage() {
             'linear-gradient(to bottom, var(--color-papel) 0%, var(--color-papel) 50%, var(--color-fondo-ficha) 100%)',
         }}
       >
-        <HeroInterna ctaHref="/tours-and-events">
+        <HeroInterna ctaHref="/tours">
           <CabeceraBlog />
         </HeroInterna>
       </div>

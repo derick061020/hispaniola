@@ -91,7 +91,7 @@ export function ArticuloPage() {
       <Meta titulo={articulo.titulo} descripcion={articulo.extracto} ruta={`/blog/${articulo.slug}`} />
 
       <HeroInterna
-        ctaHref="/tours-and-events"
+        ctaHref="/tours"
         imagen={{ src: fotoDeArticulo(articulo), alt: articulo.fotoAlt }}
         pie={<CompartirArticulo articulo={articulo} sobreOscuro />}
       >
@@ -187,7 +187,7 @@ export function ArticuloPage() {
             <p className="mx-auto mt-2 max-w-md text-sm text-navy-sub">
               {t('Our tours leave from Punta Cana every day, in small groups.')}
             </p>
-            <Boton to="/#tours" className="mt-5">
+            <Boton to="/tours-and-events" className="mt-5">
               {t('See availability')}
             </Boton>
           </div>
