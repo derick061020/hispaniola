@@ -31,7 +31,7 @@ export function ContactoPage() {
         descripcion={t('Write to us, call or send a WhatsApp. You talk straight to the boat crew. Office in Punta Cana, reply in under 24 h.')}
         ruta="/contact"
       />
-      <HeroInterna ctaHref="/tours">
+      <HeroInterna ctaHref="/tours-and-events">
         <CabeceraContacto />
       </HeroInterna>
 

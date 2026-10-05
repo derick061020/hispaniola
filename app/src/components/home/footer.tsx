@@ -237,10 +237,9 @@ export function Footer({ cta = t('Ready for an unforgettable day?') }: { cta?: s
           <h5 className="text-sm font-semibold uppercase tracking-wide text-white/50">{t('Bookings & help')}</h5>
           <ul className="mt-3 flex flex-col gap-2 text-sm text-white/80">
             <li>
-              {/* [2026-10-02, Samuel] Antes `/#tours`, que devolvía a la home
-                  y bajaba al escaparate. Ahora al catálogo, /tours, que es
-                  donde se elige de verdad. */}
-              <Link to="/tours" className="hover:text-white">
+              {/* [2026-10-05] Al catálogo combinado: tours y eventos en la
+                  misma página, que es donde se elige. */}
+              <Link to="/tours-and-events" className="hover:text-white">
                 {t('Book now')}
               </Link>
             </li>

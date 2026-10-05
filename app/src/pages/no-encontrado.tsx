@@ -22,7 +22,7 @@ export function NoEncontradoPage() {
           pagina no la tiene. Resultado: el boton coral «Book now» de la 404,
           justo donde el visitante ya se ha perdido una vez, no hacia nada.
           `/#tours` es lo que pasan las 18 internas via HeroInterna. */}
-      <Header ctaHref="/tours" />
+      <Header ctaHref="/tours-and-events" />
       <div className="grid min-h-[70svh] place-items-center px-5 text-center">
         <div>
           {/* [v3 F8 · QA 2026-08-07] El «404» pasa de <p> a <h1>: era la única

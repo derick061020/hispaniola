@@ -49,7 +49,7 @@ export function InstalacionesPage() {
         descripcion={t('A full complex in Punta Cana: open-air marine museum, biology lab, our own kitchens, shop and offices.')}
         ruta="/facilities"
       />
-      <HeroInterna ctaHref="/tours">
+      <HeroInterna ctaHref="/tours-and-events">
         <CabeceraInterna
           eyebrow={INSTALACIONES.eyebrow}
           titulo={INSTALACIONES.titulo}

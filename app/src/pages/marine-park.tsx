@@ -34,7 +34,7 @@ export function MarineParkPage() {
         ruta="/marine-park"
       />
       <HeroInterna
-        ctaHref="/tours"
+        ctaHref="/tours-and-events"
         imagen={{ src: `/fotos/${MARINE_PARK.heroFoto}.webp`, alt: MARINE_PARK.heroFotoAlt }}
       >
         <CabeceraInterna

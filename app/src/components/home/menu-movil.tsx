@@ -37,7 +37,12 @@ export function MenuMovil({
   // ahi donde se elige. Los CTA que apuntan al widget de reserva de su propia
   // pagina (la ficha, el evento) NO cambian: mandarlos a una lista desde una
   // pagina donde ya se puede reservar seria un paso atras.
-  ctaHref = '/tours',
+  // [2026-10-05, Derick: «hay una nueva página de /tours-and-events, y que se
+  // abra con ese botón»] Hace dos días este CTA pasó de `/#tours` —el ancla de
+  // la home— a `/tours`. Ahora existe la página que Marketing pedía de
+  // verdad: tours Y eventos juntos, sin pestañas que escondan la mitad. El
+  // botón de reservar lleva ahí.
+  ctaHref = '/tours-and-events',
 }: {
   abierto: boolean
   onCerrar: () => void

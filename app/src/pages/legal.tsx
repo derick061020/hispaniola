@@ -22,7 +22,7 @@ export function LegalPage() {
   return (
     <div>
       <Meta titulo={doc.nombre} descripcion={doc.intro} ruta={`/legal/${doc.slug}`} indexable={false} />
-      <HeroInterna ctaHref="/tours">
+      <HeroInterna ctaHref="/tours-and-events">
         <CabeceraLegal doc={doc} />
       </HeroInterna>
 

@@ -47,7 +47,7 @@ export function TripulacionBarcoPage() {
         descripcion={t('Comparison variant of the Crew page: the team is filtered by tapping the boat plan instead of the department chips.')}
         ruta="/crew-boat"
       />
-      <HeroInterna ctaHref="/tours">
+      <HeroInterna ctaHref="/tours-and-events">
         <CabeceraInterna
           eyebrow={EQUIPO_PAGINA.eyebrow}
           titulo={EQUIPO_PAGINA.titulo}

@@ -84,7 +84,7 @@ export function FundacionPage() {
           Si se quiere empujar a /competitive-advantage desde aqui, eso es un
           CTA de contenido con su texto, no el boton de reservar. */}
       <HeroInterna
-        ctaHref="/tours"
+        ctaHref="/tours-and-events"
         imagen={{
           src: '/fotos/arrecife-fondo-cenital-v2.webp',
           alt: 'Overhead view of the turquoise water at Playa Bávaro',

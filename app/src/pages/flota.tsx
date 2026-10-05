@@ -79,7 +79,7 @@ export function FlotaPage() {
         descripcion={t('The Hispaniola Aquatic Adventures fleet: sailing and power catamarans, speedboats and the event catamaran, each with video, gallery and a full spec sheet.')}
         ruta="/fleet"
       />
-      <HeroInterna ctaHref="/tours">
+      <HeroInterna ctaHref="/tours-and-events">
         {/* [v3 2026-08-06, WEBSITE - NOSOTROS pag. 3] Titular APROBADO. El
             cliente escribe «QUITAR LA FRASE DEBAJO Y PONER…», asi que el lead
             tambien es suyo, literal. */}
