@@ -43,7 +43,12 @@ const RETRASO_MS = 5000
 //
 // Se va por el mismo camino por el que vino —la transición de `visible`—, así
 // que la salida se ve. Desaparecer de golpe se lee como un fallo de la web.
-const VISIBLE_MS = 5000
+//
+// [2026-10-06, Derick: «tiene que durar 20 segundos en la web»] Cinco segundos
+// daban para leer el título y poco más: quien levantaba la vista del hero ya
+// no la encontraba. Veinte dan tiempo a leerla y a decidir, y el contador
+// sigue parándose con el puntero encima.
+const VISIBLE_MS = 20000
 
 // Cerrado una vez, calla dos semanas. Un aviso que vuelve en cada visita deja
 // de ser una invitación y pasa a ser un estorbo.
