@@ -504,6 +504,18 @@ export const NAV_SOSTENIBILIDAD: ItemNav[] = traducible([
     descripcion: 'Bávaro Reefs Foundation: one of the leading coral restoration projects in the country.',
     to: '/foundation',
   },
+  // [2026-10-07, reunión Raymond–Samuel del 05-10] 3er ítem: el museo
+  // subacuático. Raymond lo quiere en el menú pero dentro de Sostenibilidad,
+  // no en el nav principal («que no quede visible de buenas a primeras»). El
+  // nombre visible es el que pidió tal cual —«Museo Subacuático»— en el
+  // idioma del sitio. Va el ÚLTIMO: es lo más nuevo y lo que se descubre
+  // después de entender qué hace la fundación.
+  {
+    id: 'museo',
+    nombre: 'Underwater Museum',
+    descripcion: 'Sculptures that work as a reef, inside our Marine Park. Opening November 1, 2026.',
+    to: '/underwater-museum',
+  },
 ])
 
 // Ayuda (PLAN-v3.md §12.2) — FAQ_CATEGORIAS del prototipo: 6 categorías, 14

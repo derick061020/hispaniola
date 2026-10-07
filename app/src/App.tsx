@@ -16,6 +16,7 @@ import { TripulacionPage } from '@/pages/tripulacion'
 import { TripulacionBarcoPage } from '@/pages/tripulacion-barco'
 import { InstalacionesPage } from '@/pages/instalaciones'
 import { MarineParkPage } from '@/pages/marine-park'
+import { MuseoSubacuaticoPage } from '@/pages/museo-subacuatico'
 import { FundacionPage } from '@/pages/fundacion'
 import { GuiasPage } from '@/pages/guias'
 import { FaqPage } from '@/pages/faq'
@@ -220,6 +221,11 @@ function App() {
             Solo en ingles — nace despues de la decision de slugs EN, asi que
             no tiene ruta vieja en español de la que redirigir. */}
         <Route path="/marine-park" element={<MarineParkPage />} />
+        {/* [2026-10-07, Raymond en la reunión del 05-10] El museo subacuático,
+            versión comercial. Raymond dijo «/museo»; Samuel: la URL sigue la
+            nomenclatura en inglés del sitio. Se entra desde el desplegable
+            de Sostenibilidad (NAV_SOSTENIBILIDAD). */}
+        <Route path="/underwater-museum" element={<MuseoSubacuaticoPage />} />
         <Route path="/fleet" element={<FlotaPage />} />
         {/* ⚠️ SINGULAR. Es la fundación del cliente. NO confundir con
             `/fundaciones` (plural, abajo), que es la página interna de tokens. */}

@@ -1,0 +1,802 @@
+/* ============================================================
+   /underwater-museum — EL DESCENSO (2026-10-07).
+
+   CSS a medida de la página del museo: las capas sticky del agua y del HUD,
+   el medidor, el vidrio de las tarjetas y el halo que sigue al cursor. Lo que
+   se expresa bien con utilidades sigue en los componentes; aquí solo lo que
+   necesita pseudo-elementos, máscaras o variables vivas (`--museo-prof`,
+   `--mx/--my`). Todos los valores salen de tokens (tokens.css → «EL
+   DESCENSO»).
+   ============================================================ */
+
+.museo {
+  /* Respaldo del respaldo: si ni el degradado pinta, la columna ya es agua
+     honda y el texto blanco se lee. */
+  background: var(--color-museo-medio);
+  color: var(--color-museo-texto);
+  --museo-prof: 0;
+  /* Las dos capas sticky (agua y medidor) llevan margen negativo de una
+     pantalla y, al final, sobresalen por debajo de la columna: el medidor se
+     montaba ENCIMA del footer. `clip` las corta en el borde de la columna y,
+     a diferencia de `hidden`, no crea un contenedor de scroll — el sticky
+     sigue pegado al viewport. */
+  overflow: clip;
+}
+
+/* ---------- 1. El agua ----------
+   STICKY con margen negativo de una pantalla: ocupa el viewport mientras dura
+   la columna, no empuja el contenido y se va con la columna al llegar el
+   footer. (Una capa `fixed` se pintaría encima del footer.)
+
+   El DEGRADADO DE RESPALDO es una tira de cinco pantallas de alto con las
+   cinco paradas; `--museo-prof` la desplaza, así que sin WebGL el agua TAMBIÉN
+   se oscurece al bajar — sin una línea de JS por fotograma. */
+.museo-agua {
+  position: sticky;
+  top: 0;
+  z-index: 0;
+  height: 100svh;
+  margin-bottom: -100svh;
+  overflow: hidden;
+  background-image: linear-gradient(
+    to bottom,
+    var(--color-museo-superficie) 0%,
+    var(--color-museo-somero) 25%,
+    var(--color-museo-medio) 50%,
+    var(--color-museo-hondo) 75%,
+    var(--color-museo-abismo) 100%
+  );
+  background-size: 100% 500%;
+  background-position: 50% calc(var(--museo-prof) * 100%);
+}
+
+.museo-agua-canvas {
+  opacity: 0;
+  transition: opacity 900ms ease;
+}
+.museo-agua-canvas[data-listo] {
+  opacity: 1;
+}
+
+/* ---------- 2. El HUD (medidor) ---------- */
+.museo-hud {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  height: 100svh;
+  margin-bottom: -100svh;
+  pointer-events: none;
+}
+
+/* EL MEDIDOR (2ª vuelta, Samuel: «no me gusta que sea una línea integral con
+   otras líneas transversales»). Deja de ser una regla con rayas y pasa a ser
+   una CÁPSULA DE VIDRIO, como la del nav: dentro, un carril fino que se llena
+   de luz según bajas, siete estaciones redondas y una burbuja que hace de
+   aguja. La estación activa saca su nombre en una píldora a la izquierda; las
+   demás, al pasar el cursor. Arriba la superficie, abajo el fondo, con su
+   icono: se entiende sin leer. */
+.museo-medidor {
+  position: absolute;
+  right: calc(var(--spacing) * 5);
+  top: 50%;
+  translate: 0 -50%;
+  pointer-events: auto;
+}
+.museo-medidor-capsula {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(var(--spacing) * 3);
+  width: calc(var(--spacing) * 11);
+  padding: calc(var(--spacing) * 3.5) 0;
+  border: 1px solid var(--color-museo-borde);
+  border-radius: var(--radius-chip);
+  background: var(--color-museo-vidrio);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  box-shadow: var(--shadow-museo-capsula);
+}
+.museo-medidor-tope {
+  display: grid;
+  place-items: center;
+  color: var(--color-museo-texto-suave);
+}
+/* [3ª vuelta, Samuel: «el recorrido de la derecha se ve descuadrado»] Dos
+   cosas no casaban: (1) la aguja recorría el 100 % del alto mientras los
+   puntos están media estación hacia dentro, y (2) avanzaba con la PROFUNDIDAD
+   del agua, que no sabe dónde empieza cada sección. Ahora carril y aguja van
+   de centro de punto a centro de punto (--museo-medidor-medio = media
+   estación) y avanzan con `--museo-avance`, que el componente calcula por
+   SECCIONES: la aguja cae justo sobre un punto al entrar en su sección. */
+.museo-medidor-paradas {
+  --museo-medidor-medio: calc(var(--spacing) * 3);
+  position: relative;
+  height: min(42svh, calc(var(--spacing) * 84));
+}
+.museo-medidor-lista {
+  position: relative;
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+/* El carril y su relleno de luz, que llega hasta la aguja. */
+.museo-medidor-carril {
+  position: absolute;
+  left: 50%;
+  top: var(--museo-medidor-medio);
+  bottom: var(--museo-medidor-medio);
+  width: 2px;
+  translate: -50% 0;
+  border-radius: 999px;
+  background: var(--color-museo-borde);
+  overflow: hidden;
+}
+.museo-medidor-carril::after {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: calc(var(--museo-avance, 0) * 100%);
+  border-radius: inherit;
+  transition: height 600ms cubic-bezier(0.33, 1, 0.68, 1);
+  background: linear-gradient(to bottom, var(--color-museo-luz), var(--color-museo-texto-suave));
+}
+.museo-medidor-aguja {
+  position: absolute;
+  left: 50%;
+  top: calc(var(--museo-medidor-medio) + var(--museo-avance, 0) * (100% - 2 * var(--museo-medidor-medio)));
+  z-index: 2;
+  /* salta de punto en punto, pero deslizándose: se ve bajar la burbuja */
+  transition: top 600ms cubic-bezier(0.33, 1, 0.68, 1);
+  width: calc(var(--spacing) * 3.5);
+  height: calc(var(--spacing) * 3.5);
+  translate: -50% -50%;
+  border-radius: 999px;
+  /* Un aro de luz limpio y centrado. [3ª vuelta, Samuel: «hay un puntito, no
+     sé si es un error»] Llevaba un brillo descentrado (arriba a la izquierda,
+     «de burbuja») y debajo asomaba el punto de la estación activa: juntos se
+     leían como un punto mal alineado. */
+  /* relleno opaco y CLARO: tapa el carril (que si no se veía cruzando el aro)
+     sin volverse un hueco oscuro — Samuel: «debería estar del color
+     clarito». */
+  background: var(--color-museo-luz);
+  box-shadow: 0 0 0 1.5px var(--color-museo-luz), 0 0 16px var(--color-museo-luz);
+  pointer-events: none;
+}
+.museo-medidor-parada {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: calc(var(--spacing) * 6);
+  height: calc(var(--spacing) * 6);
+  text-decoration: none;
+}
+.museo-medidor-punto {
+  width: calc(var(--spacing) * 1.5);
+  height: calc(var(--spacing) * 1.5);
+  border-radius: 999px;
+  background: var(--color-museo-texto-tenue);
+  transition: scale 300ms ease, background-color 300ms ease;
+}
+.museo-medidor-parada[data-pasada] .museo-medidor-punto {
+  background: var(--color-museo-luz);
+}
+.museo-medidor-parada:hover .museo-medidor-punto,
+.museo-medidor-parada:focus-visible .museo-medidor-punto {
+  scale: 1.6;
+  background: var(--color-museo-luz);
+}
+/* El punto activo no se pinta: en su sitio ya está la aguja. */
+.museo-medidor-parada[data-activa] .museo-medidor-punto {
+  opacity: 0;
+}
+.museo-medidor-etiqueta {
+  position: absolute;
+  right: calc(100% + var(--spacing) * 3.5);
+  top: 50%;
+  translate: calc(var(--spacing) * 2) -50%;
+  padding: calc(var(--spacing) * 1.5) calc(var(--spacing) * 3.5);
+  border: 1px solid var(--color-museo-borde);
+  border-radius: var(--radius-chip);
+  background: var(--color-museo-vidrio-fuerte);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  white-space: nowrap;
+  color: var(--color-museo-texto);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 250ms ease, translate 250ms ease;
+}
+.museo-medidor-etiqueta b {
+  margin-right: calc(var(--spacing) * 1.5);
+  font-weight: 600;
+  color: var(--color-museo-luz);
+  font-variant-numeric: tabular-nums;
+}
+.museo-medidor-parada:hover .museo-medidor-etiqueta,
+.museo-medidor-parada:focus-visible .museo-medidor-etiqueta,
+.museo-medidor-parada[data-activa] .museo-medidor-etiqueta {
+  opacity: 1;
+  translate: 0 -50%;
+}
+.museo-medidor-metros {
+  font-family: var(--font-display);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--color-museo-texto);
+  font-variant-numeric: tabular-nums;
+}
+
+/* En móvil, una cápsula estrecha pegada al borde: sin nombres ni iconos, que
+   en 375 px se comerían el texto. Sigue diciendo cuánto has bajado. */
+@media (width < 64rem) {
+  .museo-medidor {
+    right: calc(var(--spacing) * 1.5);
+  }
+  .museo-medidor-capsula {
+    width: calc(var(--spacing) * 5);
+    padding: calc(var(--spacing) * 2.5) 0;
+    gap: 0;
+  }
+  .museo-medidor-tope,
+  .museo-medidor-etiqueta,
+  .museo-medidor-metros {
+    display: none;
+  }
+  .museo-medidor-paradas {
+    --museo-medidor-medio: calc(var(--spacing) * 2);
+    height: 30svh;
+  }
+  .museo-medidor-parada {
+    width: calc(var(--spacing) * 4);
+    height: calc(var(--spacing) * 4);
+  }
+  .museo-medidor-aguja {
+    width: calc(var(--spacing) * 2.5);
+    height: calc(var(--spacing) * 2.5);
+  }
+}
+
+/* ---------- 3. Héroe ----------
+   [2ª vuelta] Una CAJA como la de HeroInterna —mismos márgenes
+   (--spacing-hero-margen*) y mismo radio (--radius-hero)— que GSAP abre a
+   sangre al hacer scroll. Todo cuelga de UNA variable, `--museo-cierre`
+   (1 = caja, 0 = a sangre): la animación toca un número y el CSS deriva
+   márgenes y radio, sin calcular píxeles en JS. */
+.museo-hero {
+  --museo-cierre: 1;
+  --museo-margen: var(--spacing-hero-margen);
+  --museo-margen-arriba: var(--spacing-hero-margen);
+  position: relative;
+  height: 100svh;
+}
+@media (width >= 40rem) {
+  .museo-hero {
+    --museo-margen: var(--spacing-hero-margen-sm);
+    --museo-margen-arriba: 0px; /* como HeroInterna: pegado al Topbar en escritorio */
+    /* [3ª vuelta, Samuel: «está descuadrado, no se logra ver el aire de
+       abajo»] Con 100svh el Topbar empujaba la caja 34px hacia abajo y su
+       margen inferior quedaba fuera de la primera pantalla. El Topbar solo
+       existe desde sm (topbar.tsx: hidden sm:block). */
+    height: calc(100svh - var(--museo-encima, var(--spacing-museo-topbar)));
+  }
+}
+.museo-hero-marco {
+  position: absolute;
+  /* Anclada desde el píxel 0, debajo del Topbar. Los CUATRO bordes se abren a
+     la vez y en proporción: arriba, además de su margen, gana lo que ocupaba
+     el Topbar (--museo-encima), para acabar en el borde de la pantalla. (2ª
+     prueba: el borde de arriba seguía al Topbar píxel a píxel y los demás casi
+     no se movían — se leía como «la caja sube», no como «la caja crece».) */
+  top: calc(var(--museo-margen-arriba) * var(--museo-cierre) - var(--museo-encima, 0px) * (1 - var(--museo-cierre)));
+  left: calc(var(--museo-margen) * var(--museo-cierre));
+  right: calc(var(--museo-margen) * var(--museo-cierre));
+  /* El borde de abajo ya está en el fondo de la pantalla: la sección mide
+     «pantalla − Topbar» y se ancla debajo del Topbar, así que abierta del todo
+     llega justo al borde. */
+  bottom: calc(var(--museo-margen) * var(--museo-cierre));
+  border-radius: calc(var(--radius-hero) * var(--museo-cierre));
+}
+/* El Header y el texto: quietos, con los márgenes de la caja INICIAL. La caja
+   crece por debajo de ellos. */
+.museo-hero-contenido {
+  position: absolute;
+  top: var(--museo-margen-arriba);
+  left: var(--museo-margen);
+  right: var(--museo-margen);
+  bottom: var(--museo-margen);
+}
+
+/* La foto del DOM es el RESPALDO: la de verdad la pinta el shader. Se esconde
+   en cuanto el canvas está listo (opacity y no display: sigue ahí para el
+   lector de pantalla con su alt). */
+.museo-hero-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  object-fit: cover;
+  object-position: 50% 35%;
+  transition: opacity 600ms ease;
+}
+/* Se esconde cuando el shader ya TIENE LA FOTO (`data-foto`), no cuando hay
+   agua: el agua puede salir antes que la foto, y entre medias el héroe no
+   debe quedarse vacío. */
+.museo:has(.museo-agua-canvas[data-foto]) .museo-hero-img {
+  opacity: 0;
+}
+/* Sin canvas (sin WebGL 2 o con movimiento reducido): el aire de alrededor es
+   papel, como en el resto del sitio, y un velo hace legible el texto. */
+.museo:not(:has(.museo-agua-canvas[data-listo])) .museo-hero {
+  background: var(--color-papel);
+}
+.museo:not(:has(.museo-agua-canvas[data-listo])) .museo-hero-marco::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(to top, var(--color-museo-velo-foto), transparent 60%),
+    linear-gradient(to bottom, var(--color-scrim-nav), transparent 22%);
+}
+
+/* ---------- Tipografía y piezas comunes ---------- */
+.museo-seccion {
+  position: relative;
+  margin-inline: auto;
+  max-width: var(--container-contenido);
+  padding: calc(var(--spacing) * 24) calc(var(--spacing) * 5);
+}
+@media (width >= 40rem) {
+  .museo-seccion {
+    padding-inline: calc(var(--spacing) * 10);
+  }
+}
+@media (width >= 64rem) {
+  .museo-seccion {
+    /* deja libre la franja del medidor */
+    padding-right: calc(var(--spacing) * 10 + var(--spacing-museo-medidor));
+    padding-block: calc(var(--spacing) * 32);
+  }
+}
+
+.museo-eyebrow {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-museo-luz);
+}
+.museo-h2 {
+  font-family: var(--font-display);
+  font-size: var(--text-museo-seccion);
+  line-height: var(--text-museo-seccion--line-height);
+  font-weight: 600;
+  color: var(--color-museo-texto);
+  text-wrap: balance;
+}
+/* El numeral fantasma del sistema (01 · 02 · 03 del V1), en luz de agua. */
+.museo-numero {
+  font-family: var(--font-display);
+  font-size: var(--text-7xl);
+  font-weight: 600;
+  line-height: 1;
+  color: var(--color-museo-borde);
+}
+
+/* La cuenta atrás del héroe: texto del eyebrow, no un chip. El filete de la
+   izquierda la separa de «New in the Marine Park» sin enmarcarla. */
+.museo-cuenta {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--spacing) * 2);
+  border-left: 1px solid var(--color-museo-borde);
+  padding-left: calc(var(--spacing) * 4);
+  color: var(--color-museo-texto);
+}
+.museo-pulso {
+  width: calc(var(--spacing) * 2);
+  height: calc(var(--spacing) * 2);
+  border-radius: 999px;
+  background: var(--color-coral);
+  box-shadow: 0 0 0 0 var(--color-coral);
+  animation: museo-pulso 2.2s ease-out infinite;
+}
+@keyframes museo-pulso {
+  70% {
+    box-shadow: 0 0 0 8px transparent;
+  }
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+
+.museo-boton-coral,
+.museo-boton-vidrio {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--spacing) * 2);
+  border-radius: var(--radius-chip);
+  padding: calc(var(--spacing) * 3.5) calc(var(--spacing) * 7);
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 200ms ease, translate 200ms ease, border-color 200ms ease;
+}
+.museo-boton-coral {
+  background: var(--color-coral);
+  color: var(--color-papel);
+}
+.museo-boton-coral:hover {
+  background: var(--color-coral-dark);
+  translate: 0 -1px;
+}
+.museo-boton-vidrio {
+  border: 1px solid var(--color-museo-borde);
+  background: var(--color-museo-vidrio);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  color: var(--color-museo-texto);
+}
+.museo-boton-vidrio:hover {
+  background: var(--color-museo-vidrio-fuerte);
+  border-color: var(--color-museo-texto-tenue);
+}
+
+.museo-enlace {
+  font-weight: 600;
+  color: var(--color-museo-luz);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.museo-check {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.15em;
+  width: calc(var(--spacing) * 5);
+  height: calc(var(--spacing) * 5);
+  border-radius: 999px;
+  background: var(--color-museo-brillo);
+  color: var(--color-museo-luz);
+}
+
+.museo-cita {
+  border-left: 2px solid var(--color-museo-luz);
+  padding-left: calc(var(--spacing) * 5);
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--color-museo-texto);
+}
+
+.museo-marco {
+  border: 1px solid var(--color-museo-borde);
+  border-radius: var(--radius-card-grande);
+}
+
+/* ---------- Tarjetas de vidrio con el halo del cursor ---------- */
+.museo-tarjeta {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--color-museo-borde);
+  border-radius: var(--radius-card-grande);
+  background: var(--color-museo-vidrio);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  padding: calc(var(--spacing) * 7);
+  transition: border-color 300ms ease, background-color 300ms ease;
+  --mx: 50%;
+  --my: 0%;
+}
+.museo-tarjeta::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    calc(var(--spacing) * 70) circle at var(--mx) var(--my),
+    var(--color-museo-brillo),
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity 350ms ease;
+}
+.museo-tarjeta:hover,
+.museo-tarjeta:focus-within {
+  border-color: var(--color-museo-texto-tenue);
+  background: var(--color-museo-vidrio-fuerte);
+}
+.museo-tarjeta:hover::before,
+.museo-tarjeta:focus-within::before {
+  opacity: 1;
+}
+.museo-tarjeta > * {
+  position: relative;
+}
+.museo-tarjeta--foto {
+  padding: calc(var(--spacing) * 2.5);
+}
+.museo-tarjeta--premium {
+  border-color: var(--color-museo-texto-tenue);
+}
+
+.museo-icono {
+  display: inline-grid;
+  place-items: center;
+  width: calc(var(--spacing) * 11);
+  height: calc(var(--spacing) * 11);
+  border-radius: var(--radius-lg);
+  background: var(--color-museo-brillo);
+  color: var(--color-museo-luz);
+}
+
+/* ---------- Galería ---------- */
+.museo-galeria {
+  padding-block: calc(var(--spacing) * 24);
+}
+.museo-galeria-viewport {
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+.museo-galeria-viewport::-webkit-scrollbar {
+  display: none;
+}
+.museo-galeria-pista {
+  display: flex;
+  gap: calc(var(--spacing) * 5);
+  width: max-content;
+  margin: 0;
+  padding: 0 calc(var(--spacing) * 5);
+  list-style: none;
+}
+.museo-galeria-item {
+  width: min(78vw, calc(var(--spacing) * 92));
+  scroll-snap-align: center;
+}
+.museo-galeria-foto {
+  transition: scale 700ms ease;
+}
+.museo-tarjeta--foto:hover .museo-galeria-foto {
+  scale: 1.05;
+}
+/* Escritorio: el carril lo mueve GSAP anclado, así que fuera el scroll
+   propio (si no, rueda y trackpad lo desplazarían por su cuenta). El escenario
+   ocupa la pantalla para que el anclaje no deje medio carril fuera. */
+@media (width >= 64rem) {
+  .museo-galeria {
+    padding-block: 0;
+  }
+  .museo-galeria-escena {
+    display: flex;
+    min-height: 100svh;
+    flex-direction: column;
+    justify-content: center;
+    padding-block: calc(var(--spacing) * 16);
+  }
+  /* `clip` y no `hidden`: recorta lo que el carril deja fuera de pantalla
+     (sin esto la página desbordaba 1316 px a lo ancho) sin crear un
+     contenedor de scroll que la rueda pudiera mover. */
+  .museo-galeria-viewport {
+    overflow: clip;
+  }
+  .museo-galeria-pista {
+    padding-left: max(calc(var(--spacing) * 10), calc((100vw - var(--container-contenido)) / 2 + var(--spacing) * 10));
+    padding-right: calc(var(--spacing) * 10 + var(--spacing-museo-medidor));
+  }
+  .museo-galeria-item {
+    width: calc(var(--spacing) * 88);
+  }
+}
+@media (prefers-reduced-motion: reduce) and (width >= 64rem) {
+  .museo-galeria-viewport {
+    overflow-x: auto;
+  }
+}
+
+/* ---------- Reels ---------- */
+/* ⚠️ Sin `margin: 0` en las listas que reciben un `mt-*` desde el JSX: este
+   archivo va FUERA de las capas de Tailwind, así que cualquier margen escrito
+   aquí gana a las utilidades. Pasó: el aire entre título y vídeos, y el de
+   encima de las cifras, se pidió, se puso en el JSX y medía 0 px. El reset de
+   márgenes de ul/dl ya lo hace el preflight de Tailwind. */
+.museo-reels {
+  display: grid;
+  gap: calc(var(--spacing) * 5);
+  padding: 0;
+  list-style: none;
+}
+@media (width >= 40rem) {
+  .museo-reels {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+.museo-reel {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--color-museo-borde);
+  border-radius: var(--radius-card-grande);
+  background: var(--color-museo-abismo);
+}
+.museo-reel-pie {
+  position: absolute;
+  inset: auto 0 0 0;
+  padding: calc(var(--spacing) * 16) calc(var(--spacing) * 5) calc(var(--spacing) * 5);
+  background: linear-gradient(to top, var(--color-museo-velo-foto), transparent);
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--color-museo-texto);
+}
+
+/* ---------- Cifras ---------- */
+.museo-cifras {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: calc(var(--spacing) * 8) calc(var(--spacing) * 6);
+  /* [3ª vuelta] Sin filete arriba (Samuel: «quitar la línea entre los 4
+     puntos y la fila de texto e imagen»): el aire ya separa. */
+}
+@media (width >= 64rem) {
+  .museo-cifras {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+.museo-cifra {
+  display: flex;
+  flex-direction: column;
+}
+.museo-cifra dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Reserva ----------
+   [3ª vuelta] Ficha partida: foto con los datos del tour a un lado, precios y
+   botón al otro. Un solo vidrio con la foto a sangre en su mitad. */
+.museo-reserva {
+  display: grid;
+  overflow: hidden;
+  border: 1px solid var(--color-museo-borde);
+  border-radius: calc(var(--radius-card-grande) * 1.5);
+  background: var(--color-museo-vidrio);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+}
+@media (width >= 64rem) {
+  .museo-reserva {
+    grid-template-columns: 0.95fr 1.05fr;
+  }
+}
+/* [3ª vuelta, Samuel: «que la imagen no esté a sangre, que tenga su aire y
+   bordes redondeados»] La foto va DENTRO del vidrio, con un margen igual por
+   los cuatro lados y el radio de las tarjetas de la página; antes tocaba los
+   bordes del panel. */
+.museo-reserva-foto {
+  position: relative;
+  min-height: calc(var(--spacing) * 80);
+  margin: calc(var(--spacing) * 3);
+  overflow: hidden;
+  border-radius: var(--radius-card-grande);
+}
+@media (width >= 64rem) {
+  .museo-reserva-foto {
+    margin: calc(var(--spacing) * 4);
+  }
+}
+.museo-reserva-foto::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(to top, var(--color-museo-velo-foto), transparent 55%);
+}
+.museo-reserva-datos {
+  position: absolute;
+  inset: auto 0 0 0;
+  z-index: 1;
+  padding: calc(var(--spacing) * 6);
+}
+.museo-dato {
+  border: 1px solid var(--color-museo-borde);
+  border-radius: var(--radius-chip);
+  background: var(--color-museo-velo-foto);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  padding: calc(var(--spacing) * 1.5) calc(var(--spacing) * 3.5);
+  font-size: var(--text-sm);
+  color: var(--color-museo-texto);
+}
+.museo-reserva-cuerpo {
+  padding: calc(var(--spacing) * 7);
+}
+@media (width >= 64rem) {
+  .museo-reserva-cuerpo {
+    padding: calc(var(--spacing) * 12);
+  }
+}
+/* Las opciones son filas, no cajas: nombre y menú a la izquierda, precio a la
+   derecha, separadas por aire y un filete muy tenue. */
+.museo-opcion {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: calc(var(--spacing) * 6);
+  padding-block: calc(var(--spacing) * 5);
+  border-top: 1px solid var(--color-museo-borde);
+}
+.museo-opcion:last-child {
+  border-bottom: 1px solid var(--color-museo-borde);
+}
+.museo-opcion-nombre {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-museo-luz);
+}
+/* Premium con el oro de la casa: el mismo con el que la web marca lo premium
+   en las fichas (--color-premium-oro). */
+.museo-opcion[data-premium] .museo-opcion-nombre {
+  color: var(--color-premium-oro);
+}
+
+/* ---------- FAQ ----------
+   El +/- del acordeón dentro de un círculo de vidrio que se ENCIENDE al abrir.
+   Sin tocar display: el vendor alterna los dos iconos con hidden/block. */
+.museo-faq-icono {
+  width: calc(var(--spacing) * 8);
+  height: calc(var(--spacing) * 8);
+  padding: calc(var(--spacing) * 1.75);
+  border-radius: 999px;
+  background: var(--color-museo-vidrio-fuerte);
+  color: var(--color-museo-texto-suave);
+  transition: background-color 300ms ease, color 300ms ease;
+}
+[data-state="open"] > * > * > .museo-faq-icono,
+[data-state="open"] .museo-faq-icono {
+  background: var(--color-museo-luz);
+  color: var(--color-museo-abismo);
+}
+
+/* ---------- Cierre ---------- */
+.museo-subir {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--spacing) * 2);
+  border: 0;
+  background: none;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-museo-luz);
+  cursor: pointer;
+}
+.museo-subir:hover svg {
+  translate: 0 -2px;
+}
+.museo-subir svg {
+  transition: translate 200ms ease;
+}
+
+/* ---------- Footer ----------
+   La espuma del footer (.footer-espuma, componentes.css) es papel recortado
+   con forma de ola. Aquí lo que hay encima no es papel sino agua: el descenso
+   termina SUBIENDO a aguas someras (use-descenso.ts, PROF_FINAL), así que la
+   espuma se tiñe de ese mismo turquesa y el agua de la página entra en el
+   océano del footer con la forma de la ola — la orilla. (1ª versión: abismo;
+   Samuel: «se ve negro y no se ve bien».) */
+.museo-pie .footer-espuma {
+  background: var(--color-museo-somero);
+}

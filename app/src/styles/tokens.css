@@ -2363,6 +2363,43 @@
   --cocina-espuma-aspecto: var(--footer-espuma-aspecto); /* va con el mapa: si cambia uno, cambia el otro */
   --cocina-espuma-tile: calc(var(--spacing-cocina-espuma-movil) * var(--cocina-espuma-aspecto));
   --cocina-espuma-sangrado: 2px; /* sello subpíxel del borde — mismo porqué que --footer-espuma-sangrado */
+
+  /* ---------- /underwater-museum — EL DESCENSO (2026-10-07) ----------
+     Raymond (reunión 05-10): «que al ir bajando se sienta que te adentras en
+     el fondo del océano». La página entera es una columna de agua y estas son
+     sus cinco paradas, de la superficie al fondo. El fondo de la página NO es
+     un color: es la mezcla de dos paradas vecinas según el scroll
+     (components/museo/fondo-profundidad.tsx), y el shader WebGL lee ESTOS
+     mismos valores del CSS al arrancar — una sola fuente para las dos capas.
+
+     ⚠️ Esto choca a propósito con el guardarraíl de la dirección B («el aqua
+     nunca de fondo grande»). Aquí el agua no es un fondo de sección: es el
+     escenario que el cliente pidió. Por eso las dos primeras paradas son
+     turquesa y el resto se hunde hacia el NAVY de marca — a mitad de página ya
+     se lee como la web de siempre, de noche. */
+  --color-museo-superficie: #2aa9b8; /* la lámina de luz bajo la superficie — el turquesa de las fotos MEJORADAS */
+  --color-museo-somero: #0d7686; /* 2ª parada: aún hay sol */
+  --color-museo-medio: #0b4a68; /* 3ª: el azul se come al verde */
+  --color-museo-hondo: var(--color-navy); /* 4ª: el navy de marca */
+  --color-museo-abismo: #050f1d; /* el fondo — no negro: negro puro vibra con el texto blanco */
+  --color-museo-luz: #c9f4f7; /* cáusticas, rayos y el brillo de las burbujas */
+  --color-museo-texto: #f1f8f9; /* blanco frío sobre agua */
+  --color-museo-texto-suave: rgb(225 240 243 / 74%); /* párrafos — 74% mide AA sobre la parada media */
+  --color-museo-texto-tenue: rgb(225 240 243 / 52%); /* captions y metadatos */
+  --color-museo-vidrio: rgb(255 255 255 / 6%); /* relleno de tarjeta flotante */
+  --color-museo-vidrio-fuerte: rgb(255 255 255 / 11%); /* tarjeta en hover / chip activo */
+  --color-museo-borde: rgb(255 255 255 / 13%); /* hairline de canto */
+  --color-museo-brillo: rgb(169 229 238 / 30%); /* el halo que sigue al cursor — aqua-claro */
+  --color-museo-velo-foto: rgb(5 15 29 / 55%); /* velo bajo el texto del héroe */
+  --spacing-museo-medidor: 4.5rem; /* ancho del medidor de profundidad (escritorio) */
+  --shadow-museo-capsula: 0 10px 30px rgb(5 15 29 / 25%); /* la cápsula del medidor: la separa del agua sin borde duro */
+  --spacing-museo-flotar: 0.5rem; /* amplitud de la ingravidez de las tarjetas */
+  --spacing-museo-topbar: 1.75rem; /* alto del Topbar en escritorio: py-1.5 (12px) + línea de text-xs (16px) = 28px, MEDIDO en el render (el «≈34px» de --spacing-nav-flotante-top incluye aire). El héroe del museo se lo descuenta para que su aire de abajo quepa en la primera pantalla. Es el valor de partida: use-museo-animaciones.ts lo sustituye por la medida real (--museo-encima) */
+  --text-museo-titular: clamp(2.5rem, 6vw, 5.25rem); /* H1 del héroe */
+  --text-museo-titular--line-height: 1.02;
+  --text-museo-seccion: clamp(2rem, 4vw, 3.25rem); /* H2 de sección: más que --text-h2 porque aquí no hay fotos que manden */
+  --text-museo-seccion--line-height: 1.08;
+  --text-museo-cifra: clamp(2.25rem, 4.5vw, 3.5rem);
 }
 
 body {

@@ -928,6 +928,14 @@ export const devSections: DevSection[] = [
         ],
       },
       {
+        title: 'Museo Subacuático',
+        route: '/underwater-museum',
+        status: 'wip',
+        description:
+          '[2026-10-07, reunión Raymond–Samuel del 05-10] PÁGINA NUEVA: la versión COMERCIAL del museo, que abre el 1 de noviembre. En el menú, 3er ítem de Sostenibilidad. Estructura y textos del V1 de la carpeta del cliente («Ejemplo visual»); el dinamismo de su B2 (burbujas, medidor de profundidad, tarjetas que flotan, color al pasar el cursor) rehecho entero.\n\nEL CONCEPTO: la página es una COLUMNA DE AGUA. Fondo WebGL propio (components/museo/shader-agua.ts: cáusticas y rayos que se apagan al bajar, burbujas en 3 planos, partículas en suspensión) sobre un degradado CSS de respaldo que también se oscurece con `--museo-prof`. Medidor de profundidad a la derecha que es además el índice de las 7 secciones. Galería anclada en carril horizontal en escritorio. Todo el movimiento en use-museo-animaciones.ts; con prefers-reduced-motion la página queda quieta y completa.\n\n✅ Precios leídos de Coral Quest (precioLight y +upgradePremium), no escritos. ✅ Fotos y vídeos REALES del cliente (MEJORADAS + PARA USAR), optimizados con scripts/museo-medios.sh.\n⚠️ Sin metros en el medidor hasta que el cliente dé la profundidad real (PROFUNDIDAD_MUSEO_M). ⚠️ El V1 dice «incluido en Coral Quest» y /marine-park «con la pulsera de la Fundación»: manda el V1 (Samuel).\n\nA FIGMA: el agua es un degradado de las 5 paradas --color-museo-*; las capas sticky, el shader y el anclaje de la galería no viajan (son comportamiento, no frame).\n\n[2026-10-07, 2ª vuelta de Samuel] (1) El héroe arranca como CAJA con aire blanco y el Header dentro (logo, menú, Book now) — igual que el resto del sitio — y al hacer scroll se ancla y se abre a sangre; así el nav flotante vuelve a su píldora compacta con blur. (2) La foto del héroe la pinta el shader: se funde con el agua sin corte. (3) ONDAS: simulación de la ecuación de onda en GPU que alimentan el puntero, el scroll y gotas sueltas; refracta la foto y el agua. (4) Fuera los hotspots de la escultura. (5) Medidor rehecho como cápsula de vidrio con estaciones redondas. (6) FAQ sin borde duro. (7) Al final el agua vuelve a SUBIR a aguas someras y la espuma del footer se tiñe de ese turquesa: la página acaba en la orilla, sin costura.',
+        states: [],
+      },
+      {
         title: 'Nosotros (RETIRADA — redirige a /tripulacion)',
         route: '/crew',
         status: 'done',

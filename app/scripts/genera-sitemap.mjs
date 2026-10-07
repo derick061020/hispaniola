@@ -71,6 +71,7 @@ const FIJAS = [
   ['/travel-agents', 0.5, 'monthly'],
   ['/careers', 0.4, 'monthly'],
   ['/marine-park', 0.6, 'monthly'],
+  ['/underwater-museum', 0.7, 'monthly'],
 ]
 
 const [TOURS] = await datos('home.ts', ['TOURS'])

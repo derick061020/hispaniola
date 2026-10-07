@@ -112,6 +112,15 @@ export function MarineParkPage() {
                   ))}
                 </ul>
               ) : null}
+
+              {b.enlace ? (
+                <Link
+                  to={b.enlace.to}
+                  className="mt-5 inline-block font-semibold text-aqua-dark underline underline-offset-4 hover:text-aqua"
+                >
+                  {b.enlace.texto}
+                </Link>
+              ) : null}
             </div>
           </section>
         ))}

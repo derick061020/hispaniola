@@ -5,6 +5,7 @@ import {
   CircleHelp,
   Compass,
   Fish,
+  Landmark,
   MessageCircle,
   Newspaper,
   Leaf,
@@ -45,6 +46,9 @@ const ICONOS: Record<string, ComponentType<{ className?: string }>> = {
   flota: Ship,
   sostenibilidad: Leaf,
   fundacion: Sprout,
+  // [2026-10-07] El museo subacuático: el edificio con columnas es el icono
+  // universal de «museo». Fish ya lo usa el parque marino.
+  museo: Landmark,
 }
 
 // [v2 2026-07-27] Red de seguridad. Este archivo ya ha tumbado el menú DOS

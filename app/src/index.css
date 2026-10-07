@@ -6,6 +6,10 @@
    que no pisa a nadie. */
 @import './styles/alignui.css';
 @import './styles/componentes.css';
+/* [2026-10-07] La página del museo subacuático: capas sticky del agua, medidor y
+   vidrio. Archivo propio para no engordar componentes.css con 500 líneas de una
+   sola página. */
+@import './styles/museo.css';
 
 *,
 *::before,

@@ -49,6 +49,10 @@ export type BloqueMarinePark = {
    *  El texto va tal cual lo escribe el cliente, con sus paréntesis, que es
    *  literalmente lo que pidió. */
   lanzamiento?: string
+  /** [2026-10-07] Enlace a la página propia del tema, cuando la tiene. Hoy
+   *  solo el museo (/underwater-museum, la versión comercial que pidió
+   *  Raymond): aquí se queda el resumen y allí se vende. */
+  enlace?: { texto: string; to: string }
   foto: string
   fotoAlt: string
 }
@@ -78,6 +82,7 @@ export const MARINE_PARK = traducible({
         'Coral gardening & marine habitat creation',
       ],
       lanzamiento: 'Launching November 1st, 2026',
+      enlace: { texto: 'Explore the Underwater Museum', to: '/underwater-museum' },
       foto: 'marine-park-museo',
       fotoAlt: 'A diver next to one of the sculptures of the underwater museum',
     },

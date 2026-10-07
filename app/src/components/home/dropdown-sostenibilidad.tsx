@@ -13,6 +13,8 @@ import { ItemMenu } from './item-menu'
 //
 // Mismo criterio que Samuel ya fijó para la 4ª celda de Ayuda: no se inventa
 // un destino para cuadrar la rejilla, se ajusta la rejilla.
+// [2026-10-07] Ya son 3 (entra el Museo Subacuático). Sigue en UNA columna:
+// 3 en una rejilla de 2 dejaría la 4ª celda vacía, que es justo lo de arriba.
 export function DropdownSostenibilidad() {
   return (
     <div className="grid w-notch-panel-compacto grid-cols-1 gap-1 p-3">
