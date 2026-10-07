@@ -2400,6 +2400,8 @@
   --text-museo-seccion: clamp(2rem, 4vw, 3.25rem); /* H2 de sección: más que --text-h2 porque aquí no hay fotos que manden */
   --text-museo-seccion--line-height: 1.08;
   --text-museo-cifra: clamp(2.25rem, 4.5vw, 3.5rem);
+  --text-museo-cifra-reloj: clamp(1.75rem, 3vw, 2.5rem); /* los dígitos del contador de apertura */
+  --text-museo-etiqueta: 0.625rem; /* DAYS · HOURS · MIN · SEC bajo los dígitos */
 }
 
 body {

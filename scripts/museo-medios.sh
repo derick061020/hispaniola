@@ -38,7 +38,7 @@ while IFS=: read -r dst org ancho; do
   ffmpeg -nostdin -y -v error -i "$SRC/$org" -vf "scale=$ancho:-2" -c:v libwebp -quality 80 "$FOTOS/$dst.webp"
   kb "$FOTOS/$dst.webp"
 done <<'EOF'
-museo-hero:IMG_004.png:2400
+museo-hero:MEJORADAS/IMG_5757.png:2400
 museo-bateador:IMG_002.png:1600
 museo-lanzador:IMG_001.png:1600
 museo-lanzador-lateral:IMG_006.png:1600

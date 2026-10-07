@@ -12,6 +12,7 @@ import { CienciaMuseo } from '@/components/museo/ciencia-museo'
 import { ReservaMuseo } from '@/components/museo/reserva-museo'
 import { FaqMuseo } from '@/components/museo/faq-museo'
 import { CierreMuseo } from '@/components/museo/cierre-museo'
+import { BarraReservaMuseo } from '@/components/museo/barra-reserva-museo'
 import { useDescenso } from '@/components/museo/use-descenso'
 import { useMuseoAnimaciones } from '@/components/museo/use-museo-animaciones'
 import { MUSEO } from '@/data/museo'
@@ -78,6 +79,8 @@ export function MuseoSubacuaticoPage() {
       <div className="museo-pie">
         <Footer />
       </div>
+      {/* [2026-10-07, Marketing] Compra siempre a mano mientras se baja. */}
+      <BarraReservaMuseo />
     </div>
   )
 }

@@ -391,16 +391,6 @@
   color: var(--color-museo-borde);
 }
 
-/* La cuenta atrás del héroe: texto del eyebrow, no un chip. El filete de la
-   izquierda la separa de «New in the Marine Park» sin enmarcarla. */
-.museo-cuenta {
-  display: inline-flex;
-  align-items: center;
-  gap: calc(var(--spacing) * 2);
-  border-left: 1px solid var(--color-museo-borde);
-  padding-left: calc(var(--spacing) * 4);
-  color: var(--color-museo-texto);
-}
 .museo-pulso {
   width: calc(var(--spacing) * 2);
   height: calc(var(--spacing) * 2);
@@ -482,6 +472,93 @@
 .museo-marco {
   border: 1px solid var(--color-museo-borde);
   border-radius: var(--radius-card-grande);
+}
+
+/* ---------- Compra y apertura (2026-10-07, Marketing) ---------- */
+/* El botón de compra del héroe: más grande que el coral normal, con el precio
+   dentro en una pastilla más clara — se lee «Book Coral Quest · from US$ 99». */
+.museo-boton-grande {
+  padding: calc(var(--spacing) * 4) calc(var(--spacing) * 4) calc(var(--spacing) * 4) calc(var(--spacing) * 7);
+  font-size: var(--text-base);
+  box-shadow: 0 10px 30px color-mix(in srgb, var(--color-coral) 40%, transparent);
+}
+.museo-boton-precio {
+  border-radius: var(--radius-chip);
+  background: color-mix(in srgb, var(--color-papel) 22%, transparent);
+  padding: calc(var(--spacing) * 1) calc(var(--spacing) * 3);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+/* La pieza de la apertura: vidrio, fecha y cuatro casillas de reloj. */
+.museo-apertura {
+  border: 1px solid var(--color-museo-borde);
+  border-radius: var(--radius-card-grande);
+  background: var(--color-museo-velo-foto);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  padding: calc(var(--spacing) * 5);
+  max-width: calc(var(--spacing) * 92);
+}
+.museo-apertura-unidad {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: var(--radius-lg);
+  background: var(--color-museo-vidrio-fuerte);
+  padding: calc(var(--spacing) * 3) calc(var(--spacing) * 2);
+}
+
+/* La barra de reserva fija: píldora de vidrio abajo y centrada. Entra y sale
+   deslizándose; oculta no recibe clics. */
+.museo-barra {
+  position: fixed;
+  left: 50%;
+  bottom: calc(var(--spacing) * 4);
+  z-index: 45;
+  display: flex;
+  align-items: center;
+  gap: calc(var(--spacing) * 5);
+  max-width: calc(100vw - var(--spacing) * 6);
+  border: 1px solid var(--color-museo-borde);
+  border-radius: var(--radius-chip);
+  background: var(--color-museo-velo-foto);
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+  box-shadow: var(--shadow-museo-capsula);
+  padding: calc(var(--spacing) * 1.5) calc(var(--spacing) * 1.5) calc(var(--spacing) * 1.5) calc(var(--spacing) * 5);
+  translate: -50% calc(100% + var(--spacing) * 8);
+  opacity: 0;
+  pointer-events: none;
+  transition: translate 450ms cubic-bezier(0.33, 1, 0.68, 1), opacity 300ms ease;
+}
+.museo-barra[data-visible] {
+  translate: -50% 0;
+  opacity: 1;
+  pointer-events: auto;
+}
+.museo-barra-cuenta {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--spacing) * 2);
+  white-space: nowrap;
+  font-size: var(--text-sm);
+  color: var(--color-museo-texto-suave);
+}
+.museo-barra-precio {
+  white-space: nowrap;
+  border-left: 1px solid var(--color-museo-borde);
+  padding-left: calc(var(--spacing) * 5);
+  font-size: var(--text-sm);
+  color: var(--color-museo-texto-suave);
+}
+.museo-barra .museo-boton-coral {
+  white-space: nowrap;
+  padding: calc(var(--spacing) * 3) calc(var(--spacing) * 5);
+}
+@media (prefers-reduced-motion: reduce) {
+  .museo-barra {
+    transition: none;
+  }
 }
 
 /* ---------- Tarjetas de vidrio con el halo del cursor ---------- */

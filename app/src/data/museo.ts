@@ -93,11 +93,27 @@ export const MUSEO = traducible({
     titulo: 'A reef that began as a sculpture',
     lead: 'The Underwater Museum opens November 1, 2026, along the Coral Quest route.',
     ctaBajar: 'Dive into the museum',
-    cuentaAtras: 'Opens in',
-    dias: 'days',
-    dia: 'day',
+    // [2026-10-07, Marketing] Botón de compra en el héroe, con el «desde».
+    ctaReserva: 'Book Coral Quest',
+    desde: 'from',
+    // [2026-10-07, Marketing] La apertura, con protagonismo y contador.
+    apertura: 'Grand opening',
+    fechaApertura: 'November 1, 2026',
+    unidades: { dias: 'Days', horas: 'Hours', minutos: 'Min', segundos: 'Sec' },
+    // [2026-10-07, Marketing: «cambiaremos esta imagen… agregamos esta»] El
+    // buzo con el Diablo Cojuelo (MEJORADAS/IMG_5757). Antes, el bateador.
     foto: 'museo-hero',
-    fotoAlt: 'A sculpture of a baseball batter standing on the white sand of the Marine Park, with sunbeams cutting through the water',
+    fotoAlt: 'A diver waving next to the Carnival Devil sculpture of the Underwater Museum',
+  },
+
+  // La barra de reserva fija (barra-reserva-museo.tsx).
+  barra: {
+    abre: 'Opens in',
+    d: 'd',
+    h: 'h',
+    m: 'm',
+    desde: 'From',
+    cta: 'Book Coral Quest',
   },
 
   queEs: {
@@ -161,14 +177,15 @@ export const MUSEO = traducible({
     // Los nombres los pone el propio cliente en /marine-park («a baseball
     // player, pitcher, Carnival Devil…») y el V2 («Figura de brazos
     // cruzados»). El lugar, el del V2: «Parque Marino, Bávaro».
+    // [2026-10-07] Sin las dos fotos con buzo: la del Diablo Cojuelo pasó a ser
+    // el héroe (Marketing) y la otra ilustra Book. Repetidas aquí, la página
+    // enseñaba la misma imagen dos veces.
     fotos: [
       { foto: 'museo-bateador', titulo: 'The batter', lugar: 'Marine Park, Bávaro', alt: 'Sculpture of a baseball batter holding his bat on the sandy floor' },
       { foto: 'museo-diablo', titulo: 'Carnival Devil', lugar: 'Marine Park, Bávaro', alt: 'Sculpture of a Dominican Carnival Devil with long horns standing on the sand' },
       { foto: 'museo-lanzador-lateral', titulo: 'The pitcher', lugar: 'Marine Park, Bávaro', alt: 'Sculpture of a baseball pitcher kneeling, seen from the side' },
       { foto: 'museo-brazos-cruzados', titulo: 'Figure with crossed arms', lugar: 'Marine Park, Bávaro', alt: 'Sculpture of a man in a cap with his arms crossed, under the surface' },
-      { foto: 'museo-buzo-diablo', titulo: 'Up close', lugar: 'Marine Park, Bávaro', alt: 'A diver waving next to the Carnival Devil sculpture' },
       { foto: 'museo-figura-superficie', titulo: 'Under the surface', lugar: 'Marine Park, Bávaro', alt: 'A sculpture standing on its base with the water surface shining above' },
-      { foto: 'museo-buzo-figura', titulo: 'To scale', lugar: 'Marine Park, Bávaro', alt: 'A diver pointing at a sculpture of a man in a cap' },
     ],
   },
 
@@ -227,8 +244,9 @@ export const MUSEO = traducible({
     // nada que el cliente no haya dicho.
     tour: 'Coral Quest',
     datos: ['4 hours', 'Hotel pickup', 'Gourmet lunch on board', 'All ages'],
-    foto: 'museo-buzo-diablo',
-    fotoAlt: 'A diver waving next to the Carnival Devil sculpture of the Underwater Museum',
+    // [2026-10-07] Antes el buzo con el Diablo Cojuelo, que ahora es el héroe.
+    foto: 'museo-buzo-figura',
+    fotoAlt: 'A diver pointing at one of the sculptures of the Underwater Museum',
     opciones: [
       {
         id: 'light',

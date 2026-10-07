@@ -63,6 +63,9 @@ const RUTAS_CALLADAS = [
   // de eventos, y en móvil tiene su propia barra fija abajo: el aviso
   // saldría encima de ella.
   /^\/tours-and-events/,
+  // [2026-10-07] El museo tiene su propia barra de reserva fija abajo (pedida
+  // por Marketing): mismo motivo que la línea de arriba.
+  /^\/underwater-museum/,
   /^\/tours\/party-boat/,
   /^\/book\//,
   /^\/my-booking/,
