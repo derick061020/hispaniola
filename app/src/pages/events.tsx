@@ -2,6 +2,7 @@ import { Footer } from '@/components/home/footer'
 import { HeroInterna } from '@/components/internas/hero-interna'
 import { CabeceraInterna } from '@/components/internas/cabecera-interna'
 import { EventosGrid } from '@/components/evento/eventos-grid'
+import { ComidaYBarra } from '@/components/evento/comida-y-barra'
 import { Meta } from '@/components/seo/meta'
 import { t } from '@/lib/i18n'
 
@@ -37,6 +38,10 @@ export function EventsPage() {
       </HeroInterna>
 
       <EventosGrid />
+
+      {/* [2026-10-08] El tarifario de a bordo: qué se come y qué se bebe, con
+          sus precios. Antes había que entrar en una landing para verlo. */}
+      <ComidaYBarra />
 
       <Footer />
     </div>

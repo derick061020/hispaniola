@@ -212,6 +212,17 @@ export type FichaEvento = {
      *  tarifa cerrada, que era el argumento de Samuel del 2026-07-28. */
     soloEscaparate?: boolean
   }
+
+  /** [2026-10-08] La barra. Va aparte de `paquetes` porque es la SEGUNDA
+   *  eleccion del cliente —el tarifario del cliente las numera «01 Choose
+   *  your food» y «02 Choose your bar»— y su precio es POR PERSONA, no por
+   *  grupo. Comparte el mismo array en las tres landings (`BARRAS_EVENTO`),
+   *  igual que los paquetes de comida. */
+  barras?: {
+    titulo: string
+    intro: string
+    items: BarraEvento[]
+  }
   /** foto principal del mosaico (la portada) */
   foto: string
   fotoAlt: string
@@ -310,7 +321,72 @@ export type FichaEvento = {
 // la clave del estado, del deep-link `?dev-paquete=` y de lo que se guarda en
 // localStorage: cambiarlos rompería enlaces y cotizaciones ya guardadas, y no
 // se ve en pantalla. Lo que el visitante lee es `nombre`; el `id` es plomería.
-const PAQUETES_COMIDA: PaqueteEvento[] = [
+export type BarraEvento = {
+  /** id estable, kebab-case. */
+  id: string
+  nombre: string
+  /** Lo que cuesta ADEMÁS del paquete de comida: "Included" o "+US$ 15". */
+  precio: string
+  /** La unidad del precio, siempre por cabeza. Va debajo y pequeño: el
+   *  número solo se leería como el precio de la barra entera. */
+  precioNota: string
+  /** Qué se sirve, en una frase. No es una lista con checks a propósito: son
+   *  marcas y cócteles, y una lista de doce bullets no se compara mejor. */
+  texto: string
+  /** El que la casa quiere vender, con su badge. Mismo trato que
+   *  `destacado` en PaqueteEvento. */
+  destacado?: boolean
+}
+
+// LA BARRA, QUE ES LA OTRA MITAD DE LA DECISIÓN.
+//
+// [2026-10-08, Derick, con la captura del tarifario del cliente: «esta
+// información debe de agregarse en la sección EVENTS»]
+//
+// Hasta hoy la web solo publicaba la comida: los cuatro paquetes con su
+// precio, y de beber un «national open bar» suelto en la lista de «qué
+// incluye». Pero el cliente vende DOS cosas —«01 Choose your food» y «02
+// Choose your bar»— y el precio de la barra es por persona, no por grupo: en
+// un party boat de 30 personas, subir a Signature son 900 dólares. Esconder
+// eso hasta la cotización es la clase de sorpresa que tumba una venta.
+//
+// Los precios son SUMAS sobre el paquete, no totales: «Included», «+US$ 15»,
+// «+US$ 30». Por eso el campo se llama `precio` pero se escribe con el signo
+// delante, igual que `extraPrecio` en los paquetes.
+export const BARRAS_EVENTO: BarraEvento[] = [
+  {
+    id: 'caribbean',
+    nombre: 'Caribbean',
+    precio: 'Included',
+    precioNota: 'per person',
+    texto:
+      'Dominican rum, vodka, tequila, whisky and Presidente beer. Cuba Libre, '
+      + 'Screwdriver, Whisky & Coke and Tequila Sunrise, poured all day.',
+  },
+  {
+    id: 'caribbean-plus',
+    nombre: 'Caribbean Plus / Premium',
+    precio: '+US$ 15',
+    precioNota: 'per person',
+    texto:
+      'Everything in Caribbean, with white wine and five cocktails: Mojito, '
+      + 'Piña Colada, Margarita, Tequila Sunrise and the house Hispaniola '
+      + 'Tropical Punch.',
+  },
+  {
+    id: 'signature',
+    nombre: 'Signature',
+    precio: '+US$ 30',
+    precioNota: 'per person',
+    texto:
+      'Brugal Extra Viejo, Absolut, José Cuervo and Johnnie Walker. Red and '
+      + 'white wine, prosecco, and a Caribbean Mimosa the moment you step on '
+      + 'board.',
+    destacado: true,
+  },
+]
+
+export const PAQUETES_COMIDA: PaqueteEvento[] = [
   {
     id: 'premium',
     nombre: 'Premium (Turtle) Package',
@@ -513,6 +589,12 @@ const PARTY_BOAT: FichaEvento = {
   // el array compartido con bodas (ver PAQUETES_COMIDA arriba: las dos
   // landings del cliente publican los mismos 4 a los mismos precios).
   // Lo propio de esta landing es el titulo y el intro.
+  barras: {
+    titulo: 'Choose your bar',
+    intro:
+      'Every package sails with our Caribbean open bar included. Upgrade it for the whole group if you want wine, cocktails or premium labels on board — the price is per guest, and it is added on top of your food package.',
+    items: BARRAS_EVENTO,
+  },
   paquetes: {
     titulo: 'Party boat packages',
     // [v3 2026-08-06, WEBSITE-EVENTOS pag. 2] Intro APROBADA, literal.
@@ -690,6 +772,12 @@ const BODAS: FichaEvento = {
   // reserva online (calculadora) encima del formulario, sin tocar
   // pages/evento.tsx — las dos piezas se pintan solas cuando el evento
   // tiene `paquetes`.
+  barras: {
+    titulo: 'Choose your bar',
+    intro:
+      'Every wedding package sails with our Caribbean open bar included. Upgrade it if you want wine, cocktails or premium labels for the toast — the price is per guest, on top of your food package.',
+    items: BARRAS_EVENTO,
+  },
   paquetes: {
     titulo: 'Wedding Packages',
     // [v3 2026-08-06, WEBSITE-EVENTOS pag. 7] Intro APROBADA, literal —
@@ -980,6 +1068,12 @@ const EMPRESAS: FichaEvento = {
   // el cliente («los que están en los otros 2 eventos»). No hay tarifario MICE
   // propio: la fuente canónica solo publica estos precios para party boat y
   // bodas (TARIFARIO-WEB-ORIGINAL.md §3).
+  barras: {
+    titulo: 'Choose your bar',
+    intro:
+      'Every catering package sails with our Caribbean open bar included. Upgrade it for receptions and gala dinners — the price is per guest, on top of the catering package.',
+    items: BARRAS_EVENTO,
+  },
   paquetes: {
     titulo: 'Onboard Catering Packages',
     // ⚠️ COPY DE LA CASA, PENDIENTE DE APROBAR. La intro de party boat y bodas

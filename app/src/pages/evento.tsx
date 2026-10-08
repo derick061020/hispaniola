@@ -9,6 +9,7 @@ import { CalculadoraEvento } from '@/components/evento/calculadora-evento'
 import { QueOfrecemos } from '@/components/evento/que-ofrecemos'
 import { IncluyeEvento } from '@/components/evento/incluye-evento'
 import { PaquetesEvento } from '@/components/evento/paquetes-evento'
+import { BarrasEvento } from '@/components/evento/barras-evento'
 import { OtrasOcasiones } from '@/components/evento/otras-ocasiones'
 import { BarraMovilEvento } from '@/components/evento/barra-movil-evento'
 import { GaleriaMosaico } from '@/components/internas/galeria-mosaico'
@@ -280,7 +281,12 @@ export function EventoPage() {
 
               {/* Paquetes, sitio 1 de 2: pegados al barco insignia (MICE). */}
               {evento.barcoInsignia ? (
-                <PaquetesEvento evento={evento} elegido={paquete} onElegir={elegirPaquete} />
+                <>
+                  <PaquetesEvento evento={evento} elegido={paquete} onElegir={elegirPaquete} />
+                  {/* La barra va PEGADA a la comida: el cliente las elige
+                      juntas y su tarifario las numera 01 y 02. */}
+                  <BarrasEvento evento={evento} />
+                </>
               ) : null}
 
               <QueOfrecemos evento={evento} />
@@ -293,7 +299,10 @@ export function EventoPage() {
                   evento tiene `paquetes` en data; la condición de aquí es la
                   del SITIO, no la de si hay paquetes. */}
               {evento.barcoInsignia ? null : (
-                <PaquetesEvento evento={evento} elegido={paquete} onElegir={elegirPaquete} />
+                <>
+                  <PaquetesEvento evento={evento} elegido={paquete} onElegir={elegirPaquete} />
+                  <BarrasEvento evento={evento} />
+                </>
               )}
 
               {/* FAQ — solo si hay preguntas. La web del cliente de
