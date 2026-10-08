@@ -31,6 +31,7 @@ import { FundacionesPage } from '@/pages/fundaciones'
 import { ScrollAlNavegar } from '@/lib/scroll-al-navegar'
 import { NavFlotante } from '@/components/home/nav-flotante'
 import { AvisoPartyBoat } from '@/components/ui/aviso-party-boat'
+import { AvisoMuseo } from '@/components/ui/aviso-museo'
 import { Topbar } from '@/components/home/topbar'
 import { DevMode } from '@/dev/dev-mode'
 
@@ -176,6 +177,10 @@ function App() {
           de <Routes> porque es de todo el sitio; el propio componente decide
           dónde callarse. */}
       <AvisoPartyBoat />
+      {/* [2026-10-08] El ojo de buey del museo. Va en otra esquina que el
+          aviso del party boat —arriba a la derecha, no abajo— para que los
+          dos puedan convivir sin taparse. */}
+      <AvisoMuseo />
       <Routes>
         <Route path="/" element={<HomePage />} />
         {/* [2026-09-08] El catalogo en su propia pagina. Va ANTES de
