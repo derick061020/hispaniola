@@ -25,7 +25,11 @@ import { t } from '@/lib/i18n'
 // pantalla, por debajo del 15 % que Google tolera en un intersticial.
 
 const DESTINO = '/underwater-museum'
-const FOTO = '/fotos/museo-figura-superficie.webp'
+// La MISMA foto del museo, recortada al circulo. La original son 1600x894 y
+// 148 KB para dibujar un circulo de 86 px: 135 KB que se descargan sin que
+// nadie los vea. Esta es 240x240 y 13 KB, el doble de lo que ocupa en pantalla
+// a 2x. Marketing pidio expresamente que esto no engordara la web.
+const FOTO = '/fotos/museo-ojo-buey.webp'
 
 // ⚠️ LA FECHA DE APERTURA, PENDIENTE DE CONFIRMAR.
 //
@@ -43,8 +47,12 @@ const APERTURA = new Date('2026-10-31T00:00:00-04:00')
 const RETRASO_MS = 6000
 const SCROLL_MINIMO = 0.35
 
-// La tarjeta se lee en tres segundos: son cuatro líneas y un enlace.
-const TARJETA_MS = 3000
+// [2026-10-08, Marketing: «el círculo debe durar 30 segundos y el que sale en
+// cuadrado, 8 segundos»] Tres segundos era el ejemplo, y daban para ver que
+// había algo pero no para leerlo: cuatro líneas y un enlace no se leen en lo
+// que se tarda en mirar. Ocho sí, y el contador sigue parándose con el puntero
+// encima.
+const TARJETA_MS = 8000
 
 // [2026-10-08, Derick: «la duración del ícono debe ser de 30 segundos, no
 // más»] El ojo de buey pequeño se quedaba para siempre una vez encogido. Un
@@ -59,11 +67,19 @@ const ICONO_MS = 30000
 const CLAVE = 'haa_aviso_museo'
 
 // Donde NO sale: donde ya está mirando el museo, o donde está pagando.
+// [2026-10-08, Marketing: «asegurarnos de que no afecte la compra»] Calla en
+// todo lo que es comprar: el checkout, la reserva del cliente, su cuenta — y
+// también las fichas de tour y de evento, que son donde está el widget de
+// reserva y, en móvil, la barra fija de abajo. Sigue saliendo donde se
+// descubre (portada, /tours, /events, parque marino, blog), que es para lo que
+// está.
 const RUTAS_CALLADAS = [
   /^\/underwater-museum/,
   /^\/book\//,
   /^\/my-booking/,
   /^\/account/,
+  /^\/tours\/[^/]+/,
+  /^\/events\/[^/]+/,
 ]
 
 function yaSeVioEstaVisita(): boolean {
@@ -140,8 +156,10 @@ export function AvisoMuseo() {
     <div
       role="complementary"
       aria-label={t('Underwater Museum')}
-      className="fixed right-4 top-[78px] z-[55] w-auto sm:right-11 sm:top-28 sm:w-[350px]"
-      style={{ left: undefined }}
+      // En móvil va de borde a borde (14 px a cada lado, como el diseño) y
+      // por encima del header: `left` solo existe hasta sm. Sin él la tarjeta
+      // se encogía al ancho del texto y el título partía en tres líneas.
+      className="fixed inset-x-4 top-[78px] z-[55] sm:inset-x-auto sm:right-11 sm:top-28 sm:w-[350px]"
     >
       {/* LA TARJETA. Se hunde hacia su propia esquina al encogerse
           (`transform-origin` arriba a la derecha), que es de donde sale el ojo
