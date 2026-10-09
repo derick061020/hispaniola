@@ -1,0 +1,22 @@
+# EL CDN NO PUEDE TOCAR ESTAS IMAGENES.
+#
+# [2026-10-09] Hostinger pone un CDN delante (`server: hcdn`) que convierte a
+# WebP por negociacion de contenido: pidiendo hero.jpg con
+# `Accept: image/webp` devolvia `Content-Type: image/webp`. El nombre del
+# fichero no cambia —sigue siendo .jpg— pero los BYTES si.
+#
+# En una web eso es una mejora. En un correo es un fallo: Outlook de Windows
+# usa el motor de Word y NO pinta WebP, asi que esas imagenes saldrian rotas
+# justo en el cliente de mas peso en empresas. Y es exactamente el problema
+# que esta campana venia a resolver.
+#
+# `no-transform` es la forma estandar (RFC 9111 §5.2.2.6) de decirle a
+# cualquier intermediario que sirva el objeto tal cual. Se pone aqui, en un
+# .htaccess propio de la carpeta, y no en el de la raiz: ese lo REGENERA
+# `scripts/genera-htaccess.mjs` en cada build y se perderia. Este vive en
+# `public/`, asi que Vite lo copia intacto cada vez.
+<IfModule mod_headers.c>
+  <FilesMatch "\.(png|jpe?g|gif)$">
+    Header set Cache-Control "public, max-age=604800, no-transform"
+  </FilesMatch>
+</IfModule>
