@@ -16,7 +16,7 @@
 # `scripts/genera-htaccess.mjs` en cada build y se perderia. Este vive en
 # `public/`, asi que Vite lo copia intacto cada vez.
 <IfModule mod_headers.c>
-  <FilesMatch "\.(png|jpe?g|gif)$">
+  <FilesMatch "\.(png|jpe?g|gif|pdf)$">
     Header set Cache-Control "public, max-age=604800, no-transform"
   </FilesMatch>
 </IfModule>
