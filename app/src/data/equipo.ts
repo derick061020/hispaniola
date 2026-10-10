@@ -152,7 +152,11 @@ const RETRATOS_POR_DEPARTAMENTO: Record<DepartamentoId, number> = {
   // y solo entraba una toma—, que es el bug que se arregló en el commit 308114d.
   // La tercera foto de la entrega (la del CEO) NO está aquí: es el retrato de
   // Fernando y vive en `equipo-fernando`. Ver la nota de `DepartamentoId`.
-  ventas: 2,
+  // [2026-10-10, encargo del cliente: «Agregar a pestaña de Crew en About us
+  // estas imagenes · Sales and marketing · Agregar foto: IMG_9055»] 2 → 3.
+  // Persona nueva, comprobado contra las dos ya publicadas. Mismo 3:4 que el
+  // resto del muro: se escala y se centra, sin recorte visible.
+  ventas: 3,
   fundacion: 2,
 }
 
