@@ -144,7 +144,10 @@ const RETRATOS_POR_DEPARTAMENTO: Record<DepartamentoId, number> = {
   // borraron. Ninguno de los dos estaba ya en el muro (comparados contra los
   // 8 retratos publicados).
   cocina: 10,
-  oficina: 8,
+  // [2026-10-10, mismo encargo: «Office Operations · Agregar foto: IMG_9048»]
+  // 8 → 9. Persona nueva, comprobado contra las ocho publicadas. Con ella el
+  // muro llega a los 9 de la plantilla que dio Fernando para la oficina.
+  oficina: 9,
   // [2026-09-01, 3ª entrega] El grupo nuevo. Es la PRIMERA entrega de retratos
   // en la que el nº de archivos coincide con el de personas: las dos fotos son
   // dos personas distintas, comprobado abriéndolas. En las dos anteriores no
