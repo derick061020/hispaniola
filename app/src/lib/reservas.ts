@@ -33,6 +33,8 @@ export type Reserva = {
   /** Plato por persona. VACÍO cuando el menú no se elige (buffet): no es que
    *  falten por decidir, es que no hay nada que decidir. */
   platos: string[]
+  /** [2026-10-10] Los cambios desde «Mi reserva» ya cerraron (48 h antes). */
+  cambiosCerrados?: boolean
   recogida: DatosRecogida
   /** [2026-08-25] Sin `prefijo`: la reserva guardada lleva UN telefono ya
    *  compuesto («+34 612345678»), que es lo que pinta «Mi reserva» y lo que

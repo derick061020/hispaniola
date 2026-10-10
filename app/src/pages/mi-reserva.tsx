@@ -65,6 +65,24 @@ const NOMBRES_PLATO: Record<string, string> = {
 // lo que hay que PINTAR es ese mismo plato en el idioma que se está leyendo.
 // Por eso la búsqueda va contra `crudo(p).nombre` y lo que se devuelve es
 // `p.nombre`, que sale ya traducido del bloque de datos.
+// [2026-10-10] EL PLATO GUARDADO, DICHO COMO LO DICE LA CARTA.
+//
+// El valor del desplegable es el nombre canónico de la carta («Surf & Turf»,
+// «Seafood cocktail»), pero lo guardado no siempre viene igual escrito: la
+// oficina y el bot lo cargan con su propia carta («Surf and Turf», «Seafood
+// Cocktail»). Si no coincide letra a letra, el <select> no encuentra la opción,
+// se queda en «Not chosen» y el cliente cree que no se guardó. Se compara sin
+// mayúsculas, sin signos y con «&» = «and».
+function clavePlato(nombre: string) {
+  return nombre.toLowerCase().replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, ' ').trim()
+}
+function platoDeLaCarta(valor: string, menu: { nombre: string }[]) {
+  if (!valor) return ''
+  const clave = clavePlato(valor)
+  const plato = menu.find((p) => clavePlato(crudo(p).nombre) === clave)
+  return plato ? crudo(plato).nombre : valor
+}
+
 function nombrePlato(id: string, menu: { nombre: string }[]) {
   const plato = menu.find((p) => crudo(p).nombre === id)
   return plato?.nombre ?? NOMBRES_PLATO[id] ?? id
@@ -1021,14 +1039,19 @@ function BloqueMenu({
   })
   const menu = menuReserva?.platos ?? []
   const seElige = menuReserva?.modo === 'eleccion'
+  // [2026-10-10] Cerrado = no se ofrece «Editar»: se avisa ANTES. Antes se
+  // dejaba elegir y el error salía al guardar (caso de James F. Barnes,
+  // HSP-2688-8109, que escribió por WhatsApp «was not able to select»).
+  const cerrado = Boolean(reserva.cambiosCerrados)
+  const guardados = reserva.platos.map((p) => platoDeLaCarta(p, menu))
 
-  const [edit, setEdit] = useState(abrirAlEntrar && seElige)
+  const [edit, setEdit] = useState(abrirAlEntrar && seElige && !cerrado)
   // [2026-09-12] Defensa por si la reserva llega con MENOS huecos que personas
   // (la traduccion de Odoo ya rellena, pero una copia antigua en localStorage
   // no): sin esto, «Editar» pintaba un desplegable por plato guardado y a
   // quien no habia elegido nada no le salia ninguno.
   const [platos, setPlatos] = useState(() =>
-    Array.from({ length: Math.max(reserva.personas, reserva.platos.length) }, (_, i) => reserva.platos[i] ?? ''),
+    Array.from({ length: Math.max(reserva.personas, guardados.length) }, (_, i) => guardados[i] ?? ''),
   )
   const { guardando, error, enviar } = useGuardado(guardar)
   const seccion = useRef<HTMLElement>(null)
@@ -1041,7 +1064,7 @@ function BloqueMenu({
   // no lo ha elegido».
   const guardarCambios = () => void enviar({ dishes: platos }, () => setEdit(false))
   const cancelar = () => {
-    setPlatos(reserva.platos)
+    setPlatos(Array.from({ length: Math.max(reserva.personas, guardados.length) }, (_, i) => guardados[i] ?? ''))
     setEdit(false)
   }
 
@@ -1055,8 +1078,22 @@ function BloqueMenu({
           </h2>
         </div>
         {/* Solo se edita lo que se elige: con buffet no hay «Editar». */}
-        {seElige && !edit ? <BotonEditar onClick={() => setEdit(true)} /> : null}
+        {seElige && !edit && !cerrado ? <BotonEditar onClick={() => setEdit(true)} /> : null}
       </div>
+
+      {seElige && cerrado ? (
+        <p className="mt-3 rounded-btn bg-papel-hueso px-3 py-2 text-xs leading-relaxed text-navy-sub">
+          {t('Menu changes close 48 h before the tour, so the kitchen can shop for it.')}{' '}
+          <a
+            href={`https://wa.me/18293052804?text=${encodeURIComponent(`Hi! My booking is ${reserva.codigo} and I would like to choose / change our lunch.`)}`}
+            target="_blank"
+            rel="noopener"
+            className="font-semibold text-aqua-dark hover:underline"
+          >
+            {t('Message us on WhatsApp and we’ll update it for you.')}
+          </a>
+        </p>
+      ) : null}
 
       {/* 2026-08-07: el funnel ya permite reservar sin elegir plato, así que
           ESTA pantalla es donde se completa. Dos consecuencias: el select
@@ -1096,7 +1133,7 @@ function BloqueMenu({
         </div>
       ) : seElige ? (
         <ul className="mt-4 space-y-1.5 text-sm">
-          {reserva.platos.map((p, i) => (
+          {guardados.map((p, i) => (
             <li key={i} className="flex items-center justify-between">
               <span className="text-navy-soft">{t('Guest')}{' '}{i + 1}</span>
               {p ? (

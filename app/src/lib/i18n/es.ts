@@ -525,6 +525,8 @@ export const ES: Record<string, string> = {
   "Change the one we emailed you for one you remember. Nobody from Hispaniola will ever ask you for it.": "Cambia la que te mandamos por correo por una que recuerdes. Nadie de Hispaniola te la va a pedir nunca.",
   "Change your pickup": "Cambiar tu recogida",
   "Changes close 48 h before the tour. Message us and we’ll sort it out with you.": "Los cambios se cierran 48 h antes del tour. Escríbenos y lo resolvemos contigo.",
+  "Menu changes close 48 h before the tour, so the kitchen can shop for it.": "El menú se cierra 48 h antes del tour, para que la cocina pueda comprar.",
+  "Message us on WhatsApp and we’ll update it for you.": "Escríbenos por WhatsApp y lo actualizamos por ti.",
   "Changing a booking I already have": "Cambiar una reserva que ya tengo",
   "Charged separately": "Se cobran aparte",
   "Charter menus": "Menús del charter",

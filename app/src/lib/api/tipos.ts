@@ -235,6 +235,9 @@ export type Reserva = {
   pickup_time: string | null
   pax: { adults: number; children: number; infants: number; total: number }
   dishes: { guest: number; dish: string }[]
+  /** [2026-10-10] Odoo ya no acepta cambios (48 h antes del tour). Sirve para
+   *  avisar ANTES de dejar elegir, no al pulsar «Save menu». */
+  changes_locked?: boolean
   addons: { name: string; quantity: number; amount: number }[]
   pickup: { hotel: string; room: string }
   /** `balance` es lo que se cobra AHORA (la inicial si no ha pagado nada);
