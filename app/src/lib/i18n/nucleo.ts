@@ -49,23 +49,23 @@ const CLAVE = 'hispaniola.idioma'
 let actual: IdiomaUI = 'en'
 const oyentes = new Set<() => void>()
 
-/** [2026-10-03, Derick: «déjame la web en inglés solamente»] LA WEB ES EN
- *  INGLÉS, Y PUNTO.
- *
- *  Antes esto miraba el almacenamiento y, si no, el idioma del navegador: quien
- *  llegaba con el Chrome en español veía el sitio en español sin pedirlo. Ya no.
- *
- *  Lo que NO se ha tocado, a propósito: el diccionario (`es.ts`, 2.700 textos
- *  con el copy original del cliente), `t()`, `tp()` y `numero()`. Todo eso sigue
- *  en pie y devolviendo el inglés, que es lo que `t()` hace cuando el idioma es
- *  'en'. Borrarlo habría sido tirar el trabajo de la traducción entera para
- *  ahorrar unos kilobytes, y volver a encenderlo es cambiar esta función.
- *
- *  Tampoco se ha quitado `fijaIdiomaUI`: ya no la llama nadie —el selector se
- *  fue de las cuatro pantallas donde estaba— pero sigue siendo la puerta por la
- *  que volvería el español el día que se quiera. */
+/** [2026-10-13, Derick: «vuelve a dejar la página de Hispaniola tanto en
+ *  español como en inglés, todo dependiendo del navegador del cliente»]
+ *  Vuelve el comportamiento de antes del 03/10: el inglés es el idioma del
+ *  sitio y el español se le da a quien lo trae en el navegador. Si el visitante
+ *  elige a mano con el selector, manda su elección, por eso se mira primero el
+ *  almacenamiento. (El 03/10 se había dejado la web solo en inglés.) */
 function inicial(): IdiomaUI {
-  return 'en'
+  if (typeof window === 'undefined') return 'en'
+  try {
+    const guardado = window.localStorage.getItem(CLAVE)
+    if (guardado === 'en' || guardado === 'es') return guardado
+  } catch {
+    // Safari en privado tira al leer localStorage. No es motivo para no pintar
+    // la web: se cae al idioma del navegador.
+  }
+  const navegador = [...(navigator.languages ?? []), navigator.language].filter(Boolean)
+  return navegador.some((c) => c.toLowerCase().startsWith('es')) ? 'es' : 'en'
 }
 
 actual = inicial()
@@ -132,16 +132,10 @@ function vigilaAlTraductor() {
   if (actual !== 'es' && loEstanTraduciendo()) fijaIdiomaUI('es')
 }
 
-// [2026-10-03] APAGADO. Vigilaba al traductor de Chrome para servirle NUESTRO
-// español en vez del suyo automático, y era lo correcto mientras el sitio tenía
-// dos idiomas. Con la web en inglés solamente, saltaría a español justo lo que
-// se acaba de pedir que no pase.
-//
-// Se queda escrito, no borrado: el día que el español vuelva, esta llamada es
-// lo único que hay que descomentar — y el porqué de la clase `translated-ltr`
-// no es algo que apetezca volver a averiguar.
-// vigilaAlTraductor()
-void vigilaAlTraductor;
+// [2026-10-13] Encendido otra vez con la web en dos idiomas: si alguien pulsa
+// «Traducir» en Chrome, se le sirve NUESTRO español (escrito a mano) en vez del
+// automático.
+vigilaAlTraductor()
 
 /** Traduce un texto de la interfaz. Si no está en el diccionario devuelve el
  *  inglés tal cual — deliberadamente, ver la cabecera. */
