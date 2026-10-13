@@ -15,11 +15,13 @@ import { useDevFlag } from '@/dev/use-dev-flag'
 import { useDisponibilidad } from '@/components/tour/use-disponibilidad'
 import { t } from '@/lib/i18n'
 
-// Ventana de reserva del demo: 3 meses hacia delante desde el mes actual —
-// mismo criterio que el DIAS_VISIBLES=14 que este calendario reemplaza (un
-// tope explícito, no una disponibilidad real: el motor de reservas real
-// sigue pendiente del cliente, ver widget-reserva.tsx).
-const MESES_ADELANTE = 3
+// [2026-10-13, Hispaniola: «hay que habilitar todos los barcos en la web para
+// que la gente pueda reservar el 2027 completo… Maite después de enero no se
+// puede reservar»] Esto era un tope de demo de 3 meses (de octubre no se
+// pasaba de enero) que se quedó al conectar Odoo. Ahora el calendario llega
+// hasta diciembre del AÑO SIGUIENTE, siempre: quien reserva con mucha
+// antelación ve el año que viene entero. Lo agotado y lo bloqueado sigue
+// saliendo de Odoo (`use-disponibilidad.ts`, misma ventana).
 
 // [2026-08-18] Aquí vivían dos fechas agotadas INVENTADAS (hoy+3 y hoy+10),
 // iguales para los cuatro tours. Ahora los días sin plazas los dice Odoo
@@ -65,7 +67,7 @@ function GridMensual({
   const hoyDate = parseFechaISO(hoy)
 
   const mesActual = new Date(hoyDate.getFullYear(), hoyDate.getMonth(), 1)
-  const mesMaximo = new Date(hoyDate.getFullYear(), hoyDate.getMonth() + MESES_ADELANTE, 1)
+  const mesMaximo = new Date(hoyDate.getFullYear() + 1, 11, 1)
   const [mesVisible, setMesVisible] = useState(mesActual)
 
   const anio = mesVisible.getFullYear()

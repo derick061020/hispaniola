@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { obtenerDisponibilidad } from '@/lib/api/api'
-import { hoyISO, sumarDias } from '@/lib/fechas'
+import { hoyISO } from '@/lib/fechas'
 
 // [2026-08-18] LOS DÍAS AGOTADOS SALEN DE ODOO.
 //
@@ -19,7 +19,10 @@ import { hoyISO, sumarDias } from '@/lib/fechas'
 // sí bloquea—. Mejor una reserva que el equipo confirma a mano que una venta
 // que no llega a empezar.
 
-const DIAS_VENTANA = 120
+// [2026-10-13] Hasta el 31 de diciembre del año siguiente, el mismo tope que el
+// calendario (`calendario-widget.tsx`). Antes eran 120 días: aunque el
+// calendario avanzara, más allá de eso no se sabía qué estaba agotado.
+const finDelAnioQueViene = () => `${new Date().getFullYear() + 1}-12-31`
 
 export type Disponibilidad = {
   /** Días sin plazas, en ISO. Vacío mientras carga o si Odoo no contesta. */
@@ -75,7 +78,7 @@ export function useDisponibilidad(
 
     const desde = hoyISO()
     obtenerDisponibilidad(
-      { tour, variante, desde, hasta: sumarDias(desde, DIAS_VENTANA), pax },
+      { tour, variante, desde, hasta: finDelAnioQueViene(), pax },
       abortador.signal,
     )
       .then((respuesta) => {
