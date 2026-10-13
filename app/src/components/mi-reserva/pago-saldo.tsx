@@ -43,19 +43,27 @@ export function PagoSaldo({
   codigo,
   token,
   saldo,
+  abrirAlEntrar = false,
   facturacion,
   onPagado,
 }: {
   codigo: string
   token: string
   saldo: number
+  /** Llega desde el botón «Pay now» del correo (`step=pay`): el formulario
+   *  se abre solo y la pantalla baja hasta él. */
+  abrirAlEntrar?: boolean
   /** Nombre, correo, teléfono y país de la reserva: no se vuelven a pedir,
    *  pero Stripe los exige al confirmar (ver `formulario-stripe.tsx`). */
   facturacion: FacturacionStripe
   /** El saldo ya está cobrado: la pantalla recarga la reserva desde Odoo. */
   onPagado: () => void
 }) {
-  const [abierto, setAbierto] = useState(false)
+  const [abierto, setAbierto] = useState(abrirAlEntrar)
+  const caja = useRef<HTMLDivElement | null>(null)
+  useEffect(() => {
+    if (abrirAlEntrar) caja.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  }, [abrirAlEntrar])
   const [medios, setMedios] = useState<{ tarjeta: boolean; paypal: boolean } | null>(null)
   const [metodo, setMetodo] = useState<'card' | 'paypal'>('card')
   const [yendoAPaypal, setYendoAPaypal] = useState(false)
@@ -175,7 +183,7 @@ export function PagoSaldo({
   }
 
   return (
-    <div className="mt-4 rounded-card border border-linea bg-papel-hueso p-4">
+    <div ref={caja} className="mt-4 rounded-card border border-linea bg-papel-hueso p-4">
       <div className="flex items-center justify-between gap-3">
         <p className="text-sm font-semibold text-navy">{t('Pay')}{' '}{formatoDinero(saldo)}</p>
         <span className="flex items-center gap-1.5">

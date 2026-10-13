@@ -819,9 +819,15 @@ function BloqueReserva({
   // la plaza sin garantizar. El aviso del efectivo va JUNTO al botón, no en su
   // lugar.
   const pagoEnEfectivo = reserva.metodoPago === 'efectivo'
+  // [2026-10-13, SOP-0023, Rossanna] El botón «Pay now» de los correos llega
+  // con `step=pay`: se abre el formulario de pago ya desplegado y se baja
+  // hasta él. En el móvil, con la reserva entera delante, el cliente no
+  // encontraba dónde pagar.
+  const [paramsPago] = useSearchParams()
+  const abrirPago = paramsPago.get('step') === 'pay'
 
   return (
-    <section className="mt-8 rounded-card-grande border border-linea bg-papel p-5 sm:p-6">
+    <section id="pay" className="mt-8 scroll-mt-24 rounded-card-grande border border-linea bg-papel p-5 sm:p-6">
       <div className="flex items-center gap-2">
         <CreditCard className="size-5 text-aqua" aria-hidden="true" />
         <h2 className="font-display text-lg font-semibold text-navy">{t('Your booking')}</h2>
@@ -902,6 +908,7 @@ function BloqueReserva({
             codigo={reserva.codigo}
             token={token}
             saldo={reserva.saldo}
+            abrirAlEntrar={abrirPago}
             facturacion={{
               nombre: reserva.contacto.nombre.trim(),
               email: reserva.contacto.email || undefined,
