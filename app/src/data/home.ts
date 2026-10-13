@@ -513,7 +513,7 @@ export const NAV_SOSTENIBILIDAD: ItemNav[] = traducible([
   {
     id: 'museo',
     nombre: 'Underwater Museum',
-    descripcion: 'Sculptures that work as a reef, inside our Marine Park. Opening November 1, 2026.',
+    descripcion: 'Sculptures that work as a reef, inside our Marine Park. Opening November 15, 2026.',
     to: '/underwater-museum',
   },
 ])

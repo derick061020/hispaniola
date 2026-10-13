@@ -41,10 +41,10 @@ export const PRECIO_MUSEO = {
       : null,
 }
 
-/** Fecha de apertura (V1: «abre el 1 de noviembre de 2026»). La cuenta atrás
+/** Fecha de apertura (V1: «abre el 15 de noviembre de 2026»). La cuenta atrás
  *  del héroe la lee de aquí y se retira SOLA ese día: un «opens in 0 days»
  *  colgado en una página de venta es peor que no decir nada. */
-export const APERTURA_MUSEO = '2026-11-01T00:00:00-04:00'
+export const APERTURA_MUSEO = '2026-11-15T00:00:00-04:00'
 
 export const RUTA_CORAL_QUEST = '/tours/coral-quest'
 
@@ -85,20 +85,20 @@ export const MUSEO = traducible({
   meta: {
     titulo: 'Underwater Museum',
     descripcion:
-      'Sculptures that work as a reef, inside our protected Marine Park in Bávaro. The Underwater Museum opens November 1, 2026, along the Coral Quest route.',
+      'Sculptures that work as a reef, inside our protected Marine Park in Bávaro. The Underwater Museum opens November 15, 2026, along the Coral Quest route.',
   },
 
   hero: {
     eyebrow: 'New in the Marine Park',
     titulo: 'A reef that began as a sculpture',
-    lead: 'The Underwater Museum opens November 1, 2026, along the Coral Quest route.',
+    lead: 'The Underwater Museum opens November 15, 2026, along the Coral Quest route.',
     ctaBajar: 'Dive into the museum',
     // [2026-10-07, Marketing] Botón de compra en el héroe, con el «desde».
     ctaReserva: 'Book Coral Quest',
     desde: 'from',
     // [2026-10-07, Marketing] La apertura, con protagonismo y contador.
     apertura: 'Grand opening',
-    fechaApertura: 'November 1, 2026',
+    fechaApertura: 'November 15, 2026',
     unidades: { dias: 'Days', horas: 'Hours', minutos: 'Min', segundos: 'Sec' },
     // [2026-10-07, Marketing: «cambiaremos esta imagen… agregamos esta»] El
     // buzo con el Diablo Cojuelo (MEJORADAS/IMG_5757). Antes, el bateador.
@@ -226,7 +226,7 @@ export const MUSEO = traducible({
   },
 
   cifras: [
-    { valor: 'Nov 1', unidad: '2026', texto: 'museum opening' },
+    { valor: 'Nov 15', unidad: '2026', texto: 'museum opening' },
     { valor: '18.4', unidad: 'km²', texto: 'ecological recovery area' },
     { valor: '4', unidad: 'h', texto: 'Coral Quest tour' },
     { valor: '{precio}', unidad: '', texto: 'from, per person' },
@@ -265,7 +265,7 @@ export const MUSEO = traducible({
       'Confirm with 25%',
     ],
     cta: 'See availability',
-    nota: 'The museum opens November 1, 2026.',
+    nota: 'The museum opens November 15, 2026.',
   },
 
   faq: {
@@ -274,7 +274,7 @@ export const MUSEO = traducible({
     // Las respuestas son las del V1, que es el que manda. El V2 contestaba
     // distinto a dos de ellas («a partir de 4 años», «de quién es»).
     preguntas: [
-      { p: 'When does the Underwater Museum open?', r: 'On November 1, 2026.' },
+      { p: 'When does the Underwater Museum open?', r: 'On November 15, 2026.' },
       {
         p: 'Is it included in the tour?',
         r: 'Yes. The visit and snorkeling at the Underwater Museum are fully part of the regular Coral Quest itinerary, at no extra cost.',

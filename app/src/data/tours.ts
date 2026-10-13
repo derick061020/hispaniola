@@ -556,7 +556,7 @@ export const FICHAS: Record<string, FichaTour> = traducible({
         hora: '10:00 AM / 2:00 PM',
         titulo: 'Snorkeling at the Marine Park',
         texto:
-          'Explore our exclusive Marine Park, home to the Underwater Museum (launch date: Nov 1st), coral restoration gardens and artificial reefs that attract abundant tropical marine life.',
+          'Explore our exclusive Marine Park, home to the Underwater Museum (launch date: Nov 15th), coral restoration gardens and artificial reefs that attract abundant tropical marine life.',
       },
       {
         hora: '11:15 AM / 3:15 PM',
@@ -810,7 +810,7 @@ export const FICHAS: Record<string, FichaTour> = traducible({
         hora: '10:45 AM / 2:45 PM',
         titulo: 'Snorkeling at the Marine Park',
         texto:
-          'Explore our protected Marine Park, home to the Underwater Museum (launch date: Nov 1st), coral restoration gardens and thriving reef ecosystems. Keep an eye out for sea turtles, which are frequently spotted during this part of the journey.',
+          'Explore our protected Marine Park, home to the Underwater Museum (launch date: Nov 15th), coral restoration gardens and thriving reef ecosystems. Keep an eye out for sea turtles, which are frequently spotted during this part of the journey.',
       },
       {
         hora: '11:45 AM / 3:45 PM',

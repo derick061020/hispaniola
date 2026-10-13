@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { X } from 'lucide-react'
 import { t } from '@/lib/i18n'
+import { APERTURA_MUSEO } from '@/data/museo'
 
 // EL OJO DE BUEY — el aviso del Museo Subacuático.
 //
@@ -40,7 +41,11 @@ const FOTO = '/fotos/museo-ojo-buey.webp'
 //
 // Cuando la fecha pase, el aviso deja de salir solo (`dias <= 0`): no hay que
 // acordarse de quitarlo, pero sí de cambiarlo por otro si el museo ya abrió.
-const APERTURA = new Date('2026-10-31T00:00:00-04:00')
+// [2026-10-13, el cliente: «hay que cambiar la fecha de launch del museo para
+// 15 de noviembre»] Lee la MISMA fecha que la página del museo
+// (`APERTURA_MUSEO`, data/museo.ts). Tenían una cada uno —31/10 aquí y 01/11
+// allí— y el aviso y el contador ya decían cosas distintas.
+const APERTURA = new Date(APERTURA_MUSEO)
 
 // Asoma a los 6 segundos, o en cuanto se lleva un 35 % de la página — lo que
 // pase antes. Quien acaba de llegar está leyendo el hero.

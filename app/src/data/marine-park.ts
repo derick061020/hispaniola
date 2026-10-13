@@ -81,7 +81,7 @@ export const MARINE_PARK = traducible({
         'More than 70 reef restoration structures',
         'Coral gardening & marine habitat creation',
       ],
-      lanzamiento: 'Launching November 1st, 2026',
+      lanzamiento: 'Launching November 15th, 2026',
       enlace: { texto: 'Explore the Underwater Museum', to: '/underwater-museum' },
       foto: 'marine-park-museo',
       fotoAlt: 'A diver next to one of the sculptures of the underwater museum',
@@ -94,8 +94,8 @@ export const MARINE_PARK = traducible({
         "Your visit doesn't just create memories. It helps create a healthier ocean.",
       ],
       // «TAMBIEN PARA» — la pulsera da acceso al museo, así que si el museo
-      // abre el 1 de noviembre, la pulsera tampoco se vende antes.
-      lanzamiento: 'Launching November 1st, 2026',
+      // abre el 15 de noviembre, la pulsera tampoco se vende antes.
+      lanzamiento: 'Launching November 15th, 2026',
       foto: 'marine-park-pulsera',
       fotoAlt: 'Guests tying coral fragments to a nursery structure on deck',
     },

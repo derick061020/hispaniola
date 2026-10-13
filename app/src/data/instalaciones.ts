@@ -96,7 +96,7 @@ export type ZonaInstalacion = {
    *
    *  ⚠️ HOY NO LO USA NINGUNA ZONA. Se puso en el Culinary Center y Samuel lo
    *  retiró el mismo día por precaución (ver el ⚠️ de esa zona). El campo y su
-   *  render se quedan porque el 1 de noviembre está cerca y es probable que
+   *  render se quedan porque el 15 de noviembre está cerca y es probable que
    *  alguna zona lo necesite: entonces es escribir una línea, no rehacer esto.
    *  Si en diciembre sigue sin usarse, se puede borrar sin más.
    *
@@ -307,7 +307,7 @@ export const ZONAS: ZonaInstalacion[] = traducible([
     // qué para no volver a ponerlo. La captura de esta zona venía en el PDF de
     // UPDATES 09/01 junto a la instrucción del paréntesis, con una anotación
     // cortada («pone»); Samuel confirmó primero que sí lo llevaba y lo retiró
-    // el mismo día: «quítale el (Launching November 1st, 2026), por si acaso
+    // el mismo día: «quítale el (Launching November 15th, 2026), por si acaso
     // mejor». La duda de fondo sigue abierta —si el centro culinario está
     // operativo o no— y ante la duda no se publica una fecha: decir que algo
     // abre en noviembre cuando ya funciona espanta reservas, y al revés promete

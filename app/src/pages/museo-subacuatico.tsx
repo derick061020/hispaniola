@@ -20,7 +20,7 @@ import { MUSEO } from '@/data/museo'
 // MUSEO SUBACUÁTICO (/underwater-museum) — página NUEVA, 2026-10-07.
 //
 // Encargo de Raymond (reunión 2026-10-05): la versión COMERCIAL del museo, que
-// abre el 1 de noviembre. Estructura y textos del V1 de su carpeta; el
+// abre el 15 de noviembre. Estructura y textos del V1 de su carpeta; el
 // dinamismo, de la B2, rehecho («nosotros podemos hacer algo mucho mejor»,
 // Samuel). El porqué de cada dato está en data/museo.ts.
 //
