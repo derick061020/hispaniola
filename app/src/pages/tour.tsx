@@ -318,7 +318,7 @@ export function TourPage() {
                   centímetros más abajo, después de dos bloques de logística. */}
               {tour.booking === 'completo' ? <AntesDeReservar tour={tour} ficha={ficha} /> : null}
 
-              <Itinerario ficha={ficha} />
+              <Itinerario ficha={ficha} variante={variante} />
               <IncluyeTour ficha={ficha} />
               {/* v3 (2026-07-17, pedido de Samuel): tabla de precios por bote
                   para charter-privado (4 botes con sus tramos de pax).

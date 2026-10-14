@@ -82,7 +82,9 @@ function aAddOn(a: AddOnOdoo, estatico?: AddOn): AddOn {
 function aSubVariante(v: Variante, estatica?: SubVarianteTour): SubVarianteTour {
   return {
     id: v.slug,
-    nombre: v.name || estatica?.nombre || v.slug,
+    // [2026-10-14] Por `t()`: «Saona Island Catuano» sale de Odoo en inglés y
+    // en español tiene que leerse «Isla Saona Catuano».
+    nombre: v.name ? t(v.name) : estatica?.nombre || v.slug,
     descripcion: v.description ? t(v.description) : estatica?.descripcion ?? '',
     capacidad: v.capacity_label ? t(v.capacity_label) : estatica?.capacidad ?? '',
     tabla: v.tiers.length ? v.tiers.map(aTramo) : (estatica?.tabla ?? []),
@@ -97,6 +99,8 @@ function aSubVariante(v: Variante, estatica?: SubVarianteTour): SubVarianteTour 
     ...(v.duration_hours ?? estatica?.duracionHoras
       ? { duracionHoras: v.duration_hours ?? estatica?.duracionHoras }
       : {}),
+    // El itinerario, como la foto, es del front: Odoo no lo tiene.
+    ...(estatica?.itinerario ? { itinerario: estatica.itinerario } : {}),
   }
 }
 

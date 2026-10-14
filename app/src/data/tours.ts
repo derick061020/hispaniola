@@ -94,6 +94,11 @@ export type SubVarianteTour = {
    *  en la carta de 4 h—. La lógica de producto no puede colgar de un rótulo.
    *  Si falta, `cartaCharterDe` vuelve a leer `duracion` como antes. */
   duracionHoras?: number
+  /** [2026-10-14, el cliente: «hay uno que es solo Las Palmillas y Saona y
+   *  otro Mano Juan… organizarlo bien con los nombres e itinerarios»] El
+   *  recorrido de ESTA sub-variante. Si falta, la ficha pinta el general
+   *  (`ficha.itinerario`). En Saona cada barco hace un día distinto. */
+  itinerario?: PasoItinerario[]
 }
 
 /** Plato del menú BUFFET (Saona) — distinto del PlatoMenu de los paquetes
@@ -1477,8 +1482,13 @@ export const FICHAS: Record<string, FichaTour> = traducible({
     // PRODUCTO y pasa a ser el del ITINERARIO. Se respeta tal cual.
     descripcionLarga: [
       "Saona Island is one of the Dominican Republic's most iconic destinations, famous for its powder-white beaches, crystal-clear turquoise waters and breathtaking Natural Pool, where giant starfish can often be seen resting on the sandy bottom.",
-      "Departing from Bayahibe, you'll spend the day exploring the island's most beautiful locations, including Catuano, Las Palmillas and, on our Fishing Town itinerary, the charming fishing village of Mano Juan.",
-      'Choose the experience that best suits your group: Private Speedboat, the fastest and most exclusive option, for up to 9 guests. Catamaran, the classic Caribbean sailing experience. Speedboat Adventure, including stops at Mano Juan and Playa Toro.',
+      "Departing from Bayahibe, you'll spend the day exploring the island's most beautiful locations, including Catuano, Las Palmillas and, on Saona Island Mano Juan, the charming fishing village of Mano Juan.",
+      // [2026-10-14, el cliente, con el folleto viejo «Saona Island 2026»] Las
+      // dos lanchas se llaman por A DONDE VAN: «Isla Saona Catuano» (Catuano y
+      // la piscina de Las Palmillas) e «Isla Saona Mano Juan» (Mano Juan,
+      // Playa Toro y la piscina). Antes eran «Private Speedboat» y «Speedboat
+      // Adventure», nombres que no decian cual era cual.
+      'Choose the experience that best suits your group: Saona Island Catuano, by speedboat to Catuano beach and the Las Palmillas Natural Pool. Saona Island Mano Juan, by speedboat to the fishing village of Mano Juan, Playa Toro and the Natural Pool. Catamaran, the classic Caribbean sailing experience for larger groups.',
       'All options include a traditional Dominican buffet served on the island and time to relax in the famous Natural Pool at Las Palmillas.',
       'As the day comes to an end, enjoy a scenic cruise back along the Caribbean coastline before returning to your hotel.',
     ],
@@ -1497,9 +1507,12 @@ export const FICHAS: Record<string, FichaTour> = traducible({
         // persona de 11 a 25 que, con el aforo aprobado, no existe. Se corta
         // en 9 — el ultimo tramo de grupo que el tarifario define (US$ 1.280).
         // Las plazas 10 a 25 salen del widget.
-        nombre: 'Private Speedboat',
-        descripcion: 'The fastest, most exclusive way',
-        capacidad: 'Up to 9 guests',
+        // [2026-10-14] -> «Saona Island Catuano». Ver `descripcionLarga`.
+        nombre: 'Saona Island Catuano',
+        descripcion: 'Speedboat to Catuano & the Natural Pool',
+        // [2026-10-14] El folleto 2026 la vende de 1 a 25 (grupo hasta 10,
+        // por persona de 11 a 25), igual que la tabla de abajo y Odoo.
+        capacidad: 'Up to 10 guests (+US$ 130 per person from 11 up to 25)',
         tabla: [
           // [tarifa-v2] Corregido 2026-07-27 contra la web original. Tenía
           // TRES errores: (a) empezaba en `desde: 6`, así que 1-5 personas no
@@ -1523,6 +1536,19 @@ export const FICHAS: Record<string, FichaTour> = traducible({
           { desde: 10, hasta: 10, precio: 1340, tipo: 'grupo' },
           { desde: 11, hasta: 25, precio: 130, tipo: 'persona' },
         ],
+        // [2026-10-14] Literal del folleto «Saona Island 2026», pág. 5
+        // (Speedboat Option). Primero la piscina, luego la isla.
+        itinerario: [
+          { hora: '8:00 AM', titulo: 'Hotel Pickup', texto: 'Air-conditioned transportation to Bayahibe (about 1 hour 30 minutes, depending on your hotel).' },
+          { hora: '9:15 AM', titulo: 'Arrival at Bayahibe', texto: 'Check in at the pier.' },
+          { hora: '9:30 AM', titulo: 'Speedboat to the Natural Pool', texto: 'About 30–40 minutes of navigation to Las Palmillas.' },
+          { hora: '10:10 AM', titulo: 'Natural Pool at Las Palmillas', texto: 'Shallow turquoise water where you can see the famous giant starfish.' },
+          { hora: '10:40 AM', titulo: 'On to Saona Island', texto: 'About 1 hour of navigation.' },
+          { hora: '11:45 AM', titulo: 'Saona Island · Catuano', texto: 'A 3-hour stay for the buffet lunch, relaxing and swimming, with deckchairs, hammocks and four-poster beds under the coconut trees.' },
+          { hora: '2:45 PM', titulo: 'Departure from Saona', texto: 'Navigation back along the coast.' },
+          { hora: '4:00 PM', titulo: 'Arrival at Bayahibe', texto: '' },
+          { hora: '5:30–6:00 PM', titulo: 'Back at your hotel', texto: 'Depending on your hotel.' },
+        ],
       },
       {
         id: 'fishing',
@@ -1535,8 +1561,9 @@ export const FICHAS: Record<string, FichaTour> = traducible({
         // enlaces sin ganar nada.
         // ⚠️ Su aforo NO se toca: el copy aprobado solo da cifra para el
         // Private Speedboat. Los tramos siguen como los publica el tarifario.
-        nombre: 'Speedboat Adventure',
-        descripcion: 'With a stop at Mano Juan and Playa Toro',
+        // [2026-10-14] -> «Saona Island Mano Juan». Ver `descripcionLarga`.
+        nombre: 'Saona Island Mano Juan',
+        descripcion: 'Speedboat to Mano Juan, Playa Toro & the Natural Pool',
         capacidad: 'Up to 10 guests (+US$ 140 per person from 11 up to 25)',
         tabla: [
           // [tarifa-v2] Corregido 2026-07-27: empezaba en `desde: 6` → 1-5
@@ -1547,6 +1574,18 @@ export const FICHAS: Record<string, FichaTour> = traducible({
           { desde: 9, hasta: 9, precio: 1410, tipo: 'grupo' },
           { desde: 10, hasta: 10, precio: 1450, tipo: 'grupo' },
           { desde: 11, hasta: 25, precio: 140, tipo: 'persona' },
+        ],
+        // [2026-10-14] Del folleto «Saona Island 2026», pág. 2 (Saona &
+        // Fishing Town). El folleto da las paradas y el horario del barco
+        // (9:00 AM – 5:00 PM), no la hora de cada parada: no se inventan.
+        itinerario: [
+          { hora: '', titulo: 'Hotel Pickup', texto: 'Air-conditioned transportation to Bayahibe (about 1 hour 30 minutes). Your exact time is confirmed after booking.' },
+          { hora: '9:00 AM', titulo: 'Departure from Bayahibe', texto: 'By speedboat toward Saona Island.' },
+          { hora: '', titulo: 'Mano Juan fishing village', texto: 'A small fishing village of about 300 inhabitants on Saona Island.' },
+          { hora: '', titulo: 'Playa Toro (Canto de la Playa)', texto: 'The second stop: a beautiful beach equipped for your comfort.' },
+          { hora: '', titulo: 'Beach lunch', texto: 'Buffet with pasta salad, lobster spaghetti, chicken, pork chops and fruit. Optional lobster at checkout.' },
+          { hora: '', titulo: 'Natural Pool', texto: 'The third stop, where you can discover the giant starfish.' },
+          { hora: '5:00 PM', titulo: 'Back at Bayahibe', texto: 'Then the transfer back to your hotel.' },
         ],
       },
       {
@@ -1563,6 +1602,18 @@ export const FICHAS: Record<string, FichaTour> = traducible({
             extra: 'Optional meal: + US$ 45 per person',
           },
           { desde: 31, hasta: 70, precio: 105, tipo: 'persona' },
+        ],
+        // [2026-10-14] Literal del folleto «Saona Island 2026», pág. 5
+        // (Catamaran Option). Primero la isla, la piscina a la vuelta.
+        itinerario: [
+          { hora: '8:00 AM', titulo: 'Hotel Pickup', texto: 'Air-conditioned transportation to Bayahibe (about 1 hour 30 minutes, depending on your hotel).' },
+          { hora: '9:15 AM', titulo: 'Arrival at Bayahibe', texto: 'Check in at the pier.' },
+          { hora: '9:30 AM', titulo: 'Catamaran to Saona Island', texto: 'About 2–2.5 hours of navigation with music and refreshments on board.' },
+          { hora: '11:45 AM', titulo: 'Saona Island · Catuano', texto: 'A 3-hour stay for the buffet lunch, relaxing and swimming.' },
+          { hora: '3:00 PM', titulo: 'Departure from Saona', texto: '' },
+          { hora: '3:45 PM', titulo: 'Natural Pool at Las Palmillas', texto: 'Stop to see the giant starfish.' },
+          { hora: '5:00 PM', titulo: 'Arrival at Bayahibe', texto: '' },
+          { hora: '6:30 PM', titulo: 'Back at your hotel', texto: 'Depending on your hotel.' },
         ],
       },
     ],
@@ -1641,7 +1692,7 @@ export const FICHAS: Record<string, FichaTour> = traducible({
         hora: '~2:00 PM',
         titulo: 'Beach time',
         texto:
-          'Relax under the palm trees, in hammocks and Balinese beds. The Speedboat Adventure adds Mano Juan and Playa Toro.',
+          'Relax under the palm trees, in hammocks and Balinese beds. Saona Island Mano Juan adds the fishing village of Mano Juan and Playa Toro.',
       },
       {
         hora: '4:00 PM',
@@ -1675,7 +1726,7 @@ export const FICHAS: Record<string, FichaTour> = traducible({
       { p: 'How long is the full day?', r: '8 hours: departure at 9:00 AM, back at your hotel around 5:00 PM.' },
       {
         p: 'What is the difference between the three options?',
-        r: 'The Private Speedboat is the fastest and most exclusive (up to 9 guests). The Speedboat Adventure adds stops at Mano Juan and Playa Toro. The Catamaran is the classic option for large groups (up to 70 guests).',
+        r: 'Saona Island Catuano goes by speedboat to Catuano beach and the Las Palmillas Natural Pool. Saona Island Mano Juan goes by speedboat to the fishing village of Mano Juan, Playa Toro and the Natural Pool. The Catamaran does the Catuano route at a relaxed pace and is the option for large groups (up to 70 guests).',
       },
       { p: 'Can I add premium lobster?', r: 'Yes, at checkout: US$ 30 per person.' },
       { p: 'What if it rains?', r: 'Full refund or a date change, at no cost.' },

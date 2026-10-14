@@ -10,14 +10,18 @@ import { t } from '@/lib/i18n'
 // 2026-07-17 (Samuel): se quita la columna de foto de la derecha — "no aporta
 // nada, solo hace que el itinerario tenga más saltos de línea y sea más largo
 // el scroll". El timeline va a ancho completo (antes 2 columnas foto+texto).
-export function Itinerario({ ficha }: { ficha: FichaTour }) {
+export function Itinerario({ ficha, variante }: { ficha: FichaTour; variante?: string | null }) {
+  // [2026-10-14] Si el barco elegido trae su propio recorrido (Saona: Catuano,
+  // Mano Juan, catamarán), se pinta ese; si no, el de la ficha.
+  const sub = ficha.subVariantes?.find((s) => s.id === variante)
+  const pasos = sub?.itinerario ?? ficha.itinerario
   return (
     <section id="ancla-itinerario" className={`${BLOQUE_FICHA} scroll-mt-sticky-top`}>
       {/* [v3 2026-08-06, WEBSITE-TOURS pág. 8] «Itinerary — 4 Hours» + la
           nota de recogida. La nota nace con el itinerario de DOBLE SALIDA: en
           cuanto una parada muestra dos horas hay que decir de qué son. */}
       <TituloSeccion>
-        {ficha.itinerarioTitulo ?? t('Itinerary')} · {ficha.duracion}
+        {ficha.itinerarioTitulo ?? t('Itinerary')} · {sub?.itinerario ? sub.nombre : ficha.duracion}
       </TituloSeccion>
       {ficha.itinerarioNota ? (
         // [v3 2026-08-07] Sin tope de ancho (ver comparador-premium.tsx).
@@ -28,7 +32,7 @@ export function Itinerario({ ficha }: { ficha: FichaTour }) {
           Con `hora` vacía (charter y Saona coordinan a demanda) la fila no se
           rompe: la columna de hora queda vacía y el raíl sigue recto. */}
       <ul className="mt-5 flex flex-col gap-6 border-l border-linea pl-5">
-        {ficha.itinerario.map((paso, i) => (
+        {pasos.map((paso, i) => (
           <li key={i} className="relative">
             {/* El punto se coloca DONDE EMPIEZA el padding del raíl (-left-5 es
                 el espejo exacto del pl-5 de la <ul>) y se centra sobre sí mismo

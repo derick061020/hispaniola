@@ -3,7 +3,7 @@
 // Es la foto del catálogo de Odoo que el front pinta cuando el backend no
 // contesta. Para actualizarla: `npm run sync:tarifas`.
 //
-// Última sincronía: 2026-09-03 13:07 UTC
+// Última sincronía: 2026-10-14 13:09 UTC
 import type { Tour } from '@/lib/api/tipos'
 
 export const CATALOGO_ODOO: Tour[] = [
@@ -26,8 +26,8 @@ export const CATALOGO_ODOO: Tour[] = [
     "premium_upgrade": 15,
     "deposit_pct": 25,
     "infants_are_free": true,
-    "min_days_ahead": 1,
-    "max_days_ahead": 365,
+    "min_days_ahead": 0,
+    "max_days_ahead": null,
     "schedules": [
       {
         "departure": "9:00 AM",
@@ -65,8 +65,8 @@ export const CATALOGO_ODOO: Tour[] = [
     "premium_upgrade": 15,
     "deposit_pct": 25,
     "infants_are_free": true,
-    "min_days_ahead": 1,
-    "max_days_ahead": 365,
+    "min_days_ahead": 0,
+    "max_days_ahead": null,
     "schedules": [
       {
         "departure": "9:00 AM",
@@ -104,8 +104,8 @@ export const CATALOGO_ODOO: Tour[] = [
     "premium_upgrade": null,
     "deposit_pct": 25,
     "infants_are_free": true,
-    "min_days_ahead": 1,
-    "max_days_ahead": 365,
+    "min_days_ahead": 0,
+    "max_days_ahead": null,
     "schedules": [],
     "variants": [
       {
@@ -211,7 +211,7 @@ export const CATALOGO_ODOO: Tour[] = [
             "to": 13,
             "price": 1000,
             "kind": "group",
-            "extra_per_pax": null,
+            "extra_per_pax": 25,
             "note": null
           },
           {
@@ -372,8 +372,8 @@ export const CATALOGO_ODOO: Tour[] = [
     "premium_upgrade": null,
     "deposit_pct": 25,
     "infants_are_free": true,
-    "min_days_ahead": 1,
-    "max_days_ahead": 365,
+    "min_days_ahead": 0,
+    "max_days_ahead": null,
     "schedules": [
       {
         "departure": "9:00 AM",
@@ -384,9 +384,9 @@ export const CATALOGO_ODOO: Tour[] = [
     "variants": [
       {
         "slug": "speedboat",
-        "name": "Private Speedboat",
-        "description": "The fastest, most exclusive way",
-        "capacity_label": "Up to 9 guests",
+        "name": "Saona Island Catuano",
+        "description": "Speedboat to Catuano & the Natural Pool",
+        "capacity_label": "Up to 10 guests (+US$ 130 per person from 11 up to 25)",
         "duration_label": null,
         "duration_hours": null,
         "photo": null,
@@ -446,8 +446,8 @@ export const CATALOGO_ODOO: Tour[] = [
       },
       {
         "slug": "fishing",
-        "name": "Speedboat Adventure",
-        "description": "With a stop at Mano Juan and Playa Toro",
+        "name": "Saona Island Mano Juan",
+        "description": "Speedboat to Mano Juan, Playa Toro & the Natural Pool",
         "capacity_label": "Up to 10 guests (+US$ 140 per person from 11 up to 25)",
         "duration_label": null,
         "duration_hours": null,
@@ -574,8 +574,8 @@ export const CATALOGO_ODOO: Tour[] = [
     "premium_upgrade": null,
     "deposit_pct": 25,
     "infants_are_free": true,
-    "min_days_ahead": 1,
-    "max_days_ahead": 365,
+    "min_days_ahead": 0,
+    "max_days_ahead": null,
     "schedules": [],
     "variants": [
       {
@@ -659,8 +659,8 @@ export const CATALOGO_ODOO: Tour[] = [
     "premium_upgrade": null,
     "deposit_pct": 25,
     "infants_are_free": true,
-    "min_days_ahead": 1,
-    "max_days_ahead": 365,
+    "min_days_ahead": 0,
+    "max_days_ahead": null,
     "schedules": [],
     "variants": [
       {
@@ -744,8 +744,8 @@ export const CATALOGO_ODOO: Tour[] = [
     "premium_upgrade": null,
     "deposit_pct": 25,
     "infants_are_free": true,
-    "min_days_ahead": 1,
-    "max_days_ahead": 365,
+    "min_days_ahead": 0,
+    "max_days_ahead": null,
     "schedules": [],
     "variants": [],
     "addons": [],
