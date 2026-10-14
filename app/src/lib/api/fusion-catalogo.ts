@@ -66,6 +66,7 @@ function aAddOn(a: AddOnOdoo, estatico?: AddOn): AddOn {
     base: a.base === 'group' ? 'grupo' : 'persona',
     precio: a.price,
     porDefecto: a.default_on,
+    ...(a.mandatory ?? estatico?.obligatorio ? { obligatorio: true } : {}),
     // `nota` es copy del front (la langosta no hay de marzo a junio): se conserva.
     ...(estatico?.nota ? { nota: estatico.nota } : {}),
     // A qué barcos aplica lo decide Odoo si lo dice; si no, lo que ya sabía

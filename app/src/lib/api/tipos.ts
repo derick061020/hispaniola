@@ -69,6 +69,9 @@ export type AddOn = {
   base: BaseAddOn
   price: number
   default_on: boolean
+  /** [2026-10-14] Se cobra siempre que aplique (la comida del Maite y del
+   *  Santa Maria): sale marcado y no se puede quitar. */
+  mandatory?: boolean
   /** Slugs de variante a las que aplica. Vacio = a todas. */
   only_variants: string[]
   /** Condicion por tamano de grupo. null = sin limite por ese lado. */

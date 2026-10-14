@@ -1438,21 +1438,25 @@ export const FICHAS: Record<string, FichaTour> = traducible({
     addOns: [
       {
         id: 'comida-maite',
-        etiqueta: 'Add the on-board meal',
-        descripcion:
-          'The Maite group rate covers the boat. Add lunch freshly grilled on board for US$ 20 per guest.',
+        // [2026-10-14, Derick] Siempre con comida: obligatoria, igual que en
+        // Odoo (`haa.addon.mandatory`). US$ 25 en los dos barcos.
+        etiqueta: 'Meal on board',
+        descripcion: 'Lunch cooked on board, included with your booking.',
         base: 'persona',
-        precio: 20,
+        precio: 25,
+        obligatorio: true,
         soloSubVariantes: ['maite'],
         soloHastaPersonas: 8,
       },
       {
         id: 'comida-santa-maria',
-        etiqueta: 'Add the on-board meal',
-        descripcion:
-          'The Santa Maria group rate covers the boat. Add lunch freshly grilled on board for US$ 25 per guest.',
+        // [2026-10-14, Derick] Siempre con comida: obligatoria, igual que en
+        // Odoo (`haa.addon.mandatory`). US$ 25 en los dos barcos.
+        etiqueta: 'Meal on board',
+        descripcion: 'Lunch cooked on board, included with your booking.',
         base: 'persona',
         precio: 25,
+        obligatorio: true,
         soloSubVariantes: ['santa-maria'],
         soloHastaPersonas: 13,
       },

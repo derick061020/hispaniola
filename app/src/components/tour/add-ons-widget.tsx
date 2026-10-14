@@ -1,5 +1,5 @@
 import { Check } from 'lucide-react'
-import { tp } from '@/lib/i18n'
+import { t, tp } from '@/lib/i18n'
 import { formatoDinero } from '@/data/home'
 import { precioAddOn, type AddOn } from '@/lib/tarifas'
 
@@ -42,6 +42,9 @@ export function AddOnsWidget({
   if (addOns.length === 0) return null
 
   function alternar(addOn: AddOn) {
+    // [2026-10-14] Un extra obligatorio (la comida del Maite y del Santa Maria)
+    // no se puede quitar: es parte del precio.
+    if (addOn.obligatorio) return
     const activo = elegidos.includes(addOn.id)
     onCambiar(activo ? elegidos.filter((i) => i !== addOn.id) : [...elegidos, addOn.id])
   }
@@ -49,7 +52,7 @@ export function AddOnsWidget({
   return (
     <div className="flex flex-col gap-2">
       {addOns.map((a) => {
-        const activo = elegidos.includes(a.id)
+        const activo = a.obligatorio || elegidos.includes(a.id)
         const importe = precioAddOn(a, personas)
 
         return (
@@ -63,7 +66,8 @@ export function AddOnsWidget({
               type="button"
               onClick={() => alternar(a)}
               aria-pressed={activo}
-              className="flex w-full items-start gap-3 p-3 text-left"
+              aria-disabled={a.obligatorio || undefined}
+              className={`flex w-full items-start gap-3 p-3 text-left ${a.obligatorio ? 'cursor-default' : ''}`}
             >
               <span
                 aria-hidden="true"
@@ -80,6 +84,11 @@ export function AddOnsWidget({
                     +{formatoDinero(importe)}
                   </span>
                 </span>
+                {a.obligatorio ? (
+                  <span className="mt-1 inline-flex whitespace-nowrap rounded-chip bg-aqua/15 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-aqua">
+                    {t('Always included')}
+                  </span>
+                ) : null}
                 {a.descripcion ? (
                   <span className="mt-0.5 block text-xs leading-relaxed text-navy-sub">
                     {a.descripcion}

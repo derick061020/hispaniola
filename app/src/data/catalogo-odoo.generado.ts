@@ -3,7 +3,7 @@
 // Es la foto del catálogo de Odoo que el front pinta cuando el backend no
 // contesta. Para actualizarla: `npm run sync:tarifas`.
 //
-// Última sincronía: 2026-10-14 13:09 UTC
+// Última sincronía: 2026-10-14 16:49 UTC
 import type { Tour } from '@/lib/api/tipos'
 
 export const CATALOGO_ODOO: Tour[] = [
@@ -211,7 +211,7 @@ export const CATALOGO_ODOO: Tour[] = [
             "to": 13,
             "price": 1000,
             "kind": "group",
-            "extra_per_pax": 25,
+            "extra_per_pax": null,
             "note": null
           },
           {
@@ -323,11 +323,12 @@ export const CATALOGO_ODOO: Tour[] = [
       {
         "slug": "comida-maite",
         "label": "Meal on board",
-        "description": "Lunch cooked on board. Included from 9 guests up.",
+        "description": "Lunch cooked on board, included with your booking.",
         "note": null,
         "base": "person",
         "price": 25,
         "default_on": false,
+        "mandatory": true,
         "only_variants": [
           "maite"
         ],
@@ -337,11 +338,12 @@ export const CATALOGO_ODOO: Tour[] = [
       {
         "slug": "comida-santa-maria",
         "label": "Meal on board",
-        "description": "Lunch cooked on board. Included from 14 guests up.",
+        "description": "Lunch cooked on board, included with your booking.",
         "note": null,
         "base": "person",
         "price": 25,
         "default_on": false,
+        "mandatory": true,
         "only_variants": [
           "santa-maria"
         ],
@@ -546,6 +548,7 @@ export const CATALOGO_ODOO: Tour[] = [
         "base": "person",
         "price": 30,
         "default_on": true,
+        "mandatory": false,
         "only_variants": [],
         "min_pax": null,
         "max_pax": null

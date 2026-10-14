@@ -454,6 +454,15 @@ export function WidgetReserva({
   // incluye— pero declarada AQUI, que es donde la necesita la cotizacion.
   const paxParaAddOns = esDual ? totalPersonas : personas
   const addOns = addOnsDisponibles(ficha, variante, paxParaAddOns)
+  // [2026-10-14, Derick: «el Santa Maria y el Maite deben ofrecerse siempre con
+  // comida incluida»] Lo que se cobra = lo elegido + lo OBLIGATORIO que aplique
+  // a este barco y este grupo. Va a la cotizacion, al total local y al enlace
+  // del checkout, asi que el precio sale con la comida desde el principio.
+  const elegidosEfectivos = [
+    ...addOnsElegidos,
+    ...addOns.filter((a) => a.obligatorio && !addOnsElegidos.includes(a.id)).map((a) => a.id),
+  ]
+  const hayAddOnObligatorio = addOns.some((a) => a.obligatorio)
 
   // [2026-08-18] EL PRECIO BUENO LO PONE ODOO (ver use-cotizacion.ts). Hasta
   // hoy la ficha calculaba en el navegador y el checkout preguntaba a Odoo:
@@ -477,7 +486,7 @@ export function WidgetReserva({
             : { adults: personas, children: 0, infants: 0 },
           paquete,
           ninosPremium,
-          addons: addOnsElegidos.filter((id) => addOns.some((a) => a.id === id)),
+          addons: elegidosEfectivos.filter((id) => addOns.some((a) => a.id === id)),
         },
   )
 
@@ -652,7 +661,7 @@ export function WidgetReserva({
   // uno elegido; la condición se deja escrita entera porque es la regla, no el
   // estado actual del catálogo.
   const hayAddOnPedido = addOns.some((a) => addOnsElegidos.includes(a.id) && !a.porDefecto)
-  const importeAddOns = totalAddOns(addOns, addOnsElegidos, paxParaAddOns)
+  const importeAddOns = totalAddOns(addOns, elegidosEfectivos, paxParaAddOns)
   const totalLocal = totalTour === null ? null : totalTour + importeAddOns
   // Odoo si ha contestado; el cálculo local mientras tanto.
   const total = cotizacion.total ?? totalLocal
@@ -1285,11 +1294,14 @@ export function WidgetReserva({
           por ninguna parte. La puerta se abre entonces aunque no haya fecha.
           Se compara contra los add-ons que arrancan marcados (el álbum) para
           no confundir «lo eligió» con «venía puesto». */}
-      {addOns.length > 0 && (fecha !== null || hayAddOnPedido) ? (
+      {/* [2026-10-14] Con un extra obligatorio (la comida del Maite y del Santa
+          Maria) el recuadro sale desde el principio, sin esperar a la fecha:
+          es parte del precio y tiene que verse de donde sale el total. */}
+      {addOns.length > 0 && (fecha !== null || hayAddOnPedido || hayAddOnObligatorio) ? (
         <AddOnsWidget
           addOns={addOns}
           personas={paxParaAddOns}
-          elegidos={addOnsElegidos}
+          elegidos={elegidosEfectivos}
           onCambiar={onAddOnsChange}
         />
       ) : null}
@@ -1399,8 +1411,8 @@ export function WidgetReserva({
                 // contra Odoo eso además descuadraba el precio — la ficha los
                 // sumaba y el checkout no—, así que ya no es solo una compra
                 // perdida: son dos números distintos para la misma reserva.
-                ...(addOnsElegidos.length > 0
-                  ? { addons: addOnsElegidos.filter((id) => addOns.some((a) => a.id === id)).join(',') }
+                ...(elegidosEfectivos.length > 0
+                  ? { addons: elegidosEfectivos.filter((id) => addOns.some((a) => a.id === id)).join(',') }
                   : {}),
               }).toString()}`}
             >

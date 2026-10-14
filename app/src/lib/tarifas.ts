@@ -90,6 +90,13 @@ export type AddOn = {
    *  conserva el campo porque la mecánica de premarcado sigue implementada en
    *  el panel de add-ons y volver a usarla es poner esta línea, no reescribirlo. */
   porDefecto?: boolean
+  /** [2026-10-14, Derick: «el Santa Maria y el Maite deben ofrecerse siempre
+   *  con comida incluida»] Obligatorio: no es un upsell, es parte del precio.
+   *  Se suma siempre que aplique (barco y tamano de grupo) y el panel lo pinta
+   *  marcado y sin casilla. No choca con la nota de la casilla premarcada
+   *  (Directiva 2011/83/UE): no es un pago ADICIONAL, es el precio del tour,
+   *  y el servidor lo cobra igual aunque el front no lo mande. */
+  obligatorio?: boolean
   /** Nota honesta del cliente que hay que mostrar junto al add-on
    *  (ej. la langosta no está disponible de marzo a junio). */
   nota?: string

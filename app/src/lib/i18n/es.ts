@@ -2905,4 +2905,7 @@ export const ES: Record<string, string> = {
   "Saona Island Catuano goes by speedboat to Catuano beach and the Las Palmillas Natural Pool. Saona Island Mano Juan goes by speedboat to the fishing village of Mano Juan, Playa Toro and the Natural Pool. The Catamaran does the Catuano route at a relaxed pace and is the option for large groups (up to 70 guests).": "Isla Saona Catuano va en lancha a la playa de Catuano y la Piscina Natural de Las Palmillas. Isla Saona Mano Juan va en lancha al pueblo pesquero de Mano Juan, Playa Toro y la Piscina Natural. El Catamarán hace la ruta de Catuano con calma y es la opción para grupos grandes (hasta 70 personas).",
   "Up to 10 guests (+US$ 130 per person from 11 up to 25)": "Hasta 10 personas (+US$ 130 por persona de 11 a 25)",
   "Departing from Bayahibe, you'll spend the day exploring the island's most beautiful locations, including Catuano, Las Palmillas and, on Saona Island Mano Juan, the charming fishing village of Mano Juan.": "Saliendo de Bayahíbe, pasas el día recorriendo los rincones más bonitos de la isla: Catuano, Las Palmillas y, en Isla Saona Mano Juan, el encantador pueblo pesquero de Mano Juan.",
+  // [2026-10-14] Comida obligatoria del Maite y del Santa Maria.
+  "Always included": "Siempre incluida",
+  "Lunch cooked on board, included with your booking.": "Almuerzo cocinado a bordo, incluido en tu reserva.",
 }
