@@ -358,8 +358,16 @@ function FlujoReserva({
 
   function aplicarGrupo(a: number, ni: number, be: number) {
     const n = a + ni
-    setPlatos((prev) => Array.from({ length: n }, (_, i) => prev[i] ?? ''))
-    checkout.sincronizar({ pax: { adults: a, children: ni, infants: be } })
+    // [2026-10-14, la oficina: «hizo una reserva para 9 pax pero la comida la
+    // dejo seleccionar para 10»] La lista se recortaba EN PANTALLA pero al
+    // servidor solo iba el numero de personas: los platos que ya estaban
+    // guardados (10) se quedaban en el pedido. Ahora viajan juntos.
+    const platosNuevos = Array.from({ length: n }, (_, i) => platos[i] ?? '')
+    setPlatos(platosNuevos)
+    checkout.sincronizar({
+      pax: { adults: a, children: ni, infants: be },
+      ...(hayPasoMenu ? { dishes: platosNuevos } : {}),
+    })
     // El desglose entero a la URL: la pantalla lee el total y el pedido lee los
     // tres carriles, y si se separan dejan de contar lo mismo.
     onConfigurar({ personas: n, adultos: a, ninos: ni, bebes: be })
