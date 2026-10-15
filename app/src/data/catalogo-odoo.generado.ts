@@ -3,7 +3,7 @@
 // Es la foto del catálogo de Odoo que el front pinta cuando el backend no
 // contesta. Para actualizarla: `npm run sync:tarifas`.
 //
-// Última sincronía: 2026-10-14 16:49 UTC
+// Última sincronía: 2026-10-15 17:10 UTC
 import type { Tour } from '@/lib/api/tipos'
 
 export const CATALOGO_ODOO: Tour[] = [
@@ -199,7 +199,7 @@ export const CATALOGO_ODOO: Tour[] = [
         "slug": "santa-maria",
         "name": "Santa Maria",
         "description": "Premium cruise · 4h · up to 45 guests",
-        "capacity_label": "Up to 45 guests (plated up to 20, skewers from 21)",
+        "capacity_label": "Up to 45 guests (plated up to 19, skewers from 20)",
         "duration_label": "4 hours",
         "duration_hours": 4,
         "photo": "flota-santa-maria",

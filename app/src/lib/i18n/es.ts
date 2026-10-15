@@ -2908,4 +2908,11 @@ export const ES: Record<string, string> = {
   // [2026-10-14] Comida obligatoria del Maite y del Santa Maria.
   "Always included": "Siempre incluida",
   "Lunch cooked on board, included with your booking.": "Almuerzo cocinado a bordo, incluido en tu reserva.",
+  // [2026-10-15] Buffet de pinchos desde 20 personas.
+  "From 20 guests the menu changes: it is served as a skewer buffet for the whole group.": "A partir de 20 personas el menú cambia: se sirve como buffet de brochetas para todo el grupo.",
+  "From 20 guests the menu changes. See the skewer buffet.": "A partir de 20 personas el menú cambia. Mira el buffet de brochetas.",
+  "From 20 guests, on both 3-hour and 4-hour charters, the menu is served as a skewer buffet: chicken, beef and shrimp, freshly grilled on board and served for the whole group.": "A partir de 20 personas, en los charters de 3 y de 4 horas, el menú se sirve como buffet de brochetas: pollo, res y camarones, a la parrilla a bordo y para todo el grupo.",
+  "Up to 45 guests (plated up to 19, skewers from 20)": "Hasta 45 personas (emplatado hasta 19, brochetas a partir de 20)",
+  "Groups of 20+": "Grupos de 20 o más",
+  "From 20 guests": "A partir de 20 personas",
 }

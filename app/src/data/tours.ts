@@ -1031,7 +1031,7 @@ export const FICHAS: Record<string, FichaTour> = traducible({
         // ⚠️ Mismo error que GrandMa: el 20 era el corte del menu emplatado,
         // no el aforo. Copy aprobado y tarifario coinciden en 45.
         descripcion: 'Premium cruise · 4h · up to 45 guests',
-        capacidad: 'Up to 45 guests (plated up to 20, skewers from 21)',
+        capacidad: 'Up to 45 guests (plated up to 19, skewers from 20)',
         duracion: '4 hours',
         duracionHoras: 4,
         foto: 'flota-santa-maria',
@@ -1161,7 +1161,7 @@ export const FICHAS: Record<string, FichaTour> = traducible({
           // carta: la del buffet de pinchos no existe por escrito todavia y
           // este proyecto no inventa platos. Cuando llegue, es una carta mas.
           aforo: 'Up to 20 guests',
-          nota: 'From 21 guests the menu changes. See the skewer buffet.',
+          nota: 'From 20 guests the menu changes. See the skewer buffet.',
           // Son los 7 platos Premium de la casa — los mismos que el copy
           // aprobado describe («seafood, certified Angus beef, Surf & Turf,
           // vegetarian dishes and more») y los mismos que ya sirven el
@@ -1181,7 +1181,7 @@ export const FICHAS: Record<string, FichaTour> = traducible({
           id: '3h',
           pestana: '3-hour menu',
           aforo: 'Up to 20 guests',
-          nota: 'From 21 guests the menu changes. See the skewer buffet.',
+          nota: 'From 20 guests the menu changes. See the skewer buffet.',
           titulo: 'Taste of Hispaniola Menu',
           // Nombre canonico del menu de 3 h, de WEBSITE-TOURS pag. 17.
           texto:
@@ -1208,8 +1208,8 @@ export const FICHAS: Record<string, FichaTour> = traducible({
           // hasta 20 pax; skewers de 21 pax en adelante») tanto en los de 3 h
           // como en los de 4 h.
           id: '21+',
-          pestana: 'Groups of 21+',
-          aforo: 'From 21 guests',
+          pestana: 'Groups of 20+',
+          aforo: 'From 20 guests',
           titulo: 'Skewer buffet',
           // Sin sello «New» (Samuel, 2026-08-07). El cliente lo dibuja en su
           // maqueta de la slide 74, pero en la fila de pestanas no marcaba una
@@ -1218,7 +1218,7 @@ export const FICHAS: Record<string, FichaTour> = traducible({
           // distintivo: las tres son igual de vigentes y lo que las separa es
           // la regla (duracion o numero de personas), no la antiguedad.
           texto:
-            'From 21 guests, on both 3-hour and 4-hour charters, the menu is served as a skewer buffet: chicken, beef and shrimp, freshly grilled on board and served for the whole group.',
+            'From 20 guests, on both 3-hour and 4-hour charters, the menu is served as a skewer buffet: chicken, beef and shrimp, freshly grilled on board and served for the whole group.',
           // Sin rejilla de platos: en un buffet no se elige plato por persona,
           // asi que la carta no tiene nada que listar. Lo que hay que enseñar
           // es la mesa, la racion y el servicio — el bento de abajo.

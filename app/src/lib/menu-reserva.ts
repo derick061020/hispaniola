@@ -76,7 +76,10 @@ export function cartaCharterDe(
   // barco al que todavía no se le haya puesto el número no se quede sin carta.
   const horas = barco?.duracionHoras ?? (barco?.duracion?.startsWith('3') ? 3 : undefined)
   const id: CartaCharter['id'] | null =
-    personas != null && personas >= 21
+    // [2026-10-15, Rossanna: «a partir de 20 pax no es platos, es pinchos
+    // premium»] Antes 21 (tarifario: «emplatado hasta 20»). El id interno de
+    // la carta sigue siendo '21+' para no tocar lo que lo usa.
+    personas != null && personas >= 20
       ? '21+'
       : horas === 3
         ? '3h'
@@ -144,7 +147,7 @@ export function menuDeLaReserva({
         ? undefined
         : carta.id === '21+'
           ? t('Your group is 21 or more, so the menu is served as a buffet for everyone — there is no dish to pick per guest.')
-          : t('From 21 guests the menu changes: it is served as a skewer buffet for the whole group.'),
+          : t('From 20 guests the menu changes: it is served as a skewer buffet for the whole group.'),
       platos: carta.platos,
     }
   }
