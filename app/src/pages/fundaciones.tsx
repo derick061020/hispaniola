@@ -104,7 +104,7 @@ export function FundacionesPage() {
           </div>
           <div>
             <p className="text-eyebrow font-semibold uppercase tracking-[0.14em] text-aqua-dark">
-              Punta Cana · Desde 2012
+              Punta Cana · Desde 2010
             </p>
             <p className="font-mono text-[11px] text-navy-soft">--text-eyebrow · Poppins caps</p>
           </div>

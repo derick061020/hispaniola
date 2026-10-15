@@ -120,14 +120,22 @@ export const PERFILES_TRABAJO: PerfilTrabajo[] = traducible([
 //     allí lo absorbió el textarea, aquí lo absorbe contenido útil.
 //
 // ⚠️ NINGÚN dato nuevo: los cuatro ya viven vetados en otra parte del sitio.
-// El número de barcos NO se escribe a mano — se cuenta sobre FLOTA
-// (data/nosotros.ts, los 6 catamaranes reales de about-hispaniola.php), para
-// que añadir o quitar uno allí no deje esta frase mintiendo.
+//
+// [2026-10-15, petición del cliente — entrega del 15 oct, puntos 08 y 13]
+// Pasan de cuatro a tres credenciales:
+//   · «since 2012» → «since 2010». La empresa y su fundador fechan el primer
+//     barco en 2010 en todo el sitio (footer, /fleet, /crew); esta página era
+//     la única que decía 2012.
+//   · Se retira «#1 on TripAdvisor 7 years in a row»: el cliente ya no usa ese
+//     dato.
+//   · La flota va SIN cifra. Antes contaba FLOTA.length («6 catamarans»), pero
+//     Operaciones aún no confirma qué barcos operan los tours de Hispaniola
+//     (la web de la empresa dice 12 embarcaciones, que incluyen otra marca del
+//     grupo). Cuando lo confirme, se puede volver a poner el número.
 export const RESPALDO: string[] = traducible([
-  'Our own fleet: {barcos} catamarans with names and a fixed crew.',
+  'Our own fleet of catamarans, each with a name and a fixed crew.',
   'The only excursion company in the DR with a floating kitchen.',
-  'Operating in Punta Cana since 2012.',
-  '#1 on TripAdvisor 7 years in a row.',
+  'Operating in Punta Cana since 2010.',
 ])
 
 export const PERFIL_POR_DEFECTO: PerfilTrabajo['id'] = 'proveedor'

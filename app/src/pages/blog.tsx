@@ -28,7 +28,7 @@ export function BlogPage() {
     <div>
       <Meta
         titulo={t('Blog')}
-        descripcion={t('Honest guides, stories from the sea and real advice for your trip to Punta Cana, told by the people who have been sailing this coast since 2012.')}
+        descripcion={t('Honest guides, stories from the sea and real advice for your trip to Punta Cana, told by the people who have been sailing this coast since 2010.')}
         ruta="/blog"
       />
       {/* El fondo pasa de blanco a --color-fondo-ficha (el gris frío que ya

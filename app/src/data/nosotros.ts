@@ -441,7 +441,9 @@ export const FLOTA: BarcoFlota[] = traducible([
 export const NOSOTROS = traducible({
   eyebrow: 'About us',
   titulo: 'The crew and the fleet behind every tour',
-  sub: 'Two catamarans, a floating kitchen and a team that has been sailing the Punta Cana coast since 2012.',
+  // [2026-10-15, petición del cliente] 2012 → 2010 y sin número de barcos
+  // (Operaciones aún no lo confirma). Mismo cambio en equipoTexto.
+  sub: 'Our own catamarans, a floating kitchen and a team that has been sailing the Punta Cana coast since 2010.',
   // PLAN-INTERNAS-V2.md: fotos del hero-interna en fundido.
   galeria: ['galeria-charter-privado-1-v2', 'hero-catamaran-1-v2', 'galeria-semi-privado-3'],
 
@@ -453,7 +455,7 @@ export const NOSOTROS = traducible({
   equipoEyebrow: 'The team',
   equipoTitulo: 'The team that welcomes you',
   equipoTexto:
-    'Spanish management based in Punta Cana since 2012, and a team that lives the sea with you, the same one that answers you when you write in.',
+    'Spanish management based in Punta Cana since 2010, and a team that lives the sea with you, the same one that answers you when you write in.',
 
   tripulacionTitulo: 'And our Dominican crew on board',
   // Condensado de "Nuestro maravilloso equipo está altamente capacitado,

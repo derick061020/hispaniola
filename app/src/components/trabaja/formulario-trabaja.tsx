@@ -7,7 +7,6 @@ import { Campo } from '@/components/ui/campo'
 import { IconoWhatsApp } from '@/components/ui/iconos-redes'
 import { PERFILES_TRABAJO, PERFIL_POR_DEFECTO, RESPALDO, esPerfilValido } from '@/data/trabaja'
 import type { PerfilTrabajo } from '@/data/trabaja'
-import { FLOTA } from '@/data/nosotros'
 import { WHATSAPP_URL } from '@/data/tours'
 import { useDevFlag } from '@/dev/use-dev-flag'
 import { t } from '@/lib/i18n'
@@ -162,10 +161,10 @@ function PasosDespues({ perfil }: { perfil: PerfilTrabajo }) {
   )
 }
 
-// «Con quién trabajarías» — cierra el carril con las cuatro credenciales que
-// el sitio ya sostiene en otras páginas (ver RESPALDO en data/trabaja.ts para
-// el porqué y la procedencia de cada una). El número de barcos se CUENTA
-// sobre FLOTA en vez de escribirse, para que no envejezca solo.
+// «Con quién trabajarías» — cierra el carril con las credenciales que el
+// sitio ya sostiene en otras páginas (ver RESPALDO en data/trabaja.ts para el
+// porqué y la procedencia de cada una). [2026-10-15] Ya no lleva número de
+// barcos: el cliente pidió quitar la cifra hasta que Operaciones la confirme.
 function Respaldo() {
   return (
     <div className="border-t border-linea p-6 sm:p-7">
@@ -176,7 +175,7 @@ function Respaldo() {
         {RESPALDO.map((linea) => (
           <li key={linea} className="flex items-start gap-2.5 text-sm leading-snug text-navy-sub">
             <Check className="mt-0.5 size-3.5 shrink-0 text-aqua-dark" strokeWidth={2.5} aria-hidden="true" />
-            {linea.replace('{barcos}', String(FLOTA.length))}
+            {linea}
           </li>
         ))}
       </ul>
