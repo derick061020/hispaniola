@@ -23,6 +23,15 @@ const lineas = [
   'Options -MultiViews',
   'RewriteEngine On',
   '',
+  // [2026-10-16, pedido de Marketing: «me afecta las campañas»] www → sin www,
+  // 301, con la ruta y los parámetros (utm_*, gclid…). Va PRIMERO para que
+  // las redirecciones de abajo no salten antes y hagan dos saltos. Sin «?» en
+  // el destino, Apache añade la query original tal cual. Solo este host: la
+  // misma .htaccess sirve QA (hispaniola.botizate.com), que no se toca.
+  '# --- www -> dominio sin www (301, conserva ruta y query) ---',
+  'RewriteCond %{HTTP_HOST} ^www\\.hispaniolaaquaticadventures\\.com$ [NC]',
+  'RewriteRule ^ https://hispaniolaaquaticadventures.com%{REQUEST_URI} [R=301,L]',
+  '',
   `# --- ${vercel.redirects.length} redirecciones de las URLs viejas en espanol ---`,
 ]
 
