@@ -4,6 +4,10 @@
 Options -MultiViews
 RewriteEngine On
 
+# --- www -> dominio sin www (301, conserva ruta y query) ---
+RewriteCond %{HTTP_HOST} ^www\.hispaniolaaquaticadventures\.com$ [NC]
+RewriteRule ^ https://hispaniolaaquaticadventures.com%{REQUEST_URI} [R=301,L]
+
 # --- 49 redirecciones de las URLs viejas en espanol ---
 RewriteRule "^tours/semi-private-premium/?$" "/tours/caribbean-escape" [R=301,L]
 RewriteRule "^book/semi-private-premium/?$" "/book/caribbean-escape" [R=301,L]
