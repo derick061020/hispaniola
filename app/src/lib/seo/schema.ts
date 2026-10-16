@@ -1,7 +1,7 @@
 import { idiomaUI } from '@/lib/i18n'
 // Constructores de datos estructurados (schema.org). Todo sale de src/data/*
 // — nunca se inventa un dato que el sitio no muestre ya en algún lado.
-import { CONTACTO } from '@/data/home'
+import { CONTACTO, REDES } from '@/data/home'
 import type { Tour } from '@/data/home'
 import type { FichaTour, PreguntaTour } from '@/data/tours'
 
@@ -22,6 +22,9 @@ export function schemaOrganizacion() {
     // que se está pintando: el JSON-LD tiene que describir la página que el
     // rastreador está viendo, no la que había antes de pulsar el toggle.
     inLanguage: idiomaUI(),
+    // [2026-10-16] Perfiles oficiales: Google los usa para enlazar la ficha
+    // de la empresa con sus redes.
+    sameAs: REDES.flatMap((r) => (r.url ? [r.url] : [])),
     telephone: '+1-829-305-2804',
     email: CONTACTO.email,
     address: {

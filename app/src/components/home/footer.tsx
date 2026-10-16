@@ -321,14 +321,16 @@ export function Footer({ cta = t('Ready for an unforgettable day?') }: { cta?: s
             {REDES.map((red) => {
               const Icono = ICONO_RED[red.id]
               const clases =
-                'grid size-9 place-items-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20'
+                // [2026-10-16] size-10 (40px): con los enlaces ya reales, el
+                // dedo en móvil necesita algo más de área que 36px.
+                'grid size-10 place-items-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20'
               // Sin URL real no se inventa un destino: EnlacePrototipo deja
               // claro (title) que el enlace está pendiente del cliente.
               return (
                 <li key={red.id}>
                   {red.url ? (
-                    <a href={red.url} target="_blank" rel="noopener" aria-label={red.nombre} className={clases}>
-                      <Icono className="size-4" aria-hidden="true" />
+                    <a href={red.url} target="_blank" rel="noopener noreferrer" aria-label={red.nombre} className={clases}>
+                      <Icono className="size-5" aria-hidden="true" />
                     </a>
                   ) : (
                     <EnlacePrototipo aria-label={red.nombre} className={clases}>

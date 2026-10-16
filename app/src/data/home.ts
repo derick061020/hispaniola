@@ -1643,13 +1643,14 @@ export const MEDIOS_PAGO: MedioPago[] = traducible([
 // proyecto (ni en prototipo/datos.js ni en la auditoría de la web actual) —
 // misma situación que los perfiles de reseñas y los PREMIOS. Con `url: null`
 // el componente pinta un EnlacePrototipo en vez de inventar un destino.
+// [2026-10-16] URLs reales enviadas por el cliente: ya ninguna es null.
 export type RedSocial = { id: string; nombre: string; url: string | null }
 
 export const REDES: RedSocial[] = traducible([
-  { id: 'instagram', nombre: 'Instagram', url: null },
-  { id: 'facebook', nombre: 'Facebook', url: null },
-  { id: 'tiktok', nombre: 'TikTok', url: null },
-  { id: 'youtube', nombre: 'YouTube', url: null },
+  { id: 'instagram', nombre: 'Instagram', url: 'https://www.instagram.com/hispaniolaaquaticadventures' },
+  { id: 'facebook', nombre: 'Facebook', url: 'https://www.facebook.com/hispaniolaaquaticadventurespuntacana' },
+  { id: 'tiktok', nombre: 'TikTok', url: 'https://www.tiktok.com/@hispaniolaboatspuntacana' },
+  { id: 'youtube', nombre: 'YouTube', url: 'https://www.youtube.com/@hispaniolaaquaticadventure' },
 ])
 
 // Monedas. [2026-08-25] Ya NO es visual: el selector convierte de verdad, con
