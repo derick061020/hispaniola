@@ -15,6 +15,7 @@ import { FlotaPage } from '@/pages/flota'
 import { TripulacionPage } from '@/pages/tripulacion'
 import { TripulacionBarcoPage } from '@/pages/tripulacion-barco'
 import { InstalacionesPage } from '@/pages/instalaciones'
+import { ComidaYBarPage } from '@/pages/comida-y-bar'
 import { MarineParkPage } from '@/pages/marine-park'
 import { MuseoSubacuaticoPage } from '@/pages/museo-subacuatico'
 import { FundacionPage } from '@/pages/fundacion'
@@ -120,6 +121,7 @@ const REDIRECCIONES_ES_EN: [string, string][] = [
   ['/ventaja-competitiva', '/competitive-advantage'],
   ['/tripulacion', '/crew'],
   ['/instalaciones', '/facilities'],
+  ['/comida-y-bar', '/food-and-bar'],
   ['/flota', '/fleet'],
   ['/fundacion', '/foundation'],
   ['/guias', '/guides'],
@@ -222,6 +224,8 @@ function App() {
             cabecera de pages/tripulacion-barco.tsx. */}
         <Route path="/crew-boat" element={<TripulacionBarcoPage />} />
         <Route path="/facilities" element={<InstalacionesPage />} />
+        {/* [2026-10-16] Food & Bar — en QA hasta que el cliente la apruebe. */}
+        <Route path="/food-and-bar" element={<ComidaYBarPage />} />
         {/* [v3 2026-08-06, plan 05 §6] Pagina NUEVA: el parque marino.
             Solo en ingles — nace despues de la decision de slugs EN, asi que
             no tiene ruta vieja en español de la que redirigir. */}

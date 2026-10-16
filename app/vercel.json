@@ -156,6 +156,11 @@
       "permanent": true
     },
     {
+      "source": "/comida-y-bar",
+      "destination": "/food-and-bar",
+      "permanent": true
+    },
+    {
       "source": "/flota",
       "destination": "/fleet",
       "permanent": true

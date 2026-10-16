@@ -2,6 +2,7 @@ import type { ComponentType } from 'react'
 import { Link } from 'react-router-dom'
 import {
   Building2,
+  UtensilsCrossed,
   CircleHelp,
   Compass,
   Fish,
@@ -43,6 +44,7 @@ const ICONOS: Record<string, ComponentType<{ className?: string }>> = {
   // Por eso ahora hay un fallback (ver ICONO_FALLBACK): que falte un icono
   // debe degradar, no tumbar el menú.
   instalaciones: Building2,
+  'comida-y-bar': UtensilsCrossed,
   flota: Ship,
   sostenibilidad: Leaf,
   fundacion: Sprout,

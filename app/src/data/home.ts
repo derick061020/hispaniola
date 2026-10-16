@@ -468,6 +468,14 @@ export const NAV_NOSOTROS: ItemNav[] = traducible([
     to: '/facilities',
   },
   {
+    // [2026-10-16] Página nueva Food & Bar. El texto es el aprobado del
+    // «06- FLOATING KITCHEN» de la home (WEBSITE - INICIO pág. 4).
+    id: 'comida-y-bar',
+    nombre: 'Food & Bar',
+    descripcion: 'An exclusive live cooking experience with fresh seafood and gourmet menu choices.',
+    to: '/food-and-bar',
+  },
+  {
     // [v3 2026-08-06, WEBSITE - NOSOTROS pag. 1 + plan 05 §1] El megamenu pasa
     // de 3 entradas a 4: el cliente da la descripcion de MARINE PARK junto a
     // las otras tres, o sea que para el la pagina ya existe.

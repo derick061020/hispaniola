@@ -170,6 +170,11 @@ export function Footer({ cta = t('Ready for an unforgettable day?') }: { cta?: s
               </Link>
             </li>
             <li>
+              <Link to="/food-and-bar" className="hover:text-white">
+                {t('Food & Bar')}
+              </Link>
+            </li>
+            <li>
               <Link to="/fleet" className="hover:text-white">
                 {t('Fleet')}
               </Link>
