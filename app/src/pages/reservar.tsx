@@ -732,6 +732,19 @@ function FlujoReserva({
     checkout.sincronizar({ discounts: activo ? ['efectivo'] : [] })
   }
 
+  // [2026-10-17, Gerencia: «es demasiado confuso… el cliente no completó la
+  // reserva»] El pedido guardado puede traer ya el efectivo de una visita
+  // anterior y la casilla arrancaba en «tarjeta»: el resumen restaba el 5% en
+  // el total Y ADEMAS prometia otro 5% en efectivo (648 arriba, «baja a 487»
+  // abajo). La casilla sigue a lo que dice el servidor.
+  const efectivoEnServidor = !!checkout.pedido?.quote?.discounts?.some(
+    (d) => d.granted && d.id === 'efectivo',
+  )
+  useEffect(() => {
+    if (efectivoEnServidor && !pagaEnEfectivo) setPagaEnEfectivo(true)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [efectivoEnServidor])
+
   const cambiarPlato = (persona: number, plato: string) =>
     setPlatos((prev) => prev.map((p, i) => (i === persona ? plato : p)))
 
