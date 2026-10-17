@@ -153,7 +153,13 @@ export function ResumenReserva({
   // Dos cosas distintas que la fusion dejo con el mismo nombre: si el
   // cliente ELIGIO pagar en efectivo, y CUANTO seria el saldo si lo
   // hiciera. Se separan, o el texto de abajo imprime un booleano.
-  const pagaEnEfectivo = metodoPago === 'efectivo'
+  // [2026-10-17] Tambien cuando el descuento de efectivo YA viene aplicado en
+  // la cotizacion: si no, el total lo restaba y el texto de abajo prometia
+  // restarlo otra vez («baja a 487»), que es lo que hizo abandonar a una
+  // clienta.
+  const pagaEnEfectivo =
+    metodoPago === 'efectivo' ||
+    !!(descuentos ?? []).some((d) => d.granted && d.id === 'efectivo' && (importeEfectivo ?? 0) > 0)
   const saldoEnEfectivo = Math.round(saldo * 0.95)
   const ahorro = saldo - saldoEnEfectivo
 
