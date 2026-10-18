@@ -322,13 +322,17 @@ export function Footer({ cta = t('Ready for an unforgettable day?') }: { cta?: s
             <span className="font-semibold text-white">★ {RESENAS_AGREGADO.rating}</span> ·{' '}
             {numero(RESENAS_AGREGADO.total)} {t('reviews · #1 on TripAdvisor for 7 years')}
           </p>
-          <ul className="mt-3 flex flex-wrap items-center gap-2">
+          {/* [2026-10-18, Marketing: «los íconos de redes sociales que resalten
+              más»] Con su propio rótulo y en círculo BLANCO macizo (antes
+              blanco al 10% sobre el océano, que se perdía): 44 px, icono navy,
+              coral al pasar por encima. Sin colores de marca de cada red: la
+              paleta sigue siendo la de Hispaniola. */}
+          <p className="mt-5 text-sm font-semibold text-white">{t('Follow us')}</p>
+          <ul className="mt-2 flex flex-wrap items-center gap-3">
             {REDES.map((red) => {
               const Icono = ICONO_RED[red.id]
               const clases =
-                // [2026-10-16] size-10 (40px): con los enlaces ya reales, el
-                // dedo en móvil necesita algo más de área que 36px.
-                'grid size-10 place-items-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20'
+                'grid size-11 place-items-center rounded-full bg-white text-navy shadow-card ring-2 ring-white/30 transition hover:-translate-y-0.5 hover:bg-coral hover:text-white'
               // Sin URL real no se inventa un destino: EnlacePrototipo deja
               // claro (title) que el enlace está pendiente del cliente.
               return (
@@ -336,6 +340,7 @@ export function Footer({ cta = t('Ready for an unforgettable day?') }: { cta?: s
                   {red.url ? (
                     <a href={red.url} target="_blank" rel="noopener noreferrer" aria-label={red.nombre} className={clases}>
                       <Icono className="size-5" aria-hidden="true" />
+                      <span className="sr-only">{red.nombre}</span>
                     </a>
                   ) : (
                     <EnlacePrototipo aria-label={red.nombre} className={clases}>
