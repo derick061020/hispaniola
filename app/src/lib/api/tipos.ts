@@ -7,7 +7,7 @@
 
 export type Moneda = 'USD'
 export type Paquete = 'light' | 'premium'
-export type BaseAddOn = 'person' | 'group'
+export type BaseAddOn = 'person' | 'group' | 'unit'
 export type ModeloPrecio = 'flat' | 'dual' | 'tiers' | 'marginal'
 export type ModoReserva = 'full' | 'quote' | 'inquiry'
 export type Turno = 'am' | 'pm'
@@ -358,6 +358,9 @@ export type ParcheCheckout = {
   discounts?: string[]
   dishes?: (string | { guest: number; dish: string })[]
   addons?: string[]
+  /** [2026-10-17] Productos de la Fundación (unidades). Ver
+   *  components/reservar/fundacion-checkout.tsx. */
+  foundation?: { slug: string; qty: number }[]
   meta?: MetaOrigen
 }
 

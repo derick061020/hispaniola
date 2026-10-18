@@ -43,6 +43,14 @@ export const COMIDA_Y_BAR = traducible({
     // WEBSITE - INICIO pág. 4, «06- FLOATING KITCHEN».
     lead: 'An exclusive live cooking experience with fresh seafood and gourmet menu choices.',
     imagen: { src: '/fotos/ev-corporate-menu-15.webp', alt: 'Grilled lobster and skewers served on deck' },
+    // Cifras del hero, todas de contenido aprobado: los 7 platos (WEBSITE-
+    // TOURS pág. 4 y 17), la barra libre (INICIO pág. 4-5) y los 3 niveles
+    // de barra de eventos (tarifario).
+    cifras: [
+      { valor: '7', texto: 'gourmet dishes to choose from' },
+      { valor: 'Live', texto: 'show cooking in the Floating Kitchen' },
+      { valor: '3', texto: 'open bar levels for events' },
+    ],
   },
   // Accesos rápidos bajo el hero: que en el móvil se vea de entrada que hay
   // dos mitades y se pueda saltar a la que interesa.
@@ -70,6 +78,7 @@ export const COMIDA_Y_BAR = traducible({
     { src: '/fotos/ev-corporate-menu-13.webp', alt: 'A guest being served at the buffet on deck' },
     { src: '/fotos/ev-corporate-menu-16.webp', alt: 'Grilled lobster and chicken skewers' },
     { src: '/fotos/ev-corporate-menu-8.webp', alt: 'Chef preparing appetizers on board' },
+    { src: '/fotos/ev-corporate-menu-3.webp', alt: 'Grilled lobster, fish and calamari plated on board' },
   ],
   menus: {
     eyebrow: 'Menus',
@@ -121,6 +130,39 @@ export const COMIDA_Y_BAR = traducible({
     eventosCta: 'See events',
   },
 })
+
+// [2026-10-18] Los tres niveles de barra de eventos EN LISTAS, como los
+// presenta Party Boat («The bottles», «Cocktails»…). Es el MISMO contenido que
+// `BARRAS_EVENTO` (data/eventos.ts, tarifario del cliente del 2026-10-08),
+// solo partido en piezas para que se compare de un vistazo. Nada añadido: el
+// Rompón y las marcas del Caribbean que lista la web de Party Boat NO están en
+// el tarifario de Hispaniola y no se ponen.
+export const NIVELES_BAR = traducible([
+  {
+    id: 'caribbean',
+    grupos: [
+      { titulo: 'Bottles', items: ['Dominican rum', 'Vodka', 'Tequila', 'Whisky'] },
+      { titulo: 'Beer', items: ['Presidente beer'] },
+      { titulo: 'Cocktails', items: ['Cuba Libre', 'Screwdriver', 'Whisky & Coke', 'Tequila Sunrise'] },
+    ],
+  },
+  {
+    id: 'caribbean-plus',
+    grupos: [
+      { titulo: 'Bottles', items: ['Everything in Caribbean'] },
+      { titulo: 'Wine', items: ['White wine'] },
+      { titulo: 'Cocktails', items: ['Mojito', 'Piña Colada', 'Margarita', 'Tequila Sunrise', 'Hispaniola Tropical Punch'] },
+    ],
+  },
+  {
+    id: 'signature',
+    grupos: [
+      { titulo: 'Bottles', items: ['Brugal Extra Viejo', 'Absolut', 'José Cuervo', 'Johnnie Walker'] },
+      { titulo: 'Wine', items: ['Red wine', 'White wine', 'Prosecco'] },
+      { titulo: 'Welcome drink', items: ['Caribbean Mimosa the moment you step on board'] },
+    ],
+  },
+])
 
 // [2026-10-16, cliente: «Para el tema del bar por favor en QA, no activa en la
 // página, hasta que lo aprobemos»] Interruptor del bloque de niveles de barra

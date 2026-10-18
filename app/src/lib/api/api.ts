@@ -35,6 +35,18 @@ export function obtenerTour(slug: string, signal?: AbortSignal) {
 /** Hoteles de recogida. La lista viva la tiene Odoo: quien da de alta un
  *  hotel en el back-office lo ve aparecer en el funnel sin desplegar el front.
  *  `data/hoteles.ts` es la instantanea que se pinta mientras esto viaja. */
+/** [2026-10-17] Productos de la tienda de la Fundación para el checkout. */
+export type ProductoFundacion = {
+  slug: string
+  label: string
+  price: number
+  image: string | null
+  description: string | null
+}
+export function obtenerProductosFundacion(signal?: AbortSignal) {
+  return llamar<{ products: ProductoFundacion[] }>('/foundation/products', { signal })
+}
+
 export function obtenerHoteles(signal?: AbortSignal) {
   return llamar<{ hotels: Hotel[] }>('/hotels', { signal }).then((d) => d.hotels)
 }

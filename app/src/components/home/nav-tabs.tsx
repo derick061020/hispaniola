@@ -480,6 +480,15 @@ export function TabsConPaneles({
       {botonTab('nosotros', t('About us ▾'))}
       {botonTab('tours', t('Tours ▾'))}
       {botonTab('eventos', t('Events ▾'))}
+      {/* [2026-10-18, Marketing: «debe ir integrado, pero resaltado, tal como
+          lo mostré en el ejemplo, con su nuevo menú»] En Party Boat «Food &
+          Bar» es una pestaña propia del menú principal. Aquí igual, con un
+          punto de acento para que se vea que es nueva. Enlace directo: no
+          tiene subapartados que desplegar. */}
+      <Link to="/food-and-bar" className={`${claseInicio} inline-flex items-center gap-1.5`}>
+        {t('Food & Bar')}
+        <span aria-hidden="true" className="size-1.5 rounded-full bg-coral" />
+      </Link>
       {botonTab('sostenibilidad', t('Sustainability ▾'))}
       {botonTab('ayuda', t('Help ▾'))}
       {panelMontado ? (

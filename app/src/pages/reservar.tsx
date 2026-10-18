@@ -9,6 +9,7 @@ import { PasoRecogida } from '@/components/reservar/paso-recogida'
 import { BannerPremium } from '@/components/reservar/banner-premium'
 import { PasoContacto } from '@/components/reservar/paso-contacto'
 import { PasoPago, type DatosPago, type EnlaceStripe } from '@/components/reservar/paso-pago'
+import { FUNDACION_ACTIVA, FundacionCheckout } from '@/components/reservar/fundacion-checkout'
 import { ResumenReserva } from '@/components/reservar/resumen-reserva'
 import { BarraMovilReserva } from '@/components/reservar/barra-movil-reserva'
 import { etiquetaOcasion, nombreCompletoValido, partesDelNombre, telefonoDe, PREFIJO_INICIAL, type DatosCelebracion, type DatosContacto, type DatosRecogida, type Paquete } from '@/components/reservar/tipos'
@@ -727,6 +728,24 @@ function FlujoReserva({
   // Igual que la fecha y el horario: se guarda al momento. Si esperara al
   // volcado final, el resumen enseñaria el total sin descuento hasta el segundo
   // antes de cobrar, que es justo cuando nadie quiere sorpresas.
+  // [2026-10-17] Productos de la Fundación: unidades por slug. Arranca con lo
+  // que ya traiga el pedido (si vuelve al checkout) y se guarda al momento.
+  const [fundacion, setFundacion] = useState<Record<string, number>>({})
+  const lineasFundacion = (checkout.pedido?.quote?.addons ?? []).filter(
+    (l) => (l as { kind?: string }).kind === 'fundacion',
+  )
+  useEffect(() => {
+    if (!lineasFundacion.length || Object.keys(fundacion).length) return
+    setFundacion(Object.fromEntries(lineasFundacion.map((l) => [l.slug, l.quantity])))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lineasFundacion.length])
+  const cambiarFundacion = (cantidades: Record<string, number>) => {
+    setFundacion(cantidades)
+    checkout.sincronizar({
+      foundation: Object.entries(cantidades).map(([slug, qty]) => ({ slug, qty })),
+    })
+  }
+
   const cambiarEfectivo = (activo: boolean) => {
     setPagaEnEfectivo(activo)
     checkout.sincronizar({ discounts: activo ? ['efectivo'] : [] })
@@ -966,6 +985,9 @@ function FlujoReserva({
               ) : null}
 
               <SeccionPaso id="pago" numero={indiceDe('pago') + 1} titulo={TITULOS.pago} estado={estadoDe('pago')}>
+                {FUNDACION_ACTIVA && !esEvento ? (
+                  <FundacionCheckout cantidades={fundacion} onCambio={cambiarFundacion} deshabilitado={pagando} />
+                ) : null}
                 <PasoPago
                   deposito={deposito}
                   porcentajeDeposito={checkout.pedido?.quote?.deposit_pct}

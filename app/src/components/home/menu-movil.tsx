@@ -163,6 +163,15 @@ export function MenuMovil({
           >
             {t('Home')}
           </Link>
+          {/* [2026-10-18] Food & Bar, en el primer nivel como en el desktop. */}
+          <Link
+            to="/food-and-bar"
+            onClick={onCerrar}
+            className="flex items-center gap-2 border-b border-linea py-3 font-display text-base font-semibold text-navy"
+          >
+            {t('Food & Bar')}
+            <span aria-hidden="true" className="size-1.5 rounded-full bg-coral" />
+          </Link>
           {secciones.map((s) => (
             <div key={s.id} className="border-b border-linea py-1">
               <button
