@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
+import { esCorreoPropio } from '@/lib/correo-propio'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { ArrowLeft, Check, ChevronRight, CreditCard, KeyRound, MapPin, Pencil, Ticket, Users, Utensils } from 'lucide-react'
 import * as FancyButton from '@/components/alignui/fancy-button'
@@ -911,7 +912,10 @@ function BloqueReserva({
             abrirAlEntrar={abrirPago}
             facturacion={{
               nombre: reserva.contacto.nombre.trim(),
-              email: reserva.contacto.email || undefined,
+              // Nuestro propio correo no es el del pagador: se pide el suyo.
+              email: (reserva.contacto.email && !esCorreoPropio(reserva.contacto.email))
+                ? reserva.contacto.email
+                : undefined,
               telefono: reserva.contacto.telefono || undefined,
               // [2026-09-18] EL PAIS, que faltaba. El Payment Element oculta
               // los campos de facturacion y entonces hay que mandarlos al

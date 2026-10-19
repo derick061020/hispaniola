@@ -3013,4 +3013,5 @@ export const ES: Record<string, string> = {
   "show cooking in the Floating Kitchen": "show cooking en la Cocina Flotante",
   "open bar levels for events": "niveles de barra libre para eventos",
   "Follow us": "Síguenos",
+  "Your email (for the payment receipt)": "Tu correo (para el recibo del pago)",
 }
