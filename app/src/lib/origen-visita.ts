@@ -30,6 +30,10 @@ export type OrigenVisita = {
   utm_term?: string
   /** Primera página en la que aterrizó con estos parámetros. */
   landing?: string
+  /** [2026-10-19] La web EXTERNA de la que llegó (Google orgánico, Instagram…)
+   *  cuando no trae UTM. Sin esto, al llegar al checkout el referrer ya es
+   *  nuestra propia página y la venta salía como «La propia web». */
+  referrer?: string
   /** ISO. Para caducar. */
   desde?: string
 }
@@ -95,9 +99,38 @@ function vigente(origen: OrigenVisita | null): origen is OrigenVisita {
 
 /** Llamar UNA vez al arrancar la app: si la URL trae parámetros de campaña,
  *  los guarda para el resto de la visita. */
+// Nuestros dominios: venir de ellos es navegación interna, no un origen.
+const PROPIOS = ['hispaniolaaquaticadventures.com', 'hispaniola.botizate.com', 'sistemashispaniola.com']
+
+function referrerExterno(): string | undefined {
+  if (typeof document === 'undefined' || !document.referrer) return undefined
+  try {
+    const host = new URL(document.referrer).hostname.toLowerCase()
+    if (PROPIOS.some((d) => host === d || host.endsWith('.' + d))) return undefined
+    return document.referrer.slice(0, 512)
+  } catch {
+    return undefined
+  }
+}
+
 export function recordarOrigenVisita() {
   const nuevo = origenDeLaUrl()
-  if (nuevo) escribirLocal(CLAVE, nuevo)
+  if (nuevo) {
+    const externo = referrerExterno()
+    escribirLocal(CLAVE, externo ? { ...nuevo, referrer: externo } : nuevo)
+    return
+  }
+  // [2026-10-19, Marketing: «nunca la atribución debe ser la propia web»]
+  // Sin campaña pero llegando de otra web (Google orgánico, Instagram, un
+  // blog…): se guarda esa procedencia, que es la que se manda al reservar.
+  const externo = referrerExterno()
+  if (externo) {
+    escribirLocal(CLAVE, {
+      referrer: externo,
+      landing: window.location.pathname + window.location.search,
+      desde: new Date().toISOString(),
+    })
+  }
 }
 
 /** El origen que se manda a Odoo: lo que traiga la URL ahora mismo, y si no,
