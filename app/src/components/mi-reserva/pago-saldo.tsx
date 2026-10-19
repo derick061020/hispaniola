@@ -60,6 +60,14 @@ export function PagoSaldo({
   onPagado: () => void
 }) {
   const [abierto, setAbierto] = useState(abrirAlEntrar)
+  // Sin correo del cliente (o con el nuestro): se le pide para el recibo de
+  // Stripe, que es de donde la oficina saca quién pagó.
+  const [correoRecibo, setCorreoRecibo] = useState('')
+  const pideCorreo = !facturacion.email
+  const correoValido = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(correoRecibo.trim())
+  const facturacionFinal: FacturacionStripe = pideCorreo
+    ? { ...facturacion, email: correoValido ? correoRecibo.trim() : undefined }
+    : facturacion
   const caja = useRef<HTMLDivElement | null>(null)
   useEffect(() => {
     if (abrirAlEntrar) caja.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
@@ -227,12 +235,25 @@ export function PagoSaldo({
                 <Spinner /> {t('Preparing the payment…')}
               </p>
             ) : null}
+            {pideCorreo ? (
+              <label className="mb-3 block">
+                <span className="text-xs font-semibold text-navy">{t('Your email (for the payment receipt)')}</span>
+                <input
+                  type="email"
+                  autoComplete="email"
+                  value={correoRecibo}
+                  onChange={(e) => setCorreoRecibo(e.target.value)}
+                  placeholder="name@email.com"
+                  className="mt-1 w-full rounded-btn border border-linea bg-papel px-3 py-2 text-sm text-navy focus:border-aqua focus:outline-none focus:ring-2 focus:ring-aqua/20"
+                />
+              </label>
+            ) : null}
             {intento ? (
               <FormularioStripe
                 clave={intento.clave}
                 clientSecret={intento.secreto}
                 importe={saldo}
-                facturacion={facturacion}
+                facturacion={facturacionFinal}
                 obtenerSecreto={async () => ({ client_secret: intento.secreto })}
                 returnUrl={returnUrl}
                 onPagado={pagado}

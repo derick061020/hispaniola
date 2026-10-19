@@ -199,6 +199,8 @@ export function FormularioStripe({
           billing_details: {
             name: nombre?.trim() || email?.trim() || 'Guest',
             ...(telefono?.trim() ? { phone: telefono.trim() } : {}),
+            // [2026-10-19] El correo del pagador, para que Stripe lo guarde.
+            ...(email?.trim() ? { email: email.trim() } : {}),
             // Los que se ocultan hay que mandarlos SÍ O SÍ, aunque no se
             // tengan: van vacíos, que es la verdad —no se piden en ningún
             // paso— y es lo que deja el formulario en un solo campo extra.

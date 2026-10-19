@@ -2914,4 +2914,5 @@ export const ES: Record<string, string> = {
   "Up to 45 guests (plated up to 19, skewers from 20)": "Hasta 45 personas (emplatado hasta 19, brochetas a partir de 20)",
   "Groups of 20+": "Grupos de 20 o más",
   "From 20 guests": "A partir de 20 personas",
+  "Your email (for the payment receipt)": "Tu correo (para el recibo del pago)",
 }
