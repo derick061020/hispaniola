@@ -398,7 +398,9 @@ export function metaOrigen() {
   const origen = origenVisita()
   return {
     url: window.location.href,
-    referrer: document.referrer || undefined,
+    // La procedencia EXTERNA guardada al aterrizar manda sobre la página
+    // anterior, que en el checkout ya es nuestra propia web.
+    referrer: origen.referrer || document.referrer || undefined,
     utm_source: origen.utm_source,
     utm_medium: origen.utm_medium,
     utm_campaign: origen.utm_campaign,
