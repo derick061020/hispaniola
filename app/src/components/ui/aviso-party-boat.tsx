@@ -27,9 +27,18 @@ import { t } from '@/lib/i18n'
 // El copy dice PARTY BOAT con todas las letras. Lo único que afirma —4.9 en
 // TripAdvisor— ya está publicado en las dos webs: lo que se promete aquí
 // acaba en una reserva de verdad.
+//
+// [2026-10-22, Samuel: «reutiliza este popup para que ahora mande a la landing
+// de agentes»] YA NO ES DEL PARTY BOAT: el mismo aviso, con el mismo diseño y
+// los mismos tiempos, lleva ahora a hispaniolatravelagents.com. El fichero y
+// el nombre se quedan para no chocar con la rama de Food & Bar, que también
+// lo toca. El copy sale TAL CUAL de esa landing: «Partner Program» (su
+// título), «Free to join, commission from 12% up to 15%» (su descripción) y
+// «Become a Partner» (su botón). Convive con el enlace «Travel agents only»
+// de la banda de premios, que es lo que pidió Marketing.
 
-const DESTINO = 'https://hispaniolapartyboat.com/'
-const FOTO = '/fotos/ev-partyboat-11.webp'
+const DESTINO = 'https://hispaniolatravelagents.com/'
+const FOTO = '/fotos/hero-catamaran-2.webp'
 
 // Asoma a los 5 segundos. No al entrar: quien acaba de llegar está leyendo el
 // hero, y un cartel que aparece encima a los 300 ms se cierra sin mirarlo.
@@ -52,7 +61,9 @@ const VISIBLE_MS = 20000
 
 // Cerrado una vez, calla dos semanas. Un aviso que vuelve en cada visita deja
 // de ser una invitación y pasa a ser un estorbo.
-const CLAVE = 'haa_aviso_party_boat_cerrado'
+// [2026-10-22] Clave nueva: quien cerró el del party boat no ha dicho que no a
+// este.
+const CLAVE = 'haa_aviso_agentes_cerrado'
 const DIAS_DE_SILENCIO = 14
 
 // Donde NO sale: donde el visitante ya está mirando justo esto, o donde está a
@@ -67,6 +78,9 @@ const RUTAS_CALLADAS = [
   // por Marketing): mismo motivo que la línea de arriba.
   /^\/underwater-museum/,
   /^\/tours\/party-boat/,
+  // [2026-10-22] Ya es el aviso de agentes: en nuestra propia página de
+  // agentes sobra.
+  /^\/travel-agents/,
   /^\/book\//,
   /^\/my-booking/,
   /^\/account/,
@@ -144,7 +158,7 @@ export function AvisoPartyBoat() {
       // invisible se comería los clics de lo que hay debajo.
       className="pointer-events-none fixed inset-x-0 bottom-0 z-[60] flex justify-center p-3 sm:p-4"
       role="complementary"
-      aria-label={t('Party boat in Punta Cana')}
+      aria-label={t('Travel agents · Partner Program')}
     >
       <div
         // El contador se para con el puntero encima y con el foco dentro: a
@@ -179,7 +193,7 @@ export function AvisoPartyBoat() {
           <div className="relative w-[35%] max-w-[13rem] shrink-0">
             <img
               src={FOTO}
-              alt={t('A Hispaniola party boat anchored over turquoise water in Punta Cana')}
+              alt={t('A Hispaniola catamaran on turquoise water in Punta Cana')}
               loading="lazy"
               decoding="async"
               className="absolute inset-0 size-full object-cover"
@@ -195,12 +209,12 @@ export function AvisoPartyBoat() {
                           sm:flex-row sm:items-center sm:gap-3 sm:py-3 sm:pl-4 sm:pr-9">
             <div className="min-w-0 flex-1">
               <p className="font-display text-[0.875rem] font-bold leading-tight text-fiesta-texto sm:text-[0.9375rem]">
-                {t('Party Boat in Punta Cana')}
+                {t('Travel agents · Partner Program')}
               </p>
               {/* UNA linea, y corta. Es un aviso, no un folleto: si hay que
                   leerlo dos veces, se cierra sin leerlo ninguna. */}
               <p className="mt-0.5 line-clamp-2 text-[0.75rem] leading-snug text-fiesta-texto-suave sm:text-[0.8125rem]">
-                {t('Music, open bar and the whole boat for you.')}
+                {t('Free to join, commission from 12% up to 15%.')}
               </p>
             </div>
 
@@ -216,7 +230,7 @@ export function AvisoPartyBoat() {
                          focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-coral
                          sm:self-auto sm:px-4 sm:py-2.5 sm:text-[0.8125rem]"
             >
-              {t('See the experience')}
+              {t('Become a Partner')}
             </a>
           </div>
 
