@@ -64,6 +64,7 @@ const FIJAS = [
   ['/crew', 0.6, 'monthly'],
   ['/facilities', 0.6, 'monthly'],
   ['/fleet', 0.7, 'monthly'],
+  ['/food-and-bar', 0.7, 'monthly'],
   ['/faq', 0.6, 'monthly'],
   ['/guides', 0.7, 'weekly'],
   ['/blog', 0.7, 'weekly'],

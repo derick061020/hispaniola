@@ -80,6 +80,10 @@ const CLAVE = 'haa_aviso_museo'
 // está.
 const RUTAS_CALLADAS = [
   /^\/underwater-museum/,
+  // [2026-10-17, QA de Food & Bar, dos rondas] Es la única página de
+  // descubrimiento con submenú fijo, y el aviso (fijo, encima) tapaba sus
+  // chips a 768-1024 px y el título de la sección al saltar en móvil.
+  /^\/food-and-bar/,
   /^\/book\//,
   /^\/my-booking/,
   /^\/account/,

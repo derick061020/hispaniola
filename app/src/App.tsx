@@ -12,6 +12,7 @@ import { ToursYEventosPage } from '@/pages/tours-y-eventos'
 import { GraciasEventoPage } from '@/pages/gracias-evento'
 import { VentajaCompetitivaPage } from '@/pages/ventaja-competitiva'
 import { FlotaPage } from '@/pages/flota'
+import { ComidaYBarPage } from '@/pages/comida-y-bar'
 import { TripulacionPage } from '@/pages/tripulacion'
 import { TripulacionBarcoPage } from '@/pages/tripulacion-barco'
 import { InstalacionesPage } from '@/pages/instalaciones'
@@ -121,6 +122,7 @@ const REDIRECCIONES_ES_EN: [string, string][] = [
   ['/tripulacion', '/crew'],
   ['/instalaciones', '/facilities'],
   ['/flota', '/fleet'],
+  ['/comida-y-bar', '/food-and-bar'],
   ['/fundacion', '/foundation'],
   ['/guias', '/guides'],
   ['/agentes-de-viaje', '/travel-agents'],
@@ -232,6 +234,10 @@ function App() {
             de Sostenibilidad (NAV_SOSTENIBILIDAD). */}
         <Route path="/underwater-museum" element={<MuseoSubacuaticoPage />} />
         <Route path="/fleet" element={<FlotaPage />} />
+        {/* [2026-10-17] Food & Bar — pendiente de aprobación de Marketing en QA.
+            [2026-10-22, Samuel] Aquí vive la propuesta 3 de Food & Bar, aprobada
+            como versión definitiva. */}
+        <Route path="/food-and-bar" element={<ComidaYBarPage />} />
         {/* ⚠️ SINGULAR. Es la fundación del cliente. NO confundir con
             `/fundaciones` (plural, abajo), que es la página interna de tokens. */}
         <Route path="/foundation" element={<FundacionPage />} />

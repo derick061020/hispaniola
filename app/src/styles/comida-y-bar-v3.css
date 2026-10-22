@@ -1,0 +1,937 @@
+/* ============================================================
+   FOOD & BAR — PROPUESTA 3 (2026-10-21), definitiva en /food-and-bar.
+
+   [Samuel, 2026-10-21: «no me gusta la versión actual… los estilos que ya
+   hemos usado y que le gustan: el Museo, el tour educativo de Bávaro Reef y
+   la landing de agentes — sobre todo los efectos de estar bajo el agua»]
+
+   La página vive DENTRO de la columna de agua del museo (`.museo`, museo.css):
+   el mismo shader, el mismo descenso por scroll, las mismas tarjetas de
+   vidrio y botones. Aquí solo lo que es de esta página:
+     · las burbujas de primer plano (portadas de la landing de agentes);
+     · las olas separadoras y el sello girado (del tour de Bávaro Reef);
+     · la «mesa» de platos y la «barra» de bebidas sobre el agua.
+   Todos los valores salen de tokens (tokens.css → «FOOD & BAR v3»).
+   ============================================================ */
+
+/* ---------- Burbujas (landing de agentes: `.burbuja`) ---------- */
+.comida3-burbujas {
+  overflow: hidden;
+}
+.comida3-burbuja {
+  position: absolute;
+  bottom: calc(var(--s) * -2);
+  left: var(--x);
+  width: var(--s);
+  height: var(--s);
+  border-radius: 999px;
+  border: 1px solid var(--color-comida3-burbuja-borde);
+  background: radial-gradient(
+    circle at 32% 28%,
+    var(--color-comida3-burbuja-brillo) 0 12%,
+    var(--color-comida3-burbuja-cuerpo) 34%,
+    transparent 70%
+  );
+  opacity: 0;
+  animation: comida3-burbuja-sube var(--d) linear infinite;
+  animation-delay: var(--w);
+  will-change: transform, opacity;
+}
+@keyframes comida3-burbuja-sube {
+  0% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.85;
+  }
+  50% {
+    transform: translate(0.5rem, calc(var(--comida3-subida) * -0.5));
+  }
+  88% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translate(-0.25rem, calc(var(--comida3-subida) * -1));
+    opacity: 0;
+  }
+}
+.comida3-burbujas[data-quieta] .comida3-burbuja {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .comida3-burbuja {
+    display: none;
+  }
+}
+
+/* ---------- Texto sobre agua somera ----------
+   La sombra del tour de Bávaro Reef (`.brt-b p { text-shadow }`): arriba de
+   la columna el agua es turquesa y el blanco necesita apoyo para leerse. */
+.comida3-sombra-texto :is(h1, h2, h3, p) {
+  text-shadow: 0 1px 14px var(--color-comida3-sombra-texto);
+}
+
+/* ---------- Carrete de fotos: portillos de Bávaro Reef (`.brt-port`) ---------- */
+/* [5ª revisión, Samuel] EL CARRETE SANGRA A LA DERECHA: arranca alineado con el
+   contenedor de la web por la izquierda (margen del contenedor + su padding) y
+   sale por el borde derecho de la ventana, sin degradado, para que se entienda
+   que hay más. El mismo cálculo vale en 390 (solo el padding) y en pantallas
+   más anchas que el contenedor. Las flechas viven DENTRO del contenedor. */
+.comida3-carrete {
+  --carrete-margen: calc(var(--spacing) * 5);
+  padding-left: var(--carrete-margen);
+  scroll-padding-inline: var(--carrete-margen);
+}
+@media (width >= 40rem) {
+  .comida3-carrete {
+    --carrete-margen: calc(max(0px, (100% - var(--container-contenido)) / 2) + var(--spacing) * 10);
+  }
+}
+.comida3-portillo {
+  position: relative;
+  display: block;
+  width: var(--spacing-portillo-v3-movil);
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border: var(--spacing-portillo-canto) solid var(--color-papel);
+  border-radius: var(--radius-card-grande);
+  box-shadow: var(--shadow-comida3-portillo);
+  rotate: var(--giro, 0deg);
+  transition:
+    rotate 500ms cubic-bezier(0.2, 0.7, 0.2, 1),
+    translate 500ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  cursor: pointer;
+}
+.comida3-portillo img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  scale: 1.06;
+  transition: scale 600ms ease;
+}
+.comida3-portillo:hover,
+.comida3-portillo:focus-visible {
+  rotate: 0deg;
+  translate: 0 calc(var(--spacing) * -1.5);
+}
+.comida3-portillo:hover img {
+  scale: 1.14;
+}
+.comida3-portillo:focus-visible {
+  outline: 3px solid var(--color-museo-luz);
+  outline-offset: 3px;
+}
+.comida3-portillo-lupa {
+  position: absolute;
+  right: calc(var(--spacing) * 3);
+  bottom: calc(var(--spacing) * 3);
+  display: grid;
+  place-items: center;
+  width: calc(var(--spacing) * 9);
+  height: calc(var(--spacing) * 9);
+  border-radius: 999px;
+  background: var(--color-papel);
+  color: var(--color-navy);
+}
+.comida3-portillo--grande {
+  width: min(100%, var(--spacing-portillo-v3-grande));
+  aspect-ratio: 4 / 3;
+  cursor: default;
+}
+.comida3-portillo--recorte {
+  width: min(80%, var(--spacing-portillo-v3));
+  aspect-ratio: 1;
+  border-radius: 999px;
+  background: radial-gradient(closest-side, var(--color-museo-superficie), var(--color-museo-medio));
+  rotate: 0deg;
+}
+.comida3-portillo--recorte img {
+  inset: 12%;
+  width: 76%;
+  height: 76%;
+  object-fit: contain;
+  scale: 1;
+  filter: var(--shadow-comida3-flota);
+}
+.comida3-flecha {
+  display: grid;
+  place-items: center;
+  width: calc(var(--spacing) * 11);
+  height: calc(var(--spacing) * 11);
+  border-radius: 999px;
+  border: 1px solid var(--color-museo-borde);
+  background: var(--color-museo-vidrio);
+  color: var(--color-museo-texto);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  transition: background-color 200ms ease;
+}
+.comida3-flecha:hover {
+  background: var(--color-museo-vidrio-fuerte);
+}
+
+/* ---------- Menús ---------- */
+/* El plato que asoma por la esquina (la bandeja de Party Boat). En móvil,
+   entero y centrado sobre el título, como allí. */
+.comida3-plato-esquina {
+  display: block;
+  width: var(--spacing-plato-esquina-v3-movil);
+  margin: 0 auto calc(var(--spacing) * 6);
+}
+/* [5ª revisión, Samuel: «a la derecha hay un plato que se corta»] El plato
+   asoma junto al título. Cortaba por dos motivos: era tan ancho que a 1024 se
+   metía en el texto, y la caja del título es más baja que él, así que su parte
+   de abajo quedaba bajo la sección siguiente. Ahora su ancho depende del sitio
+   que hay, y la caja le da altura propia. Se comprueba midiendo (qa). */
+@media (width >= 64rem) {
+  .comida3-esquina {
+    --esquina-ancho: var(--spacing-plato-esquina-v3-lg);
+    min-height: calc(var(--esquina-ancho) * 0.7);
+  }
+  .comida3-plato-esquina {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    width: var(--esquina-ancho);
+    /* Centrado SIN `translate`: GSAP (data-museo-flotar) lo lee y lo pisa, y el
+       plato bajaba media altura y se cortaba bajo la sección siguiente. El
+       recorte mide 663×414 → alto = ancho × 0,624. */
+    margin: calc(var(--esquina-ancho) * -0.312) 0 0;
+    pointer-events: none;
+  }
+}
+@media (width >= 80rem) {
+  .comida3-esquina {
+    --esquina-ancho: var(--spacing-plato-esquina-v3);
+  }
+}
+
+
+/* ---------- Open Bar ---------- */
+.comida3-halo-bebida {
+  position: absolute;
+  bottom: 4%;
+  left: 50%;
+  width: 90%;
+  aspect-ratio: 1;
+  translate: -50% 0;
+  border-radius: 999px;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--color-museo-luz) 26%, transparent), transparent);
+}
+
+/* Niveles de barra: el vaso sale por encima de la card. `.museo-tarjeta`
+   recorta (overflow: hidden) para el halo del cursor; aquí no puede. */
+.museo-tarjeta.comida3-nivel {
+  overflow: visible;
+  padding-top: calc(var(--spacing-nivel-bebida) - var(--spacing-nivel-bebida-sobresale) + var(--spacing) * 4);
+}
+.museo-tarjeta.comida3-nivel::before {
+  border-radius: inherit;
+}
+.comida3-nivel-vaso {
+  position: absolute;
+  top: calc(var(--spacing-nivel-bebida-sobresale) * -1);
+  left: 0;
+  right: 0;
+  height: var(--spacing-nivel-bebida);
+}
+.comida3-nivel--firma {
+  border-color: color-mix(in srgb, var(--color-premium-oro) 60%, transparent);
+}
+
+/* ============================================================
+   2ª REVISIÓN DE SAMUEL (2026-10-21) — la v3 pasa a ser la base.
+   ============================================================ */
+
+/* ---------- Piezas en claro (las secciones fuera del agua) ---------- */
+.comida3-eyebrow {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-aqua-dark);
+}
+.comida3-h2 {
+  font-family: var(--font-display);
+  font-size: var(--text-museo-seccion);
+  line-height: var(--text-museo-seccion--line-height);
+  font-weight: 600;
+  color: var(--color-navy);
+  text-wrap: balance;
+}
+.comida3-card {
+  position: relative;
+  border: 1px solid var(--color-linea);
+  border-radius: var(--radius-card-grande);
+  background: var(--color-papel);
+  padding: calc(var(--spacing) * 7);
+}
+/* La Turtle de eventos, en el navy de marca (la de Party Boat), no en negro. */
+.comida3-turtle {
+  background: var(--color-navy);
+  color: var(--color-papel);
+}
+.comida3-boton-claro {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--spacing) * 2);
+  min-height: calc(var(--spacing) * 11);
+  border: 1px solid var(--color-linea-fuerte);
+  border-radius: var(--radius-chip);
+  background: var(--color-papel);
+  padding: calc(var(--spacing) * 3) calc(var(--spacing) * 6);
+  font-weight: 600;
+  color: var(--color-navy);
+  transition:
+    border-color 200ms ease,
+    color 200ms ease;
+}
+.comida3-boton-claro:hover {
+  border-color: var(--color-aqua);
+  color: var(--color-aqua-dark);
+}
+.comida3-flecha-clara {
+  display: grid;
+  place-items: center;
+  width: calc(var(--spacing) * 11);
+  height: calc(var(--spacing) * 11);
+  border-radius: 999px;
+  border: 1px solid var(--color-linea-fuerte);
+  background: var(--color-papel);
+  color: var(--color-navy);
+  transition:
+    border-color 200ms ease,
+    opacity 200ms ease;
+}
+.comida3-flecha-clara:hover {
+  border-color: var(--color-aqua);
+}
+.comida3-flecha-clara:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.comida3-subir {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--spacing) * 2);
+  min-height: calc(var(--spacing) * 11);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-aqua-dark);
+}
+
+/* Sin submenú: el margen de ancla solo esquiva la píldora del header
+   (escritorio) o la hamburguesa (móvil). */
+.comida3 .ancla-comida {
+  scroll-margin-top: var(--spacing-ancla-v3-movil);
+}
+@media (width >= 48rem) {
+  .comida3 .ancla-comida {
+    scroll-margin-top: var(--spacing-ancla-v3);
+  }
+}
+
+/* ---------- La espuma (la del footer de la web, `footer-espuma-mapa`) ----------
+   [Samuel: «entre el héroe y la sección de abajo se ve una línea recta y
+   seca»] Misma técnica que la landing de agentes (`.espuma`): un bloque del
+   color de FUERA recortado con la forma de la ola. Deriva despacio. */
+.comida3-espuma {
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  height: calc(var(--spacing-espuma-v3) + 2px);
+  pointer-events: none;
+  background: var(--color-papel);
+  -webkit-mask-image: url('/fotos/footer-espuma-mapa.webp');
+  mask-image: url('/fotos/footer-espuma-mapa.webp');
+  -webkit-mask-size: calc(var(--spacing-espuma-v3) * 3.299) 100%;
+  mask-size: calc(var(--spacing-espuma-v3) * 3.299) 100%;
+  -webkit-mask-repeat: repeat-x;
+  mask-repeat: repeat-x;
+}
+/* [2026-10-22, Samuel] Las olas son FIJAS: ni la del héroe ni las del agua se
+   desplazan en bucle (se quitó la deriva `comida3-espuma-deriva`). */
+/* En el héroe: la ola rompe en el borde de abajo de la caja, del blanco de la
+   sección siguiente; crece con la caja. */
+.comida3-espuma--hero {
+  bottom: -2px;
+  scale: 1 -1;
+  /* [3ª revisión, Samuel] La ola del héroe NO se ve en la caja inicial (con
+     su aire en los cuatro lados) y NO se mueve sola: es fija. Aparece con la
+     expansión, atada a la misma variable que GSAP anima (`--museo-cierre`,
+     1 = caja, 0 = a sangre), así que solo avanza con el scroll. */
+  animation: none;
+  opacity: calc(1 - var(--museo-cierre, 1));
+}
+/* El agua entra desde el blanco de «menús de eventos» y sale al blanco del
+   cierre (blanco y no papel hueso: debajo viene la espuma del footer, que es
+   del color del papel). */
+/* Las del agua, MÁS GRANDES que antes (6 → 9 rem; la del héroe es de 6 rem pero
+   se ve entera sobre la foto): `--spacing-espuma-agua-v3`. */
+.comida3-espuma--agua {
+  height: calc(var(--spacing-espuma-agua-v3) + 2px);
+  -webkit-mask-size: calc(var(--spacing-espuma-agua-v3) * 3.299) 100%;
+  mask-size: calc(var(--spacing-espuma-agua-v3) * 3.299) 100%;
+}
+.comida3-espuma--entra {
+  top: -2px;
+}
+.comida3-espuma--sale {
+  bottom: -2px;
+  scale: 1 -1;
+}
+/* [2026-10-22, Samuel: «arriba y abajo del Open Bar se ve un fondo azul oscuro
+   que no es el mar»] La columna `.museo` llevaba padding vertical, y la capa de
+   agua (sticky, `.museo-agua`) arranca DENTRO del padding: esas dos franjas
+   enseñaban el color de respaldo de `.museo`. Ahora la columna NO tiene
+   padding —la capa de agua cubre de borde a borde— y el aire que deja la espuma
+   se lo da el contenido. */
+.comida3-agua {
+  padding: 0;
+}
+.comida3-agua-contenido {
+  padding-block: calc(var(--spacing-espuma-agua-v3) - var(--spacing) * 3);
+}
+/* El marco recorta la espuma con sus esquinas redondas. */
+.comida3 .museo-hero-marco {
+  overflow: hidden;
+}
+/* El velo del héroe: el oscuro ya no llega hasta el borde de abajo (allí está
+   la espuma), así no termina en seco. */
+.comida3 .museo-hero-marco::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    linear-gradient(to top, transparent 4%, var(--color-museo-velo-foto) 24%, transparent 70%),
+    linear-gradient(to right, var(--color-museo-velo-foto), transparent 50%);
+}
+
+/* ---------- El Coco Loco del héroe ----------
+   [2ª revisión] Fuera el ticket. Un plato recortado encima de la foto (que ya
+   es de platos) se leía como pegado; el Coco Loco solo, grande, con un halo
+   de luz detrás y burbujas subiendo, sí se distingue de la foto. */
+.comida3-hero-bebida {
+  position: relative;
+  width: var(--spacing-hero-bebida-v3);
+  height: var(--spacing-hero-bebida-v3);
+}
+.comida3-hero-bebida::before {
+  content: '';
+  position: absolute;
+  inset: -12%;
+  border-radius: 999px;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--color-museo-luz) 55%, transparent), transparent);
+}
+.comida3-hero-bebida img {
+  rotate: -6deg;
+}
+
+/* ---------- El índice (IndiceV3) ---------- */
+.comida3-indice-lateral,
+.comida3-indice-barra {
+  position: fixed;
+  z-index: 40;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 300ms ease,
+    visibility 0s linear 300ms,
+    translate 400ms var(--ease-resorte-gentil);
+}
+.comida3-indice-lateral[data-visible],
+.comida3-indice-barra[data-visible] {
+  opacity: 1;
+  visibility: visible;
+  translate: 0 0;
+  transition:
+    opacity 300ms ease,
+    visibility 0s,
+    translate 780ms var(--ease-resorte-gentil);
+}
+.comida3-indice-lateral {
+  display: none;
+  right: calc(var(--spacing) * 2);
+  top: 50%;
+  /* centrado en vertical con `transform` (el `translate` es del resorte de
+     entrada); el alto cambia poco al moverse el punto activo. */
+  transform: translateY(-50%);
+  width: var(--spacing-indice-v3);
+  flex-direction: column;
+  align-items: center;
+  translate: calc(var(--spacing) * 6) 0;
+}
+@media (width >= 64rem) {
+  .comida3-indice-lateral {
+    display: flex;
+  }
+}
+.comida3-indice-ilus {
+  display: grid;
+  place-items: center;
+  width: var(--spacing-indice-ilus);
+  height: var(--spacing-indice-ilus);
+  border-radius: 999px;
+  background: var(--color-papel);
+  border: 1px solid var(--color-linea);
+}
+.comida3-indice-ilus-img {
+  width: 82%;
+  height: 82%;
+  object-fit: contain;
+}
+/* EL RESORTE: cada vez que cambia la sección, la ilustración nueva entra
+   pequeña, girada y desde abajo, y se asienta con el «Gentle» de Figma (un
+   pelín de rebote). */
+@media (prefers-reduced-motion: no-preference) {
+  .comida3-indice-ilus-img {
+    animation: comida3-resorte 780ms var(--ease-resorte-gentil) both;
+  }
+}
+@keyframes comida3-resorte {
+  from {
+    scale: 0.45;
+    rotate: -14deg;
+    translate: 0 30%;
+    opacity: 0;
+  }
+  35% {
+    opacity: 1;
+  }
+}
+.comida3-indice-punto {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: var(--spacing-indice-v3);
+  height: calc(var(--spacing) * 8);
+}
+/* El punto activo ES su ilustración: un disco más grande, que empuja a los
+   vecinos. */
+.comida3-indice-punto[aria-current] {
+  height: var(--spacing-indice-activo);
+}
+.comida3-indice-ilus--punto {
+  width: var(--spacing-indice-activo);
+  height: var(--spacing-indice-activo);
+  outline: 2px solid var(--color-coral);
+  outline-offset: -2px;
+}
+.comida3-indice-bolita {
+  width: calc(var(--spacing) * 2.5);
+  height: calc(var(--spacing) * 2.5);
+  border-radius: 999px;
+  border: 2px solid var(--color-linea-fuerte);
+  background: var(--color-papel);
+  transition:
+    scale 400ms var(--ease-resorte-gentil),
+    background-color 200ms ease,
+    border-color 200ms ease;
+}
+.comida3-indice-punto[data-pasada] .comida3-indice-bolita {
+  border-color: var(--color-aqua);
+  background: var(--color-aqua);
+}
+.comida3-indice-punto:hover .comida3-indice-bolita,
+.comida3-indice-punto:focus-visible .comida3-indice-bolita {
+  scale: 1.3;
+  border-color: var(--color-aqua-dark);
+}
+.comida3-indice-etiqueta {
+  position: absolute;
+  /* a la izquierda del punto o del disco activo (que es más ancho) */
+  right: calc(50% + var(--spacing) * 3);
+  white-space: nowrap;
+  border-radius: var(--radius-chip);
+  background: var(--color-navy);
+  color: var(--color-papel);
+  padding: calc(var(--spacing) * 1) calc(var(--spacing) * 3);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  opacity: 0;
+  translate: calc(var(--spacing) * 2) 0;
+  pointer-events: none;
+  transition:
+    opacity 200ms ease,
+    translate 400ms var(--ease-resorte-gentil);
+}
+.comida3-indice-punto:hover .comida3-indice-etiqueta,
+.comida3-indice-punto:focus-visible .comida3-indice-etiqueta {
+  opacity: 1;
+  translate: 0 0;
+}
+/* El activo: nombre corto, más pequeño, un momento al llegar. */
+.comida3-indice-punto[aria-current] .comida3-indice-etiqueta {
+  right: calc(50% + var(--spacing-indice-activo) / 2 + var(--spacing) * 1.5);
+  font-size: calc(var(--text-eyebrow) * 0.92);
+  padding: calc(var(--spacing) * 0.5) calc(var(--spacing) * 2.5);
+}
+.comida3-indice-punto[data-reciente] .comida3-indice-etiqueta {
+  opacity: 1;
+  translate: 0 0;
+}
+.comida3-indice-punto:focus-visible {
+  outline: 2px solid var(--color-aqua);
+  outline-offset: 2px;
+  border-radius: 999px;
+}
+
+/* Móvil y tableta: la barra de abajo. */
+.comida3-indice-barra {
+  left: calc(var(--spacing) * 3);
+  right: calc(var(--spacing) * 3);
+  bottom: calc(var(--spacing) * 3 + env(safe-area-inset-bottom));
+  translate: 0 calc(100% + var(--spacing) * 6);
+}
+@media (width >= 40rem) {
+  .comida3-indice-barra {
+    left: 50%;
+    right: auto;
+    width: var(--spacing-indice-barra-max);
+    margin-left: calc(var(--spacing-indice-barra-max) / -2);
+  }
+}
+@media (width >= 64rem) {
+  .comida3-indice-barra {
+    display: none;
+  }
+}
+.comida3-indice-pildora {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: calc(var(--spacing) * 2);
+  min-height: calc(var(--spacing) * 12);
+  border: 1px solid var(--color-linea);
+  border-radius: var(--radius-chip);
+  background: color-mix(in srgb, var(--color-papel) 94%, transparent);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  padding: calc(var(--spacing) * 1) calc(var(--spacing) * 3) calc(var(--spacing) * 1) calc(var(--spacing) * 1);
+}
+.comida3-indice-ilus--barra {
+  width: calc(var(--spacing) * 10);
+  height: calc(var(--spacing) * 10);
+  flex-shrink: 0;
+  background: var(--color-aqua-tint);
+}
+.comida3-indice-lista {
+  margin-bottom: calc(var(--spacing) * 2);
+  border: 1px solid var(--color-linea);
+  border-radius: var(--radius-card-grande);
+  background: var(--color-papel);
+  padding: calc(var(--spacing) * 2);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .comida3-indice-lista {
+    animation: comida3-lista-sube 500ms var(--ease-resorte-gentil) both;
+  }
+}
+@keyframes comida3-lista-sube {
+  from {
+    opacity: 0;
+    translate: 0 calc(var(--spacing) * 4);
+    scale: 0.97;
+  }
+}
+/* En móvil, que la barra no tape el final de la última sección. */
+@media (width < 64rem) {
+  .comida3 main {
+    padding-bottom: calc(var(--spacing) * 16);
+  }
+}
+
+/* ---------- Las sombras que QUEDAN (4ª revisión) ----------
+   Solo donde hay algo que flota de verdad, y más suaves que antes. Ver la
+   lista en la cabecera de pages/comida-y-bar-v3.tsx. */
+.comida3-flota {
+  filter: var(--shadow-comida3-flota);
+}
+
+/* ---------- Open Bar (6ª revisión) ---------- */
+/* El box sutil de cada grupo de bebidas: un blanco translúcido de baja
+   opacidad sobre el agua, esquinas redondeadas y un filo fino. Sin sombra ni
+   desenfoque (el agua es WebGL: un backdrop-filter encima cuesta). */
+.comida3-grupo-bebidas {
+  border: 1px solid var(--color-museo-borde);
+  border-radius: var(--radius-card-grande);
+  background: var(--color-museo-vidrio);
+  padding: calc(var(--spacing) * 6) calc(var(--spacing) * 4) calc(var(--spacing) * 8);
+}
+@media (width >= 40rem) {
+  .comida3-grupo-bebidas {
+    padding-inline: calc(var(--spacing) * 6);
+  }
+}
+
+/* ---------- CTA fijo de reservar ---------- */
+/* ESCRITORIO (≥ 1024): la píldora centrada abajo (barra-reserva-v3.tsx). En
+   móvil y tableta el botón va dentro de la barra del índice. */
+.comida3-cta-fijo {
+  position: fixed;
+  left: 50%;
+  bottom: calc(var(--spacing) * 4);
+  z-index: 45;
+  display: none;
+  align-items: center;
+  gap: calc(var(--spacing) * 2);
+  translate: -50% calc(100% + var(--spacing) * 8);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    translate 780ms var(--ease-resorte-gentil),
+    opacity 300ms ease;
+}
+.comida3-cta-fijo[data-visible] {
+  translate: -50% 0;
+  opacity: 1;
+  pointer-events: auto;
+}
+.comida3-cta-fijo .museo-boton-coral,
+.comida3-boton-secundario {
+  white-space: nowrap;
+  /* El anillo blanco que antes llevaba la píldora, ahora uno por botón. */
+  outline: 3px solid var(--color-papel);
+}
+/* SECUNDARIO: contorno navy sobre papel, sin sombra. Más bajo de peso que el
+   coral (sin relleno de color) para no competir con él. */
+.comida3-boton-secundario {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid var(--color-navy);
+  border-radius: var(--radius-chip);
+  background: var(--color-papel);
+  color: var(--color-navy);
+  padding: calc(var(--spacing) * 3.5 - 1.5px) calc(var(--spacing) * 6);
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 200ms ease;
+}
+.comida3-boton-secundario:hover {
+  background: var(--color-aqua-tint);
+}
+@media (width >= 64rem) {
+  .comida3-cta-fijo {
+    display: flex;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .comida3-cta-fijo {
+    transition: none;
+  }
+}
+
+/* MÓVIL / TABLETA: la barra del índice con el botón de reservar a su lado. */
+.comida3-indice-fila {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--spacing) * 2);
+}
+.comida3-indice-fila .comida3-indice-pildora {
+  min-width: 0;
+  flex: 1;
+  width: auto;
+}
+.comida3-indice-cta {
+  flex-shrink: 0;
+  justify-content: center;
+  min-height: calc(var(--spacing) * 12);
+  white-space: nowrap;
+  font-size: var(--text-sm);
+  padding-block: 0;
+  padding-inline: calc(var(--spacing) * 3.5);
+  outline: 3px solid var(--color-papel);
+  transition:
+    opacity 200ms ease,
+    max-width 300ms ease,
+    padding 300ms ease;
+  max-width: 10rem;
+  overflow: hidden;
+}
+/* Se esconde donde la página ya tiene su bloque de salidas (el cierre). */
+.comida3-indice-cta[data-oculto] {
+  max-width: 0;
+  padding-inline: 0;
+  border-width: 0;
+  outline-width: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .comida3-indice-cta {
+    transition: none;
+  }
+}
+
+/* El botón «Dev» del modo desarrollo (dev/dev-mode.tsx, `fixed bottom-5 right-5`)
+   tapaba el «Book now» de la barra inferior en móvil. No existe en producción
+   (`import.meta.env.DEV`): aquí solo se sube sobre la barra para poder revisar
+   la página en local. */
+@media (width < 64rem) {
+  body:has(.comida3-indice-barra) button[title^='Glosario Dev'] {
+    bottom: calc(var(--spacing) * 22);
+  }
+}
+
+/* ---------- Tarjetas comparables de menús (tours y eventos) ---------- */
+/* [2026-10-22, Samuel, tras releer el encargo de Marketing] Cuatro tarjetas
+   iguales por bloque. La rejilla fija las cuatro filas (foto · nombre · qué
+   incluye · pie) y cada tarjeta es un SUBGRID de ellas: las zonas de las cuatro
+   miden lo mismo sin alturas a mano. Borde fino y fondo plano, sin sombra.
+   MÓVIL (< 40rem): carrusel con scroll-snap y la siguiente tarjeta asomando.
+   TABLETA (≥ 40rem): 2×2. ESCRITORIO (≥ 64rem): 4×1. */
+.comida3-tm-rejilla {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: var(--spacing-tm-movil-v3);
+  grid-template-rows: repeat(4, auto);
+  column-gap: calc(var(--spacing) * 4);
+  row-gap: 0;
+  margin-inline: calc(var(--spacing) * -5);
+  padding-inline: calc(var(--spacing) * 5);
+  scroll-padding-inline: calc(var(--spacing) * 5);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  list-style: none;
+}
+.comida3-tm-rejilla::-webkit-scrollbar {
+  display: none;
+}
+.comida3-tm {
+  display: grid;
+  grid-row: span 4;
+  grid-template-rows: subgrid;
+  row-gap: 0;
+  min-width: 0;
+  overflow: hidden;
+  scroll-snap-align: start;
+  border: 1px solid var(--color-linea);
+  border-radius: var(--radius-card-grande);
+  background: var(--color-papel);
+}
+.comida3-tm--destacada {
+  border-color: var(--color-navy);
+  background: var(--color-navy);
+  color: var(--color-papel);
+}
+.comida3-tm-foto {
+  position: relative;
+  aspect-ratio: var(--aspect-tm-foto-v3);
+  background: var(--color-papel);
+}
+/* Platos recortados (sin fondo): enteros, con aire alrededor. */
+.comida3-tm-foto-contiene {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: calc(var(--spacing) * 3);
+}
+/* «Ver los N platos»: el desplegable del Premium DENTRO de su tarjeta. */
+.comida3-tm-mas {
+  margin-top: calc(var(--spacing) * 3);
+}
+.comida3-tm-mas-boton {
+  display: inline-flex;
+  align-items: center;
+  min-height: calc(var(--spacing) * 11);
+  cursor: pointer;
+  list-style: none;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-aqua-dark);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.comida3-tm-mas-boton::-webkit-details-marker {
+  display: none;
+}
+@media (width >= 40rem) {
+  .comida3-tm-rejilla {
+    grid-auto-flow: row;
+    grid-auto-columns: auto;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: none;
+    row-gap: calc(var(--spacing) * 5);
+    margin-inline: 0;
+    padding-inline: 0;
+    overflow: visible;
+    scroll-snap-type: none;
+  }
+}
+@media (width >= 64rem) {
+  .comida3-tm-rejilla {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* [2026-10-22, revisión] Carrete de la cocina: en móvil, fotos más pequeñas para
+   ver más de cada una y que asome la siguiente. */
+@media (width >= 40rem) {
+  .comida3-portillo {
+    width: var(--spacing-portillo-v3);
+  }
+}
+
+/* ---------- Lectura: sin palabras sueltas en la última línea ---------- */
+/* [2026-10-22, revisión] `pretty` en párrafos y listas, `balance` en títulos.
+   En los títulos de tarjeta, además, un espacio no separable pega la última
+   palabra («Menu», «Package») a la anterior. */
+.comida3 :is(h1, h2, h3, h4) {
+  text-wrap: balance;
+}
+.comida3 :is(p, li) {
+  text-wrap: pretty;
+}
+
+/* ---------- Foco visible: 3 px en chips y enlaces ---------- */
+.comida3 :is(a, summary, button):focus-visible {
+  outline: 3px solid var(--color-museo-luz);
+  outline-offset: 3px;
+}
+
+/* ---------- Tarjetas de menús: ajustes de la revisión ---------- */
+/* Rótulo del desplegable: «See all N dishes» ↔ «Show fewer». */
+.comida3-tm-mas .comida3-tm-menos,
+.comida3-tm-mas[open] .comida3-tm-mas-n {
+  display: none;
+}
+.comida3-tm-mas[open] .comida3-tm-menos {
+  display: inline;
+}
+/* Al abrir un desplegable, las tarjetas dejan de compartir filas: la abierta
+   crece sola y las demás conservan su altura natural (no se estiran). */
+.comida3-tm-rejilla:has(details[open]) {
+  align-items: start;
+}
+.comida3-tm-rejilla:has(details[open]) .comida3-tm {
+  grid-template-rows: none;
+  grid-row: auto;
+  grid-auto-rows: min-content;
+}
+/* Móvil (< 40rem): cada tarjeta con su altura natural, foto más baja. */
+@media (width < 40rem) {
+  .comida3-tm-rejilla {
+    grid-template-rows: none;
+    align-items: start;
+  }
+  .comida3-tm {
+    grid-row: auto;
+    grid-template-rows: none;
+    grid-auto-rows: min-content;
+  }
+  .comida3-tm-foto {
+    aspect-ratio: var(--aspect-tm-foto-movil-v3);
+  }
+}

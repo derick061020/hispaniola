@@ -343,7 +343,10 @@ export const OCASIONES: Ocasion[] = traducible([
 // «REMOVE:»), y su unico consumidor era home/eventos-especiales.tsx, que se
 // borra con ella. Contenido completo en el tag `v3-pre-en`.
 
-export type IncluyeItem = { id: string; titulo: string; texto: string }
+// [2026-10-17] `enlace`: el ítem lleva a la página que lo amplía. Nace con
+// Food & Bar (Marketing: la sección «debe ir integrada, pero resaltada»): la
+// Floating Kitchen y el Open Bar de la home son la puerta natural a los menús.
+export type IncluyeItem = { id: string; titulo: string; texto: string; enlace?: { to: string; texto: string } }
 
 // Sección «Incluye» (v3-F19) — portado del bloque "...all our cruises include:"
 // de la HOME de la web actual (9 ítems), traducido fiel. Se QUITA el 9º
@@ -396,12 +399,14 @@ export const INCLUYE_CRUCERO: IncluyeItem[] = traducible([
     id: 'comida',
     titulo: 'Floating Kitchen',
     texto: 'An exclusive live cooking experience with fresh seafood and gourmet menu choices.',
+    enlace: { to: '/food-and-bar#menus', texto: 'See the menus' },
   },
   {
     id: 'bebidas',
     titulo: 'Open Bar',
     texto:
       'Unlimited Presidente beer (local beer), premium aged rum, vodka, tequila, tropical juices, refreshments, soft drinks (light and regular) and bottled water.',
+    enlace: { to: '/food-and-bar#open-bar', texto: 'See the Open Bar' },
   },
   {
     id: 'fotos',
@@ -482,6 +487,16 @@ export const NAV_NOSOTROS: ItemNav[] = traducible([
     nombre: 'Fleet',
     descripcion: 'Discover our modern catamarans for shared tours, private charters, and every group size.',
     to: '/fleet',
+  },
+  {
+    // [2026-10-17] Página nueva Food & Bar. Vive en «About us», junto a
+    // Instalaciones y Flota, y NO como tab propio: el orden de los 6 tabs lo
+    // dictó el cliente (reunión 07-24) y un 7º es decisión suya. El texto es
+    // el aprobado del «06- FLOATING KITCHEN» (WEBSITE - INICIO pág. 4).
+    id: 'comida-y-bar',
+    nombre: 'Food & Bar',
+    descripcion: 'An exclusive live cooking experience with fresh seafood and gourmet menu choices.',
+    to: '/food-and-bar',
   },
 ])
 
