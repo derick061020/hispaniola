@@ -89,6 +89,11 @@ const NO_ES_COPY = new Set([
   "Joker",
   "Karaya",
   "Karaya Punta Cana by Hispaniola",
+  // Las 4 webs de party boat del grupo (WEBS_GRUPO, 2026-10-22): marcas.
+  "Hispaniola Party Boat",
+  "Pride Party Boat",
+  "Black Party Boat",
+  "Traffic Light Party Boat",
   "Laura G.",
   "Lives in the clickable prototype (prototipo/), not part of this build",
   "Lola",

@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Link } from 'react-router-dom'
-import { X } from 'lucide-react'
+import { ArrowUpRight, X } from 'lucide-react'
 import { useCatalogo } from '@/lib/api/use-catalogo'
 import { fusionarLista } from '@/lib/api/fusion-catalogo'
-import { TOURS, OCASIONES, NAV_NOSOTROS, NAV_SOSTENIBILIDAD, NAV_AYUDA, bookingCta, formatoDinero } from '@/data/home'
+import { TOURS, OCASIONES, WEBS_GRUPO, NAV_NOSOTROS, NAV_SOSTENIBILIDAD, NAV_AYUDA, bookingCta, formatoDinero } from '@/data/home'
 import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
 import { Boton } from '@/components/ui/boton'
 import { t, traducible } from '@/lib/i18n'
@@ -217,6 +217,25 @@ export function MenuMovil({
                           </EnlacePrototipo>
                         ),
                       )}
+                      {/* Webs de party boat del grupo (2026-10-22, Samuel tras
+                          hablar con Raymond) — mismas 4 que el megamenú, bajo
+                          su rótulo y con ↗: salen del sitio, en pestaña nueva. */}
+                      <p className="mt-2 px-3 text-xs font-semibold uppercase tracking-wide text-navy-soft">
+                        {t('Our party boats')}
+                      </p>
+                      {WEBS_GRUPO.map((w) => (
+                        <a
+                          key={w.id}
+                          href={w.url}
+                          target="_blank"
+                          rel="noopener"
+                          className="flex items-center gap-1 rounded-lg px-3 py-2 hover:bg-papel-hueso"
+                        >
+                          <span className="text-sm font-medium text-navy">{w.nombre}</span>
+                          <ArrowUpRight aria-hidden="true" className="size-3.5 shrink-0 text-navy-soft" />
+                          <span className="sr-only">{t('(opens in a new tab)')}</span>
+                        </a>
+                      ))}
                     </div>
                   ) : null}
                   {s.id === 'nosotros' ? (
