@@ -2260,6 +2260,7 @@ export const ES: Record<string, string> = {
   "Transportation": "Transporte",
   "Travel agencies and agents": "Agencias y agentes de viaje",
   "Travel agents": "Agentes de viaje",
+  "Travel agents only": "Solo agentes de viaje",
   "Travel tips": "Consejos de viaje",
   "travelers already trust us": "viajeros ya confían en nosotros",
   "TripAdvisor, #1 water activity in Bávaro / Punta Cana for more than 7 years": "TripAdvisor — #1 en actividades acuáticas de Bávaro / Punta Cana durante más de 7 años",

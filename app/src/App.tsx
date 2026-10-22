@@ -30,7 +30,7 @@ import { LegalPage } from '@/pages/legal'
 import { FundacionesPage } from '@/pages/fundaciones'
 import { ScrollAlNavegar } from '@/lib/scroll-al-navegar'
 import { NavFlotante } from '@/components/home/nav-flotante'
-import { AvisoPartyBoat } from '@/components/ui/aviso-party-boat'
+// import { AvisoPartyBoat } from '@/components/ui/aviso-party-boat' // apagado el 2026-10-22, ver abajo
 import { AvisoMuseo } from '@/components/ui/aviso-museo'
 import { Topbar } from '@/components/home/topbar'
 import { DevMode } from '@/dev/dev-mode'
@@ -175,8 +175,11 @@ function App() {
       {/* [2026-10-02] El puente al party boat, 2ª versión: al rincón y con
           foto. La 1ª iba centrada abajo y tapaba las tarjetas de tours. Fuera
           de <Routes> porque es de todo el sitio; el propio componente decide
-          dónde callarse. */}
-      <AvisoPartyBoat />
+          dónde callarse.
+          [2026-10-22, Marketing en «MARKETING WEB», captura del aviso + «@Derick
+          Desactivar»] Apagado. El componente se queda por si vuelve; en su
+          lugar, el enlace «Travel agents only» de la banda de premios. */}
+      {/* <AvisoPartyBoat /> */}
       {/* [2026-10-08] El ojo de buey del museo. Va en otra esquina que el
           aviso del party boat —arriba a la derecha, no abajo— para que los
           dos puedan convivir sin taparse. */}

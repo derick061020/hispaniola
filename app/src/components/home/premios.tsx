@@ -1,4 +1,12 @@
 import { PREMIOS } from '@/data/home'
+import { t } from '@/lib/i18n'
+
+// [2026-10-22, Marketing en «MARKETING WEB»: «Que te hable primero:
+// hispaniolatravelagents.com» + capturas «Ponlo así en móvil» y «PC»] La
+// puerta a la landing de agentes vive en esta banda, no en un popup: en PC a
+// la derecha de los logos, tras una línea vertical; en móvil, centrada debajo.
+// Es un dominio aparte, así que abre en pestaña nueva.
+const URL_AGENTES = 'https://hispaniolatravelagents.com/'
 
 // Banda de premios — v3-F11 (PLAN-v3.md §14): esta sección ERA "cinta de
 // stats + premios" (stats.tsx). Las 4 cifras subieron al hero (viven junto al
@@ -34,20 +42,37 @@ export function Premios() {
       {/* [v3] El hueco de desktop sale ahora de --spacing-premio-hueco (56px,
           antes gap-x-12 = 48px): a todo color cada badge necesita su margen de
           silencio o la fila se lee como un collage. */}
-      <ul className="mx-auto flex max-w-contenido flex-wrap items-center justify-center gap-x-8 gap-y-6 sm:gap-x-premio-hueco">
-        {PREMIOS.map((premio) => (
-          <li key={premio.id}>
-            <img
-              src={`/premios/${premio.foto}.webp`}
-              alt={premio.nombre}
-              width={premio.ancho}
-              height={premio.alto}
-              loading="lazy"
-              className={`premio-logo${premio.fondo === 'macizo' ? ' premio-logo--macizo' : ''}`}
-            />
-          </li>
-        ))}
-      </ul>
+      {/* [2026-10-22] Con el enlace al lado, los 8 logos (770px) + 7 huecos de
+          56px ya no caben en una fila: desde xl el hueco baja a 24px (40px en
+          2xl). Por debajo de xl el enlace va centrado debajo, como en móvil. */}
+      <div className="mx-auto flex max-w-contenido flex-col items-center gap-y-8 xl:flex-row xl:gap-x-6">
+        <ul className="flex flex-1 flex-wrap items-center justify-center gap-x-8 gap-y-6 sm:gap-x-premio-hueco xl:gap-x-6 2xl:gap-x-10">
+          {PREMIOS.map((premio) => (
+            <li key={premio.id}>
+              <img
+                src={`/premios/${premio.foto}.webp`}
+                alt={premio.nombre}
+                width={premio.ancho}
+                height={premio.alto}
+                loading="lazy"
+                className={`premio-logo${premio.fondo === 'macizo' ? ' premio-logo--macizo' : ''}`}
+              />
+            </li>
+          ))}
+        </ul>
+        {/* La línea vertical va en este envoltorio y no en el enlace: un <a>
+            flex se come el espacio entre el texto y la flecha. */}
+        <div className="shrink-0 xl:flex xl:items-center xl:self-stretch xl:border-l xl:border-linea xl:pl-6">
+          <a
+            href={URL_AGENTES}
+            target="_blank"
+            rel="noopener"
+            className="whitespace-nowrap text-sm text-navy-sub underline underline-offset-4 transition-colors hover:text-navy"
+          >
+            {t('Travel agents only')} <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
     </section>
   )
 }
