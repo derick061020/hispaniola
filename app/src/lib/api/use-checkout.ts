@@ -19,6 +19,54 @@ const CLAVE = 'hsp:checkout:v1'
 
 type Guardado = { codigo: string; token: string; tour: string; abierto: string }
 
+/** Estados de un pedido que ya no se retoma. */
+const CERRADOS = ['paid', 'confirmed', 'cancelled']
+
+// [2026-10-20, proyecto «Recuperar reservas por email», diap. 4: «Una orden por
+// cada carga del paso 1. Duplicados, rastreadores y reintentos inflan los
+// abandonos». Portado el 2026-10-22 junto con los arreglos del pedido
+// reutilizado, sin el resto de aquel carril.] LOS RASTREADORES NO ABREN PEDIDO.
+//
+// `/book/` esta en el Disallow de robots.txt, pero los robots que no lo leen
+// —o que lo ignoran a proposito, como AdsBot de Google, que comprueba las
+// paginas de destino de los anuncios aunque `User-agent: *` diga que no—
+// ejecutan el JavaScript, montan este hook y abren un pedido en Odoo en cada
+// visita: no guardan localStorage, asi que cada carga es un navegador nuevo y
+// una clave de idempotencia nueva. Eso es el «rastreador cada dos horas» de
+// la auditoria.
+//
+// Solo se excluye a quien SE DECLARA robot en su user-agent. Los navegadores
+// automatizados que se disfrazan de Chrome no se pueden distinguir desde
+// aqui —ni se intenta: un falso positivo dejaria a un cliente de verdad sin
+// pedido—; esos los tiene que filtrar Odoo.
+// `HeadlessChrome` NO esta en la lista a proposito: es el de los scripts de
+// `qa/`, que necesitan abrir pedido contra un Odoo de pruebas.
+const ROBOT = /bot\b|bot\/|crawler|spider|crawling|slurp|facebookexternalhit|lighthouse|pingdom|uptimerobot|statuscake/i
+const NO_ROBOT = /cubot/i // marca de moviles: «CUBOT X30» no es un robot
+
+export function esRobotDeclarado(ua: string = typeof navigator === 'undefined' ? '' : navigator.userAgent): boolean {
+  return ROBOT.test(ua) && !NO_ROBOT.test(ua)
+}
+
+/** Clave de idempotencia de como mucho 64 caracteres (Odoo la corta ahi, y
+ *  cortarla a ciegas podria hacer que dos claves distintas colisionaran: la
+ *  clave derivada de un pedido pagado —la base + su codigo, ver `arrancar`—
+ *  cortada se quedaria en la base y volveria a dar el pedido pagado). */
+function claveCorta(clave: string): string {
+  if (clave.length <= 64) return clave
+  // FNV-1a de 32 bits, dos pasadas con semillas distintas: no es criptografia,
+  // solo un resumen estable para que la misma entrada de la misma clave.
+  const fnv = (texto: string, semilla: number) => {
+    let h = semilla >>> 0
+    for (let i = 0; i < texto.length; i++) {
+      h ^= texto.charCodeAt(i)
+      h = Math.imul(h, 16777619) >>> 0
+    }
+    return h.toString(36)
+  }
+  return `${clave.slice(0, 40)}-${fnv(clave, 2166136261)}${fnv(clave, 33554467)}`
+}
+
 /** Un identificador estable de ESTE navegador, para la clave de idempotencia.
  *  No identifica a nadie: es un numero al azar que vive en su localStorage y
  *  solo sirve para que dos visitantes no compartan pedido. */
@@ -103,14 +151,85 @@ export function useCheckout(inicio: InicioCheckout) {
     let cancelado = false
     const abortador = new AbortController()
 
+    /** Lo que la URL dice y el pedido no. Ver el porque abajo, en `arrancar`. */
+    function desajusteContraUrl(pedido: Pedido): ParcheCheckout {
+      const desajuste: ParcheCheckout = {}
+      if (inicio.paquete && pedido.package !== inicio.paquete) {
+        desajuste.package = inicio.paquete
+      }
+      const varianteUrl = inicio.variante ?? null
+      if (varianteUrl !== null && pedido.variant !== varianteUrl) {
+        desajuste.variant = varianteUrl
+      }
+      if (inicio.fecha && pedido.date !== inicio.fecha) {
+        desajuste.date = inicio.fecha
+      }
+      if (inicio.scheduleIndex !== undefined
+          && pedido.schedule_index !== inicio.scheduleIndex) {
+        desajuste.schedule_index = inicio.scheduleIndex
+      }
+      if (inicio.pax) {
+        const { adults, children, infants } = inicio.pax
+        if (pedido.pax.adults !== adults || pedido.pax.children !== children
+            || pedido.pax.infants !== infants) {
+          desajuste.pax = { adults, children, infants }
+        }
+      }
+      // Los extras se eligen en la ficha y no se tocan dentro del
+      // funnel, asi que la lista de la URL es siempre la buena.
+      const extras = inicio.addons ?? []
+      if ([...extras].sort().join(',') !== [...pedido.addons].sort().join(',')) {
+        desajuste.addons = extras
+      }
+      return desajuste
+    }
+
+    /** Corrige el pedido contra la URL y lo publica. */
+    async function publicarCorregido(pedido: Pedido, guardado: Guardado) {
+      const desajuste = desajusteContraUrl(pedido)
+      if (Object.keys(desajuste).length) {
+        try {
+          const { pedido: corregido } = await sincronizarCheckout(
+            guardado.codigo, guardado.token, desajuste,
+          )
+          if (cancelado) return
+          setEstado((s) => ({ ...s, pedido: corregido, cargando: false }))
+          return
+        } catch {
+          // Si la correccion falla, se sigue con el pedido tal cual: es
+          // mejor un precio a corregir que un funnel que no abre.
+        }
+        if (cancelado) return
+      }
+      setEstado((s) => ({ ...s, pedido, cargando: false }))
+    }
+
     async function arrancar() {
+      // [2026-10-20, portado el 2026-10-22] Un robot declarado no abre pedido.
+      // El funnel se pinta igual (con el precio estimado y sin poder pagar),
+      // sin banda de error.
+      if (esRobotDeclarado()) {
+        setEstado((s) => ({ ...s, cargando: false }))
+        return
+      }
       const guardado = leerGuardado()
       try {
         if (guardado && guardado.tour === inicio.tour) {
-          const pedido = await leerCheckout(guardado.codigo, guardado.token, abortador.signal)
+          let pedido: Pedido | null = null
+          try {
+            pedido = await leerCheckout(guardado.codigo, guardado.token, abortador.signal)
+          } catch (error) {
+            // [2026-10-20, portado el 2026-10-22] Un pedido guardado que ya no
+            // existe o cuyo token no vale (404/403) no es una caida del
+            // sistema: se olvida y se abre uno nuevo. Antes caia al `catch` de
+            // abajo y el visitante se quedaba mirando «We can’t open your
+            // booking» para siempre en ese navegador. Lo demas (red, 5xx) si
+            // es un error de verdad.
+            if (!(error instanceof ErrorApi) || ![403, 404].includes(error.status)) throw error
+          }
           if (cancelado) return
           // Un pedido ya cerrado no se retoma: se abre uno nuevo.
-          if (!['paid', 'confirmed', 'cancelled'].includes(pedido.state)) {
+          if (pedido && !CERRADOS.includes(pedido.state)) {
             sesion.current = guardado
             // [2026-08-25, Samuel: «cuando voy al semiprivado light, en
             // checkout muestra el premium»] El pedido guardado se buscaba SOLO
@@ -133,49 +252,12 @@ export function useCheckout(inicio: InicioCheckout) {
             // cambia dentro de el (fecha, horario, personas y la subida a
             // Premium). Si dejara de hacerlo, recargar volveria a la
             // configuracion de la ficha y borraria lo que se acaba de elegir.
-            const desajuste: ParcheCheckout = {}
-            if (inicio.paquete && pedido.package !== inicio.paquete) {
-              desajuste.package = inicio.paquete
-            }
-            const varianteUrl = inicio.variante ?? null
-            if (varianteUrl !== null && pedido.variant !== varianteUrl) {
-              desajuste.variant = varianteUrl
-            }
-            if (inicio.fecha && pedido.date !== inicio.fecha) {
-              desajuste.date = inicio.fecha
-            }
-            if (inicio.scheduleIndex !== undefined
-                && pedido.schedule_index !== inicio.scheduleIndex) {
-              desajuste.schedule_index = inicio.scheduleIndex
-            }
-            if (inicio.pax) {
-              const { adults, children, infants } = inicio.pax
-              if (pedido.pax.adults !== adults || pedido.pax.children !== children
-                  || pedido.pax.infants !== infants) {
-                desajuste.pax = { adults, children, infants }
-              }
-            }
-            // Los extras se eligen en la ficha y no se tocan dentro del
-            // funnel, asi que la lista de la URL es siempre la buena.
-            const extras = inicio.addons ?? []
-            if ([...extras].sort().join(',') !== [...pedido.addons].sort().join(',')) {
-              desajuste.addons = extras
-            }
-            if (Object.keys(desajuste).length) {
-              try {
-                const { pedido: corregido } = await sincronizarCheckout(
-                  guardado.codigo, guardado.token, desajuste,
-                )
-                if (cancelado) return
-                setEstado((s) => ({ ...s, pedido: corregido, cargando: false }))
-                return
-              } catch {
-                // Si la correccion falla, se sigue con el pedido tal cual: es
-                // mejor un precio a corregir que un funnel que no abre.
-              }
-              if (cancelado) return
-            }
-            setEstado((s) => ({ ...s, pedido, cargando: false }))
+            //
+            // [2026-10-22, Rossanna: prueba en la web reutilizó el pedido del
+            // 23/09 y su reserva siguio con la fecha del 30/09] La comparacion
+            // vive en `desajusteContraUrl` porque ahora hace falta en DOS
+            // sitios: aqui y al abrir (ver abajo).
+            await publicarCorregido(pedido, guardado)
             return
           }
           escribirGuardado(null)
@@ -195,8 +277,26 @@ export function useCheckout(inicio: InicioCheckout) {
         // Ahora la clave lleva un identificador aleatorio propio de este
         // navegador. Sigue cumpliendo lo que buscaba —recargar la pagina no
         // crea un pedido nuevo— sin mezclar a dos personas distintas.
-        const clave = `${inicio.tour}-${idDeEsteNavegador()}`
-        const pedido = await abrirCheckout(inicio, clave)
+        const base = `${inicio.tour}-${idDeEsteNavegador()}`
+        let pedido = await abrirCheckout(inicio, claveCorta(base))
+        // [2026-10-22, Rossanna: prueba en la web reutilizó el pedido del
+        // 23/09 (HSP-6561-5111), que ya estaba PAGADO] Odoo devuelve el pedido
+        // de una clave conocida SEA CUAL SEA SU ESTADO (`/checkout/start`,
+        // rama `reused`), y la clave de este navegador para este tour no
+        // cambia nunca. Resultado: quien ya habia pagado este tour en este
+        // navegador y volvia a reservarlo recibia SU PEDIDO PAGADO; el primer
+        // guardado contestaba 409 `order_closed` y la pantalla decia «We
+        // can’t open your booking» —un error del sistema que no lo era— sin
+        // forma de salir.
+        //
+        // Ahora, si lo que vuelve esta cerrado, se pide otro con una clave
+        // derivada del pedido cerrado. Es determinista a proposito: recargar
+        // recorre la misma cadena y llega al mismo pedido nuevo, sin crear
+        // otro por cada carga. (Arreglo del carril «Recuperar reservas por
+        // email», 2026-10-20.)
+        for (let i = 0; i < 3 && CERRADOS.includes(pedido.state); i++) {
+          pedido = await abrirCheckout(inicio, claveCorta(`${base}-${pedido.code}`))
+        }
         if (cancelado) return
         const nuevo: Guardado = {
           codigo: pedido.code,
@@ -206,7 +306,15 @@ export function useCheckout(inicio: InicioCheckout) {
         }
         sesion.current = nuevo
         escribirGuardado(nuevo)
-        setEstado((s) => ({ ...s, pedido, cargando: false }))
+        // [2026-10-22, Rossanna: prueba en la web reutilizó el pedido del
+        // 23/09; su reserva 20260923-001271 siguio con fecha 30/09 aunque ella
+        // eligio otra cosa] Un pedido REUTILIZADO (la clave ya existia: este
+        // navegador ya habia abierto este tour, hace mas de 12 h o antes de
+        // pasar por otro) vuelve tal cual estaba —Odoo no le aplica lo que
+        // manda `/start`—, con la fecha y las personas de entonces. Se
+        // corrige contra la URL igual que el pedido guardado; con un pedido
+        // recien creado no hay desajuste y no sale ninguna llamada.
+        await publicarCorregido(pedido, nuevo)
       } catch (error) {
         if (cancelado) return
         setEstado((s) => ({
@@ -278,7 +386,7 @@ export function useCheckout(inicio: InicioCheckout) {
       const sesionActual = sesion.current
       const pedido = estado.pedido
       if (!sesionActual || !pedido) return
-      if (['paid', 'confirmed', 'cancelled'].includes(pedido.state)) return
+      if (CERRADOS.includes(pedido.state)) return
       abandonarCheckout(sesionActual.codigo, sesionActual.token, 'closed the tab')
     }
     // `pagehide` y no `beforeunload`: en movil el navegador puede matar la
