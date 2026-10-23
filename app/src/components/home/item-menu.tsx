@@ -80,7 +80,10 @@ const ICONO_FALLBACK = Compass
 // daría ~160px, 6 líneas de texto). La descripción se oculta ahí (`hidden
 // lg:block`), quedando chip + título — misma decisión que ya tomó Samuel
 // para el móvil, aplicada a la franja donde el ancho tampoco da.
-export function ItemMenu({ item }: { item: ItemNav }) {
+// `conDescripcion` (2026-10-23): la hoja móvil (menu-movil.tsx) reutiliza
+// este mismo ítem en sus sub-vistas y ahí la descripción SÍ cabe y ayuda —
+// en el dropdown solo se ve desde lg por falta de ancho en el panel compacto.
+export function ItemMenu({ item, conDescripcion = false }: { item: ItemNav; conDescripcion?: boolean }) {
   const Icono = ICONOS[item.id] ?? ICONO_FALLBACK
   const clases = 'group flex gap-3 rounded-lg p-3 transition-colors hover:bg-papel-hueso'
   const contenido = (
@@ -90,7 +93,7 @@ export function ItemMenu({ item }: { item: ItemNav }) {
       </span>
       <span className="min-w-0">
         <span className="block font-display text-sm font-semibold text-navy">{item.nombre}</span>
-        <span className="mt-0.5 hidden text-xs text-navy-soft lg:block">{item.descripcion}</span>
+        <span className={`mt-0.5 text-xs text-navy-soft ${conDescripcion ? 'block' : 'hidden lg:block'}`}>{item.descripcion}</span>
       </span>
     </>
   )
