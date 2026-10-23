@@ -2261,10 +2261,6 @@ export const ES: Record<string, string> = {
   "Travel agencies and agents": "Agencias y agentes de viaje",
   "Travel agents": "Agentes de viaje",
   "Travel agents only": "Solo agentes de viaje",
-  "Travel agents · Partner Program": "Agentes de viaje · Programa de partners",
-  "Free to join, commission from 12% up to 15%.": "Alta gratuita, comisión del 12 % al 15 %.",
-  "Become a Partner": "Hazte partner",
-  "A Hispaniola catamaran on turquoise water in Punta Cana": "Un catamarán de Hispaniola sobre el agua turquesa de Punta Cana",
   "Travel tips": "Consejos de viaje",
   "travelers already trust us": "viajeros ya confían en nosotros",
   "TripAdvisor, #1 water activity in Bávaro / Punta Cana for more than 7 years": "TripAdvisor — #1 en actividades acuáticas de Bávaro / Punta Cana durante más de 7 años",
@@ -2754,12 +2750,6 @@ export const ES: Record<string, string> = {
   ", and with the guarantee that your reservation will never be handed over to third parties.": ", y con la garantía de que tu reserva no se le pasa a nadie.",
   "The name on the boat is the name on your booking.": "El nombre del barco es el nombre de tu reserva.",
 
-  // [2026-10-02] El aviso del party boat (ui/aviso-party-boat.tsx).
-  "Party boat in Punta Cana": "Party boat en Punta Cana",
-  "Party Boat in Punta Cana": "Party Boat en Punta Cana",
-  "Music, open bar and the whole boat for you.": "Música, barra libre y el barco entero.",
-  "See the experience": "Ver experiencia",
-  "A Hispaniola party boat anchored over turquoise water in Punta Cana": "Un party boat de Hispaniola fondeado sobre agua turquesa en Punta Cana",
   "Dismiss": "Cerrar",
 
   // [2026-10-02, Samuel, pedido de marketing] La página /tours-and-events

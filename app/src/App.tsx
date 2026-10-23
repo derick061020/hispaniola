@@ -31,7 +31,6 @@ import { LegalPage } from '@/pages/legal'
 import { FundacionesPage } from '@/pages/fundaciones'
 import { ScrollAlNavegar } from '@/lib/scroll-al-navegar'
 import { NavFlotante } from '@/components/home/nav-flotante'
-import { AvisoPartyBoat } from '@/components/ui/aviso-party-boat'
 import { AvisoMuseo } from '@/components/ui/aviso-museo'
 import { Topbar } from '@/components/home/topbar'
 import { DevMode } from '@/dev/dev-mode'
@@ -181,10 +180,11 @@ function App() {
           [2026-10-22, Marketing en «MARKETING WEB», captura del aviso + «@Derick
           Desactivar»] Fuera el party boat.
           [2026-10-22, Samuel: «reutiliza este popup para que ahora mande a la
-          landing de agentes»] El mismo aviso, ahora a hispaniolatravelagents.com
-          (ver aviso-party-boat.tsx). Convive con el enlace «Travel agents
-          only» de la banda de premios. */}
-      <AvisoPartyBoat />
+          landing de agentes»] El mismo aviso, ahora a hispaniolatravelagents.com.
+          [2026-10-23, Derick: «elimina esto definitivamente»] Borrado del todo,
+          componente incluido (ui/aviso-party-boat.tsx, recuperable del
+          historial de git). A los agentes se llega por el enlace «Travel
+          agents only» de la banda de premios. */}
       {/* [2026-10-08] El ojo de buey del museo. Va en otra esquina que el
           aviso del party boat —arriba a la derecha, no abajo— para que los
           dos puedan convivir sin taparse. */}
