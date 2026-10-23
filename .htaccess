@@ -8,7 +8,7 @@ RewriteEngine On
 RewriteCond %{HTTP_HOST} ^www\.hispaniolaaquaticadventures\.com$ [NC]
 RewriteRule ^ https://hispaniolaaquaticadventures.com%{REQUEST_URI} [R=301,L]
 
-# --- 49 redirecciones de las URLs viejas en espanol ---
+# --- 50 redirecciones de las URLs viejas en espanol ---
 RewriteRule "^tours/semi-private-premium/?$" "/tours/caribbean-escape" [R=301,L]
 RewriteRule "^book/semi-private-premium/?$" "/book/caribbean-escape" [R=301,L]
 RewriteRule "^book/semi-private-premium/thank-you/?$" "/book/caribbean-escape/thank-you" [R=301,L]
@@ -40,6 +40,7 @@ RewriteRule "^nosotros/?$" "/crew" [R=301,L]
 RewriteRule "^tripulacion/?$" "/crew" [R=301,L]
 RewriteRule "^instalaciones/?$" "/facilities" [R=301,L]
 RewriteRule "^flota/?$" "/fleet" [R=301,L]
+RewriteRule "^comida-y-bar/?$" "/food-and-bar" [R=301,L]
 RewriteRule "^fundacion/?$" "/foundation" [R=301,L]
 RewriteRule "^guias/?$" "/guides" [R=301,L]
 RewriteRule "^agentes-de-viaje/?$" "/travel-agents" [R=301,L]
