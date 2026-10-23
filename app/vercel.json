@@ -254,6 +254,41 @@
       "source": "/contact.php",
       "destination": "/contact",
       "permanent": true
+    },
+    {
+      "source": "/private-saona-island-excursion.php",
+      "destination": "/tours/saona-island",
+      "permanent": true
+    },
+    {
+      "source": "/semi-private-snorkeling-catamaran-excursion-puntacana.php",
+      "destination": "/tours/coral-quest",
+      "permanent": true
+    },
+    {
+      "source": "/tips-for-punta-cana-snorkeling-and-sailing.php",
+      "destination": "/guides",
+      "permanent": true
+    },
+    {
+      "source": "/private-catamaran-snorkeling-excursion-puntacana.php",
+      "destination": "/tours/private-charter",
+      "permanent": true
+    },
+    {
+      "source": "/educational-snorkeling-for-snorkel-lovers.php",
+      "destination": "/tours/caribbean-escape",
+      "permanent": true
+    },
+    {
+      "source": "/about-hispaniola.php",
+      "destination": "/competitive-advantage",
+      "permanent": true
+    },
+    {
+      "source": "/events-party-boat-puntacana.php",
+      "destination": "/events/party-boat",
+      "permanent": true
     }
   ],
   "headers": [
