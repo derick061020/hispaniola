@@ -308,7 +308,7 @@ export function MenuMovil({
                       <CardOcasion
                         o={o}
                         compacto
-                        alto={i === OCASIONES.length - 1 && OCASIONES.length % 2 === 1 ? 'h-28' : 'h-24'}
+                        alto={i === OCASIONES.length - 1 && OCASIONES.length % 2 === 1 ? 'h-32' : 'h-28'}
                       />
                     </div>
                   ))}

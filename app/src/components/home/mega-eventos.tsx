@@ -53,11 +53,11 @@ import { t } from '@/lib/i18n'
 // rejilla de 2 columnas para ahorrar scroll — foto baja, título text-sm.
 export function CardOcasion({
   o,
-  alto = 'h-44',
+  alto = 'h-52',
   compacto = false,
 }: {
   o: Ocasion
-  alto?: 'h-44' | 'h-36' | 'h-24' | 'h-28'
+  alto?: 'h-52' | 'h-44' | 'h-36' | 'h-32' | 'h-28' | 'h-24'
   compacto?: boolean
 }) {
   // El zoom vive en el contenedor con overflow-hidden, no en el <img>
