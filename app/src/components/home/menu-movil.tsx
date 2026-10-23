@@ -298,12 +298,22 @@ export function MenuMovil({
               // (-mx-5 / -mb-5 anulan el padding de esta vista).
               <>
                 <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-navy-soft">{t('Private events')}</p>
-                <div className="grid gap-5 sm:grid-cols-3 sm:gap-4">
-                  {OCASIONES.map((o) => (
-                    <CardOcasion key={o.tipo} o={o} alto="h-36" />
+                {/* [2026-10-23, Samuel] Menos scroll en móvil: rejilla de 2
+                    columnas con fotos bajas; el 3.º ocupa el ancho completo
+                    (una celda vacía al lado se leería como hueco). Desde sm
+                    (≥640, tablet) vuelve a 3 columnas, como antes. */}
+                <div className="grid grid-cols-2 gap-x-3 gap-y-4 sm:grid-cols-3 sm:gap-4">
+                  {OCASIONES.map((o, i) => (
+                    <div key={o.tipo} className={i === OCASIONES.length - 1 && OCASIONES.length % 2 === 1 ? 'col-span-2 sm:col-span-1' : ''}>
+                      <CardOcasion
+                        o={o}
+                        compacto
+                        alto={i === OCASIONES.length - 1 && OCASIONES.length % 2 === 1 ? 'h-28' : 'h-24'}
+                      />
+                    </div>
                   ))}
                 </div>
-                <FranjaWebsGrupo className="-mx-5 mt-6 -mb-5 px-5 pt-4 pb-5" />
+                <FranjaWebsGrupo className="-mx-5 mt-5 -mb-5 px-5 pt-4 pb-5" />
               </>
             ) : null}
             {mostrada === 'nosotros' || mostrada === 'sostenibilidad' || mostrada === 'ayuda' ? (

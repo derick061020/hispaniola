@@ -49,7 +49,17 @@ import { t } from '@/lib/i18n'
 
 /** Card de un evento propio (enlace interno). La comparten el megamenú y la
  *  hoja móvil (menu-movil.tsx). */
-export function CardOcasion({ o, alto = 'h-44' }: { o: Ocasion; alto?: 'h-44' | 'h-36' }) {
+// `compacto` (2026-10-23, Samuel): la sub-vista móvil de Eventos usa una
+// rejilla de 2 columnas para ahorrar scroll — foto baja, título text-sm.
+export function CardOcasion({
+  o,
+  alto = 'h-44',
+  compacto = false,
+}: {
+  o: Ocasion
+  alto?: 'h-44' | 'h-36' | 'h-24' | 'h-28'
+  compacto?: boolean
+}) {
   // El zoom vive en el contenedor con overflow-hidden, no en el <img>
   // suelto — mismo motivo que MegaTours.
   const contenido = (
@@ -62,10 +72,12 @@ export function CardOcasion({ o, alto = 'h-44' }: { o: Ocasion; alto?: 'h-44' | 
           className="size-full object-cover transition-transform duration-300 group-hover:scale-105"
         />
       </span>
-      <span className="mt-2 block font-display text-base font-semibold leading-tight text-navy transition-colors group-hover:text-aqua-dark">
+      <span
+        className={`mt-2 block font-display font-semibold leading-tight text-navy transition-colors group-hover:text-aqua-dark ${compacto ? 'text-sm' : 'text-base'}`}
+      >
         {o.nombre}
       </span>
-      <span className="mt-1 block text-xs text-navy-soft">{o.meta}</span>
+      <span className={`block text-xs text-navy-soft ${compacto ? 'mt-0.5' : 'mt-1'}`}>{o.meta}</span>
     </>
   )
   // Bodas y MICE llevan a su landing real; «Eventos y party boat» sigue en el
