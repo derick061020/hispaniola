@@ -1,11 +1,13 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type TouchEvent } from 'react'
 import { createPortal } from 'react-dom'
 import { Link } from 'react-router-dom'
-import { X } from 'lucide-react'
+import { ChevronLeft, ChevronRight, X } from 'lucide-react'
 import { useCatalogo } from '@/lib/api/use-catalogo'
 import { fusionarLista } from '@/lib/api/fusion-catalogo'
-import { TOURS, OCASIONES, NAV_NOSOTROS, NAV_SOSTENIBILIDAD, NAV_AYUDA, bookingCta, formatoDinero } from '@/data/home'
-import { EnlacePrototipo } from '@/components/ui/enlace-prototipo'
+import { TOURS, OCASIONES, NAV_NOSOTROS, NAV_SOSTENIBILIDAD, NAV_AYUDA } from '@/data/home'
+import { CardTour } from './mega-tours'
+import { CardOcasion, FranjaWebsGrupo } from './mega-eventos'
+import { ItemMenu } from './item-menu'
 import { Boton } from '@/components/ui/boton'
 import { t, traducible } from '@/lib/i18n'
 import { SelectorIdioma } from '@/components/ui/selector-idioma'
@@ -54,9 +56,59 @@ export function MenuMovil({
   // sin tocar código, y el «desde US$» es el del catálogo, no el que quedó
   // escrito en `data/home.ts`. Si Odoo no contesta se pinta la lista estática.
   const tours = fusionarLista(TOURS, useCatalogo())
-  const [expandida, setExpandida] = useState<Seccion | null>('tours')
+  // [2026-10-23] `vista`: la sub-vista abierta (null = listado principal).
+  // `mostrada`: qué contenido pinta el panel de sub-vista — se separa de
+  // `vista` para que, al volver, el panel siga mostrando su contenido
+  // mientras sale deslizándose en vez de vaciarse de golpe.
+  const [vista, setVista] = useState<Seccion | null>(null)
+  const [mostrada, setMostrada] = useState<Seccion>('tours')
   const hojaRef = useRef<HTMLDivElement>(null)
   const cerrarBtnRef = useRef<HTMLButtonElement>(null)
+  const atrasRef = useRef<HTMLButtonElement>(null)
+  // El botón de cada apartado, para devolverle el foco al volver.
+  const botonesRef = useRef<Partial<Record<Seccion, HTMLButtonElement | null>>>({})
+  const volviendoDe = useRef<Seccion | null>(null)
+  const toque = useRef<{ x: number; y: number } | null>(null)
+
+  const abrirVista = (s: Seccion) => {
+    setMostrada(s)
+    setVista(s)
+  }
+  const volver = () => {
+    volviendoDe.current = vista
+    setVista(null)
+  }
+
+  // Cada vez que se abre la hoja, empieza en el listado.
+  useEffect(() => {
+    if (abierto) setVista(null)
+  }, [abierto])
+
+  // Foco: al entrar en una sub-vista, al «Atrás»; al volver, al apartado del
+  // que se venía (no al principio de la lista). preventScroll: el foco no
+  // debe arrastrar el panel que aún se está deslizando.
+  useEffect(() => {
+    if (vista) {
+      atrasRef.current?.focus({ preventScroll: true })
+    } else if (volviendoDe.current) {
+      botonesRef.current[volviendoDe.current]?.focus({ preventScroll: true })
+      volviendoDe.current = null
+    }
+  }, [vista])
+
+  // Gesto: deslizar hacia la derecha en una sub-vista vuelve al listado.
+  // Umbral de 70px y casi horizontal, para no confundirlo con un scroll.
+  const alTocar = (e: TouchEvent<HTMLDivElement>) => {
+    toque.current = { x: e.touches[0].clientX, y: e.touches[0].clientY }
+  }
+  const alSoltar = (e: TouchEvent<HTMLDivElement>) => {
+    const inicio = toque.current
+    toque.current = null
+    if (!inicio || !vista) return
+    const dx = e.changedTouches[0].clientX - inicio.x
+    const dy = e.changedTouches[0].clientY - inicio.y
+    if (dx > 70 && Math.abs(dy) < 40) volver()
+  }
 
   // Bloqueo de scroll + foco de entrada/salida (§13.4, los 3 fallos de UX que
   // tenía la pantalla completa): mientras la hoja está abierta, el fondo NO
@@ -85,13 +137,23 @@ export function MenuMovil({
     if (!abierto) return
     function onKeyDown(e: KeyboardEvent) {
       if (e.key === 'Escape') {
-        onCerrar()
+        // [2026-10-23] En una sub-vista, Escape vuelve un nivel (como el
+        // «Atrás»); en el listado, cierra la hoja.
+        if (vista) {
+          volviendoDe.current = vista
+          setVista(null)
+        } else {
+          onCerrar()
+        }
         return
       }
       if (e.key !== 'Tab') return
       const hoja = hojaRef.current
       if (!hoja) return
-      const focosables = hoja.querySelectorAll<HTMLElement>('a[href], button:not([disabled])')
+      // Sin los de la vista que está fuera de pantalla (`inert`).
+      const focosables = [...hoja.querySelectorAll<HTMLElement>('a[href], button:not([disabled])')].filter(
+        (el) => !el.closest('[inert]'),
+      )
       if (focosables.length === 0) return
       const primero = focosables[0]
       const ultimo = focosables[focosables.length - 1]
@@ -105,7 +167,7 @@ export function MenuMovil({
     }
     document.addEventListener('keydown', onKeyDown)
     return () => document.removeEventListener('keydown', onKeyDown)
-  }, [abierto, onCerrar])
+  }, [abierto, onCerrar, vista])
 
   if (!abierto) return null
 
@@ -123,23 +185,40 @@ export function MenuMovil({
           objeto, no de pantalla). Decorativo: el cierre accesible ya está
           cubierto por Escape y el botón de cerrar, así que se saca del árbol
           de accesibilidad. */}
-      <div className="fixed inset-0 z-50 bg-navy/40 backdrop-blur-sm md:hidden" onClick={onCerrar} aria-hidden="true" />
+      <div className="fixed inset-0 z-50 bg-navy/40 backdrop-blur-sm lg:hidden" onClick={onCerrar} aria-hidden="true" />
 
       {/* La hoja — mismo margen (--spacing-hero-margen) y radio (--radius-hero)
           que el hero: por eso se lee como parte del mismo sistema y no como
           un modal genérico a sangre. Cae desde arriba (transform-origin +
           keyframes en componentes.css): en desktop los menús salen del notch,
           en el header — en móvil deben salir del mismo sitio, no subir desde
-          abajo como un bottom sheet, que mentiría sobre su origen. */}
+          abajo como un bottom sheet, que mentiría sobre su origen.
+          [2026-10-23] lg:hidden y no md:hidden: entre 768 y 1023 ya no hay
+          tabs (nav-flotante.tsx) y la hamburguesa abre esta misma hoja. */}
       <div
         ref={hojaRef}
         role="dialog"
         aria-modal="true"
         aria-label={t('Menu')}
-        className="menu-hoja fixed inset-hero-margen z-50 flex flex-col overflow-hidden rounded-hero bg-papel shadow-hero md:hidden"
+        className="menu-hoja fixed inset-hero-margen z-50 flex flex-col overflow-hidden rounded-hero bg-papel shadow-hero lg:hidden"
       >
+        {/* Barra superior. En el listado: «Menu». En una sub-vista: «Atrás»
+            arriba a la izquierda (2026-10-23, Samuel) — mismo sitio donde
+            cualquier móvil pone el «volver», para que no haya que buscarlo. */}
         <div className="flex items-center justify-between border-b border-linea px-5 py-4">
-          <strong className="font-display text-lg text-navy">{t('Menu')}</strong>
+          {vista ? (
+            <button
+              ref={atrasRef}
+              type="button"
+              onClick={volver}
+              className="-ml-2 flex items-center gap-1 rounded-lg py-1 pr-2 pl-1 font-display text-base font-semibold text-navy hover:bg-papel-hueso"
+            >
+              <ChevronLeft aria-hidden="true" className="size-5" />
+              {t('Back')}
+            </button>
+          ) : (
+            <strong className="font-display text-lg text-navy">{t('Menu')}</strong>
+          )}
           <button
             ref={cerrarBtnRef}
             type="button"
@@ -151,148 +230,105 @@ export function MenuMovil({
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-5 py-2">
-          {/* "Inicio" (2026-07-17, pedido de Samuel): primer ítem de todos,
-              link plano a "/" — a diferencia de las 4 secciones de abajo, no
-              tiene subítems que desplegar, así que no pasa por el estado
-              `expandida`. */}
-          <Link
-            to="/"
-            onClick={onCerrar}
-            className="block border-b border-linea py-3 font-display text-base font-semibold text-navy"
+        {/* NAVEGACIÓN POR PÁGINAS (2026-10-23, pedido de Samuel). Antes cada
+            apartado era un acordeón que empujaba el contenido; ahora tocar un
+            apartado DESLIZA la hoja a una sub-vista que solo muestra ese
+            apartado, con el mismo lenguaje que el megamenú de escritorio
+            (foto + nombre + línea en Tours y Eventos; icono + nombre +
+            descripción en Nosotros, Sostenibilidad y Ayuda, que en escritorio
+            tampoco tienen foto — no se inventan imágenes).
+            Las dos vistas viven a la vez, una al lado de la otra, y se mueven
+            con translate (motion-reduce: sin transición, cambio seco). La que
+            está fuera de pantalla va `inert`: ni foco ni lector de pantalla.
+            Volver: botón «Atrás», Escape (en una sub-vista vuelve un nivel; en
+            el listado cierra) o deslizar el dedo hacia la derecha. */}
+        <div className="relative flex-1 overflow-hidden" onTouchStart={alTocar} onTouchEnd={alSoltar}>
+          <div
+            inert={vista !== null}
+            className={`absolute inset-0 overflow-y-auto px-5 py-2 transition-transform duration-300 ease-out motion-reduce:transition-none ${
+              vista ? '-translate-x-full' : 'translate-x-0'
+            }`}
           >
-            {t('Home')}
-          </Link>
-          {secciones.map((s) => (
-            <div key={s.id} className="border-b border-linea py-1">
+            {/* "Inicio" (2026-07-17, pedido de Samuel): primer ítem de todos,
+                link plano a "/" — no tiene sub-vista. */}
+            <Link
+              to="/"
+              onClick={onCerrar}
+              className="block border-b border-linea py-3 font-display text-base font-semibold text-navy"
+            >
+              {t('Home')}
+            </Link>
+            {secciones.map((s) => (
               <button
+                key={s.id}
+                ref={(el) => {
+                  botonesRef.current[s.id] = el
+                }}
                 type="button"
-                onClick={() => setExpandida((e) => (e === s.id ? null : s.id))}
-                className="flex w-full items-center justify-between py-3 text-left font-display text-base font-semibold text-navy"
+                onClick={() => abrirVista(s.id)}
+                className="flex w-full items-center justify-between border-b border-linea py-4 text-left font-display text-base font-semibold text-navy"
               >
                 {s.label}
-                <span className={`text-navy-soft transition-transform ${expandida === s.id ? 'rotate-180' : ''}`}>▾</span>
+                <ChevronRight aria-hidden="true" className="size-5 text-navy-soft" />
               </button>
-              {expandida === s.id ? (
-                <div className="pb-3">
-                  {s.id === 'tours' ? (
-                    <div className="flex flex-col gap-2">
-                      {/* Los tours llevan a su ficha real. La hoja se cierra
-                          sola al navegar: el header escucha el cambio de
-                          pathname (header.tsx) — hace falta porque entre dos
-                          fichas React Router NO desmonta la página, así que la
-                          hoja se quedaría abierta encima, con el scroll del
-                          fondo aún bloqueado. */}
-                      {tours.map((tour) => (
-                        <Link
-                          key={tour.slug}
-                          to={`/tours/${tour.slug}`}
-                          className="flex items-center justify-between rounded-lg bg-papel-hueso px-3 py-2.5"
-                        >
-                          <span className="text-sm font-medium text-navy">{tour.nombre}</span>
-                          <span className="text-xs font-semibold text-menta-texto">
-                            {tour.precioLight !== null ? `From ${formatoDinero(tour.precioLight)}` : bookingCta[tour.booking]}
-                          </span>
-                        </Link>
-                      ))}
+            ))}
+          </div>
+
+          <div
+            inert={vista === null}
+            className={`absolute inset-0 overflow-y-auto px-5 pt-4 pb-5 transition-transform duration-300 ease-out motion-reduce:transition-none ${
+              vista ? 'translate-x-0' : 'translate-x-full'
+            }`}
+          >
+            <h2 className="mb-4 font-display text-xl font-semibold text-navy">
+              {secciones.find((s) => s.id === mostrada)?.label}
+            </h2>
+            {mostrada === 'tours' ? (
+              // Los tours llevan a su ficha real. La hoja se cierra sola al
+              // navegar: el header escucha el cambio de pathname (header.tsx).
+              <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+                {tours.map((tour) => (
+                  <CardTour key={tour.slug} tour={tour} />
+                ))}
+              </div>
+            ) : null}
+            {mostrada === 'eventos' ? (
+              // Igual que el megamenú: los 3 eventos propios arriba, grandes;
+              // las webs del grupo en su franja de fondo plano al pie, a sangre
+              // (-mx-5 / -mb-5 anulan el padding de esta vista).
+              <>
+                <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-navy-soft">{t('Private events')}</p>
+                {/* [2026-10-23, Samuel] Menos scroll en móvil: rejilla de 2
+                    columnas con fotos bajas; el 3.º ocupa el ancho completo
+                    (una celda vacía al lado se leería como hueco). Desde sm
+                    (≥640, tablet) vuelve a 3 columnas, como antes. */}
+                <div className="grid grid-cols-2 gap-x-3 gap-y-4 sm:grid-cols-3 sm:gap-4">
+                  {OCASIONES.map((o, i) => (
+                    <div key={o.tipo} className={i === OCASIONES.length - 1 && OCASIONES.length % 2 === 1 ? 'col-span-2 sm:col-span-1' : ''}>
+                      <CardOcasion
+                        o={o}
+                        compacto
+                        alto={i === OCASIONES.length - 1 && OCASIONES.length % 2 === 1 ? 'h-32' : 'h-28'}
+                      />
                     </div>
-                  ) : null}
-                  {s.id === 'eventos' ? (
-                    <div className="flex flex-col gap-1.5">
-                      {/* Bodas y MICE llevan a su landing real; «Eventos y
-                          party boat» sigue en el prototipo (formulario del
-                          hub). Misma unión por `slug` que el megamenú. */}
-                      {OCASIONES.map((o) =>
-                        o.slug ? (
-                          <Link
-                            key={o.tipo}
-                            to={`/events/${o.slug}`}
-                            className="rounded-lg px-3 py-2 hover:bg-papel-hueso"
-                          >
-                            <span className="text-sm font-medium text-navy">{o.nombre}</span>
-                          </Link>
-                        ) : (
-                          <EnlacePrototipo key={o.tipo} className="rounded-lg px-3 py-2 hover:bg-papel-hueso">
-                            <span className="text-sm font-medium text-navy">{o.nombre}</span>
-                          </EnlacePrototipo>
-                        ),
-                      )}
-                    </div>
-                  ) : null}
-                  {s.id === 'nosotros' ? (
-                    <div className="flex flex-col gap-1.5">
-                      {/* Igual que ItemMenu del dropdown de escritorio: `to`
-                          decide página real vs. placeholder del prototipo. */}
-                      {NAV_NOSOTROS.map((item) =>
-                        item.to ? (
-                          <Link
-                            key={item.id}
-                            to={item.to}
-                            className="rounded-lg px-3 py-2 text-sm font-medium text-navy hover:bg-papel-hueso"
-                          >
-                            {item.nombre}
-                          </Link>
-                        ) : (
-                          <EnlacePrototipo
-                            key={item.id}
-                            className="rounded-lg px-3 py-2 text-sm font-medium text-navy hover:bg-papel-hueso"
-                          >
-                            {item.nombre}
-                          </EnlacePrototipo>
-                        ),
-                      )}
-                    </div>
-                  ) : null}
-                  {/* [v2 2026-07-27] Sostenibilidad, tab nuevo del menú v2.
-                      Mismo tratamiento que Nosotros y Ayuda. */}
-                  {s.id === 'sostenibilidad' ? (
-                    <div className="flex flex-col gap-1.5">
-                      {NAV_SOSTENIBILIDAD.map((item) =>
-                        item.to ? (
-                          <Link
-                            key={item.id}
-                            to={item.to}
-                            className="rounded-lg px-3 py-2 text-sm font-medium text-navy hover:bg-papel-hueso"
-                          >
-                            {item.nombre}
-                          </Link>
-                        ) : (
-                          <EnlacePrototipo
-                            key={item.id}
-                            className="rounded-lg px-3 py-2 text-sm font-medium text-navy hover:bg-papel-hueso"
-                          >
-                            {item.nombre}
-                          </EnlacePrototipo>
-                        ),
-                      )}
-                    </div>
-                  ) : null}
-                  {s.id === 'ayuda' ? (
-                    <div className="flex flex-col gap-1.5">
-                      {NAV_AYUDA.map((item) =>
-                        item.to ? (
-                          <Link
-                            key={item.id}
-                            to={item.to}
-                            className="rounded-lg px-3 py-2 text-sm font-medium text-navy hover:bg-papel-hueso"
-                          >
-                            {item.nombre}
-                          </Link>
-                        ) : (
-                          <EnlacePrototipo
-                            key={item.id}
-                            className="rounded-lg px-3 py-2 text-sm font-medium text-navy hover:bg-papel-hueso"
-                          >
-                            {item.nombre}
-                          </EnlacePrototipo>
-                        ),
-                      )}
-                    </div>
-                  ) : null}
+                  ))}
                 </div>
-              ) : null}
-            </div>
-          ))}
+                <FranjaWebsGrupo className="-mx-5 mt-5 -mb-5 px-5 pt-4 pb-5" />
+              </>
+            ) : null}
+            {mostrada === 'nosotros' || mostrada === 'sostenibilidad' || mostrada === 'ayuda' ? (
+              // El mismo ItemMenu de los dropdowns de escritorio, con la
+              // descripción visible. -mx-3: el p-3 del ítem deja el icono
+              // alineado con el título de la vista.
+              <div className="-mx-3 grid gap-1 sm:grid-cols-2">
+                {(mostrada === 'nosotros' ? NAV_NOSOTROS : mostrada === 'sostenibilidad' ? NAV_SOSTENIBILIDAD : NAV_AYUDA).map(
+                  (item) => (
+                    <ItemMenu key={item.id} item={item} conDescripcion />
+                  ),
+                )}
+              </div>
+            ) : null}
+          </div>
         </div>
 
         <div className="flex items-center gap-3 border-t border-linea p-4">

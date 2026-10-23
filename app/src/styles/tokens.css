@@ -778,6 +778,15 @@
      fijo de Tours sin compartir su Nº de columnas. */
   --spacing-mega-card-ancho: 12.5rem; /* 200px */
 
+  /* Ancho del megamenú de Eventos (2026-10-23, Samuel). Desde que los 3
+     eventos propios llenan la fila (3 columnas fluidas) y las webs del grupo
+     van como filas con miniatura, ninguna fila tiene ya cards de ancho fijo
+     que den el ancho por `w-fit`: el panel lo fija este token. 880px = lo que
+     medía con 4 cards (4 × mega-card-ancho + 3 gaps de 16 + padding 2 × 16),
+     el mismo ancho que MegaTours: al saltar entre las dos pestañas, el panel
+     no cambia de tamaño. */
+  --spacing-mega-eventos-ancho: 55rem; /* 880px */
+
   /* CTA «mar» del hero (pedido de Samuel, 2026-07-14): el botón lg lleva dos
      capas de olas en deriva constante al pie, y el catamarán real vive DENTRO
      del botón, en un hueco reservado a la derecha — al hover zarpa: sale de

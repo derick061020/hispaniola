@@ -3024,4 +3024,17 @@ export const ES: Record<string, string> = {
   "A hot dog and a fruit skewer on a white plate": "Un hot dog y una brocheta de fruta en un plato blanco",
   "A hot dog, chicken and beef skewers and french fries on a white plate": "Un hot dog, brochetas de pollo y res y papas fritas en un plato blanco",
   "Chicken, beef and shrimp skewers with shrimp tempura and french fries on a white plate": "Brochetas de pollo, res y camarón con tempura de camarón y papas fritas en un plato blanco",
+
+  // [2026-10-22, Samuel tras hablar con Raymond] Las 4 webs de party boat del
+  // grupo en el megamenú de Eventos y en la hoja móvil (WEBS_GRUPO en
+  // data/home.ts). Los nombres de los barcos son marca y no se traducen.
+  "Other experiences from our group": "Otras experiencias del grupo",
+  "(opens in a new tab)": "(se abre en una pestaña nueva)",
+  "Private party boat. Your price per person in seconds.": "Party boat privado. Tu precio por persona en segundos.",
+  "Private catamaran charters for your group.": "Catamaranes privados para tu grupo.",
+  "The whole boat is yours: food on board, your playlist.": "El barco entero para tu grupo: comida a bordo y tu música.",
+  "Adults-only Thursday sail with open bar and live DJ.": "Salida de los jueves solo para adultos, con barra libre y DJ en vivo.",
+
+  // [2026-10-23] Hoja del menú móvil con sub-vistas: el botón de volver.
+  "Back": "Atrás",
 }

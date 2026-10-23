@@ -337,6 +337,58 @@ export const OCASIONES: Ocasion[] = traducible([
   },
 ])
 
+// Webs hermanas del grupo (2026-10-22, pedido de Samuel tras hablar con
+// Raymond): los 4 party boats que el grupo vende con dominio propio se
+// enlazan desde el megamenú de Eventos. Van en una lista APARTE de
+// OCASIONES a propósito: OCASIONES también alimenta el footer, el ticker y la
+// hoja móvil con rutas internas (/events/:slug), y estas son webs EXTERNAS.
+// Nombre y meta salen de cada web (title / meta description, condensados a
+// una línea); la foto es su og:image o la foto de cabecera, recortada a
+// 480×346 (= proporción de la card del megamenú) en /fotos/grupo-*.webp.
+//   · Black Party Boat: su foto de cabecera (ref-dance) parece de banco/IA,
+//     así que se usa una foto propia de su galería (ev-partyboat-5).
+//   · Hispaniola Party Boat: su og:image lleva el logo abajo a la izquierda;
+//     el recorte lo deja fuera.
+export type WebGrupo = {
+  id: string
+  nombre: string
+  meta: string
+  url: string
+  /** nombre de archivo en /fotos (sin extensión) */
+  foto: string
+}
+
+export const WEBS_GRUPO: WebGrupo[] = traducible([
+  {
+    id: 'hispaniola-party-boat',
+    nombre: 'Hispaniola Party Boat',
+    meta: 'Private party boat. Your price per person in seconds.',
+    url: 'https://hispaniolapartyboat.com/',
+    foto: 'grupo-hispaniola-party-boat',
+  },
+  {
+    id: 'pride-boat',
+    nombre: 'Pride Party Boat',
+    meta: 'Private catamaran charters for your group.',
+    url: 'https://prideboatpuntacana.com/',
+    foto: 'grupo-pride-boat',
+  },
+  {
+    id: 'black-party-boat',
+    nombre: 'Black Party Boat',
+    meta: 'The whole boat is yours: food on board, your playlist.',
+    url: 'https://blackpartyboatpuntacana.com/',
+    foto: 'grupo-black-party-boat',
+  },
+  {
+    id: 'traffic-light',
+    nombre: 'Traffic Light Party Boat',
+    meta: 'Adults-only Thursday sail with open bar and live DJ.',
+    url: 'https://puntacanatrafficlight.com/',
+    foto: 'grupo-traffic-light',
+  },
+])
+
 // [v3 2026-08-06] Aqui vivian `EventoEspecial` y `EVENTOS_ESPECIALES` (la
 // vitrina de 4 boxes Cumpleanos/Bodas/Aniversarios/Despedidas del final de
 // la home). El cliente pidio ELIMINAR esa seccion (WEBSITE - INICIO pag. 5,
