@@ -123,20 +123,22 @@ export function MenuMovil({
           objeto, no de pantalla). Decorativo: el cierre accesible ya está
           cubierto por Escape y el botón de cerrar, así que se saca del árbol
           de accesibilidad. */}
-      <div className="fixed inset-0 z-50 bg-navy/40 backdrop-blur-sm md:hidden" onClick={onCerrar} aria-hidden="true" />
+      <div className="fixed inset-0 z-50 bg-navy/40 backdrop-blur-sm lg:hidden" onClick={onCerrar} aria-hidden="true" />
 
       {/* La hoja — mismo margen (--spacing-hero-margen) y radio (--radius-hero)
           que el hero: por eso se lee como parte del mismo sistema y no como
           un modal genérico a sangre. Cae desde arriba (transform-origin +
           keyframes en componentes.css): en desktop los menús salen del notch,
           en el header — en móvil deben salir del mismo sitio, no subir desde
-          abajo como un bottom sheet, que mentiría sobre su origen. */}
+          abajo como un bottom sheet, que mentiría sobre su origen.
+          [2026-10-23] lg:hidden y no md:hidden: entre 768 y 1023 ya no hay
+          tabs (nav-flotante.tsx) y la hamburguesa abre esta misma hoja. */}
       <div
         ref={hojaRef}
         role="dialog"
         aria-modal="true"
         aria-label={t('Menu')}
-        className="menu-hoja fixed inset-hero-margen z-50 flex flex-col overflow-hidden rounded-hero bg-papel shadow-hero md:hidden"
+        className="menu-hoja fixed inset-hero-margen z-50 flex flex-col overflow-hidden rounded-hero bg-papel shadow-hero lg:hidden"
       >
         <div className="flex items-center justify-between border-b border-linea px-5 py-4">
           <strong className="font-display text-lg text-navy">{t('Menu')}</strong>

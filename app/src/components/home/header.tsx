@@ -144,7 +144,7 @@ export function Header({
             página. Logo y CTA (a los lados) SÍ se quedan aquí — ver más
             abajo. 'solida' no cambia. */}
         {sobreVideo ? null : (
-          <nav className="hidden items-center gap-1 md:flex">
+          <nav className="hidden items-center gap-1 lg:flex">
             <TabsConPaneles menuAbierto={menuAbierto} toggle={toggle} />
           </nav>
         )}
@@ -158,14 +158,20 @@ export function Header({
           <span className="hidden sm:inline-flex">
             <Boton href={ctaHref}>{t('Book now')}</Boton>
           </span>
-          {/* En 'sobreVideo' el de aquí solo vive de sm a md: por debajo manda
-              el fijo del portal, justo abajo. */}
+          {/* En 'sobreVideo' el de aquí solo vive de sm a lg: por debajo manda
+              el fijo del portal, justo abajo.
+              [2026-10-23] Hasta lg, no md: los tabs de NavFlotante no caben
+              entre logo y «Book now» por debajo de ~1010 px (ver el
+              comentario en nav-flotante.tsx). Con scroll se oculta: este
+              botón se va con el hero y lo releva el fijo del portal. */}
           <button
             type="button"
             onClick={() => setMovilAbierto(true)}
             aria-label="Menu"
-            className={`grid size-10 place-items-center rounded-lg transition-colors md:hidden ${
-              sobreVideo ? 'text-white hover:bg-white/10 max-sm:hidden' : 'text-navy hover:bg-papel-hueso'
+            className={`grid size-10 place-items-center rounded-lg transition-colors lg:hidden ${
+              sobreVideo
+                ? `text-white hover:bg-white/10 max-sm:hidden ${scrolleado ? 'invisible' : ''}`
+                : 'text-navy hover:bg-papel-hueso'
             }`}
           >
             <Menu className="size-5" />
@@ -187,7 +193,13 @@ export function Header({
               type="button"
               onClick={() => setMovilAbierto(true)}
               aria-label="Menu"
-              className={`fixed right-5 top-3 z-50 grid size-10 place-items-center transition-colors sm:hidden ${
+              // [2026-10-23] De sm a lg aparece SOLO con scroll: arriba del
+              // todo el botón del Header ya está en su fila (y este, a
+              // top-3, caería encima del Topbar); al bajar, sin NavFlotante
+              // en esa franja, era la única forma de volver a abrir el menú.
+              className={`fixed right-5 top-3 z-50 grid size-10 place-items-center transition-colors ${
+                scrolleado ? 'lg:hidden' : 'sm:hidden'
+              } ${
                 scrolleado
                   ? 'rounded-full bg-white text-navy shadow-card'
                   : 'rounded-lg text-white hover:bg-white/10'

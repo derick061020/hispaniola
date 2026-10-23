@@ -35,7 +35,9 @@ import { t } from '@/lib/i18n'
 // izquierda dejaba un hueco de una card arriba a la derecha — el mismo
 // «espacio blanco raro» de la 2ª vuelta—, y estirar las cards está vetado.
 // Entre md y lg (768-1023, donde 4 no caben en 92vw) el panel mide 3: los
-// eventos llenan la fila y los barcos van a 2×2 centrados. Las cards son
+// eventos llenan la fila y los barcos van a 2×2 centrados. (Desde el
+// 2026-10-23 los tabs solo se muestran desde lg —ver nav-flotante.tsx—, así
+// que esa variante hoy no se ve; se deja por si el corte vuelve a md.) Las cards son
 // las mismas (foto, nombre, una línea); lo único que
 // distingue a las externas es la flechita ↗ junto al nombre y que abren en
 // pestaña nueva.
