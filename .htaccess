@@ -8,7 +8,7 @@ RewriteEngine On
 RewriteCond %{HTTP_HOST} ^www\.hispaniolaaquaticadventures\.com$ [NC]
 RewriteRule ^ https://hispaniolaaquaticadventures.com%{REQUEST_URI} [R=301,L]
 
-# --- 50 redirecciones de las URLs viejas en espanol ---
+# --- 57 redirecciones de las URLs viejas en espanol ---
 RewriteRule "^tours/semi-private-premium/?$" "/tours/caribbean-escape" [R=301,L]
 RewriteRule "^book/semi-private-premium/?$" "/book/caribbean-escape" [R=301,L]
 RewriteRule "^book/semi-private-premium/thank-you/?$" "/book/caribbean-escape/thank-you" [R=301,L]
@@ -59,6 +59,13 @@ RewriteRule "^semi-private-catamaran-excursion\.php/?$" "/tours/caribbean-escape
 RewriteRule "^party-boat\.php/?$" "/events/party-boat" [R=301,L,QSD]
 RewriteRule "^weddings\.php/?$" "/events/weddings" [R=301,L,QSD]
 RewriteRule "^contact\.php/?$" "/contact" [R=301,L,QSD]
+RewriteRule "^private-saona-island-excursion\.php/?$" "/tours/saona-island" [R=301,L,QSD]
+RewriteRule "^semi-private-snorkeling-catamaran-excursion-puntacana\.php/?$" "/tours/coral-quest" [R=301,L,QSD]
+RewriteRule "^tips-for-punta-cana-snorkeling-and-sailing\.php/?$" "/guides" [R=301,L,QSD]
+RewriteRule "^private-catamaran-snorkeling-excursion-puntacana\.php/?$" "/tours/private-charter" [R=301,L,QSD]
+RewriteRule "^educational-snorkeling-for-snorkel-lovers\.php/?$" "/tours/caribbean-escape" [R=301,L,QSD]
+RewriteRule "^about-hispaniola\.php/?$" "/competitive-advantage" [R=301,L,QSD]
+RewriteRule "^events-party-boat-puntacana\.php/?$" "/events/party-boat" [R=301,L,QSD]
 
 # --- SPA: toda ruta que no sea un fichero real la pinta React ---
 RewriteCond %{REQUEST_FILENAME} !-f
