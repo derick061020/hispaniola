@@ -73,6 +73,7 @@
   --color-aqua-claro: #a9e5ee;
   --color-coral: #ef5b44; /* CTA de reserva */
   --color-coral-dark: #d6432c; /* hover del CTA */
+  --color-coral-texto: #c53b25; /* coral para TEXTO pequeño sobre blanco: 5,1:1 (AA). coral-dark da 4,47:1 */
   --color-menta: #e7f5ef; /* fondo de panel de precio */
   --color-menta-texto: #0c7a5e; /* precio dentro del panel */
   --color-linea: #dfe6ea; /* bordes hairline */
@@ -2402,6 +2403,79 @@
   --text-museo-cifra: clamp(2.25rem, 4.5vw, 3.5rem);
   --text-museo-cifra-reloj: clamp(1.75rem, 3vw, 2.5rem); /* los dígitos del contador de apertura */
   --text-museo-etiqueta: 0.625rem; /* DAYS · HOURS · MIN · SEC bajo los dígitos */
+
+  /* ── FOOD & BAR (/food-and-bar, 2026-10-17) ──────────────────────────────
+     [Samuel, 2ª vuelta: «el submenú fijo queda tapado por el header fijo»]
+     El submenú de la página se pega DEBAJO del chrome fijo de cada ancho:
+       · móvil (<640): no hay píldora; solo la hamburguesa fija (top-3,
+         40px). La barra va a top:0 con 4rem de alto y deja sitio a la
+         derecha para la hamburguesa, que queda «dentro» de la barra.
+       · escritorio (md+): la píldora de NavFlotante en estado fijo ocupa
+         16px de offset + 52px de alto medido (ver --spacing-faq-sticky-top);
+         + 8px de aire = 76px.
+     El margen de ancla suma el alto del submenú y un respiro, para que al
+     saltar a una sección su título no quede debajo de nada. */
+  --spacing-ancla-comida-movil: 5rem; /* 64 + 16 */
+  --spacing-ancla-comida: 11.25rem; /* 96 + 64 + 20 */
+  /* Lo que la bebida de cada nivel de barra de eventos sobresale por
+     encima de su card. */
+  --spacing-nivel-bebida: 11rem;
+  --spacing-nivel-bebida-sobresale: 6.5rem;
+
+  /* ── FOOD & BAR (/food-and-bar, la v3 desde 2026-10-22; propuesta de 2026-10-21) ────────────────────────
+     Propuesta 3: la página vive en el agua del museo (tokens «EL DESCENSO»);
+     aquí solo lo suyo. Ver styles/comida-y-bar-v3.css. */
+  /* Burbujas de primer plano (las de la landing de agentes, en luz de agua). */
+  --color-comida3-burbuja-borde: color-mix(in srgb, var(--color-papel) 70%, transparent);
+  --color-comida3-burbuja-brillo: color-mix(in srgb, var(--color-papel) 85%, transparent);
+  --color-comida3-burbuja-cuerpo: color-mix(in srgb, var(--color-papel) 18%, transparent);
+  /* Sombra de texto sobre agua somera (la de Bávaro Reef, `.brt-b p`): el
+     turquesa de arriba de la columna no da AA con blanco sin ella. */
+  --color-comida3-sombra-texto: rgb(5 15 29 / 45%);
+  /* Sombra honda de los portillos y medallones (`.brt-port` de Bávaro Reef). */
+  --shadow-comida3-portillo: 0 14px 26px -16px rgb(5 15 29 / 38%);
+  /* [4ª revisión, Samuel: «no me gustan las sombras; solo si tienen función»]
+     La ÚNICA sombra de recorte que queda: contacto suave bajo lo que flota
+     sobre el agua o sobre la foto del héroe (vasos del Open Bar, Coco Loco). */
+  --shadow-comida3-flota: drop-shadow(0 10px 12px rgb(5 15 29 / 28%));
+  /* [5ª revisión] El fondo crema del Premium se va (Samuel: «amarillento»). */
+  /* Vasos de la barra del Open Bar. */
+  --spacing-bebida-v3: 9rem;
+  /* El plato que asoma por la esquina de «Menus». */
+  --spacing-plato-esquina-v3: 26rem;
+  --spacing-plato-esquina-v3-lg: 16rem; /* 1024–1279: junto al título sin pisarlo */
+  --spacing-plato-esquina-v3-movil: 15rem;
+  /* Portillos del carrete (Bávaro Reef: canto blanco de 4px). */
+  --spacing-portillo-v3: 17rem;
+  --spacing-portillo-v3-movil: 13.5rem;
+  --spacing-portillo-v3-grande: 27rem;
+  --spacing-portillo-canto: 0.25rem;
+  /* Ticket del héroe. */
+  /* [2ª revisión, 2026-10-21] Fuera el ticket del héroe; en su lugar, la
+     Coco Loco con burbujas. */
+  --spacing-hero-bebida-v3: 19rem;
+  /* Alto de la espuma (la del footer) en las transiciones de la página. */
+  --spacing-espuma-v3: 6rem;
+  /* [2026-10-22] Las olas de entrada y salida del agua del Open Bar, más grandes. */
+  --spacing-espuma-agua-v3: 9rem;
+  /* El índice lateral (≥ 1024) y la barra de abajo (< 1024). */
+  --spacing-indice-v3: 5rem;
+  /* [5ª revisión] SIN franja reservada: el contenido vuelve a su ancho normal y
+     los puntos del índice van sobre el margen. */
+  /* [3ª revisión] Disco del punto activo (ilustración en el propio punto). */
+  --spacing-indice-activo: 3.5rem;
+  --spacing-indice-ilus: 4.5rem;
+  --spacing-indice-barra-max: 32rem;
+  /* Margen de ancla sin submenú: píldora del header (md+) o hamburguesa. */
+  --spacing-ancla-v3: 7rem;
+  --spacing-ancla-v3-movil: 4.5rem;
+  /* Tarjetas comparables de menús (carrusel móvil): ancho de cada una, para que asome la siguiente. */
+  --spacing-tm-movil-v3: 82%;
+  --aspect-tm-foto-v3: 4 / 3;
+  --aspect-tm-foto-movil-v3: 16 / 9;
+  /* El resorte «Gentle» de Figma (masa 1, rigidez 100, amortiguación 15),
+     muestreado: 0,78 s hasta asentarse, ~3 % de rebote. */
+  --ease-resorte-gentil: linear(0, 0.03, 0.104, 0.204, 0.316, 0.43, 0.539, 0.638, 0.726, 0.8, 0.862, 0.911, 0.949, 0.978, 0.999, 1.013, 1.022, 1.027, 1.028, 1.028, 1.026, 1.023, 1.02, 1.017, 1.014, 1.011, 1.008, 1.006, 1.004, 1.003, 1.002, 1);
 }
 
 body {

@@ -28,7 +28,13 @@ import type { Descenso } from './use-descenso'
 // Se quitaron las gotas del scroll y las gotas sueltas de ambiente: el agua se
 // mueve cuando tú la tocas, y si no, está en calma.
 
-type Props = { descenso: RefObject<Descenso> }
+// [2026-10-21, /food-and-bar] `foto` opcional: la propuesta 3 de Food & Bar
+// reusa esta misma agua con SU foto de héroe (el plato en cubierta). Sin la
+// prop, el museo sigue igual.
+// [2026-10-21, 2ª revisión de la v3] `foto={null}`: agua SIN foto (el Open Bar
+// de Food & Bar, donde el agua es solo un tramo de la página). Y en cualquier
+// caso el agua deja de pintarse cuando su capa está fuera de pantalla.
+type Props = { descenso: RefObject<Descenso>; foto?: string | null }
 
 const FOTO_HERO = '/fotos/museo-hero.webp'
 
@@ -44,7 +50,7 @@ function tokenRGB(nombre: string): [number, number, number] {
   return [rgb[0] / 255, rgb[1] / 255, rgb[2] / 255]
 }
 
-export function FondoProfundidad({ descenso }: Props) {
+export function FondoProfundidad({ descenso, foto = FOTO_HERO }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   // Sube cuando el navegador devuelve un contexto WebGL perdido: vuelve a
   // montar el efecto entero (programas, texturas, simulación) desde cero.
@@ -217,7 +223,8 @@ export function FondoProfundidad({ descenso }: Props) {
       img.decode().catch(() => {}).finally(subir)
     }
     img.onerror = sinFoto
-    img.src = FOTO_HERO
+    if (foto) img.src = foto
+    else sinFoto()
 
     // ── Gotas ──
     const gotas: number[][] = []
@@ -247,8 +254,21 @@ export function FondoProfundidad({ descenso }: Props) {
     // del ticker corren después de que GSAP haya actualizado sus animaciones,
     // en el mismo fotograma: el shader siempre lee la caja ya crecida. (El
     // ticker también se para solo con la pestaña oculta.)
+    // FUERA DE PANTALLA NO SE PINTA: cuando el agua es solo un tramo de la
+    // página (Food & Bar), el resto del tiempo el shader no gasta nada.
+    let enPantalla = true
+    // [PR de Food & Bar] Solo con `foto={null}` (el tramo de agua de Food & Bar):
+    // el Museo y el resto de usos se pintan exactamente igual que antes.
+    const vigiaPantalla =
+      foto === null
+        ? new IntersectionObserver(([e]) => {
+            enPantalla = e.isIntersecting
+          })
+        : null
+    vigiaPantalla?.observe(canvas)
+
     const pintar = (tiempo: number) => {
-      if (W < 2 || H < 2 || gl.isContextLost()) return
+      if (!enPantalla || W < 2 || H < 2 || gl.isContextLost()) return
       const t = tiempo
       const d = descenso.current
       caja = canvas.getBoundingClientRect()
@@ -360,6 +380,7 @@ export function FondoProfundidad({ descenso }: Props) {
       vivo = false
       gsap.ticker.remove(pintar)
       vigia.disconnect()
+      vigiaPantalla?.disconnect()
       canvas.removeEventListener('webglcontextlost', perdido)
       canvas.removeEventListener('webglcontextrestored', recuperado)
       window.removeEventListener('pointermove', alMover)
@@ -376,7 +397,7 @@ export function FondoProfundidad({ descenso }: Props) {
       delete canvas.dataset.listo
       delete canvas.dataset.foto
     }
-  }, [descenso, vida])
+  }, [descenso, vida, foto])
 
   return (
     // STICKY y no fixed (museo.css): pegada arriba mientras dura la columna de

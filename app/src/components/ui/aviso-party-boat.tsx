@@ -77,6 +77,10 @@ const RUTAS_CALLADAS = [
   // [2026-10-07] El museo tiene su propia barra de reserva fija abajo (pedida
   // por Marketing): mismo motivo que la línea de arriba.
   /^\/underwater-museum/,
+  // [2026-10-17, QA de Food & Bar] La página ya enseña los menús y las barras
+  // de eventos, y el aviso tapaba títulos al saltar con su submenú: el mismo
+  // motivo por el que calla en /events.
+  /^\/food-and-bar/,
   /^\/tours\/party-boat/,
   // [2026-10-22] Ya es el aviso de agentes: en nuestra propia página de
   // agentes sobra.

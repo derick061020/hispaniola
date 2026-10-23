@@ -488,7 +488,8 @@ export const PAQUETES_COMIDA: PaqueteEvento[] = [
 /** Nota al pie del bloque de paquetes — verbatim del original, y también
  *  compartida: los descuentos, el aviso de langosta y la regla de las
  *  sustituciones vegetarianas son del tarifario, no de la ocasión. */
-const NOTA_PAQUETES =
+// [2026-10-21] Exportada: /food-and-bar la pone bajo sus cuatro paquetes.
+export const NOTA_PAQUETES =
   '*“Starting At Rates” with the applicable discounts: up to 5% returning guest · 5% booking 30+ days ahead · 5% cash payment. Lobster may not be available from March to June (it is replaced with wild prawn). Vegetarian options apply ONLY to their own package and cannot be swapped with other packages.'
 
 // ────────────────────────────────────────────────────────────────────

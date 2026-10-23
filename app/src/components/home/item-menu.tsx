@@ -10,6 +10,7 @@ import {
   Newspaper,
   Leaf,
   Ship,
+  UtensilsCrossed,
   Sprout,
   TicketCheck,
   User,
@@ -44,6 +45,7 @@ const ICONOS: Record<string, ComponentType<{ className?: string }>> = {
   // debe degradar, no tumbar el menú.
   instalaciones: Building2,
   flota: Ship,
+  'comida-y-bar': UtensilsCrossed,
   sostenibilidad: Leaf,
   fundacion: Sprout,
   // [2026-10-07] El museo subacuático: el edificio con columnas es el icono

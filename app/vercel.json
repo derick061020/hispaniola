@@ -161,6 +161,11 @@
       "permanent": true
     },
     {
+      "source": "/comida-y-bar",
+      "destination": "/food-and-bar",
+      "permanent": true
+    },
+    {
       "source": "/fundacion",
       "destination": "/foundation",
       "permanent": true

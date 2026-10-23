@@ -32,7 +32,13 @@ const PROF_FINAL = 0.16
 // Además de dejarlo en la ref, se escribe como `--museo-prof` en el
 // contenedor: lo que pueda resolverse en CSS (el degradado de respaldo, la
 // aguja del medidor) se resuelve en CSS, sin JS por fotograma.
-export function useDescenso(columnaRef: RefObject<HTMLElement | null>) {
+// [2026-10-21, /food-and-bar] `profMax` opcional: Food & Bar no baja al
+// abismo (la comida sobre agua casi negra no apetece); se queda en azul de mar
+// abierto. Escala la curva entera, así que la subida final también se escala.
+// `profMin` (mismo día, QA de contraste): tampoco EMPIEZA en la superficie
+// turquesa —el blanco no daba AA justo bajo el héroe—; arranca en la 2ª parada.
+// Sin los argumentos, el museo sigue igual.
+export function useDescenso(columnaRef: RefObject<HTMLElement | null>, profMax = 1, profMin = 0) {
   const estado = useRef<Descenso>({ prof: 0, scroll: 0, expansion: 0 })
 
   useEffect(() => {
@@ -53,7 +59,7 @@ export function useDescenso(columnaRef: RefObject<HTMLElement | null>) {
       const giro = giroEl
         ? Math.min(0.98, Math.max(0.5, (giroEl.getBoundingClientRect().top - caja.top - vh * 0.6) / recorrido))
         : 1
-      const prof = p <= giro ? p / giro : 1 - ((p - giro) / (1 - giro)) * (1 - PROF_FINAL)
+      const prof = (p <= giro ? p / giro : 1 - ((p - giro) / (1 - giro)) * (1 - PROF_FINAL)) * (profMax - profMin) + profMin
 
       estado.current.prof = prof
       estado.current.scroll = -caja.top / vh
@@ -72,7 +78,7 @@ export function useDescenso(columnaRef: RefObject<HTMLElement | null>) {
       window.removeEventListener('scroll', alScroll)
       window.removeEventListener('resize', alScroll)
     }
-  }, [columnaRef])
+  }, [columnaRef, profMax, profMin])
 
   return estado
 }
