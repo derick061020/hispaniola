@@ -1,5 +1,6 @@
 import { PREMIOS } from '@/data/home'
 import { t } from '@/lib/i18n'
+import { Boton } from '@/components/ui/boton'
 
 // [2026-10-22, Marketing en «MARKETING WEB»: «Que te hable primero:
 // hispaniolatravelagents.com» + capturas «Ponlo así en móvil» y «PC»] La
@@ -49,8 +50,14 @@ export function Premios() {
       {/* [2026-10-22] Con el enlace al lado, los 8 logos (770px) + 7 huecos de
           56px ya no caben en una fila: desde xl el hueco baja a 24px (40px en
           2xl). Por debajo de xl el enlace va centrado debajo, como en móvil. */}
-      <div className="mx-auto flex max-w-contenido flex-col items-center gap-y-8 xl:flex-row xl:gap-x-6">
-        <ul className="flex flex-1 flex-wrap items-center justify-center gap-x-8 gap-y-6 sm:gap-x-premio-hueco xl:gap-x-6 2xl:gap-x-10">
+      {/* [2026-10-27, Marketing por WhatsApp: «centrarlo debajo de los logos,
+          ponerlo un poco más grande y con el formato del fondo naranja como
+          los demás» — «Fernando quiere que destaquen»] El enlace deja de ir a
+          la derecha y pasa a ir centrado debajo en TODOS los anchos (como
+          karayapuntacana.com). Sin nada al lado, los logos recuperan su hueco
+          de siempre (--spacing-premio-hueco) y se va la línea vertical. */}
+      <div className="mx-auto flex max-w-contenido flex-col items-center gap-y-10">
+        <ul className="flex flex-wrap items-center justify-center gap-x-8 gap-y-6 sm:gap-x-premio-hueco">
           {PREMIOS.map((premio) => (
             <li key={premio.id}>
               <img
@@ -64,18 +71,14 @@ export function Premios() {
             </li>
           ))}
         </ul>
-        {/* La línea vertical va en este envoltorio y no en el enlace: un <a>
-            flex se come el espacio entre el texto y la flecha. */}
-        <div className="shrink-0 xl:flex xl:items-center xl:self-stretch xl:border-l xl:border-linea xl:pl-6">
-          <a
-            href={URL_AGENTES}
-            target="_blank"
-            rel="noopener"
-            className="whitespace-nowrap text-sm text-navy-sub underline underline-offset-4 transition-colors hover:text-navy"
-          >
-            {t('Travel agents only')} <span aria-hidden="true">→</span>
-          </a>
-        </div>
+        {/* [2026-10-27] Antes era un enlace de texto subrayado (text-sm,
+            navy-sub) tras una línea vertical. Ahora es el Boton coral 'lg', el
+            mismo de los CTA principales de la home (hero, WhyDirect): mismo
+            padding, hover a coral-dark con levantamiento y foco del sistema.
+            El hueco entre texto y flecha lo pone el gap-2 del propio Boton. */}
+        <Boton href={URL_AGENTES} target="_blank" rel="noopener" tamaño="lg" className="whitespace-nowrap">
+          {t('Travel agents only')} <span aria-hidden="true">→</span>
+        </Boton>
       </div>
     </section>
   )
