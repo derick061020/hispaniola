@@ -338,7 +338,9 @@ export const OCASIONES: Ocasion[] = traducible([
 ])
 
 // Webs hermanas del grupo (2026-10-22, pedido de Samuel tras hablar con
-// Raymond): los 4 party boats que el grupo vende con dominio propio se
+// Raymond). [2026-10-30, Blanka en «Hispaniola Gerencia»: «remove esas dos y
+// ponerla en hispaniolapartyboat.com»] Pride Party Boat y Black Party Boat ya no
+// salen aquí: se enlazan desde la web de Hispaniola Party Boat. Eran los 4 party boats que el grupo vende con dominio propio se
 // enlazan desde el megamenú de Eventos. Van en una lista APARTE de
 // OCASIONES a propósito: OCASIONES también alimenta el footer, el ticker y la
 // hoja móvil con rutas internas (/events/:slug), y estas son webs EXTERNAS.
@@ -365,20 +367,6 @@ export const WEBS_GRUPO: WebGrupo[] = traducible([
     meta: 'Private party boat. Your price per person in seconds.',
     url: 'https://hispaniolapartyboat.com/',
     foto: 'grupo-hispaniola-party-boat',
-  },
-  {
-    id: 'pride-boat',
-    nombre: 'Pride Party Boat',
-    meta: 'Private catamaran charters for your group.',
-    url: 'https://prideboatpuntacana.com/',
-    foto: 'grupo-pride-boat',
-  },
-  {
-    id: 'black-party-boat',
-    nombre: 'Black Party Boat',
-    meta: 'The whole boat is yours: food on board, your playlist.',
-    url: 'https://blackpartyboatpuntacana.com/',
-    foto: 'grupo-black-party-boat',
   },
   {
     id: 'traffic-light',
