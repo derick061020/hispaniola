@@ -304,7 +304,7 @@ export const LEGAL: Record<string, DocumentoLegal> = traducible({
   cookies: {
     slug: 'cookies',
     nombre: 'Cookie Policy',
-    actualizado: 'August 23, 2026',
+    actualizado: 'October 30, 2026',
     contenidoReal: false,
     // ⚠️ [2026-08-23] Esta intro DECÍA que el sitio no usaba cookies de
     // analítica. Dejó de ser cierto el día que entró Microsoft Clarity en
@@ -314,8 +314,17 @@ export const LEGAL: Record<string, DocumentoLegal> = traducible({
     // precisamente donde alguien va a comprobarlo.
     // Sigue siendo placeholder (`contenidoReal: false`): las tres secciones de
     // abajo esperan el texto legal de verdad (PLAN-LANZAMIENTO.md Bloque G).
+    // ⚠️ [2026-10-30, hallazgo B del QA del PDF HAA-LEG-002] Fuera «We use no
+    // advertising cookies»: contradecía la Privacidad §5 (cookies y píxel de
+    // Meta para medir la publicidad). Se dice lo que hay HOY instalado (Clarity,
+    // app/index.html) y el píxel de Meta va como «may also use», remitiendo a
+    // la Privacidad, porque no está en el código todavía: decir que ya se usa
+    // sería tan falso como decir que no se usa. La última frase de cookies
+    // («delete or block them in your browser settings») sale del propio §5.
+    // ⚠️ TRADUCCIÓN NUESTRA: inglés y español redactados por nosotros, pendientes
+    // de revisión por Marketing.
     intro:
-      'This site uses Microsoft Clarity to understand how visitors use these pages, through heatmaps and session recordings. Clarity sets its own cookies. We use no advertising cookies. The full policy is still being drafted.',
+      'This site uses cookies to work properly and to understand how it is used. Today that includes Microsoft Clarity, which records heatmaps and visit sessions and sets its own cookies. As our Privacy Policy explains (section 5), we may also use cookies and the Meta pixel to measure our advertising on Facebook and Instagram. You can delete or block cookies in your browser settings. The full cookie policy is still being drafted.',
     secciones: [
       { titulo: 'What cookies are', bloques: [PLACEHOLDER] },
       { titulo: 'Cookies we use', bloques: [PLACEHOLDER] },

@@ -3157,4 +3157,7 @@ export const ES: Record<string, string> = {
   "is paid before the tour starts.": "se paga antes del inicio del tour.",
   // [2026-10-30] Gracias: reservas antiguas pagadas todo en efectivo (sin depósito).
   "You get the voucher by email and on WhatsApp.": "Recibes el voucher por correo y por WhatsApp.",
+  // [2026-10-30] /legal/cookies sin contradecir la Privacidad §5 (hallazgo B del QA). Inglés y español nuestros, para revisión de Marketing.
+  "This site uses cookies to work properly and to understand how it is used. Today that includes Microsoft Clarity, which records heatmaps and visit sessions and sets its own cookies. As our Privacy Policy explains (section 5), we may also use cookies and the Meta pixel to measure our advertising on Facebook and Instagram. You can delete or block cookies in your browser settings. The full cookie policy is still being drafted.": "Este sitio usa cookies para funcionar correctamente y entender cómo se usa. Hoy eso incluye Microsoft Clarity, que registra mapas de calor y sesiones de visita y pone sus propias cookies. Como explica nuestra Política de Privacidad (sección 5), también podemos usar cookies y el píxel de Meta para medir nuestra publicidad en Facebook e Instagram. Puede borrarlas o bloquearlas desde la configuración de su navegador. La política de cookies completa aún se está redactando.",
+  "October 30, 2026": "30 de octubre de 2026",
 }
