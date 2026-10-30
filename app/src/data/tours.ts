@@ -429,12 +429,13 @@ export const FICHAS: Record<string, FichaTour> = traducible({
     // y por eso ocupa el H1 tal cual, con su «(15+)» incluido. El corto
     // —«Caribbean Escape»— vive en TOURS de data/home.ts; ahí está la tabla
     // que traduce los dos nombres viejos.
-    tituloLargo: 'Caribbean Escape: An Adults-Only Ocean Experience (15+)',
+    // [2026-10-30] PDF HAA-LEG-002 §8: edad mínima 15, no «solo adultos».
+    tituloLargo: 'Caribbean Escape: An Ocean Experience for Ages 15+',
     // [v3 2026-08-06, WEBSITE-TOURS pág. 2] Título APROBADO del bloque de
     // descripción, literal. Convive con el H1 del hero, que sigue siendo el
     // NOMBRE del producto (el que usan el ticker, el grid y el megamenú): uno
     // dice qué compras, el otro por qué.
-    promesa: 'The Ultimate Adults-Only Catamaran Tour in Punta Cana',
+    promesa: 'The Ultimate 15+ Catamaran Tour in Punta Cana',
     // [v3 2026-08-06, WEBSITE-TOURS pág. 1 + slide 71] Los 4 chips aprobados
     // (el cliente tachó «Cancelación gratis») + «Ages 15+», que es la regla
     // concreta que pidió en la reunión («los niños de 15 en adelante»).
@@ -450,7 +451,8 @@ export const FICHAS: Record<string, FichaTour> = traducible({
       'Premium Lunch',
       'Ages 15+',
     ],
-    audiencia: 'Adults only',
+    // [2026-10-30] PDF HAA-LEG-002 §8: edad mínima 15, no «solo adultos».
+    audiencia: 'Ages 15+',
     // «4 hours», no «4 horas»: este string se compone dentro del título del
     // itinerario aprobado («Itinerary — 4 Hours») y de la ficha técnica. Las
     // otras 3 fichas lo pasan a inglés en su propio commit de F3.
@@ -596,7 +598,8 @@ export const FICHAS: Record<string, FichaTour> = traducible({
     queLlevar: QUE_LLEVAR_MARINE_PARK,
     recomendaciones: RECOMENDACIONES_V3,
     faqTour: [
-      { p: 'What if it rains?', r: 'Full refund or a date change, at no cost.' },
+      // [2026-10-30] Cláusula 3 de HAA-LEG-002 (Marketing): se intenta reprogramar y, si no se puede, reembolso total. Antes daba a elegir.
+      { p: 'What if it rains?', r: 'If the tour is canceled due to weather or sea conditions, we will try to reschedule it. If that is not possible, we will refund the full price of the tour.' },
       { p: 'Is there a restroom on board?', r: 'Yes, every one of our boats has a restroom.' },
       { p: 'Can I come if I cannot swim?', r: 'Yes, the snorkeling is in shallow water and life jackets are available.' },
       {
@@ -1405,7 +1408,8 @@ export const FICHAS: Record<string, FichaTour> = traducible({
       // add-on de este tour.
       { p: 'Can I choose the menu?', r: 'Yes, we agree the seven dishes with you (seafood, meat, Surf & Turf, vegetarian and the chicken, beef or shrimp skewers).' },
       { p: 'Do you accept corporate payments?', r: 'Yes, see the Corporate & MICE page for formal invoicing.' },
-      { p: 'What if it rains?', r: 'Full refund or a date change, at no cost.' },
+      // [2026-10-30] Cláusula 3 de HAA-LEG-002 (Marketing): se intenta reprogramar y, si no se puede, reembolso total. Antes daba a elegir.
+      { p: 'What if it rains?', r: 'If the tour is canceled due to weather or sea conditions, we will try to reschedule it. If that is not possible, we will refund the full price of the tour.' },
     ],
     tambienTeGusta: ['caribbean-escape', 'coral-quest'],
     // ⚡⚡ [2026-09-01, Samuel] LOS DOS ADD-ONS QUE HABÍA AQUÍ SE VAN, Y ENTRAN
@@ -1733,7 +1737,8 @@ export const FICHAS: Record<string, FichaTour> = traducible({
         r: 'Saona Island Catuano goes by speedboat to Catuano beach and the Las Palmillas Natural Pool. Saona Island Mano Juan goes by speedboat to the fishing village of Mano Juan, Playa Toro and the Natural Pool. The Catamaran does the Catuano route at a relaxed pace and is the option for large groups (up to 70 guests).',
       },
       { p: 'Can I add premium lobster?', r: 'Yes, at checkout: US$ 30 per person.' },
-      { p: 'What if it rains?', r: 'Full refund or a date change, at no cost.' },
+      // [2026-10-30] Cláusula 3 de HAA-LEG-002 (Marketing): se intenta reprogramar y, si no se puede, reembolso total. Antes daba a elegir.
+      { p: 'What if it rains?', r: 'If the tour is canceled due to weather or sea conditions, we will try to reschedule it. If that is not possible, we will refund the full price of the tour.' },
       {
         p: 'Is there a minimum age for children?',
         r: 'No minimum age. We carry life jackets in every size on both the speedboat and the catamaran.',

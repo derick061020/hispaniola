@@ -261,7 +261,8 @@ export const MUSEO = traducible({
     ],
     garantias: [
       'Free cancellation up to 7 days before',
-      'Full refund for bad weather',
+      // [2026-10-30] PDF HAA-LEG-002 §3.
+      'Bad weather: we reschedule or refund in full',
       'Confirm with 25%',
     ],
     cta: 'See availability',

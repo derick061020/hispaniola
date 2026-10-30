@@ -258,6 +258,11 @@ export function GraciasPage() {
   // Las reservas guardadas antes del cambio no traen el campo: se leen como
   // 'tarjeta', que es lo que eran.
   const pagoEnEfectivo = reserva.metodoPago === 'efectivo'
+  // [2026-10-30, Samuel: seguir el PDF HAA-LEG-002 §6, «para confirmar la reserva se paga un depósito»]
+  // Desde hoy toda reserva nueva cobra depósito. Una guardada ANTES con efectivo
+  // y `deposito: 0` (pago entero a bordo) se sigue pintando como lo que fue:
+  // sin recibo de depósito ni «Deposit — pending».
+  const todoEnEfectivo = pagoEnEfectivo && reserva.deposito <= 0
   // Solo se usa en el camino de tarjeta, donde el saldo sigue sin descontar.
   const saldoEnEfectivo = Math.round(reserva.saldo * 0.95)
   const horario = reserva.ficha.horarios[reserva.horarioIdx]
@@ -383,11 +388,17 @@ export function GraciasPage() {
                       guarda la plaza— así que el recibo de hoy llega también.
                       Lo que el efectivo rebaja es el saldo de a bordo, y eso se
                       cuenta en el paso 3. */}
-                  {t('You get the voucher + the receipt for your')}{' '}
-                  <strong className="font-semibold text-navy">
-                    {formatoDinero(reserva.deposito)}
-                  </strong>{' '}
-                  {t('deposit by email and on WhatsApp.')}
+                  {todoEnEfectivo ? (
+                    t('You get the voucher by email and on WhatsApp.')
+                  ) : (
+                    <>
+                      {t('You get the voucher + the receipt for your')}{' '}
+                      <strong className="font-semibold text-navy">
+                        {formatoDinero(reserva.deposito)}
+                      </strong>{' '}
+                      {t('deposit by email and on WhatsApp.')}
+                    </>
+                  )}
                   {/* La promesa que sostiene el «puedes elegirlo luego» del
                       funnel: si quedó menú sin decidir, aquí se dice cuándo
                       llega el correo que lo resuelve. */}
@@ -476,6 +487,7 @@ export function GraciasPage() {
                 («Island buffet») en vez de prometer un correo que no existe. */}
             <FilaResumen label={t('Menu')} valor={resumenMenu} />
             <FilaResumen label={t('Pickup')} valor={reserva.recogida.hotel || '—'} />
+            {todoEnEfectivo ? null : (
             <div className="!mt-3 flex items-center justify-between border-t border-linea pt-3 text-sm">
               {/* Lo COBRADO manda sobre lo prometido: `cobro` viene de Odoo y
                   dice si el deposito entro de verdad. */}
@@ -490,7 +502,8 @@ export function GraciasPage() {
                 {formatoDinero(cobro && cobro.pagado > 0 ? cobro.pagado : reserva.deposito)}
               </span>
             </div>
-            {cobro && cobro.pagado <= 0 ? (
+            )}
+            {!todoEnEfectivo && cobro && cobro.pagado <= 0 ? (
               <p className="!mt-1 text-xs text-navy-soft">
                 {t('We haven’t received the deposit yet. Your spot is held and you can pay it any time from')}{' '}
                 <Link to={`/my-booking?codigo=${reserva.codigo}`} className="font-semibold text-aqua-dark hover:underline">

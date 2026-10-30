@@ -1437,7 +1437,8 @@ export function WidgetReserva({
           lineas={[
             t('Book now, pay later: confirm with just 25%'),
             t('Free cancellation up to 7 days before'),
-            t('Full refund for bad weather'),
+            // [2026-10-30] PDF HAA-LEG-002 §3.
+            t('Bad weather: we reschedule or refund in full'),
           ]}
         />
       </div>

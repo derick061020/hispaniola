@@ -180,7 +180,8 @@ export function PasoPago({
         <strong className="font-semibold text-navy">
           {porcentajeDeposito ? `${porcentajeDeposito}%` : '25%'} {t('deposit')}
         </strong>{' '}{t('today')}{' '}
-        ({formatoDinero(deposito)}{t('). You pay the remaining')}{' '}{formatoDinero(saldo)} {t('on the day of the tour, with a 5% discount if you pay cash on board.')}
+        ({formatoDinero(deposito)}{t('). You pay the remaining')}{' '}{formatoDinero(saldo)} {/* [2026-10-30] PDF HAA-LEG-002 §6: «antes del inicio». */}
+        {t('before the tour starts, with a 5% discount if you pay cash on board.')}
       </p>
 
       {/* Entrando directo a /book/:slug (sin pasar por el widget) la reserva

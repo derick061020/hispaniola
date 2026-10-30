@@ -366,7 +366,8 @@ export function Footer({ cta = t('Ready for an unforgettable day?') }: { cta?: s
               se conserva — es el ÚNICO medio de pago que el proyecto tiene
               confirmado. */}
           <p className="mt-3 text-xs text-white/50">
-            {t('Confirm with 25% online. The rest on the day of the tour. Cash on board works too.')}
+            {/* [2026-10-30] PDF HAA-LEG-002 §6. */}
+            {t('Confirm with 25% online. The rest before the tour starts. Cash on board works too.')}
           </p>
         </div>
 
@@ -404,7 +405,8 @@ export function Footer({ cta = t('Ready for an unforgettable day?') }: { cta?: s
         <ul className="flex flex-wrap items-center gap-x-4 gap-y-1">
           <li>
             <Link to="/legal/cancellation-policy" className="hover:text-white/70">
-              {t('Cancellation policy')}
+              {/* [2026-10-30] Nombre del documento oficial HAA-LEG-002. */}
+              {t('Cancellation and refund policy')}
             </Link>
           </li>
           <li>

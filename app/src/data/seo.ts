@@ -39,9 +39,10 @@ export const SEO_POR_RUTA: Record<string, SeoRuta> = {
   },
   // objetivo: punta cana snorkeling excursions · 257 impresiones
   '/tours/caribbean-escape': {
-    titulo: 'Adults-Only Catamaran Snorkeling Tour in Punta Cana',
+    // [2026-10-30] PDF HAA-LEG-002 §8: edad mínima 15, no «solo adultos». ⚠️ Título SEO: avisar a Marketing.
+    titulo: 'Catamaran Snorkeling Tour in Punta Cana for Ages 15+',
     descripcion:
-      'Adults-only catamaran in Punta Cana: protected reef snorkeling, underwater museum, secluded beach and chef-cooked lunch on board. 15+.',
+      'Catamaran in Punta Cana for ages 15+: protected reef snorkeling, underwater museum, secluded beach and chef-cooked lunch on board.',
   },
   // objetivo: isla saona tours 828 + saona island excursion 357
   '/tours/saona-island': {

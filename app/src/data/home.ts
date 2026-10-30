@@ -116,7 +116,7 @@ export const TOURS: Tour[] = traducible([
   {
     slug: 'caribbean-escape',
     nombre: 'Caribbean Escape',
-    audienciaChip: 'Adults only',
+    audienciaChip: 'Ages 15+', // [2026-10-30] PDF HAA-LEG-002 §8
     duracionCorta: '4 h',
     rating: 4.9,
     resenas: 1782,
@@ -125,7 +125,8 @@ export const TOURS: Tour[] = traducible([
     booking: 'completo',
     // [v3 2026-08-06] Copy APROBADO por el cliente (WEBSITE - INICIO, pág. 2).
     descripcionCorta:
-      'An intimate adults-only Caribbean experience featuring protected reef snorkeling, an exclusive underwater museum, a secluded beach, and chef-prepared cuisine from our floating kitchen.',
+      // [2026-10-30] PDF HAA-LEG-002 §8: edad mínima 15, no «solo adultos».
+      'An intimate Caribbean experience for guests aged 15 and over, featuring protected reef snorkeling, an exclusive underwater museum, a secluded beach, and chef-prepared cuisine from our floating kitchen.',
     foto: 'galeria-semi-privado-4-v2',
     galeria: [
       'galeria-semi-privado-4-v2',
@@ -1750,7 +1751,8 @@ export type FaqItem = { p: string; r: string }
 export const FAQ_HOME: FaqItem[] = traducible([
   {
     p: 'What happens if it rains on the day of my tour?',
-    r: 'Full refund or a date change, at no cost. We only cancel if conditions are not safe.',
+    // [2026-10-30] Cláusula 3 de HAA-LEG-002 (Marketing): se intenta reprogramar y, si no se puede, reembolso total. Antes daba a elegir.
+    r: 'If the tour is canceled due to weather or sea conditions, we will try to reschedule it. If that is not possible, we will refund the full price of the tour. We only cancel if conditions are not safe.',
   },
   {
     p: 'Can I cancel my booking?',
@@ -1758,7 +1760,8 @@ export const FAQ_HOME: FaqItem[] = traducible([
   },
   {
     p: 'Can I pay just the deposit?',
-    r: 'Yes, you confirm with 25% and pay the rest on the day of the tour.',
+    // [2026-10-30] PDF HAA-LEG-002 §6: el saldo se paga «antes del inicio de la excursión». El 5% en efectivo se queda: el PDF no lo menciona.
+    r: 'Yes, you confirm with 25% and pay the rest before the tour starts.',
   },
   {
     p: 'Does it include pickup at my hotel?',
@@ -1783,17 +1786,20 @@ export const FAQ_HOME: FaqItem[] = traducible([
   },
   {
     p: 'Is it suitable for pregnant women or older guests?',
-    r: 'It depends on the tour and on the sea that day. Write to us on WhatsApp before booking and we’ll tell you which one suits you.',
+    // [2026-10-30] PDF HAA-LEG-002 §8 (de «older guests» el PDF no dice nada).
+    r: 'Pregnant women are welcome, provided their doctor agrees; they take part at their own risk. Guests with reduced mobility are welcome too: please contact us before booking so we can assess together how you can take part safely.',
   },
   {
     p: 'Can children join every tour?',
     // ⚠️ [2026-08-12] 18+ → 15+ (ver el gemelo en data/faq.ts, que lleva el
     // porqué completo): la ficha ya publicaba «Ages 15+» y el nombre nuevo del
     // tour lo lleva dentro.
-    r: 'On Coral Quest, yes; Caribbean Escape is adults only (15+). We carry child life jackets in every size.',
+    // [2026-10-30] PDF HAA-LEG-002 §8.
+    r: 'On Coral Quest, yes; Caribbean Escape is the only tour with a minimum age: guests aged 15 and over. We carry child life jackets in every size.',
   },
   {
     p: 'Do you take cards? Can I pay at the hotel?',
-    r: 'We accept Visa, Mastercard, American Express and PayPal from My Booking. You can also pay the balance on the day of the tour, in cash, with a 5% discount.',
+    // [2026-10-30] PDF HAA-LEG-002 §6: el saldo se paga «antes del inicio de la excursión». El 5% en efectivo se queda: el PDF no lo menciona.
+    r: 'We accept Visa, Mastercard, American Express and PayPal from My Booking. You can also pay the balance in cash before the tour starts, with a 5% discount.',
   },
 ])

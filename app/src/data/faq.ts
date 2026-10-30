@@ -23,7 +23,8 @@ export const FAQ_CATEGORIAS: CategoriaFaq[] = traducible([
     preguntas: [
       {
         p: 'Can I pay only part of it now?',
-        r: 'Yes. You confirm with 25% and pay the rest on the day of the tour, in cash (with a 5% discount) or by card from My Booking.',
+        // [2026-10-30] PDF HAA-LEG-002 §6: el saldo se paga «antes del inicio de la excursión». El 5% en efectivo se queda: el PDF no lo menciona.
+        r: 'Yes. You confirm with 25% and pay the rest before the tour starts, in cash (with a 5% discount) or by card from My Booking.',
       },
       {
         p: 'What happens if I cancel?',
@@ -39,7 +40,8 @@ export const FAQ_CATEGORIAS: CategoriaFaq[] = traducible([
       },
       {
         p: 'Do you accept cards? Can I pay at the hotel?',
-        r: 'We accept Visa, Mastercard, American Express and PayPal from My Booking. You can also pay the balance on the day of the tour, in cash, with a 5% discount.',
+        // [2026-10-30] PDF HAA-LEG-002 §6: el saldo se paga «antes del inicio de la excursión». El 5% en efectivo se queda: el PDF no lo menciona.
+        r: 'We accept Visa, Mastercard, American Express and PayPal from My Booking. You can also pay the balance in cash before the tour starts, with a 5% discount.',
       },
     ],
   },
@@ -87,10 +89,12 @@ export const FAQ_CATEGORIAS: CategoriaFaq[] = traducible([
     id: 'clima',
     nombre: 'Weather & cancellations',
     preguntas: [
-      { p: 'What if it rains on the day of my tour?', r: 'Full refund or a date change, at no cost.' },
+      // [2026-10-30] Cláusula 3 de HAA-LEG-002 (Marketing): se intenta reprogramar y, si no se puede, reembolso total. Antes daba a elegir.
+      { p: 'What if it rains on the day of my tour?', r: 'If the tour is canceled due to weather or sea conditions, we will try to reschedule it. If that is not possible, we will refund the full price of the tour.' },
       {
         p: 'Do you cancel for rough seas?',
-        r: 'Only if conditions are not safe. In that case, a full refund or a reschedule.',
+        // [2026-10-30] Cláusula 3 de HAA-LEG-002 (Marketing): se intenta reprogramar y, si no se puede, reembolso total. Antes daba a elegir.
+        r: 'Only if conditions are not safe. In that case we will try to reschedule your tour, and if that is not possible, we will refund the full price.',
       },
     ],
   },
@@ -106,12 +110,14 @@ export const FAQ_CATEGORIAS: CategoriaFaq[] = traducible([
         // nuevo del producto lo lleva dentro, así que este 18+ era el último
         // sitio de la web que decía otra cosa. Mismo cambio en el FAQ de la
         // home (data/home.ts).
-        r: 'On Coral Quest yes; Caribbean Escape is adults only (15+).',
+        // [2026-10-30] PDF HAA-LEG-002 §8: «solo para mayores de 15 años», no «adults only».
+        r: 'On Coral Quest yes; Caribbean Escape is the only tour with a minimum age: guests aged 15 and over.',
       },
       { p: 'Do you have child life jackets?', r: 'Yes, in every size.' },
       {
         p: 'Is it suitable for pregnant women or older guests?',
-        r: 'It depends on the tour and on how the sea is that day. Message us on WhatsApp before booking and we’ll tell you which one suits you.',
+        // [2026-10-30] PDF HAA-LEG-002 §8 (embarazadas y movilidad reducida; de «older guests» el PDF no dice nada).
+        r: 'Pregnant women are welcome, provided their doctor agrees; they take part at their own risk. Guests with reduced mobility are welcome too: please contact us before booking so we can assess together how you can take part safely.',
       },
     ],
   },
