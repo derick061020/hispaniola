@@ -23,7 +23,8 @@ export const FAQ_CATEGORIAS: CategoriaFaq[] = traducible([
     preguntas: [
       {
         p: 'Can I pay only part of it now?',
-        r: 'Yes. You confirm with 25% and pay the rest on the day of the tour, in cash (with a 5% discount) or by card from My Booking.',
+        // [2026-10-30] PDF HAA-LEG-002 §6: 20–25 %, saldo antes del inicio, sin 5% por efectivo.
+        r: 'Yes. You confirm with a deposit of between 20% and 25% of the total, as indicated when you book, and pay the rest before the tour starts. You can also pay the full amount online.',
       },
       {
         p: 'What happens if I cancel?',
@@ -35,11 +36,13 @@ export const FAQ_CATEGORIAS: CategoriaFaq[] = traducible([
       },
       {
         p: 'How much cash should I bring?',
-        r: 'If you chose the 25% deposit, the remaining balance (with a 5% discount if you pay in cash on board).',
+        // [2026-10-30] Sin el 5% por efectivo (PDF HAA-LEG-002).
+        r: 'Only if you pay the balance in cash: the remaining amount after your deposit, before the tour starts.',
       },
       {
         p: 'Do you accept cards? Can I pay at the hotel?',
-        r: 'We accept Visa, Mastercard, American Express and PayPal from My Booking. You can also pay the balance on the day of the tour, in cash, with a 5% discount.',
+        // [2026-10-30] Sin el 5% por efectivo y con el saldo antes del inicio (PDF HAA-LEG-002).
+        r: 'We accept Visa, Mastercard, American Express and PayPal from My Booking. The balance is paid before the tour starts, by the means our team tells you.',
       },
     ],
   },
@@ -108,12 +111,14 @@ export const FAQ_CATEGORIAS: CategoriaFaq[] = traducible([
         // nuevo del producto lo lleva dentro, así que este 18+ era el último
         // sitio de la web que decía otra cosa. Mismo cambio en el FAQ de la
         // home (data/home.ts).
-        r: 'On Coral Quest yes; Caribbean Escape is adults only (15+).',
+        // [2026-10-30] PDF HAA-LEG-002 §8: «solo para mayores de 15 años», no «adults only».
+        r: 'On Coral Quest yes; Caribbean Escape is the only tour with a minimum age: guests aged 15 and over.',
       },
       { p: 'Do you have child life jackets?', r: 'Yes, in every size.' },
       {
         p: 'Is it suitable for pregnant women or older guests?',
-        r: 'It depends on the tour and on how the sea is that day. Message us on WhatsApp before booking and we’ll tell you which one suits you.',
+        // [2026-10-30] PDF HAA-LEG-002 §8 (embarazadas y movilidad reducida; de «older guests» el PDF no dice nada).
+        r: 'Pregnant women are welcome, provided their doctor agrees; they take part at their own risk. Guests with reduced mobility are welcome too: please contact us before booking so we can assess together how you can take part safely.',
       },
     ],
   },

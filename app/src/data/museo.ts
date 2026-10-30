@@ -261,8 +261,8 @@ export const MUSEO = traducible({
     ],
     garantias: [
       'Free cancellation up to 7 days before',
-      'Full refund for bad weather',
-      'Confirm with 25%',
+      'Bad weather: we reschedule or refund in full',
+      'Confirm with a 20–25% deposit',
     ],
     cta: 'See availability',
     nota: 'The museum opens November 15, 2026.',

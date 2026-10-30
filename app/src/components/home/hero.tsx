@@ -369,7 +369,7 @@ export function Hero() {
                   <div className="flex flex-col items-center gap-1.5 text-xs text-white/70 sm:flex-row sm:gap-3">
                     <span>{t('Free cancellation up to 7 days before')}</span>
                     <span className="hidden h-3 w-px bg-white/20 sm:block" aria-hidden="true" />
-                    <span>{t('Confirm with just a 25% deposit')}</span>
+                    <span>{t('Confirm with a 20–25% deposit')}</span>
                   </div>
 
                   {/* v3-F16/F17 (pedido de Samuel, 2026-07-14): las 3 insignias

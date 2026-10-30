@@ -131,7 +131,8 @@ export function AntesDeReservar({ tour, ficha }: { tour: Tour; ficha: FichaTour 
             <span className="text-sm text-navy-sub">{t('maximum discount')}</span>
           </p>
           <p className="mt-2 text-sm text-navy-sub">
-            {t('All three')}{' '}<strong className="font-semibold text-navy">{t('stack')}</strong>{t(': meet the three and you pay')}{' '}{DESCUENTO_MAXIMO}{t('% less than the list price.')}
+            {/* [2026-10-30] Dos, no tres: fuera el 5% por efectivo (PDF HAA-LEG-002). */}
+            {t('Both')}{' '}<strong className="font-semibold text-navy">{t('stack')}</strong>{t(': meet both and you pay')}{' '}{DESCUENTO_MAXIMO}{t('% less than the list price.')}
           </p>
 
           <ul className="mt-5 flex flex-col gap-3 border-t border-menta-texto/15 pt-4">

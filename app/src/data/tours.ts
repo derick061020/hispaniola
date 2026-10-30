@@ -193,6 +193,10 @@ export type MenuCharterTour = {
 
 export type FichaTour = {
   tituloLargo: string
+  /** [2026-10-30] El % de depósito que pide Odoo para este tour (`deposit_pct`).
+   *  Lo rellena `fusionarFicha`; sin Odoo ni foto queda vacío y la web dice
+   *  el rango del PDF HAA-LEG-002 («between 20% and 25%»). */
+  porcentajeDeposito?: number
   /** [v3 2026-08-06] Título del bloque de descripción, con el copy APROBADO
    *  por el cliente (WEBSITE-TOURS: «The Ultimate Adults-Only Catamaran Tour
    *  in Punta Cana», «Discover the Caribbean Beneath the Surface»…). Hasta la
@@ -429,12 +433,13 @@ export const FICHAS: Record<string, FichaTour> = traducible({
     // y por eso ocupa el H1 tal cual, con su «(15+)» incluido. El corto
     // —«Caribbean Escape»— vive en TOURS de data/home.ts; ahí está la tabla
     // que traduce los dos nombres viejos.
-    tituloLargo: 'Caribbean Escape: An Adults-Only Ocean Experience (15+)',
+    // [2026-10-30] PDF HAA-LEG-002 §8: edad mínima 15, no «solo adultos».
+    tituloLargo: 'Caribbean Escape: An Ocean Experience for Ages 15+',
     // [v3 2026-08-06, WEBSITE-TOURS pág. 2] Título APROBADO del bloque de
     // descripción, literal. Convive con el H1 del hero, que sigue siendo el
     // NOMBRE del producto (el que usan el ticker, el grid y el megamenú): uno
     // dice qué compras, el otro por qué.
-    promesa: 'The Ultimate Adults-Only Catamaran Tour in Punta Cana',
+    promesa: 'The Ultimate 15+ Catamaran Tour in Punta Cana',
     // [v3 2026-08-06, WEBSITE-TOURS pág. 1 + slide 71] Los 4 chips aprobados
     // (el cliente tachó «Cancelación gratis») + «Ages 15+», que es la regla
     // concreta que pidió en la reunión («los niños de 15 en adelante»).
@@ -450,7 +455,8 @@ export const FICHAS: Record<string, FichaTour> = traducible({
       'Premium Lunch',
       'Ages 15+',
     ],
-    audiencia: 'Adults only',
+    // [2026-10-30] PDF HAA-LEG-002 §8: edad mínima 15, no «solo adultos».
+    audiencia: 'Ages 15+',
     // «4 hours», no «4 horas»: este string se compone dentro del título del
     // itinerario aprobado («Itinerary — 4 Hours») y de la ficha técnica. Las
     // otras 3 fichas lo pasan a inglés en su propio commit de F3.
@@ -602,7 +608,8 @@ export const FICHAS: Record<string, FichaTour> = traducible({
       { p: 'Can I come if I cannot swim?', r: 'Yes, the snorkeling is in shallow water and life jackets are available.' },
       {
         p: 'Should I bring cash? How much?',
-        r: 'Only if you choose to pay the 25% deposit, the balance gets a 5% discount when paid in cash.',
+        // [2026-10-30] PDF HAA-LEG-002 §6: sin el 5% por efectivo.
+        r: 'Only if you pay the balance in cash: the remaining amount after your deposit, before the tour starts.',
       },
     ],
     tambienTeGusta: ['coral-quest', 'private-charter'],
@@ -855,7 +862,8 @@ export const FICHAS: Record<string, FichaTour> = traducible({
       { p: 'Can I come if I cannot swim?', r: 'Yes, the snorkeling is in shallow water and life jackets are available.' },
       {
         p: 'Should I bring cash? How much?',
-        r: 'Only if you choose to pay the 25% deposit, the balance gets a 5% discount when paid in cash.',
+        // [2026-10-30] PDF HAA-LEG-002 §6: sin el 5% por efectivo.
+        r: 'Only if you pay the balance in cash: the remaining amount after your deposit, before the tour starts.',
       },
     ],
     tambienTeGusta: ['caribbean-escape', 'private-charter'],

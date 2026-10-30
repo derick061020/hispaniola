@@ -178,9 +178,10 @@ export function PasoPago({
       <p className="text-sm text-navy-sub">
         {t('Confirm your spot by paying only the')}{' '}
         <strong className="font-semibold text-navy">
-          {porcentajeDeposito ? `${porcentajeDeposito}%` : '25%'} {t('deposit')}
+          {porcentajeDeposito ? `${porcentajeDeposito}%` : '20–25%'} {t('deposit')}
         </strong>{' '}{t('today')}{' '}
-        ({formatoDinero(deposito)}{t('). You pay the remaining')}{' '}{formatoDinero(saldo)} {t('on the day of the tour, with a 5% discount if you pay cash on board.')}
+        ({formatoDinero(deposito)}{t('). You pay the remaining')}{' '}{formatoDinero(saldo)} {/* [2026-10-30] PDF HAA-LEG-002: el saldo se paga antes del inicio, sin 5% por efectivo. */}
+        {t('before the tour starts.')}
       </p>
 
       {/* Entrando directo a /book/:slug (sin pasar por el widget) la reserva

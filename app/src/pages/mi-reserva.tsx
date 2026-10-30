@@ -894,7 +894,8 @@ function BloqueReserva({
           <p className="pt-1 text-right text-xs text-navy-soft">
             {t('The remaining')}{' '}
             {formatoDinero(reserva.saldoTotal - reserva.saldo)}{' '}
-            {t('is paid on the day of the tour.')}
+            {/* [2026-10-30] PDF HAA-LEG-002 §6. */}
+            {t('is paid before the tour starts.')}
           </p>
         ) : null}
       </dl>

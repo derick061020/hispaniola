@@ -184,7 +184,8 @@ export function PagoSaldo({
           {t('Pay the balance online ·')}{' '}{formatoDinero(saldo)}
         </button>
         <p className="mt-2 text-center text-xs text-navy-soft">
-          {t('Or pay in cash on board — you save 5% and there’s nothing to do here.')}
+          {/* [2026-10-30] Sin el 5%: el PDF HAA-LEG-002 no lo recoge. El saldo, antes del inicio. */}
+          {t('Or pay it before the tour starts, by the means our team tells you.')}
         </p>
       </div>
     )

@@ -240,14 +240,14 @@ export function FilasPasajeros({
 
             <FilaPasajero
               titulo={t('Children')}
-              edades="3-12"
+              edades="4-12"
               minimo={0}
               maximo={maxPersonas - 1}
               pista={
                 <PistaInfo
                   sobreOscuro={sobreOscuro}
                   etiqueta={t('What age counts as a child')}
-                  texto={t('Ages 3 to 12 pay a reduced fare. Under 3s do not pay: add them as infants.')}
+                  texto={t('Ages 4 to 12 pay a reduced fare. Under 4s do not pay: add them as infants.')}
                 />
               }
             >
@@ -309,7 +309,7 @@ export function FilasPasajeros({
                     sobreOscuro ? 'bg-aqua-claro' : 'bg-aqua'
                   }`}
                 />
-                {tp('Children (ages 3-12) pay {precio} each.', {
+                {tp('Children (ages 4-12) pay {precio} each.', {
                   precio: formatoDinero(precioNino),
                 })}
               </p>
@@ -320,14 +320,14 @@ export function FilasPasajeros({
                 `maxPersonas` ni deshabilita el «+». */}
             <FilaPasajero
               titulo={t('Infants')}
-              edades="0-2"
+              edades="0-3"
               minimo={0}
               maximo={maxPersonas}
               pista={
                 <PistaInfo
                   sobreOscuro={sobreOscuro}
                   etiqueta={t('What age counts as an infant')}
-                  texto={t('Up to age 3 they travel free and do not take up a spot. From age 4 they pay the child fare.')}
+                  texto={t('Under 4 they travel free and do not take up a spot. From age 4 they pay the child fare.')}
                 />
               }
             >

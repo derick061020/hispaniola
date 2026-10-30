@@ -160,8 +160,7 @@ export function ResumenReserva({
   const pagaEnEfectivo =
     metodoPago === 'efectivo' ||
     !!(descuentos ?? []).some((d) => d.granted && d.id === 'efectivo' && (importeEfectivo ?? 0) > 0)
-  const saldoEnEfectivo = Math.round(saldo * 0.95)
-  const ahorro = saldo - saldoEnEfectivo
+  // [2026-10-30] Fuera el «saldo en efectivo −5%»: el PDF HAA-LEG-002 no lo recoge.
 
   return (
     <div className={className}>
@@ -543,20 +542,16 @@ export function ResumenReserva({
           </div>
           <div className="mt-1.5 flex items-center justify-between">
             <span className="text-navy-sub">
-              {pagaEnEfectivo ? t('On the day, in cash') : t('On the day of the tour')}
+              {/* [2026-10-30] PDF HAA-LEG-002: «antes del inicio de la excursión». */}
+              {pagaEnEfectivo ? t('On the day, in cash') : t('Before the tour starts')}
             </span>
             <span className="text-navy">{formatoDinero(saldo)}</span>
           </div>
           <p className="mt-2.5 text-xs leading-relaxed text-navy-soft">
             {pagaEnEfectivo
               ? t('The deposit still goes on your card today: it is what holds your spot, and it comes off the total. The rest you pay in cash on board, with the 5% discount already in that amount.')
-              : (
-                <>
-                  {t('The deposit is not an extra charge: it comes off the total. Paying cash on board brings the balance down to')}{' '}
-                  <span className="font-semibold text-navy">{formatoDinero(saldoEnEfectivo)}</span>
-                  {t('. You save')}{' '}{formatoDinero(ahorro)}.
-                </>
-              )}
+              : // [2026-10-30] Fuera «pagando en efectivo baja a…»: el PDF HAA-LEG-002 no recoge el 5%.
+                t('The deposit is not an extra charge: it comes off the total.')}
           </p>
           <p className="mt-2 flex items-center gap-1.5 text-xs font-medium text-menta-texto">
             <Check className="size-3.5 shrink-0" aria-hidden="true" />
@@ -571,7 +566,8 @@ export function ResumenReserva({
           <li className="flex gap-2.5">
             <ShieldCheck className="size-4 shrink-0 text-aqua-dark" aria-hidden="true" />
             <span>
-              <strong className="font-semibold text-navy">{t('Total flexibility.')}</strong> {t('Free cancellation up to 7 days before and a full refund for bad weather.')}
+              <strong className="font-semibold text-navy">{t('Total flexibility.')}</strong> {/* [2026-10-30] Cláusulas 1 y 3 de HAA-LEG-002. */}
+              {t('Free cancellation up to 7 days before. If bad weather cancels the tour, we reschedule it or refund it in full.')}
             </span>
           </li>
           <li className="flex gap-2.5">

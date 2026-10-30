@@ -151,7 +151,7 @@ export function reservaDemo(): Reserva {
     slug: 'caribbean-escape',
     tour: {
       nombre: 'Caribbean Escape',
-      audienciaChip: 'Adults only',
+      audienciaChip: 'Ages 15+', // [2026-10-30] PDF HAA-LEG-002 §8
       duracionCorta: '4 h',
       maxPax: 25,
       precioLight: 99,

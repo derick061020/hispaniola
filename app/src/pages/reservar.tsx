@@ -22,6 +22,7 @@ import { useCheckout } from '@/lib/api/use-checkout'
 import type { ErrorApi } from '@/lib/api/cliente'
 import type { ParcheCheckout } from '@/lib/api/tipos'
 import { t, tp, traducible } from '@/lib/i18n'
+import { porcentajeDepositoDe } from '@/lib/api/fusion-catalogo'
 import { escuchaMoneda, instantaneaMoneda } from '@/lib/moneda'
 import { SelectorMoneda } from '@/components/ui/selector-moneda'
 import type { MetodoPago } from '@/lib/tarifas'
@@ -297,7 +298,10 @@ function FlujoReserva({
         Math.max(personas - (paqueteElegido!.paxIncluidos ?? 12), 0)
     : (precioLight + upgrade) * personas
   const total = checkout.pedido?.amounts.total ?? estimacionLocal
-  const deposito = checkout.pedido?.amounts.deposit ?? Math.round(estimacionLocal * 0.25)
+  // [2026-10-30] Mientras Odoo no contesta, el % del propio tour (foto del
+  // catálogo) y no un 25 fijo: el PDF HAA-LEG-002 dice 20–25 % según el tour.
+  const pctDeposito = checkout.pedido?.quote?.deposit_pct ?? porcentajeDepositoDe(tour.slug)
+  const deposito = checkout.pedido?.amounts.deposit ?? Math.round((estimacionLocal * pctDeposito) / 100)
   const saldo = checkout.pedido?.amounts.balance ?? total - deposito
 
   // QUÉ COME ESTE GRUPO. Resuelto en un solo sitio (lib/menu-reserva.ts) a
@@ -424,7 +428,12 @@ function FlujoReserva({
   // El importe NO se calcula aqui: se manda la eleccion al servidor y el se
   // encarga, con la misma cuenta que el CRM (5% sobre el SALDO, no sobre el
   // total, porque el deposito ya entro por tarjeta).
-  const [pagaEnEfectivo, setPagaEnEfectivo] = useState(false)
+  // ⚠️ [2026-10-30, Samuel: «la web dice lo que dice el PDF HAA-LEG-002»] El PDF
+  // no recoge el 5% por efectivo y dice que la reserva se confirma con un
+  // depósito: la casilla «I’ll pay the balance in cash on board» desaparece y
+  // aquí ya nunca se pide `efectivo`. Odoo lo sigue sabiendo conceder: quitarlo
+  // de su lado es tarea de Derick (docs/proceso/politicas-haa-leg-002/PARA-DERICK.md).
+  const pagaEnEfectivo = false
   // [2026-09-01, fusion con Samuel] «Como se paga» ya era una decision de este
   // checkout: esta casilla, que sincroniza `discounts: ['efectivo']` con Odoo.
   // Su reparto local (`desglosePago`) no se usa —el importe lo pone el
@@ -536,7 +545,7 @@ function FlujoReserva({
     dishes: hayPasoMenu ? platos : [],
     addons: addonsIniciales,
     // Lo decide el servidor: aqui solo se dice que el cliente lo eligio.
-    discounts: pagaEnEfectivo ? ['efectivo'] : [],
+    discounts: [],
     ...(celebracion.ocasion && celebracion.ocasion !== 'ninguna'
       ? { occasion: celebracion.ocasion, occasion_note: celebracion.nota.trim() }
       : {}),
@@ -727,10 +736,6 @@ function FlujoReserva({
   // Igual que la fecha y el horario: se guarda al momento. Si esperara al
   // volcado final, el resumen enseñaria el total sin descuento hasta el segundo
   // antes de cobrar, que es justo cuando nadie quiere sorpresas.
-  const cambiarEfectivo = (activo: boolean) => {
-    setPagaEnEfectivo(activo)
-    checkout.sincronizar({ discounts: activo ? ['efectivo'] : [] })
-  }
 
   // [2026-10-17, Gerencia: «es demasiado confuso… el cliente no completó la
   // reserva»] El pedido guardado puede traer ya el efectivo de una visita
@@ -740,8 +745,10 @@ function FlujoReserva({
   const efectivoEnServidor = !!checkout.pedido?.quote?.discounts?.some(
     (d) => d.granted && d.id === 'efectivo',
   )
+  // [2026-10-30] Y al revés que antes: si el pedido guardado trae el efectivo
+  // de una visita anterior, se le QUITA en el servidor en vez de seguirlo.
   useEffect(() => {
-    if (efectivoEnServidor && !pagaEnEfectivo) setPagaEnEfectivo(true)
+    if (efectivoEnServidor) checkout.sincronizar({ discounts: [] })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [efectivoEnServidor])
 
@@ -774,7 +781,7 @@ function FlujoReserva({
     <div className="flex min-h-screen flex-col overflow-x-clip bg-papel pb-[calc(4.5rem+env(safe-area-inset-bottom))] lg:pb-0">
       <Meta
         titulo={`Book · ${tour.nombre}`}
-        descripcion={`Set up your ${tour.nombre}: pick each guest’s dish, the pickup and confirm with just a 25% deposit.`}
+        descripcion={`Set up your ${tour.nombre}: pick each guest’s dish, the pickup and confirm with a deposit of ${pctDeposito}%.`}
         ruta={`/book/${tour.slug}`}
         indexable={false}
       />
@@ -968,7 +975,7 @@ function FlujoReserva({
               <SeccionPaso id="pago" numero={indiceDe('pago') + 1} titulo={TITULOS.pago} estado={estadoDe('pago')}>
                 <PasoPago
                   deposito={deposito}
-                  porcentajeDeposito={checkout.pedido?.quote?.deposit_pct}
+                  porcentajeDeposito={pctDeposito}
                   saldo={saldo}
                   pedidoListo={checkout.pedido !== null}
                   fechaElegida={fechaISO !== null}
@@ -978,8 +985,6 @@ function FlujoReserva({
                   registraLanzar={(fn) => { lanzarPago.current = fn }}
                   procesando={pagando}
                   error={errorPago}
-                  pagaEnEfectivo={pagaEnEfectivo}
-                  onEfectivoChange={cambiarEfectivo}
                 />
               </SeccionPaso>
             </div>
@@ -1051,7 +1056,7 @@ function FlujoReserva({
                 descuentos={checkout.pedido?.quote?.discounts}
                 importeDescuento={checkout.pedido?.quote?.discount_amount}
                 importeEfectivo={checkout.pedido?.quote?.cash_discount}
-                porcentajeDeposito={checkout.pedido?.quote?.deposit_pct}
+                porcentajeDeposito={pctDeposito}
                 desglose={
                   tour.precioNino != null || ninos > 0 || bebes > 0
                     ? { adultos, ninos, bebes }
