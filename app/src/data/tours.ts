@@ -596,7 +596,8 @@ export const FICHAS: Record<string, FichaTour> = traducible({
     queLlevar: QUE_LLEVAR_MARINE_PARK,
     recomendaciones: RECOMENDACIONES_V3,
     faqTour: [
-      { p: 'What if it rains?', r: 'Full refund or a date change, at no cost.' },
+      // [2026-10-30] Cláusula 3 de HAA-LEG-002 (Marketing): se intenta reprogramar y, si no se puede, reembolso total. Antes daba a elegir.
+      { p: 'What if it rains?', r: 'If the tour is canceled due to weather or sea conditions, we will try to reschedule it. If that is not possible, we will refund the full price of the tour.' },
       { p: 'Is there a restroom on board?', r: 'Yes, every one of our boats has a restroom.' },
       { p: 'Can I come if I cannot swim?', r: 'Yes, the snorkeling is in shallow water and life jackets are available.' },
       {
@@ -1405,7 +1406,8 @@ export const FICHAS: Record<string, FichaTour> = traducible({
       // add-on de este tour.
       { p: 'Can I choose the menu?', r: 'Yes, we agree the seven dishes with you (seafood, meat, Surf & Turf, vegetarian and the chicken, beef or shrimp skewers).' },
       { p: 'Do you accept corporate payments?', r: 'Yes, see the Corporate & MICE page for formal invoicing.' },
-      { p: 'What if it rains?', r: 'Full refund or a date change, at no cost.' },
+      // [2026-10-30] Cláusula 3 de HAA-LEG-002 (Marketing): se intenta reprogramar y, si no se puede, reembolso total. Antes daba a elegir.
+      { p: 'What if it rains?', r: 'If the tour is canceled due to weather or sea conditions, we will try to reschedule it. If that is not possible, we will refund the full price of the tour.' },
     ],
     tambienTeGusta: ['caribbean-escape', 'coral-quest'],
     // ⚡⚡ [2026-09-01, Samuel] LOS DOS ADD-ONS QUE HABÍA AQUÍ SE VAN, Y ENTRAN
@@ -1733,7 +1735,8 @@ export const FICHAS: Record<string, FichaTour> = traducible({
         r: 'Saona Island Catuano goes by speedboat to Catuano beach and the Las Palmillas Natural Pool. Saona Island Mano Juan goes by speedboat to the fishing village of Mano Juan, Playa Toro and the Natural Pool. The Catamaran does the Catuano route at a relaxed pace and is the option for large groups (up to 70 guests).',
       },
       { p: 'Can I add premium lobster?', r: 'Yes, at checkout: US$ 30 per person.' },
-      { p: 'What if it rains?', r: 'Full refund or a date change, at no cost.' },
+      // [2026-10-30] Cláusula 3 de HAA-LEG-002 (Marketing): se intenta reprogramar y, si no se puede, reembolso total. Antes daba a elegir.
+      { p: 'What if it rains?', r: 'If the tour is canceled due to weather or sea conditions, we will try to reschedule it. If that is not possible, we will refund the full price of the tour.' },
       {
         p: 'Is there a minimum age for children?',
         r: 'No minimum age. We carry life jackets in every size on both the speedboat and the catamaran.',

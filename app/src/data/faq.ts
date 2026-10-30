@@ -87,10 +87,12 @@ export const FAQ_CATEGORIAS: CategoriaFaq[] = traducible([
     id: 'clima',
     nombre: 'Weather & cancellations',
     preguntas: [
-      { p: 'What if it rains on the day of my tour?', r: 'Full refund or a date change, at no cost.' },
+      // [2026-10-30] Cláusula 3 de HAA-LEG-002 (Marketing): se intenta reprogramar y, si no se puede, reembolso total. Antes daba a elegir.
+      { p: 'What if it rains on the day of my tour?', r: 'If the tour is canceled due to weather or sea conditions, we will try to reschedule it. If that is not possible, we will refund the full price of the tour.' },
       {
         p: 'Do you cancel for rough seas?',
-        r: 'Only if conditions are not safe. In that case, a full refund or a reschedule.',
+        // [2026-10-30] Cláusula 3 de HAA-LEG-002 (Marketing): se intenta reprogramar y, si no se puede, reembolso total. Antes daba a elegir.
+        r: 'Only if conditions are not safe. In that case we will try to reschedule your tour, and if that is not possible, we will refund the full price.',
       },
     ],
   },

@@ -404,7 +404,8 @@ export function Footer({ cta = t('Ready for an unforgettable day?') }: { cta?: s
         <ul className="flex flex-wrap items-center gap-x-4 gap-y-1">
           <li>
             <Link to="/legal/cancellation-policy" className="hover:text-white/70">
-              {t('Cancellation policy')}
+              {/* [2026-10-30] Nombre del documento oficial HAA-LEG-002. */}
+              {t('Cancellation and refund policy')}
             </Link>
           </li>
           <li>

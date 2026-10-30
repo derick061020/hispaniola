@@ -1762,7 +1762,8 @@ export type FaqItem = { p: string; r: string }
 export const FAQ_HOME: FaqItem[] = traducible([
   {
     p: 'What happens if it rains on the day of my tour?',
-    r: 'Full refund or a date change, at no cost. We only cancel if conditions are not safe.',
+    // [2026-10-30] Cláusula 3 de HAA-LEG-002 (Marketing): se intenta reprogramar y, si no se puede, reembolso total. Antes daba a elegir.
+    r: 'If the tour is canceled due to weather or sea conditions, we will try to reschedule it. If that is not possible, we will refund the full price of the tour. We only cancel if conditions are not safe.',
   },
   {
     p: 'Can I cancel my booking?',
