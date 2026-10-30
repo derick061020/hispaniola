@@ -193,10 +193,6 @@ export type MenuCharterTour = {
 
 export type FichaTour = {
   tituloLargo: string
-  /** [2026-10-30] El % de depósito que pide Odoo para este tour (`deposit_pct`).
-   *  Lo rellena `fusionarFicha`; sin Odoo ni foto queda vacío y la web dice
-   *  el rango del PDF HAA-LEG-002 («between 20% and 25%»). */
-  porcentajeDeposito?: number
   /** [v3 2026-08-06] Título del bloque de descripción, con el copy APROBADO
    *  por el cliente (WEBSITE-TOURS: «The Ultimate Adults-Only Catamaran Tour
    *  in Punta Cana», «Discover the Caribbean Beneath the Surface»…). Hasta la
@@ -608,8 +604,7 @@ export const FICHAS: Record<string, FichaTour> = traducible({
       { p: 'Can I come if I cannot swim?', r: 'Yes, the snorkeling is in shallow water and life jackets are available.' },
       {
         p: 'Should I bring cash? How much?',
-        // [2026-10-30] PDF HAA-LEG-002 §6: sin el 5% por efectivo.
-        r: 'Only if you pay the balance in cash: the remaining amount after your deposit, before the tour starts.',
+        r: 'Only if you choose to pay the 25% deposit, the balance gets a 5% discount when paid in cash.',
       },
     ],
     tambienTeGusta: ['coral-quest', 'private-charter'],
@@ -862,8 +857,7 @@ export const FICHAS: Record<string, FichaTour> = traducible({
       { p: 'Can I come if I cannot swim?', r: 'Yes, the snorkeling is in shallow water and life jackets are available.' },
       {
         p: 'Should I bring cash? How much?',
-        // [2026-10-30] PDF HAA-LEG-002 §6: sin el 5% por efectivo.
-        r: 'Only if you pay the balance in cash: the remaining amount after your deposit, before the tour starts.',
+        r: 'Only if you choose to pay the 25% deposit, the balance gets a 5% discount when paid in cash.',
       },
     ],
     tambienTeGusta: ['caribbean-escape', 'private-charter'],

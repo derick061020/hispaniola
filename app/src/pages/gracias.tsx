@@ -258,7 +258,8 @@ export function GraciasPage() {
   // Las reservas guardadas antes del cambio no traen el campo: se leen como
   // 'tarjeta', que es lo que eran.
   const pagoEnEfectivo = reserva.metodoPago === 'efectivo'
-  // [2026-10-30] Fuera el «saldo en efectivo −5%» del camino de tarjeta (PDF HAA-LEG-002).
+  // Solo se usa en el camino de tarjeta, donde el saldo sigue sin descontar.
+  const saldoEnEfectivo = Math.round(reserva.saldo * 0.95)
   const horario = reserva.ficha.horarios[reserva.horarioIdx]
   // sumarDias ya devuelve ISO string (formato 'YYYY-MM-DD'), listo para fechaLarga.
   const fechaRecordatorioISO = sumarDias(reserva.fechaISO, -1)
@@ -427,12 +428,15 @@ export function GraciasPage() {
                     </>
                   ) : (
                     <>
-                      {/* [2026-10-30] PDF HAA-LEG-002: saldo antes del inicio, sin 5% por efectivo. */}
                       {t('You pay the balance of')}{' '}
                       <strong className="font-semibold text-navy">
                         {formatoDinero(reserva.saldo)}
                       </strong>{' '}
-                      {t('before the tour starts.')}
+                      {t('on board. In cash it comes to')}{' '}
+                      <strong className="font-semibold text-navy">
+                        {formatoDinero(saldoEnEfectivo)}
+                      </strong>{' '}
+                      {t('with the 5% discount.')}
                     </>
                   )}
                 </>
@@ -499,10 +503,10 @@ export function GraciasPage() {
               <span className="text-navy-soft">
                 {pagoEnEfectivo
                   ? t('To pay on board (cash, −5% applied)')
-                  : t('Balance, before the tour starts')}
+                  : t('Balance on board (cash, −5%)')}
               </span>
               <span className="font-semibold text-navy">
-                {formatoDinero(reserva.saldo)}
+                {formatoDinero(pagoEnEfectivo ? reserva.saldo : saldoEnEfectivo)}
               </span>
             </div>
           </dl>

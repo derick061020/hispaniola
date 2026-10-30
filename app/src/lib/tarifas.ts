@@ -253,15 +253,13 @@ export const DESCUENTOS: Descuento[] = traducible([
     porcentaje: 5,
     autoAplicable: true,
   },
-  // [2026-10-30, Samuel: «la web dice lo que dice el PDF HAA-LEG-002»] Fuera el
-  // 5% por pagar en efectivo: el PDF no lo recoge. El tope pasa de 15 a 10.
-  // (Cliente que repite y 30 días de antelación tampoco salen en el PDF, pero
-  // el encargo era solo el efectivo: quedan apuntados para Marketing.)
+  {
+    id: 'efectivo',
+    etiqueta: 'Paying in cash',
+    porcentaje: 5,
+    autoAplicable: true,
+  },
 ])
-
-/** [2026-10-30] Tope del rango de depósito del PDF HAA-LEG-002 («entre el 20 % y el
- *  25 %»). Solo para estimar mientras Odoo, que pone el % de cada tour, no contesta. */
-export const DEPOSITO_MAXIMO_PDF = 25
 
 export const DESCUENTO_MAXIMO = DESCUENTOS.reduce((s, d) => s + d.porcentaje, 0)
 
@@ -308,8 +306,7 @@ export function desglosePago(totalBruto: number, metodo: MetodoPago): DesglosePa
     const total = totalBruto - descuento
     return { descuento, total, hoy: 0, pendiente: total }
   }
-  // [2026-10-30] Sin código que la llame hoy; el 25 es el tope del PDF HAA-LEG-002.
-  const hoy = Math.round((totalBruto * DEPOSITO_MAXIMO_PDF) / 100)
+  const hoy = Math.round(totalBruto * 0.25)
   return { descuento: 0, total: totalBruto, hoy, pendiente: totalBruto - hoy }
 }
 

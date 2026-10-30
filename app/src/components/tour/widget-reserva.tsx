@@ -1435,11 +1435,9 @@ export function WidgetReserva({
       <div className="border-t border-linea pt-3">
         <ChecksTicker
           lineas={[
-            // [2026-10-30] PDF HAA-LEG-002: el % del tour (Odoo) y la cláusula 3.
-            ficha.porcentajeDeposito
-              ? tp('Book now, pay later: confirm with just {pct}%', { pct: ficha.porcentajeDeposito })
-              : t('Book now, pay later: confirm with a 20–25% deposit'),
+            t('Book now, pay later: confirm with just 25%'),
             t('Free cancellation up to 7 days before'),
+            // [2026-10-30] PDF HAA-LEG-002 §3.
             t('Bad weather: we reschedule or refund in full'),
           ]}
         />

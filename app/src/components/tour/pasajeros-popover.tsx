@@ -37,6 +37,8 @@ import { t, tp } from '@/lib/i18n'
 // portaliza. Al ir en el flujo del scroll del widget se puede alcanzar
 // scrolleando aunque caiga por debajo del borde — mismo trato que el popover
 // del calendario.
+// [2026-10-30] PDF HAA-LEG-002 §6: «Los niños pagan a partir de los 4 años. Los
+// menores de 4 años no pagan tarifa.» Bebés 0-3, niños 4-12 (antes 0-2 y 3-12).
 export function PasajerosPopover({
   total,
   max,

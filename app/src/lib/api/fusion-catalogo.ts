@@ -27,7 +27,6 @@ import type { AddOn } from '@/lib/tarifas'
 import type { Tour as TarjetaTour } from '@/data/home'
 import { t } from '@/lib/i18n'
 import { respaldoDeOdoo } from '@/data/catalogo-odoo.generado'
-import { DEPOSITO_MAXIMO_PDF } from '@/lib/tarifas'
 
 function aHorario(h: HorarioOdoo): Horario {
   return { hora: h.departure, regreso: h.back ?? '' }
@@ -163,22 +162,11 @@ export function fusionarFicha(
     ...ficha,
     horarios: odoo.schedules.length ? odoo.schedules.map(aHorario) : ficha.horarios,
     upgradePremium: odoo.premium_upgrade ?? ficha.upgradePremium,
-    // [2026-10-30] El PDF HAA-LEG-002 dice «entre el 20 % y el 25 %, según se
-    // indique al reservar»: lo que se indica es lo que Odoo tiene por tour.
-    porcentajeDeposito: odoo.deposit_pct,
     ...(subVariantes ? { subVariantes } : {}),
     ...(addOns ? { addOns } : {}),
     ...(menuBuffet ? { menuBuffet } : {}),
     ...(menuCharter ? { menuCharter } : {}),
   }
-}
-
-/** [2026-10-30] El % de depósito de un tour cuando no hay ficha fusionada a
- *  mano (el checkout): el de Odoo en vivo si lo hay, si no el de la foto del
- *  catálogo, y si tampoco, el tope del rango del PDF (25): una estimación que
- *  se queda corta asusta más al cobrar que una que se pasa. */
-export function porcentajeDepositoDe(slug: string, odoo?: TourOdoo | null): number {
-  return (odoo ?? respaldoDeOdoo(slug))?.deposit_pct ?? DEPOSITO_MAXIMO_PDF
 }
 
 /** La tarjeta del tour (nombre, «desde US$», aforo) con los precios de Odoo.

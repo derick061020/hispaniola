@@ -1772,8 +1772,8 @@ export const FAQ_HOME: FaqItem[] = traducible([
   },
   {
     p: 'Can I pay just the deposit?',
-    // [2026-10-30] PDF HAA-LEG-002 §6.
-    r: 'Yes, you confirm with a deposit of between 20% and 25% and pay the rest before the tour starts.',
+    // [2026-10-30] PDF HAA-LEG-002 §6: el saldo se paga «antes del inicio de la excursión». El 5% en efectivo se queda: el PDF no lo menciona.
+    r: 'Yes, you confirm with 25% and pay the rest before the tour starts.',
   },
   {
     p: 'Does it include pickup at my hotel?',
@@ -1811,7 +1811,7 @@ export const FAQ_HOME: FaqItem[] = traducible([
   },
   {
     p: 'Do you take cards? Can I pay at the hotel?',
-    // [2026-10-30] PDF HAA-LEG-002 §6, sin el 5% por efectivo.
-    r: 'We accept Visa, Mastercard, American Express and PayPal from My Booking. The balance is paid before the tour starts, by the means our team tells you.',
+    // [2026-10-30] PDF HAA-LEG-002 §6: el saldo se paga «antes del inicio de la excursión». El 5% en efectivo se queda: el PDF no lo menciona.
+    r: 'We accept Visa, Mastercard, American Express and PayPal from My Booking. You can also pay the balance in cash before the tour starts, with a 5% discount.',
   },
 ])

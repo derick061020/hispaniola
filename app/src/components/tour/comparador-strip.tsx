@@ -25,7 +25,7 @@ export function ComparadorStrip() {
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 rounded-card bg-aqua-tint px-4 py-3 ring-1 ring-aqua/20">
       <p className="text-sm text-navy-sub">
-        {t('Same price as on Viator or Civitatis. Here with a')}{' '}<strong className="font-semibold text-navy">{t('20–25% deposit')}</strong>
+        {t('Same price as on Viator or Civitatis. Here with a')}{' '}<strong className="font-semibold text-navy">{t('25% deposit')}</strong>
         {t(', your choice of menu and direct WhatsApp.')}
       </p>
       {/* Etapa A: Button neutral/stroke del sistema (xsmall) — la pastilla

@@ -367,7 +367,7 @@ export function Footer({ cta = t('Ready for an unforgettable day?') }: { cta?: s
               confirmado. */}
           <p className="mt-3 text-xs text-white/50">
             {/* [2026-10-30] PDF HAA-LEG-002 §6. */}
-            {t('Confirm with a 20–25% deposit online. The rest is paid before the tour starts.')}
+            {t('Confirm with 25% online. The rest before the tour starts. Cash on board works too.')}
           </p>
         </div>
 

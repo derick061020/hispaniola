@@ -23,8 +23,8 @@ export const FAQ_CATEGORIAS: CategoriaFaq[] = traducible([
     preguntas: [
       {
         p: 'Can I pay only part of it now?',
-        // [2026-10-30] PDF HAA-LEG-002 §6: 20–25 %, saldo antes del inicio, sin 5% por efectivo.
-        r: 'Yes. You confirm with a deposit of between 20% and 25% of the total, as indicated when you book, and pay the rest before the tour starts. You can also pay the full amount online.',
+        // [2026-10-30] PDF HAA-LEG-002 §6: el saldo se paga «antes del inicio de la excursión». El 5% en efectivo se queda: el PDF no lo menciona.
+        r: 'Yes. You confirm with 25% and pay the rest before the tour starts, in cash (with a 5% discount) or by card from My Booking.',
       },
       {
         p: 'What happens if I cancel?',
@@ -36,13 +36,12 @@ export const FAQ_CATEGORIAS: CategoriaFaq[] = traducible([
       },
       {
         p: 'How much cash should I bring?',
-        // [2026-10-30] Sin el 5% por efectivo (PDF HAA-LEG-002).
-        r: 'Only if you pay the balance in cash: the remaining amount after your deposit, before the tour starts.',
+        r: 'If you chose the 25% deposit, the remaining balance (with a 5% discount if you pay in cash on board).',
       },
       {
         p: 'Do you accept cards? Can I pay at the hotel?',
-        // [2026-10-30] Sin el 5% por efectivo y con el saldo antes del inicio (PDF HAA-LEG-002).
-        r: 'We accept Visa, Mastercard, American Express and PayPal from My Booking. The balance is paid before the tour starts, by the means our team tells you.',
+        // [2026-10-30] PDF HAA-LEG-002 §6: el saldo se paga «antes del inicio de la excursión». El 5% en efectivo se queda: el PDF no lo menciona.
+        r: 'We accept Visa, Mastercard, American Express and PayPal from My Booking. You can also pay the balance in cash before the tour starts, with a 5% discount.',
       },
     ],
   },
