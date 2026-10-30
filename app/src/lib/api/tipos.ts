@@ -359,6 +359,25 @@ export type ParcheCheckout = {
   dishes?: (string | { guest: number; dish: string })[]
   addons?: string[]
   meta?: MetaOrigen
+  /** [2026-10-30] Casillas del último paso (anexo HAA-LEG-002, apartado D).
+   *  Campo NUEVO: Odoo todavía no lo conoce. Viaja en un `sync` aparte, justo
+   *  antes de `/pay`, para que un back que lo rechace no se lleve por delante
+   *  el guardado del formulario. Ver PARA-DERICK.md §4. */
+  legal_acceptance?: AceptacionLegal
+}
+
+/** Constancia de aceptación de las políticas. Ejemplo:
+ *  `{ accepted_at: '2026-10-29T18:32:05.120Z', version: 'HAA-LEG-002 · 29 de
+ *  octubre de 2026', channel: 'web', image_consent: false }` */
+export type AceptacionLegal = {
+  /** Cuándo marcó la casilla de Términos. ISO 8601 en UTC. */
+  accepted_at: string
+  /** Versión de las políticas que vio. Hoy, «HAA-LEG-002 · 29 de octubre de 2026». */
+  version: string
+  /** Desde la web siempre 'web'. Enlace de pago y firma a bordo los pone Odoo. */
+  channel: 'web'
+  /** Casilla 2: autoriza fotos y video en redes, web y publicidad. */
+  image_consent: boolean
 }
 
 /** De donde viene la visita. Se guarda en el pedido para poder atribuir la

@@ -7,6 +7,8 @@ import { FormularioStripe, type EstadoFormularioStripe, type FacturacionStripe }
 import { formatoDinero } from '@/data/home'
 import { t } from '@/lib/i18n'
 import { Spinner } from '@/components/ui/spinner'
+import { CasillasAceptacion } from '@/components/reservar/casillas-aceptacion'
+import type { EstadoAceptacion } from '@/lib/aceptacion-legal'
 
 // Sección 4 del funnel (Fase C, layout Viator): «Pago». El desglose completo
 // del precio vive en la columna derecha (ResumenReserva), así que aquí solo van
@@ -71,6 +73,8 @@ export function PasoPago({
   onEfectivoChange,
   procesando = false,
   error = null,
+  aceptacion,
+  onAceptacionChange,
 }: {
   deposito: number
   /** El % real del tarifario: no todos los tours cobran 25. */
@@ -108,6 +112,10 @@ export function PasoPago({
   /** Mensaje si el cobro no se pudo iniciar o la tarjeta se rechazó. La reserva
    *  NO se pierde: sigue registrada como pendiente en el CRM. */
   error?: string | null
+  /** [2026-10-30] Las dos casillas del anexo HAA-LEG-002. El estado vive en
+   *  `reservar.tsx`, que es quien lo manda a Odoo antes de cobrar. */
+  aceptacion: EstadoAceptacion
+  onAceptacionChange: (valor: EstadoAceptacion) => void
 }) {
   // ── Qué pasarelas hay configuradas en Odoo ──────────────────────────────
   const [medios, setMedios] = useState<Medios | null>(null)
@@ -153,7 +161,33 @@ export function PasoPago({
     !sinPasarela &&
     (metodo === 'paypal' ? medios.paypal : stripeListo)
 
+  // ── Casilla de Términos: sin ella no se paga ────────────────────────────
+  // [2026-10-30, anexo HAA-LEG-002, C.3] «No se puede pagar sin marcar la
+  // casilla 1. Si el cliente lo intenta, la casilla se resalta en rojo con el
+  // mensaje…». Por eso el botón NO se apaga sin ella (apagado no se puede
+  // «intentar», y el visitante no sabría qué falta): se deja pulsar y se le
+  // lleva a la casilla. Todos los caminos al cobro pasan por aquí: el botón,
+  // la barra móvil (que tira de `lanzar`), PayPal y los wallets de Stripe
+  // (`antesDeAbrir` del formulario).
+  const refTerminos = useRef<HTMLInputElement | null>(null)
+  const [avisoTerminos, setAvisoTerminos] = useState(false)
+  const aceptaTerminos = aceptacion.aceptaTerminos
+  useEffect(() => {
+    if (aceptaTerminos) setAvisoTerminos(false)
+  }, [aceptaTerminos])
+
+  const exigeTerminos = () => {
+    if (aceptaTerminos) return true
+    setAvisoTerminos(true)
+    // En móvil se paga desde la barra fija de abajo, lejos de la casilla: sin
+    // llevarla a la vista, el aviso saldría donde nadie mira.
+    refTerminos.current?.scrollIntoView({ block: 'center', behavior: 'smooth' })
+    refTerminos.current?.focus({ preventScroll: true })
+    return false
+  }
+
   const lanzar = () => {
+    if (!exigeTerminos()) return
     if (metodo === 'paypal') return onPagar({ metodo })
     pagarConStripe.current?.()
   }
@@ -243,6 +277,7 @@ export function PasoPago({
                 onError={stripe.onError}
                 onEstado={setEstadoStripe}
                 registraPagar={(fn) => { pagarConStripe.current = fn }}
+                antesDeAbrir={exigeTerminos}
                 desactivado={procesando}
               />
             </OpcionPago>
@@ -292,6 +327,17 @@ export function PasoPago({
           </span>
         </label>
       ) : null}
+
+      {/* [2026-10-30] Anexo HAA-LEG-002, C.1: «justo antes del botón de
+          pagar, una debajo de la otra». Debajo del efectivo, que es una
+          decisión sobre cómo se paga, y pegadas al botón. */}
+      <CasillasAceptacion
+        ref={refTerminos}
+        valor={aceptacion}
+        onCambio={onAceptacionChange}
+        avisoTerminos={avisoTerminos}
+        desactivado={procesando}
+      />
 
       {/* [2026-08-21, auditoría móvil] En móvil este botón se esconde: la
           acción del paso vive en la barra fija de abajo, con el importe al

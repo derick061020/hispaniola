@@ -19,6 +19,8 @@ import { FICHAS, type FichaTour } from '@/data/tours'
 import { guardarReserva, type Reserva } from '@/lib/reservas'
 import { menuDeLaReserva } from '@/lib/menu-reserva'
 import { useCheckout } from '@/lib/api/use-checkout'
+import { sincronizarCheckout } from '@/lib/api/api'
+import { ACEPTACION_INICIAL, aceptacionParaOdoo, type EstadoAceptacion } from '@/lib/aceptacion-legal'
 import type { ErrorApi } from '@/lib/api/cliente'
 import type { ParcheCheckout } from '@/lib/api/tipos'
 import { t, tp, traducible } from '@/lib/i18n'
@@ -437,6 +439,28 @@ function FlujoReserva({
   const [estadoPago, setEstadoPago] = useState({ procesando: false, puedePagar: false })
   const pagandoStripe = estadoPago.procesando
   const [errorPago, setErrorPago] = useState<string | null>(null)
+  // [2026-10-30, anexo HAA-LEG-002] Las dos casillas del último paso. Empiezan
+  // SIEMPRE sin marcar —también al volver de PayPal o recargar—: la aceptación
+  // es de esta visita y no se guarda en el navegador.
+  const [aceptacion, setAceptacion] = useState<EstadoAceptacion>(ACEPTACION_INICIAL)
+
+  // La constancia de aceptación va a Odoo ANTES de crear el cobro (apartado D:
+  // «prueba de que aceptó antes de pagar»). Va en un `sync` PROPIO y no dentro
+  // de `datosDelFormulario()` a propósito: `legal_acceptance` es un campo nuevo
+  // y, si el Odoo de producción todavía validara los campos y lo rechazara, ese
+  // rechazo se llevaría por delante el guardado del contacto y la fecha, y
+  // Odoo cobraría con datos viejos. Así, lo peor que pasa es que esta
+  // constancia no se guarde; el pago sigue. Por la misma razón no pasa por
+  // `checkout.sincronizar`, que pintaría su error en la banda de arriba.
+  const enviarAceptacion = async () => {
+    const legal_acceptance = aceptacionParaOdoo(aceptacion)
+    if (!legal_acceptance || !checkout.codigo || !checkout.token) return
+    try {
+      await sincronizarCheckout(checkout.codigo, checkout.token, { legal_acceptance })
+    } catch {
+      // Sin ruido para el visitante: ver arriba. Derick lo ve en PARA-DERICK.md §4.
+    }
+  }
 
   // [2026-08-14] AQUÍ SE COBRA DE VERDAD. Lo que había antes creaba el intento
   // de cobro en Stripe y navegaba a «Gracias» sin confirmarlo nunca: el
@@ -472,6 +496,7 @@ function FlujoReserva({
       // (antes era void y este `await` no esperaba a nada, así que el guardado
       // y el cobro salían a la vez). Odoo cobra con lo que tenga guardado.
       await checkout.sincronizar(datosDelFormulario(), true)
+      await enviarAceptacion()
       const intento = await checkout.pagar({ proveedor: 'paypal' })
       if (!intento.approve_url) throw new Error(t('PayPal did not return an approval link.'))
       // La copia local se guarda ANTES de salir del sitio: al volver, la
@@ -497,6 +522,7 @@ function FlujoReserva({
     obtenerSecreto: async () => {
       setErrorPago(null)
       await checkout.sincronizar(datosDelFormulario(), true)
+      await enviarAceptacion()
       const intento = await checkout.pagar({ proveedor: 'stripe' })
       return { client_secret: intento.client_secret, amount: intento.amount }
     },
@@ -985,6 +1011,8 @@ function FlujoReserva({
                   error={errorPago}
                   pagaEnEfectivo={pagaEnEfectivo}
                   onEfectivoChange={cambiarEfectivo}
+                  aceptacion={aceptacion}
+                  onAceptacionChange={setAceptacion}
                 />
               </SeccionPaso>
             </div>

@@ -102,6 +102,16 @@ Las filas con ⚠️ llevan una nota del traductor.
 | 8. Menores y cambios | 8. Minors and changes |  |
 | Los datos de menores de edad nos los facilita su padre, madre o tutor al reservar. Podemos actualizar esta política; la versión vigente es siempre la publicada en nuestra web. | The data of minors is provided by their parent or guardian when booking. We may update this policy; the version in force is always the one published on our website. |  |
 
+## Casillas de aceptación del checkout (anexo, págs. 5-6)
+
+Último paso de la reserva, justo antes de pagar. Los títulos subrayados son enlaces.
+
+| ES (PDF) | EN (traducción nuestra) | Nota |
+|---|---|---|
+| He leído y acepto los Términos y Condiciones, la Política de Cancelación y Reembolsos, la Política de Privacidad y el Relevo de Responsabilidad y Asunción de Riesgos, en nombre propio y de todas las personas de esta reserva. | I have read and accept the Terms and Conditions, the Cancellation and Refund Policy, the Privacy Policy and the Release of Liability and Assumption of Risk, on my own behalf and on behalf of all the people in this booking. |  |
+| Autorizo a Hispaniola Aquatic Adventures y a Bávaro Reefs Group a usar en redes sociales, web y publicidad las fotos y videos de la excursión en los que aparezcamos yo y los menores de mi reserva. | I authorize Hispaniola Aquatic Adventures and Bávaro Reefs Group to use, on social media, the website and in advertising, the photos and videos of the tour in which I and the minors in my booking appear. |  |
+| Debe aceptar los Términos y Condiciones para continuar. | You must accept the Terms and Conditions to continue. |  |
+
 ## Avisos del resto de la web (FAQ, home, fichas de tour)
 
 | ES | EN | Dónde |
