@@ -89,6 +89,7 @@ export function FormularioStripe({
   onError,
   onEstado,
   registraPagar,
+  antesDeAbrir,
   desactivado = false,
 }: {
   clave: string
@@ -109,6 +110,11 @@ export function FormularioStripe({
   onEstado?: (estado: EstadoFormularioStripe) => void
   /** Publica el disparador del cobro, para el botón de fuera (y la barra móvil). */
   registraPagar?: (pagar: () => void) => void
+  /** [2026-10-30] Última palabra del padre antes de abrir la hoja de Apple /
+   *  Google Pay o Link: si devuelve false, no se abre. En el checkout es la
+   *  casilla de Términos (HAA-LEG-002): los wallets cobran sin pasar por el
+   *  botón de pagar, así que el bloqueo de `paso-pago.tsx` no les llegaba. */
+  antesDeAbrir?: () => boolean
   desactivado?: boolean
 }) {
   const nodoExpress = useRef<HTMLDivElement | null>(null)
@@ -132,8 +138,8 @@ export function FormularioStripe({
 
   // Las props que lee el cobro cambian (importe, contacto) pero los elementos
   // se montan una vez: se leen por ref para que el handler vea lo último.
-  const ultimo = useRef({ importe, facturacion, obtenerSecreto, returnUrl, antesDeConfirmar, onPagado, onError })
-  ultimo.current = { importe, facturacion, obtenerSecreto, returnUrl, antesDeConfirmar, onPagado, onError }
+  const ultimo = useRef({ importe, facturacion, obtenerSecreto, returnUrl, antesDeConfirmar, antesDeAbrir, onPagado, onError })
+  ultimo.current = { importe, facturacion, obtenerSecreto, returnUrl, antesDeConfirmar, antesDeAbrir, onPagado, onError }
 
   useEffect(() => {
     onEstado?.(estado)
@@ -282,6 +288,9 @@ export function FormularioStripe({
             actualiza({ expressDisponible: hay })
           })
           express.on('click', (e) => {
+            // Sin `resolve` la hoja no se abre: es la forma de decir «todavía
+            // no» que admite Stripe en este evento.
+            if (ultimo.current.antesDeAbrir && !ultimo.current.antesDeAbrir()) return
             // Síncrono, o Apple Pay no abre la hoja. El nombre del negocio es
             // lo que el cliente ve en el título de la hoja del sistema.
             e.resolve({ business: { name: 'Hispaniola Aquatic Adventures' } })

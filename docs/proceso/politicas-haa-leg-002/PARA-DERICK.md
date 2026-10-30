@@ -57,35 +57,66 @@ el parte de embarque y cualquier regla que convierta edades en categorías.
 
 ### 4. Casillas de aceptación al reservar (anexo, págs. 5-6)
 
-En el último paso del checkout (`app/src/components/reservar/paso-pago.tsx`, justo antes del botón
-de pagar), una debajo de otra, mismo tamaño y estilo, sin las palabras «obligatorio» ni «opcional»:
+**Web: hecho en esta rama** (Samuel decidió que las casillas las hacemos nosotros). En el último
+paso del checkout, justo antes del botón de pagar, una debajo de otra y con el mismo estilo
+(`app/src/components/reservar/casillas-aceptacion.tsx`, montadas en `paso-pago.tsx`):
 
-1. **Obligatoria**, con asterisco rojo al final, sin marcar al cargar: «He leído y acepto los
-   Términos y Condiciones, la Política de Cancelación y Reembolsos, la Política de Privacidad y el
-   Relevo de Responsabilidad y Asunción de Riesgos, en nombre propio y de todas las personas de esta
-   reserva.» Cada documento enlaza a su página en pestaña nueva (`/legal/terms`,
-   `/legal/cancellation-policy`, `/legal/privacy`; el Relevo HAA-LEG-001 aún no tiene página porque
-   no nos ha llegado). Sin marcarla no se paga: al pulsar «Pagar» se resalta en rojo con «Debe
-   aceptar los Términos y Condiciones para continuar.»
-2. **Opcional**, sin asterisco, nunca premarcada y sin enlaces: «Autorizo a Hispaniola Aquatic
-   Adventures y a Bávaro Reefs Group a usar en redes sociales, web y publicidad las fotos y videos de
-   la excursión en los que aparezcamos yo y los menores de mi reserva.»
+1. «He leído y acepto los Términos y Condiciones, la Política de Cancelación y Reembolsos, la
+   Política de Privacidad y el Relevo de Responsabilidad y Asunción de Riesgos, en nombre propio y de
+   todas las personas de esta reserva.» con asterisco rojo, sin marcar al cargar. Enlaces en pestaña
+   nueva a `/legal/terms`, `/legal/cancellation-policy` y `/legal/privacy`. **El Relevo HAA-LEG-001
+   va sin enlace** porque no nos ha llegado (TODO en el código: cuando llegue, página `/legal/release`
+   y su ruta en `DOCUMENTOS`).
+2. «Autorizo a Hispaniola Aquatic Adventures y a Bávaro Reefs Group a usar en redes sociales, web y
+   publicidad las fotos y videos de la excursión en los que aparezcamos yo y los menores de mi
+   reserva.» Sin asterisco ni enlaces, nunca premarcada.
 
-Las dos frases necesitan versión en inglés (la web sale en inglés por defecto), que tiene que revisar
-Marketing junto con `TRADUCCION-EN-PARA-REVISAR.md`.
+Sin la casilla 1 no sale ninguna llamada a `/pay`: ni desde el botón, ni desde la barra móvil, ni con
+PayPal, ni con los wallets de Stripe (Apple/Google Pay y Link no abren la hoja). Al intentarlo, la
+casilla se marca en rojo con «Debe aceptar los Términos y Condiciones para continuar.» (anunciado a
+lectores de pantalla y con el foco en la casilla). Texto en español literal del PDF; el inglés es
+nuestro y lo revisa Marketing (`TRADUCCION-EN-PARA-REVISAR.md`). Prueba: `app/qa/qa_casillas.mjs`
+(Odoo simulado, 1440 y 390 px, EN y ES).
 
-**Qué guarda Odoo en cada reserva** (apartado D), por ejemplo al confirmar:
+**Lo que llega a Odoo — campo nuevo `legal_acceptance`** en `POST /checkout/:code/sync`:
 
-| Campo | Ejemplo |
-|---|---|
-| Fecha y hora de aceptación | 29/10/2026 14:32 |
-| Versión aceptada | HAA-LEG-002 · 29 de octubre de 2026 |
-| Canal | Web / Enlace de pago / Firma a bordo |
-| Autoriza imagen | Sí / No |
+```json
+{
+  "legal_acceptance": {
+    "accepted_at": "2026-10-29T18:32:05.120Z",
+    "version": "HAA-LEG-002 · 29 de octubre de 2026",
+    "channel": "web",
+    "image_consent": false
+  }
+}
+```
+
+| Clave | Tipo | Qué es (apartado D del anexo) |
+|---|---|---|
+| `accepted_at` | texto ISO 8601, **UTC** | Fecha y hora de aceptación: el momento en que marcó la casilla 1, antes de pagar. Para enseñarla, pásala a hora de Punta Cana (UTC-4). |
+| `version` | texto | Versión aceptada. Hoy siempre `HAA-LEG-002 · 29 de octubre de 2026` (`app/src/lib/aceptacion-legal.ts`). |
+| `channel` | `"web"` | Canal. Desde la web siempre `web`; «Enlace de pago» y «Firma a bordo» los pone Odoo. |
+| `image_consent` | booleano | Autoriza imagen: `true` = Sí, `false` = No. |
+
+Cómo viaja:
+- En un `sync` **propio**, solo con `legal_acceptance` (y el `meta` de siempre), justo **después**
+  del `sync` del formulario y **antes** de `POST /checkout/:code/pay`. Si el pago falla y se
+  reintenta, se vuelve a mandar (mismo contenido, o hora nueva si desmarcó y volvió a marcar).
+- Es **opcional**: si tu `sync` todavía no lo conoce, la web no se rompe. Si lo ignora, el pago sigue
+  igual; si respondiera error, la web lo calla y sigue cobrando (por eso va aparte: no se lleva por
+  delante el guardado del contacto y la fecha).
+- Solo se manda si la casilla 1 está marcada, y sin ella no hay cobro, así que **toda reserva pagada
+  en la web llega con `legal_acceptance`**.
+
+**Qué te queda a ti:** solo **guardarlo y mostrarlo en la reserva** — los cuatro datos del apartado D
+(fecha y hora, versión, canal, autoriza imagen Sí/No), visibles en la ficha de la reserva para que
+Redes pueda mirar «Autoriza imagen» antes de publicar (apartado E), y que se pueda cambiar a «No» si el
+cliente lo pide después. Si el pedido ya tiene una aceptación, la última manda.
 
 **Enlaces de pago** (apartado C.6): si la página del enlace no admite casillas, el mensaje que lo
 acompaña dice «Al pagar, acepta nuestros Términos y Condiciones, la Política de Privacidad y el
 Relevo de Responsabilidad», con los enlaces; el relevo y la autorización de imagen se firman a bordo.
+En esos casos el canal es «Enlace de pago» o «Firma a bordo» y lo rellena el equipo en Odoo.
 
 ### 5. Enlazar la Política de Cancelación desde el correo de confirmación (anexo, C.5)
 
