@@ -76,6 +76,14 @@ export type SubVarianteTour = {
   descripcion: string
   capacidad: string
   tabla: TramoPrecio[]
+  /** [2026-10-30, Blanka en «Hispaniola Gerencia»: «Saona por catamaran no
+   *  puede tener funcion de reservar en linea, solo porque contamos con
+   *  disponibilidad de un tercero. Subcontratamos. Esas reservas las tengo que
+   *  hacer yo. Con lancha esta bien en linea»] Se sigue enseñando (info,
+   *  itinerario, precio), pero el widget no deja reservarla: manda a WhatsApp.
+   *  Odoo tambien se niega a cobrarla (`/pay`), por si alguien llega al pago
+   *  con un enlace viejo. */
+  soloConsulta?: boolean
   /** Foto del bote/modalidad, en /fotos (sin extensión). Opcional —
    *    sin foto, el widget pinta solo el nombre. */
   foto?: string
@@ -1598,6 +1606,7 @@ export const FICHAS: Record<string, FichaTour> = traducible({
       },
       {
         id: 'catamaran',
+        soloConsulta: true,
         nombre: 'Catamaran',
         descripcion: 'The classic Caribbean sailing experience',
         capacidad: 'Up to 70 guests',

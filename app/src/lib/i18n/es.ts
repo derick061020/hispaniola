@@ -344,6 +344,7 @@ export const ES: Record<string, string> = {
   "As printed on the card": "Tal como aparece en la tarjeta",
   "As the day comes to an end, enjoy a scenic cruise back along the Caribbean coastline before returning to your hotel.": "Al caer el día, navegación de vuelta bordeando la costa caribeña antes del traslado a tu hotel.",
   "Ask on WhatsApp": "Pregunta por WhatsApp",
+  "This option is booked directly with our team. Message us and we will confirm availability for your date.": "Esta opción se reserva directamente con nuestro equipo. Escríbenos y te confirmamos la disponibilidad para tu fecha.",
   "Assigned, provided in the charter paperwork": "Asignado — se facilita en la documentación del charter",
   "At anchor": "Fondeado",
   "At Hispaniola Aquatic Adventures, every private charter is designed around you. Our fleet of catamarans can accommodate groups of all sizes, and our experienced team will take care of every detail so you can relax and enjoy the celebration.": "Nuestro equipo, con años de experiencia, se compromete a cubrir tus necesidades para que crees recuerdos que duren toda la vida. Tenemos catamaranes de distintos tamaños para cualquier grupo. No dudes en preguntarnos cómo convertimos un evento en un recuerdo para siempre.",

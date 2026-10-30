@@ -322,22 +322,24 @@ export function Footer({ cta = t('Ready for an unforgettable day?') }: { cta?: s
             <span className="font-semibold text-white">★ {RESENAS_AGREGADO.rating}</span> ·{' '}
             {numero(RESENAS_AGREGADO.total)} {t('reviews · #1 on TripAdvisor for 7 years')}
           </p>
-          <ul className="mt-3 flex flex-wrap items-center gap-2">
+          {/* [2026-10-30, Fernando via Blanka: «en horizontal y más grandes»]
+              48 px (antes 36) y siempre en una fila, sin saltar de línea. */}
+          <ul className="mt-4 flex flex-nowrap items-center gap-3">
             {REDES.map((red) => {
               const Icono = ICONO_RED[red.id]
               const clases =
-                'grid size-9 place-items-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20'
+                'grid size-12 place-items-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20'
               // Sin URL real no se inventa un destino: EnlacePrototipo deja
               // claro (title) que el enlace está pendiente del cliente.
               return (
                 <li key={red.id}>
                   {red.url ? (
                     <a href={red.url} target="_blank" rel="noopener" aria-label={red.nombre} className={clases}>
-                      <Icono className="size-4" aria-hidden="true" />
+                      <Icono className="size-6" aria-hidden="true" />
                     </a>
                   ) : (
                     <EnlacePrototipo aria-label={red.nombre} className={clases}>
-                      <Icono className="size-4" aria-hidden="true" />
+                      <Icono className="size-6" aria-hidden="true" />
                     </EnlacePrototipo>
                   )}
                 </li>

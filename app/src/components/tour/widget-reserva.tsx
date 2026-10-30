@@ -1359,7 +1359,20 @@ export function WidgetReserva({
           Cediéndolo, el pie llega al borde real y el hueco bajo el botón lo
           pone él. */}
       <div className="widget-pie lg:sticky lg:bottom-0 lg:z-10 lg:-mx-5 lg:px-5 lg:pb-5 lg:pt-3">
-        {fecha === null ? (
+        {subActiva?.soloConsulta ? (
+          // [2026-10-30, Blanka] Saona en catamarán: lo opera un tercero y la
+          // reserva la hace la oficina. Ver `soloConsulta` en data/tours.ts.
+          <>
+            <p className="mb-3 text-sm text-navy-sub">
+              {t('This option is booked directly with our team. Message us and we will confirm availability for your date.')}
+            </p>
+            <FancyButton.Root variant="primary" className="w-full" asChild>
+              <a href={WHATSAPP_URL} target="_blank" rel="noopener">
+                {t('Ask on WhatsApp')}
+              </a>
+            </FancyButton.Root>
+          </>
+        ) : fecha === null ? (
           <FancyButton.Root variant="primary" className="w-full" disabled>
             {t('Pick a date')}
           </FancyButton.Root>
