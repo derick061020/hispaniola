@@ -41,18 +41,22 @@ export type Reserva = {
    *  Odoo devuelve. La particion en pais + numero es del formulario, no del
    *  dato guardado — ver `telefonoDe()` en components/reservar/tipos.ts. */
   contacto: Omit<DatosContacto, 'prefijo'>
-  /** [2026-09-01] Cómo se paga: 'efectivo' (todo el día del tour, con el 5% de
-   *  descuento y SIN cobro hoy) o 'tarjeta' (depósito del 25% y el resto luego).
+  /** [2026-09-01] Cómo se paga el SALDO: 'efectivo' (a bordo, antes de salir,
+   *  con el 5% de descuento sobre el saldo) o 'tarjeta'. En los dos casos el
+   *  depósito se cobra al reservar.
+   *  [2026-10-30, Samuel: seguir el PDF HAA-LEG-002 §6, «para confirmar la reserva se paga un depósito»] Este comentario decía «'efectivo' (todo el día del tour, SIN cobro
+   *  hoy)»: nunca fue lo que cobraba el checkout.
    *  Opcional para no invalidar las reservas ya guardadas en localStorage de
    *  antes de este cambio; sin el campo se leen como 'tarjeta', que es lo que
-   *  eran. Cuando exista backend, este campo es parte del contrato: una reserva
-   *  en efectivo llega sin depósito cobrado y el equipo tiene que saberlo. */
+   *  eran. Las reservas antiguas que se guardaron con `deposito: 0` y efectivo
+   *  se siguen pintando como lo que fueron (ver pages/gracias.tsx). */
   metodoPago?: MetodoPago
   /** Lo que rebajó pagar en efectivo. 0 o ausente con tarjeta. */
   descuentoEfectivo?: number
   /** El importe final, YA con el descuento de efectivo si lo hubo. */
   total: number
-  /** Lo que se cobra al reservar. 0 pagando en efectivo. */
+  /** Lo que se cobra al reservar: el depósito, también pagando el saldo en
+   *  efectivo. Solo vale 0 en reservas antiguas guardadas antes del 2026-10-30. */
   deposito: number
   saldo: number
   /** Todo lo que queda por pagar, si es mas que lo que se cobra ahora. */

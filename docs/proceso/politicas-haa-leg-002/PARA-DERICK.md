@@ -14,20 +14,32 @@ descuentos de cliente que repite y de 30 días, y la forma de cobrar el saldo.
 
 > «Para confirmar la reserva se paga un depósito de entre el 20 % y el 25 % del total.»
 
-El efectivo tiene que ser **solo del saldo**, nunca del depósito. Hoy el frontend se contradice y
-hay que saber qué hace el servidor:
+El efectivo es **solo del saldo**, nunca del depósito.
 
-- `app/src/components/reservar/resumen-reserva.tsx:522-528` y `paso-pago.tsx:290` dicen que con
-  efectivo el depósito **se sigue cobrando con tarjeta** (según el comentario, el servidor cotiza
-  `deposit: 47.03` con `['efectivo']`).
-- En cambio, `app/src/pages/reservar.tsx:677-679` (botón «Confirm booking» en vez de «Pay deposit»),
-  `app/src/components/reservar/barra-movil-reserva.tsx:58-68` («Total, in cash», hoy 0) y el
-  comentario de `reservar.tsx:601` («una reserva en efectivo llega SIN depósito cobrado») dan a
-  entender que se confirma sin cobrar nada.
+**Web: hecho en esta rama.** El cobro de la web nunca distinguió el efectivo: `paso-pago.tsx`
+(`lanzar` → Stripe con `importe={deposito}` o PayPal) cobra siempre el `amounts.deposit` que
+devuelve Odoo, y no hay ningún camino que confirme una reserva nueva sin pagar. Si falla la pasarela,
+la reserva queda guardada como pendiente y el equipo llama. Lo que se contradecía eran los textos, y
+ya están corregidos:
+- el botón de la barra móvil decía «Confirm booking» con la casilla de efectivo; ahora dice
+  «Pay deposit · US$ X» siempre (`reservar.tsx`);
+- la barra móvil enseñaba «Total, in cash · on the day»; ahora enseña siempre lo que se paga hoy,
+  el depósito (`barra-movil-reserva.tsx`);
+- `desglosePago` (`tarifas.ts`) y los comentarios de `lib/reservas.ts` decían «efectivo = 0 hoy»;
+  ahora cobran el depósito y aplican el 5 % sobre el saldo.
 
-**Qué hacer:** que `POST /checkout/:code/confirm` (y `/pay`) no confirme ningún pedido sin el
-depósito cobrado, también con `discounts: ['efectivo']`. Si el servidor ya lo hace, avísanos y
-corregimos esos dos textos del frontend para que digan «Pay deposit».
+**Servidor: comprobado en `/quote` de producción** (coral-quest, 2 adultos, 15-12-2026):
+
+| `discounts` | total | depósito | saldo | `cash_discount` |
+|---|---|---|---|---|
+| `[]` | 188,10 | 47,03 (25 %) | 141,07 | 0 |
+| `['efectivo']` | 181,05 | **47,03 (25 %)** | 134,02 | 7,05 (5 % del saldo) |
+
+**Qué te queda a ti:** confirmar que `POST /checkout/:code/pay` crea el intento de cobro por ese
+mismo depósito también con `['efectivo']` (nunca por 0), y que `POST /checkout/:code/confirm` (y el
+webhook) no pasa a confirmada ninguna reserva sin el depósito cobrado. Desde la web no lo puedo
+comprobar sin crear un pedido real. Si el servidor tuviera algún camino de «confirmar sin pagar»
+(reservas antiguas guardadas con `deposito: 0`), hay que cerrarlo.
 
 ### 2. Edades: «los niños pagan a partir de los 4 años; los menores de 4 no pagan» (§6)
 

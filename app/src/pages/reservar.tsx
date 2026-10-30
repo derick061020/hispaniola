@@ -597,8 +597,11 @@ function FlujoReserva({
       // [2026-09-01] `total` ya es el importe DESPUÉS del descuento por pagar en
       // efectivo, si se eligió. Se guarda además el método y lo que rebajó, para
       // que «Gracias» y «Mi reserva» puedan explicar el número en vez de
-      // enseñarlo a secas — y para que el equipo sepa qué esperar el día del
-      // tour: una reserva en efectivo llega SIN depósito cobrado.
+      // enseñarlo a secas.
+      // ⚠️ [2026-10-30, Samuel: seguir el PDF HAA-LEG-002 §6, «para confirmar la reserva se paga un depósito»] Lo que seguía aquí —«una reserva en efectivo llega SIN depósito
+      // cobrado»— no era verdad: el cobro sale por `lanzar` (paso-pago.tsx) con
+      // `deposito`, y Odoo cotiza el mismo depósito con o sin efectivo
+      // (comprobado en /quote: 47,03 en los dos casos; el 5 % cae sobre el saldo).
       metodoPago,
       descuentoEfectivo: checkout.pedido?.quote?.cash_discount ?? 0,
       total,
@@ -673,10 +676,12 @@ function FlujoReserva({
               guardaYAvanza('menu', { step: 'menu', dishes: hayPasoMenu ? platos : [] }),
           }
         : {
-              texto:
-                metodoPago === 'efectivo'
-                  ? t('Confirm booking')
-                  : `${t('Pay deposit')} · ${formatoDinero(deposito)}`,
+              // [2026-10-30, Samuel: seguir el PDF HAA-LEG-002 §6, «para confirmar la reserva se paga un depósito»]
+              // Con la casilla de efectivo marcada también se cobra el depósito
+              // con tarjeta (lo cobra `lanzar`, que no mira el método), así que
+              // el botón dice lo mismo en los dos caminos. Antes decía «Confirm
+              // booking», como si no se cobrara nada.
+              texto: `${t('Pay deposit')} · ${formatoDinero(deposito)}`,
               // [2026-09-14] Y solo cuando el paso de pago dice que se puede:
               // con Payment Element, «Pay» con la tarjeta a medias solo
               // devuelve un error de Stripe; mejor no dejar pulsar.
@@ -1079,7 +1084,6 @@ function FlujoReserva({
       <BarraMovilReserva
         deposito={deposito}
         total={total}
-        metodoPago={metodoPago}
         texto={ctaPaso.texto}
         habilitado={ctaPaso.habilitado}
         cargando={ctaPaso.cargando}

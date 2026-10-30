@@ -3155,4 +3155,6 @@ export const ES: Record<string, string> = {
   "Confirm with 25% online. The rest before the tour starts. Cash on board works too.": "Confirma con el 25 % online. El resto, antes del inicio del tour. También puedes pagar en efectivo a bordo.",
   "before the tour starts, with a 5% discount if you pay cash on board.": "antes del inicio del tour, con un 5 % de descuento si pagas en efectivo a bordo.",
   "is paid before the tour starts.": "se paga antes del inicio del tour.",
+  // [2026-10-30] Gracias: reservas antiguas pagadas todo en efectivo (sin depósito).
+  "You get the voucher by email and on WhatsApp.": "Recibes el voucher por correo y por WhatsApp.",
 }
