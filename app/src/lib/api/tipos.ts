@@ -79,6 +79,15 @@ export type AddOn = {
   max_pax?: number | null
 }
 
+export type PromoWeb = {
+  pct: number
+  label: string
+  /** Último día (AAAA-MM-DD) en que se puede reservar con la promo. */
+  until: string | null
+  /** Si aplica, el 5% por reservar con 30 días no se suma. */
+  excludes_early_booking: boolean
+}
+
 export type Tour = {
   slug: string
   id: number
@@ -103,6 +112,8 @@ export type Tour = {
   schedules: Horario[]
   variants: Variante[]
   addons: AddOn[]
+  /** [2026-10-30] Promo de temporada vigente (oferta `promo` de Odoo). */
+  promo?: PromoWeb | null
   tiers?: Tramo[]
   marginal?: { included_pax: number; extra_price: number }
   included?: string[]

@@ -22,6 +22,8 @@ import {
 import { AddOnsWidget } from '@/components/tour/add-ons-widget'
 import { useCotizacion } from '@/components/tour/use-cotizacion'
 import { BannerGrupo } from '@/components/tour/banner-grupo'
+import { ChipPromo } from '@/components/ui/chip-promo'
+import { usePromo } from '@/lib/api/use-promo'
 import { NumeroEditable } from '@/components/ui/numero-editable'
 import { PasajerosPopover, FilasPasajeros } from '@/components/tour/pasajeros-popover'
 import { numero, t, tp } from '@/lib/i18n'
@@ -387,6 +389,7 @@ export function WidgetReserva({
   // para que no cambie en cada render (y para que cada tour muestre siempre
   // la misma, que es lo que esperaría alguien que vuelve a la página).
   const resenaWidget = QUOTES[tour.slug.length % QUOTES.length]
+  const promo = usePromo(tour.slug)
   // v3 (2026-07-17, Saona): cuando el tour tiene subVariantes (Saona:
   // speedboat / fishing / catamarán), el selector de paquetes pasa a ser un
   // selector de BOTE — el toggle Light/Premium se oculta. El id arranca en
@@ -1316,6 +1319,19 @@ export function WidgetReserva({
           Fase B prometiendo un 15% que ninguna otra parte del sitio explicaba;
           ahora que la explicación existe, lo peligroso sería que las dos
           cifras pudieran separarse. */}
+      {/* [2026-10-30, Blanka: «PROMO 10% (no compatible con el 5% de 30 días
+          con anticipación)»] El descuento lo pone `/quote`; aquí solo se
+          anuncia, con la condición a la vista para que nadie cuente con los dos. */}
+      {promo ? (
+        <div className="flex flex-col items-center gap-1 text-center">
+          <ChipPromo slug={tour.slug} conFecha />
+          {promo.excludes_early_booking ? (
+            <span className="text-xs text-navy-soft">
+              {t('Not combinable with the 30-day early booking discount')}
+            </span>
+          ) : null}
+        </div>
+      ) : null}
       <div className="flex items-center justify-center gap-1.5 rounded-btn bg-menta px-3 py-1.5 text-center text-xs font-medium text-menta-texto">
         <Tag className="size-3.5 shrink-0" aria-hidden="true" />
         {t('Book direct and save up to')}{' '}{DESCUENTO_MAXIMO}%

@@ -30,6 +30,15 @@ const ICONO_RED: Record<string, (p: { className?: string }) => React.ReactElemen
   youtube: IconoYouTube,
 }
 
+// [2026-10-30, Blanka: «también los iconos que sean en colores»] Cada red en
+// su color de marca, con el glifo en blanco encima.
+const COLOR_RED: Record<string, string> = {
+  instagram: 'bg-[linear-gradient(45deg,#f9ce34_0%,#ee2a7b_50%,#6228d7_100%)]',
+  facebook: 'bg-[#1877f2]',
+  tiktok: 'bg-black ring-1 ring-white/25',
+  youtube: 'bg-[#ff0000]',
+}
+
 // Footer «océano» (2026-07-17, pedido de Samuel) — reemplaza el corte duro
 // blanco→navy: misma TÉCNICA de espuma que IncluyeCrucero (ver
 // .footer-espuma en componentes.css) pero ESTÁTICA — img en vez de video,
@@ -327,8 +336,7 @@ export function Footer({ cta = t('Ready for an unforgettable day?') }: { cta?: s
           <ul className="mt-4 flex flex-nowrap items-center gap-3">
             {REDES.map((red) => {
               const Icono = ICONO_RED[red.id]
-              const clases =
-                'grid size-12 place-items-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20'
+              const clases = `grid size-12 place-items-center rounded-full text-white shadow-md transition-transform hover:scale-110 ${COLOR_RED[red.id] ?? 'bg-white/10'}`
               // Sin URL real no se inventa un destino: EnlacePrototipo deja
               // claro (title) que el enlace está pendiente del cliente.
               return (

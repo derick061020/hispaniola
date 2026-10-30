@@ -3,6 +3,7 @@ import { useCatalogo } from '@/lib/api/use-catalogo'
 import { fusionarLista } from '@/lib/api/fusion-catalogo'
 import { TOURS, bookingCta, formatoDinero, type Tour } from '@/data/home'
 import { t } from '@/lib/i18n'
+import { ChipPromo } from '@/components/ui/chip-promo'
 
 // Megamenú Tours — el escaparate: los 4 productos, camino directo al dinero
 // (ver NOTAS['home-megamenu-tours'] del prototipo). Cada tour lleva a su ficha
@@ -84,6 +85,8 @@ export function CardTour({ tour, className = '' }: { tour: Tour; className?: str
         )}
         {tour.duracionCorta}
       </span>
+      {/* [2026-10-30, Blanka] El cartel de la promo, debajo del precio. */}
+      <ChipPromo slug={tour.slug} className="mt-1" />
     </Link>
   )
 }
