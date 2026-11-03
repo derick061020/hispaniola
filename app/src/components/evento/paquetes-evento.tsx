@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react'
-import { Check, Minus, Sparkles, Package } from 'lucide-react'
+import { Check, Sparkles, Package } from 'lucide-react'
 import { TituloSeccion } from '@/components/tour/titulo-seccion'
 import { BLOQUE_FICHA } from '@/components/tour/bloque-ficha'
 import type { FichaEvento, PaqueteEvento } from '@/data/eventos'
@@ -46,6 +46,12 @@ import { t, tp } from '@/lib/i18n'
 //       de tour gobierna a la vez el widget y la tabla de precios del charter
 //       — mismo patrón, misma razón: dos piezas que hablan del mismo dato no
 //       pueden tener cada una el suyo.
+//
+// [2026-11-03, Gerencia (Blanka), con captura: «por favor quitar lo que no
+// está incluido»] Se quitan las rayas: cada card enseña SOLO lo que entra,
+// en el mismo orden común de siempre (el de `platos`), así que la comparación
+// sigue leyéndose escalón a escalón. Lo de «— lo que no» del punto 1 queda
+// derogado; para volver, el filtro está en `incluidos` de la card.
 //
 // ⚠️ VOLVER ATRÁS: la versión anterior (mismo layout, pero cada card con solo
 // sus propios items, el extra de precio al pie y sin selección) está en el
@@ -106,6 +112,8 @@ function Card({
   // El precio completo en una línea: la cifra grande sin su condición al lado
   // es la que se leía como total.
   const incluidas = paquete.incluyeHasta ?? null
+  // Solo lo que entra en ESTE paquete, en el orden común (ver cabecera, 2026-11-03).
+  const incluidos = platos.filter((plato) => paquete.items.some((i) => i.titulo === plato))
 
   return (
     <article
@@ -200,28 +208,19 @@ function Card({
             }`}
             style={
               ancha
-                ? ({ gridTemplateRows: `repeat(${Math.ceil(platos.length / 2)}, auto)` } as CSSProperties)
+                ? ({ gridTemplateRows: `repeat(${Math.ceil(incluidos.length / 2)}, auto)` } as CSSProperties)
                 : undefined
             }
           >
-            {platos.map((plato) => {
+            {incluidos.map((plato) => {
               const item = paquete.items.find((i) => i.titulo === plato)
               return (
-                <li
-                  key={plato}
-                  className={`flex items-start gap-2 text-sm ${
-                    item ? 'text-navy-sub' : 'text-navy-soft/60'
-                  }`}
-                >
-                  {item ? (
-                    <Check className="mt-0.5 size-4 shrink-0 text-menta-texto" aria-hidden="true" />
-                  ) : (
-                    <Minus className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
-                  )}
+                <li key={plato} className="flex items-start gap-2 text-sm text-navy-sub">
+                  <Check className="mt-0.5 size-4 shrink-0 text-menta-texto" aria-hidden="true" />
                   <span>
                     {/* Para lectores de pantalla el icono no dice nada: la
                         palabra sí. */}
-                    <span className="sr-only">{item ? t('Included: ') : t('Not included: ')}</span>
+                    <span className="sr-only">{t('Included: ')}</span>
                     {plato}
                     {item?.texto ? <span className="text-navy-soft"> · {item.texto}</span> : null}
                   </span>
