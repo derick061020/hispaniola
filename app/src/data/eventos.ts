@@ -238,6 +238,11 @@ export type FichaEvento = {
    *  grabe uno por ocasión (una boda no se vende con el mismo clip que un
    *  party boat) — misma deuda que ya arrastran los 4 tours. */
   videoGaleria: string | null
+  /** [2026-11-04, Sr. Fernando, MARKETING WEB: el vídeo «Party Boat» va «en
+   *  eventos… en la galería principal»] Clip corto y mudo para la columna y el
+   *  mini reproductor; el completo se pide al pulsar. Ver el mismo campo en
+   *  data/tours.ts. */
+  videoGaleriaCartel?: { src: string; poster: string }
   /** [2026-08-21, pedido de Samuel] LAS FOTOS DEL MENU, que son la mini
    *  galería de la primera celda del mosaico. Antes se DERIVABAN de las fotos
    *  de los paquetes, que son bodegones de plato sobre blanco; ahora salen de
@@ -640,10 +645,11 @@ const PARTY_BOAT: FichaEvento = {
     'ev-partyboat-menu-9',
     'ev-partyboat-menu-10',
   ],
-  // ⚠️ PLACEHOLDER a propósito: la columna vertical espera el clip de alguien
-  // explicando cómo reservar. El clip real del party boat está abajo, en
-  // `videoProducto`, dentro de la rejilla.
-  videoGaleria: '/video/hero.mp4',
+  // [2026-11-04, Sr. Fernando, MARKETING WEB] La columna vertical lleva ya el
+  // vídeo «Party Boat» que mandó Marketing (antes era el de marca de relleno).
+  // El clip de la rejilla (`videoProducto`) sigue siendo el de antes.
+  videoGaleria: '/video/eventos/party-boat-galeria.mp4',
+  videoGaleriaCartel: { src: '/video/eventos/party-boat-cartel.mp4', poster: '/video/eventos/party-boat-cartel.jpg' },
   videoProducto: {
     src: '/video/eventos/party-boat.mp4',
     poster: '/fotos/ev-partyboat-video-poster.webp',

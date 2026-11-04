@@ -248,6 +248,18 @@ export type FichaTour = {
    *  (hero.mp4), que es el único video real que hay; cuando el cliente mande
    *  clips POR TOUR se cambia aquí y la ficha no se toca. */
   videoGaleria: string | null
+  /** [2026-11-04, Sr. Fernando, grupo MARKETING WEB: «el Snorkel Lover va para
+   *  el Coral Quest y el Semi-Privado para el Caribbean Escape… sé que son
+   *  horizontales, pero que al hacer clic salga el vídeo como un pop-up»]
+   *  Clip corto, vertical y mudo para la columna 9:16 del mosaico y el mini
+   *  reproductor. Así la página no descarga el vídeo entero (20-25 MB) solo
+   *  para el cartel: el completo se pide al pulsar. Sin cartel, se usa
+   *  `videoGaleria` para todo, como antes. */
+  videoGaleriaCartel?: { src: string; poster: string }
+  /** El vídeo completo es horizontal (16:9): el reproductor se abre apaisado
+   *  en vez de copiar la proporción 9:16 de la celda, que le recortaría los
+   *  lados. */
+  videoGaleriaApaisado?: boolean
   /** Quote sobre la foto principal del mosaico — portada de primeraResenaTour()
    *  de prototipo/app.js. Prueba social ANTES de scrollear (wireframe A1). */
   quoteDestacada: string
@@ -541,7 +553,9 @@ export const FICHAS: Record<string, FichaTour> = traducible({
       'tour-escape-15',
       'tour-escape-16',
     ],
-    videoGaleria: '/video/hero.mp4',
+    videoGaleria: '/video/tours/caribbean-escape.mp4',
+    videoGaleriaCartel: { src: '/video/tours/caribbean-escape-cartel.mp4', poster: '/video/tours/caribbean-escape-cartel.jpg' },
+    videoGaleriaApaisado: true,
     quoteDestacada: 'The coral was the highlight of the trip. The biologist explained everything to us.',
     // [v3 2026-08-06, WEBSITE-TOURS pág. 8] Itinerario APROBADO, con DOBLE
     // SALIDA: cada parada trae la hora del turno de mañana y la del de tarde
@@ -787,7 +801,9 @@ export const FICHAS: Record<string, FichaTour> = traducible({
       'tour-coral-11',
       'tour-coral-2',
     ],
-    videoGaleria: '/video/hero.mp4',
+    videoGaleria: '/video/tours/coral-quest.mp4',
+    videoGaleriaCartel: { src: '/video/tours/coral-quest-cartel.mp4', poster: '/video/tours/coral-quest-cartel.jpg' },
+    videoGaleriaApaisado: true,
     quoteDestacada: 'Perfect for going with kids. Everyone felt safe.',
     itinerarioTitulo: 'Marine Park Journey',
     itinerarioNota:

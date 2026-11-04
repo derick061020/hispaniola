@@ -37,8 +37,14 @@ export function VideoAcompanante({
   src,
   poster,
   etiqueta,
+  cartel,
+  apaisado = false,
 }: {
   src: string
+  /** Clip corto para el mini reproductor; el completo (`src`) se abre al ampliar. */
+  cartel?: { src: string; poster: string }
+  /** El completo es 16:9 (ver VideoLightbox). */
+  apaisado?: boolean
   /** Misma foto de portada que usa la celda del mosaico. */
   poster: string
   etiqueta: string
@@ -88,8 +94,8 @@ export function VideoAcompanante({
       >
         <div className="group relative aspect-[9/16] w-40 overflow-hidden rounded-card-grande bg-navy shadow-lg ring-1 ring-white/10">
           <video
-            src={src}
-            poster={poster}
+            src={cartel?.src ?? src}
+            poster={cartel?.poster ?? poster}
             autoPlay
             muted
             loop
@@ -135,6 +141,7 @@ export function VideoAcompanante({
           poster={poster}
           etiqueta={etiqueta}
           origen={expansion.origen}
+          apaisado={apaisado}
           onCerrar={() => setExpandido(false)}
         />
       ) : null}

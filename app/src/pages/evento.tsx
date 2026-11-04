@@ -178,6 +178,7 @@ export function EventoPage() {
                 // la misma GaleriaMosaico, que ya aceptaba `video` — lo único
                 // que faltaba era el dato (`videoGaleria` en data/eventos.ts).
                 video={evento.videoGaleria}
+                videoCartel={evento.videoGaleriaCartel ?? null}
                 // [v2 2026-07-27, plan 01 §10] El slider de comida en la
                 // primera celda va también aquí: el cliente dijo «en TODOS los
                 // servicios» (reunión 07-24, 19:27), y las 3 landings de evento
@@ -205,6 +206,7 @@ export function EventoPage() {
               {evento.videoGaleria !== null ? (
                 <VideoAcompanante
                   src={evento.videoGaleria}
+                  cartel={evento.videoGaleriaCartel}
                   poster={`/fotos/${evento.foto}.webp`}
                   etiqueta={evento.nombre}
                 />

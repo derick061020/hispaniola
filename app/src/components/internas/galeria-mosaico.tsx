@@ -60,6 +60,8 @@ export function GaleriaMosaico({
   fotos,
   etiqueta,
   video = null,
+  videoCartel = null,
+  videoApaisado = false,
   fotosComida,
   videoProducto = null,
 }: {
@@ -68,6 +70,10 @@ export function GaleriaMosaico({
   etiqueta: string
   /** Ruta del video (en /video). null = mosaico solo de fotos, como siempre. */
   video?: string | null
+  /** Clip corto vertical para la columna (ver `videoGaleriaCartel` en data/tours.ts). */
+  videoCartel?: { src: string; poster: string } | null
+  /** El vídeo completo es 16:9: el reproductor se abre apaisado. */
+  videoApaisado?: boolean
   /** [v2] Fotos de plato del menú de ESTE tour/evento. Con 2 o más, la
    *  primera celda pasa a ser el slider. Sin ellas, el mosaico es el de
    *  siempre — las landings sin menú no cambian. */
@@ -278,8 +284,8 @@ export function GaleriaMosaico({
                 el hueco nunca está vacío mientras carga, y quien tenga datos
                 limitados ve una imagen en vez de un rectángulo. */}
             <video
-              src={video}
-              poster={`/fotos/${fotos[0]}.webp`}
+              src={videoCartel?.src ?? video}
+              poster={videoCartel?.poster ?? `/fotos/${fotos[0]}.webp`}
               autoPlay
               muted
               loop
@@ -338,6 +344,7 @@ export function GaleriaMosaico({
           poster={`/fotos/${fotos[0]}.webp`}
           etiqueta={etiqueta}
           origen={video360.origen}
+          apaisado={videoApaisado}
           onCerrar={() => setVerVideo(false)}
         />
       ) : null}

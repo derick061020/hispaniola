@@ -212,6 +212,8 @@ export function TourPage() {
                 fotos={ficha.galeriaCompleta}
                 etiqueta={tour.nombre}
                 video={ficha.videoGaleria}
+                videoCartel={ficha.videoGaleriaCartel ?? null}
+                videoApaisado={ficha.videoGaleriaApaisado}
                 // [v2 2026-07-27] Las fotos de plato de ESTE tour alimentan el
                 // slider de la primera celda (§10). Se derivan de los menús
                 // que la ficha ya declara — no hay una lista aparte que pueda
@@ -230,6 +232,8 @@ export function TourPage() {
               {ficha.videoGaleria !== null ? (
                 <VideoAcompanante
                   src={ficha.videoGaleria}
+                  cartel={ficha.videoGaleriaCartel}
+                  apaisado={ficha.videoGaleriaApaisado}
                   poster={`/fotos/${tour.foto}.webp`}
                   etiqueta={tour.nombre}
                 />
