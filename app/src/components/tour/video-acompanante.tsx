@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { X, Maximize2 } from 'lucide-react'
 import { VideoLightbox } from '@/components/tour/video-lightbox'
+import { medirVideo } from '@/lib/medir-video'
 import { useDevFlag } from '@/dev/use-dev-flag'
 import { useOrigenExpansion } from '@/lib/use-expansion-flip'
 import { t } from '@/lib/i18n'
@@ -111,6 +112,7 @@ export function VideoAcompanante({
               // Expande DESDE el mini player, no desde el centro.
               expansion.abrirDesde(e.currentTarget.parentElement as HTMLElement)
               setExpandido(true)
+              medirVideo(src, 'abierto')
             }}
             aria-label={`Ver el video de ${etiqueta} en grande`}
             className="absolute inset-0 grid place-items-center bg-navy/0 transition-colors group-hover:bg-navy/35"

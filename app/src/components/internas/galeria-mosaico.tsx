@@ -1,4 +1,5 @@
-import { useState, type CSSProperties } from 'react'
+import { useState, type CSSProperties, useEffect, useRef } from 'react'
+import { medirVideo, observarVisto } from '@/lib/medir-video'
 import { Play, Volume2 } from 'lucide-react'
 import { GaleriaLightbox } from '@/components/tour/galeria-lightbox'
 import { useOrigenExpansion } from '@/lib/use-expansion-flip'
@@ -95,6 +96,10 @@ export function GaleriaMosaico({
   // cosa (venías de las fotos del menú) y daba otra.
   const [conjunto, setConjunto] = useState<'galeria' | 'comida'>('galeria')
   const [verVideo, setVerVideo] = useState(false)
+  // Medición (Sr. Fernando, 04/11): «lo vio en la galería» cuando la columna del
+  // vídeo estuvo a la vista. Ver lib/medir-video.ts.
+  const refColumnaVideo = useRef<HTMLButtonElement>(null)
+  useEffect(() => (video ? observarVisto(refColumnaVideo.current, video) : undefined), [video])
   // [v2 2026-07-28] Origen de la expansión: el rectángulo de la celda o del
   // video que se pulsó, para que el visor DESPEGUE de ahí en vez de aparecer
   // en el centro. Ver lib/use-expansion-flip.ts.
@@ -273,9 +278,11 @@ export function GaleriaMosaico({
         {video !== null ? (
           <button
             type="button"
+            ref={refColumnaVideo}
             onClick={(e) => {
               video360.abrirDesde(e.currentTarget)
               setVerVideo(true)
+              medirVideo(video, 'abierto')
             }}
             aria-label={`Watch the video of ${etiqueta}`}
             className="group relative aspect-[9/16] h-galeria-video-alto-movil w-auto shrink-0 self-center overflow-hidden rounded-card-grande bg-papel-hueso sm:h-full sm:self-auto"

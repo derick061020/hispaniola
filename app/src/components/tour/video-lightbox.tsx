@@ -4,6 +4,7 @@ import * as CompactButton from '@/components/alignui/compact-button'
 import * as Modal from '@/components/alignui/modal'
 import { useExpansionFlip, type RectOrigen } from '@/lib/use-expansion-flip'
 import { t } from '@/lib/i18n'
+import { medirProgreso } from '@/lib/medir-video'
 
 // Reproductor a pantalla completa del video del mosaico (Samuel, 2026-07-22:
 // «el video del grid, que al darle click se abra y se reproduzca»).
@@ -126,6 +127,8 @@ export function VideoLightbox({
             controls
             playsInline
             preload="metadata"
+            // Medición: hasta dónde lo ven (25/50/75/100 %). Ver lib/medir-video.ts.
+            onTimeUpdate={(e) => medirProgreso(src, e.currentTarget)}
             // ⚠️ LA PROPORCIÓN LA MANDA LA CELDA DE ORIGEN, NO EL ARCHIVO.
             //
             // Primero se probó al revés —fijar el ratio real del archivo al
