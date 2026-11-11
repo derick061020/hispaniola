@@ -777,6 +777,18 @@ export const PREMIOS: Premio[] = traducible([
     alto: 109,
     fondo: 'macizo',
   },
+  // [2026-11-11, Blanka en «Hispaniola Gerencia»: «A subir en la web please»]
+  // El Viator Experience Award 2025 (nuevo). Mandó también los 2022/2023/2024 en
+  // alta, que reemplazaron los nativos de 95×109 (el «pendiente assets en alta»
+  // §9 de arriba): los webp pasan a ~287×327 (3×), el tamaño pintado sigue 95×109.
+  {
+    id: 'viator-2025',
+    nombre: 'Viator Experience Award 2025',
+    foto: 'premio-viator-2025',
+    ancho: 95,
+    alto: 109,
+    fondo: 'macizo',
+  },
   {
     id: 'luxury-travel-guide',
     nombre: 'Luxury Travel Guide, The Americas Awards 2016, Winner: Tour Operator of the Year, Punta Cana',
