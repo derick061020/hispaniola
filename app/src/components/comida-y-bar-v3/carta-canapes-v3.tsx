@@ -30,6 +30,11 @@ import { t } from '@/lib/i18n'
 //      Classic») y en qué paquetes entra («Included in Breeze, Tide and Turtle»).
 //   3. Cada lista repite la pastilla de su familia sobre la foto.
 // Todo sale de PAQUETES_COMIDA (`bocados`): si cambia un paquete, cambia aquí.
+//
+// [2026-11-12, 3ª vuelta, Samuel: «demasiado sutil»] Cada familia va DENTRO DE
+// SU CAJA: Classic en el tinte aqua (claro, fresco, de marca) y Premium en
+// navy con oro, la piel del Turtle. En móvil el selector sigue mandando: enseña
+// una caja u otra, y su pestaña activa toma el color de su caja.
 const C = CANAPES_TEXTOS.carta
 const PAQUETES = [...PAQUETES_COMIDA].sort((a, b) => (a.precioBase ?? 0) - (b.precioBase ?? 0))
 
@@ -72,13 +77,19 @@ function Familia({ f }: { f: FamiliaCanapes }) {
           <Pastilla familia={f.familia} />
         </div>
       </div>
-      <h4 className="mt-4 flex items-baseline justify-between gap-3 font-display text-xl font-semibold text-navy">
+      {/* [3ª vuelta] Dentro de la caja Premium (navy) el texto pasa a blanco
+          y el secundario a sobre-navy-suave (6,2:1 sobre navy, AA). */}
+      <h4
+        className={`mt-4 flex items-baseline justify-between gap-3 font-display text-xl font-semibold ${premium ? 'text-white' : 'text-navy'}`}
+      >
         {t(f.nombre)}
-        <span className="text-eyebrow font-semibold uppercase tracking-[0.14em] text-navy-soft">
+        <span
+          className={`text-eyebrow font-semibold uppercase tracking-[0.14em] ${premium ? 'text-sobre-navy-suave' : 'text-navy-sub'}`}
+        >
           {f.items.length} {t(C.variedades)}
         </span>
       </h4>
-      <ul className="mt-3 grid gap-2 text-sm text-navy">
+      <ul className={`mt-3 grid gap-2 text-sm ${premium ? 'text-white' : 'text-navy'}`}>
         {f.items.map((nombre) => (
           <li key={nombre} className="flex gap-2">
             <span className={`comida3-canapes-punto ${premium ? 'comida3-canapes-punto--premium' : ''}`} aria-hidden="true" />
@@ -181,7 +192,7 @@ export function CartaCanapesV3() {
             aria-controls={`${base}-panel-${fam}`}
             aria-selected={activa === fam}
             onClick={() => setActiva(fam)}
-            className="comida3-canapes-pestana"
+            className={`comida3-canapes-pestana comida3-canapes-pestana--${fam}`}
           >
             {fam === 'premium' ? <Sparkles className="size-4" aria-hidden="true" /> : null}
             {t(CANAPES_TEXTOS.tarjeta[fam])}
@@ -202,10 +213,12 @@ export function CartaCanapesV3() {
             >
               <header>
                 <Pastilla familia={fam} />
-                <p className="mt-3 font-display text-xl font-semibold text-navy">
+                <p className={`mt-3 font-display text-2xl font-semibold ${fam === 'premium' ? 'text-premium-oro' : 'text-navy'}`}>
                   {t(C.composicion).replace('{caliente}', t(listas[0].nombre)).replace('{fria}', t(listas[1].nombre))}
                 </p>
-                <p className="mt-1 text-sm text-navy-sub">{t(C.incluidoEn).replace('{paquetes}', incluidaEn(fam))}</p>
+                <p className={`mt-1 text-sm ${fam === 'premium' ? 'text-sobre-navy-suave' : 'text-navy-sub'}`}>
+                  {t(C.incluidoEn).replace('{paquetes}', incluidaEn(fam))}
+                </p>
               </header>
               <div className="grid gap-8 sm:grid-cols-2 sm:gap-6">
                 {listas.map((f) => (

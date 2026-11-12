@@ -1061,24 +1061,50 @@
   font-weight: 600;
   color: var(--color-navy-sub);
 }
-.comida3-canapes-pestana[aria-selected='true'] {
-  background: var(--color-navy);
+/* [3ª vuelta] La pestaña activa toma el color de la caja que enseña:
+   Classic = aqua-dark con blanco (5,6:1), Premium = navy con oro (6,5:1). */
+.comida3-canapes-pestana--classic[aria-selected='true'] {
+  background: var(--color-aqua-dark);
   color: var(--color-papel);
 }
-.comida3-canapes-pestana[aria-selected='true'] svg {
+.comida3-canapes-pestana--premium[aria-selected='true'] {
+  background: var(--color-navy);
   color: var(--color-premium-oro);
 }
+/* [3ª vuelta, 2026-11-12, Samuel: «demasiado sutil»] Cada familia, en SU
+   caja. Classic: el tinte aqua de marca, claro y fresco (navy 14:1, navy-sub
+   7:1, aqua-dark 5,2:1 sobre él: AA). Premium: navy con un halo de oro en la
+   esquina y borde oro, la misma piel que el Turtle (blanco 15:1, oro 6,5:1,
+   sobre-navy-suave 6,2:1: AA). */
 .comida3-canapes-grupo {
-  gap: calc(var(--spacing) * 5);
+  gap: calc(var(--spacing) * 6);
   align-content: start;
-  border-top: 2px solid var(--color-navy);
-  padding-top: calc(var(--spacing) * 4);
-}
-.comida3-canapes-grupo--premium {
-  border-top-color: var(--color-premium-oro);
+  border: 1px solid transparent;
+  border-radius: var(--radius-card-grande);
+  padding: calc(var(--spacing) * 6) calc(var(--spacing) * 5);
 }
 .comida3-canapes-grupo--classic {
-  border-top-color: var(--color-aqua);
+  border-color: var(--color-aqua-claro);
+  background: var(--color-aqua-tint);
+}
+.comida3-canapes-grupo--premium {
+  border-color: var(--color-premium-oro);
+  background:
+    radial-gradient(circle at 100% 0%, var(--color-premium-oro-suave), transparent 55%),
+    var(--color-navy);
+}
+/* La pastilla Classic sobre su propia caja (que tiene el mismo tinte): en papel. */
+.comida3-canapes-grupo--classic .comida3-familia--classic {
+  background: var(--color-papel);
+}
+/* Las fotos dentro de la caja Premium, con un filete de oro. */
+.comida3-canapes-grupo--premium .comida3-canapes-foto {
+  box-shadow: 0 0 0 1px var(--color-premium-oro);
+}
+@media (width >= 40rem) {
+  .comida3-canapes-grupo {
+    padding: calc(var(--spacing) * 8) calc(var(--spacing) * 7);
+  }
 }
 .comida3-canapes-foto {
   position: relative;
