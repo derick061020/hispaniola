@@ -561,7 +561,7 @@ export const nombrePaqueteComida = (p: PaqueteEvento) =>
   USAR_NOMBRE_TURTLE && p.id === 'premium' ? NOMBRE_TURTLE : p.nombre
 
 /** [2026-11-12, 2ª vuelta] El nombre CORTO en la sección de canapés (botón,
- *  tabla de acceso, «Included in…»). El del paquete ancla es «Premium», que
+ *  «Included in…»). El del paquete ancla es «Premium», que
  *  aquí se confundiría con la familia Premium de canapés: se dice «Turtle»,
  *  que es la otra mitad de su nombre («Premium (Turtle) Package») y como lo
  *  llama Party Boat. El título de la tarjeta no cambia. */
@@ -681,6 +681,11 @@ export const CANAPES_TEXTOS = {
     // básicas y cuáles las Premium»] Cada fila dice de QUÉ lista sale.
     deVariedades: 'varieties',
     noIncluida: 'Not included',
+    // [4ª vuelta, Samuel: Standard/Premium/VIP «chocan con la familia
+    // Premium»] De los niveles de Fernando solo se ENSEÑA el VIP (la
+    // presentación especial del Turtle): «Premium» junto al Tide se leía como
+    // la familia Premium. Los niveles siguen en `bocados.nivel` para /events.
+    nivelesVisibles: ['VIP'],
     verCarta: 'See the 28 bites',
     preguntar: 'Ask about {paquete}',
     planear: 'Plan your event',
@@ -690,8 +695,8 @@ export const CANAPES_TEXTOS = {
   carta: {
     eyebrow: 'Bites menu',
     titulo: '28 bites, in two families',
-    texto:
-      'Classic and Premium, each with seven hot and seven cold varieties. Your package sets how many you choose from each family.',
+    // [4ª vuelta] Una sola frase: el resto lo dicen las cajas de abajo.
+    texto: 'Your package sets how many you pick from each family.',
     familias: 'Bite families',
     // Las «condiciones comerciales sugeridas» de DISTRIBUCION CANAPES.docx,
     // tal como las publica Party Boat. ⚠️ El documento las llama «sugeridas»:
@@ -702,14 +707,6 @@ export const CANAPES_TEXTOS = {
       'The pieces per guest are set with our Events Team.',
     ],
     variedades: 'varieties',
-    // [2ª vuelta] La tabla «qué paquete da acceso a qué familia», que sale
-    // de los `bocados` de PAQUETES_COMIDA (no se escribe a mano).
-    acceso: {
-      titulo: 'What each package includes',
-      paquete: 'Package',
-      total: 'Total',
-      soloAlmuerzo: 'Lunch only',
-    },
     // {paquetes} = «Breeze, Tide and Turtle», sacado de los datos.
     incluidoEn: 'Included in {paquetes}',
     y: 'and',

@@ -3185,7 +3185,6 @@ export const ES: Record<string, string> = {
   "Hi! I’d like more information about the {paquete} for a private event.": "¡Hola! Quisiera más información sobre el {paquete} para un evento privado.",
   "Bites menu": "Carta de canapés",
   "28 bites, in two families": "28 canapés, en dos familias",
-  "Classic and Premium, each with seven hot and seven cold varieties. Your package sets how many you choose from each family.": "Classic y Premium, cada una con siete variedades calientes y siete frías. Tu paquete marca cuántas eliges de cada familia.",
   "Bite families": "Familias de canapés",
   "Swap hot for cold inside the same family.": "Cambia caliente por frío dentro de la misma familia.",
   "Add extra varieties for a per-person supplement.": "Añade variedades extra con un suplemento por persona.",
@@ -3227,10 +3226,9 @@ export const ES: Record<string, string> = {
   "Sushi California Roll": "Roll de sushi California",
   "Fish Ceviche": "Ceviche de pescado",
   "Turtle Package": "Turtle Package",
-  // [2026-11-12, 2ª vuelta] Canapés: tabla de acceso y familias.
+  // [2026-11-12, 2ª y 4ª vuelta] Canapés: familias y bloque superior.
+  "Your package sets how many you pick from each family.": "Tu paquete marca cuántos eliges de cada familia.",
   "See the 28 bites": "Ver los 28 canapés",
-  "What each package includes": "Qué incluye cada paquete",
-  "Lunch only": "Solo almuerzo",
   "Included in {paquetes}": "Incluido en {paquetes}",
   "and": "y",
   "{caliente} + {fria}": "{caliente} + {fria}",

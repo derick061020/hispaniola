@@ -1,5 +1,5 @@
 import { useId, useState } from 'react'
-import { Check, Sparkles } from 'lucide-react'
+import { Sparkles } from 'lucide-react'
 import { CANAPES, CANAPES_TEXTOS, PAQUETES_COMIDA, cortoPaqueteComida, type FamiliaCanapes } from '@/data/eventos'
 import { t } from '@/lib/i18n'
 
@@ -35,6 +35,13 @@ import { t } from '@/lib/i18n'
 // SU CAJA: Classic en el tinte aqua (claro, fresco, de marca) y Premium en
 // navy con oro, la piel del Turtle. En móvil el selector sigue mandando: enseña
 // una caja u otra, y su pestaña activa toma el color de su caja.
+//
+// [2026-11-12, 4ª vuelta, Samuel: «todo el bloque superior… y ese bloque a la
+// derecha me confunde»] Fuera la tabla «What each package includes»: repetía
+// lo que ya dicen las cajas «Or bites» de las tarjetas y el «Included in…» de
+// cada familia, y sus subtítulos Standard/Premium/VIP chocaban con la familia
+// Premium (el Tide salía como «Premium»). Arriba queda UN título y UNA frase;
+// las tres reglas bajan a una línea de letra pequeña bajo las cajas.
 const C = CANAPES_TEXTOS.carta
 const PAQUETES = [...PAQUETES_COMIDA].sort((a, b) => (a.precioBase ?? 0) - (b.precioBase ?? 0))
 
@@ -101,62 +108,6 @@ function Familia({ f }: { f: FamiliaCanapes }) {
   )
 }
 
-/** Paquete × familia. Celda vacía = «—» (con texto para lectores). */
-function TablaAcceso() {
-  const A = C.acceso
-  const celda = (n: number, familia: IdFamilia) =>
-    n > 0 ? (
-      <span className={`comida3-acceso-n comida3-acceso-n--${familia}`}>{n}</span>
-    ) : (
-      <span className="text-navy-soft">
-        <span aria-hidden="true">—</span>
-        <span className="sr-only">{t(CANAPES_TEXTOS.tarjeta.noIncluida)}</span>
-      </span>
-    )
-  return (
-    <div className="comida3-acceso">
-      <table className="w-full text-left text-sm">
-        <caption className="comida3-acceso-titulo">{t(A.titulo)}</caption>
-        <thead>
-          <tr>
-            <th scope="col" className="comida3-acceso-th">{t(A.paquete)}</th>
-            <th scope="col" className="comida3-acceso-th text-center">
-              <Pastilla familia="classic" />
-            </th>
-            <th scope="col" className="comida3-acceso-th text-center">
-              <Pastilla familia="premium" />
-            </th>
-            <th scope="col" className="comida3-acceso-th text-right">{t(A.total)}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {PAQUETES.map((p) => {
-            const b = p.bocados
-            const total = (b?.classic ?? 0) + (b?.premium ?? 0)
-            return (
-              <tr key={p.id} className="border-t border-linea">
-                <th scope="row" className="py-3 pr-2 font-display text-base font-semibold text-navy">
-                  {t(cortoPaqueteComida(p))}
-                  {b?.nivel ? <span className="block font-sans text-xs font-medium text-navy-soft sm:ml-2 sm:inline">{t(b.nivel)}</span> : null}
-                </th>
-                <td className="py-3 text-center">{celda(b?.classic ?? 0, 'classic')}</td>
-                <td className="py-3 text-center">{celda(b?.premium ?? 0, 'premium')}</td>
-                <td className="py-3 text-right text-navy">
-                  {total > 0 ? (
-                    <span className="font-semibold">{total}</span>
-                  ) : (
-                    <span className="text-xs text-navy-soft">{t(A.soloAlmuerzo)}</span>
-                  )}
-                </td>
-              </tr>
-            )
-          })}
-        </tbody>
-      </table>
-    </div>
-  )
-}
-
 export function CartaCanapesV3() {
   const [activa, setActiva] = useState<IdFamilia>('classic')
   const base = useId()
@@ -164,21 +115,10 @@ export function CartaCanapesV3() {
 
   return (
     <div id="bites" className="ancla-comida comida3-canapes mt-20 lg:mt-24">
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:items-start lg:gap-16" data-museo-revelar>
-        <div>
-          <p className="comida3-eyebrow">{t(C.eyebrow)}</p>
-          <h3 className="comida3-h2 mt-3">{t(C.titulo)}</h3>
-          <p className="mt-4 text-lead text-navy-sub">{t(C.texto)}</p>
-          <ul className="mt-6 grid gap-2.5 text-sm text-navy-sub">
-            {C.reglas.map((r) => (
-              <li key={r} className="flex gap-2.5">
-                <Check className="mt-0.5 size-4 shrink-0 text-aqua-dark" aria-hidden="true" />
-                {t(r)}
-              </li>
-            ))}
-          </ul>
-        </div>
-        <TablaAcceso />
+      <div className="max-w-2xl" data-museo-revelar>
+        <p className="comida3-eyebrow">{t(C.eyebrow)}</p>
+        <h3 className="comida3-h2 mt-3">{t(C.titulo)}</h3>
+        <p className="mt-4 text-lead text-navy-sub">{t(C.texto)}</p>
       </div>
 
       {/* Selector de familia: solo móvil y tableta. */}
@@ -229,6 +169,11 @@ export function CartaCanapesV3() {
           )
         })}
       </div>
+
+      {/* Las tres reglas, como letra pequeña (antes, viñetas arriba). */}
+      <p className="mx-auto mt-8 max-w-3xl text-center text-xs leading-relaxed text-navy-soft">
+        {C.reglas.map((r) => t(r)).join(' · ')}
+      </p>
     </div>
   )
 }

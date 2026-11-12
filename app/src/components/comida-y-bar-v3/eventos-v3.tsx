@@ -65,12 +65,14 @@ function CajaBocados({ p, primeroConBocados, premium }: { p: PaqueteEvento; prim
             {t(B.selecciones)}
           </span>
         </p>
-        <p
-          className={`inline-flex items-center gap-1.5 font-display text-lg font-semibold ${premium ? 'text-premium-oro' : 'text-navy'}`}
-        >
-          {premium ? <Sparkles className="size-4" aria-hidden="true" /> : null}
-          {t(b.nivel)}
-        </p>
+        {B.nivelesVisibles.includes(b.nivel) ? (
+          <p
+            className={`inline-flex items-center gap-1.5 font-display text-lg font-semibold ${premium ? 'text-premium-oro' : 'text-navy'}`}
+          >
+            {premium ? <Sparkles className="size-4" aria-hidden="true" /> : null}
+            {t(b.nivel)}
+          </p>
+        ) : null}
       </div>
       <ul className="mt-4 grid gap-2">
         {filas.map((f) => (
