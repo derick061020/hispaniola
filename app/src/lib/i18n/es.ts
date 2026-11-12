@@ -3227,4 +3227,13 @@ export const ES: Record<string, string> = {
   "Sushi California Roll": "Roll de sushi California",
   "Fish Ceviche": "Ceviche de pescado",
   "Turtle Package": "Turtle Package",
+  // [2026-11-12, 2ª vuelta] Canapés: tabla de acceso y familias.
+  "See the 28 bites": "Ver los 28 canapés",
+  "What each package includes": "Qué incluye cada paquete",
+  "Lunch only": "Solo almuerzo",
+  "Included in {paquetes}": "Incluido en {paquetes}",
+  "and": "y",
+  "{caliente} + {fria}": "{caliente} + {fria}",
+  "Plantain mofonguitos topped with shrimp and parsley": "Mofonguitos de plátano con camarones y perejil",
+  "Turtle": "Turtle",
 }

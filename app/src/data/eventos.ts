@@ -560,6 +560,13 @@ export const NOMBRE_TURTLE = 'Turtle Package'
 export const nombrePaqueteComida = (p: PaqueteEvento) =>
   USAR_NOMBRE_TURTLE && p.id === 'premium' ? NOMBRE_TURTLE : p.nombre
 
+/** [2026-11-12, 2ª vuelta] El nombre CORTO en la sección de canapés (botón,
+ *  tabla de acceso, «Included in…»). El del paquete ancla es «Premium», que
+ *  aquí se confundiría con la familia Premium de canapés: se dice «Turtle»,
+ *  que es la otra mitad de su nombre («Premium (Turtle) Package») y como lo
+ *  llama Party Boat. El título de la tarjeta no cambia. */
+export const cortoPaqueteComida = (p: PaqueteEvento) => (p.id === 'premium' ? 'Turtle' : p.nombreCorto)
+
 export type FamiliaCanapes = {
   /** id estable, kebab-case. */
   id: 'hot-classic' | 'cold-classic' | 'hot-premium' | 'cold-premium'
@@ -579,9 +586,11 @@ export type FamiliaCanapes = {
 //   · hot-classic  → IMG_8511 (bandeja de croquetas en el chafing)
 //   · cold-classic → IMG_8507 (brochetas de fruta)
 //   · cold-premium → CATAMARAN CELENA NOEL_-98 (bandeja de sushi a bordo)
-//   · hot-premium  → ⚠️ NO HAY. Lo más cercano son los «bocaditos de plátano»
-//     de la entrega de Karaya (IMG_2860), pero no consta si son el mofonguito
-//     con camarón (Hot Premium) o la canastita de pollo (Hot Basic): no se usa.
+//   · hot-premium  → [2026-11-12, 2ª vuelta, Samuel: «puedes usar fotos de
+//     canapés de la web de Party Boat»] Mofonguito de plátano con camarón, de
+//     hispaniolapartyboat.com (archivo «bite-premium-hot-mofonguito-shrimp»,
+//     mismo grupo y mismo catering). Es el «Plantain Mofonguito with Shrimp»
+//     de la carta, no una foto genérica.
 export const CANAPES: FamiliaCanapes[] = [
   {
     id: 'hot-classic',
@@ -619,8 +628,8 @@ export const CANAPES: FamiliaCanapes[] = [
     id: 'hot-premium',
     nombre: 'Hot Premium',
     familia: 'premium',
-    foto: null,
-    fotoAlt: '',
+    foto: '/fotos/comida-bar/canape-hot-premium',
+    fotoAlt: 'Plantain mofonguitos topped with shrimp and parsley',
     items: [
       'Plantain Mofonguito with Shrimp',
       'Fish Fingers',
@@ -668,6 +677,11 @@ export const CANAPES_TEXTOS = {
     sinBocados: 'No bite selections',
     // {paquete} = el nombre corto del primer paquete que sí lleva canapés.
     empiezan: 'Bites start with the {paquete} package.',
+    // [2ª vuelta, Samuel: «que se entienda mucho mejor cuáles son las
+    // básicas y cuáles las Premium»] Cada fila dice de QUÉ lista sale.
+    deVariedades: 'varieties',
+    noIncluida: 'Not included',
+    verCarta: 'See the 28 bites',
     preguntar: 'Ask about {paquete}',
     planear: 'Plan your event',
     // El mensaje que abre WhatsApp. {paquete} = nombre completo.
@@ -688,6 +702,19 @@ export const CANAPES_TEXTOS = {
       'The pieces per guest are set with our Events Team.',
     ],
     variedades: 'varieties',
+    // [2ª vuelta] La tabla «qué paquete da acceso a qué familia», que sale
+    // de los `bocados` de PAQUETES_COMIDA (no se escribe a mano).
+    acceso: {
+      titulo: 'What each package includes',
+      paquete: 'Package',
+      total: 'Total',
+      soloAlmuerzo: 'Lunch only',
+    },
+    // {paquetes} = «Breeze, Tide and Turtle», sacado de los datos.
+    incluidoEn: 'Included in {paquetes}',
+    y: 'and',
+    // Qué lleva cada familia, en una línea.
+    composicion: '{caliente} + {fria}',
   },
 }
 

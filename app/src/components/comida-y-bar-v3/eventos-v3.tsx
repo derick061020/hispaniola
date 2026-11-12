@@ -1,13 +1,12 @@
 import { Link } from 'react-router-dom'
-import { ArrowRight, Sparkles, Users } from 'lucide-react'
+import { ArrowDown, ArrowRight, Sparkles, Users } from 'lucide-react'
 import { COMIDA_Y_BAR } from '@/data/comida-y-bar'
 import { COMIDA_Y_BAR_V3 } from '@/data/comida-y-bar-v3'
 import {
   CANAPES_TEXTOS,
-  NOMBRE_TURTLE,
+  cortoPaqueteComida,
   NOTA_PAQUETES,
   PAQUETES_COMIDA,
-  USAR_NOMBRE_TURTLE,
   WHATSAPP_URL,
   nombrePaqueteComida,
   type PaqueteEvento,
@@ -45,10 +44,16 @@ function CajaBocados({ p, primeroConBocados, premium }: { p: PaqueteEvento; prim
     )
   }
 
+  // [2026-11-12, 2ª vuelta, Samuel: «que de un vistazo quede claro qué
+  // paquete da acceso a qué nivel»] Las DOS familias salen SIEMPRE, en el
+  // mismo orden y con el mismo código de color que la carta (Classic = aqua,
+  // Premium = navy y oro). La que el paquete no incluye se queda apagada con
+  // «Not included»: así, pasando la vista de Breeze a Tide, se ve aparecer
+  // la Premium.
   const filas = [
-    { n: b.classic, nombre: B.classic, oro: false },
-    { n: b.premium, nombre: B.premium, oro: true },
-  ].filter((f) => f.n > 0)
+    { id: 'classic' as const, n: b.classic, nombre: B.classic },
+    { id: 'premium' as const, n: b.premium, nombre: B.premium },
+  ]
 
   return (
     <div className={`comida3-bocados ${premium ? 'comida3-bocados--vip' : ''}`}>
@@ -67,13 +72,27 @@ function CajaBocados({ p, primeroConBocados, premium }: { p: PaqueteEvento; prim
           {t(b.nivel)}
         </p>
       </div>
-      <ul className="mt-3 flex flex-wrap gap-1.5">
+      <ul className="mt-4 grid gap-2">
         {filas.map((f) => (
-          <li key={f.nombre} className={`comida3-bocados-chip ${f.oro ? 'comida3-bocados-chip--oro' : ''}`}>
-            <span className="font-semibold">{f.n}</span> {t(f.nombre)}
+          <li key={f.id} className={`comida3-bocados-fila ${f.n === 0 ? 'comida3-bocados-fila--fuera' : ''}`}>
+            <span className={`comida3-familia comida3-familia--${f.id}`}>
+              {f.id === 'premium' ? <Sparkles className="size-3" aria-hidden="true" /> : null}
+              {t(f.nombre)}
+            </span>
+            {f.n > 0 ? (
+              <span className="font-semibold">
+                {f.n} <span className="font-normal opacity-80">{t(B.deVariedades)}</span>
+              </span>
+            ) : (
+              <span>{t(B.noIncluida)}</span>
+            )}
           </li>
         ))}
       </ul>
+      <a href="#bites" className={`mt-3 inline-flex min-h-11 items-center gap-1 text-xs font-semibold underline underline-offset-4 ${premium ? 'text-sobre-navy-suave hover:text-white' : 'text-aqua-dark'}`}>
+        {t(B.verCarta)}
+        <ArrowDown className="size-3.5" aria-hidden="true" />
+      </a>
     </div>
   )
 }
@@ -130,9 +149,10 @@ export function EventosV3() {
               const premium = p.destacado === 'premium'
               const suave = premium ? 'text-sobre-navy-suave' : 'text-navy-soft'
               const nombre = t(nombrePaqueteComida(p))
-              // El nombre corto del botón: «Ask about Premium» (como el widget de
-              // /events). Si se activa USAR_NOMBRE_TURTLE, «Ask about Turtle».
-              const corto = USAR_NOMBRE_TURTLE && p.id === 'premium' ? NOMBRE_TURTLE.replace(/ Package$/, '') : t(p.nombreCorto)
+              // El nombre corto del botón. El ancla dice «Ask about Turtle», no
+              // «…Premium», para no confundirlo con la familia Premium de
+              // canapés (ver cortoPaqueteComida en data/eventos.ts).
+              const corto = t(cortoPaqueteComida(p))
               const whatsapp = `${WHATSAPP_URL}?text=${encodeURIComponent(t(B.whatsapp).replace('{paquete}', nombre))}`
               return (
                 <TarjetaV3
