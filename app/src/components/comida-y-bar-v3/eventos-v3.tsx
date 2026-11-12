@@ -2,9 +2,81 @@ import { Link } from 'react-router-dom'
 import { ArrowRight, Sparkles, Users } from 'lucide-react'
 import { COMIDA_Y_BAR } from '@/data/comida-y-bar'
 import { COMIDA_Y_BAR_V3 } from '@/data/comida-y-bar-v3'
-import { NOTA_PAQUETES, PAQUETES_COMIDA } from '@/data/eventos'
+import {
+  CANAPES_TEXTOS,
+  NOMBRE_TURTLE,
+  NOTA_PAQUETES,
+  PAQUETES_COMIDA,
+  USAR_NOMBRE_TURTLE,
+  WHATSAPP_URL,
+  nombrePaqueteComida,
+  type PaqueteEvento,
+} from '@/data/eventos'
+import { IconoWhatsApp } from '@/components/ui/iconos-redes'
 import { t } from '@/lib/i18n'
+import { CartaCanapesV3 } from './carta-canapes-v3'
 import { pegaUltima, RejillaTarjetas, RotuloZona, TarjetaV3 } from './tarjetas-v3'
+
+// [2026-11-12, Fernando vía Marketing: canapés] Cada paquete suma su «or
+// bites» (la alternativa al almuerzo, como en la web de Party Boat), un botón
+// para preguntar por WhatsApp y otro para planear el evento; debajo, la carta
+// de los 28 canapés (carta-canapes-v3.tsx). Los valores por defecto de las
+// dudas abiertas viven en data/eventos.ts (CANAPES_TEXTOS y compañía).
+const B = CANAPES_TEXTOS.tarjeta
+
+/** La caja «Or bites» de una tarjeta. */
+function CajaBocados({ p, primeroConBocados, premium }: { p: PaqueteEvento; primeroConBocados?: PaqueteEvento; premium: boolean }) {
+  const b = p.bocados
+  if (!b) return null
+  const total = b.classic + b.premium
+  const etiqueta = <p className="comida3-bocados-etiqueta">{t(B.oBocados)}</p>
+
+  if (!b.nivel || total === 0) {
+    return (
+      <div className="comida3-bocados comida3-bocados--vacia">
+        {etiqueta}
+        <p className="font-display text-base font-semibold text-navy">{t(B.sinBocados)}</p>
+        {primeroConBocados ? (
+          <p className="mt-1 text-sm text-navy-sub">
+            {t(B.empiezan).replace('{paquete}', t(primeroConBocados.nombreCorto))}
+          </p>
+        ) : null}
+      </div>
+    )
+  }
+
+  const filas = [
+    { n: b.classic, nombre: B.classic, oro: false },
+    { n: b.premium, nombre: B.premium, oro: true },
+  ].filter((f) => f.n > 0)
+
+  return (
+    <div className={`comida3-bocados ${premium ? 'comida3-bocados--vip' : ''}`}>
+      {etiqueta}
+      <div className="flex items-end justify-between gap-3">
+        <p className="flex items-baseline gap-2">
+          <span className={`font-display text-5xl font-semibold leading-none ${premium ? 'text-premium-oro' : 'text-navy'}`}>{total}</span>
+          <span className={`text-eyebrow font-semibold uppercase tracking-[0.14em] ${premium ? 'text-sobre-navy-suave' : 'text-navy-soft'}`}>
+            {t(B.selecciones)}
+          </span>
+        </p>
+        <p
+          className={`inline-flex items-center gap-1.5 font-display text-lg font-semibold ${premium ? 'text-premium-oro' : 'text-navy'}`}
+        >
+          {premium ? <Sparkles className="size-4" aria-hidden="true" /> : null}
+          {t(b.nivel)}
+        </p>
+      </div>
+      <ul className="mt-3 flex flex-wrap gap-1.5">
+        {filas.map((f) => (
+          <li key={f.nombre} className={`comida3-bocados-chip ${f.oro ? 'comida3-bocados-chip--oro' : ''}`}>
+            <span className="font-semibold">{f.n}</span> {t(f.nombre)}
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
 
 // LOS MENÚS DE EVENTOS — el corazón de la página de Party Boat (sus cuatro
 // cards Starfish · Breeze · Tide · Turtle, con la foto circular asomando, el
@@ -34,6 +106,7 @@ const V = COMIDA_Y_BAR_V3.eventos
 export function EventosV3() {
   // El Premium al final, como en Party Boat (de menos a más).
   const paquetes = [...PAQUETES_COMIDA].sort((a, b) => (a.precioBase ?? 0) - (b.precioBase ?? 0))
+  const primeroConBocados = paquetes.find((p) => p.bocados?.nivel)
 
   return (
     <section id="event-menus" className="ancla-comida relative bg-papel py-20 lg:py-28">
@@ -41,8 +114,9 @@ export function EventosV3() {
         <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between" data-museo-revelar>
           <div className="max-w-2xl">
             <p className="comida3-eyebrow">{COMIDA_Y_BAR.niveles.eyebrow}</p>
-            <h2 className="comida3-h2 mt-3">{E.titulo}</h2>
-            <p className="mt-4 text-lead text-navy-sub">{E.texto}</p>
+            {/* [2026-11-12] ⚠️ Cabecera pendiente de Marketing (CANAPES_TEXTOS). */}
+            <h2 className="comida3-h2 mt-3">{t(CANAPES_TEXTOS.cabecera.titulo)}</h2>
+            <p className="mt-4 text-lead text-navy-sub">{t(CANAPES_TEXTOS.cabecera.texto)}</p>
           </div>
           <Link to="/events#onboard" className="comida3-boton-claro group shrink-0 self-start md:self-auto">
             {E.cta}
@@ -51,15 +125,21 @@ export function EventosV3() {
         </div>
 
         <div className="mt-14">
-          <RejillaTarjetas etiqueta={E.titulo}>
+          <RejillaTarjetas etiqueta={E.titulo} conBocados>
             {paquetes.map((p) => {
               const premium = p.destacado === 'premium'
               const suave = premium ? 'text-sobre-navy-suave' : 'text-navy-soft'
+              const nombre = t(nombrePaqueteComida(p))
+              // El nombre corto del botón: «Ask about Premium» (como el widget de
+              // /events). Si se activa USAR_NOMBRE_TURTLE, «Ask about Turtle».
+              const corto = USAR_NOMBRE_TURTLE && p.id === 'premium' ? NOMBRE_TURTLE.replace(/ Package$/, '') : t(p.nombreCorto)
+              const whatsapp = `${WHATSAPP_URL}?text=${encodeURIComponent(t(B.whatsapp).replace('{paquete}', nombre))}`
               return (
                 <TarjetaV3
                   key={p.id}
                   id={p.id}
                   destacada={premium}
+                  bocados={<CajaBocados p={p} primeroConBocados={primeroConBocados} premium={premium} />}
                   foto={{ src: `/fotos/${p.foto}.webp`, alt: t(V.fotoAlt[p.id] ?? p.fotoAlt) }}
                   cinta={
                     premium ? (
@@ -72,7 +152,7 @@ export function EventosV3() {
                   nombre={
                     <>
                       <h3 className={`font-display text-2xl font-semibold leading-tight ${premium ? 'text-white' : 'text-navy'}`}>
-                        {pegaUltima(t(p.nombre))}
+                        {pegaUltima(nombre)}
                       </h3>
                       <p className={`mt-3 text-xs font-semibold uppercase tracking-[0.12em] ${suave}`}>{t('Starting at')}*</p>
                       <p className={`font-display text-4xl font-semibold ${premium ? 'text-premium-oro' : 'text-coral-dark'}`}>
@@ -103,6 +183,30 @@ export function EventosV3() {
                       <p className={`mt-1 text-sm ${premium ? 'text-premium-oro' : 'text-coral-texto'}`}>
                         {p.extraPrecio ? t(p.extraPrecio) : null}
                       </p>
+                      {/* [2026-11-12] Cada paquete, su botón: preguntar por
+                          WhatsApp (como Party Boat) o ir a planear el evento.
+                          Reservar online NO: eso es la integración con Odoo de
+                          Derick. */}
+                      <div className="mt-4 flex flex-col gap-2">
+                        <a
+                          href={whatsapp}
+                          target="_blank"
+                          rel="noopener"
+                          className={`comida3-pregunta ${premium ? 'comida3-pregunta--vip' : ''}`}
+                        >
+                          {t(B.preguntar).replace('{paquete}', corto)}
+                          <span className="comida3-pregunta-icono">
+                            <IconoWhatsApp className="size-5" />
+                          </span>
+                        </a>
+                        <Link
+                          to="/events"
+                          className={`group inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold underline-offset-4 hover:underline ${premium ? 'text-white' : 'text-navy'}`}
+                        >
+                          {t(B.planear)}
+                          <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+                        </Link>
+                      </div>
                     </div>
                   }
                 />
@@ -111,6 +215,7 @@ export function EventosV3() {
           </RejillaTarjetas>
         </div>
         <p className="mx-auto mt-10 max-w-3xl text-center text-xs leading-relaxed text-navy-soft">{t(NOTA_PAQUETES)}</p>
+        <CartaCanapesV3 />
         {/* [2026-10-22, repaso de CTA] La salida natural tras ver los cuatro
             paquetes: planear el evento (la landing de eventos, donde se cotiza). */}
         <div className="mt-8 flex justify-center">

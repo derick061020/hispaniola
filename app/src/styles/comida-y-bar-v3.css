@@ -935,3 +935,223 @@
     aspect-ratio: var(--aspect-tm-foto-movil-v3);
   }
 }
+
+/* ---------- Canapés («or bites») — 2026-11-12, encargo de Fernando ---------- */
+/* Las tarjetas de eventos ganan una QUINTA zona (la caja «Or bites») entre «qué
+   incluye» y el pie. La rejilla pasa a cinco filas para que las cajas de las
+   cuatro tarjetas alineen. Solo con `conBocados`: los menús de tours no cambian. */
+.comida3-tm-rejilla--bocados {
+  grid-template-rows: repeat(5, auto);
+}
+.comida3-tm-rejilla--bocados .comida3-tm {
+  grid-row: span 5;
+}
+@media (width < 40rem) {
+  /* Móvil: como el resto, cada tarjeta con su altura natural. */
+  .comida3-tm-rejilla--bocados {
+    grid-template-rows: none;
+  }
+  .comida3-tm-rejilla--bocados .comida3-tm {
+    grid-row: auto;
+  }
+}
+@media (width >= 40rem) {
+  .comida3-tm-rejilla--bocados {
+    grid-template-rows: none;
+  }
+}
+
+/* La caja. Fondo hueso con borde fino; la etiqueta «Or bites» monta sobre el
+   borde de arriba, como en Party Boat. */
+.comida3-bocados {
+  position: relative;
+  height: 100%;
+  border: 1px solid var(--color-linea);
+  border-radius: var(--radius-card);
+  background: var(--color-papel-hueso);
+  padding: calc(var(--spacing) * 6) calc(var(--spacing) * 4) calc(var(--spacing) * 4);
+}
+.comida3-bocados-etiqueta {
+  position: absolute;
+  top: 0;
+  left: calc(var(--spacing) * 4);
+  translate: 0 -50%;
+  border: 1px solid var(--color-linea);
+  border-radius: var(--radius-chip);
+  background: var(--color-papel);
+  padding: calc(var(--spacing) * 1) calc(var(--spacing) * 3);
+  font-size: var(--text-eyebrow);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-aqua-dark);
+}
+/* Starfish: sin canapés. Borde discontinuo y sin fondo: se lee como «aquí no
+   hay», no como una caja rota. */
+.comida3-bocados--vacia {
+  border-style: dashed;
+  background: transparent;
+}
+/* VIP (el Turtle, en navy): borde y cifras en oro. Es la «presentación
+   especial» que pidió Fernando. */
+.comida3-bocados--vip {
+  border-color: var(--color-premium-oro);
+  background: var(--color-premium-oro-suave);
+}
+.comida3-bocados--vip .comida3-bocados-etiqueta {
+  border-color: var(--color-premium-oro);
+  background: var(--color-navy);
+  color: var(--color-premium-oro);
+}
+.comida3-bocados-chip {
+  border: 1px solid var(--color-linea-fuerte);
+  border-radius: var(--radius-chip);
+  background: var(--color-papel);
+  padding: calc(var(--spacing) * 1) calc(var(--spacing) * 3);
+  font-size: var(--text-xs);
+  color: var(--color-navy);
+}
+.comida3-bocados-chip--oro {
+  border-color: var(--color-premium-oro);
+}
+.comida3-bocados--vip .comida3-bocados-chip {
+  border-color: var(--color-premium-oro);
+  background: transparent;
+  color: var(--color-papel);
+}
+
+/* «Ask about Tide» + el círculo verde de WhatsApp (el gesto de Party Boat). */
+.comida3-pregunta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: calc(var(--spacing) * 3);
+  min-height: calc(var(--spacing) * 12);
+  border: 1px solid var(--color-linea-fuerte);
+  border-radius: var(--radius-chip);
+  background: var(--color-papel);
+  padding: calc(var(--spacing) * 1) calc(var(--spacing) * 1) calc(var(--spacing) * 1) calc(var(--spacing) * 5);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--color-coral-texto);
+  transition: border-color 200ms ease;
+}
+.comida3-pregunta:hover {
+  border-color: var(--color-whatsapp-dark);
+}
+.comida3-pregunta-icono {
+  display: grid;
+  place-items: center;
+  width: calc(var(--spacing) * 10);
+  height: calc(var(--spacing) * 10);
+  border-radius: var(--radius-chip);
+  background: var(--color-whatsapp);
+  color: var(--color-papel);
+}
+.comida3-pregunta--vip {
+  border-color: var(--color-premium-oro);
+  background: transparent;
+  color: var(--color-premium-oro);
+}
+
+/* La carta de los 28. */
+.comida3-canapes-selector {
+  display: inline-grid;
+  grid-template-columns: 1fr 1fr;
+  gap: calc(var(--spacing) * 1);
+  border: 1px solid var(--color-linea);
+  border-radius: var(--radius-chip);
+  background: var(--color-papel-hueso);
+  padding: calc(var(--spacing) * 1);
+}
+.comida3-canapes-pestana {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--spacing) * 1.5);
+  min-height: calc(var(--spacing) * 11);
+  min-width: calc(var(--spacing) * 32);
+  border-radius: var(--radius-chip);
+  padding-inline: calc(var(--spacing) * 5);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-navy-sub);
+}
+.comida3-canapes-pestana[aria-selected='true'] {
+  background: var(--color-navy);
+  color: var(--color-papel);
+}
+.comida3-canapes-pestana[aria-selected='true'] svg {
+  color: var(--color-premium-oro);
+}
+.comida3-canapes-grupo {
+  gap: calc(var(--spacing) * 5);
+  align-content: start;
+  border-top: 2px solid var(--color-navy);
+  padding-top: calc(var(--spacing) * 4);
+}
+.comida3-canapes-grupo--premium {
+  border-top-color: var(--color-premium-oro);
+}
+.comida3-canapes-grupo-titulo {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--spacing) * 2);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-navy);
+}
+.comida3-canapes-grupo--premium .comida3-canapes-grupo-titulo svg {
+  color: var(--color-premium-oro-oscuro);
+}
+.comida3-canapes-foto {
+  overflow: hidden;
+  aspect-ratio: var(--aspect-tm-foto-v3);
+  border-radius: var(--radius-card);
+  background: var(--color-papel-hueso);
+}
+/* Familia sin foto real: hueco de diseño con su nombre, no un «falta foto». */
+.comida3-canapes-hueco {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-linea);
+  border-radius: var(--radius-card);
+  background: var(--color-papel-hueso);
+  color: var(--color-navy-soft);
+}
+.comida3-canapes-hueco--premium {
+  border-color: var(--color-navy);
+  background: var(--color-navy);
+  color: var(--color-premium-oro);
+}
+.comida3-canapes-punto {
+  flex-shrink: 0;
+  width: calc(var(--spacing) * 1.5);
+  height: calc(var(--spacing) * 1.5);
+  margin-top: 0.45em;
+  border-radius: var(--radius-chip);
+  background: var(--color-aqua);
+}
+.comida3-canapes-punto--premium {
+  background: var(--color-premium-oro);
+}
+/* En escritorio se ven las dos familias a la vez: sin selector. (Va aquí y no
+   con `lg:hidden` porque esta hoja no está en capa y pisaría la utilidad.) */
+@media (width >= 64rem) {
+  .comida3-canapes-selector {
+    display: none;
+  }
+}
+@media (width < 40rem) {
+  .comida3-canapes-selector {
+    display: grid;
+  }
+  .comida3-canapes-foto {
+    aspect-ratio: var(--aspect-tm-foto-movil-v3);
+  }
+}
