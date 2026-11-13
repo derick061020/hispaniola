@@ -133,11 +133,12 @@ export function EventosV3() {
     <section id="event-menus" className="ancla-comida relative bg-papel py-20 lg:py-28">
       <div className="mx-auto max-w-contenido px-5 sm:px-10">
         <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between" data-museo-revelar>
-          <div className="max-w-2xl">
+          {/* [2026-11-13, Samuel: «columna demasiado estrecha»] Más ancho: título en 2 líneas y párrafo cómodo. */}
+          <div className="max-w-5xl">
             <p className="comida3-eyebrow">{COMIDA_Y_BAR.niveles.eyebrow}</p>
             {/* [2026-11-12] ⚠️ Cabecera pendiente de Marketing (CANAPES_TEXTOS). */}
             <h2 className="comida3-h2 mt-3">{t(CANAPES_TEXTOS.cabecera.titulo)}</h2>
-            <p className="mt-4 text-lead text-navy-sub">{t(CANAPES_TEXTOS.cabecera.texto)}</p>
+            <p className="mt-4 max-w-3xl text-lead text-navy-sub">{t(CANAPES_TEXTOS.cabecera.texto)}</p>
           </div>
           <Link to="/events#onboard" className="comida3-boton-claro group shrink-0 self-start md:self-auto">
             {E.cta}

@@ -1068,7 +1068,7 @@
   color: var(--color-papel);
 }
 .comida3-canapes-pestana--premium[aria-selected='true'] {
-  background: var(--color-navy);
+  background: var(--color-premium-fondo);
   color: var(--color-premium-oro);
 }
 /* [3ª vuelta, 2026-11-12, Samuel: «demasiado sutil»] Cada familia, en SU
@@ -1087,11 +1087,17 @@
   border-color: var(--color-aqua-claro);
   background: var(--color-aqua-tint);
 }
+/* [2026-11-13] Premium: el fondo, la luz y el filo los pone `.premium-card`
+   (componentes.css, la card premium de tours). Aquí solo se apaga el borde
+   propio de la caja para no dibujar dos filos. */
 .comida3-canapes-grupo--premium {
-  border-color: var(--color-premium-oro);
-  background:
-    radial-gradient(circle at 100% 0%, var(--color-premium-oro-suave), transparent 55%),
-    var(--color-navy);
+  border-color: transparent;
+}
+/* La etiqueta de oro degradado (`.premium-metal`): tinta casi negra encima,
+   como el badge de las cards premium de tours. */
+.comida3-familia--metal {
+  border-color: transparent;
+  color: var(--color-premium-fondo);
 }
 /* La pastilla Classic sobre su propia caja (que tiene el mismo tinte): en papel. */
 .comida3-canapes-grupo--classic .comida3-familia--classic {
@@ -1099,7 +1105,7 @@
 }
 /* Las fotos dentro de la caja Premium, con un filete de oro. */
 .comida3-canapes-grupo--premium .comida3-canapes-foto {
-  box-shadow: 0 0 0 1px var(--color-premium-oro);
+  box-shadow: 0 0 0 1px var(--color-premium-borde);
 }
 @media (width >= 40rem) {
   .comida3-canapes-grupo {
