@@ -1,10 +1,18 @@
 import { Link } from 'react-router-dom'
-import { ArrowRight, Sparkles, Users } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import { COMIDA_Y_BAR } from '@/data/comida-y-bar'
-import { COMIDA_Y_BAR_V3 } from '@/data/comida-y-bar-v3'
-import { NOTA_PAQUETES, PAQUETES_COMIDA } from '@/data/eventos'
+import { CANAPES_TEXTOS, NOTA_PAQUETES } from '@/data/eventos'
 import { t } from '@/lib/i18n'
-import { pegaUltima, RejillaTarjetas, RotuloZona, TarjetaV3 } from './tarjetas-v3'
+import { CartaCanapesV3 } from './carta-canapes-v3'
+import { TarjetasPaquetesComida } from './paquetes-comida-v3'
+
+// [2026-11-12, Fernando vía Marketing: canapés] Cada paquete suma su «or
+// bites» (la alternativa al almuerzo, como en la web de Party Boat), un botón
+// para preguntar por WhatsApp y otro para planear el evento; debajo, la carta
+// de los 28 canapés (carta-canapes-v3.tsx). Los valores por defecto de las
+// dudas abiertas viven en data/eventos.ts (CANAPES_TEXTOS y compañía).
+// [2026-11-13] Las tarjetas viven en paquetes-comida-v3.tsx (compartidas con
+// las 3 páginas de evento).
 
 // LOS MENÚS DE EVENTOS — el corazón de la página de Party Boat (sus cuatro
 // cards Starfish · Breeze · Tide · Turtle, con la foto circular asomando, el
@@ -29,20 +37,18 @@ import { pegaUltima, RejillaTarjetas, RotuloZona, TarjetaV3 } from './tarjetas-v
 // (NOTA_PAQUETES: «Starting At Rates», la veda de la langosta del Turtle…),
 // con el «Starting at» sobre cada precio, como en la versión actual.
 const E = COMIDA_Y_BAR.eventos
-const V = COMIDA_Y_BAR_V3.eventos
 
 export function EventosV3() {
-  // El Premium al final, como en Party Boat (de menos a más).
-  const paquetes = [...PAQUETES_COMIDA].sort((a, b) => (a.precioBase ?? 0) - (b.precioBase ?? 0))
-
   return (
     <section id="event-menus" className="ancla-comida relative bg-papel py-20 lg:py-28">
       <div className="mx-auto max-w-contenido px-5 sm:px-10">
         <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between" data-museo-revelar>
-          <div className="max-w-2xl">
+          {/* [2026-11-13, Samuel: «columna demasiado estrecha»] Más ancho: título en 2 líneas y párrafo cómodo. */}
+          <div className="max-w-5xl">
             <p className="comida3-eyebrow">{COMIDA_Y_BAR.niveles.eyebrow}</p>
-            <h2 className="comida3-h2 mt-3">{E.titulo}</h2>
-            <p className="mt-4 text-lead text-navy-sub">{E.texto}</p>
+            {/* [2026-11-12] ⚠️ Cabecera pendiente de Marketing (CANAPES_TEXTOS). */}
+            <h2 className="comida3-h2 mt-3">{t(CANAPES_TEXTOS.cabecera.titulo)}</h2>
+            <p className="mt-4 max-w-3xl text-lead text-navy-sub">{t(CANAPES_TEXTOS.cabecera.texto)}</p>
           </div>
           <Link to="/events#onboard" className="comida3-boton-claro group shrink-0 self-start md:self-auto">
             {E.cta}
@@ -51,66 +57,10 @@ export function EventosV3() {
         </div>
 
         <div className="mt-14">
-          <RejillaTarjetas etiqueta={E.titulo}>
-            {paquetes.map((p) => {
-              const premium = p.destacado === 'premium'
-              const suave = premium ? 'text-sobre-navy-suave' : 'text-navy-soft'
-              return (
-                <TarjetaV3
-                  key={p.id}
-                  id={p.id}
-                  destacada={premium}
-                  foto={{ src: `/fotos/${p.foto}.webp`, alt: t(V.fotoAlt[p.id] ?? p.fotoAlt) }}
-                  cinta={
-                    premium ? (
-                      <p className="inline-flex items-center gap-1.5 rounded-chip bg-navy px-3 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-premium-oro">
-                        <Sparkles className="size-3.5" aria-hidden="true" />
-                        {V.destacado}
-                      </p>
-                    ) : null
-                  }
-                  nombre={
-                    <>
-                      <h3 className={`font-display text-2xl font-semibold leading-tight ${premium ? 'text-white' : 'text-navy'}`}>
-                        {pegaUltima(t(p.nombre))}
-                      </h3>
-                      <p className={`mt-3 text-xs font-semibold uppercase tracking-[0.12em] ${suave}`}>{t('Starting at')}*</p>
-                      <p className={`font-display text-4xl font-semibold ${premium ? 'text-premium-oro' : 'text-coral-dark'}`}>
-                        {p.precio}
-                      </p>
-                      <p className={`mt-1 inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.12em] ${suave}`}>
-                        <Users className="size-3.5" aria-hidden="true" />
-                        {t(p.capacidad)}
-                      </p>
-                    </>
-                  }
-                  incluye={
-                    <>
-                      <RotuloZona oscuro={premium}>{t('Includes')}</RotuloZona>
-                      <ul className={`mt-3 grid gap-1.5 text-sm ${premium ? 'text-white' : 'text-navy'}`}>
-                        {p.items.map((it) => (
-                          <li key={it.titulo}>
-                            <span className="font-semibold">{t(it.titulo)}</span>
-                            {it.texto ? <span className={suave}> · {t(it.texto)}</span> : null}
-                          </li>
-                        ))}
-                      </ul>
-                    </>
-                  }
-                  pie={
-                    <div className={`text-xs font-semibold ${premium ? 'text-sobre-navy-suave' : 'text-navy-sub'}`}>
-                      <p>{t(p.meta)}</p>
-                      <p className={`mt-1 text-sm ${premium ? 'text-premium-oro' : 'text-coral-texto'}`}>
-                        {p.extraPrecio ? t(p.extraPrecio) : null}
-                      </p>
-                    </div>
-                  }
-                />
-              )
-            })}
-          </RejillaTarjetas>
+          <TarjetasPaquetesComida etiqueta={E.titulo} />
         </div>
         <p className="mx-auto mt-10 max-w-3xl text-center text-xs leading-relaxed text-navy-soft">{t(NOTA_PAQUETES)}</p>
+        <CartaCanapesV3 />
         {/* [2026-10-22, repaso de CTA] La salida natural tras ver los cuatro
             paquetes: planear el evento (la landing de eventos, donde se cotiza). */}
         <div className="mt-8 flex justify-center">

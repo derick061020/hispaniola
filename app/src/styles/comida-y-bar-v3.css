@@ -935,3 +935,296 @@
     aspect-ratio: var(--aspect-tm-foto-movil-v3);
   }
 }
+
+/* ---------- Canapés («or bites») — 2026-11-12, encargo de Fernando ---------- */
+/* Las tarjetas de eventos ganan una QUINTA zona (la caja «Or bites») entre «qué
+   incluye» y el pie. La rejilla pasa a cinco filas para que las cajas de las
+   cuatro tarjetas alineen. Solo con `conBocados`: los menús de tours no cambian. */
+.comida3-tm-rejilla--bocados {
+  grid-template-rows: repeat(5, auto);
+}
+.comida3-tm-rejilla--bocados .comida3-tm {
+  grid-row: span 5;
+}
+@media (width < 40rem) {
+  /* Móvil: como el resto, cada tarjeta con su altura natural. */
+  .comida3-tm-rejilla--bocados {
+    grid-template-rows: none;
+  }
+  .comida3-tm-rejilla--bocados .comida3-tm {
+    grid-row: auto;
+  }
+}
+@media (width >= 40rem) {
+  .comida3-tm-rejilla--bocados {
+    grid-template-rows: none;
+  }
+}
+
+/* La caja. Fondo hueso con borde fino; la etiqueta «Or bites» monta sobre el
+   borde de arriba, como en Party Boat. */
+.comida3-bocados {
+  position: relative;
+  height: 100%;
+  border: 1px solid var(--color-linea);
+  border-radius: var(--radius-card);
+  background: var(--color-papel-hueso);
+  padding: calc(var(--spacing) * 6) calc(var(--spacing) * 4) calc(var(--spacing) * 4);
+}
+.comida3-bocados-etiqueta {
+  position: absolute;
+  top: 0;
+  left: calc(var(--spacing) * 4);
+  translate: 0 -50%;
+  border: 1px solid var(--color-linea);
+  border-radius: var(--radius-chip);
+  background: var(--color-papel);
+  padding: calc(var(--spacing) * 1) calc(var(--spacing) * 3);
+  font-size: var(--text-eyebrow);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-aqua-dark);
+}
+/* Starfish: sin canapés. Borde discontinuo y sin fondo: se lee como «aquí no
+   hay», no como una caja rota. */
+.comida3-bocados--vacia {
+  border-style: dashed;
+  background: transparent;
+}
+/* VIP (el Turtle, en navy): borde y cifras en oro. Es la «presentación
+   especial» que pidió Fernando. */
+.comida3-bocados--vip {
+  border-color: var(--color-premium-oro);
+  background: var(--color-premium-oro-suave);
+}
+.comida3-bocados--vip .comida3-bocados-etiqueta {
+  border-color: var(--color-premium-oro);
+  background: var(--color-navy);
+  color: var(--color-premium-oro);
+}
+
+/* «Ask about Tide» + el círculo verde de WhatsApp (el gesto de Party Boat). */
+.comida3-pregunta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: calc(var(--spacing) * 3);
+  min-height: calc(var(--spacing) * 12);
+  border: 1px solid var(--color-linea-fuerte);
+  border-radius: var(--radius-chip);
+  background: var(--color-papel);
+  padding: calc(var(--spacing) * 1) calc(var(--spacing) * 1) calc(var(--spacing) * 1) calc(var(--spacing) * 5);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--color-coral-texto);
+  transition: border-color 200ms ease;
+}
+.comida3-pregunta:hover {
+  border-color: var(--color-whatsapp-dark);
+}
+.comida3-pregunta-icono {
+  display: grid;
+  place-items: center;
+  width: calc(var(--spacing) * 10);
+  height: calc(var(--spacing) * 10);
+  border-radius: var(--radius-chip);
+  background: var(--color-whatsapp);
+  color: var(--color-papel);
+}
+.comida3-pregunta--vip {
+  border-color: var(--color-premium-oro);
+  background: transparent;
+  color: var(--color-premium-oro);
+}
+
+/* La carta de los 28. */
+.comida3-canapes-selector {
+  display: inline-grid;
+  grid-template-columns: 1fr 1fr;
+  gap: calc(var(--spacing) * 1);
+  border: 1px solid var(--color-linea);
+  border-radius: var(--radius-chip);
+  background: var(--color-papel-hueso);
+  padding: calc(var(--spacing) * 1);
+}
+.comida3-canapes-pestana {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--spacing) * 1.5);
+  min-height: calc(var(--spacing) * 11);
+  min-width: calc(var(--spacing) * 32);
+  border-radius: var(--radius-chip);
+  padding-inline: calc(var(--spacing) * 5);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-navy-sub);
+}
+/* [3ª vuelta] La pestaña activa toma el color de la caja que enseña:
+   Classic = aqua-dark con blanco (5,6:1), Premium = navy con oro (6,5:1). */
+.comida3-canapes-pestana--classic[aria-selected='true'] {
+  background: var(--color-aqua-dark);
+  color: var(--color-papel);
+}
+.comida3-canapes-pestana--premium[aria-selected='true'] {
+  background: var(--color-premium-fondo);
+  color: var(--color-premium-oro);
+}
+/* [3ª vuelta, 2026-11-12, Samuel: «demasiado sutil»] Cada familia, en SU
+   caja. Classic: el tinte aqua de marca, claro y fresco (navy 14:1, navy-sub
+   7:1, aqua-dark 5,2:1 sobre él: AA). Premium: navy con un halo de oro en la
+   esquina y borde oro, la misma piel que el Turtle (blanco 15:1, oro 6,5:1,
+   sobre-navy-suave 6,2:1: AA). */
+.comida3-canapes-grupo {
+  gap: calc(var(--spacing) * 6);
+  align-content: start;
+  border: 1px solid transparent;
+  border-radius: var(--radius-card-grande);
+  padding: calc(var(--spacing) * 6) calc(var(--spacing) * 5);
+}
+.comida3-canapes-grupo--classic {
+  border-color: var(--color-aqua-claro);
+  background: var(--color-aqua-tint);
+}
+/* [2026-11-13] Premium: el fondo, la luz y el filo los pone `.premium-card`
+   (componentes.css, la card premium de tours). Aquí solo se apaga el borde
+   propio de la caja para no dibujar dos filos. */
+.comida3-canapes-grupo--premium {
+  border-color: transparent;
+}
+/* La etiqueta de oro degradado (`.premium-metal`): tinta casi negra encima,
+   como el badge de las cards premium de tours. */
+.comida3-familia--metal {
+  border-color: transparent;
+  color: var(--color-premium-fondo);
+}
+/* La pastilla Classic sobre su propia caja (que tiene el mismo tinte): en papel. */
+.comida3-canapes-grupo--classic .comida3-familia--classic {
+  background: var(--color-papel);
+}
+/* Las fotos dentro de la caja Premium, con un filete de oro. */
+.comida3-canapes-grupo--premium .comida3-canapes-foto {
+  box-shadow: 0 0 0 1px var(--color-premium-borde);
+}
+@media (width >= 40rem) {
+  .comida3-canapes-grupo {
+    padding: calc(var(--spacing) * 8) calc(var(--spacing) * 7);
+  }
+}
+.comida3-canapes-foto {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: var(--aspect-tm-foto-v3);
+  border-radius: var(--radius-card);
+  background: var(--color-papel-hueso);
+}
+/* Familia sin foto real: hueco de diseño con su nombre, no un «falta foto». */
+.comida3-canapes-hueco {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-linea);
+  border-radius: var(--radius-card);
+  background: var(--color-papel-hueso);
+  color: var(--color-navy-soft);
+}
+.comida3-canapes-hueco--premium {
+  border-color: var(--color-navy);
+  background: var(--color-navy);
+  color: var(--color-premium-oro);
+}
+.comida3-canapes-punto {
+  flex-shrink: 0;
+  width: calc(var(--spacing) * 1.5);
+  height: calc(var(--spacing) * 1.5);
+  margin-top: 0.45em;
+  border-radius: var(--radius-chip);
+  background: var(--color-aqua);
+}
+.comida3-canapes-punto--premium {
+  background: var(--color-premium-oro);
+}
+/* En escritorio se ven las dos familias a la vez: sin selector. (Va aquí y no
+   con `lg:hidden` porque esta hoja no está en capa y pisaría la utilidad.) */
+@media (width >= 64rem) {
+  .comida3-canapes-selector {
+    display: none;
+  }
+}
+@media (width < 40rem) {
+  .comida3-canapes-selector {
+    display: grid;
+  }
+  .comida3-canapes-foto {
+    aspect-ratio: var(--aspect-tm-foto-movil-v3);
+  }
+}
+
+/* ---------- Canapés, 2ª vuelta (2026-11-12): que se lea qué es Classic y qué
+   Premium ---------- */
+/* UN código de color para las dos familias, el mismo en las cajas «Or bites»,
+   las cabeceras de familia y las fotos de cada lista:
+   Classic = aqua (el acento de marca, en su tinte), Premium = navy con oro
+   (el mismo trato que el Turtle). */
+.comida3-familia {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--spacing) * 1);
+  border: 1px solid transparent;
+  border-radius: var(--radius-chip);
+  padding: calc(var(--spacing) * 1) calc(var(--spacing) * 2.5);
+  font-size: var(--text-eyebrow);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.comida3-familia--classic {
+  border-color: var(--color-aqua-claro);
+  background: var(--color-aqua-tint);
+  color: var(--color-aqua-dark);
+}
+.comida3-familia--premium {
+  border-color: var(--color-premium-oro);
+  background: var(--color-navy);
+  color: var(--color-premium-oro);
+}
+
+/* Las dos filas de la caja «Or bites»: siempre las dos familias; la que el
+   paquete no incluye, apagada. */
+.comida3-bocados-fila {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: calc(var(--spacing) * 3);
+  font-size: var(--text-sm);
+  color: var(--color-navy);
+}
+.comida3-bocados--vip .comida3-bocados-fila {
+  color: var(--color-papel);
+}
+.comida3-bocados-fila--fuera {
+  color: var(--color-navy-soft);
+}
+/* [2026-11-13, ITV] Antes era `opacity: 0.45` y la pastilla quedaba a 1,9:1.
+   Ahora «apagada» = contorno discontinuo sin relleno y texto navy-soft
+   (5,3:1 sobre el hueso de la caja): se lee, pero no compite. */
+.comida3-bocados-fila--fuera .comida3-familia {
+  border: 1px dashed var(--color-linea-fuerte);
+  background: transparent;
+  color: var(--color-navy-soft);
+}
+
+
+/* [2026-11-13] Las mismas tarjetas en la columna de las páginas de evento (con
+   el formulario a la derecha, ~760 px): 2×2 también en escritorio. Va al final
+   para ganar a la regla de 4 columnas de ≥ 64rem. */
+@media (width >= 64rem) {
+  .comida3-tm-rejilla--columna {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

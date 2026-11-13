@@ -81,6 +81,26 @@ export type PaqueteEvento = {
   /** badge de destacar: null = ninguno, "premium" = "Most complete" o
    *  similar. La card se pinta con un acento si está presente. */
   destacado?: 'premium' | null
+  /** [2026-11-12, Fernando vía Marketing: «paquetes de canapés»] La otra forma
+   *  de comer el paquete: en vez del almuerzo, canapés pasados en bandeja.
+   *  Ver `BocadosPaquete` y `CANAPES` más abajo. Opcional: hoy solo lo pinta
+   *  /food-and-bar; /events lo puede leer el día que se decida. */
+  bocados?: BocadosPaquete
+}
+
+/** [2026-11-12] Los canapés de cada paquete (DISTRIBUCION CANAPES.docx).
+ *  ⚠️ VALOR POR DEFECTO, pendiente de Fernando: los canapés son una
+ *  ALTERNATIVA al almuerzo del paquete («or bites», como en la web de
+ *  Hispaniola Party Boat) y NO cambian el precio. Si resulta que son un extra
+ *  con precio propio, se cambia aquí y en los textos de `CANAPES_TEXTOS`. */
+export type BocadosPaquete = {
+  /** El nivel de canapés: «Standard», «Premium», «VIP». `null` = el paquete
+   *  no lleva canapés (el Starfish, «Basic» en el documento del cliente). */
+  nivel: string | null
+  /** Variedades de la familia Classic («Basic» en el documento). */
+  classic: number
+  /** Variedades de la familia Premium. */
+  premium: number
 }
 
 /** [v2 2026-07-27] Total de un paquete de evento — MODELO MARGINAL:
@@ -415,6 +435,8 @@ export const PAQUETES_COMIDA: PaqueteEvento[] = [
     ],
     extraPrecio: 'US$ 99.00 per extra guest',
     destacado: 'premium',
+    // [2026-11-12] VIP = 6 variedades: 2 Classic + 4 Premium.
+    bocados: { nivel: 'VIP', classic: 2, premium: 4 },
   },
   {
     id: 'package-i',
@@ -440,6 +462,8 @@ export const PAQUETES_COMIDA: PaqueteEvento[] = [
     foto: 'paquete-i',
     fotoAlt: 'Party boat Starfish Package',
     items: [{ titulo: 'Hot Dog', texto: '1p/p' }],
+    // [2026-11-12] «Basic» en el documento del cliente: sin canapés.
+    bocados: { nivel: null, classic: 0, premium: 0 },
     // Las "Vegetarian Substitutions" del cliente son reemplazos, no items
     // extra — el plato de cada comensal es O el hot dog O el vegetariano.
     // Por ahora el form los lleva como items; si quieres separarlos, dime
@@ -465,6 +489,11 @@ export const PAQUETES_COMIDA: PaqueteEvento[] = [
       { titulo: 'French Fries', texto: '' },
     ],
     extraPrecio: 'US$ 65.00 per extra guest',
+    // [2026-11-12] Standard = 2 variedades Classic.
+    // ⚠️ VALOR POR DEFECTO: el documento del cliente dice «2» en el texto y
+    // «3» en el total de su tabla comparativa (2 + 0). Se toma 2, pendiente
+    // de que Fernando lo confirme.
+    bocados: { nivel: 'Standard', classic: 2, premium: 0 },
   },
   {
     id: 'package-iii',
@@ -487,6 +516,8 @@ export const PAQUETES_COMIDA: PaqueteEvento[] = [
       { titulo: 'French Fries', texto: '' },
     ],
     extraPrecio: 'US$ 75.00 per extra guest',
+    // [2026-11-12] Premium = 4 variedades: 2 Classic + 2 Premium.
+    bocados: { nivel: 'Premium', classic: 2, premium: 2 },
   },
 ]
 
@@ -496,6 +527,198 @@ export const PAQUETES_COMIDA: PaqueteEvento[] = [
 // [2026-10-21] Exportada: /food-and-bar la pone bajo sus cuatro paquetes.
 export const NOTA_PAQUETES =
   '*“Starting At Rates” with the applicable discounts: up to 5% returning guest · 5% booking 30+ days ahead · 5% cash payment. Lobster may not be available from March to June (it is replaced with wild prawn). Vegetarian options apply ONLY to their own package and cannot be swapped with other packages.'
+
+// ────────────────────────────────────────────────────────────────────
+// CANAPÉS («BITES») — 2026-11-12, encargo de Fernando (grupo MARKETING WEB)
+// ────────────────────────────────────────────────────────────────────
+//
+// Fuente: «Seleccion CANAPES.docx» (las 28 variedades, nombres LITERALES) y
+// «DISTRIBUCION CANAPES.docx» (cuántas lleva cada paquete y las condiciones).
+// Referencia visual: el bloque de menús de hispaniolapartyboat.com/food-and-bar
+// (cada paquete con su «or bites»).
+//
+// VALORES POR DEFECTO de Samuel mientras Fernando contesta (todos aquí, en
+// datos, para cambiarlos sin tocar componentes):
+//   1. Los canapés son una ALTERNATIVA al almuerzo, sin cambiar precios.
+//   2. Las familias se llaman Classic y Premium (el documento dice «Basic»;
+//      Party Boat dice «Classic»), y los niveles Standard / Premium / VIP.
+//   3. Una foto por familia, solo reales del cliente; si no hay, hueco.
+//   4. Standard = 2 variedades Classic.
+//   5. Solo se pinta en /food-and-bar (estos datos sirven luego a /events).
+//   6. La cabecera adapta la de Party Boat — ⚠️ PENDIENTE DE MARKETING.
+
+/** [2026-11-12] El paquete «Premium (Turtle)» choca con el nivel de canapés
+ *  «Premium», que es el del Tide. Party Boat lo llama «Turtle» a secas. NO se
+ *  renombra en esta rama (decisión de Samuel): queda preparado. Con `true`,
+ *  /food-and-bar lo pinta como `NOMBRE_TURTLE`. Para cambiarlo en TODA la web
+ *  (/events, landings, widget) hay que cambiar el `nombre` del paquete
+ *  `premium` en PAQUETES_COMIDA, no este interruptor. */
+export const USAR_NOMBRE_TURTLE = false
+export const NOMBRE_TURTLE = 'Turtle Package'
+
+/** El nombre que se enseña de un paquete de comida (ver USAR_NOMBRE_TURTLE). */
+export const nombrePaqueteComida = (p: PaqueteEvento) =>
+  USAR_NOMBRE_TURTLE && p.id === 'premium' ? NOMBRE_TURTLE : p.nombre
+
+/** [2026-11-12, 2ª vuelta] El nombre CORTO en la sección de canapés (botón,
+ *  «Included in…»). El del paquete ancla es «Premium», que
+ *  aquí se confundiría con la familia Premium de canapés: se dice «Turtle»,
+ *  que es la otra mitad de su nombre («Premium (Turtle) Package») y como lo
+ *  llama Party Boat. El título de la tarjeta no cambia. */
+export const cortoPaqueteComida = (p: PaqueteEvento) => (p.id === 'premium' ? 'Turtle' : p.nombreCorto)
+
+export type FamiliaCanapes = {
+  /** id estable, kebab-case. */
+  id: 'hot-classic' | 'cold-classic' | 'hot-premium' | 'cold-premium'
+  /** «Hot Classic»… — lo que se lee. */
+  nombre: string
+  familia: 'classic' | 'premium'
+  /** Ruta de la foto en /public, sin extensión. `null` = no hay foto real
+   *  del cliente: se pinta un hueco de diseño, NUNCA stock ni IA. */
+  foto: string | null
+  fotoAlt: string
+  /** Los canapés, con el nombre literal del documento del cliente. */
+  items: string[]
+}
+
+// Fotos (2026-11-12): todas de «FOTO PARA NUEVA WEB 2026/EVENTS/*/COMIDA», las
+// del propio cliente, recortadas a 4:3:
+//   · hot-classic  → IMG_8511 (bandeja de croquetas en el chafing)
+//   · cold-classic → IMG_8507 (brochetas de fruta)
+//   · cold-premium → CATAMARAN CELENA NOEL_-98 (bandeja de sushi a bordo)
+//   · hot-premium  → [2026-11-12, 2ª vuelta, Samuel: «puedes usar fotos de
+//     canapés de la web de Party Boat»] Mofonguito de plátano con camarón, de
+//     hispaniolapartyboat.com (archivo «bite-premium-hot-mofonguito-shrimp»,
+//     mismo grupo y mismo catering). Es el «Plantain Mofonguito with Shrimp»
+//     de la carta, no una foto genérica.
+export const CANAPES: FamiliaCanapes[] = [
+  {
+    id: 'hot-classic',
+    nombre: 'Hot Classic',
+    familia: 'classic',
+    foto: '/fotos/comida-bar/canape-hot-classic',
+    fotoAlt: 'A tray of golden croquettes served on board',
+    items: [
+      'Cochinita Pibil Quesadilla',
+      'Mini Plantain Chicken Basket',
+      'Chicken Croquette',
+      'Chicken Teriyaki Skewer',
+      'Chicken Fingers',
+      'Carrot Quipe',
+      'Broccoli Quipe',
+    ],
+  },
+  {
+    id: 'cold-classic',
+    nombre: 'Cold Classic',
+    familia: 'classic',
+    foto: '/fotos/comida-bar/canape-cold-classic',
+    fotoAlt: 'Fresh fruit skewers lined up on a tray',
+    items: [
+      'Fruit Skewer',
+      'Spanish Potato Tortilla',
+      'Italian Bruschetta',
+      'Quinoa Mini Salad with Chicken',
+      'Dominican Quipes',
+      'Croissant with Serrano Ham',
+      'Chicharrón Ceviche',
+    ],
+  },
+  {
+    id: 'hot-premium',
+    nombre: 'Hot Premium',
+    familia: 'premium',
+    foto: '/fotos/comida-bar/canape-hot-premium',
+    fotoAlt: 'Plantain mofonguitos topped with shrimp and parsley',
+    items: [
+      'Plantain Mofonguito with Shrimp',
+      'Fish Fingers',
+      'Tempura Shrimp',
+      'Mini Angus Burger',
+      'Serrano Ham Croquette',
+      'Mini Meat Lasagna',
+      'Vegetarian Lasagna',
+    ],
+  },
+  {
+    id: 'cold-premium',
+    nombre: 'Cold Premium',
+    familia: 'premium',
+    foto: '/fotos/comida-bar/canape-cold-premium',
+    fotoAlt: 'A platter of sushi rolls served on board',
+    items: [
+      'Serrano Ham Montadito',
+      'Shrimp Ceviche',
+      'Octopus Ceviche',
+      'Sushi King Crab Roll',
+      'Sushi Alaska Roll',
+      'Sushi California Roll',
+      'Fish Ceviche',
+    ],
+  },
+]
+
+/** Los textos del bloque. Pasan por t() en el componente (es.ts). */
+export const CANAPES_TEXTOS = {
+  // ⚠️ PENDIENTE DE MARKETING: cabecera adaptada de la de Party Boat («Four
+  // menus. Lunch on board, or bites passed round.» / «Each menu carries its
+  // own bite selection. Pick the menu first, then decide how you want to eat
+  // it.»), con la bajada que ya tenía esta sección.
+  cabecera: {
+    titulo: 'Four packages. Lunch on board, or bites passed round.',
+    texto:
+      'Party boats, weddings and corporate groups choose from four packages, priced for up to 12 guests. Each one comes as a lunch or with its own bite selection: pick the package first, then decide how you want to eat it.',
+  },
+  tarjeta: {
+    oBocados: 'Or bites',
+    selecciones: 'selections',
+    classic: 'Classic',
+    premium: 'Premium',
+    sinBocados: 'No bite selections',
+    // {paquete} = el nombre corto del primer paquete que sí lleva canapés.
+    empiezan: 'Bites start with the {paquete} package.',
+    // [2ª vuelta, Samuel: «que se entienda mucho mejor cuáles son las
+    // básicas y cuáles las Premium»] Cada fila dice de QUÉ lista sale.
+    deVariedades: 'varieties',
+    noIncluida: 'Not included',
+    // [4ª vuelta, Samuel: Standard/Premium/VIP «chocan con la familia
+    // Premium»] De los niveles de Fernando solo se ENSEÑA el VIP (la
+    // presentación especial del Turtle): «Premium» junto al Tide se leía como
+    // la familia Premium. Los niveles siguen en `bocados.nivel` para /events.
+    nivelesVisibles: ['VIP'],
+    verCarta: 'See the 28 bites',
+    preguntar: 'Ask about {paquete}',
+    planear: 'Plan your event',
+    // El mensaje que abre WhatsApp. {paquete} = nombre completo.
+    whatsapp: 'Hi! I’d like more information about the {paquete} for a private event.',
+  },
+  // [2026-11-13] Las 3 páginas de evento: bajo la intro aprobada de cada una
+  // (que no se toca), una frase común que presenta los canapés.
+  evento: {
+    intro: 'Every package can also be served as bites instead of lunch: the package sets how many you pick from each family.',
+  },
+  carta: {
+    eyebrow: 'Bites menu',
+    titulo: '28 bites, in two families',
+    // [4ª vuelta] Una sola frase: el resto lo dicen las cajas de abajo.
+    texto: 'Your package sets how many you pick from each family.',
+    familias: 'Bite families',
+    // Las «condiciones comerciales sugeridas» de DISTRIBUCION CANAPES.docx,
+    // tal como las publica Party Boat. ⚠️ El documento las llama «sugeridas»:
+    // confirmar con Fernando que ya valen para Hispaniola.
+    reglas: [
+      'Swap hot for cold inside the same family.',
+      'Add extra varieties for a per-person supplement.',
+      'The pieces per guest are set with our Events Team.',
+    ],
+    variedades: 'varieties',
+    // {paquetes} = «Breeze, Tide and Turtle», sacado de los datos.
+    incluidoEn: 'Included in {paquetes}',
+    y: 'and',
+    // Qué lleva cada familia, en una línea.
+    composicion: '{caliente} + {fria}',
+  },
+}
 
 // ────────────────────────────────────────────────────────────────────
 // 1) PARTY BOAT — /events-party-boat-puntacana.php

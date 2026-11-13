@@ -1,10 +1,11 @@
-import type { CSSProperties } from 'react'
-import { Check, Sparkles, Package } from 'lucide-react'
+import { Check } from 'lucide-react'
 import { TituloSeccion } from '@/components/tour/titulo-seccion'
 import { BLOQUE_FICHA } from '@/components/tour/bloque-ficha'
-import type { FichaEvento, PaqueteEvento } from '@/data/eventos'
+import { TarjetasPaquetesComida } from '@/components/comida-y-bar-v3/paquetes-comida-v3'
+import { CartaCanapesV3 } from '@/components/comida-y-bar-v3/carta-canapes-v3'
+import { CANAPES_TEXTOS, type FichaEvento } from '@/data/eventos'
 import { formatoDinero } from '@/data/home'
-import { t, tp } from '@/lib/i18n'
+import { t } from '@/lib/i18n'
 
 // "Paquetes" de las landings de evento (PLAN-EVENTOS.md §3) — presente en
 // party-boat y en bodas, que comparten el MISMO array de 4 paquetes
@@ -76,196 +77,27 @@ import { t, tp } from '@/lib/i18n'
 //    mismo idioma que el selector del widget. El Premium se distingue por su
 //    badge y su fondo `bg-aqua-tint/40`, que no se pisan con la selección.
 
-/** Los platos que aparecen en ALGÚN paquete, en orden de escalón: se recorren
- *  los paquetes de más barato a más caro y se van añadiendo los que no
- *  estaban. Así la columna de platos se lee como la progresión de la oferta
- *  (hot dog → pollo/res/papas → camarón/tempura/fish sticks → langosta) en
- *  vez del orden en que el cliente los escribió en cada paquete. */
-function platosDe(items: PaqueteEvento[]): string[] {
-  const porPrecio = [...items].sort(
-    (a, b) => (a.precioBase ?? Number.POSITIVE_INFINITY) - (b.precioBase ?? Number.POSITIVE_INFINITY),
-  )
-  const platos: string[] = []
-  for (const paquete of porPrecio) {
-    for (const item of paquete.items) {
-      if (!platos.includes(item.titulo)) platos.push(item.titulo)
-    }
-  }
-  return platos
-}
 
-function Card({
-  paquete,
-  platos,
-  ancha = false,
-  elegido,
-  onElegir,
-}: {
-  paquete: PaqueteEvento
-  /** la MISMA lista para las 4 cards — ver el porqué arriba */
-  platos: string[]
-  ancha?: boolean
-  elegido: boolean
-  onElegir: () => void
-}) {
-  const esPremium = paquete.destacado === 'premium'
-  // El precio completo en una línea: la cifra grande sin su condición al lado
-  // es la que se leía como total.
-  const incluidas = paquete.incluyeHasta ?? null
-  // Solo lo que entra en ESTE paquete, en el orden común (ver cabecera, 2026-11-03).
-  const incluidos = platos.filter((plato) => paquete.items.some((i) => i.titulo === plato))
-
-  return (
-    <article
-      className={[
-        // h-full: la card ocupa toda la altura de su fila del grid, para que
-        // el `flex-1` de la lista empuje el botón al fondo y los 3 de la fila
-        // queden con el botón en el mismo Y.
-        'flex h-full flex-col overflow-hidden rounded-card transition',
-        // La variante ancha se vuelve HORIZONTAL a partir de sm: foto a un
-        // lado, contenido al otro. Debajo de sm sigue siendo la card de
-        // siempre (foto arriba), como las otras 3.
-        ancha ? 'sm:flex-row' : '',
-        // ring-2 aqua = ELEGIDO (mismo idioma que el selector del widget).
-        // Sin elegir, hairline gris. El Premium aporta lo suyo con el fondo.
-        elegido ? 'ring-2 ring-aqua' : 'ring-1 ring-linea',
-        esPremium ? 'bg-aqua-tint/40' : '',
-        // Sin sombras (Samuel: "que no tenga sombras las cajas").
-      ].join(' ')}
-    >
-      {/* Foto (si tiene) o placeholder. El recorte cambia con la variante: la
-          ancha no fija proporción a partir de sm —se estira al alto de la
-          card—, y la compacta usa 3:2 para no comerse media card cuando solo
-          mide un tercio de la columna. */}
-      {paquete.foto ? (
-        <div
-          className={[
-            'aspect-[3/2] overflow-hidden bg-papel-hueso',
-            ancha ? 'sm:aspect-auto sm:w-2/5 sm:shrink-0' : '',
-          ].join(' ')}
-        >
-          <img
-            src={`/fotos/${paquete.foto}.webp`}
-            alt={paquete.fotoAlt}
-            loading="lazy"
-            className="size-full object-cover"
-          />
-        </div>
-      ) : (
-        <div
-          className={[
-            'flex aspect-[3/2] items-center justify-center bg-papel-hueso',
-            ancha ? 'sm:aspect-auto sm:w-2/5 sm:shrink-0' : '',
-          ].join(' ')}
-        >
-          <Package className="size-12 text-navy-soft" aria-hidden="true" />
-        </div>
-      )}
-
-      <div className={`flex flex-1 flex-col p-5 ${ancha ? 'sm:p-6' : ''}`}>
-        {esPremium ? (
-          <span className="mb-2 inline-flex w-fit items-center gap-1 rounded-chip bg-aqua-tint px-2 py-0.5 text-xs font-semibold text-aqua-dark">
-            <Sparkles className="size-3" aria-hidden="true" />
-            {t('Most complete')}
-          </span>
-        ) : null}
-
-        <h3 className={`font-display font-semibold text-navy ${ancha ? 'text-h3' : 'text-base'}`}>
-          {paquete.nombre}
-        </h3>
-
-        {/* [2026-08-25] Del NÚMERO, no del texto. `precio` y `extraPrecio` son
-            cadenas del cliente («US$ 1,188.00») y con el selector de moneda
-            eran los dos únicos precios del sitio que se quedaban en dólares
-            mientras el resto se convertía. `precioBase` y `porPersonaExtra`
-            son los mismos importes en número, así que pasan por
-            `formatoDinero` como todo lo demás. Las cadenas se conservan como
-            red por si algún paquete no publicara su número. */}
-        <p className={`mt-1 font-display font-semibold text-navy ${ancha ? 'text-2xl' : 'text-xl'}`}>
-          {paquete.precioBase != null ? formatoDinero(paquete.precioBase) : paquete.precio}
-        </p>
-        <p className="text-xs text-navy-soft">
-          {incluidas !== null ? tp('Up to {n} guests', { n: incluidas }) : paquete.capacidad}
-          {paquete.porPersonaExtra
-            ? <> · +{formatoDinero(paquete.porPersonaExtra ?? null)} {t('per extra guest')}</>
-            : paquete.extraPrecio ? <> · +{paquete.extraPrecio}</> : null}
-        </p>
-        <p className="mt-0.5 text-xs text-navy-soft">{paquete.meta}</p>
-
-        {/* LOS MISMOS PLATOS EN LAS 4 CARDS. `flex-1` empuja el botón al
-            fondo. Si el paquete no publica menú (no es el caso hoy, pero
-            bodas podría), se dice en vez de pintar 8 rayas. */}
-        {paquete.items.length > 0 ? (
-          <ul
-            className={`mt-4 flex-1 space-y-1.5 ${
-              // grid-flow-col + tantas filas como la mitad de los platos: las
-              // 2 columnas de la card ancha se llenan HACIA ABAJO y no en
-              // zigzag. Con el relleno por filas (el de por defecto) el orden
-              // de los platos quedaba 1-2 / 3-4 en horizontal y dejaba de
-              // coincidir con la columna vertical de las otras 3 cards —
-              // justo lo que hace comparable la lista.
-              ancha ? 'sm:grid sm:grid-flow-col sm:gap-x-6 sm:gap-y-1.5 sm:space-y-0' : ''
-            }`}
-            style={
-              ancha
-                ? ({ gridTemplateRows: `repeat(${Math.ceil(incluidos.length / 2)}, auto)` } as CSSProperties)
-                : undefined
-            }
-          >
-            {incluidos.map((plato) => {
-              const item = paquete.items.find((i) => i.titulo === plato)
-              return (
-                <li key={plato} className="flex items-start gap-2 text-sm text-navy-sub">
-                  <Check className="mt-0.5 size-4 shrink-0 text-menta-texto" aria-hidden="true" />
-                  <span>
-                    {/* Para lectores de pantalla el icono no dice nada: la
-                        palabra sí. */}
-                    <span className="sr-only">{t('Included: ')}</span>
-                    {plato}
-                    {item?.texto ? <span className="text-navy-soft"> · {item.texto}</span> : null}
-                  </span>
-                </li>
-              )
-            })}
-          </ul>
-        ) : (
-          <p className="mt-4 flex-1 text-sm italic text-navy-soft">
-            {t('Full menu on confirmation. Message us on WhatsApp and we’ll send it over.')}
-          </p>
-        )}
-
-        {/* LA CARD YA HACE ALGO. El botón elige el paquete en el widget de
-            reserva; si ya es el elegido, lo dice y deja de ser pulsable
-            (repetir la acción no hace nada y un botón que no hace nada
-            miente). `aria-pressed` para que el estado no sea solo color. */}
-        <button
-          type="button"
-          onClick={onElegir}
-          aria-pressed={elegido}
-          // [2026-08-21, auditoría móvil] py-3 (antes py-2.5): 10px de padding
-          // sobre una línea de 20px daban 40px de alto, por debajo de los 44
-          // que necesita el pulgar. Son 4 botones apilados en móvil y son los
-          // que mandan el paquete al widget, así que fallar el toque aquí
-          // cuesta una elección de producto.
-          className={`mt-4 w-full rounded-btn px-4 py-3 text-sm font-semibold transition ${
-            elegido
-              ? 'cursor-default bg-aqua-tint text-aqua-dark'
-              : 'bg-papel text-navy ring-1 ring-linea hover:bg-papel-hueso'
-          }`}
-        >
-          {elegido ? (
-            <span className="flex items-center justify-center gap-1.5">
-              <Check className="size-4" aria-hidden="true" />
-              {t('Selected')}
-            </span>
-          ) : (
-            t('Choose this package')
-          )}
-        </button>
-      </div>
-    </article>
-  )
-}
+// ── [2026-11-13] LA SECCIÓN APROBADA DE /food-and-bar, AQUÍ ────────────────
+// Fernando aprobó en /food-and-bar los paquetes con su «Or bites» y la carta
+// de los 28 canapés, y pidió llevarlos a las 3 páginas de evento (party boat,
+// bodas y corporativo) en lugar de este bloque. Se pinta EL MISMO componente
+// (comida-y-bar-v3/paquetes-comida-v3.tsx y carta-canapes-v3.tsx) con LOS
+// MISMOS datos (PAQUETES_COMIDA): ni código ni precios duplicados.
+// Lo que se conserva de lo de arriba:
+//   · El punto 3: cada tarjeta tiene su «Choose this package», marcado cuando
+//     es el elegido y en sincronía con el formulario de la derecha (el estado
+//     sigue en pages/evento.tsx).
+//   · El punto 2: el precio sale de `precioBase` con `formatoDinero` (sigue al
+//     selector de moneda) y el extra por invitado va pegado.
+//   · Título e intro de cada evento (copy aprobado, literal) + una frase común
+//     sobre los canapés (CANAPES_TEXTOS.evento).
+// Lo que cambia: la comparación «mismos platos en el mismo orden» del punto 1
+// la hacen ahora las tarjetas de /food-and-bar (mismas zonas alineadas) y su
+// caja «Or bites». Con el formulario a la derecha la columna mide ~760 px: las
+// tarjetas van en 2×2 y las dos cajas de canapés, apiladas (`columna`).
+// ⚠️ VOLVER ATRÁS: la versión anterior de este archivo está en el commit
+// 8dd86e9 — `git checkout 8dd86e9 -- app/src/components/evento/paquetes-evento.tsx`.
 
 export function PaquetesEvento({
   evento,
@@ -280,57 +112,55 @@ export function PaquetesEvento({
   const paquetes = evento.paquetes
   if (!paquetes || paquetes.items.length === 0) return null
 
-  const platos = platosDe(paquetes.items)
-
-  // El destacado va SOLO en su fila; el resto, uno al lado del otro. Sale del
-  // DATO (`destacado: 'premium'`), no de la posición en el array: si mañana el
-  // cliente marca otro paquete, la maqueta le sigue sin tocar este archivo. Si
-  // ninguno está marcado, `resto` los tiene a todos y la sección cae a la fila
-  // de N — no queda un hueco.
-  const destacados = paquetes.items.filter((p) => p.destacado)
-  const resto = paquetes.items.filter((p) => !p.destacado)
-
   return (
     <section id="ancla-paquetes" className={`${BLOQUE_FICHA} scroll-mt-sticky-top`}>
       <TituloSeccion>{paquetes.titulo}</TituloSeccion>
       <p className="mt-2 text-sm text-navy-sub">{paquetes.intro}</p>
-      {/* [2026-08-07, pedido de Samuel] SE RETIRA LA LÍNEA DE INSTRUCCIÓN que
-          iba aquí («Los N llevan lo mismo a bordo, todo lo de "What's
-          Included" arriba…»). Repetía lo que la sección de «Incluye» ya dice
-          dos bloques más arriba y lo que las propias cards enseñan de un
-          vistazo. Afecta a las DOS landings que pintan este bloque (party boat
-          y bodas): es el mismo componente. */}
+      <p className="mt-2 text-sm font-medium text-navy">{t(CANAPES_TEXTOS.evento.intro)}</p>
 
-      <div className="mt-5 flex flex-col gap-4">
-        {destacados.map((p) => (
-          <Card
-            key={p.id}
-            paquete={p}
-            platos={platos}
-            ancha
-            elegido={p.id === elegido}
-            onElegir={() => onElegir(p.id)}
-          />
-        ))}
-
-        {/* sm:grid-cols-3 y no lg: a 640px los 3 ya caben (≈190px cada uno).
-            En la columna de la ficha en desktop rondan los 220px. */}
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-          {resto.map((p) => (
-            <Card
-              key={p.id}
-              paquete={p}
-              platos={platos}
-              elegido={p.id === elegido}
-              onElegir={() => onElegir(p.id)}
-            />
-          ))}
-        </div>
+      <div className="mt-8">
+        <TarjetasPaquetesComida
+          etiqueta={paquetes.titulo}
+          columna
+          precio={(p) => (p.precioBase != null ? formatoDinero(p.precioBase) : p.precio)}
+          extra={(p) =>
+            p.porPersonaExtra ? <>+{formatoDinero(p.porPersonaExtra)} {t('per extra guest')}</> : t(p.extraPrecio ?? '')
+          }
+          acciones={(p, premium) => {
+            const activo = p.id === elegido
+            // LA CARD HACE ALGO (punto 3 de arriba): elige el paquete en el
+            // formulario; si ya es el elegido, lo dice y deja de ser pulsable.
+            // `aria-pressed` para que el estado no sea solo color.
+            return (
+              <button
+                type="button"
+                onClick={() => onElegir(p.id)}
+                aria-pressed={activo}
+                className={`mt-4 inline-flex min-h-12 w-full items-center justify-center gap-1.5 rounded-chip px-4 text-sm font-semibold transition ${
+                  activo
+                    ? 'cursor-default bg-aqua-tint text-aqua-dark'
+                    : premium
+                      ? 'text-premium-oro ring-1 ring-premium-oro hover:bg-premium-oro-suave'
+                      : 'bg-papel text-navy ring-1 ring-linea-fuerte hover:bg-papel-hueso'
+                }`}
+              >
+                {activo ? (
+                  <>
+                    <Check className="size-4" aria-hidden="true" />
+                    {t('Selected')}
+                  </>
+                ) : (
+                  t('Choose this package')
+                )}
+              </button>
+            )
+          }}
+        />
       </div>
 
-      {paquetes.nota ? (
-        <p className="mt-5 border-t border-linea pt-4 text-xs text-navy-soft">{paquetes.nota}</p>
-      ) : null}
+      {paquetes.nota ? <p className="mt-6 text-xs leading-relaxed text-navy-soft">{t(paquetes.nota)}</p> : null}
+
+      <CartaCanapesV3 columna />
     </section>
   )
 }

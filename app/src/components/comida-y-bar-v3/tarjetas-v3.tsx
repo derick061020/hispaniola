@@ -42,10 +42,23 @@ export const pegaUltima = (texto: string) => texto.replace(/ (?=[^ ]+$)/, ' ')
 
 /** La rejilla de cuatro tarjetas (carrusel en móvil, 2×2 en tableta, 4×1).
  *  En móvil lleva la pista «Swipe to see more», como los niveles de barra. */
-export function RejillaTarjetas({ children, etiqueta }: { children: ReactNode; etiqueta: string }) {
+export function RejillaTarjetas({
+  children,
+  etiqueta,
+  conBocados = false,
+  columna = false,
+}: {
+  children: ReactNode
+  etiqueta: string
+  /** [2026-11-12] Las tarjetas llevan la quinta zona («or bites»). */
+  conBocados?: boolean
+  /** [2026-11-13] Columna estrecha (página de evento, con el formulario a la
+   *  derecha): 2×2 también en escritorio, nunca 4 en fila. */
+  columna?: boolean
+}) {
   return (
     <>
-      <ul className="comida3-tm-rejilla" tabIndex={0} aria-label={etiqueta}>
+      <ul className={`comida3-tm-rejilla ${conBocados ? 'comida3-tm-rejilla--bocados' : ''} ${columna ? 'comida3-tm-rejilla--columna' : ''}`} tabIndex={0} aria-label={etiqueta}>
         {children}
       </ul>
       <p className="mt-3 flex items-center gap-1.5 text-xs font-medium text-navy-sub sm:hidden">
@@ -67,11 +80,15 @@ type PropsTarjeta = {
   incluye: ReactNode
   /** Zona 4: dónde se sirve / el pie. */
   pie: ReactNode
+  /** [2026-11-12] Zona opcional entre «qué incluye» y el pie: la alternativa
+   *  de canapés de los paquetes de eventos. Si va, la rejilla lleva
+   *  `conBocados` (cinco filas en vez de cuatro, para que alineen). */
+  bocados?: ReactNode
   destacada?: boolean
 }
 
-/** Una tarjeta: cuatro zonas, subgrid de la rejilla. */
-export function TarjetaV3({ id, foto, cinta, nombre, incluye, pie, destacada = false }: PropsTarjeta) {
+/** Una tarjeta: cuatro zonas (cinco con canapés), subgrid de la rejilla. */
+export function TarjetaV3({ id, foto, cinta, nombre, incluye, pie, bocados, destacada = false }: PropsTarjeta) {
   return (
     <li id={id} className={`comida3-tm ancla-comida ${destacada ? 'comida3-turtle comida3-tm--destacada' : ''}`}>
       <div className="comida3-tm-foto">
@@ -86,6 +103,7 @@ export function TarjetaV3({ id, foto, cinta, nombre, incluye, pie, destacada = f
       </div>
       <div className="px-5 pt-4 sm:px-6 sm:pt-5">{nombre}</div>
       <div className="px-5 pb-4 pt-3 sm:px-6 sm:pb-5 sm:pt-4">{incluye}</div>
+      {bocados ? <div className="px-4 pb-5 sm:px-5">{bocados}</div> : null}
       <div className={`border-t px-5 pb-5 pt-3 sm:px-6 sm:pb-6 sm:pt-4 ${destacada ? 'border-white/15' : 'border-linea'}`}>{pie}</div>
     </li>
   )
