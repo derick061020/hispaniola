@@ -1210,7 +1210,12 @@
 .comida3-bocados-fila--fuera {
   color: var(--color-navy-soft);
 }
+/* [2026-11-13, ITV] Antes era `opacity: 0.45` y la pastilla quedaba a 1,9:1.
+   Ahora «apagada» = contorno discontinuo sin relleno y texto navy-soft
+   (5,3:1 sobre el hueso de la caja): se lee, pero no compite. */
 .comida3-bocados-fila--fuera .comida3-familia {
-  opacity: 0.45;
+  border: 1px dashed var(--color-linea-fuerte);
+  background: transparent;
+  color: var(--color-navy-soft);
 }
 
