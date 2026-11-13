@@ -1219,3 +1219,12 @@
   color: var(--color-navy-soft);
 }
 
+
+/* [2026-11-13] Las mismas tarjetas en la columna de las páginas de evento (con
+   el formulario a la derecha, ~760 px): 2×2 también en escritorio. Va al final
+   para ganar a la regla de 4 columnas de ≥ 64rem. */
+@media (width >= 64rem) {
+  .comida3-tm-rejilla--columna {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

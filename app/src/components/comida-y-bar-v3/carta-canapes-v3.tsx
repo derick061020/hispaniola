@@ -117,18 +117,22 @@ function Familia({ f }: { f: FamiliaCanapes }) {
   )
 }
 
-export function CartaCanapesV3() {
+/** `columna` [2026-11-13]: para las páginas de evento, donde el formulario
+ *  de la derecha deja una columna de ~760 px. Las dos cajas van APILADAS (cada
+ *  una con sus dos listas lado a lado) y la cabecera baja a la escala de la
+ *  ficha (allí el título de sección es el h2 de «paquetes»). */
+export function CartaCanapesV3({ columna = false }: { columna?: boolean }) {
   const [activa, setActiva] = useState<IdFamilia>('classic')
   const base = useId()
   const familias: IdFamilia[] = ['classic', 'premium']
 
   return (
-    <div id="bites" className="ancla-comida comida3-canapes mt-20 lg:mt-24">
+    <div id="bites" className={`ancla-comida comida3-canapes ${columna ? 'mt-12 scroll-mt-sticky-top' : 'mt-20 lg:mt-24'}`}>
       {/* [2026-11-13, Samuel] El título va en UNA línea en escritorio: contenedor ancho y sin corte desde lg. */}
       <div className="max-w-4xl" data-museo-revelar>
         <p className="comida3-eyebrow">{t(C.eyebrow)}</p>
-        <h3 className="comida3-h2 mt-3 lg:whitespace-nowrap">{t(C.titulo)}</h3>
-        <p className="mt-4 text-lead text-navy-sub">{t(C.texto)}</p>
+        <h3 className={columna ? 'mt-2 font-display text-h3 font-semibold text-navy' : 'comida3-h2 mt-3 lg:whitespace-nowrap'}>{t(C.titulo)}</h3>
+        <p className={columna ? 'mt-2 text-sm text-navy-sub' : 'mt-4 text-lead text-navy-sub'}>{t(C.texto)}</p>
       </div>
 
       {/* Selector de familia: solo móvil y tableta. */}
@@ -150,7 +154,7 @@ export function CartaCanapesV3() {
         ))}
       </div>
 
-      <div className="mt-6 grid gap-10 lg:mt-14 lg:grid-cols-2 lg:gap-8">
+      <div className={`mt-6 grid ${columna ? 'gap-6' : 'gap-10 lg:mt-14 lg:grid-cols-2 lg:gap-8'}`}>
         {familias.map((fam) => {
           const listas = CANAPES.filter((f) => f.familia === fam)
           return (

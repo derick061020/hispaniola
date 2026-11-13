@@ -46,15 +46,19 @@ export function RejillaTarjetas({
   children,
   etiqueta,
   conBocados = false,
+  columna = false,
 }: {
   children: ReactNode
   etiqueta: string
   /** [2026-11-12] Las tarjetas llevan la quinta zona («or bites»). */
   conBocados?: boolean
+  /** [2026-11-13] Columna estrecha (página de evento, con el formulario a la
+   *  derecha): 2×2 también en escritorio, nunca 4 en fila. */
+  columna?: boolean
 }) {
   return (
     <>
-      <ul className={`comida3-tm-rejilla ${conBocados ? 'comida3-tm-rejilla--bocados' : ''}`} tabIndex={0} aria-label={etiqueta}>
+      <ul className={`comida3-tm-rejilla ${conBocados ? 'comida3-tm-rejilla--bocados' : ''} ${columna ? 'comida3-tm-rejilla--columna' : ''}`} tabIndex={0} aria-label={etiqueta}>
         {children}
       </ul>
       <p className="mt-3 flex items-center gap-1.5 text-xs font-medium text-navy-sub sm:hidden">

@@ -692,6 +692,11 @@ export const CANAPES_TEXTOS = {
     // El mensaje que abre WhatsApp. {paquete} = nombre completo.
     whatsapp: 'Hi! I’d like more information about the {paquete} for a private event.',
   },
+  // [2026-11-13] Las 3 páginas de evento: bajo la intro aprobada de cada una
+  // (que no se toca), una frase común que presenta los canapés.
+  evento: {
+    intro: 'Every package can also be served as bites instead of lunch: the package sets how many you pick from each family.',
+  },
   carta: {
     eyebrow: 'Bites menu',
     titulo: '28 bites, in two families',

@@ -3227,6 +3227,7 @@ export const ES: Record<string, string> = {
   "Fish Ceviche": "Ceviche de pescado",
   "Turtle Package": "Turtle Package",
   // [2026-11-12, 2ª y 4ª vuelta] Canapés: familias y bloque superior.
+  "Every package can also be served as bites instead of lunch: the package sets how many you pick from each family.": "Cada paquete también puede servirse con canapés en lugar de almuerzo: el paquete marca cuántos eliges de cada familia.",
   "Your package sets how many you pick from each family.": "Tu paquete marca cuántos eliges de cada familia.",
   "See the 28 bites": "Ver los 28 canapés",
   "Included in {paquetes}": "Incluido en {paquetes}",
