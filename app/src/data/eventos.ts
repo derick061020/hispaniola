@@ -1069,10 +1069,13 @@ const BODAS: FichaEvento = {
     'ev-weddings-menu-9',
     'ev-weddings-menu-10',
   ],
-  // ⚠️ PLACEHOLDER: mismo caso que las otras dos landings. Bodas es además el
-  // único evento del que el cliente NO entregó vídeo propio, así que aquí no
-  // hay `videoProducto` que poner en la rejilla.
-  videoGaleria: '/video/hero.mp4',
+  // [2026-11-14, Gerencia/Marketing] La columna vertical lleva ya el reel de
+  // la boda de Kendra & Vernon (sin el logo afro) que mandó Marketing; antes
+  // era el vídeo de marca de relleno. El cartel es un recorte corto y mudo del
+  // mismo reel, con la portada que entregaron. Sigue sin `videoProducto` 16:9
+  // para la rejilla.
+  videoGaleria: '/video/eventos/weddings-reel.mp4',
+  videoGaleriaCartel: { src: '/video/eventos/weddings-reel-cartel.mp4', poster: '/video/eventos/weddings-reel-poster.jpg' },
   videoProducto: null,
   // FAQ de bodas — las 3 preguntas de la web del cliente + 1
   // pregunta sobre el Dress code (la más común, sale de la práctica

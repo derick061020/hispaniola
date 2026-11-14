@@ -198,7 +198,7 @@ export function FormularioStripe({
       //    Del domicilio no viaja NADA: lo recoge el propio Payment Element
       //    (`fields.billingDetails.address: 'auto'`), y lo que Stripe recoge
       //    no se le manda desde aquí.
-      const { nombre, email, telefono, pais } = ultimo.current.facturacion
+      const { nombre, email, telefono } = ultimo.current.facturacion
       const confirmParams: Record<string, unknown> = { return_url: ultimo.current.returnUrl }
       if (via === 'boton') {
         confirmParams.payment_method_data = {
@@ -210,8 +210,12 @@ export function FormularioStripe({
             // Los que se ocultan hay que mandarlos SÍ O SÍ, aunque no se
             // tengan: van vacíos, que es la verdad —no se piden en ningún
             // paso— y es lo que deja el formulario en un solo campo extra.
+            // El país lo recoge ahora el propio Payment Element
+            // (`country: 'auto'`), para que Canadá y los demás puedan elegirlo
+            // y el campo del código postal se adapte (ZIP en EE. UU., Postal
+            // code en Canadá). Por eso ya NO viaja desde aquí: solo los que
+            // siguen ocultos (line1/line2/city/state).
             address: {
-              country: pais?.trim().toUpperCase() || 'US',
               line1: '',
               line2: '',
               city: '',
@@ -347,9 +351,16 @@ export function FormularioStripe({
                 line2: 'never',
                 city: 'never',
                 state: 'never',
-                country: 'never',
-                // El ÚNICO que se pide: es el de la comprobación AVS del
-                // banco y no lo tenemos de ningún paso anterior.
+                // [2026-11-14, Hispaniola: «los canadienses no pueden pagar,
+                // les pide ZIP pero Canadá usa Postal Code»] El país se elige
+                // en el formulario (antes iba oculto con el país del prefijo
+                // telefónico, y +1 es EE. UU. y Canadá a la vez, así que a un
+                // canadiense le salía «ZIP» y rechazaba su código postal con
+                // letras). Mostrándolo, al elegir Canadá el campo pasa a
+                // «Postal code» con su validación correcta.
+                country: 'auto',
+                // El código postal es el de la comprobación AVS del banco y
+                // no lo tenemos de ningún paso anterior.
                 postalCode: 'auto',
               },
             },
