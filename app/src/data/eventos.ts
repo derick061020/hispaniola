@@ -263,6 +263,13 @@ export type FichaEvento = {
    *  mini reproductor; el completo se pide al pulsar. Ver el mismo campo en
    *  data/tours.ts. */
   videoGaleriaCartel?: { src: string; poster: string }
+  /** [2026-11-17, MARKETING WEB / Sr. Fernando] SEGUNDO vídeo de la galería, la
+   *  columna 9:16 que va a la DERECHA de `videoGaleria`. Pedido: en bodas y
+   *  party boat, al lado del vídeo que ya hay, poner el vídeo de los botes
+   *  privados (el mismo de /tours/private-charter). Sin esto, la ficha enseña
+   *  un solo vídeo, como siempre. Su cartel/poster, en `videoGaleriaCartel2`. */
+  videoGaleria2?: string | null
+  videoGaleriaCartel2?: { src: string; poster: string }
   /** [2026-08-21, pedido de Samuel] LAS FOTOS DEL MENU, que son la mini
    *  galería de la primera celda del mosaico. Antes se DERIVABAN de las fotos
    *  de los paquetes, que son bodegones de plato sobre blanco; ahora salen de
@@ -873,6 +880,10 @@ const PARTY_BOAT: FichaEvento = {
   // El clip de la rejilla (`videoProducto`) sigue siendo el de antes.
   videoGaleria: '/video/eventos/party-boat-galeria.mp4',
   videoGaleriaCartel: { src: '/video/eventos/party-boat-cartel.mp4', poster: '/video/eventos/party-boat-cartel.jpg' },
+  // [2026-11-17, MARKETING WEB / Sr. Fernando] El vídeo de los botes privados,
+  // al lado del de party boat.
+  videoGaleria2: '/video/private-boats.mp4',
+  videoGaleriaCartel2: { src: '/video/private-boats-cartel.mp4', poster: '/video/private-boats-poster.jpg' },
   videoProducto: {
     src: '/video/eventos/party-boat.mp4',
     poster: '/fotos/ev-partyboat-video-poster.webp',
@@ -1076,6 +1087,10 @@ const BODAS: FichaEvento = {
   // para la rejilla.
   videoGaleria: '/video/eventos/weddings-reel.mp4',
   videoGaleriaCartel: { src: '/video/eventos/weddings-reel-cartel.mp4', poster: '/video/eventos/weddings-reel-poster.jpg' },
+  // [2026-11-17, MARKETING WEB / Sr. Fernando] El vídeo de los botes privados,
+  // al lado del reel de boda.
+  videoGaleria2: '/video/private-boats.mp4',
+  videoGaleriaCartel2: { src: '/video/private-boats-cartel.mp4', poster: '/video/private-boats-poster.jpg' },
   videoProducto: null,
   // FAQ de bodas — las 3 preguntas de la web del cliente + 1
   // pregunta sobre el Dress code (la más común, sale de la práctica

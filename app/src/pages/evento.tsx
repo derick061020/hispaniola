@@ -179,6 +179,10 @@ export function EventoPage() {
                 // que faltaba era el dato (`videoGaleria` en data/eventos.ts).
                 video={evento.videoGaleria}
                 videoCartel={evento.videoGaleriaCartel ?? null}
+                // [2026-11-17, MARKETING WEB / Sr. Fernando] El 2º vídeo (botes
+                // privados) al lado del de la ocasión, en bodas y party boat.
+                video2={evento.videoGaleria2 ?? null}
+                videoCartel2={evento.videoGaleriaCartel2 ?? null}
                 // [v2 2026-07-27, plan 01 §10] El slider de comida en la
                 // primera celda va también aquí: el cliente dijo «en TODOS los
                 // servicios» (reunión 07-24, 19:27), y las 3 landings de evento

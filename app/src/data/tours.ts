@@ -1349,7 +1349,14 @@ export const FICHAS: Record<string, FichaTour> = traducible({
       'tour-charter-17',
       'tour-charter-18',
     ],
-    videoGaleria: '/video/hero.mp4',
+    // [2026-11-17, MARKETING WEB / Sr. Fernando] El montaje de los botes
+    // privados reemplaza al placeholder `/video/hero.mp4`. Es el mismo clip que
+    // ahora acompaña a bodas y party boat. 9:16, se abre con sonido al pulsar.
+    videoGaleria: '/video/private-boats.mp4',
+    videoGaleriaCartel: {
+      src: '/video/private-boats-cartel.mp4',
+      poster: '/video/private-boats-poster.jpg',
+    },
     quoteDestacada: 'They tailored everything for us, the whole boat just for the family.',
     // [v3 2026-08-06, WEBSITE-TOURS pag. 20: «QUITAR HORAS Y PONER DEBAJO DE
     // PLAYA DESIERTA SOLO EN TOUR DE 4 HORAS»] Las horas desaparecen — un

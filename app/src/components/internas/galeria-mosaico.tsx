@@ -1,4 +1,4 @@
-import { useState, type CSSProperties, useEffect, useRef } from 'react'
+import { useState, type CSSProperties, type RefObject, useEffect, useRef } from 'react'
 import { medirVideo, observarVisto } from '@/lib/medir-video'
 import { Play, Volume2 } from 'lucide-react'
 import { GaleriaLightbox } from '@/components/tour/galeria-lightbox'
@@ -63,6 +63,9 @@ export function GaleriaMosaico({
   video = null,
   videoCartel = null,
   videoApaisado = false,
+  video2 = null,
+  videoCartel2 = null,
+  videoApaisado2 = false,
   fotosComida,
   videoProducto = null,
 }: {
@@ -75,6 +78,14 @@ export function GaleriaMosaico({
   videoCartel?: { src: string; poster: string } | null
   /** El vídeo completo es 16:9: el reproductor se abre apaisado. */
   videoApaisado?: boolean
+  /** [2026-11-17, MARKETING WEB / Sr. Fernando] SEGUNDA columna de vídeo, del
+   *  mismo tamaño 9:16, a la derecha de la primera. Nace porque pidieron que en
+   *  bodas y party boat, «al lado del vídeo individual» que ya hay, vaya otro
+   *  vídeo (el de los botes privados). null = solo una columna, como siempre —
+   *  los tours y /corporate no lo pasan y no cambian. */
+  video2?: string | null
+  videoCartel2?: { src: string; poster: string } | null
+  videoApaisado2?: boolean
   /** [v2] Fotos de plato del menú de ESTE tour/evento. Con 2 o más, la
    *  primera celda pasa a ser el slider. Sin ellas, el mosaico es el de
    *  siempre — las landings sin menú no cambian. */
@@ -95,11 +106,20 @@ export function GaleriaMosaico({
   // que no aparecían los platos ni se podían pasar — el visor prometía una
   // cosa (venías de las fotos del menú) y daba otra.
   const [conjunto, setConjunto] = useState<'galeria' | 'comida'>('galeria')
-  const [verVideo, setVerVideo] = useState(false)
+  // QUÉ vídeo abre el reproductor. Antes era un booleano (un solo vídeo); con
+  // dos columnas tiene que saber cuál se pulsó, así que guarda su src/poster y
+  // si se abre apaisado.
+  const [videoAbierto, setVideoAbierto] = useState<{
+    src: string
+    poster: string
+    apaisado: boolean
+  } | null>(null)
   // Medición (Sr. Fernando, 04/11): «lo vio en la galería» cuando la columna del
   // vídeo estuvo a la vista. Ver lib/medir-video.ts.
   const refColumnaVideo = useRef<HTMLButtonElement>(null)
+  const refColumnaVideo2 = useRef<HTMLButtonElement>(null)
   useEffect(() => (video ? observarVisto(refColumnaVideo.current, video) : undefined), [video])
+  useEffect(() => (video2 ? observarVisto(refColumnaVideo2.current, video2) : undefined), [video2])
   // [v2 2026-07-28] Origen de la expansión: el rectángulo de la celda o del
   // video que se pulsó, para que el visor DESPEGUE de ahí en vez de aparecer
   // en el centro. Ver lib/use-expansion-flip.ts.
@@ -108,8 +128,14 @@ export function GaleriaMosaico({
 
   // [dev-mode] ?dev-galeria=abierta — ver src/dev/dev-registry.ts
   useDevFlag('dev-galeria', (v) => setLightbox(v === 'abierta' ? 0 : null))
-  // [dev-mode] ?dev-galeria-video=abierto — el frame del reproductor.
-  useDevFlag('dev-galeria-video', (v) => setVerVideo(v === 'abierto'))
+  // [dev-mode] ?dev-galeria-video=abierto — el frame del reproductor (del 1º).
+  useDevFlag('dev-galeria-video', (v) =>
+    setVideoAbierto(
+      v === 'abierto' && video
+        ? { src: video, poster: videoCartel?.poster ?? `/fotos/${fotos[0]}.webp`, apaisado: videoApaisado }
+        : null,
+    ),
+  )
 
   if (fotos.length <= 1) return null
 
@@ -268,6 +294,66 @@ export function GaleriaMosaico({
     </div>
   )
 
+  // Una columna de vídeo 9:16: el cartel mudo en bucle hace de póster animado y
+  // el botón abre el reproductor con sonido. Se pinta una vez (los tours y
+  // /corporate) o dos (bodas y party boat, con el vídeo de los botes al lado),
+  // así que es una función y no JSX duplicado.
+  const columnaVideo = (
+    src: string,
+    cartel: { src: string; poster: string } | null,
+    apaisado: boolean,
+    ref: RefObject<HTMLButtonElement | null>,
+  ) => (
+    <button
+      type="button"
+      ref={ref}
+      onClick={(e) => {
+        video360.abrirDesde(e.currentTarget)
+        setVideoAbierto({ src, poster: cartel?.poster ?? `/fotos/${fotos[0]}.webp`, apaisado })
+        medirVideo(src, 'abierto')
+      }}
+      aria-label={`Watch the video of ${etiqueta}`}
+      className="group relative aspect-[9/16] h-galeria-video-alto-movil w-auto shrink-0 self-center overflow-hidden rounded-card-grande bg-papel-hueso sm:h-full sm:self-auto"
+    >
+      {/* Bucle mudo = cartel animado. El poster es la foto de portada: el hueco
+          nunca está vacío mientras carga, y quien tenga datos limitados ve una
+          imagen en vez de un rectángulo. */}
+      <video
+        src={cartel?.src ?? src}
+        poster={cartel?.poster ?? `/fotos/${fotos[0]}.webp`}
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="metadata"
+        aria-hidden="true"
+        className="size-full object-cover transition-transform duration-300 group-hover:scale-105"
+      />
+      {/* Degradado al pie: sin él la píldora de «Ver con sonido» flota sobre
+          fotogramas que cambian y a veces se queda ilegible. */}
+      <span
+        aria-hidden="true"
+        className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-navy/70 to-transparent"
+      />
+      {/* El play, centrado: es el botón, no una etiqueta de «esto es un
+          video». Crece al hover con la celda. */}
+      <span aria-hidden="true" className="absolute inset-0 grid place-items-center">
+        <span className="grid size-14 place-items-center rounded-full bg-white/25 text-white ring-1 ring-white/40 backdrop-blur-sm transition-transform duration-300 group-hover:scale-110">
+          <Play className="size-6 translate-x-px fill-current" />
+        </span>
+      </span>
+      {/* El cartel va mudo por obligación (los navegadores no autoreproducen
+          con sonido). La píldora dice qué gana el clic. */}
+      <span
+        aria-hidden="true"
+        className="absolute inset-x-0 bottom-0 flex items-center justify-center gap-1.5 px-3 pb-3 text-xs font-medium text-white"
+      >
+        <Volume2 className="size-3.5 shrink-0" />
+        {t('Watch with sound')}
+      </span>
+    </button>
+  )
+
   return (
     <>
       {/* La FILA (video + rejilla) es quien lleva el alto a partir de sm:, y
@@ -275,58 +361,10 @@ export function GaleriaMosaico({
           alto que gobernar. En móvil la fila no tiene alto: se apila y cada
           pieza usa el suyo. */}
       <div className="flex flex-col gap-2 sm:h-80 sm:flex-row sm:gap-1.5 lg:h-galeria-ficha-alto">
-        {video !== null ? (
-          <button
-            type="button"
-            ref={refColumnaVideo}
-            onClick={(e) => {
-              video360.abrirDesde(e.currentTarget)
-              setVerVideo(true)
-              medirVideo(video, 'abierto')
-            }}
-            aria-label={`Watch the video of ${etiqueta}`}
-            className="group relative aspect-[9/16] h-galeria-video-alto-movil w-auto shrink-0 self-center overflow-hidden rounded-card-grande bg-papel-hueso sm:h-full sm:self-auto"
-          >
-            {/* Bucle mudo = cartel animado. El poster es la foto de portada:
-                el hueco nunca está vacío mientras carga, y quien tenga datos
-                limitados ve una imagen en vez de un rectángulo. */}
-            <video
-              src={videoCartel?.src ?? video}
-              poster={videoCartel?.poster ?? `/fotos/${fotos[0]}.webp`}
-              autoPlay
-              muted
-              loop
-              playsInline
-              preload="metadata"
-              aria-hidden="true"
-              className="size-full object-cover transition-transform duration-300 group-hover:scale-105"
-            />
-            {/* Degradado al pie: sin él la píldora de «Ver con sonido» flota
-                sobre fotogramas que cambian y a veces se queda ilegible. */}
-            <span
-              aria-hidden="true"
-              className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-navy/70 to-transparent"
-            />
-            {/* El play, centrado: es el botón, no una etiqueta de «esto es un
-                video». Crece al hover con la celda. */}
-            <span aria-hidden="true" className="absolute inset-0 grid place-items-center">
-              <span className="grid size-14 place-items-center rounded-full bg-white/25 text-white ring-1 ring-white/40 backdrop-blur-sm transition-transform duration-300 group-hover:scale-110">
-                <Play className="size-6 translate-x-px fill-current" />
-              </span>
-            </span>
-            {/* El cartel va mudo por obligación (los navegadores no
-                autoreproducen con sonido). La píldora dice qué gana el clic
-                — si no, un video que ya se está moviendo no parece
-                pulsable. */}
-            <span
-              aria-hidden="true"
-              className="absolute inset-x-0 bottom-0 flex items-center justify-center gap-1.5 px-3 pb-3 text-xs font-medium text-white"
-            >
-              <Volume2 className="size-3.5 shrink-0" />
-              {t('Watch with sound')}
-            </span>
-          </button>
-        ) : null}
+        {video !== null ? columnaVideo(video, videoCartel, videoApaisado, refColumnaVideo) : null}
+        {video2 !== null
+          ? columnaVideo(video2, videoCartel2, videoApaisado2, refColumnaVideo2)
+          : null}
 
         {rejilla}
       </div>
@@ -345,14 +383,14 @@ export function GaleriaMosaico({
         />
       ) : null}
 
-      {verVideo && video !== null ? (
+      {videoAbierto !== null ? (
         <VideoLightbox
-          src={video}
-          poster={`/fotos/${fotos[0]}.webp`}
+          src={videoAbierto.src}
+          poster={videoAbierto.poster}
           etiqueta={etiqueta}
           origen={video360.origen}
-          apaisado={videoApaisado}
-          onCerrar={() => setVerVideo(false)}
+          apaisado={videoAbierto.apaisado}
+          onCerrar={() => setVideoAbierto(null)}
         />
       ) : null}
     </>
