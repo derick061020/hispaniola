@@ -147,7 +147,7 @@ export const CONCEPTOS_SUELTOS: ConceptoSuelto[] = traducible([
   },
   {
     id: 'fotos',
-    nombre: 'Tour photos',
+    nombre: 'GoPro tour photos', // [2026-11-19, Sr. Fernando] «go pro fotos»
     nota: 'All day long, GoPro included on the snorkel stop',
     importe: 20,
     foto: 'galeria-snorkel-lovers-9-v2',
@@ -197,7 +197,7 @@ export const CARA_A_CARA: FilaCaraACara[] = traducible([
     fotoAlt: 'The floating kitchen grill in action',
   },
   {
-    concepto: 'Tour photos',
+    concepto: 'GoPro tour photos', // [2026-11-19, Sr. Fernando] «go pro fotos»
     nosotros: 'Included, snorkeling shots too',
     otros: 'Charged separately',
     foto: 'galeria-snorkel-lovers-9-v2',
@@ -281,7 +281,7 @@ export const RAZONES: GrupoRazones[] = traducible([
     resumen: 'You talk to the owner. There’s no commission to pay in between.',
     razones: [
       'Book direct with the owner',
-      'Tour photos included',
+      'GoPro tour photos included', // [2026-11-19, Sr. Fernando] «go pro fotos»
       'Half-day trip: your afternoon stays free',
     ],
   },

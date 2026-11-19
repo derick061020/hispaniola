@@ -138,6 +138,34 @@ export function TourPage() {
     ficha.promesa ??
     (tour.booking === 'cotizacion' ? t('A day at sea, tailored to you') : t('A day at sea'))
 
+  // El bloque del menú se arma una vez y la página decide dónde va (`menuAbajo`).
+  const menuTour =
+    tour.booking === 'completo' ? (
+      <MenuTour
+        tour={tour}
+        ficha={ficha}
+        variante={variante}
+        personas={personas}
+        // [2026-08-07] Lo que hace clicable la franja de la langosta.
+        // `disponibles` aplica la MISMA regla que el widget (la
+        // langosta solo existe en los charters de 4 h), así que en un
+        // barco de 3 h la franja vuelve a ser informativa en vez de
+        // ofrecer algo que esa cocina no puede servir.
+        seleccionAddOns={{
+          elegidos: addOnsElegidos,
+          // [2026-09-01] Con `personas`, para que la regla de aforo
+          // (`soloHastaPersonas`) valga también aquí: el filtro tiene
+          // que ser EL MISMO que el del widget o las dos columnas
+          // discreparían sobre qué extras existen.
+          disponibles: addOnsDisponibles(ficha, variante, personas).map((a) => a.id),
+          alternar: (id) =>
+            setAddOnsElegidos((prev) =>
+              prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
+            ),
+        }}
+      />
+    ) : null
+
   return (
     // pb-[calc(4rem+env(safe-area-inset-bottom))] (auditoría móvil 2026-07-17):
     // BarraMovilFicha ahora crece con la zona segura del iPhone — el padding
@@ -274,31 +302,7 @@ export function TourPage() {
                   del menú en vez de competir con él — que fue lo que motivó
                   quitar la comparativa anterior, fundida dentro del bloque. */}
               {tour.booking === 'completo' ? <ComparadorPremium tour={tour} ficha={ficha} /> : null}
-              {tour.booking === 'completo' ? (
-                <MenuTour
-                  tour={tour}
-                  ficha={ficha}
-                  variante={variante}
-                  personas={personas}
-                  // [2026-08-07] Lo que hace clicable la franja de la langosta.
-                  // `disponibles` aplica la MISMA regla que el widget (la
-                  // langosta solo existe en los charters de 4 h), así que en un
-                  // barco de 3 h la franja vuelve a ser informativa en vez de
-                  // ofrecer algo que esa cocina no puede servir.
-                  seleccionAddOns={{
-                    elegidos: addOnsElegidos,
-                    // [2026-09-01] Con `personas`, para que la regla de aforo
-                    // (`soloHastaPersonas`) valga también aquí: el filtro tiene
-                    // que ser EL MISMO que el del widget o las dos columnas
-                    // discreparían sobre qué extras existen.
-                    disponibles: addOnsDisponibles(ficha, variante, personas).map((a) => a.id),
-                    alternar: (id) =>
-                      setAddOnsElegidos((prev) =>
-                        prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
-                      ),
-                  }}
-                />
-              ) : null}
+              {ficha.menuAbajo ? null : menuTour}
 
               {/* [v3 2026-08-06, slide 77] SECCION —no banda— debajo de los
                   menus, sitio que fijo Samuel. Ni es la banda «estas en
@@ -324,6 +328,12 @@ export function TourPage() {
 
               <Itinerario ficha={ficha} variante={variante} />
               <IncluyeTour ficha={ficha} />
+              {/* [2026-11-19, Sr. Fernando, Gerencia: «desplazar comida hacia abajo»]
+                  En Caribbean Escape y Coral Quest la comida va aquí, debajo de
+                  «What to Bring» y antes de los vídeos (`ficha.menuAbajo`). El
+                  resto de fichas la siguen teniendo arriba. Si se mueve, mover
+                  también la pestaña en anclas-ficha.tsx. */}
+              {ficha.menuAbajo ? menuTour : null}
               {/* v3 (2026-07-17, pedido de Samuel): tabla de precios por bote
                   para charter-privado (4 botes con sus tramos de pax).
                   Solo se pinta si la ficha tiene subVariantes. */}

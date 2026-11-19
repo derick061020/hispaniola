@@ -317,6 +317,11 @@ export type FichaTour = {
    *  Son ventajas REALES sacadas de `incluye`/`menuPremium` de esta misma
    *  ficha — no se inventa ninguna. */
   ventajasPremium?: string[]
+  /** [2026-11-19, Sr. Fernando, Gerencia: «desplazar comida hacia abajo»,
+   *  con la flecha a debajo de «What to Bring»] El menú se pinta después de
+   *  «What's Included / What to Bring» y antes de los vídeos, en vez de
+   *  arriba del itinerario. Solo en las fichas que lo pidieron. */
+  menuAbajo?: boolean
   /** [v2 2026-07-28] El widget de esta ficha abre SIEMPRE en piel premium
    *  (oscura con terminaciones doradas), haya o no toggle Light/Premium.
    *
@@ -388,8 +393,33 @@ const INCLUYE_MARINE_PARK: BeneficioIncluido[] = [
   // profesionales»] Texto literal de la variante 1 que mandaron. La
   // plataforma no se nombra —ellos mismos no la nombran en sus variantes—:
   // si mañana cambian de proveedor, «our online photo gallery» sigue valiendo.
-  { titulo: 'Complimentary Tour Photos', texto: 'GoPro photos uploaded after your tour to our online photo gallery.' },
+  // [2026-11-19, Sr. Fernando: «en todos los lugares que aparece fotos cambiar
+  // por go pro fotos»] Título con GoPro; el texto ya lo decía.
+  { titulo: 'Complimentary GoPro Photos', texto: 'GoPro photos uploaded after your tour to our online photo gallery.' },
 ]
+
+// [2026-11-19, Sr. Fernando, Gerencia] Caribbean Escape se separa de la lista
+// compartida: (1) «eliminar artificial reefs del primer bloque: Exclusive
+// marine park access» y (2) «añadir otro punto después de floating bar and the
+// natural pool», texto literal suyo. Coral Quest sigue con la compartida: no
+// pidió tocarla. ⚠️ El texto literal dice «ideal spot for families with
+// children», y esta ficha es 15+: se publica tal cual lo mandó.
+const INCLUYE_CARIBBEAN_ESCAPE: BeneficioIncluido[] = INCLUYE_MARINE_PARK.flatMap((b) => {
+  if (b.titulo === 'Exclusive Marine Park Access') {
+    return [{ ...b, texto: 'Snorkel in our protected Marine Park featuring the Underwater Museum and coral restoration gardens.' }]
+  }
+  if (b.titulo === 'Floating Bar at the Natural Pool') {
+    return [
+      b,
+      {
+        titulo: 'Second Snorkeling Stop at the Artificial Reef',
+        texto:
+          'Snorkel in shallow waters at our artificial reef, where schools of fish gather and you can spot some of the greatest variety of marine life in the Bávaro Reef. It’s an ideal spot for families with children and beginner snorkelers.',
+      },
+    ]
+  }
+  return [b]
+})
 
 // Traducción NUESTRA (el cliente no da estos dos bloques): son datos reales
 // portados del tarifario y de la web, solo cambian de idioma. Compartidos por
@@ -583,7 +613,8 @@ export const FICHAS: Record<string, FichaTour> = traducible({
       },
       {
         hora: '10:00 AM / 2:00 PM',
-        titulo: 'Snorkeling at the Marine Park',
+        // [2026-11-19, Sr. Fernando] Título literal («texto negrita»).
+        titulo: 'Snorkeling at the Marine Park / Exclusive for Hispaniola Clients',
         texto:
           'Explore our exclusive Marine Park, home to the Underwater Museum (launch date: Nov 15th), coral restoration gardens and artificial reefs that attract abundant tropical marine life.',
       },
@@ -595,7 +626,8 @@ export const FICHAS: Record<string, FichaTour> = traducible({
       },
       {
         hora: '12:00 PM / 4:00 PM',
-        titulo: 'Natural Pool & Floating Kitchen',
+        // [2026-11-19, Sr. Fernando] Título literal («texto negrita»).
+        titulo: 'Natural Pool, Floating Kitchen & Artificial Reefs / Exclusive for Hispaniola Clients',
         texto:
           "Swim in Punta Cana's famous crystal-clear natural pool before enjoying your freshly prepared gourmet lunch from our signature Floating Kitchen. No buffets. Every meal is cooked fresh on board.",
       },
@@ -615,7 +647,7 @@ export const FICHAS: Record<string, FichaTour> = traducible({
     // esta ficha y los 8 pesan igual, que es como él los presenta.
     // ⚠️ «Wi-Fi On Board» ya se prometía (estaba en incluyeExtra) — el dato no
     // es nuevo, solo sube de categoría.
-    incluye: INCLUYE_MARINE_PARK,
+    incluye: INCLUYE_CARIBBEAN_ESCAPE,
     noIncluido: NO_INCLUIDO_MARINE_PARK,
     queLlevar: QUE_LLEVAR_MARINE_PARK,
     recomendaciones: RECOMENDACIONES_V3,
@@ -629,6 +661,8 @@ export const FICHAS: Record<string, FichaTour> = traducible({
         r: 'Only if you choose to pay the 25% deposit, the balance gets a 5% discount when paid in cash.',
       },
     ],
+    // [2026-11-19, Sr. Fernando] Comida debajo de «What to Bring».
+    menuAbajo: true,
     tambienTeGusta: ['coral-quest', 'private-charter'],
     // [v2 2026-07-27] Las 4 ventajas del comparador (slide 17) y de la caja de
     // upsell del widget (slide 5). Salen de menuPremium/incluye de esta misma
@@ -643,7 +677,8 @@ export const FICHAS: Record<string, FichaTour> = traducible({
       'Lobster, certified Angus beef and Surf & Turf on your plate',
       '7 dishes to choose from instead of 2',
       'Vegetarian options and seafood cocktail',
-      'Your tour photos, included',
+      // [2026-11-19, Sr. Fernando] Fuera «Your tour photos, included»: las
+      // fotos van en Light y en Premium, no son ventaja de ninguno.
     ],
     // ⚡ [2026-09-01, Samuel: «eliminar el upsell del álbum completo máxima
     // calidad»] ESTA FICHA SE QUEDA SIN EXTRAS. El álbum de fotos era el único
@@ -828,19 +863,22 @@ export const FICHAS: Record<string, FichaTour> = traducible({
       {
         // ⚡ [2026-09-01, Samuel] 9:15/1:15 → 9:00/1:00, igual que `horarios`.
         hora: '9:00 AM / 1:00 PM',
-        titulo: 'Private Marina & Marine Interpretation Center',
+        // [2026-11-19, Sr. Fernando] Título y texto literales.
+        titulo: 'Marine Interpretation Center',
         texto:
-          "Check in at our private marina before visiting our Marine Interpretation Center, where you'll meet our Foundation Conservation Team and discover how we're restoring and protecting Punta Cana's coral reefs through one of the Dominican Republic's leading marine conservation projects.",
+          "Upon arrival, visit our Marine Interpretation Center, where you’ll meet our Foundation’s conservation team and discover how we’re restoring and protecting Punta Cana’s coral reefs through one of the Dominican Republic’s leading marine conservation projects.",
       },
       {
         hora: '10:00 AM / 2:00 PM',
-        titulo: 'Natural Pool & Symbolic Coral Planting',
+        // [2026-11-19, Sr. Fernando] Título literal («texto negrita»).
+        titulo: 'Natural Pool, Symbolic Coral Planting / Exclusive for Hispaniola Clients',
         texto:
           'Take part in a symbolic coral planting activity, then enjoy your first snorkeling experience in the crystal-clear Natural Pool, surrounded by our artificial reefs designed to attract tropical marine life.',
       },
       {
         hora: '10:45 AM / 2:45 PM',
-        titulo: 'Snorkeling at the Marine Park',
+        // [2026-11-19, Sr. Fernando] Título literal («texto negrita»).
+        titulo: 'Snorkeling at the Marine Park / Exclusive for Hispaniola Clients',
         texto:
           'Explore our protected Marine Park, home to the Underwater Museum (launch date: Nov 15th), coral restoration gardens and thriving reef ecosystems. Keep an eye out for sea turtles, which are frequently spotted during this part of the journey.',
       },
@@ -884,6 +922,8 @@ export const FICHAS: Record<string, FichaTour> = traducible({
         r: 'Only if you choose to pay the 25% deposit, the balance gets a 5% discount when paid in cash.',
       },
     ],
+    // [2026-11-19, Sr. Fernando] Comida debajo de «What to Bring».
+    menuAbajo: true,
     tambienTeGusta: ['caribbean-escape', 'private-charter'],
     // ⚡ [2026-09-01, Samuel] Sin extras: el álbum de fotos sale de las 4
     // fichas. Ver la nota del semi-privado y lib/tarifas.ts.
@@ -1407,7 +1447,8 @@ export const FICHAS: Record<string, FichaTour> = traducible({
       'WiFi on board',
       'Snorkeling gear (every size)',
       'Marine biologist as your guide on the reef',
-      'Free photos uploaded to our online photo gallery',
+      // [2026-11-19, Sr. Fernando] «go pro fotos».
+      'Free GoPro photos uploaded to our online photo gallery',
     ],
     // ⚡ [2026-09-01, Samuel] Fuera la langosta (ya no se vende aquí) y fuera el
     // álbum de fotos, que además nunca estuvo en esta línea. Lo que queda son
@@ -1673,7 +1714,8 @@ export const FICHAS: Record<string, FichaTour> = traducible({
       // no es verdad —se puede añadir aquí mismo—, así que cambia.
       addOn: {
         nombre: 'Premium lobster',
-        precio: 30,
+        // [2026-11-19, Sr. Fernando, Gerencia: «Saona: subir precio a 40$»] 30 -> 40.
+        precio: 40,
         // [2026-09-12, Rossanna: «para las excursiones de Saona poner MENU:
         // BEACH BUFFET y quitar boat»] En Saona se come en la playa, no a
         // bordo: «on board» describia el tour equivocado.
@@ -1753,7 +1795,7 @@ export const FICHAS: Record<string, FichaTour> = traducible({
     // [v3 2026-08-07, pedido de Samuel] SIN «professional photographer (on
     // request, extra cost)», igual que en snorkel-lovers.
     noIncluido:
-      'Not included: transportation from Casa de Campo (surcharge). Optional add-on at checkout: premium lobster (US$ 30/person).',
+      'Not included: transportation from Casa de Campo (surcharge). Optional add-on at checkout: premium lobster (US$ 40/person).',
     queLlevar: [
       'Swimsuit',
       'Towel',
@@ -1768,7 +1810,7 @@ export const FICHAS: Record<string, FichaTour> = traducible({
         p: 'What is the difference between the three options?',
         r: 'Saona Island Catuano goes by speedboat to Catuano beach and the Las Palmillas Natural Pool. Saona Island Mano Juan goes by speedboat to the fishing village of Mano Juan, Playa Toro and the Natural Pool. The Catamaran does the Catuano route at a relaxed pace and is the option for large groups (up to 70 guests).',
       },
-      { p: 'Can I add premium lobster?', r: 'Yes, at checkout: US$ 30 per person.' },
+      { p: 'Can I add premium lobster?', r: 'Yes, at checkout: US$ 40 per person.' },
       // [2026-10-30] Cláusula 3 de HAA-LEG-002 (Marketing): se intenta reprogramar y, si no se puede, reembolso total. Antes daba a elegir.
       { p: 'What if it rains?', r: 'If the tour is canceled due to weather or sea conditions, we will try to reschedule it. If that is not possible, we will refund the full price of the tour.' },
       {
@@ -1790,7 +1832,8 @@ export const FICHAS: Record<string, FichaTour> = traducible({
         descripcion:
           'Lobster for every person on board, on top of the buffet. Added when you book.',
         base: 'persona',
-        precio: 30,
+        // [2026-11-19, Sr. Fernando, Gerencia: «Saona: subir precio a 40$»] 30 -> 40.
+        precio: 40,
         nota: 'From March to June lobster may be unavailable; if so it is replaced with jumbo shrimp.',
       },
       // ⚡ [2026-09-01, Samuel] Aquí estaba el álbum de fotos, retirado de las 4

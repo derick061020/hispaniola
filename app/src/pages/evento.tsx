@@ -288,10 +288,10 @@ export function EventoPage() {
               {/* Paquetes, sitio 1 de 2: pegados al barco insignia (MICE). */}
               {evento.barcoInsignia ? (
                 <>
-                  <PaquetesEvento evento={evento} elegido={paquete} onElegir={elegirPaquete} />
-                  {/* La barra va PEGADA a la comida: el cliente las elige
-                      juntas y su tarifario las numera 01 y 02. */}
+                  {/* [2026-11-19, Sr. Fernando: «Open Bar: quiero que aparezca en
+                      primer lugar… Comida: debajo de los Open Bars»] */}
                   <BarrasEvento evento={evento} />
+                  <PaquetesEvento evento={evento} elegido={paquete} onElegir={elegirPaquete} />
                 </>
               ) : null}
 
@@ -306,8 +306,9 @@ export function EventoPage() {
                   del SITIO, no la de si hay paquetes. */}
               {evento.barcoInsignia ? null : (
                 <>
-                  <PaquetesEvento evento={evento} elegido={paquete} onElegir={elegirPaquete} />
+                  {/* [2026-11-19, Sr. Fernando] Barras primero, comida después. */}
                   <BarrasEvento evento={evento} />
+                  <PaquetesEvento evento={evento} elegido={paquete} onElegir={elegirPaquete} />
                 </>
               )}
 

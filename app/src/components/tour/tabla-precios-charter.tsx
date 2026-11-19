@@ -104,7 +104,7 @@ export function TablaPreciosCharter({
       </div>
 
       <p className="mt-4 text-xs text-navy-soft">
-        {t('* Premium lobster is an optional add-on at checkout (US$ 30 per person). * Prices may vary with season and availability. Confirm with the team when you book.')}
+        {t('* Premium lobster is an optional add-on at checkout (US$ 40 per person). * Prices may vary with season and availability. Confirm with the team when you book.')}
       </p>
     </section>
   )

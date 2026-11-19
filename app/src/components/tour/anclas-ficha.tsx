@@ -1,6 +1,7 @@
 import { t } from '@/lib/i18n'
 import { useLayoutEffect, useRef, useState } from 'react'
 import type { Tour } from '@/data/home'
+import { FICHAS } from '@/data/tours'
 import { useAnclasActiva, irAlAncla } from '@/components/ui/use-anclas-activa'
 import { useDevFlag } from '@/dev/use-dev-flag'
  // [dev-mode]
@@ -62,15 +63,19 @@ export function AnclasFicha({ tour }: { tour: Tour }) {
   // la página (pages/tour.tsx: el menú se movió por encima del itinerario,
   // slide 11). Este array TIENE que ir en el mismo orden que las secciones o
   // el resaltado de la pestaña activa al hacer scroll se desincroniza.
+  const menuAbajo = Boolean(FICHAS[tour.slug]?.menuAbajo)
   const anclas = [
     // [v3 2026-08-06] Las 5 etiquetas pasan a inglés con los títulos de
     // sección que apuntan: los bloques compartidos por las 4 fichas ya llevan
     // el copy aprobado («Itinerary», «What's Included»…), y una pestaña que
     // dice «Incluye» sobre una sección que dice «What's Included» se lee como
     // un fallo, no como una traducción a medias.
-    ...(tour.booking === 'completo' ? [{ id: 'ancla-menu', label: t('Menu') }] : []),
+    // [2026-11-19, Sr. Fernando] Con `menuAbajo` la comida va después de
+    // «Included» (pages/tour.tsx), y la pestaña la sigue.
+    ...(tour.booking === 'completo' && !menuAbajo ? [{ id: 'ancla-menu', label: t('Menu') }] : []),
     { id: 'ancla-itinerario', label: t('Itinerary') },
     { id: 'ancla-incluye', label: t('Included') },
+    ...(tour.booking === 'completo' && menuAbajo ? [{ id: 'ancla-menu', label: t('Menu') }] : []),
     { id: 'ancla-opiniones', label: t('Reviews') },
     { id: 'ancla-faq', label: 'FAQ' },
   ]

@@ -367,7 +367,19 @@ export type BarraEvento = {
   texto: string
   /** El que la casa quiere vender, con su badge. Mismo trato que
    *  `destacado` en PaqueteEvento. */
-  destacado?: boolean
+  destacado?: boolean  /** [2026-11-19, Sr. Fernando, Gerencia: «Open Bar: quiero que aparezca en
+   *  primer lugar… incluir las fotografías que hemos enviado y detallar
+   *  exactamente qué bebidas incluye cada paquete»] La foto de las botellas y
+   *  vasos de ESA barra (las tres que mandó: Caribe, Caribbean plus,
+   *  Signature) y el detalle, con la misma estructura que la web de Party Boat
+   *  que puso de modelo: botellas, lo demás de la barra y los cócteles. */
+  foto: string
+  fotoAlt: string
+  botellas: string[]
+  tambien: string[]
+  cocteles: string[]
+  /** El trago de bienvenida (solo Signature: «mimosa bienvenida»). */
+  bienvenida?: string
 }
 
 // LA BARRA, QUE ES LA OTRA MITAD DE LA DECISIÓN.
@@ -394,6 +406,13 @@ export const BARRAS_EVENTO: BarraEvento[] = [
     texto:
       'Dominican rum, vodka, tequila, whisky and Presidente beer. Cuba Libre, '
       + 'Screwdriver, Whisky & Coke and Tequila Sunrise, poured all day.',
+    // [2026-11-19, Sr. Fernando] Lista literal suya («Caribe»), sin los
+    // tamaños de botella: la web de Party Boat, su modelo, tampoco los pone.
+    foto: 'barra-caribbean',
+    fotoAlt: 'The Caribbean open bar: Barceló Dorado, Afterworks, Agavita, Passport and Presidente, with its cocktails',
+    botellas: ['Barceló Dorado Rum', 'Afterworks Vodka', 'Agavita Blanco Tequila', 'Passport Whisky'],
+    tambien: ['Presidente beer', 'Coca-Cola', 'Sprite / 7Up', 'Orange or pineapple juice', 'Water'],
+    cocteles: ['Cuba Libre', 'Screwdriver', 'Whisky & Coke', 'Tequila Sunrise'],
   },
   {
     id: 'caribbean-plus',
@@ -404,6 +423,12 @@ export const BARRAS_EVENTO: BarraEvento[] = [
       'Everything in Caribbean, with white wine and five cocktails: Mojito, '
       + 'Piña Colada, Margarita, Tequila Sunrise and the house Hispaniola '
       + 'Tropical Punch.',
+    // [2026-11-19, Sr. Fernando] «Caribbean plus», literal.
+    foto: 'barra-caribbean-plus',
+    fotoAlt: 'The Caribbean Plus open bar: Barceló Gran Añejo, Afterworks, Agavita, Passport, white wine and Presidente, with its cocktails',
+    botellas: ['Barceló Gran Añejo Rum', 'Afterworks Vodka', 'Agavita Blanco Tequila', 'Passport Whisky'],
+    tambien: ['Presidente beer', 'White wine'],
+    cocteles: ['Mojito', 'Piña Colada', 'Margarita', 'Tequila Sunrise', 'Hispaniola Tropical Punch'],
   },
   {
     id: 'signature',
@@ -415,6 +440,14 @@ export const BARRAS_EVENTO: BarraEvento[] = [
       + 'white wine, prosecco, and a Caribbean Mimosa the moment you step on '
       + 'board.',
     destacado: true,
+    // [2026-11-19, Sr. Fernando] «Signature Open Bar», literal: «y mantenemos
+    // los 4–5 cócteles anteriores» = los cinco de Caribbean Plus.
+    foto: 'barra-signature',
+    fotoAlt: 'The Signature open bar: Brugal Extra Viejo, Absolut, José Cuervo, Johnnie Walker Red, wines, prosecco and Presidente',
+    botellas: ['Brugal Extra Viejo Rum', 'Absolut Vodka', 'José Cuervo Tequila', 'Johnnie Walker Red Label Whisky'],
+    tambien: ['Presidente beer', 'White wine', 'Red wine', 'Prosecco'],
+    cocteles: ['Mojito', 'Piña Colada', 'Margarita', 'Tequila Sunrise', 'Hispaniola Tropical Punch'],
+    bienvenida: 'A Caribbean Mimosa the moment you step on board',
   },
 ]
 
@@ -812,8 +845,9 @@ const PARTY_BOAT: FichaEvento = {
     // [2026-10-02, cliente vía Rossanna] Las variantes 2 y 3 que mandaron,
     // literales. Los títulos pierden el «(Facebook)»: nombraba la plataforma
     // dos veces en la misma tarjeta, y ya no es esa.
-    { titulo: 'Tour Photos', texto: 'We upload your tour photos to our online gallery. Free.' },
-    { titulo: 'Underwater Photos', texto: 'From the snorkeling tour, available in our online photo gallery.' },
+    // [2026-11-19, Sr. Fernando: «en todos los lugares que aparece fotos cambiar por go pro fotos»]
+    { titulo: 'GoPro Tour Photos', texto: 'We upload your GoPro tour photos to our online gallery. Free.' },
+    { titulo: 'GoPro Underwater Photos', texto: 'From the snorkeling tour, available in our online photo gallery.' },
     { titulo: 'WiFi & AUX port', texto: 'WiFi on board and an AUX port for your music.' },
     { titulo: 'Music & Dance', texto: 'Sound system and a crew with energy.' },
     { titulo: 'National Open Bar', texto: 'National beer, rum, vodka, juices and sodas.' },
@@ -995,7 +1029,8 @@ const BODAS: FichaEvento = {
     // sacarla escondería una parada que sí se vende, y dejarla sin condición
     // prometía tres paradas en los paquetes de 3 h.
     { titulo: 'Deserted beach', texto: 'Private stop with a coco loco. 4-hour Premium package only.' },
-    { titulo: 'Photos', texto: 'Of the whole event, uploaded to our online photo gallery. Free.' },
+    // [2026-11-19, Sr. Fernando: «en todos los lugares que aparece fotos cambiar por go pro fotos»]
+    { titulo: 'GoPro Photos', texto: 'GoPro photos of the whole event, uploaded to our online photo gallery. Free.' },
     { titulo: 'Food', texto: 'Freshly made in our floating kitchen, custom menu.' },
     { titulo: 'Coordinator', texto: 'One person just for you, from start to finish.' },
     // 8º ítem, y es EL dato que separa bodas de party boat: las dos

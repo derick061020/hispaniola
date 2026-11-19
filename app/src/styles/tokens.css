@@ -2482,6 +2482,9 @@
   --spacing-tm-movil-v3: 82%;
   --aspect-tm-foto-v3: 4 / 3;
   --aspect-tm-foto-movil-v3: 16 / 9;
+  /* [2026-11-19, Sr. Fernando] Foto de las tarjetas de comida en las páginas de
+     evento, más baja: «la sección de comida se ve demasiado grande». */
+  --aspect-tm-foto-compacta-v3: 2 / 1;
   /* El resorte «Gentle» de Figma (masa 1, rigidez 100, amortiguación 15),
      muestreado: 0,78 s hasta asentarse, ~3 % de rebote. */
   --ease-resorte-gentil: linear(0, 0.03, 0.104, 0.204, 0.316, 0.43, 0.539, 0.638, 0.726, 0.8, 0.862, 0.911, 0.949, 0.978, 0.999, 1.013, 1.022, 1.027, 1.028, 1.028, 1.026, 1.023, 1.02, 1.017, 1.014, 1.011, 1.008, 1.006, 1.004, 1.003, 1.002, 1);

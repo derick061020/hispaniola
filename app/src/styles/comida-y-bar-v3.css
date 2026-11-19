@@ -1228,3 +1228,45 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+/* [2026-11-19, Sr. Fernando, Gerencia: «la sección de comida se ve demasiado
+   grande… reducir el tamaño de las imágenes y los espacios, de manera que la
+   presentación sea más compacta, elegante y fácil de visualizar», en Events,
+   Weddings y MICE] Solo la versión de columna (las páginas de evento): la
+   página de Food & Bar se queda como está. Foto más baja, menos aire y cifras
+   un punto más pequeñas. */
+.comida3-tm-rejilla--columna {
+  row-gap: calc(var(--spacing) * 4);
+}
+.comida3-tm-rejilla--columna .comida3-tm-foto {
+  aspect-ratio: var(--aspect-tm-foto-compacta-v3);
+}
+.comida3-tm-rejilla--columna .comida3-tm > div:not(.comida3-tm-foto) {
+  padding-inline: calc(var(--spacing) * 4);
+}
+.comida3-tm-rejilla--columna .comida3-tm > div:nth-child(2) {
+  padding-top: calc(var(--spacing) * 3);
+}
+.comida3-tm-rejilla--columna .comida3-tm > div:nth-child(3) {
+  padding-block: calc(var(--spacing) * 2) calc(var(--spacing) * 3);
+}
+.comida3-tm-rejilla--columna .comida3-tm > div:last-child {
+  padding-block: calc(var(--spacing) * 3) calc(var(--spacing) * 4);
+}
+.comida3-tm-rejilla--columna .comida3-tm h3 {
+  font-size: var(--text-xl);
+}
+.comida3-tm-rejilla--columna .comida3-tm .text-4xl {
+  font-size: var(--text-3xl);
+}
+.comida3-tm-rejilla--columna .comida3-bocados {
+  padding: calc(var(--spacing) * 5) calc(var(--spacing) * 3) calc(var(--spacing) * 3);
+}
+.comida3-tm-rejilla--columna .comida3-bocados .text-5xl {
+  font-size: var(--text-4xl);
+}
+@media (width < 40rem) {
+  .comida3-tm-rejilla--columna .comida3-tm-foto {
+    aspect-ratio: var(--aspect-tm-foto-compacta-v3);
+  }
+}
