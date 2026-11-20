@@ -11,7 +11,7 @@
 //   Reggie's review   → Events 3, Weddings 3, Private boats 3
 //   Honey Moon        → Caribbean Escape 2, Weddings 4, Events 4
 //   Private Boats     → MICE 1
-//   first-time-snorkel→ Caribbean Escape 3
+//   first-time-snorkel→ Caribbean Escape 3, Coral Quest 4 (confirmado 19/11 20:02)
 //   in-their-words    → Coral Quest 2, Private tours 4
 //   no-worries        → Caribbean Escape 4, Coral Quest 3
 //   4 hours           → Caribbean Escape 5, Private tours 5
@@ -19,8 +19,7 @@
 //   coral-quest-cierre→ Coral Quest 5 («Coral Quest 5» en el pie)
 //
 // «Private boats» y «Private tours» son la misma página (/tours/private-charter):
-// sus posiciones no se pisan (3, 4, 5). Coral Quest no tiene 4.º y el charter
-// no tiene 2.º: se pintan los que hay, en su orden.
+// sus posiciones no se pisan (3, 4, 5). El charter no tiene 2.º: se pintan los que hay, en su orden.
 //
 // Cada reel: `src` (720p con sonido), `cartel` (6 s mudo a 360p para el bucle)
 // y `poster`. Originales de 75–280 MB recomprimidos a 7–20 MB.
@@ -67,7 +66,14 @@ export const REELS_PRODUCTO = {
     reel('no-worries'),
     reel('four-hours'),
   ],
-  coralQuest: [CORAL_QUEST_ACTUAL, reel('in-their-words'), reel('no-worries'), reel('coral-quest-cierre')],
+  coralQuest: [
+    CORAL_QUEST_ACTUAL,
+    reel('in-their-words'),
+    reel('no-worries'),
+    // [19/11 20:02, Sr. Fernando: «coral quest num 4», citando «Caribbean escape3, Coral quest 4»]
+    reel('first-time-snorkel'),
+    reel('coral-quest-cierre'),
+  ],
   privateCharter: [BOTES_PRIVADOS_ACTUAL, reel('reggies-review'), reel('in-their-words'), reel('four-hours')],
   partyBoat: [PARTY_BOAT_ACTUAL, BOTES_PRIVADOS_ACTUAL, reel('reggies-review'), reel('honey-moon')],
   weddings: [BODA_ACTUAL, BOTES_PRIVADOS_ACTUAL, reel('reggies-review'), reel('honey-moon'), reel('upcoming-wedding')],
