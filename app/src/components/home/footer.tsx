@@ -329,7 +329,11 @@ export function Footer({ cta = t('Ready for an unforgettable day?') }: { cta?: s
           <p className="text-sm font-semibold text-white">{t('How guests rate us')}</p>
           <p className="mt-1 text-sm text-white/70">
             <span className="font-semibold text-white">★ {RESENAS_AGREGADO.rating}</span> ·{' '}
-            {numero(RESENAS_AGREGADO.total)} {t('reviews · #1 on TripAdvisor for 7 years')}
+            {/* [2026-11-19] useGrouping 'always': en español el separador de
+                miles solo sale desde 5 cifras y aquí se leía «5720 reseñas»
+                (antes «1782») mientras el resto del sitio dice «5.720». Igual
+                que en data/por-que-reservar.ts. */}
+            {numero(RESENAS_AGREGADO.total, { useGrouping: 'always' })} {t('reviews · #1 on TripAdvisor for 7 years')}
           </p>
           {/* [2026-10-30, Fernando via Blanka: «en horizontal y más grandes»]
               48 px (antes 36) y siempre en una fila, sin saltar de línea. */}
