@@ -121,7 +121,7 @@ export function ResumenReserva({
    *  aparte del tour, nunca fundidos en el precio base: el visitante tiene que
    *  ver qué parte del total eligió añadir — y poder reconocer el álbum que
    *  viene premarcado. */
-  lineasAddOns?: { label: string; quantity: number; amount: number }[]
+  lineasAddOns?: { label: string; quantity: number; amount: number; kind?: string }[]
   /** Las ofertas que el servidor ha aplicado a este pedido. */
   descuentos?: { id: string; label: string; pct: number; granted: boolean }[]
   importeDescuento?: number
@@ -436,18 +436,26 @@ export function ResumenReserva({
             </>
           )}
           {lineasAddOns?.map((extra) => (
-            <FilaPrecio
-              key={extra.label}
-              concepto={
-                <>
-                  {t(extra.label)}{' '}
-                  {extra.quantity > 1 ? (
-                    <span className="text-navy-soft">× {extra.quantity}</span>
-                  ) : null}
-                </>
-              }
-              importe={extra.amount}
-            />
+            <div key={extra.label}>
+              <FilaPrecio
+                concepto={
+                  <>
+                    {t(extra.label)}{' '}
+                    {extra.quantity > 1 ? (
+                      <span className="text-navy-soft">× {extra.quantity}</span>
+                    ) : null}
+                  </>
+                }
+                importe={extra.amount}
+              />
+              {/* [2026-11-19, Sr. Fernando: nota junto al precio] El
+                  transporte privado entra entero en el depósito. */}
+              {extra.kind === 'transporte' ? (
+                <p className="text-xs text-navy-sub">
+                  {t('Private transportation is paid in full at the time of booking.')}
+                </p>
+              ) : null}
+            </div>
           ))}
           {/* [2026-09-01, Derick: «que aparezcan los descuentos en el checkout»
               y «que no solo se aplique, sino que el cliente sepa que se

@@ -3288,4 +3288,10 @@ export const ES: Record<string, string> = {
   "The Caribbean open bar: Barceló Dorado, Afterworks, Agavita, Passport and Presidente, with its cocktails": "La barra Caribbean: Barceló Dorado, Afterworks, Agavita, Passport y Presidente, con sus cócteles",
   "The Caribbean Plus open bar: Barceló Gran Añejo, Afterworks, Agavita, Passport, white wine and Presidente, with its cocktails": "La barra Caribbean Plus: Barceló Gran Añejo, Afterworks, Agavita, Passport, vino blanco y Presidente, con sus cócteles",
   "The Signature open bar: Brugal Extra Viejo, Absolut, José Cuervo, Johnnie Walker Red, wines, prosecco and Presidente": "La barra Signature: Brugal Extra Viejo, Absolut, José Cuervo, Johnnie Walker Red, vinos, prosecco y Presidente",
+  // [2026-11-19, Sr. Fernando, Gerencia] Transporte privado ida y vuelta.
+  "Air-conditioned transportation from your hotel. Private transportation can be added for an additional fee.": "Transporte con aire acondicionado desde tu hotel. Puedes añadir transporte privado por un cargo adicional.",
+  "Add private round-trip transportation": "Añadir transporte privado ida y vuelta",
+  "Just for your group. {lejano} from Uvero Alto and Cap Cana, {normal} from other areas. Shared transportation is still included.": "Solo para tu grupo. {lejano} desde Uvero Alto y Cap Cana, {normal} desde las demás zonas. El transporte compartido sigue incluido.",
+  "Private transportation is paid in full at the time of booking.": "El transporte privado se paga en su totalidad al momento de reservar.",
+  "Private round-trip transportation": "Transporte privado ida y vuelta",
 }

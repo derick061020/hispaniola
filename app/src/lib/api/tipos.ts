@@ -138,6 +138,10 @@ export type LineaAddOn = {
   slug: string
   label: string
   base: BaseAddOn
+  /** [2026-11-19] `transporte` = el transporte privado, que se cobra entero
+   *  con el depósito (`paid_in_full`). `fundacion` = producto de la tienda. */
+  kind?: 'tour' | 'fundacion' | 'transporte'
+  paid_in_full?: boolean
   unit_price: number
   quantity: number
   amount: number
@@ -167,6 +171,8 @@ export type Cotizacion = {
   base: number
   addons: LineaAddOn[]
   addons_total: number
+  /** [2026-11-19] El transporte privado, si está contratado. */
+  private_transport?: LineaAddOn | null
   subtotal: number
   discounts: DescuentoAplicado[]
   discount_pct: number
@@ -213,6 +219,8 @@ export type Pedido = {
   how_found: string | null
   dishes: { guest: number; dish: string }[]
   addons: string[]
+  /** [2026-11-19] Si el pedido lleva el transporte privado contratado. */
+  private_transport?: boolean
   amounts: {
     currency: Moneda
     base: number
@@ -369,6 +377,9 @@ export type ParcheCheckout = {
   discounts?: string[]
   dishes?: (string | { guest: number; dish: string })[]
   addons?: string[]
+  /** [2026-11-19, Sr. Fernando] Transporte privado ida y vuelta. El importe lo
+   *  pone Odoo según la zona del hotel. */
+  private_transport?: boolean
   meta?: MetaOrigen
   /** [2026-10-30] Casillas del último paso (anexo HAA-LEG-002, apartado D).
    *  Campo NUEVO: Odoo todavía no lo conoce. Viaja en un `sync` aparte, justo
