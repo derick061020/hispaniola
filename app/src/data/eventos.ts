@@ -1,4 +1,5 @@
 import { traducible } from '@/lib/i18n'
+import { REELS_PRODUCTO } from '@/data/reels-producto'
 
 // Contenido de las 3 LANDINGS de eventos v2 (PLAN-EVENTOS.md) — portado
 // VERBATIM de las 3 URLs de la web actual del cliente:
@@ -917,6 +918,8 @@ const PARTY_BOAT: FichaEvento = {
   // [2026-11-04, Sr. Fernando, MARKETING WEB] La columna vertical lleva ya el
   // vídeo «Party Boat» que mandó Marketing (antes era el de marca de relleno).
   // El clip de la rejilla (`videoProducto`) sigue siendo el de antes.
+  // [2026-11-19, Sr. Fernando] Los 5 reels de arriba. Reparto en data/reels-producto.ts.
+  reels: REELS_PRODUCTO.partyBoat,
   videoGaleria: '/video/eventos/party-boat-galeria.mp4',
   videoGaleriaCartel: { src: '/video/eventos/party-boat-cartel.mp4', poster: '/video/eventos/party-boat-cartel.jpg' },
   // [2026-11-17, MARKETING WEB / Sr. Fernando] El vídeo de los botes privados,
@@ -1125,6 +1128,8 @@ const BODAS: FichaEvento = {
   // era el vídeo de marca de relleno. El cartel es un recorte corto y mudo del
   // mismo reel, con la portada que entregaron. Sigue sin `videoProducto` 16:9
   // para la rejilla.
+  // [2026-11-19, Sr. Fernando] Los 5 reels de arriba. Reparto en data/reels-producto.ts.
+  reels: REELS_PRODUCTO.weddings,
   videoGaleria: '/video/eventos/weddings-reel.mp4',
   videoGaleriaCartel: { src: '/video/eventos/weddings-reel-cartel.mp4', poster: '/video/eventos/weddings-reel-poster.jpg' },
   // [2026-11-17, MARKETING WEB / Sr. Fernando] El vídeo de los botes privados,
@@ -1342,7 +1347,11 @@ const EMPRESAS: FichaEvento = {
   ],
   // ⚠️ PLACEHOLDER, igual que en las otras dos. El clip real de corporate va
   // en la rejilla, abajo.
-  videoGaleria: '/video/hero.mp4',
+  // [2026-11-19, Sr. Fernando: «Mice num1»] El placeholder deja paso al vídeo
+  // «Private Boats» que mandó Marketing. Es el único reel de MICE, así que va
+  // en la columna 9:16 de siempre y no en fila de reels.
+  videoGaleria: REELS_PRODUCTO.mice.src,
+  videoGaleriaCartel: { src: REELS_PRODUCTO.mice.cartel!, poster: REELS_PRODUCTO.mice.poster },
   videoProducto: {
     src: '/video/eventos/corporate.mp4',
     poster: '/fotos/ev-corporate-video-poster.webp',

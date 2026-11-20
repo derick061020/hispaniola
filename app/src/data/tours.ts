@@ -9,6 +9,7 @@
 
 import type { AddOn } from '@/lib/tarifas'
 import { traducible } from '@/lib/i18n'
+import { REELS_PRODUCTO } from '@/data/reels-producto'
 
 export type PasoItinerario = {
   hora: string
@@ -600,6 +601,8 @@ export const FICHAS: Record<string, FichaTour> = traducible({
       'tour-escape-15',
       'tour-escape-16',
     ],
+    // [2026-11-19, Sr. Fernando] Los 5 reels de arriba. Reparto en data/reels-producto.ts.
+    reels: REELS_PRODUCTO.caribbeanEscape,
     videoGaleria: '/video/tours/caribbean-escape.mp4',
     videoGaleriaCartel: { src: '/video/tours/caribbean-escape-cartel.mp4', poster: '/video/tours/caribbean-escape-cartel.jpg' },
     videoGaleriaApaisado: true,
@@ -865,6 +868,8 @@ export const FICHAS: Record<string, FichaTour> = traducible({
       'tour-coral-11',
       'tour-coral-2',
     ],
+    // [2026-11-19, Sr. Fernando] Los 5 reels de arriba. Reparto en data/reels-producto.ts.
+    reels: REELS_PRODUCTO.coralQuest,
     videoGaleria: '/video/tours/coral-quest.mp4',
     videoGaleriaCartel: { src: '/video/tours/coral-quest-cartel.mp4', poster: '/video/tours/coral-quest-cartel.jpg' },
     videoGaleriaApaisado: true,
@@ -1423,6 +1428,8 @@ export const FICHAS: Record<string, FichaTour> = traducible({
     // [2026-11-17, MARKETING WEB / Sr. Fernando] El montaje de los botes
     // privados reemplaza al placeholder `/video/hero.mp4`. Es el mismo clip que
     // ahora acompaña a bodas y party boat. 9:16, se abre con sonido al pulsar.
+    // [2026-11-19, Sr. Fernando] Los 5 reels de arriba. Reparto en data/reels-producto.ts.
+    reels: REELS_PRODUCTO.privateCharter,
     videoGaleria: '/video/private-boats.mp4',
     videoGaleriaCartel: {
       src: '/video/private-boats-cartel.mp4',
