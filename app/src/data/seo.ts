@@ -12,7 +12,7 @@
 // español cada página sigue con su título traducido. Los H1 no se tocan (voz de
 // marca, regla 1 del documento) y las rutas tampoco (regla 3).
 //
-// ⚠️ La portada dice «4.9 stars from 1,782 reviews»: Marketing pide confirmarlo
+// ⚠️ La portada dice «4.9 stars from 5,720 reviews»: Marketing pide confirmarlo
 // con Operaciones, porque cambia con el tiempo. Ya no dice «#1 on TripAdvisor
 // 7 years running», que habría que poder demostrar.
 
@@ -23,7 +23,7 @@ export const SEO_POR_RUTA: Record<string, SeoRuta> = {
   '/': {
     titulo: 'Catamaran Tours in Punta Cana | Hispaniola Aquatic',
     descripcion:
-      'Snorkeling in a real coral nursery, a secluded beach and food cooked on board. Small groups, 4.9 stars from 1,782 reviews. Book direct.',
+      'Snorkeling in a real coral nursery, a secluded beach and food cooked on board. Small groups, 4.9 stars from 5,720 reviews. Book direct.',
   },
   // objetivo: punta cana catamaran tours 303 + punta cana boat tours 558
   '/tours': {

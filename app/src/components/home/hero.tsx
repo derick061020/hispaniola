@@ -389,7 +389,7 @@ export function Hero() {
                       real (4.9, con relleno fraccionario en la 5ª estrella)
                       es la de reseñas. */}
                   <div className="mt-2 flex flex-wrap items-start justify-center gap-x-8 gap-y-4">
-                    <InsigniaConfianza calificacion={4.9} titulo="4.9" subtitulo={t('1,782 reviews')} />
+                    <InsigniaConfianza calificacion={4.9} titulo="4.9" subtitulo={t('5,720 reviews')} />
                     <InsigniaConfianza calificacion={5} titulo={t('#1 on TripAdvisor')} subtitulo={t('7 years running')} />
                     <InsigniaConfianza calificacion={5} titulo={t('Viator Awards')} subtitulo="2022 · 2023 · 2024" />
                   </div>

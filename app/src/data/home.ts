@@ -119,7 +119,7 @@ export const TOURS: Tour[] = traducible([
     audienciaChip: 'Ages 15+', // [2026-10-30] PDF HAA-LEG-002 §8
     duracionCorta: '4 h',
     rating: 4.9,
-    resenas: 1782,
+    resenas: 5720,
     maxPax: 25,
     precioLight: 99,
     booking: 'completo',
@@ -146,7 +146,7 @@ export const TOURS: Tour[] = traducible([
     audienciaChip: 'All ages',
     duracionCorta: '4 h',
     rating: 4.9,
-    resenas: 1782,
+    resenas: 5720,
     // v3 (2026-07-17): el «Max. Capacity: 30» de la web del cliente + precio
     // tarifa dual Adulto / Niño (la web publica 2 tarifas separadas solo para
     // este tour familiar — el resto del catálogo es 1 precio por persona). El
@@ -190,7 +190,7 @@ export const TOURS: Tour[] = traducible([
     // barco, no es un rango aproximado.
     duracionCorta: '3 or 4 h',
     rating: 4.9,
-    resenas: 1782,
+    resenas: 5720,
     // [v3 2026-08-06] 85, no 120: el copy aprobado (WEBSITE-TOURS pag. 17)
     // fija el aforo del Forever Teresa, que es el barco grande del charter y
     // el que marca el maximo de la ficha. Alimenta la card del grid y el
@@ -233,7 +233,7 @@ export const TOURS: Tour[] = traducible([
     audienciaChip: 'Full day',
     duracionCorta: 'full day',
     rating: 4.9,
-    resenas: 1782,
+    resenas: 5720,
     maxPax: 70,
     precioLight: 184,
     booking: 'completo',
@@ -1262,7 +1262,7 @@ export const RESENAS_MURO: Review[] = QUOTES.flatMap((real, i) => [
 // «intentar que sea lo más real posible»).
 //
 // ⚠️ LOS RATINGS POR PLATAFORMA SON DEL CLIENTE, NO NUESTROS. Hasta
-// 2026-07-22 esta barra pintaba SOLO el agregado real (4,9 / 1.782) porque
+// 2026-07-22 esta barra pintaba SOLO el agregado real (4,9 / 5.720) porque
 // las cifras por plataforma de la maqueta (Google 4,9 · +900 reseñas /
 // TripAdvisor 4,9 / Viator 4,8 Premier) no existen en ninguna fuente del
 // proyecto: las generó la IA con la que el cliente hizo esa maqueta.
@@ -1323,10 +1323,12 @@ export const PLATAFORMAS_RESENAS: PlataformaResena[] = traducible([
   {
     id: 'google',
     nombre: 'Google',
-    rating: '4.9',
-    ratingNumero: 4.9,
+    // [2026-11-19, Sr. Fernando, Gerencia, con captura de Google: 4,8 · 907
+    // opiniones] Confirmado por el cliente: deja de estar por confirmar.
+    rating: '4.8',
+    ratingNumero: 4.8,
     distincion: 'More than 900 reviews',
-    porConfirmar: true,
+    porConfirmar: false,
     url: null,
   },
   {
@@ -1349,8 +1351,15 @@ export const PLATAFORMAS_RESENAS: PlataformaResena[] = traducible([
   },
 ])
 
-/** Agregado real, el mismo número que usa el hero y el footer. */
-export const RESENAS_AGREGADO = traducible({ rating: '4.9', total: 1782 })
+/** Agregado real, el mismo número que usa el hero y el footer.
+ *  [2026-11-19, Sr. Fernando: «hay que actualizar el número de reviews: en
+ *  TripAdvisor son más de 4000, Google 900, Facebook casi 800», con capturas:
+ *  TripAdvisor 4.057 (4,9), Google 907 (4,8), Facebook 756 (100 % lo
+ *  recomienda)] 4.057 + 907 + 756 = 5.720. La media ponderada sale 4,9
+ *  (contando Facebook como 5). Antes: 1.782. El número está repetido a mano
+ *  en hero, footer, flota, SEO, schema e index.html, y en Odoo
+ *  (`haa.excursion.review_count`): se cambian todos juntos. */
+export const RESENAS_AGREGADO = traducible({ rating: '4.9', total: 5720 })
 
 // Los 2 VIDEO-TESTIMONIOS de la cabecera de la sección (2026-07-22).
 // Sustituyen al antiguo `FUNDADOR` —un solo video, con la frase de los

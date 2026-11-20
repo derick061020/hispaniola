@@ -263,6 +263,11 @@ export type FichaEvento = {
    *  mini reproductor; el completo se pide al pulsar. Ver el mismo campo en
    *  data/tours.ts. */
   videoGaleriaCartel?: { src: string; poster: string }
+  /** [2026-11-19, Sr. Fernando, Gerencia] Hasta 5 reels verticales que van
+   *  ARRIBA de la galería de fotos (que pasa a compacta). `cartel` = clip corto
+   *  mudo para el bucle; `src` = el reel completo con sonido. Ver `reels` en
+   *  galeria-mosaico.tsx. */
+  reels?: { src: string; poster: string; cartel?: string }[]
   /** [2026-11-17, MARKETING WEB / Sr. Fernando] SEGUNDO vídeo de la galería, la
    *  columna 9:16 que va a la DERECHA de `videoGaleria`. Pedido: en bodas y
    *  party boat, al lado del vídeo que ya hay, poner el vídeo de los botes

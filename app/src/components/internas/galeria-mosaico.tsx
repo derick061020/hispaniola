@@ -68,6 +68,7 @@ export function GaleriaMosaico({
   videoApaisado2 = false,
   fotosComida,
   videoProducto = null,
+  reels = null,
 }: {
   fotos: string[]
   /** describe el conjunto para lectores de pantalla (el nombre del tour/evento) */
@@ -99,6 +100,16 @@ export function GaleriaMosaico({
    *  la MISMA galería que las fotos, en su diapositiva 0, para que además se
    *  llegue a él pasando fotos. */
   videoProducto?: { src: string; poster: string } | null
+  /** [2026-11-19, Sr. Fernando, Gerencia] LOS REELS ARRIBA, LAS FOTOS DEBAJO.
+   *  «En cada producto colocaremos 5 reels, que serán el contenido visual
+   *  principal… debajo mantendremos la galería de fotos, pero con imágenes de
+   *  menor tamaño y una presentación más compacta». Con reels, la fila de
+   *  arriba son hasta 5 columnas 9:16 (cartel mudo en bucle + reproductor con
+   *  sonido al pulsar) y las columnas `video`/`video2` NO se pintan: su sitio
+   *  es ahora la fila de reels. La rejilla de fotos baja a
+   *  `--spacing-galeria-compacta-alto`. Sin reels (null o vacío), todo como
+   *  antes. */
+  reels?: { src: string; poster: string; cartel?: string }[] | null
 }) {
   const [lightbox, setLightbox] = useState<number | null>(null)
   // [v2 2026-07-28] QUÉ conjunto muestra el lightbox. Bug que reportó Samuel:
@@ -120,6 +131,7 @@ export function GaleriaMosaico({
   const refColumnaVideo2 = useRef<HTMLButtonElement>(null)
   useEffect(() => (video ? observarVisto(refColumnaVideo.current, video) : undefined), [video])
   useEffect(() => (video2 ? observarVisto(refColumnaVideo2.current, video2) : undefined), [video2])
+  const conReels = (reels?.length ?? 0) > 0
   // [v2 2026-07-28] Origen de la expansión: el rectángulo de la celda o del
   // video que se pulsó, para que el visor DESPEGUE de ahí en vez de aparecer
   // en el centro. Ver lib/use-expansion-flip.ts.
@@ -282,14 +294,14 @@ export function GaleriaMosaico({
     // con el ancho sobrante en vez de imponer el min-content de sus 4 celdas
     // de abajo (que empujaría el video fuera de la columna).
     <div
-      className="grid h-72 min-w-0 flex-1 grid-cols-12 gap-1.5 overflow-hidden rounded-card-grande sm:h-full"
+      className={`grid min-w-0 flex-1 grid-cols-12 gap-1.5 overflow-hidden rounded-card-grande ${conReels ? 'h-galeria-compacta-alto' : 'h-72 sm:h-full'}`}
       style={{ gridTemplateRows: '1.35fr 1fr' } as CSSProperties}
     >
       {[0, 1, 2].map((i) => celda(i, 'col-span-4'))}
       {[3, 4, 5, 6].map((i) => celda(i, 'col-span-3'))}
     </div>
   ) : (
-    <div className="grid h-56 min-w-0 flex-1 grid-cols-2 grid-rows-2 gap-1.5 overflow-hidden rounded-card-grande sm:h-full">
+    <div className={`grid min-w-0 flex-1 grid-cols-2 grid-rows-2 gap-1.5 overflow-hidden rounded-card-grande ${conReels ? 'h-galeria-compacta-alto' : 'h-56 sm:h-full'}`}>
       {Array.from({ length: visibles }, (_, i) => celda(i, ''))}
     </div>
   )
@@ -302,10 +314,12 @@ export function GaleriaMosaico({
     src: string,
     cartel: { src: string; poster: string } | null,
     apaisado: boolean,
-    ref: RefObject<HTMLButtonElement | null>,
+    ref: RefObject<HTMLButtonElement | null> | null,
+    clase = 'aspect-[9/16] h-galeria-video-alto-movil w-auto shrink-0 self-center sm:h-full sm:self-auto',
   ) => (
     <button
       type="button"
+      key={src}
       ref={ref}
       onClick={(e) => {
         video360.abrirDesde(e.currentTarget)
@@ -313,7 +327,7 @@ export function GaleriaMosaico({
         medirVideo(src, 'abierto')
       }}
       aria-label={`Watch the video of ${etiqueta}`}
-      className="group relative aspect-[9/16] h-galeria-video-alto-movil w-auto shrink-0 self-center overflow-hidden rounded-card-grande bg-papel-hueso sm:h-full sm:self-auto"
+      className={`group relative overflow-hidden rounded-card-grande bg-papel-hueso ${clase}`}
     >
       {/* Bucle mudo = cartel animado. El poster es la foto de portada: el hueco
           nunca está vacío mientras carga, y quien tenga datos limitados ve una
@@ -360,14 +374,33 @@ export function GaleriaMosaico({
           los dos hijos lo copian con h-full — así el bloque tiene un solo
           alto que gobernar. En móvil la fila no tiene alto: se apila y cada
           pieza usa el suyo. */}
-      <div className="flex flex-col gap-2 sm:h-80 sm:flex-row sm:gap-1.5 lg:h-galeria-ficha-alto">
-        {video !== null ? columnaVideo(video, videoCartel, videoApaisado, refColumnaVideo) : null}
-        {video2 !== null
-          ? columnaVideo(video2, videoCartel2, videoApaisado2, refColumnaVideo2)
-          : null}
+      {conReels ? (
+        // [2026-11-19] Reels arriba (carril lateral en móvil, 5 columnas
+        // iguales desde sm:) y la rejilla compacta debajo.
+        <div className="flex flex-col gap-1.5">
+          <div className="-mx-1 flex snap-x snap-mandatory gap-1.5 overflow-x-auto px-1 sm:mx-0 sm:grid sm:grid-cols-5 sm:overflow-visible sm:px-0">
+            {reels!.slice(0, 5).map((r) =>
+              columnaVideo(
+                r.src,
+                { src: r.cartel ?? r.src, poster: r.poster },
+                false,
+                null,
+                'aspect-[9/16] w-reel-ancho-movil shrink-0 snap-start sm:w-full',
+              ),
+            )}
+          </div>
+          {rejilla}
+        </div>
+      ) : (
+        <div className="flex flex-col gap-2 sm:h-80 sm:flex-row sm:gap-1.5 lg:h-galeria-ficha-alto">
+          {video !== null ? columnaVideo(video, videoCartel, videoApaisado, refColumnaVideo) : null}
+          {video2 !== null
+            ? columnaVideo(video2, videoCartel2, videoApaisado2, refColumnaVideo2)
+            : null}
 
-        {rejilla}
-      </div>
+          {rejilla}
+        </div>
+      )}
 
       {lightbox !== null ? (
         <GaleriaLightbox

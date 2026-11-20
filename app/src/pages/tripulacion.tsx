@@ -4,6 +4,7 @@ import { HeroInterna } from '@/components/internas/hero-interna'
 import { CierreEquipo } from '@/components/equipo/cierre-equipo'
 import { FranjaEquipo } from '@/components/equipo/franja-equipo'
 import { GridEquipo } from '@/components/equipo/grid-equipo'
+import { PerritosEquipo } from '@/components/equipo/perritos-equipo'
 import { MuroTripulacion } from '@/components/equipo/muro-tripulacion'
 import { ModalVideoCrew } from '@/components/equipo/modal-video-crew'
 import { Meta } from '@/components/seo/meta'
@@ -163,6 +164,10 @@ export function TripulacionPage() {
               </div>
             </section>
           ) : null}
+
+          {/* [2026-11-19, Sr. Fernando] Los perritos, «por debajo de un
+              servidor»: justo bajo su historia, antes de los departamentos. */}
+          <PerritosEquipo />
 
           <GridEquipo />
           {/* El cierre va fuera de GridEquipo (donde vivía): no depende del

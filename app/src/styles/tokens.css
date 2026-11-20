@@ -1353,6 +1353,12 @@
      este valor — copia el alto de la fila (h-full), así video y rejilla
      comparten línea de base superior e inferior. */
   --spacing-galeria-video-alto-movil: 22rem; /* 352px → 198px de ancho */
+  /* [2026-11-19, Sr. Fernando, Gerencia: «arriba 5 reels… debajo la galería de
+     fotos con imágenes de menor tamaño y más compacta»] Alto de la rejilla de
+     fotos cuando la ficha lleva fila de reels encima, y ancho de cada reel en
+     móvil (carril con desplazamiento lateral: caben ~2,3 a la vista). */
+  --spacing-galeria-compacta-alto: 13rem; /* 208px */
+  --spacing-reel-ancho-movil: 9.5rem; /* 152px → 270px de alto a 9:16 */
   /* Alto de FILA de la carta de platos del charter (tour/carta-charter.tsx,
      2026-07-28 — «hazla más linda, es importante para que se enamoren y
      compren»). Es un alto de fila, no de card: la rejilla es asimétrica y el

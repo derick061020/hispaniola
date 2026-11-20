@@ -130,7 +130,7 @@ export function Footer({ cta = t('Ready for an unforgettable day?') }: { cta?: s
             <br />
             {t('Eco-friendly · Zero plastic · Since 2010.')}
           </p>
-          <p className="mt-3 text-xs text-white/50">{t('★ 4.9 · 1,782 reviews · #1 on TripAdvisor for 7 years')}</p>
+          <p className="mt-3 text-xs text-white/50">{t('★ 4.9 · 5,720 reviews · #1 on TripAdvisor for 7 years')}</p>
         </div>
 
         <div>

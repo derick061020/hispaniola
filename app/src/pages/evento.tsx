@@ -195,6 +195,8 @@ export function EventoPage() {
                 // [2026-08-21] El clip del propio evento, como una celda más de
                 // la rejilla. Ver `videoProducto` en data/eventos.ts.
                 videoProducto={evento.videoProducto}
+                // [2026-11-19, Sr. Fernando] Reels arriba, fotos compactas debajo.
+                reels={evento.reels ?? null}
               />
 
               {/* [v2 2026-07-28, pedido de Samuel: «al estar el video vertical

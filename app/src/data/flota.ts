@@ -141,7 +141,7 @@ export const FAMILIA_FLOTA = traducible({
   //     ficha completa, hoy 6) — ver la constante y su porqué arriba.
   kpis: [
     { cifra: 'Since 2010', label: 'sailing this coast' },
-    { cifra: '4.9', label: '1,782 verified reviews' },
+    { cifra: '4.9', label: '5,720 verified reviews' },
     { cifra: `Fleet of ${BARCOS_FLOTA}`, label: 'boats we own' },
     { cifra: 'The only', label: 'floating kitchen in Punta Cana' },
   ],

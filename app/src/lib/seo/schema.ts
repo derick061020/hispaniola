@@ -36,13 +36,13 @@ export function schemaOrganizacion() {
       latitude: 18.66974,
       longitude: -68.401262,
     },
-    // Mismo 4.9 / 1.782 reseñas que se muestra en las 4 fichas de tour y en
+    // Mismo 4.9 / 5.720 reseñas que se muestra en las 4 fichas de tour y en
     // la cinta de confianza de la home (data/home.ts TOURS + STATS) — no es
     // un número aparte inventado para el schema.
     aggregateRating: {
       '@type': 'AggregateRating',
       ratingValue: '4.9',
-      reviewCount: '1782',
+      reviewCount: '5720',
     },
   }
 }

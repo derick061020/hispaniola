@@ -247,6 +247,8 @@ export function TourPage() {
                 // que la ficha ya declara — no hay una lista aparte que pueda
                 // quedarse desincronizada del menú que se pinta abajo.
                 fotosComida={fotosComidaDe(ficha)}
+                // [2026-11-19, Sr. Fernando] Reels arriba, fotos compactas debajo.
+                reels={ficha.reels ?? null}
               />
 
               {/* [v2 2026-07-27, plan 01 §11] El video que ACOMPAÑA el scroll,

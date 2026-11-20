@@ -256,6 +256,11 @@ export type FichaTour = {
    *  para el cartel: el completo se pide al pulsar. Sin cartel, se usa
    *  `videoGaleria` para todo, como antes. */
   videoGaleriaCartel?: { src: string; poster: string }
+  /** [2026-11-19, Sr. Fernando, Gerencia] Hasta 5 reels verticales que van
+   *  ARRIBA de la galería de fotos (que pasa a compacta). `cartel` = clip corto
+   *  mudo para el bucle; `src` = el reel completo con sonido. Ver `reels` en
+   *  galeria-mosaico.tsx. */
+  reels?: { src: string; poster: string; cartel?: string }[]
   /** El vídeo completo es horizontal (16:9): el reproductor se abre apaisado
    *  en vez de copiar la proporción 9:16 de la celda, que le recortaría los
    *  lados. */
@@ -767,6 +772,13 @@ export const FICHAS: Record<string, FichaTour> = traducible({
     menuLight: [
       { nombre: 'Grilled chicken breast', desc: 'With potatoes and vegetables', foto: 'plato-chicken-bodegon' },
       { nombre: 'Grilled fish fillet', desc: 'With potatoes and vegetables', foto: 'plato-fish-bodegon' },
+      // [2026-11-19, Sr. Fernando] El Light también lleva el Kid's Meal.
+      {
+        nombre: "Kid's Meal",
+        desc: 'Burger, chicken strips, sausage and fries',
+        foto: 'plato-kids-meal',
+        soloNinos: true,
+      },
     ],
     menuPremium: [
       ...MENU_PREMIUM_CASA,
@@ -811,7 +823,10 @@ export const FICHAS: Record<string, FichaTour> = traducible({
       'Lobster, certified Angus beef and Surf & Turf on your plate',
       '8 dishes to choose from instead of 2',
       'Vegetarian options and seafood cocktail',
-      "Kid's Meal for the little ones",
+      // [2026-11-19, Sr. Fernando, Gerencia, con captura del comparador: «sí
+      // incluye el kids meal para los pequeños el Light»] Fuera de las
+      // ventajas: el Kid's Meal va en los dos paquetes (Odoo ya lo daba así:
+      // el niño lleva su Kid's Meal salvo que suba al menú de adulto).
     ],
     // v3 (2026-07-17, web del cliente): 18 fotos reales de la excursión
     // familiar (la web tenía `images/excursions/educational/{4,5,7,8,10,11,
