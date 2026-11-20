@@ -327,6 +327,12 @@ export type FichaTour = {
    *  «What's Included / What to Bring» y antes de los vídeos, en vez de
    *  arriba del itinerario. Solo en las fichas que lo pidieron. */
   menuAbajo?: boolean
+  /** [2026-11-19, Sr. Fernando, Gerencia] Transporte privado ida y vuelta,
+   *  contratable en el checkout (paso de recogida). El precio de verdad lo pone
+   *  Odoo (`haa.addon` kind «transporte», según la zona del hotel); estos
+   *  números solo rotulan la casilla antes de que conteste. Por reserva, no
+   *  por persona: «por un cargo adicional». */
+  transportePrivado?: { precio: number; precioZonaLejana: number; zonasLejanas: string[] }
   /** [v2 2026-07-28] El widget de esta ficha abre SIEMPRE en piel premium
    *  (oscura con terminaciones doradas), haya o no toggle Light/Premium.
    *
@@ -387,7 +393,13 @@ const INCLUYE_MARINE_PARK: BeneficioIncluido[] = [
     titulo: 'Premium Open Bar',
     texto: 'Beer, aged rum, vodka, tequila, juices, soft drinks and water throughout the tour.',
   },
-  { titulo: 'Round-Trip Hotel Transportation', texto: 'Air-conditioned transportation from your hotel.' },
+  // [2026-11-19, Sr. Fernando, captura: «Private transportation can be added
+  // for an additional fee»] Esta lista la comparten Coral Quest y Caribbean
+  // Escape, que son justo los dos tours con transporte privado.
+  {
+    titulo: 'Round-Trip Hotel Transportation',
+    texto: 'Air-conditioned transportation from your hotel. Private transportation can be added for an additional fee.',
+  },
   { titulo: 'Wi-Fi On Board', texto: 'Stay connected throughout your experience.' },
   {
     titulo: 'Floating Bar at the Natural Pool',
@@ -668,6 +680,8 @@ export const FICHAS: Record<string, FichaTour> = traducible({
     ],
     // [2026-11-19, Sr. Fernando] Comida debajo de «What to Bring».
     menuAbajo: true,
+    // [2026-11-19, Sr. Fernando] «Uvero Alto y Cap Cana: US$60. Demás zonas: US$50».
+    transportePrivado: { precio: 50, precioZonaLejana: 60, zonasLejanas: ['Uvero Alto', 'Cap Cana'] },
     tambienTeGusta: ['coral-quest', 'private-charter'],
     // [v2 2026-07-27] Las 4 ventajas del comparador (slide 17) y de la caja de
     // upsell del widget (slide 5). Salen de menuPremium/incluye de esta misma
@@ -939,6 +953,8 @@ export const FICHAS: Record<string, FichaTour> = traducible({
     ],
     // [2026-11-19, Sr. Fernando] Comida debajo de «What to Bring».
     menuAbajo: true,
+    // [2026-11-19, Sr. Fernando] «Uvero Alto y Cap Cana: US$60. Demás zonas: US$50».
+    transportePrivado: { precio: 50, precioZonaLejana: 60, zonasLejanas: ['Uvero Alto', 'Cap Cana'] },
     tambienTeGusta: ['caribbean-escape', 'private-charter'],
     // ⚡ [2026-09-01, Samuel] Sin extras: el álbum de fotos sale de las 4
     // fichas. Ver la nota del semi-privado y lib/tarifas.ts.

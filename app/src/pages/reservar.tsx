@@ -561,6 +561,7 @@ function FlujoReserva({
     pickup: { hotel: recogida.hotel.trim(), notes: recogida.notas.trim() },
     dishes: hayPasoMenu ? platos : [],
     addons: addonsIniciales,
+    ...(ficha.transportePrivado ? { private_transport: transportePrivado } : {}),
     // Lo decide el servidor: aqui solo se dice que el cliente lo eligio.
     discounts: pagaEnEfectivo ? ['efectivo'] : [],
     ...(celebracion.ocasion && celebracion.ocasion !== 'ninguna'
@@ -776,6 +777,36 @@ function FlujoReserva({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [efectivoEnServidor])
 
+  // [2026-11-19, Sr. Fernando, Gerencia] TRANSPORTE PRIVADO ida y vuelta
+  // (Caribbean Escape y Coral Quest). Una casilla en la recogida; el importe
+  // —según la zona del hotel— y el depósito —que lo lleva entero— los pone
+  // Odoo. Viaja con el hotel para que la cotización use la zona de AHORA.
+  const [transportePrivado, setTransportePrivado] = useState(false)
+  const transporteEnServidor = !!checkout.pedido?.private_transport
+  useEffect(() => {
+    if (transporteEnServidor && !transportePrivado) setTransportePrivado(true)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [transporteEnServidor])
+  const cambiarTransportePrivado = (quiere: boolean) => {
+    setTransportePrivado(quiere)
+    checkout.sincronizar({
+      step: 'pickup',
+      pickup: { hotel: recogida.hotel.trim(), notes: recogida.notas.trim() },
+      private_transport: quiere,
+    })
+  }
+  const cambiarRecogida = (parcial: Partial<DatosRecogida>) => {
+    setRecogida((r) => ({ ...r, ...parcial }))
+    // Con el transporte privado marcado, otro hotel puede ser otra zona y
+    // otro precio: se recotiza al momento, no al pulsar «Continue».
+    if (transportePrivado && parcial.hotel !== undefined) {
+      checkout.sincronizar({
+        step: 'pickup',
+        pickup: { hotel: parcial.hotel.trim(), notes: recogida.notas.trim() },
+      })
+    }
+  }
+
   const cambiarPlato = (persona: number, plato: string) =>
     setPlatos((prev) => prev.map((p, i) => (i === persona ? plato : p)))
 
@@ -918,8 +949,12 @@ function FlujoReserva({
                 <div className="mt-6 border-t border-linea pt-6">
                   <PasoRecogida
                     datos={recogida}
-                    onCambio={(parcial) => setRecogida((r) => ({ ...r, ...parcial }))}
+                    onCambio={cambiarRecogida}
                     horaSalida={horario?.hora ?? null}
+                    transportePrivado={ficha.transportePrivado}
+                    conTransportePrivado={transportePrivado}
+                    onTransportePrivado={cambiarTransportePrivado}
+                    importeTransportePrivado={checkout.pedido?.quote?.private_transport?.amount ?? null}
                   />
                 </div>
                 <Continuar
