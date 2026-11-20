@@ -8,7 +8,8 @@ import { traducible } from '@/lib/i18n'
 // Textos y fotos LITERALES suyos (fotos: Presidenta.jpg, Firulais.jpg,
 // Machete.jpg). El nombre se escribe «Firulay», como en su texto (el archivo
 // decía «Firulais»). Machete lleva la versión corregida de las 17:21 («in
-// March 2026»). En primera persona porque es él quien los encontró.
+// March 2026»). [20:28, Sr. Fernando: «cambiar I found por we found en
+// todos»] En primera persona del plural.
 export type Perrito = {
   nombre: string
   /** Slug en /public/fotos (`perrito-<slug>.webp`). */
@@ -26,13 +27,13 @@ export const PERRITOS: Perrito[] = traducible([
     nombre: 'Presidenta',
     foto: 'perrito-presidenta',
     texto:
-      'I found her on January 9, 2023, after she’d been hit by a vehicle. Back then, her name was Luna, and she lived aboard Eclipse. On the night of April 10, she helped save a life. After that night, we named her Presidenta, a name that holds special meaning for us.',
+      'We found her on January 9, 2023, after she’d been hit by a vehicle. Back then, her name was Luna, and she lived aboard Eclipse. On the night of April 10, she helped save a life. After that night, we named her Presidenta, a name that holds special meaning for us.',
   },
   {
     nombre: 'Firulay',
     foto: 'perrito-firulay',
     texto:
-      'I found him in December 2024, lying in a puddle at a gas station in the rain. He’d had a hard life and was wary of people. With time and patience, he learned to trust us. Today, the whole crew loves him.',
+      'We found him in December 2024, lying in a puddle at a gas station in the rain. He’d had a hard life and was wary of people. With time and patience, he learned to trust us. Today, the whole crew loves him.',
   },
   {
     nombre: 'Machete',
