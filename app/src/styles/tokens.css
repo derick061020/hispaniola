@@ -1359,6 +1359,7 @@
      móvil (carril con desplazamiento lateral: caben ~2,3 a la vista). */
   --spacing-galeria-compacta-alto: 13rem; /* 208px */
   --spacing-reel-ancho-movil: 9.5rem; /* 152px → 270px de alto a 9:16 */
+  --spacing-reel-ancho-movil-doble: 20rem; /* video horizontal en el carril móvil: algo más del doble de un reel */
   /* Alto de FILA de la carta de platos del charter (tour/carta-charter.tsx,
      2026-07-28 — «hazla más linda, es importante para que se enamoren y
      compren»). Es un alto de fila, no de card: la rejilla es asimétrica y el

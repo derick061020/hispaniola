@@ -430,8 +430,11 @@ export function WidgetReserva({
   // desaparece de la pantalla con el estado en `true` y el checkout cobraría un
   // salto de menú para cero niños.
   useEffect(() => {
-    if (ninos === 0 && ninosPremium) setNinosPremium(false)
-  }, [ninos, ninosPremium])
+    // [2026-11-21] Y pasar a Light también: el menú Premium del niño va con
+    // el paquete Premium.
+    const enLight = paquete === 'light' && ficha.menuLight.length > 0
+    if ((ninos === 0 || enLight) && ninosPremium) setNinosPremium(false)
+  }, [ninos, ninosPremium, paquete, ficha.menuLight.length])
 
   // Tope del stepper de personas — misma fórmula que el funnel (ver
   // maxPersonasDe, arriba): aforo del tour si la tarifa es dual, el tramo más
@@ -810,6 +813,17 @@ export function WidgetReserva({
       </div>
 
       <Precio precio={precioAnclaNum} unidad={unidadAncla} />
+      {/* [2026-11-21, Sr. Fernando] La tarifa del niño a la vista, junto al
+          precio: es la misma en Light y en Premium. */}
+      {esDual && tour.precioNino != null ? (
+        <p className="-mt-2 text-sm text-navy-sub">
+          {t('Kids (ages 4-12)')}{' '}
+          <span className="font-semibold text-navy">
+            {formatoDinero(tour.precioNino)}
+          </span>{' '}
+          · {t('same price on Light and Premium')}
+        </p>
+      ) : null}
 
       {/* v3 (2026-07-17, charter): el cálculo del total en vivo, justo
           debajo de la cabecera. Es la pieza que faltaba — antes el
@@ -1112,7 +1126,9 @@ export function WidgetReserva({
               es qué comen — y dentro del desplegable nadie lo vería.
               Solo aparece si hay niños Y el tour tiene salto de menú; si no,
               es una casilla que no cambia el precio. */}
-          {ninos > 0 && ficha.upgradePremium ? (
+          {/* [2026-11-21] Solo con Premium: en Light el salto vale 0 en
+              `calcularTotalTour`, y la casilla prometía «+15» sin cobrarlo. */}
+          {ninos > 0 && ficha.upgradePremium && (paquete === 'premium' || !tienePaquetes) ? (
             <label
               className={`mt-2 flex cursor-pointer items-start gap-3 rounded-card border px-3 py-2.5 ${
                 pielOscura ? 'border-white/15 bg-white/5' : 'border-linea bg-papel'
@@ -1125,14 +1141,13 @@ export function WidgetReserva({
                 onChange={(e) => setNinosPremium(e.target.checked)}
               />
               <span className="text-sm">
-                <span className={`font-semibold ${pielOscura ? 'text-papel' : 'text-navy'}`}>
+                {/* [2026-11-21] Sin invertir: dentro de la Caja oscura los tokens
+                    navy ya son claros, y «papel» era texto oscuro sobre negro
+                    (la casilla salía en blanco en la captura del Sr. Fernando). */}
+                <span className="font-semibold text-navy">
                   {t('Kids on the adult Premium menu')}
                 </span>
-                <span
-                  className={`mt-0.5 block text-xs ${
-                    pielOscura ? 'text-papel/70' : 'text-navy-sub'
-                  }`}
-                >
+                <span className="mt-0.5 block text-xs text-navy-sub">
                   {t('Instead of the Kid’s Meal.')}{' '}
                   {tp('+{precio} per child', { precio: formatoDinero(ficha.upgradePremium) })}
                 </span>

@@ -23,7 +23,11 @@
 //
 // Cada reel: `src` (720p con sonido), `cartel` (6 s mudo a 360p para el bucle)
 // y `poster`. Originales de 75–280 MB recomprimidos a 7–20 MB.
-export type ReelProducto = { src: string; poster: string; cartel?: string }
+// `apaisado`: video horizontal (16:9). [2026-11-20, Sr. Fernando: «el primer
+// video de Caribbean Escape y el primero de Coral Quest… como no son reels,
+// ahora se ven demasiado pequeños; a ver si hay forma de ponerlos más
+// grandes»] Ocupa dos columnas de la fila y se abre en horizontal.
+export type ReelProducto = { src: string; poster: string; cartel?: string; apaisado?: boolean }
 
 const reel = (nombre: string): ReelProducto => ({
   src: `/video/reels-producto/${nombre}.mp4`,
@@ -33,11 +37,13 @@ const reel = (nombre: string): ReelProducto => ({
 
 // Los que ya estaban en cada página (sus posiciones 1 y 2).
 const CARIBBEAN_ESCAPE_ACTUAL: ReelProducto = {
+  apaisado: true,
   src: '/video/tours/caribbean-escape.mp4',
   cartel: '/video/tours/caribbean-escape-cartel.mp4',
   poster: '/video/tours/caribbean-escape-cartel.jpg',
 }
 const CORAL_QUEST_ACTUAL: ReelProducto = {
+  apaisado: true,
   src: '/video/tours/coral-quest.mp4',
   cartel: '/video/tours/coral-quest-cartel.mp4',
   poster: '/video/tours/coral-quest-cartel.jpg',

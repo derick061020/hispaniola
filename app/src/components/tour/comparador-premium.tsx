@@ -1,7 +1,7 @@
 import { Check, X } from 'lucide-react'
 import { formatoDinero, type Tour } from '@/data/home'
 import type { FichaTour } from '@/data/tours'
-import { t } from '@/lib/i18n'
+import { t, tp } from '@/lib/i18n'
 
 // Comparador Light vs Premium (correcciones v2, plan 01 §2 — slides 16 y 17).
 //
@@ -27,6 +27,12 @@ export function ComparadorPremium({ tour, ficha }: { tour: Tour; ficha: FichaTou
   const ventajas = ficha.ventajasPremium
   const upgrade = ficha.upgradePremium
   const precioLight = tour.precioLight
+  // [2026-11-21, Sr. Fernando, Gerencia: «debemos mostrar la tarifa de niños en
+  // ambas, en el Premium y en el Light… mismo precio para Premium y Light en el
+  // caso de los niños, y dar una opción de upgrade a menú Premium para niños
+  // por 15$ extra»] El niño paga lo mismo en los dos paquetes (así cobra ya
+  // `calcularTotalTour` y `services/pricing.py`); lo que faltaba era decirlo.
+  const precioNino = tour.precioNino ?? null
 
   // Sin las tres piezas no hay comparación que hacer. Ausencia silenciosa: el
   // charter y Saona no venden por paquetes y aquí no pintan nada.
@@ -89,6 +95,17 @@ export function ComparadorPremium({ tour, ficha }: { tour: Tour; ficha: FichaTou
             <span className="premium-cifra">{formatoDinero(precioLight + upgrade)}</span>
             <span className="ml-1 text-sm font-normal text-premium-texto-suave">{t('per person')}</span>
           </p>
+          {precioNino !== null ? (
+            <p className="mt-1 text-sm text-premium-texto">
+              {t('Kids (ages 4-12)')}{' '}
+              <span className="font-semibold">{formatoDinero(precioNino)}</span>
+              <span className="mt-0.5 block text-xs text-premium-texto-suave">
+                {tp('Optional: Premium menu for kids, +{precio} per child.', {
+                  precio: formatoDinero(upgrade),
+                })}
+              </span>
+            </p>
+          ) : null}
           <ul className="mt-5 flex flex-col gap-3">
             {ventajas.map((v) => (
               <li key={v} className="flex items-start gap-2.5 text-sm text-premium-texto">
@@ -117,6 +134,15 @@ export function ComparadorPremium({ tour, ficha }: { tour: Tour; ficha: FichaTou
             {formatoDinero(precioLight)}
             <span className="ml-1 text-sm font-normal text-navy-soft">{t('per person')}</span>
           </p>
+          {precioNino !== null ? (
+            <p className="mt-1 text-sm text-navy-sub">
+              {t('Kids (ages 4-12)')}{' '}
+              <span className="font-semibold text-navy">{formatoDinero(precioNino)}</span>
+              <span className="mt-0.5 block text-xs text-navy-soft">
+                {t('Same price on Light and Premium.')}
+              </span>
+            </p>
+          ) : null}
           <p className="mt-5 text-[11px] font-semibold uppercase tracking-wide text-navy-soft">
             {t('Not included')}
           </p>

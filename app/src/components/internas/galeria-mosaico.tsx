@@ -109,7 +109,7 @@ export function GaleriaMosaico({
    *  es ahora la fila de reels. La rejilla de fotos baja a
    *  `--spacing-galeria-compacta-alto`. Sin reels (null o vacío), todo como
    *  antes. */
-  reels?: { src: string; poster: string; cartel?: string }[] | null
+  reels?: { src: string; poster: string; cartel?: string; apaisado?: boolean }[] | null
 }) {
   const [lightbox, setLightbox] = useState<number | null>(null)
   // [v2 2026-07-28] QUÉ conjunto muestra el lightbox. Bug que reportó Samuel:
@@ -378,14 +378,26 @@ export function GaleriaMosaico({
         // [2026-11-19] Reels arriba (carril lateral en móvil, 5 columnas
         // iguales desde sm:) y la rejilla compacta debajo.
         <div className="flex flex-col gap-1.5">
-          <div className="-mx-1 flex snap-x snap-mandatory gap-1.5 overflow-x-auto px-1 sm:mx-0 sm:grid sm:grid-cols-5 sm:overflow-visible sm:px-0">
+          {/* [2026-11-21] Un video horizontal ocupa DOS columnas (y estira al
+              alto de la fila); los verticales, una. Las columnas se cuentan
+              aquí para que la fila siempre llene el ancho. */}
+          <div
+            className="-mx-1 flex snap-x snap-mandatory gap-1.5 overflow-x-auto px-1 sm:mx-0 sm:grid sm:overflow-visible sm:px-0"
+            style={{
+              gridTemplateColumns: `repeat(${reels!
+                .slice(0, 5)
+                .reduce((n, r) => n + (r.apaisado ? 2 : 1), 0)}, minmax(0, 1fr))`,
+            }}
+          >
             {reels!.slice(0, 5).map((r) =>
               columnaVideo(
                 r.src,
                 { src: r.cartel ?? r.src, poster: r.poster },
-                false,
+                Boolean(r.apaisado),
                 null,
-                'aspect-[9/16] w-reel-ancho-movil shrink-0 snap-start sm:w-full',
+                r.apaisado
+                  ? 'h-[calc(var(--spacing-reel-ancho-movil)*16/9)] w-reel-ancho-movil-doble shrink-0 snap-start sm:col-span-2 sm:aspect-[9/8] sm:h-auto sm:w-full'
+                  : 'aspect-[9/16] w-reel-ancho-movil shrink-0 snap-start sm:w-full',
               ),
             )}
           </div>
