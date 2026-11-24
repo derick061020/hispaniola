@@ -3209,6 +3209,8 @@ export const ES: Record<string, string> = {
   "Carrot Quipe": "Quipe de zanahoria",
   "Broccoli Quipe": "Quipe de brócoli",
   "Fruit Skewer": "Brocheta de frutas",
+  "Snacks": "Snacks",
+  "Mini Croissant": "Mini croissant",
   "Spanish Potato Tortilla": "Tortilla española de papa",
   "Italian Bruschetta": "Bruschetta italiana",
   "Quinoa Mini Salad with Chicken": "Miniensalada de quinoa con pollo",

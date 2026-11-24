@@ -471,6 +471,14 @@ export const PAQUETES_COMIDA: PaqueteEvento[] = [
     foto: 'paquete-premium',
     fotoAlt: 'Premium (Turtle) Package: lobster, skewers and fries on a white plate',
     items: [
+      // [2026-11-24, Sr. Fernando en Gerencia: «que todos los paquetes incluyan
+      // Snacks, Fruit Skewer y Mini Croissant» y «elimina la salchicha de las
+      // opciones donde aparezca»] La base común va PRIMERO en los cuatro, y el
+      // Hot Dog sale de Starfish y Breeze. ⚠️ Las fotos de Starfish y Breeze
+      // (paquete-i, paquete-ii) aún enseñan el hot dog: falta foto nueva.
+      { titulo: 'Snacks', texto: '' },
+      { titulo: 'Fruit Skewer', texto: '1p/p' },
+      { titulo: 'Mini Croissant', texto: '1p/p' },
       { titulo: 'Chicken Skewer', texto: '1p/p' },
       { titulo: 'Beef Skewer', texto: '1p/p' },
       { titulo: 'Shrimp Skewer', texto: '1p/p' },
@@ -507,7 +515,11 @@ export const PAQUETES_COMIDA: PaqueteEvento[] = [
     meta: '3 hours on board · 2 stops',
     foto: 'paquete-i',
     fotoAlt: 'Party boat Starfish Package',
-    items: [{ titulo: 'Hot Dog', texto: '1p/p' }],
+    items: [
+      { titulo: 'Snacks', texto: '' },
+      { titulo: 'Fruit Skewer', texto: '1p/p' },
+      { titulo: 'Mini Croissant', texto: '1p/p' },
+    ],
     // [2026-11-12] «Basic» en el documento del cliente: sin canapés.
     bocados: { nivel: null, classic: 0, premium: 0 },
     // Las "Vegetarian Substitutions" del cliente son reemplazos, no items
@@ -529,7 +541,9 @@ export const PAQUETES_COMIDA: PaqueteEvento[] = [
     foto: 'paquete-ii',
     fotoAlt: 'Party boat Breeze Package',
     items: [
-      { titulo: 'Hot Dog', texto: '1p/p' },
+      { titulo: 'Snacks', texto: '' },
+      { titulo: 'Fruit Skewer', texto: '1p/p' },
+      { titulo: 'Mini Croissant', texto: '1p/p' },
       { titulo: 'Chicken Skewer', texto: '1p/p' },
       { titulo: 'Beef Skewer', texto: '1p/p' },
       { titulo: 'French Fries', texto: '' },
@@ -554,6 +568,9 @@ export const PAQUETES_COMIDA: PaqueteEvento[] = [
     foto: 'paquete-iii',
     fotoAlt: 'Party boat Tide Package',
     items: [
+      { titulo: 'Snacks', texto: '' },
+      { titulo: 'Fruit Skewer', texto: '1p/p' },
+      { titulo: 'Mini Croissant', texto: '1p/p' },
       { titulo: 'Chicken Skewer', texto: '1p/p' },
       { titulo: 'Beef Skewer', texto: '1p/p' },
       { titulo: 'Shrimp Skewer', texto: '1p/p' },
