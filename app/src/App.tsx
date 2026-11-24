@@ -8,6 +8,7 @@ import { CuentaPage } from '@/pages/cuenta'
 import { MiReservaPage } from '@/pages/mi-reserva'
 import { EventoPage } from '@/pages/evento'
 import { EventsPage } from '@/pages/events'
+import { FiestaOnDeckPage } from '@/pages/fiesta-on-deck'
 import { ToursYEventosPage } from '@/pages/tours-y-eventos'
 import { GraciasEventoPage } from '@/pages/gracias-evento'
 import { VentajaCompetitivaPage } from '@/pages/ventaja-competitiva'
@@ -205,6 +206,14 @@ function App() {
         <Route path="/account" element={<CuentaPage />} />
         {/* [2026-09-08] Las tres ocasiones juntas, igual que /tours. */}
         <Route path="/events" element={<EventsPage />} />
+        {/* [2026-11-24, Sr. Fernando en Gerencia] Fiesta on Deck: las dos
+            experiencias de la marca nueva, dentro de /events. Rutas ESTÁTICAS
+            (React Router las puntúa por encima de /events/:slug, así que ganan
+            aunque vayan en cualquier orden); su plantilla no es la de evento
+            —ver pages/fiesta-on-deck.tsx—. `key` para que al cambiar de una a
+            otra se reinicie el estado (paquete, invitados, banderas). */}
+        <Route path="/events/fiesta-on-deck-afro" element={<FiestaOnDeckPage key="afro" slug="fiesta-on-deck-afro" />} />
+        <Route path="/events/fiesta-on-deck-latin" element={<FiestaOnDeckPage key="latin" slug="fiesta-on-deck-latin" />} />
         <Route path="/events/:slug" element={<EventoPorSlug />} />
         <Route path="/events/:slug/thank-you" element={<GraciasEventoPage />} />
         {/* [2026-10-02, pedido de marketing] Tours y eventos en UNA página,

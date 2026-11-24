@@ -80,11 +80,14 @@ const [TOURS] = await datos('home.ts', ['TOURS'])
 // se necesita aqui y ademas respeta el orden con que se publican.
 const [EVENTOS] = await datos('eventos.ts', ['EVENTOS_ORDEN'])
 const [ARTICULOS] = await datos('blog.ts', ['ARTICULOS'])
+// [2026-11-24] Las dos landings de Fiesta on Deck (/events/fiesta-on-deck-*).
+const [SLUGS_FOD] = await datos('fiesta-on-deck.ts', ['SLUGS_FOD'])
 
 const urls = [
   ...FIJAS.map(([ruta, prioridad, frecuencia]) => ({ ruta, prioridad, frecuencia })),
   ...TOURS.map((t) => ({ ruta: `/tours/${t.slug}`, prioridad: 0.9, frecuencia: 'weekly' })),
   ...EVENTOS.map((e) => ({ ruta: `/events/${e.slug}`, prioridad: 0.8, frecuencia: 'monthly' })),
+  ...SLUGS_FOD.map((slug) => ({ ruta: `/events/${slug}`, prioridad: 0.8, frecuencia: 'monthly' })),
   ...ARTICULOS.map((a) => ({ ruta: `/blog/${a.slug}`, prioridad: 0.6, frecuencia: 'monthly' })),
 ]
 
@@ -131,5 +134,5 @@ try {
 
 console.log(
   `sitemap.xml: ${urls.length} URLs ` +
-    `(${FIJAS.length} fijas + ${TOURS.length} tours + ${EVENTOS.length} eventos + ${ARTICULOS.length} articulos)`,
+    `(${FIJAS.length} fijas + ${TOURS.length} tours + ${EVENTOS.length} eventos + ${SLUGS_FOD.length} fiesta on deck + ${ARTICULOS.length} articulos)`,
 )

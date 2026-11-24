@@ -26,6 +26,7 @@
     "sync:tarifas": "node scripts/sincroniza-tarifas.mjs"
   },
   "dependencies": {
+    "@fontsource-variable/archivo": "^5.2.8",
     "@fontsource/poppins": "^5.2.7",
     "@radix-ui/react-accordion": "^1.2.16",
     "@radix-ui/react-dialog": "^1.1.19",

@@ -1,0 +1,162 @@
+/* ============================================================
+   Fiesta on Deck (2026-11-24, Sr. Fernando en Gerencia) — los tres efectos
+   de la línea visual de Marketing que una utilidad de Tailwind no expresa
+   bien: el titular con contorno, la sombra dura desplazada y la cinta que
+   corre. Todo sale de los tokens de rol (--color-fod-*) definidos en
+   tokens.css, así que la MISMA regla pinta Afro o Latin según la clase del
+   contenedor (.fod-afro / .fod-latin).
+   ============================================================ */
+
+/* ⚠️ Aquí se usan las variables de ROL (--fod-acento…) y no --color-fod-*: estas
+   últimas están en `@theme inline`, que NO emite variables en :root —solo
+   escribe el valor dentro de cada utilidad—, así que var(--color-fod-acento)
+   no existe fuera de una clase de Tailwind. */
+
+.fod-display {
+  font-family: var(--font-fod);
+  font-weight: 900;
+  font-stretch: 125%;
+  text-transform: uppercase;
+  line-height: 0.88;
+  letter-spacing: -0.01em;
+}
+
+/* Titular hueco: «ON DECK», «PLAY.», «EL VOLUMEN.» en las referencias. */
+.fod-contorno {
+  color: transparent;
+  -webkit-text-stroke: 2px var(--fod-texto);
+}
+
+/* Pegatina y bloque marcado: en Afro, amarillo con letra negra; en Latin,
+   rojo bandera con letra hueso (el mango con letra azul queda para botones). */
+.fod-pegatina {
+  background: var(--fod-acento);
+  color: var(--fod-sobre-acento);
+}
+.fod-latin .fod-pegatina {
+  background: var(--fod-acento-2);
+  color: var(--fod-texto);
+}
+
+/* Bloque de acento detrás de una palabra («AFRO CARIBBEAN.», «BIGGER.»),
+   un poco girado y con su sombra dura, como en las referencias. */
+.fod-marcado {
+  display: inline-block;
+  padding: 0.04em 0.18em 0.02em;
+  background: var(--fod-acento);
+  color: var(--fod-sobre-acento);
+  transform: rotate(-1.5deg);
+  box-shadow: var(--spacing-fod-sombra) var(--spacing-fod-sombra) 0 var(--fod-acento-2);
+}
+.fod-latin .fod-marcado {
+  background: var(--fod-acento-2);
+  color: var(--fod-texto);
+  box-shadow: var(--spacing-fod-sombra) var(--spacing-fod-sombra) 0 var(--fod-acento);
+}
+
+.fod-sombra {
+  box-shadow: var(--spacing-fod-sombra) var(--spacing-fod-sombra) 0 var(--fod-acento);
+}
+.fod-sombra-2 {
+  box-shadow: var(--spacing-fod-sombra) var(--spacing-fod-sombra) 0 var(--fod-acento-2);
+}
+.fod-sombra-chica {
+  box-shadow: var(--spacing-fod-sombra-chica) var(--spacing-fod-sombra-chica) 0 var(--fod-texto);
+}
+
+/* Botón principal: amarillo/mango con borde y sombra dura; al pulsar «se
+   hunde» hasta su sombra, como en la referencia. */
+.fod-boton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  padding: 0.75rem 1.25rem;
+  border: 2px solid var(--fod-texto);
+  background: var(--fod-acento);
+  color: var(--fod-sobre-acento);
+  font-family: var(--font-fod);
+  font-weight: 800;
+  font-stretch: 112%;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  box-shadow: var(--spacing-fod-sombra-chica) var(--spacing-fod-sombra-chica) 0 var(--fod-texto);
+  transition: transform 0.12s, box-shadow 0.12s;
+}
+.fod-boton:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: calc(var(--spacing-fod-sombra-chica) + 2px) calc(var(--spacing-fod-sombra-chica) + 2px) 0 var(--fod-texto);
+}
+.fod-boton:active {
+  transform: translate(var(--spacing-fod-sombra-chica), var(--spacing-fod-sombra-chica));
+  box-shadow: none;
+}
+.fod-boton--hueco {
+  background: transparent;
+  color: var(--fod-texto);
+}
+.fod-boton--whatsapp {
+  background: var(--color-whatsapp);
+  color: var(--fod-sobre-acento);
+}
+
+/* La cinta que cruza la página. Dos copias del contenido en fila y se
+   desplaza la mitad: el bucle no tiene salto. */
+.fod-cinta {
+  overflow: hidden;
+  white-space: nowrap;
+}
+.fod-cinta__pista {
+  display: inline-flex;
+  animation: fod-cinta 38s linear infinite;
+}
+@keyframes fod-cinta {
+  to {
+    transform: translateX(-50%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fod-cinta__pista {
+    animation: none;
+  }
+}
+
+/* Foto en marco inclinado (hero, sonido): borde de acento y sombra dura. */
+.fod-marco {
+  border: 4px solid var(--fod-acento);
+  box-shadow: 10px 10px 0 var(--fod-acento-2);
+}
+.fod-afro .fod-marco {
+  box-shadow: 10px 10px 0 var(--fod-texto);
+}
+
+/* En Afro el segundo acento ES el amarillo, así que la sombra del bloque
+   marcado sería invisible sobre su propio fondo: va en blanco. */
+.fod-afro .fod-marcado {
+  box-shadow: var(--spacing-fod-sombra) var(--spacing-fod-sombra) 0 var(--fod-texto);
+}
+.fod-sombra-3 {
+  box-shadow: var(--spacing-fod-sombra) var(--spacing-fod-sombra) 0 var(--fod-acento-3);
+}
+/* Solo existe en la Latin (el diccionario de jerga alterna 4 colores). */
+.fod-sombra-4 {
+  box-shadow: var(--spacing-fod-sombra) var(--spacing-fod-sombra) 0 var(--color-fod-latin-naranja);
+}
+
+/* Dentro de una banda de acento (cierre) el botón hueco toma el color del
+   texto de la banda: blanco sobre amarillo no se leería. */
+.fod-pegatina .fod-boton--hueco {
+  color: inherit;
+  border-color: currentColor;
+  box-shadow: var(--spacing-fod-sombra-chica) var(--spacing-fod-sombra-chica) 0 currentColor;
+}
+
+/* Las dos landings son oscuras: el selector de fecha, los <select> y la
+   barra de scroll nativos tienen que dibujarse en oscuro, o el calendario
+   sale blanco y el «dd/mm/aaaa» casi no se lee. */
+.fod-afro,
+.fod-latin {
+  color-scheme: dark;
+}

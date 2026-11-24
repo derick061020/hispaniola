@@ -357,6 +357,9 @@ export type WebGrupo = {
   nombre: string
   meta: string
   url: string
+  /** [2026-11-24] Ruta INTERNA (Fiesta on Deck): si existe, se enlaza con
+   *  <Link> en la misma pestaña y sin el ↗ de «otra web». */
+  to?: string
   /** nombre de archivo en /fotos (sin extensión) */
   foto: string
 }
@@ -369,12 +372,33 @@ export const WEBS_GRUPO: WebGrupo[] = traducible([
     url: 'https://hispaniolapartyboat.com/',
     foto: 'grupo-hispaniola-party-boat',
   },
+  // [2026-11-24, Sr. Fernando en Gerencia] «En el menú Events, donde
+  // actualmente aparecen Hispaniola Party Boat y Traffic Light Party Boat,
+  // vamos a colocar estas dos nuevas experiencias de Fiesta on Deck». Traffic
+  // Light SALE de Events: pasará a Tours, pero ese cambio queda en standby
+  // hasta la semana siguiente («cuando comenzaremos a trabajar en ese
+  // producto»). Su entrada era:
+  //   { id: 'traffic-light', nombre: 'Traffic Light Party Boat',
+  //     meta: 'Adults-only Thursday sail with open bar and live DJ.',
+  //     url: 'https://puntacanatrafficlight.com/', foto: 'grupo-traffic-light' }
+  // Las de Fiesta on Deck NO son webs externas: viven en esta web (`to`), así
+  // que se pintan sin ↗ y abren en la misma pestaña. Nombre = el <title> de
+  // las landings de Marketing; meta = su descripción, condensada a una línea.
   {
-    id: 'traffic-light',
-    nombre: 'Traffic Light Party Boat',
-    meta: 'Adults-only Thursday sail with open bar and live DJ.',
-    url: 'https://puntacanatrafficlight.com/',
-    foto: 'grupo-traffic-light',
+    id: 'fiesta-on-deck-afro',
+    nombre: 'Fiesta on Deck · Afro Caribbean',
+    meta: 'Private party boat with Afrobeats, Hip-Hop, R&B and Dancehall.',
+    url: '/events/fiesta-on-deck-afro',
+    to: '/events/fiesta-on-deck-afro',
+    foto: 'grupo-fod-afro',
+  },
+  {
+    id: 'fiesta-on-deck-latin',
+    nombre: 'Fiesta on Deck · Latin Party',
+    meta: 'Private party boat with reggaetón, dembow, bachata and merengue.',
+    url: '/events/fiesta-on-deck-latin',
+    to: '/events/fiesta-on-deck-latin',
+    foto: 'grupo-fod-latin',
   },
 ])
 

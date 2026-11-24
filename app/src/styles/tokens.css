@@ -15,6 +15,12 @@
 @import '@fontsource/poppins/500.css';
 @import '@fontsource/poppins/600.css';
 @import '@fontsource/poppins/700.css';
+/* [2026-11-24, Sr. Fernando en Gerencia: Fiesta on Deck] Archivo (variable, con
+   eje de anchura 62-125 %) es la letra de la marca Fiesta on Deck en las dos
+   landings que preparó Marketing. SOLO se usa dentro de .fod-afro/.fod-latin
+   (token --font-fod); el resto del sitio sigue en Poppins. El woff2 solo se
+   descarga cuando una de esas páginas lo pinta. */
+@import '@fontsource-variable/archivo/standard.css';
 
 @theme {
   /* ---------- Color: base blanco + navy, aqua/coral como acento ----------
@@ -2495,6 +2501,88 @@
   /* El resorte «Gentle» de Figma (masa 1, rigidez 100, amortiguación 15),
      muestreado: 0,78 s hasta asentarse, ~3 % de rebote. */
   --ease-resorte-gentil: linear(0, 0.03, 0.104, 0.204, 0.316, 0.43, 0.539, 0.638, 0.726, 0.8, 0.862, 0.911, 0.949, 0.978, 0.999, 1.013, 1.022, 1.027, 1.028, 1.028, 1.026, 1.023, 1.02, 1.017, 1.014, 1.011, 1.008, 1.006, 1.004, 1.003, 1.002, 1);
+}
+
+/* ============================================================
+   FIESTA ON DECK (2026-11-24, Sr. Fernando en «Hispaniola Gerencia»: nueva
+   marca de party boat con dos experiencias, integradas en la web de
+   Hispaniola). La línea visual la definió Marketing en sus dos landings de
+   referencia (hispaniolapartyboat.com/fiesta-on-deck-*): Afro = cubierta negra
+   y barras amarillas; Latin = noche azul bandera con rojo, mango y turquesa.
+   Los hex son LOS SUYOS, copiados de su :root — no son variaciones nuestras.
+
+   Dos capas a propósito:
+   1) La paleta de cada marca, con nombre propio (tokens de Figma reales).
+   2) Los ROLES (`--color-fod-fondo`, `-acento`…), que los componentes usan.
+      Viven en `@theme inline` para que la utilidad apunte a la variable de
+      rol y no a su valor en :root: así UNA sola plantilla se pinta Afro o
+      Latin según la clase (.fod-afro / .fod-latin) del contenedor.
+   ============================================================ */
+@theme {
+  --font-fod: 'Archivo Variable', 'Arial Black', Impact, system-ui, sans-serif;
+
+  /* Afro Caribbean */
+  --color-fod-afro-tinta: #0a0a0a; /* la cubierta de noche */
+  --color-fod-afro-panel: #161513; /* panel elevado */
+  --color-fod-afro-sol: #f8cf1a; /* amarillo Afro, color de marca */
+  --color-fod-afro-hueso: #ffffff; /* texto */
+  --color-fod-afro-humo: #b9b4a8; /* texto secundario, gris cálido */
+  --color-fod-afro-linea: #2a2824; /* filetes sobre negro */
+
+  /* Latin Party */
+  --color-fod-latin-tinta: #0a1a42; /* azul bandera de noche */
+  --color-fod-latin-panel: #132a63;
+  --color-fod-latin-mango: #ffc72c;
+  --color-fod-latin-rojo: #e4002b; /* rojo bandera */
+  --color-fod-latin-turquesa: #00c9b7; /* agua de Saona */
+  --color-fod-latin-naranja: #ff7a1a; /* atardecer */
+  --color-fod-latin-hueso: #fff8ee;
+  --color-fod-latin-humo: #bfd0f0;
+  --color-fod-latin-linea: #24438c;
+
+  /* La sombra dura desplazada (sin difuminar) es la firma de las dos landings. */
+  --spacing-fod-sombra: 6px;
+  --spacing-fod-sombra-chica: 3px;
+  --text-fod-display: clamp(3rem, 9vw, 7.5rem);
+  --text-fod-h2: clamp(2.5rem, 6vw, 5.25rem);
+  --text-fod-h3: clamp(1.5rem, 2.6vw, 2.25rem);
+}
+
+@theme inline {
+  --color-fod-fondo: var(--fod-fondo);
+  --color-fod-panel: var(--fod-panel);
+  --color-fod-acento: var(--fod-acento);
+  --color-fod-acento-2: var(--fod-acento-2);
+  --color-fod-acento-3: var(--fod-acento-3);
+  --color-fod-texto: var(--fod-texto);
+  --color-fod-humo: var(--fod-humo);
+  --color-fod-linea: var(--fod-linea);
+  /* texto encima de una superficie de acento (amarillo / mango) */
+  --color-fod-sobre-acento: var(--fod-sobre-acento);
+}
+
+.fod-afro {
+  --fod-fondo: var(--color-fod-afro-tinta);
+  --fod-panel: var(--color-fod-afro-panel);
+  --fod-acento: var(--color-fod-afro-sol);
+  --fod-acento-2: var(--color-fod-afro-sol);
+  --fod-acento-3: var(--color-fod-afro-hueso);
+  --fod-texto: var(--color-fod-afro-hueso);
+  --fod-humo: var(--color-fod-afro-humo);
+  --fod-linea: var(--color-fod-afro-linea);
+  --fod-sobre-acento: var(--color-fod-afro-tinta);
+}
+
+.fod-latin {
+  --fod-fondo: var(--color-fod-latin-tinta);
+  --fod-panel: var(--color-fod-latin-panel);
+  --fod-acento: var(--color-fod-latin-mango);
+  --fod-acento-2: var(--color-fod-latin-rojo);
+  --fod-acento-3: var(--color-fod-latin-turquesa);
+  --fod-texto: var(--color-fod-latin-hueso);
+  --fod-humo: var(--color-fod-latin-humo);
+  --fod-linea: var(--color-fod-latin-linea);
+  --fod-sobre-acento: var(--color-fod-latin-tinta);
 }
 
 body {

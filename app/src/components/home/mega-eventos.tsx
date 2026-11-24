@@ -42,6 +42,10 @@ import { t } from '@/lib/i18n'
 //     pequeño»; la fila con miniatura cambia la FORMA además del tamaño, y la
 //     franja de fondo las separa como un bloque aparte — tres señales a la
 //     vez (forma, tamaño, fondo) sin añadir cajas ni sombras.
+//     [2026-11-24, Sr. Fernando] Entran las dos de Fiesta on Deck y sale
+//     Traffic Light: tres filas, así que la franja pasa a 3 columnas (una
+//     por experiencia, alineadas con las 3 cards de arriba). Fiesta on Deck
+//     vive en ESTA web, así que se enlaza sin ↗ y en la misma pestaña.
 //     La otra opción (mini-cards de 4 columnas con foto apaisada pequeña)
 //     queda lista: VARIANTE_GRUPO más abajo; en dev se ve con `?grupo=mini`.
 // El panel ya no sale de `w-fit`: lo fija --spacing-mega-eventos-ancho
@@ -130,7 +134,7 @@ export function FranjaWebsGrupo({ className = '' }: { className?: string }) {
       {VARIANTE_GRUPO === 'mini' ? (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
           {WEBS_GRUPO.map((w) => (
-            <a key={w.id} href={w.url} target="_blank" rel="noopener" className="group block" data-mega-item>
+            <a key={w.id} href={w.url} {...(w.to ? {} : { target: '_blank', rel: 'noopener' })} className="group block" data-mega-item>
               <span className="block h-20 overflow-hidden rounded-card bg-papel">
                 <img
                   src={`/fotos/${w.foto}.webp`}
@@ -150,25 +154,37 @@ export function FranjaWebsGrupo({ className = '' }: { className?: string }) {
         // gap-x-4 = el mismo gap de la fila de eventos, así las dos columnas
         // de filas caen alineadas con la rejilla de arriba. El hover es un
         // cambio de FONDO (al papel del panel), no una sombra.
-        <div className="-mx-2 grid grid-cols-1 gap-x-4 gap-y-1 sm:grid-cols-2">
-          {WEBS_GRUPO.map((w) => (
-            <a
-              key={w.id}
-              href={w.url}
-              target="_blank"
-              rel="noopener"
-              className="group flex items-center gap-3 rounded-lg p-2 transition-colors hover:bg-papel"
-              data-mega-item
-            >
-              <span className="size-14 shrink-0 overflow-hidden rounded-lg bg-papel">
-                <img src={`/fotos/${w.foto}.webp`} alt="" aria-hidden="true" className="size-full object-cover" />
-              </span>
-              <span className="min-w-0">
-                <NombreExterno nombre={w.nombre} />
-                <span className="mt-0.5 block text-xs text-navy-soft">{w.meta}</span>
-              </span>
-            </a>
-          ))}
+        <div className="-mx-2 grid grid-cols-1 gap-x-4 gap-y-1 sm:grid-cols-3">
+          {WEBS_GRUPO.map((w) => {
+            const contenido = (
+              <>
+                <span className="size-14 shrink-0 overflow-hidden rounded-lg bg-papel">
+                  <img src={`/fotos/${w.foto}.webp`} alt="" aria-hidden="true" className="size-full object-cover" />
+                </span>
+                <span className="min-w-0">
+                  {w.to ? (
+                    <span className="block font-display text-sm font-semibold leading-tight text-navy transition-colors group-hover:text-aqua-dark">
+                      {w.nombre}
+                    </span>
+                  ) : (
+                    <NombreExterno nombre={w.nombre} />
+                  )}
+                  <span className="mt-0.5 block text-xs text-navy-soft">{w.meta}</span>
+                </span>
+              </>
+            )
+            const clase = 'group flex items-center gap-3 rounded-lg p-2 transition-colors hover:bg-papel'
+            // [2026-11-24] Fiesta on Deck vive en esta web: <Link>, misma pestaña.
+            return w.to ? (
+              <Link key={w.id} to={w.to} className={clase} data-mega-item>
+                {contenido}
+              </Link>
+            ) : (
+              <a key={w.id} href={w.url} target="_blank" rel="noopener" className={clase} data-mega-item>
+                {contenido}
+              </a>
+            )
+          })}
         </div>
       )}
     </div>
