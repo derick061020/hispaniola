@@ -3277,6 +3277,8 @@ export const ES: Record<string, string> = {
   "A Caribbean Mimosa the moment you step on board": "Una Mimosa caribeña nada más subir a bordo",
   "A Hibiscus & Ginger Fizz with prosecco the moment you step on board": "Un Hibiscus & Ginger Fizz con prosecco nada más subir a bordo",
   "A Chinola Mimosa with prosecco the moment you step on board": "Una Mimosa de chinola con prosecco nada más subir a bordo",
+  "Prices in US dollars, taxes included.": "Precios en dólares estadounidenses, impuestos incluidos.",
+  "Fiesta on Deck is the party boat family of Hispaniola Aquatic Adventures, a Bávaro Reefs Group company. Playa Bibijagua, Bávaro, Punta Cana, Dominican Republic.": "Fiesta on Deck es la familia de party boats de Hispaniola Aquatic Adventures, empresa de Bávaro Reefs Group. Playa Bibijagua, Bávaro, Punta Cana, República Dominicana.",
   "A rum-led menu with Jamaican inspiration: the Caribbean Rum Punch opens it, and the Sorrel & Ginger Rum Punch, with hibiscus and ginger, is the star.": "Una carta centrada en el ron, con inspiración jamaicana: la abre el Caribbean Rum Punch, y el protagonista es el Sorrel & Ginger Rum Punch, con hibisco y jengibre.",
   "Latin classics with a Dominican touch: the Paloma opens the menu, and passion fruit (chinola) ties the two upper levels together.": "Clásicos latinos con sello dominicano: la Paloma abre la carta y la chinola une los dos niveles superiores.",
   "Barceló Dorado Rum": "Ron Barceló Dorado",

@@ -1,5 +1,4 @@
 import { useMemo, useState } from 'react'
-import { Footer } from '@/components/home/footer'
 import { Meta } from '@/components/seo/meta'
 import { HeroFod } from '@/components/fiesta-on-deck/hero-fod'
 import { CalculadoraFod } from '@/components/fiesta-on-deck/calculadora-fod'
@@ -15,6 +14,7 @@ import {
   DiaRealFod,
   GaleriaFod,
   JergaFod,
+  PieFod,
   SonidoFod,
 } from '@/components/fiesta-on-deck/secciones-fod'
 import {
@@ -100,7 +100,8 @@ export function FiestaOnDeckPage({ slug }: { slug: 'fiesta-on-deck-afro' | 'fies
       {esLatin ? <JergaFod fiesta={fiesta} /> : <DiaRealFod fiesta={fiesta} />}
       <BuenoSaberFod />
       <CierreFod fiesta={fiesta} desde={paquetes[0].precioBase} />
-      <Footer />
+      {/* [2026-11-25, Sr. Fernando] El pie de la marca, no el de Hispaniola: ver PieFod. */}
+      <PieFod fiesta={fiesta} />
     </div>
   )
 }

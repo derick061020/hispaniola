@@ -1,8 +1,12 @@
 import { useState, type ReactNode } from 'react'
 import { Check } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { Logo } from '@/components/ui/logo'
 import {
   BANDERAS_FOD,
   BUENO_SABER_FOD,
+  FIESTAS_ON_DECK,
+  SLUGS_FOD,
   PACKS_FOD,
   WHATSAPP_FOD,
   WHATSAPP_FOD_TEXTO,
@@ -590,5 +594,83 @@ export function CierreFod({ fiesta, desde }: { fiesta: FiestaOnDeck; desde: numb
         </div>
       </div>
     </section>
+  )
+}
+
+// ── El pie ───────────────────────────────────────────────────────────────
+
+/** [2026-11-25, Sr. Fernando, Gerencia 15:04: «en la parte final en afro nos
+ *  fuimos con el color y en latin terminamos como la página de Hispaniola;
+ *  sería bueno darle el mismo toque que afro»] Las dos landings terminaban en
+ *  el footer general de Hispaniola (el mar, «Ready for an unforgettable
+ *  day?»), que rompe la línea de la marca justo al final. Este es el pie de
+ *  Fiesta on Deck, con el color de cada experiencia (tokens de rol: negro y
+ *  amarillo en Afro, azul bandera y mango en Latin): logo circular de la
+ *  marca con el de Hispaniola pequeño al lado, las dos experiencias y el
+ *  contacto. Hispaniola Party Boat no se enlaza (se quitó de Events el 25/11). */
+export function PieFod({ fiesta }: { fiesta: FiestaOnDeck }) {
+  return (
+    <footer className="border-t-8 border-fod-acento bg-fod-fondo text-fod-texto">
+      <div className="mx-auto grid max-w-contenido gap-10 px-5 py-14 sm:px-10 md:grid-cols-[1.4fr_1fr_1fr]">
+        <div>
+          <div className="flex items-center gap-4">
+            <LogoCircularFod className="size-24" />
+            <Logo sobreOscuro compacto className="h-8 w-auto opacity-90" />
+          </div>
+          <p className="mt-5 max-w-md text-sm text-fod-humo">
+            {t('Fiesta on Deck is the party boat family of Hispaniola Aquatic Adventures, a Bávaro Reefs Group company. Playa Bibijagua, Bávaro, Punta Cana, Dominican Republic.')}
+          </p>
+        </div>
+        <nav aria-label="Fiesta on Deck">
+          <p className="font-fod text-xs font-extrabold uppercase tracking-widest text-fod-acento">Fiesta on Deck</p>
+          <ul className="mt-4 space-y-2 text-sm font-semibold">
+            {SLUGS_FOD.map((slug) => (
+              <li key={slug}>
+                <Link to={`/events/${slug}`} className="hover:text-fod-acento">
+                  {FIESTAS_ON_DECK[slug].nombre}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+        <div>
+          <p className="font-fod text-xs font-extrabold uppercase tracking-widest text-fod-acento">{t('Contact')}</p>
+          <ul className="mt-4 space-y-2 text-sm font-semibold">
+            <li>
+              <a href={`https://wa.me/${WHATSAPP_FOD}`} target="_blank" rel="noopener" className="hover:text-fod-acento">
+                WhatsApp {WHATSAPP_FOD_TEXTO}
+              </a>
+            </li>
+            <li>
+              <a href={`https://instagram.com/${fiesta.galeria.instagram}`} target="_blank" rel="noopener" className="hover:text-fod-acento">
+                Instagram @{fiesta.galeria.instagram}
+              </a>
+            </li>
+            <li>
+              <Link to="/legal/terms" className="hover:text-fod-acento">{t('Terms')}</Link>
+              {' · '}
+              <Link to="/legal/privacy" className="hover:text-fod-acento">{t('Privacy')}</Link>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div className="mx-auto max-w-contenido px-5 sm:px-10">
+        <p className="border-t border-fod-linea py-6 font-mono text-xs text-fod-humo">
+          © {new Date().getFullYear()} Hispaniola Aquatic Adventures · RNC 130878161 · {t('Prices in US dollars, taxes included.')}
+        </p>
+      </div>
+    </footer>
+  )
+}
+
+/** [2026-11-25, Sr. Fernando: «vamos a probar con el logo circular de Fiesta,
+ *  que va a quedar un chin más grande la parte blanca»] El logo va dentro de
+ *  un círculo blanco con aire alrededor: el cuadrado del logo cabe entero en
+ *  el círculo (un relleno fijo y pequeño: en % se calcularía sobre el ancho del padre, no del círculo) y el blanco sobresale un poco. */
+export function LogoCircularFod({ className = '' }: { className?: string }) {
+  return (
+    <span className={`flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-papel p-2.5 ${className}`}>
+      <img src="/fotos/fiesta-on-deck/fiesta-on-deck.webp" alt="Fiesta on Deck Punta Cana" className="size-full object-contain" />
+    </span>
   )
 }

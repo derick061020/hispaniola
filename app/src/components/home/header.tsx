@@ -142,7 +142,10 @@ export function Header({
               navegación — Header se remonta al cambiar de ruta. */}
           {marca ? (
             <span className="flex items-center gap-3 sm:gap-4">
-              <img src={marca.src} alt={marca.alt} className="size-16 rounded-sm bg-papel object-contain sm:size-20" />
+              {/* [2026-11-25, Sr. Fernando] Logo circular: el blanco un poco más grande que el logo. */}
+              <span className="flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-papel p-1.5 sm:size-20 sm:p-2">
+                <img src={marca.src} alt={marca.alt} className="size-full object-contain" />
+              </span>
               <Logo sobreOscuro={sobreVideo} compacto className="h-7 w-auto opacity-90 sm:h-8" />
             </span>
           ) : (
