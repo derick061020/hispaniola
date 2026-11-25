@@ -6,10 +6,13 @@ import {
   PACKS_FOD,
   WHATSAPP_FOD,
   WHATSAPP_FOD_TEXTO,
+  barrasFod,
+  introCartaFod,
   type FiestaOnDeck,
+  type MarcaFod,
 } from '@/data/fiesta-on-deck'
 import { formatoDinero } from '@/data/home'
-import { BARRAS_EVENTO } from '@/data/eventos'
+// (las barras salen de barrasFod: la carta de cócteles cambia por temático)
 import { TarjetasBarra } from '@/components/evento/tarjetas-barra'
 import { t } from '@/lib/i18n'
 
@@ -178,7 +181,7 @@ export function SonidoFod({ fiesta }: { fiesta: FiestaOnDeck }) {
  *  borde y la sombra dura del panel son de la marca: así no parece una
  *  página incrustada dentro de otra. El copy del intro es el de la landing de
  *  party boat (`barras.intro`), el mismo producto. */
-export function BarraFod({ elegida, onElegir }: { elegida: string; onElegir: (id: string) => void }) {
+export function BarraFod({ marca, elegida, onElegir }: { marca: MarcaFod; elegida: string; onElegir: (id: string) => void }) {
   return (
     <Seccion id="fod-barra">
       <CabeceraFod
@@ -187,11 +190,11 @@ export function BarraFod({ elegida, onElegir }: { elegida: string; onElegir: (id
         linea2={t('bar.')}
         intro={t(
           'Every package sails with our Caribbean open bar included. Upgrade it for the whole group if you want wine, cocktails or premium labels on board — the price is per guest, and it is added on top of your food package.',
-        )}
+        ) + ' ' + t(introCartaFod(marca))}
       />
       <div className="fod-sombra mt-12 border-2 border-fod-texto bg-papel p-4 sm:p-6">
         <TarjetasBarra
-          items={BARRAS_EVENTO}
+          items={barrasFod(marca)}
           elegida={elegida}
           onElegir={(id) => {
             onElegir(id)

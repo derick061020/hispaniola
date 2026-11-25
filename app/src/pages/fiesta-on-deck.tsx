@@ -81,7 +81,7 @@ export function FiestaOnDeckPage({ slug }: { slug: 'fiesta-on-deck-afro' | 'fies
       <CuatroFod fiesta={fiesta} />
       <SonidoFod fiesta={fiesta} />
       <CintaFod items={fiesta.sonido.estilos} invertida />
-      <BarraFod elegida={barra} onElegir={setBarra} />
+      <BarraFod marca={fiesta.marca} elegida={barra} onElegir={setBarra} />
       <ComidaFod fiesta={fiesta} />
       {esLatin ? <BanderasFod elegidas={banderas} onCambiar={setBanderas} /> : null}
       <CelebraFod packActual={pack} />

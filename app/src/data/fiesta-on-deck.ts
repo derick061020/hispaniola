@@ -1,4 +1,5 @@
 import { traducible } from '@/lib/i18n'
+import { BARRAS_EVENTO, type BarraEvento } from '@/data/eventos'
 
 // ────────────────────────────────────────────────────────────────────
 // FIESTA ON DECK — las dos experiencias de la nueva marca de party boat
@@ -403,3 +404,45 @@ export const FIESTAS_ON_DECK: Record<string, FiestaOnDeck> = traducible({
 })
 
 export const SLUGS_FOD = ['fiesta-on-deck-afro', 'fiesta-on-deck-latin'] as const
+
+// LA CARTA DE CÓCTELES DE CADA TEMÁTICO.
+//
+// [2026-11-25, Sr. Fernando, Gerencia 15:01: «habría unos cambios en la
+// coctelería de los party boats temáticos»] Los niveles, los precios y las
+// botellas son los de siempre (BARRAS_EVENTO: Included / +15 / +30). Lo que
+// cambia es la lista de cócteles y el trago de bienvenida de Signature:
+// Afro va centrada en el ron, con inspiración jamaicana, y Latin en los
+// clásicos latinos con sello dominicano. Las listas son literales de su
+// documento.
+const CARTA_FOD: Record<MarcaFod, { intro: string; cocteles: Record<string, string[]>; bienvenida: string }> = {
+  afro: {
+    intro: 'A rum-led menu with Jamaican inspiration: the Caribbean Rum Punch opens it, and the Sorrel & Ginger Rum Punch, with hibiscus and ginger, is the star.',
+    cocteles: {
+      caribbean: ['Caribbean Rum Punch', 'Cuba Libre', 'Pineapple & Vodka', 'Whisky & Coke'],
+      'caribbean-plus': ['Sorrel & Ginger Rum Punch', 'Caribbean Rum Punch', 'Rum & Ginger', 'Grapefruit Rum Fizz', 'Piña Colada'],
+      signature: ['Sorrel & Ginger Rum Punch', 'Aged Rum Punch', 'Rum & Ginger', 'Grapefruit Rum Fizz', 'Piña Colada'],
+    },
+    bienvenida: 'A Hibiscus & Ginger Fizz with prosecco the moment you step on board',
+  },
+  latin: {
+    intro: 'Latin classics with a Dominican touch: the Paloma opens the menu, and passion fruit (chinola) ties the two upper levels together.',
+    cocteles: {
+      caribbean: ['Paloma', 'Cuba Libre', 'Tequila Sunrise', 'Whisky & Coke'],
+      'caribbean-plus': ['Chinola Mojito', 'Classic Mojito', 'Margarita', 'Paloma', 'Piña Colada'],
+      signature: ['Chinola Mojito', 'Tamarind Margarita', 'Paloma', 'Piña Colada', 'Dominican Chinola Daiquiri'],
+    },
+    bienvenida: 'A Chinola Mimosa with prosecco the moment you step on board',
+  },
+}
+
+/** Las tres barras de evento con la carta de cócteles del temático. */
+export function barrasFod(marca: MarcaFod): BarraEvento[] {
+  const carta = CARTA_FOD[marca]
+  return BARRAS_EVENTO.map((b) => ({
+    ...b,
+    cocteles: carta.cocteles[b.id] ?? b.cocteles,
+    bienvenida: b.bienvenida ? carta.bienvenida : undefined,
+  }))
+}
+
+export const introCartaFod = (marca: MarcaFod) => CARTA_FOD[marca].intro
