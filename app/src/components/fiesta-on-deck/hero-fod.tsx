@@ -28,24 +28,19 @@ export function HeroFod({ fiesta }: { fiesta: FiestaOnDeck }) {
 
   return (
     <section id="hero" className="bg-fod-fondo text-fod-texto" data-nav-oscuro>
-      <Header variante="sobreVideo" ctaHref="#fod-reserva" />
+      <Header
+        variante="sobreVideo"
+        ctaHref="#fod-reserva"
+        marca={{ src: '/fotos/fiesta-on-deck/fiesta-on-deck.webp', alt: 'Fiesta on Deck Punta Cana' }}
+      />
 
       <div className="mx-auto max-w-contenido px-5 pb-12 pt-4 sm:px-10 sm:pb-16">
         {/* Marca + operador + cambio de experiencia */}
         <div className="flex flex-wrap items-center justify-between gap-4 border-y-2 border-fod-linea py-3">
-          <div className="flex items-center gap-3">
-            <img
-              src="/fotos/fiesta-on-deck/fiesta-on-deck.webp"
-              alt="Fiesta on Deck Punta Cana"
-              className="size-12 rounded-sm bg-papel object-contain"
-            />
-            <span className="text-xs uppercase tracking-wide text-fod-humo">{t('Operated by')}</span>
-            <img
-              src="/fotos/fiesta-on-deck/hispaniola-logo.webp"
-              alt="Hispaniola Aquatic Adventures"
-              className="h-8 w-auto"
-            />
-          </div>
+          {/* [2026-11-25, Sr. Fernando] El logo de Fiesta on Deck (grande) y el de
+              Hispaniola (pequeño, a su derecha) están ya en el header: aquí queda
+              el texto «Operated by» como aclaración y el cambio Afro ⇄ Latin. */}
+          <span className="text-xs uppercase tracking-wide text-fod-humo">{t('Operated by')} Hispaniola Aquatic Adventures</span>
           <nav aria-label={t('Fiesta on Deck experiences')} className="flex gap-2">
             {SLUGS_FOD.map((slug) => {
               const f = FIESTAS_ON_DECK[slug]

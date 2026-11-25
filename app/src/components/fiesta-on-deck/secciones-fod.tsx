@@ -231,7 +231,7 @@ export function ComidaFod({ fiesta }: { fiesta: FiestaOnDeck }) {
         </figure>
         <div className="p-6 sm:p-10">
           <p className="font-fod text-lg font-bold italic text-fod-acento">{c.manuscrito ?? t('On the menu')}</p>
-          <h3 className="fod-display mt-1 text-fod-h3">{t('Five plates')}</h3>
+          {/* [2026-11-25, Sr. Fernando: «2. eliminar five plates»] Sin el titular: la lista numerada ya lo dice. */}
           <ol className="mt-6">
             {c.platos.map((p, i) => (
               <li key={p} className="flex items-baseline gap-4 border-b border-fod-linea py-3">

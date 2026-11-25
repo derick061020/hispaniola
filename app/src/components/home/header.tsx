@@ -52,9 +52,14 @@ export function Header({
   // mío —el botón que abre esa página es «See availability», no este— y se
   // devolvió el mismo día.
   ctaHref = '/tours',
+  marca,
 }: {
   variante?: 'solida' | 'sobreVideo'
   ctaHref?: string
+  /** [2026-11-25, Sr. Fernando: «el logo más grande de Fiesta on Deck y el de
+   *  Hispaniola a la derecha más pequeño»] Una marca propia (Fiesta on Deck)
+   *  ocupa el sitio del logo, y el de Hispaniola va a su derecha, compacto. */
+  marca?: { src: string; alt: string }
 }) {
   const [movilAbierto, setMovilAbierto] = useState(false)
   const { pathname } = useLocation()
@@ -135,7 +140,14 @@ export function Header({
               ([2026-08-21] pedido de Samuel). Solo la dispara Header, y Logo
               se encarga de que suene UNA vez por carga y no en cada
               navegación — Header se remonta al cambiar de ruta. */}
-          <Logo sobreOscuro={sobreVideo} entrada />
+          {marca ? (
+            <span className="flex items-center gap-3 sm:gap-4">
+              <img src={marca.src} alt={marca.alt} className="size-16 rounded-sm bg-papel object-contain sm:size-20" />
+              <Logo sobreOscuro={sobreVideo} compacto className="h-7 w-auto opacity-90 sm:h-8" />
+            </span>
+          ) : (
+            <Logo sobreOscuro={sobreVideo} entrada />
+          )}
         </Link>
 
         {/* 2026-07-21: los TABS de escritorio de 'sobreVideo' (antes un

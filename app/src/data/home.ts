@@ -365,13 +365,11 @@ export type WebGrupo = {
 }
 
 export const WEBS_GRUPO: WebGrupo[] = traducible([
-  {
-    id: 'hispaniola-party-boat',
-    nombre: 'Hispaniola Party Boat',
-    meta: 'Private party boat. Your price per person in seconds.',
-    url: 'https://hispaniolapartyboat.com/',
-    foto: 'grupo-hispaniola-party-boat',
-  },
+  // [2026-11-25, Sr. Fernando en Gerencia, con captura tachada: «1. quitar
+  // hispaniola party boat»] En Events quedan solo las dos Fiesta on Deck. Su
+  // entrada era: { id: 'hispaniola-party-boat', nombre: 'Hispaniola Party Boat',
+  //   meta: 'Private party boat. Your price per person in seconds.',
+  //   url: 'https://hispaniolapartyboat.com/', foto: 'grupo-hispaniola-party-boat' }
   // [2026-11-24, Sr. Fernando en Gerencia] «En el menú Events, donde
   // actualmente aparecen Hispaniola Party Boat y Traffic Light Party Boat,
   // vamos a colocar estas dos nuevas experiencias de Fiesta on Deck». Traffic
