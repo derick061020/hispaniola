@@ -79,6 +79,18 @@ export type AddOn = {
   max_pax?: number | null
 }
 
+export type PromoWeb = {
+  pct: number
+  label: string
+  /** Último día (AAAA-MM-DD) en que se puede reservar con la promo. */
+  until: string | null
+  /** Si aplica, el 5% por reservar con 30 días no se suma. */
+  excludes_early_booking: boolean
+  /** [2026-11-24] Si viene, la promo vale SOLO para esas variantes (el
+   *  Premium de eventos): se pinta en su tarjeta, no en todo el producto. */
+  variants?: string[]
+}
+
 export type Tour = {
   slug: string
   id: number
@@ -103,6 +115,8 @@ export type Tour = {
   schedules: Horario[]
   variants: Variante[]
   addons: AddOn[]
+  /** [2026-10-30] Promo de temporada vigente (oferta `promo` de Odoo). */
+  promo?: PromoWeb | null
   tiers?: Tramo[]
   marginal?: { included_pax: number; extra_price: number }
   included?: string[]
@@ -127,6 +141,10 @@ export type LineaAddOn = {
   slug: string
   label: string
   base: BaseAddOn
+  /** [2026-11-19] `transporte` = el transporte privado, que se cobra entero
+   *  con el depósito (`paid_in_full`). `fundacion` = producto de la tienda. */
+  kind?: 'tour' | 'fundacion' | 'transporte'
+  paid_in_full?: boolean
   unit_price: number
   quantity: number
   amount: number
@@ -156,6 +174,8 @@ export type Cotizacion = {
   base: number
   addons: LineaAddOn[]
   addons_total: number
+  /** [2026-11-19] El transporte privado, si está contratado. */
+  private_transport?: LineaAddOn | null
   subtotal: number
   discounts: DescuentoAplicado[]
   discount_pct: number
@@ -202,6 +222,8 @@ export type Pedido = {
   how_found: string | null
   dishes: { guest: number; dish: string }[]
   addons: string[]
+  /** [2026-11-19] Si el pedido lleva el transporte privado contratado. */
+  private_transport?: boolean
   amounts: {
     currency: Moneda
     base: number
@@ -361,7 +383,29 @@ export type ParcheCheckout = {
   /** [2026-10-17] Productos de la Fundación (unidades). Ver
    *  components/reservar/fundacion-checkout.tsx. */
   foundation?: { slug: string; qty: number }[]
+  /** [2026-11-19, Sr. Fernando] Transporte privado ida y vuelta. El importe lo
+   *  pone Odoo según la zona del hotel. */
+  private_transport?: boolean
   meta?: MetaOrigen
+  /** [2026-10-30] Casillas del último paso (anexo HAA-LEG-002, apartado D).
+   *  Campo NUEVO: Odoo todavía no lo conoce. Viaja en un `sync` aparte, justo
+   *  antes de `/pay`, para que un back que lo rechace no se lleve por delante
+   *  el guardado del formulario. Ver PARA-DERICK.md §4. */
+  legal_acceptance?: AceptacionLegal
+}
+
+/** Constancia de aceptación de las políticas. Ejemplo:
+ *  `{ accepted_at: '2026-10-29T18:32:05.120Z', version: 'HAA-LEG-002 · 29 de
+ *  octubre de 2026', channel: 'web', image_consent: false }` */
+export type AceptacionLegal = {
+  /** Cuándo marcó la casilla de Términos. ISO 8601 en UTC. */
+  accepted_at: string
+  /** Versión de las políticas que vio. Hoy, «HAA-LEG-002 · 29 de octubre de 2026». */
+  version: string
+  /** Desde la web siempre 'web'. Enlace de pago y firma a bordo los pone Odoo. */
+  channel: 'web'
+  /** Casilla 2: autoriza fotos y video en redes, web y publicidad. */
+  image_consent: boolean
 }
 
 /** De donde viene la visita. Se guarda en el pedido para poder atribuir la

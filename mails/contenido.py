@@ -79,7 +79,8 @@ COMUN = {
         "ref": "Reserva",
         "ayuda": "¿Alguna duda? Habla directo con el equipo del barco:",
         "direccion": "Hispaniola Aquatic Adventures · Punta Cana, República Dominicana<br>{{company_address}}",
-        "franja": "Cancelación gratuita hasta 7 días antes" + p.sep() + "Reserva directa, sin intermediarios",
+        # [2026-10-30, PDF HAA-LEG-002 anexo C.5] enlace a la política de cancelación
+        "franja": '<a href="https://hispaniolaaquaticadventures.com/legal/cancellation-policy" style="color:#5b6b78;text-decoration:underline;">Cancelación gratuita hasta 7 días antes</a>' + p.sep() + "Reserva directa, sin intermediarios",
         "gestionar": "Gestionar mi reserva",
         "ver_reserva": "Ver mi reserva",
         "calendario": "Añadir a mi calendario",
@@ -88,7 +89,7 @@ COMUN = {
         "ref": "Booking",
         "ayuda": "Any questions? Talk straight to the boat crew:",
         "direccion": "Hispaniola Aquatic Adventures · Punta Cana, Dominican Republic<br>{{company_address}}",
-        "franja": "Free cancellation up to 7 days before" + p.sep() + "Book direct, no middlemen",
+        "franja": '<a href="https://hispaniolaaquaticadventures.com/legal/cancellation-policy" style="color:#5b6b78;text-decoration:underline;">Free cancellation up to 7 days before</a>' + p.sep() + "Book direct, no middlemen",
         "gestionar": "Manage my booking",
         "ver_reserva": "View my booking",
         "calendario": "Add to my calendar",

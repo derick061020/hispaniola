@@ -178,6 +178,11 @@ export function EventoPage() {
                 // la misma GaleriaMosaico, que ya aceptaba `video` — lo único
                 // que faltaba era el dato (`videoGaleria` en data/eventos.ts).
                 video={evento.videoGaleria}
+                videoCartel={evento.videoGaleriaCartel ?? null}
+                // [2026-11-17, MARKETING WEB / Sr. Fernando] El 2º vídeo (botes
+                // privados) al lado del de la ocasión, en bodas y party boat.
+                video2={evento.videoGaleria2 ?? null}
+                videoCartel2={evento.videoGaleriaCartel2 ?? null}
                 // [v2 2026-07-27, plan 01 §10] El slider de comida en la
                 // primera celda va también aquí: el cliente dijo «en TODOS los
                 // servicios» (reunión 07-24, 19:27), y las 3 landings de evento
@@ -190,6 +195,8 @@ export function EventoPage() {
                 // [2026-08-21] El clip del propio evento, como una celda más de
                 // la rejilla. Ver `videoProducto` en data/eventos.ts.
                 videoProducto={evento.videoProducto}
+                // [2026-11-19, Sr. Fernando] Reels arriba, fotos compactas debajo.
+                reels={evento.reels ?? null}
               />
 
               {/* [v2 2026-07-28, pedido de Samuel: «al estar el video vertical
@@ -205,6 +212,7 @@ export function EventoPage() {
               {evento.videoGaleria !== null ? (
                 <VideoAcompanante
                   src={evento.videoGaleria}
+                  cartel={evento.videoGaleriaCartel}
                   poster={`/fotos/${evento.foto}.webp`}
                   etiqueta={evento.nombre}
                 />
@@ -282,10 +290,10 @@ export function EventoPage() {
               {/* Paquetes, sitio 1 de 2: pegados al barco insignia (MICE). */}
               {evento.barcoInsignia ? (
                 <>
-                  <PaquetesEvento evento={evento} elegido={paquete} onElegir={elegirPaquete} />
-                  {/* La barra va PEGADA a la comida: el cliente las elige
-                      juntas y su tarifario las numera 01 y 02. */}
+                  {/* [2026-11-19, Sr. Fernando: «Open Bar: quiero que aparezca en
+                      primer lugar… Comida: debajo de los Open Bars»] */}
                   <BarrasEvento evento={evento} />
+                  <PaquetesEvento evento={evento} elegido={paquete} onElegir={elegirPaquete} />
                 </>
               ) : null}
 
@@ -300,8 +308,9 @@ export function EventoPage() {
                   del SITIO, no la de si hay paquetes. */}
               {evento.barcoInsignia ? null : (
                 <>
-                  <PaquetesEvento evento={evento} elegido={paquete} onElegir={elegirPaquete} />
+                  {/* [2026-11-19, Sr. Fernando] Barras primero, comida después. */}
                   <BarrasEvento evento={evento} />
+                  <PaquetesEvento evento={evento} elegido={paquete} onElegir={elegirPaquete} />
                 </>
               )}
 

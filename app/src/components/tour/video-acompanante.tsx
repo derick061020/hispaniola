@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { X, Maximize2 } from 'lucide-react'
 import { VideoLightbox } from '@/components/tour/video-lightbox'
+import { medirVideo } from '@/lib/medir-video'
 import { useDevFlag } from '@/dev/use-dev-flag'
 import { useOrigenExpansion } from '@/lib/use-expansion-flip'
 import { t } from '@/lib/i18n'
@@ -37,8 +38,14 @@ export function VideoAcompanante({
   src,
   poster,
   etiqueta,
+  cartel,
+  apaisado = false,
 }: {
   src: string
+  /** Clip corto para el mini reproductor; el completo (`src`) se abre al ampliar. */
+  cartel?: { src: string; poster: string }
+  /** El completo es 16:9 (ver VideoLightbox). */
+  apaisado?: boolean
   /** Misma foto de portada que usa la celda del mosaico. */
   poster: string
   etiqueta: string
@@ -88,8 +95,8 @@ export function VideoAcompanante({
       >
         <div className="group relative aspect-[9/16] w-40 overflow-hidden rounded-card-grande bg-navy shadow-lg ring-1 ring-white/10">
           <video
-            src={src}
-            poster={poster}
+            src={cartel?.src ?? src}
+            poster={cartel?.poster ?? poster}
             autoPlay
             muted
             loop
@@ -105,6 +112,7 @@ export function VideoAcompanante({
               // Expande DESDE el mini player, no desde el centro.
               expansion.abrirDesde(e.currentTarget.parentElement as HTMLElement)
               setExpandido(true)
+              medirVideo(src, 'abierto')
             }}
             aria-label={`Ver el video de ${etiqueta} en grande`}
             className="absolute inset-0 grid place-items-center bg-navy/0 transition-colors group-hover:bg-navy/35"
@@ -135,6 +143,7 @@ export function VideoAcompanante({
           poster={poster}
           etiqueta={etiqueta}
           origen={expansion.origen}
+          apaisado={apaisado}
           onCerrar={() => setExpandido(false)}
         />
       ) : null}

@@ -10,6 +10,11 @@
    vidrio. Archivo propio para no engordar componentes.css con 500 líneas de una
    sola página. */
 @import './styles/museo.css';
+@import './styles/comida-y-bar.css';
+/* [2026-10-21] Propuesta 3 de Food & Bar (/food-and-bar), sobre el agua del museo. */
+@import './styles/comida-y-bar-v3.css';
+/* [2026-11-24] Las dos landings de Fiesta on Deck (/events/fiesta-on-deck-*). */
+@import './styles/fiesta-on-deck.css';
 
 *,
 *::before,

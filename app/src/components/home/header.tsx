@@ -52,9 +52,14 @@ export function Header({
   // mío —el botón que abre esa página es «See availability», no este— y se
   // devolvió el mismo día.
   ctaHref = '/tours',
+  marca,
 }: {
   variante?: 'solida' | 'sobreVideo'
   ctaHref?: string
+  /** [2026-11-25, Sr. Fernando: «el logo más grande de Fiesta on Deck y el de
+   *  Hispaniola a la derecha más pequeño»] Una marca propia (Fiesta on Deck)
+   *  ocupa el sitio del logo, y el de Hispaniola va a su derecha, compacto. */
+  marca?: { src: string; alt: string }
 }) {
   const [movilAbierto, setMovilAbierto] = useState(false)
   const { pathname } = useLocation()
@@ -135,7 +140,17 @@ export function Header({
               ([2026-08-21] pedido de Samuel). Solo la dispara Header, y Logo
               se encarga de que suene UNA vez por carga y no en cada
               navegación — Header se remonta al cambiar de ruta. */}
-          <Logo sobreOscuro={sobreVideo} entrada />
+          {marca ? (
+            <span className="flex items-center gap-3 sm:gap-4">
+              {/* [2026-11-25, Sr. Fernando] Logo circular: el blanco un poco más grande que el logo. */}
+              <span className="flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-papel p-1.5 sm:size-20 sm:p-2">
+                <img src={marca.src} alt={marca.alt} className="size-full object-contain" />
+              </span>
+              <Logo sobreOscuro={sobreVideo} compacto className="h-7 w-auto opacity-90 sm:h-8" />
+            </span>
+          ) : (
+            <Logo sobreOscuro={sobreVideo} entrada />
+          )}
         </Link>
 
         {/* 2026-07-21: los TABS de escritorio de 'sobreVideo' (antes un
@@ -144,7 +159,7 @@ export function Header({
             página. Logo y CTA (a los lados) SÍ se quedan aquí — ver más
             abajo. 'solida' no cambia. */}
         {sobreVideo ? null : (
-          <nav className="hidden items-center gap-1 md:flex">
+          <nav className="hidden items-center gap-1 lg:flex">
             <TabsConPaneles menuAbierto={menuAbierto} toggle={toggle} />
           </nav>
         )}
@@ -158,14 +173,20 @@ export function Header({
           <span className="hidden sm:inline-flex">
             <Boton href={ctaHref}>{t('Book now')}</Boton>
           </span>
-          {/* En 'sobreVideo' el de aquí solo vive de sm a md: por debajo manda
-              el fijo del portal, justo abajo. */}
+          {/* En 'sobreVideo' el de aquí solo vive de sm a lg: por debajo manda
+              el fijo del portal, justo abajo.
+              [2026-10-23] Hasta lg, no md: los tabs de NavFlotante no caben
+              entre logo y «Book now» por debajo de ~1010 px (ver el
+              comentario en nav-flotante.tsx). Con scroll se oculta: este
+              botón se va con el hero y lo releva el fijo del portal. */}
           <button
             type="button"
             onClick={() => setMovilAbierto(true)}
             aria-label="Menu"
-            className={`grid size-10 place-items-center rounded-lg transition-colors md:hidden ${
-              sobreVideo ? 'text-white hover:bg-white/10 max-sm:hidden' : 'text-navy hover:bg-papel-hueso'
+            className={`grid size-10 place-items-center rounded-lg transition-colors lg:hidden ${
+              sobreVideo
+                ? `text-white hover:bg-white/10 max-sm:hidden ${scrolleado ? 'invisible' : ''}`
+                : 'text-navy hover:bg-papel-hueso'
             }`}
           >
             <Menu className="size-5" />
@@ -187,7 +208,13 @@ export function Header({
               type="button"
               onClick={() => setMovilAbierto(true)}
               aria-label="Menu"
-              className={`fixed right-5 top-3 z-50 grid size-10 place-items-center transition-colors sm:hidden ${
+              // [2026-10-23] De sm a lg aparece SOLO con scroll: arriba del
+              // todo el botón del Header ya está en su fila (y este, a
+              // top-3, caería encima del Topbar); al bajar, sin NavFlotante
+              // en esa franja, era la única forma de volver a abrir el menú.
+              className={`fixed right-5 top-3 z-50 grid size-10 place-items-center transition-colors ${
+                scrolleado ? 'lg:hidden' : 'sm:hidden'
+              } ${
                 scrolleado
                   ? 'rounded-full bg-white text-navy shadow-card'
                   : 'rounded-lg text-white hover:bg-white/10'

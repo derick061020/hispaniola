@@ -116,16 +116,17 @@ export const TOURS: Tour[] = traducible([
   {
     slug: 'caribbean-escape',
     nombre: 'Caribbean Escape',
-    audienciaChip: 'Adults only',
+    audienciaChip: 'Ages 15+', // [2026-10-30] PDF HAA-LEG-002 §8
     duracionCorta: '4 h',
     rating: 4.9,
-    resenas: 1782,
+    resenas: 5720,
     maxPax: 25,
     precioLight: 99,
     booking: 'completo',
     // [v3 2026-08-06] Copy APROBADO por el cliente (WEBSITE - INICIO, pág. 2).
     descripcionCorta:
-      'An intimate adults-only Caribbean experience featuring protected reef snorkeling, an exclusive underwater museum, a secluded beach, and chef-prepared cuisine from our floating kitchen.',
+      // [2026-10-30] PDF HAA-LEG-002 §8: edad mínima 15, no «solo adultos».
+      'An intimate Caribbean experience for guests aged 15 and over, featuring protected reef snorkeling, an exclusive underwater museum, a secluded beach, and chef-prepared cuisine from our floating kitchen.',
     foto: 'galeria-semi-privado-4-v2',
     galeria: [
       'galeria-semi-privado-4-v2',
@@ -145,7 +146,7 @@ export const TOURS: Tour[] = traducible([
     audienciaChip: 'All ages',
     duracionCorta: '4 h',
     rating: 4.9,
-    resenas: 1782,
+    resenas: 5720,
     // v3 (2026-07-17): el «Max. Capacity: 30» de la web del cliente + precio
     // tarifa dual Adulto / Niño (la web publica 2 tarifas separadas solo para
     // este tour familiar — el resto del catálogo es 1 precio por persona). El
@@ -189,7 +190,7 @@ export const TOURS: Tour[] = traducible([
     // barco, no es un rango aproximado.
     duracionCorta: '3 or 4 h',
     rating: 4.9,
-    resenas: 1782,
+    resenas: 5720,
     // [v3 2026-08-06] 85, no 120: el copy aprobado (WEBSITE-TOURS pag. 17)
     // fija el aforo del Forever Teresa, que es el barco grande del charter y
     // el que marca el maximo de la ficha. Alimenta la card del grid y el
@@ -232,7 +233,7 @@ export const TOURS: Tour[] = traducible([
     audienciaChip: 'Full day',
     duracionCorta: 'full day',
     rating: 4.9,
-    resenas: 1782,
+    resenas: 5720,
     maxPax: 70,
     precioLight: 184,
     booking: 'completo',
@@ -337,13 +338,78 @@ export const OCASIONES: Ocasion[] = traducible([
   },
 ])
 
+// Webs hermanas del grupo (2026-10-22, pedido de Samuel tras hablar con
+// Raymond). [2026-10-30, Blanka en «Hispaniola Gerencia»: «remove esas dos y
+// ponerla en hispaniolapartyboat.com»] Pride Party Boat y Black Party Boat ya no
+// salen aquí: se enlazan desde la web de Hispaniola Party Boat. Eran los 4 party boats que el grupo vende con dominio propio se
+// enlazan desde el megamenú de Eventos. Van en una lista APARTE de
+// OCASIONES a propósito: OCASIONES también alimenta el footer, el ticker y la
+// hoja móvil con rutas internas (/events/:slug), y estas son webs EXTERNAS.
+// Nombre y meta salen de cada web (title / meta description, condensados a
+// una línea); la foto es su og:image o la foto de cabecera, recortada a
+// 480×346 (= proporción de la card del megamenú) en /fotos/grupo-*.webp.
+//   · Black Party Boat: su foto de cabecera (ref-dance) parece de banco/IA,
+//     así que se usa una foto propia de su galería (ev-partyboat-5).
+//   · Hispaniola Party Boat: su og:image lleva el logo abajo a la izquierda;
+//     el recorte lo deja fuera.
+export type WebGrupo = {
+  id: string
+  nombre: string
+  meta: string
+  url: string
+  /** [2026-11-24] Ruta INTERNA (Fiesta on Deck): si existe, se enlaza con
+   *  <Link> en la misma pestaña y sin el ↗ de «otra web». */
+  to?: string
+  /** nombre de archivo en /fotos (sin extensión) */
+  foto: string
+}
+
+export const WEBS_GRUPO: WebGrupo[] = traducible([
+  // [2026-11-25, Sr. Fernando en Gerencia, con captura tachada: «1. quitar
+  // hispaniola party boat»] En Events quedan solo las dos Fiesta on Deck. Su
+  // entrada era: { id: 'hispaniola-party-boat', nombre: 'Hispaniola Party Boat',
+  //   meta: 'Private party boat. Your price per person in seconds.',
+  //   url: 'https://hispaniolapartyboat.com/', foto: 'grupo-hispaniola-party-boat' }
+  // [2026-11-24, Sr. Fernando en Gerencia] «En el menú Events, donde
+  // actualmente aparecen Hispaniola Party Boat y Traffic Light Party Boat,
+  // vamos a colocar estas dos nuevas experiencias de Fiesta on Deck». Traffic
+  // Light SALE de Events: pasará a Tours, pero ese cambio queda en standby
+  // hasta la semana siguiente («cuando comenzaremos a trabajar en ese
+  // producto»). Su entrada era:
+  //   { id: 'traffic-light', nombre: 'Traffic Light Party Boat',
+  //     meta: 'Adults-only Thursday sail with open bar and live DJ.',
+  //     url: 'https://puntacanatrafficlight.com/', foto: 'grupo-traffic-light' }
+  // Las de Fiesta on Deck NO son webs externas: viven en esta web (`to`), así
+  // que se pintan sin ↗ y abren en la misma pestaña. Nombre = el <title> de
+  // las landings de Marketing; meta = su descripción, condensada a una línea.
+  {
+    id: 'fiesta-on-deck-afro',
+    nombre: 'Fiesta on Deck · Afro Caribbean',
+    meta: 'Private party boat with Afrobeats, Hip-Hop, R&B and Dancehall.',
+    url: '/events/fiesta-on-deck-afro',
+    to: '/events/fiesta-on-deck-afro',
+    foto: 'grupo-fod-afro',
+  },
+  {
+    id: 'fiesta-on-deck-latin',
+    nombre: 'Fiesta on Deck · Latin Party',
+    meta: 'Private party boat with reggaetón, dembow, bachata and merengue.',
+    url: '/events/fiesta-on-deck-latin',
+    to: '/events/fiesta-on-deck-latin',
+    foto: 'grupo-fod-latin',
+  },
+])
+
 // [v3 2026-08-06] Aqui vivian `EventoEspecial` y `EVENTOS_ESPECIALES` (la
 // vitrina de 4 boxes Cumpleanos/Bodas/Aniversarios/Despedidas del final de
 // la home). El cliente pidio ELIMINAR esa seccion (WEBSITE - INICIO pag. 5,
 // «REMOVE:»), y su unico consumidor era home/eventos-especiales.tsx, que se
 // borra con ella. Contenido completo en el tag `v3-pre-en`.
 
-export type IncluyeItem = { id: string; titulo: string; texto: string }
+// [2026-10-17] `enlace`: el ítem lleva a la página que lo amplía. Nace con
+// Food & Bar (Marketing: la sección «debe ir integrada, pero resaltada»): la
+// Floating Kitchen y el Open Bar de la home son la puerta natural a los menús.
+export type IncluyeItem = { id: string; titulo: string; texto: string; enlace?: { to: string; texto: string } }
 
 // Sección «Incluye» (v3-F19) — portado del bloque "...all our cruises include:"
 // de la HOME de la web actual (9 ítems), traducido fiel. Se QUITA el 9º
@@ -396,12 +462,14 @@ export const INCLUYE_CRUCERO: IncluyeItem[] = traducible([
     id: 'comida',
     titulo: 'Floating Kitchen',
     texto: 'An exclusive live cooking experience with fresh seafood and gourmet menu choices.',
+    enlace: { to: '/food-and-bar#menus', texto: 'See the menus' },
   },
   {
     id: 'bebidas',
     titulo: 'Open Bar',
     texto:
       'Unlimited Presidente beer (local beer), premium aged rum, vodka, tequila, tropical juices, refreshments, soft drinks (light and regular) and bottled water.',
+    enlace: { to: '/food-and-bar#open-bar', texto: 'See the Open Bar' },
   },
   {
     id: 'fotos',
@@ -468,14 +536,6 @@ export const NAV_NOSOTROS: ItemNav[] = traducible([
     to: '/facilities',
   },
   {
-    // [2026-10-16] Página nueva Food & Bar. El texto es el aprobado del
-    // «06- FLOATING KITCHEN» de la home (WEBSITE - INICIO pág. 4).
-    id: 'comida-y-bar',
-    nombre: 'Food & Bar',
-    descripcion: 'An exclusive live cooking experience with fresh seafood and gourmet menu choices.',
-    to: '/food-and-bar',
-  },
-  {
     // [v3 2026-08-06, WEBSITE - NOSOTROS pag. 1 + plan 05 §1] El megamenu pasa
     // de 3 entradas a 4: el cliente da la descripcion de MARINE PARK junto a
     // las otras tres, o sea que para el la pagina ya existe.
@@ -490,6 +550,16 @@ export const NAV_NOSOTROS: ItemNav[] = traducible([
     nombre: 'Fleet',
     descripcion: 'Discover our modern catamarans for shared tours, private charters, and every group size.',
     to: '/fleet',
+  },
+  {
+    // [2026-10-17] Página nueva Food & Bar. Vive en «About us», junto a
+    // Instalaciones y Flota, y NO como tab propio: el orden de los 6 tabs lo
+    // dictó el cliente (reunión 07-24) y un 7º es decisión suya. El texto es
+    // el aprobado del «06- FLOATING KITCHEN» (WEBSITE - INICIO pág. 4).
+    id: 'comida-y-bar',
+    nombre: 'Food & Bar',
+    descripcion: 'An exclusive live cooking experience with fresh seafood and gourmet menu choices.',
+    to: '/food-and-bar',
   },
 ])
 
@@ -725,6 +795,18 @@ export const PREMIOS: Premio[] = traducible([
     id: 'viator-2024',
     nombre: 'Viator Experience Awards 2024',
     foto: 'premio-viator-2024',
+    ancho: 95,
+    alto: 109,
+    fondo: 'macizo',
+  },
+  // [2026-11-11, Blanka en «Hispaniola Gerencia»: «A subir en la web please»]
+  // El Viator Experience Award 2025 (nuevo). Mandó también los 2022/2023/2024 en
+  // alta, que reemplazaron los nativos de 95×109 (el «pendiente assets en alta»
+  // §9 de arriba): los webp pasan a ~287×327 (3×), el tamaño pintado sigue 95×109.
+  {
+    id: 'viator-2025',
+    nombre: 'Viator Experience Award 2025',
+    foto: 'premio-viator-2025',
     ancho: 95,
     alto: 109,
     fondo: 'macizo',
@@ -1202,7 +1284,7 @@ export const RESENAS_MURO: Review[] = QUOTES.flatMap((real, i) => [
 // «intentar que sea lo más real posible»).
 //
 // ⚠️ LOS RATINGS POR PLATAFORMA SON DEL CLIENTE, NO NUESTROS. Hasta
-// 2026-07-22 esta barra pintaba SOLO el agregado real (4,9 / 1.782) porque
+// 2026-07-22 esta barra pintaba SOLO el agregado real (4,9 / 5.720) porque
 // las cifras por plataforma de la maqueta (Google 4,9 · +900 reseñas /
 // TripAdvisor 4,9 / Viator 4,8 Premier) no existen en ninguna fuente del
 // proyecto: las generó la IA con la que el cliente hizo esa maqueta.
@@ -1263,10 +1345,12 @@ export const PLATAFORMAS_RESENAS: PlataformaResena[] = traducible([
   {
     id: 'google',
     nombre: 'Google',
-    rating: '4.9',
-    ratingNumero: 4.9,
+    // [2026-11-19, Sr. Fernando, Gerencia, con captura de Google: 4,8 · 907
+    // opiniones] Confirmado por el cliente: deja de estar por confirmar.
+    rating: '4.8',
+    ratingNumero: 4.8,
     distincion: 'More than 900 reviews',
-    porConfirmar: true,
+    porConfirmar: false,
     url: null,
   },
   {
@@ -1289,8 +1373,15 @@ export const PLATAFORMAS_RESENAS: PlataformaResena[] = traducible([
   },
 ])
 
-/** Agregado real, el mismo número que usa el hero y el footer. */
-export const RESENAS_AGREGADO = traducible({ rating: '4.9', total: 1782 })
+/** Agregado real, el mismo número que usa el hero y el footer.
+ *  [2026-11-19, Sr. Fernando: «hay que actualizar el número de reviews: en
+ *  TripAdvisor son más de 4000, Google 900, Facebook casi 800», con capturas:
+ *  TripAdvisor 4.057 (4,9), Google 907 (4,8), Facebook 756 (100 % lo
+ *  recomienda)] 4.057 + 907 + 756 = 5.720. La media ponderada sale 4,9
+ *  (contando Facebook como 5). Antes: 1.782. El número está repetido a mano
+ *  en hero, footer, flota, SEO, schema e index.html, y en Odoo
+ *  (`haa.excursion.review_count`): se cambian todos juntos. */
+export const RESENAS_AGREGADO = traducible({ rating: '4.9', total: 5720 })
 
 // Los 2 VIDEO-TESTIMONIOS de la cabecera de la sección (2026-07-22).
 // Sustituyen al antiguo `FUNDADOR` —un solo video, con la frase de los
@@ -1704,7 +1795,8 @@ export type FaqItem = { p: string; r: string }
 export const FAQ_HOME: FaqItem[] = traducible([
   {
     p: 'What happens if it rains on the day of my tour?',
-    r: 'Full refund or a date change, at no cost. We only cancel if conditions are not safe.',
+    // [2026-10-30] Cláusula 3 de HAA-LEG-002 (Marketing): se intenta reprogramar y, si no se puede, reembolso total. Antes daba a elegir.
+    r: 'If the tour is canceled due to weather or sea conditions, we will try to reschedule it. If that is not possible, we will refund the full price of the tour. We only cancel if conditions are not safe.',
   },
   {
     p: 'Can I cancel my booking?',
@@ -1712,7 +1804,8 @@ export const FAQ_HOME: FaqItem[] = traducible([
   },
   {
     p: 'Can I pay just the deposit?',
-    r: 'Yes, you confirm with 25% and pay the rest on the day of the tour.',
+    // [2026-10-30] PDF HAA-LEG-002 §6: el saldo se paga «antes del inicio de la excursión». El 5% en efectivo se queda: el PDF no lo menciona.
+    r: 'Yes, you confirm with 25% and pay the rest before the tour starts.',
   },
   {
     p: 'Does it include pickup at my hotel?',
@@ -1737,17 +1830,20 @@ export const FAQ_HOME: FaqItem[] = traducible([
   },
   {
     p: 'Is it suitable for pregnant women or older guests?',
-    r: 'It depends on the tour and on the sea that day. Write to us on WhatsApp before booking and we’ll tell you which one suits you.',
+    // [2026-10-30] PDF HAA-LEG-002 §8 (de «older guests» el PDF no dice nada).
+    r: 'Pregnant women are welcome, provided their doctor agrees; they take part at their own risk. Guests with reduced mobility are welcome too: please contact us before booking so we can assess together how you can take part safely.',
   },
   {
     p: 'Can children join every tour?',
     // ⚠️ [2026-08-12] 18+ → 15+ (ver el gemelo en data/faq.ts, que lleva el
     // porqué completo): la ficha ya publicaba «Ages 15+» y el nombre nuevo del
     // tour lo lleva dentro.
-    r: 'On Coral Quest, yes; Caribbean Escape is adults only (15+). We carry child life jackets in every size.',
+    // [2026-10-30] PDF HAA-LEG-002 §8.
+    r: 'On Coral Quest, yes; Caribbean Escape is the only tour with a minimum age: guests aged 15 and over. We carry child life jackets in every size.',
   },
   {
     p: 'Do you take cards? Can I pay at the hotel?',
-    r: 'We accept Visa, Mastercard, American Express and PayPal from My Booking. You can also pay the balance on the day of the tour, in cash, with a 5% discount.',
+    // [2026-10-30] PDF HAA-LEG-002 §6: el saldo se paga «antes del inicio de la excursión». El 5% en efectivo se queda: el PDF no lo menciona.
+    r: 'We accept Visa, Mastercard, American Express and PayPal from My Booking. You can also pay the balance in cash before the tour starts, with a 5% discount.',
   },
 ])

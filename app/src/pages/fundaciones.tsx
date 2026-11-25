@@ -94,7 +94,7 @@ export function FundacionesPage() {
           </div>
           <div>
             <p className="text-lead text-navy-sub">
-              Párrafo destacado / lead — 4.9★ en 1.782 reseñas y #1 en TripAdvisor durante 7 años.
+              Párrafo destacado / lead — 4.9★ en 5.720 reseñas y #1 en TripAdvisor durante 7 años.
             </p>
             <p className="font-mono text-[11px] text-navy-soft">--text-lead · Poppins</p>
           </div>

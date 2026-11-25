@@ -186,6 +186,14 @@ import { t } from '@/lib/i18n'
 // menú (MenuMovil) — un panel flotante ahí competiría por la misma franja
 // que el pulgar necesita para scrollear.
 //
+// [2026-10-23, Samuel] Desde lg (1024), no desde md. Entre 768 y ~1010 px
+// la píldora (6 tabs, 574 px medidos) NO cabe entre el logo y «Book now» del
+// Header y los pisaba: «Home» encima del logo y «Help» debajo del botón. Y
+// en estado fijo, con logo y «Book now» fundidos, mide 804 px — de borde a
+// borde a 768. Compactar los tabs no llega (harían falta ~375 px a 768, y en
+// español las etiquetas son más largas), así que esa franja usa la misma
+// hamburguesa + hoja que ya tenía el tramo sm–md (header.tsx).
+//
 // Exclusiones explícitas (igual que antes, defensivas por si un dev-flag
 // forzara la visibilidad):
 //   - /reservar/:slug y /mi-reserva: checkout / gestión de reserva — nada de
@@ -411,7 +419,7 @@ export function NavFlotante() {
     // para un Topbar que ya no está en pantalla (Samuel: "está quedando muy
     // abajo... que no estorbe").
     <div
-      className={`nav-flotante-envoltorio pointer-events-none inset-x-0 z-50 hidden justify-center md:flex ${
+      className={`nav-flotante-envoltorio pointer-events-none inset-x-0 z-50 hidden justify-center lg:flex ${
         cedeElTope ? 'nav-flotante-envoltorio--en-flujo absolute' : 'fixed'
       } ${fijo ? 'nav-flotante-envoltorio--fijo' : ''}`}
     >

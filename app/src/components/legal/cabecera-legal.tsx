@@ -11,7 +11,11 @@ export function CabeceraLegal({ doc }: { doc: DocumentoLegal }) {
 
       <h1 className="mt-3 max-w-2xl text-balance font-display text-h2 font-semibold text-white">{doc.nombre}</h1>
 
-      <p className="mt-4 text-sm text-white/70">{t('Last updated:')}{' '}{doc.actualizado}</p>
+      <p className="mt-4 text-sm text-white/70">{t('Last updated:')}{' '}{doc.actualizado}
+        {/* [2026-10-30] El código del documento oficial (HAA-LEG-002) a la vista:
+            es la versión que el cliente acepta al reservar. */}
+        {doc.codigo ? ` · ${doc.codigo}` : null}
+      </p>
     </div>
   )
 }

@@ -131,5 +131,25 @@ export const MARINE_PARK = traducible({
       foto: 'marine-park-arrecife',
       fotoAlt: 'Artificial reef blocks on the seabed, surrounded by fish',
     },
+    // [2026-11-19, Sr. Fernando, Gerencia: «añadir otro punto en marine park: 05
+    // Marine Monitoring & Patrols…»] Texto y ✓ literales suyos.
+    // ⚠️ FOTO PROVISIONAL: él pidió al equipo una foto con el medidor de
+    // velocidad en la yola. Mientras llega, la del área protegida (tortuga con
+    // snorkelistas), que en esta página no salía. Al llegar, cambiar `foto`.
+    {
+      numero: '05',
+      titulo: 'Marine Monitoring & Patrols',
+      claim: "Protecting Bávaro’s Reef and Our Beloved Sea Turtles",
+      parrafos: [
+        "Years of conservation work helped lay the groundwork for the Bávaro Reef Lagoon’s designation as a protected area. Following that milestone and agreements signed with the Dominican Republic’s Ministry of Environment and Natural Resources, two park rangers joined a joint program run by the Ministry and the Bávaro Reefs Foundation. They patrol the lagoon daily to protect its habitats and marine wildlife, with special attention to our beloved sea turtles.",
+      ],
+      checks: [
+        'Daily patrols across the protected lagoon',
+        'Protection of marine habitats and biodiversity',
+        'Special attention to sea turtles',
+      ],
+      foto: 'fundacion-area-protegida',
+      fotoAlt: 'A sea turtle swimming next to snorkelers in the protected lagoon',
+    },
   ] satisfies BloqueMarinePark[],
 })

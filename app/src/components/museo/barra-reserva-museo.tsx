@@ -18,9 +18,9 @@ import { dosCifras, useCuentaAtras } from './use-cuenta-atras'
 // Así cumple lo de Marketing —«sin sobrecargar la página»—: aparece cuando
 // el visitante está leyendo y no tiene un botón de compra a la vista.
 //
-// ⚠️ Por ella se calla en esta ruta el aviso del Party Boat
-// (ui/aviso-party-boat.tsx), igual que en /tours-and-events: dos barras
-// fijas abajo se pisarían, y en esta página la que vende es esta.
+// ⚠️ Por ella se callaba en esta ruta el aviso del Party Boat, igual que en
+// /tours-and-events: dos barras fijas abajo se pisarían, y en esta página la
+// que vende es esta. [2026-10-23] Ese aviso ya no existe.
 
 export function BarraReservaMuseo() {
   const b = MUSEO.barra

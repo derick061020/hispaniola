@@ -131,7 +131,11 @@ function direccionEntre(desde: MenuId, hasta: MenuId): 1 | -1 {
 // navy de marca que usa 'solida': mismo trato que ya tiene `text-white` (un
 // color base de Tailwind, no un tinte de marca, para el estado sobre fondo
 // oscuro).
-const base = 'rounded-lg px-3 py-2 text-sm font-medium transition-colors'
+// [2026-10-23] px-2.5 hasta xl (luego px-3, como siempre): los tabs solo
+// existen desde lg (nav-flotante.tsx) y, en español, a 1024 la píldora
+// rozaba la cola del logo (3 px medidos). 6 tabs × 4 px le dan aire sin
+// tocar ni el texto ni la altura.
+const base = 'rounded-lg px-2.5 py-2 text-sm font-medium transition-colors xl:px-3'
 export const claseLinkTab = `${base} text-navy hover:bg-papel-hueso`
 const claseLinkTabFlotanteOscuro = `${base} text-white hover:bg-white/10`
 const claseLinkTabFlotanteClaro = `${base} text-black hover:bg-black/10`
@@ -480,15 +484,6 @@ export function TabsConPaneles({
       {botonTab('nosotros', t('About us ▾'))}
       {botonTab('tours', t('Tours ▾'))}
       {botonTab('eventos', t('Events ▾'))}
-      {/* [2026-10-18, Marketing: «debe ir integrado, pero resaltado, tal como
-          lo mostré en el ejemplo, con su nuevo menú»] En Party Boat «Food &
-          Bar» es una pestaña propia del menú principal. Aquí igual, con un
-          punto de acento para que se vea que es nueva. Enlace directo: no
-          tiene subapartados que desplegar. */}
-      <Link to="/food-and-bar" className={`${claseInicio} inline-flex items-center gap-1.5`}>
-        {t('Food & Bar')}
-        <span aria-hidden="true" className="size-1.5 rounded-full bg-coral" />
-      </Link>
       {botonTab('sostenibilidad', t('Sustainability ▾'))}
       {botonTab('ayuda', t('Help ▾'))}
       {panelMontado ? (

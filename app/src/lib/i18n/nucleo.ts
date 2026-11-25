@@ -162,7 +162,11 @@ export function tp(plantilla: string, valores: Record<string, string | number>):
  *  original usaba el punto (`1.782`, `91.607`) y el diccionario lo mantiene,
  *  así que aquí se usa `es-ES` y no `es-DO`, que formatea a la americana. */
 export function numero(n: number, opciones?: Intl.NumberFormatOptions): string {
-  return n.toLocaleString(actual === 'es' ? 'es-ES' : 'en-US', opciones)
+  // [2026-11-19] `useGrouping: 'always'` por defecto: `es-ES` solo separa los
+  // miles desde 5 cifras (minimumGroupingDigits = 2), así que 5720 salía
+  // «5720 reseñas» en la ficha y «5.720» en el resto. Quien pase su propio
+  // `useGrouping` manda.
+  return n.toLocaleString(actual === 'es' ? 'es-ES' : 'en-US', { useGrouping: 'always', ...opciones })
 }
 
 // ── Los datos (data/*.ts) ────────────────────────────────────────────────

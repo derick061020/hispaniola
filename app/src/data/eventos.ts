@@ -1,4 +1,5 @@
 import { traducible } from '@/lib/i18n'
+import { REELS_PRODUCTO } from '@/data/reels-producto'
 
 // Contenido de las 3 LANDINGS de eventos v2 (PLAN-EVENTOS.md) — portado
 // VERBATIM de las 3 URLs de la web actual del cliente:
@@ -81,6 +82,26 @@ export type PaqueteEvento = {
   /** badge de destacar: null = ninguno, "premium" = "Most complete" o
    *  similar. La card se pinta con un acento si está presente. */
   destacado?: 'premium' | null
+  /** [2026-11-12, Fernando vía Marketing: «paquetes de canapés»] La otra forma
+   *  de comer el paquete: en vez del almuerzo, canapés pasados en bandeja.
+   *  Ver `BocadosPaquete` y `CANAPES` más abajo. Opcional: hoy solo lo pinta
+   *  /food-and-bar; /events lo puede leer el día que se decida. */
+  bocados?: BocadosPaquete
+}
+
+/** [2026-11-12] Los canapés de cada paquete (DISTRIBUCION CANAPES.docx).
+ *  ⚠️ VALOR POR DEFECTO, pendiente de Fernando: los canapés son una
+ *  ALTERNATIVA al almuerzo del paquete («or bites», como en la web de
+ *  Hispaniola Party Boat) y NO cambian el precio. Si resulta que son un extra
+ *  con precio propio, se cambia aquí y en los textos de `CANAPES_TEXTOS`. */
+export type BocadosPaquete = {
+  /** El nivel de canapés: «Standard», «Premium», «VIP». `null` = el paquete
+   *  no lleva canapés (el Starfish, «Basic» en el documento del cliente). */
+  nivel: string | null
+  /** Variedades de la familia Classic («Basic» en el documento). */
+  classic: number
+  /** Variedades de la familia Premium. */
+  premium: number
 }
 
 /** [v2 2026-07-27] Total de un paquete de evento — MODELO MARGINAL:
@@ -238,6 +259,23 @@ export type FichaEvento = {
    *  grabe uno por ocasión (una boda no se vende con el mismo clip que un
    *  party boat) — misma deuda que ya arrastran los 4 tours. */
   videoGaleria: string | null
+  /** [2026-11-04, Sr. Fernando, MARKETING WEB: el vídeo «Party Boat» va «en
+   *  eventos… en la galería principal»] Clip corto y mudo para la columna y el
+   *  mini reproductor; el completo se pide al pulsar. Ver el mismo campo en
+   *  data/tours.ts. */
+  videoGaleriaCartel?: { src: string; poster: string }
+  /** [2026-11-19, Sr. Fernando, Gerencia] Hasta 5 reels verticales que van
+   *  ARRIBA de la galería de fotos (que pasa a compacta). `cartel` = clip corto
+   *  mudo para el bucle; `src` = el reel completo con sonido. Ver `reels` en
+   *  galeria-mosaico.tsx. */
+  reels?: { src: string; poster: string; cartel?: string }[]
+  /** [2026-11-17, MARKETING WEB / Sr. Fernando] SEGUNDO vídeo de la galería, la
+   *  columna 9:16 que va a la DERECHA de `videoGaleria`. Pedido: en bodas y
+   *  party boat, al lado del vídeo que ya hay, poner el vídeo de los botes
+   *  privados (el mismo de /tours/private-charter). Sin esto, la ficha enseña
+   *  un solo vídeo, como siempre. Su cartel/poster, en `videoGaleriaCartel2`. */
+  videoGaleria2?: string | null
+  videoGaleriaCartel2?: { src: string; poster: string }
   /** [2026-08-21, pedido de Samuel] LAS FOTOS DEL MENU, que son la mini
    *  galería de la primera celda del mosaico. Antes se DERIVABAN de las fotos
    *  de los paquetes, que son bodegones de plato sobre blanco; ahora salen de
@@ -327,6 +365,10 @@ export type BarraEvento = {
   nombre: string
   /** Lo que cuesta ADEMÁS del paquete de comida: "Included" o "+US$ 15". */
   precio: string
+  /** [2026-11-25] El mismo precio, como NÚMERO: lo que suma por invitado
+   *  sobre el paquete (0 en la incluida). Lo usa la calculadora de Fiesta on
+   *  Deck; la lógica de precio no lee el texto visible (CLAUDE.md, 2026-08-18). */
+  extraPorPersona: number
   /** La unidad del precio, siempre por cabeza. Va debajo y pequeño: el
    *  número solo se leería como el precio de la barra entera. */
   precioNota: string
@@ -335,7 +377,19 @@ export type BarraEvento = {
   texto: string
   /** El que la casa quiere vender, con su badge. Mismo trato que
    *  `destacado` en PaqueteEvento. */
-  destacado?: boolean
+  destacado?: boolean  /** [2026-11-19, Sr. Fernando, Gerencia: «Open Bar: quiero que aparezca en
+   *  primer lugar… incluir las fotografías que hemos enviado y detallar
+   *  exactamente qué bebidas incluye cada paquete»] La foto de las botellas y
+   *  vasos de ESA barra (las tres que mandó: Caribe, Caribbean plus,
+   *  Signature) y el detalle, con la misma estructura que la web de Party Boat
+   *  que puso de modelo: botellas, lo demás de la barra y los cócteles. */
+  foto: string
+  fotoAlt: string
+  botellas: string[]
+  tambien: string[]
+  cocteles: string[]
+  /** El trago de bienvenida (solo Signature: «mimosa bienvenida»). */
+  bienvenida?: string
 }
 
 // LA BARRA, QUE ES LA OTRA MITAD DE LA DECISIÓN.
@@ -358,31 +412,55 @@ export const BARRAS_EVENTO: BarraEvento[] = [
     id: 'caribbean',
     nombre: 'Caribbean',
     precio: 'Included',
+    extraPorPersona: 0,
     precioNota: 'per person',
     texto:
       'Dominican rum, vodka, tequila, whisky and Presidente beer. Cuba Libre, '
       + 'Screwdriver, Whisky & Coke and Tequila Sunrise, poured all day.',
+    // [2026-11-19, Sr. Fernando] Lista literal suya («Caribe»), sin los
+    // tamaños de botella: la web de Party Boat, su modelo, tampoco los pone.
+    foto: 'barra-caribbean',
+    fotoAlt: 'The Caribbean open bar: Barceló Dorado, Afterworks, Agavita, Passport and Presidente, with its cocktails',
+    botellas: ['Barceló Dorado Rum', 'Afterworks Vodka', 'Agavita Blanco Tequila', 'Passport Whisky'],
+    tambien: ['Presidente beer', 'Coca-Cola', 'Sprite / 7Up', 'Orange or pineapple juice', 'Water'],
+    cocteles: ['Cuba Libre', 'Screwdriver', 'Whisky & Coke', 'Tequila Sunrise'],
   },
   {
     id: 'caribbean-plus',
     nombre: 'Caribbean Plus / Premium',
     precio: '+US$ 15',
+    extraPorPersona: 15,
     precioNota: 'per person',
     texto:
       'Everything in Caribbean, with white wine and five cocktails: Mojito, '
       + 'Piña Colada, Margarita, Tequila Sunrise and the house Hispaniola '
       + 'Tropical Punch.',
+    // [2026-11-19, Sr. Fernando] «Caribbean plus», literal.
+    foto: 'barra-caribbean-plus',
+    fotoAlt: 'The Caribbean Plus open bar: Barceló Gran Añejo, Afterworks, Agavita, Passport, white wine and Presidente, with its cocktails',
+    botellas: ['Barceló Gran Añejo Rum', 'Afterworks Vodka', 'Agavita Blanco Tequila', 'Passport Whisky'],
+    tambien: ['Presidente beer', 'White wine'],
+    cocteles: ['Mojito', 'Piña Colada', 'Margarita', 'Tequila Sunrise', 'Hispaniola Tropical Punch'],
   },
   {
     id: 'signature',
     nombre: 'Signature',
     precio: '+US$ 30',
+    extraPorPersona: 30,
     precioNota: 'per person',
     texto:
       'Brugal Extra Viejo, Absolut, José Cuervo and Johnnie Walker. Red and '
       + 'white wine, prosecco, and a Caribbean Mimosa the moment you step on '
       + 'board.',
     destacado: true,
+    // [2026-11-19, Sr. Fernando] «Signature Open Bar», literal: «y mantenemos
+    // los 4–5 cócteles anteriores» = los cinco de Caribbean Plus.
+    foto: 'barra-signature',
+    fotoAlt: 'The Signature open bar: Brugal Extra Viejo, Absolut, José Cuervo, Johnnie Walker Red, wines, prosecco and Presidente',
+    botellas: ['Brugal Extra Viejo Rum', 'Absolut Vodka', 'José Cuervo Tequila', 'Johnnie Walker Red Label Whisky'],
+    tambien: ['Presidente beer', 'White wine', 'Red wine', 'Prosecco'],
+    cocteles: ['Mojito', 'Piña Colada', 'Margarita', 'Tequila Sunrise', 'Hispaniola Tropical Punch'],
+    bienvenida: 'A Caribbean Mimosa the moment you step on board',
   },
 ]
 
@@ -400,6 +478,14 @@ export const PAQUETES_COMIDA: PaqueteEvento[] = [
     foto: 'paquete-premium',
     fotoAlt: 'Premium (Turtle) Package: lobster, skewers and fries on a white plate',
     items: [
+      // [2026-11-24, Sr. Fernando en Gerencia: «que todos los paquetes incluyan
+      // Snacks, Fruit Skewer y Mini Croissant» y «elimina la salchicha de las
+      // opciones donde aparezca»] La base común va PRIMERO en los cuatro, y el
+      // Hot Dog sale de Starfish y Breeze. ⚠️ Las fotos de Starfish y Breeze
+      // (paquete-i, paquete-ii) aún enseñan el hot dog: falta foto nueva.
+      { titulo: 'Snacks', texto: '' },
+      { titulo: 'Fruit Skewer', texto: '1p/p' },
+      { titulo: 'Mini Croissant', texto: '1p/p' },
       { titulo: 'Chicken Skewer', texto: '1p/p' },
       { titulo: 'Beef Skewer', texto: '1p/p' },
       { titulo: 'Shrimp Skewer', texto: '1p/p' },
@@ -410,6 +496,8 @@ export const PAQUETES_COMIDA: PaqueteEvento[] = [
     ],
     extraPrecio: 'US$ 99.00 per extra guest',
     destacado: 'premium',
+    // [2026-11-12] VIP = 6 variedades: 2 Classic + 4 Premium.
+    bocados: { nivel: 'VIP', classic: 2, premium: 4 },
   },
   {
     id: 'package-i',
@@ -434,7 +522,13 @@ export const PAQUETES_COMIDA: PaqueteEvento[] = [
     meta: '3 hours on board · 2 stops',
     foto: 'paquete-i',
     fotoAlt: 'Party boat Starfish Package',
-    items: [{ titulo: 'Hot Dog', texto: '1p/p' }],
+    items: [
+      { titulo: 'Snacks', texto: '' },
+      { titulo: 'Fruit Skewer', texto: '1p/p' },
+      { titulo: 'Mini Croissant', texto: '1p/p' },
+    ],
+    // [2026-11-12] «Basic» en el documento del cliente: sin canapés.
+    bocados: { nivel: null, classic: 0, premium: 0 },
     // Las "Vegetarian Substitutions" del cliente son reemplazos, no items
     // extra — el plato de cada comensal es O el hot dog O el vegetariano.
     // Por ahora el form los lleva como items; si quieres separarlos, dime
@@ -454,12 +548,19 @@ export const PAQUETES_COMIDA: PaqueteEvento[] = [
     foto: 'paquete-ii',
     fotoAlt: 'Party boat Breeze Package',
     items: [
-      { titulo: 'Hot Dog', texto: '1p/p' },
+      { titulo: 'Snacks', texto: '' },
+      { titulo: 'Fruit Skewer', texto: '1p/p' },
+      { titulo: 'Mini Croissant', texto: '1p/p' },
       { titulo: 'Chicken Skewer', texto: '1p/p' },
       { titulo: 'Beef Skewer', texto: '1p/p' },
       { titulo: 'French Fries', texto: '' },
     ],
     extraPrecio: 'US$ 65.00 per extra guest',
+    // [2026-11-12] Standard = 2 variedades Classic.
+    // ⚠️ VALOR POR DEFECTO: el documento del cliente dice «2» en el texto y
+    // «3» en el total de su tabla comparativa (2 + 0). Se toma 2, pendiente
+    // de que Fernando lo confirme.
+    bocados: { nivel: 'Standard', classic: 2, premium: 0 },
   },
   {
     id: 'package-iii',
@@ -474,6 +575,9 @@ export const PAQUETES_COMIDA: PaqueteEvento[] = [
     foto: 'paquete-iii',
     fotoAlt: 'Party boat Tide Package',
     items: [
+      { titulo: 'Snacks', texto: '' },
+      { titulo: 'Fruit Skewer', texto: '1p/p' },
+      { titulo: 'Mini Croissant', texto: '1p/p' },
       { titulo: 'Chicken Skewer', texto: '1p/p' },
       { titulo: 'Beef Skewer', texto: '1p/p' },
       { titulo: 'Shrimp Skewer', texto: '1p/p' },
@@ -482,14 +586,209 @@ export const PAQUETES_COMIDA: PaqueteEvento[] = [
       { titulo: 'French Fries', texto: '' },
     ],
     extraPrecio: 'US$ 75.00 per extra guest',
+    // [2026-11-12] Premium = 4 variedades: 2 Classic + 2 Premium.
+    bocados: { nivel: 'Premium', classic: 2, premium: 2 },
   },
 ]
 
 /** Nota al pie del bloque de paquetes — verbatim del original, y también
  *  compartida: los descuentos, el aviso de langosta y la regla de las
  *  sustituciones vegetarianas son del tarifario, no de la ocasión. */
-const NOTA_PAQUETES =
+// [2026-10-21] Exportada: /food-and-bar la pone bajo sus cuatro paquetes.
+export const NOTA_PAQUETES =
   '*“Starting At Rates” with the applicable discounts: up to 5% returning guest · 5% booking 30+ days ahead · 5% cash payment. Lobster may not be available from March to June (it is replaced with wild prawn). Vegetarian options apply ONLY to their own package and cannot be swapped with other packages.'
+
+// ────────────────────────────────────────────────────────────────────
+// CANAPÉS («BITES») — 2026-11-12, encargo de Fernando (grupo MARKETING WEB)
+// ────────────────────────────────────────────────────────────────────
+//
+// Fuente: «Seleccion CANAPES.docx» (las 28 variedades, nombres LITERALES) y
+// «DISTRIBUCION CANAPES.docx» (cuántas lleva cada paquete y las condiciones).
+// Referencia visual: el bloque de menús de hispaniolapartyboat.com/food-and-bar
+// (cada paquete con su «or bites»).
+//
+// VALORES POR DEFECTO de Samuel mientras Fernando contesta (todos aquí, en
+// datos, para cambiarlos sin tocar componentes):
+//   1. Los canapés son una ALTERNATIVA al almuerzo, sin cambiar precios.
+//   2. Las familias se llaman Classic y Premium (el documento dice «Basic»;
+//      Party Boat dice «Classic»), y los niveles Standard / Premium / VIP.
+//   3. Una foto por familia, solo reales del cliente; si no hay, hueco.
+//   4. Standard = 2 variedades Classic.
+//   5. Solo se pinta en /food-and-bar (estos datos sirven luego a /events).
+//   6. La cabecera adapta la de Party Boat — ⚠️ PENDIENTE DE MARKETING.
+
+/** [2026-11-12] El paquete «Premium (Turtle)» choca con el nivel de canapés
+ *  «Premium», que es el del Tide. Party Boat lo llama «Turtle» a secas. NO se
+ *  renombra en esta rama (decisión de Samuel): queda preparado. Con `true`,
+ *  /food-and-bar lo pinta como `NOMBRE_TURTLE`. Para cambiarlo en TODA la web
+ *  (/events, landings, widget) hay que cambiar el `nombre` del paquete
+ *  `premium` en PAQUETES_COMIDA, no este interruptor. */
+export const USAR_NOMBRE_TURTLE = false
+export const NOMBRE_TURTLE = 'Turtle Package'
+
+/** El nombre que se enseña de un paquete de comida (ver USAR_NOMBRE_TURTLE). */
+export const nombrePaqueteComida = (p: PaqueteEvento) =>
+  USAR_NOMBRE_TURTLE && p.id === 'premium' ? NOMBRE_TURTLE : p.nombre
+
+/** [2026-11-12, 2ª vuelta] El nombre CORTO en la sección de canapés (botón,
+ *  «Included in…»). El del paquete ancla es «Premium», que
+ *  aquí se confundiría con la familia Premium de canapés: se dice «Turtle»,
+ *  que es la otra mitad de su nombre («Premium (Turtle) Package») y como lo
+ *  llama Party Boat. El título de la tarjeta no cambia. */
+export const cortoPaqueteComida = (p: PaqueteEvento) => (p.id === 'premium' ? 'Turtle' : p.nombreCorto)
+
+export type FamiliaCanapes = {
+  /** id estable, kebab-case. */
+  id: 'hot-classic' | 'cold-classic' | 'hot-premium' | 'cold-premium'
+  /** «Hot Classic»… — lo que se lee. */
+  nombre: string
+  familia: 'classic' | 'premium'
+  /** Ruta de la foto en /public, sin extensión. `null` = no hay foto real
+   *  del cliente: se pinta un hueco de diseño, NUNCA stock ni IA. */
+  foto: string | null
+  fotoAlt: string
+  /** Los canapés, con el nombre literal del documento del cliente. */
+  items: string[]
+}
+
+// Fotos (2026-11-12): todas de «FOTO PARA NUEVA WEB 2026/EVENTS/*/COMIDA», las
+// del propio cliente, recortadas a 4:3:
+//   · hot-classic  → IMG_8511 (bandeja de croquetas en el chafing)
+//   · cold-classic → IMG_8507 (brochetas de fruta)
+//   · cold-premium → CATAMARAN CELENA NOEL_-98 (bandeja de sushi a bordo)
+//   · hot-premium  → [2026-11-12, 2ª vuelta, Samuel: «puedes usar fotos de
+//     canapés de la web de Party Boat»] Mofonguito de plátano con camarón, de
+//     hispaniolapartyboat.com (archivo «bite-premium-hot-mofonguito-shrimp»,
+//     mismo grupo y mismo catering). Es el «Plantain Mofonguito with Shrimp»
+//     de la carta, no una foto genérica.
+export const CANAPES: FamiliaCanapes[] = [
+  {
+    id: 'hot-classic',
+    nombre: 'Hot Classic',
+    familia: 'classic',
+    foto: '/fotos/comida-bar/canape-hot-classic',
+    fotoAlt: 'A tray of golden croquettes served on board',
+    items: [
+      'Cochinita Pibil Quesadilla',
+      'Mini Plantain Chicken Basket',
+      'Chicken Croquette',
+      'Chicken Teriyaki Skewer',
+      'Chicken Fingers',
+      'Carrot Quipe',
+      'Broccoli Quipe',
+    ],
+  },
+  {
+    id: 'cold-classic',
+    nombre: 'Cold Classic',
+    familia: 'classic',
+    foto: '/fotos/comida-bar/canape-cold-classic',
+    fotoAlt: 'Fresh fruit skewers lined up on a tray',
+    items: [
+      'Fruit Skewer',
+      'Spanish Potato Tortilla',
+      'Italian Bruschetta',
+      'Quinoa Mini Salad with Chicken',
+      'Dominican Quipes',
+      'Croissant with Serrano Ham',
+      'Chicharrón Ceviche',
+    ],
+  },
+  {
+    id: 'hot-premium',
+    nombre: 'Hot Premium',
+    familia: 'premium',
+    foto: '/fotos/comida-bar/canape-hot-premium',
+    fotoAlt: 'Plantain mofonguitos topped with shrimp and parsley',
+    items: [
+      'Plantain Mofonguito with Shrimp',
+      'Fish Fingers',
+      'Tempura Shrimp',
+      'Mini Angus Burger',
+      'Serrano Ham Croquette',
+      'Mini Meat Lasagna',
+      'Vegetarian Lasagna',
+    ],
+  },
+  {
+    id: 'cold-premium',
+    nombre: 'Cold Premium',
+    familia: 'premium',
+    foto: '/fotos/comida-bar/canape-cold-premium',
+    fotoAlt: 'A platter of sushi rolls served on board',
+    items: [
+      'Serrano Ham Montadito',
+      'Shrimp Ceviche',
+      'Octopus Ceviche',
+      'Sushi King Crab Roll',
+      'Sushi Alaska Roll',
+      'Sushi California Roll',
+      'Fish Ceviche',
+    ],
+  },
+]
+
+/** Los textos del bloque. Pasan por t() en el componente (es.ts). */
+export const CANAPES_TEXTOS = {
+  // ⚠️ PENDIENTE DE MARKETING: cabecera adaptada de la de Party Boat («Four
+  // menus. Lunch on board, or bites passed round.» / «Each menu carries its
+  // own bite selection. Pick the menu first, then decide how you want to eat
+  // it.»), con la bajada que ya tenía esta sección.
+  cabecera: {
+    titulo: 'Four packages. Lunch on board, or bites passed round.',
+    texto:
+      'Party boats, weddings and corporate groups choose from four packages, priced for up to 12 guests. Each one comes as a lunch or with its own bite selection: pick the package first, then decide how you want to eat it.',
+  },
+  tarjeta: {
+    oBocados: 'Or bites',
+    selecciones: 'selections',
+    classic: 'Classic',
+    premium: 'Premium',
+    sinBocados: 'No bite selections',
+    // {paquete} = el nombre corto del primer paquete que sí lleva canapés.
+    empiezan: 'Bites start with the {paquete} package.',
+    // [2ª vuelta, Samuel: «que se entienda mucho mejor cuáles son las
+    // básicas y cuáles las Premium»] Cada fila dice de QUÉ lista sale.
+    deVariedades: 'varieties',
+    noIncluida: 'Not included',
+    // [4ª vuelta, Samuel: Standard/Premium/VIP «chocan con la familia
+    // Premium»] De los niveles de Fernando solo se ENSEÑA el VIP (la
+    // presentación especial del Turtle): «Premium» junto al Tide se leía como
+    // la familia Premium. Los niveles siguen en `bocados.nivel` para /events.
+    nivelesVisibles: ['VIP'],
+    verCarta: 'See the 28 bites',
+    preguntar: 'Ask about {paquete}',
+    planear: 'Plan your event',
+    // El mensaje que abre WhatsApp. {paquete} = nombre completo.
+    whatsapp: 'Hi! I’d like more information about the {paquete} for a private event.',
+  },
+  // [2026-11-13] Las 3 páginas de evento: bajo la intro aprobada de cada una
+  // (que no se toca), una frase común que presenta los canapés.
+  evento: {
+    intro: 'Every package can also be served as bites instead of lunch: the package sets how many you pick from each family.',
+  },
+  carta: {
+    eyebrow: 'Bites menu',
+    titulo: '28 bites, in two families',
+    // [4ª vuelta] Una sola frase: el resto lo dicen las cajas de abajo.
+    texto: 'Your package sets how many you pick from each family.',
+    familias: 'Bite families',
+    // Las «condiciones comerciales sugeridas» de DISTRIBUCION CANAPES.docx,
+    // tal como las publica Party Boat. ⚠️ El documento las llama «sugeridas»:
+    // confirmar con Fernando que ya valen para Hispaniola.
+    reglas: [
+      'Swap hot for cold inside the same family.',
+      'Add extra varieties for a per-person supplement.',
+      'The pieces per guest are set with our Events Team.',
+    ],
+    variedades: 'varieties',
+    // {paquetes} = «Breeze, Tide and Turtle», sacado de los datos.
+    incluidoEn: 'Included in {paquetes}',
+    y: 'and',
+    // Qué lleva cada familia, en una línea.
+    composicion: '{caliente} + {fria}',
+  },
+}
 
 // ────────────────────────────────────────────────────────────────────
 // 1) PARTY BOAT — /events-party-boat-puntacana.php
@@ -576,8 +875,9 @@ const PARTY_BOAT: FichaEvento = {
     // [2026-10-02, cliente vía Rossanna] Las variantes 2 y 3 que mandaron,
     // literales. Los títulos pierden el «(Facebook)»: nombraba la plataforma
     // dos veces en la misma tarjeta, y ya no es esa.
-    { titulo: 'Tour Photos', texto: 'We upload your tour photos to our online gallery. Free.' },
-    { titulo: 'Underwater Photos', texto: 'From the snorkeling tour, available in our online photo gallery.' },
+    // [2026-11-19, Sr. Fernando: «en todos los lugares que aparece fotos cambiar por go pro fotos»]
+    { titulo: 'GoPro Tour Photos', texto: 'We upload your GoPro tour photos to our online gallery. Free.' },
+    { titulo: 'GoPro Underwater Photos', texto: 'From the snorkeling tour, available in our online photo gallery.' },
     { titulo: 'WiFi & AUX port', texto: 'WiFi on board and an AUX port for your music.' },
     { titulo: 'Music & Dance', texto: 'Sound system and a crew with energy.' },
     { titulo: 'National Open Bar', texto: 'National beer, rum, vodka, juices and sodas.' },
@@ -639,10 +939,17 @@ const PARTY_BOAT: FichaEvento = {
     'ev-partyboat-menu-9',
     'ev-partyboat-menu-10',
   ],
-  // ⚠️ PLACEHOLDER a propósito: la columna vertical espera el clip de alguien
-  // explicando cómo reservar. El clip real del party boat está abajo, en
-  // `videoProducto`, dentro de la rejilla.
-  videoGaleria: '/video/hero.mp4',
+  // [2026-11-04, Sr. Fernando, MARKETING WEB] La columna vertical lleva ya el
+  // vídeo «Party Boat» que mandó Marketing (antes era el de marca de relleno).
+  // El clip de la rejilla (`videoProducto`) sigue siendo el de antes.
+  // [2026-11-19, Sr. Fernando] Los 5 reels de arriba. Reparto en data/reels-producto.ts.
+  reels: REELS_PRODUCTO.partyBoat,
+  videoGaleria: '/video/eventos/party-boat-galeria.mp4',
+  videoGaleriaCartel: { src: '/video/eventos/party-boat-cartel.mp4', poster: '/video/eventos/party-boat-cartel.jpg' },
+  // [2026-11-17, MARKETING WEB / Sr. Fernando] El vídeo de los botes privados,
+  // al lado del de party boat.
+  videoGaleria2: '/video/private-boats.mp4',
+  videoGaleriaCartel2: { src: '/video/private-boats-cartel.mp4', poster: '/video/private-boats-poster.jpg' },
   videoProducto: {
     src: '/video/eventos/party-boat.mp4',
     poster: '/fotos/ev-partyboat-video-poster.webp',
@@ -754,7 +1061,8 @@ const BODAS: FichaEvento = {
     // sacarla escondería una parada que sí se vende, y dejarla sin condición
     // prometía tres paradas en los paquetes de 3 h.
     { titulo: 'Deserted beach', texto: 'Private stop with a coco loco. 4-hour Premium package only.' },
-    { titulo: 'Photos', texto: 'Of the whole event, uploaded to our online photo gallery. Free.' },
+    // [2026-11-19, Sr. Fernando: «en todos los lugares que aparece fotos cambiar por go pro fotos»]
+    { titulo: 'GoPro Photos', texto: 'GoPro photos of the whole event, uploaded to our online photo gallery. Free.' },
     { titulo: 'Food', texto: 'Freshly made in our floating kitchen, custom menu.' },
     { titulo: 'Coordinator', texto: 'One person just for you, from start to finish.' },
     // 8º ítem, y es EL dato que separa bodas de party boat: las dos
@@ -839,10 +1147,19 @@ const BODAS: FichaEvento = {
     'ev-weddings-menu-9',
     'ev-weddings-menu-10',
   ],
-  // ⚠️ PLACEHOLDER: mismo caso que las otras dos landings. Bodas es además el
-  // único evento del que el cliente NO entregó vídeo propio, así que aquí no
-  // hay `videoProducto` que poner en la rejilla.
-  videoGaleria: '/video/hero.mp4',
+  // [2026-11-14, Gerencia/Marketing] La columna vertical lleva ya el reel de
+  // la boda de Kendra & Vernon (sin el logo afro) que mandó Marketing; antes
+  // era el vídeo de marca de relleno. El cartel es un recorte corto y mudo del
+  // mismo reel, con la portada que entregaron. Sigue sin `videoProducto` 16:9
+  // para la rejilla.
+  // [2026-11-19, Sr. Fernando] Los 5 reels de arriba. Reparto en data/reels-producto.ts.
+  reels: REELS_PRODUCTO.weddings,
+  videoGaleria: '/video/eventos/weddings-reel.mp4',
+  videoGaleriaCartel: { src: '/video/eventos/weddings-reel-cartel.mp4', poster: '/video/eventos/weddings-reel-poster.jpg' },
+  // [2026-11-17, MARKETING WEB / Sr. Fernando] El vídeo de los botes privados,
+  // al lado del reel de boda.
+  videoGaleria2: '/video/private-boats.mp4',
+  videoGaleriaCartel2: { src: '/video/private-boats-cartel.mp4', poster: '/video/private-boats-poster.jpg' },
   videoProducto: null,
   // FAQ de bodas — las 3 preguntas de la web del cliente + 1
   // pregunta sobre el Dress code (la más común, sale de la práctica
@@ -1054,7 +1371,11 @@ const EMPRESAS: FichaEvento = {
   ],
   // ⚠️ PLACEHOLDER, igual que en las otras dos. El clip real de corporate va
   // en la rejilla, abajo.
-  videoGaleria: '/video/hero.mp4',
+  // [2026-11-19, Sr. Fernando: «Mice num1»] El placeholder deja paso al vídeo
+  // «Private Boats» que mandó Marketing. Es el único reel de MICE, así que va
+  // en la columna 9:16 de siempre y no en fila de reels.
+  videoGaleria: REELS_PRODUCTO.mice.src,
+  videoGaleriaCartel: { src: REELS_PRODUCTO.mice.cartel!, poster: REELS_PRODUCTO.mice.poster },
   videoProducto: {
     src: '/video/eventos/corporate.mp4',
     poster: '/fotos/ev-corporate-video-poster.webp',

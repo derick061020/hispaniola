@@ -159,7 +159,13 @@ const RETRATOS_POR_DEPARTAMENTO: Record<DepartamentoId, number> = {
   // estas imagenes · Sales and marketing · Agregar foto: IMG_9055»] 2 → 3.
   // Persona nueva, comprobado contra las dos ya publicadas. Mismo 3:4 que el
   // resto del muro: se escala y se centra, sin recorte visible.
-  ventas: 3,
+  // [2026-10-30, Marketing de Hispaniola: «puede eliminar a los dos hombres de
+  // esta foto, quitarlos de la web que ya no trabajan con nosotros»] 3 → 1.
+  // Salen los dos hombres (los antiguos ventas-1 y ventas-3, IMG_9005 e
+  // IMG_9055) y se queda ella (IMG_1000), que pasa de ventas-2 a ventas-1
+  // porque el nombre del archivo sale del índice. Las dos fotos se borraron:
+  // no las usaba nadie más.
+  ventas: 1,
   fundacion: 2,
 }
 
@@ -198,7 +204,10 @@ const PLANTILLA_POR_DEPARTAMENTO: Partial<Record<DepartamentoId, number>> = {
   guias: 8,
   marinos: 30,
   oficina: 9,
-  ventas: 4,
+  // ⚠️ [2026-10-30] 4 → 2: los 4 de Fernando menos los dos que Marketing dice
+  // que ya no trabajan allí. Es una RESTA nuestra, no un número que nos hayan
+  // dado: pendiente de que Marketing lo confirme.
+  ventas: 2,
   fundacion: 5,
 }
 

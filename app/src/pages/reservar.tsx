@@ -20,6 +20,8 @@ import { FICHAS, type FichaTour } from '@/data/tours'
 import { guardarReserva, type Reserva } from '@/lib/reservas'
 import { menuDeLaReserva } from '@/lib/menu-reserva'
 import { useCheckout } from '@/lib/api/use-checkout'
+import { sincronizarCheckout } from '@/lib/api/api'
+import { ACEPTACION_INICIAL, aceptacionParaOdoo, type EstadoAceptacion } from '@/lib/aceptacion-legal'
 import type { ErrorApi } from '@/lib/api/cliente'
 import type { ParcheCheckout } from '@/lib/api/tipos'
 import { t, tp, traducible } from '@/lib/i18n'
@@ -438,6 +440,28 @@ function FlujoReserva({
   const [estadoPago, setEstadoPago] = useState({ procesando: false, puedePagar: false })
   const pagandoStripe = estadoPago.procesando
   const [errorPago, setErrorPago] = useState<string | null>(null)
+  // [2026-10-30, anexo HAA-LEG-002] Las dos casillas del último paso. Empiezan
+  // SIEMPRE sin marcar —también al volver de PayPal o recargar—: la aceptación
+  // es de esta visita y no se guarda en el navegador.
+  const [aceptacion, setAceptacion] = useState<EstadoAceptacion>(ACEPTACION_INICIAL)
+
+  // La constancia de aceptación va a Odoo ANTES de crear el cobro (apartado D:
+  // «prueba de que aceptó antes de pagar»). Va en un `sync` PROPIO y no dentro
+  // de `datosDelFormulario()` a propósito: `legal_acceptance` es un campo nuevo
+  // y, si el Odoo de producción todavía validara los campos y lo rechazara, ese
+  // rechazo se llevaría por delante el guardado del contacto y la fecha, y
+  // Odoo cobraría con datos viejos. Así, lo peor que pasa es que esta
+  // constancia no se guarde; el pago sigue. Por la misma razón no pasa por
+  // `checkout.sincronizar`, que pintaría su error en la banda de arriba.
+  const enviarAceptacion = async () => {
+    const legal_acceptance = aceptacionParaOdoo(aceptacion)
+    if (!legal_acceptance || !checkout.codigo || !checkout.token) return
+    try {
+      await sincronizarCheckout(checkout.codigo, checkout.token, { legal_acceptance })
+    } catch {
+      // Sin ruido para el visitante: ver arriba. Derick lo ve en PARA-DERICK.md §4.
+    }
+  }
 
   // [2026-08-14] AQUÍ SE COBRA DE VERDAD. Lo que había antes creaba el intento
   // de cobro en Stripe y navegaba a «Gracias» sin confirmarlo nunca: el
@@ -473,6 +497,7 @@ function FlujoReserva({
       // (antes era void y este `await` no esperaba a nada, así que el guardado
       // y el cobro salían a la vez). Odoo cobra con lo que tenga guardado.
       await checkout.sincronizar(datosDelFormulario(), true)
+      await enviarAceptacion()
       const intento = await checkout.pagar({ proveedor: 'paypal' })
       if (!intento.approve_url) throw new Error(t('PayPal did not return an approval link.'))
       // La copia local se guarda ANTES de salir del sitio: al volver, la
@@ -498,6 +523,7 @@ function FlujoReserva({
     obtenerSecreto: async () => {
       setErrorPago(null)
       await checkout.sincronizar(datosDelFormulario(), true)
+      await enviarAceptacion()
       const intento = await checkout.pagar({ proveedor: 'stripe' })
       return { client_secret: intento.client_secret, amount: intento.amount }
     },
@@ -536,6 +562,7 @@ function FlujoReserva({
     pickup: { hotel: recogida.hotel.trim(), notes: recogida.notas.trim() },
     dishes: hayPasoMenu ? platos : [],
     addons: addonsIniciales,
+    ...(ficha.transportePrivado ? { private_transport: transportePrivado } : {}),
     // Lo decide el servidor: aqui solo se dice que el cliente lo eligio.
     discounts: pagaEnEfectivo ? ['efectivo'] : [],
     ...(celebracion.ocasion && celebracion.ocasion !== 'ninguna'
@@ -598,8 +625,11 @@ function FlujoReserva({
       // [2026-09-01] `total` ya es el importe DESPUÉS del descuento por pagar en
       // efectivo, si se eligió. Se guarda además el método y lo que rebajó, para
       // que «Gracias» y «Mi reserva» puedan explicar el número en vez de
-      // enseñarlo a secas — y para que el equipo sepa qué esperar el día del
-      // tour: una reserva en efectivo llega SIN depósito cobrado.
+      // enseñarlo a secas.
+      // ⚠️ [2026-10-30, Samuel: seguir el PDF HAA-LEG-002 §6, «para confirmar la reserva se paga un depósito»] Lo que seguía aquí —«una reserva en efectivo llega SIN depósito
+      // cobrado»— no era verdad: el cobro sale por `lanzar` (paso-pago.tsx) con
+      // `deposito`, y Odoo cotiza el mismo depósito con o sin efectivo
+      // (comprobado en /quote: 47,03 en los dos casos; el 5 % cae sobre el saldo).
       metodoPago,
       descuentoEfectivo: checkout.pedido?.quote?.cash_discount ?? 0,
       total,
@@ -674,10 +704,12 @@ function FlujoReserva({
               guardaYAvanza('menu', { step: 'menu', dishes: hayPasoMenu ? platos : [] }),
           }
         : {
-              texto:
-                metodoPago === 'efectivo'
-                  ? t('Confirm booking')
-                  : `${t('Pay deposit')} · ${formatoDinero(deposito)}`,
+              // [2026-10-30, Samuel: seguir el PDF HAA-LEG-002 §6, «para confirmar la reserva se paga un depósito»]
+              // Con la casilla de efectivo marcada también se cobra el depósito
+              // con tarjeta (lo cobra `lanzar`, que no mira el método), así que
+              // el botón dice lo mismo en los dos caminos. Antes decía «Confirm
+              // booking», como si no se cobrara nada.
+              texto: `${t('Pay deposit')} · ${formatoDinero(deposito)}`,
               // [2026-09-14] Y solo cuando el paso de pago dice que se puede:
               // con Payment Element, «Pay» con la tarjeta a medias solo
               // devuelve un error de Stripe; mejor no dejar pulsar.
@@ -763,6 +795,36 @@ function FlujoReserva({
     if (efectivoEnServidor && !pagaEnEfectivo) setPagaEnEfectivo(true)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [efectivoEnServidor])
+
+  // [2026-11-19, Sr. Fernando, Gerencia] TRANSPORTE PRIVADO ida y vuelta
+  // (Caribbean Escape y Coral Quest). Una casilla en la recogida; el importe
+  // —según la zona del hotel— y el depósito —que lo lleva entero— los pone
+  // Odoo. Viaja con el hotel para que la cotización use la zona de AHORA.
+  const [transportePrivado, setTransportePrivado] = useState(false)
+  const transporteEnServidor = !!checkout.pedido?.private_transport
+  useEffect(() => {
+    if (transporteEnServidor && !transportePrivado) setTransportePrivado(true)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [transporteEnServidor])
+  const cambiarTransportePrivado = (quiere: boolean) => {
+    setTransportePrivado(quiere)
+    checkout.sincronizar({
+      step: 'pickup',
+      pickup: { hotel: recogida.hotel.trim(), notes: recogida.notas.trim() },
+      private_transport: quiere,
+    })
+  }
+  const cambiarRecogida = (parcial: Partial<DatosRecogida>) => {
+    setRecogida((r) => ({ ...r, ...parcial }))
+    // Con el transporte privado marcado, otro hotel puede ser otra zona y
+    // otro precio: se recotiza al momento, no al pulsar «Continue».
+    if (transportePrivado && parcial.hotel !== undefined) {
+      checkout.sincronizar({
+        step: 'pickup',
+        pickup: { hotel: parcial.hotel.trim(), notes: recogida.notas.trim() },
+      })
+    }
+  }
 
   const cambiarPlato = (persona: number, plato: string) =>
     setPlatos((prev) => prev.map((p, i) => (i === persona ? plato : p)))
@@ -906,8 +968,12 @@ function FlujoReserva({
                 <div className="mt-6 border-t border-linea pt-6">
                   <PasoRecogida
                     datos={recogida}
-                    onCambio={(parcial) => setRecogida((r) => ({ ...r, ...parcial }))}
+                    onCambio={cambiarRecogida}
                     horaSalida={horario?.hora ?? null}
+                    transportePrivado={ficha.transportePrivado}
+                    conTransportePrivado={transportePrivado}
+                    onTransportePrivado={cambiarTransportePrivado}
+                    importeTransportePrivado={checkout.pedido?.quote?.private_transport?.amount ?? null}
                   />
                 </div>
                 <Continuar
@@ -1002,6 +1068,8 @@ function FlujoReserva({
                   error={errorPago}
                   pagaEnEfectivo={pagaEnEfectivo}
                   onEfectivoChange={cambiarEfectivo}
+                  aceptacion={aceptacion}
+                  onAceptacionChange={setAceptacion}
                 />
               </SeccionPaso>
             </div>
@@ -1101,7 +1169,6 @@ function FlujoReserva({
       <BarraMovilReserva
         deposito={deposito}
         total={total}
-        metodoPago={metodoPago}
         texto={ctaPaso.texto}
         habilitado={ctaPaso.habilitado}
         cargando={ctaPaso.cargando}

@@ -22,6 +22,8 @@ import {
 import { AddOnsWidget } from '@/components/tour/add-ons-widget'
 import { useCotizacion } from '@/components/tour/use-cotizacion'
 import { BannerGrupo } from '@/components/tour/banner-grupo'
+import { ChipPromo } from '@/components/ui/chip-promo'
+import { usePromo } from '@/lib/api/use-promo'
 import { NumeroEditable } from '@/components/ui/numero-editable'
 import { PasajerosPopover, FilasPasajeros } from '@/components/tour/pasajeros-popover'
 import { numero, t, tp } from '@/lib/i18n'
@@ -387,6 +389,7 @@ export function WidgetReserva({
   // para que no cambie en cada render (y para que cada tour muestre siempre
   // la misma, que es lo que esperaría alguien que vuelve a la página).
   const resenaWidget = QUOTES[tour.slug.length % QUOTES.length]
+  const promo = usePromo(tour.slug)
   // v3 (2026-07-17, Saona): cuando el tour tiene subVariantes (Saona:
   // speedboat / fishing / catamarán), el selector de paquetes pasa a ser un
   // selector de BOTE — el toggle Light/Premium se oculta. El id arranca en
@@ -427,8 +430,11 @@ export function WidgetReserva({
   // desaparece de la pantalla con el estado en `true` y el checkout cobraría un
   // salto de menú para cero niños.
   useEffect(() => {
-    if (ninos === 0 && ninosPremium) setNinosPremium(false)
-  }, [ninos, ninosPremium])
+    // [2026-11-21] Y pasar a Light también: el menú Premium del niño va con
+    // el paquete Premium.
+    const enLight = paquete === 'light' && ficha.menuLight.length > 0
+    if ((ninos === 0 || enLight) && ninosPremium) setNinosPremium(false)
+  }, [ninos, ninosPremium, paquete, ficha.menuLight.length])
 
   // Tope del stepper de personas — misma fórmula que el funnel (ver
   // maxPersonasDe, arriba): aforo del tour si la tarifa es dual, el tramo más
@@ -807,6 +813,17 @@ export function WidgetReserva({
       </div>
 
       <Precio precio={precioAnclaNum} unidad={unidadAncla} />
+      {/* [2026-11-21, Sr. Fernando] La tarifa del niño a la vista, junto al
+          precio: es la misma en Light y en Premium. */}
+      {esDual && tour.precioNino != null ? (
+        <p className="-mt-2 text-sm text-navy-sub">
+          {t('Kids (ages 4-12)')}{' '}
+          <span className="font-semibold text-navy">
+            {formatoDinero(tour.precioNino)}
+          </span>{' '}
+          · {t('same price on Light and Premium')}
+        </p>
+      ) : null}
 
       {/* v3 (2026-07-17, charter): el cálculo del total en vivo, justo
           debajo de la cabecera. Es la pieza que faltaba — antes el
@@ -1109,7 +1126,9 @@ export function WidgetReserva({
               es qué comen — y dentro del desplegable nadie lo vería.
               Solo aparece si hay niños Y el tour tiene salto de menú; si no,
               es una casilla que no cambia el precio. */}
-          {ninos > 0 && ficha.upgradePremium ? (
+          {/* [2026-11-21] Solo con Premium: en Light el salto vale 0 en
+              `calcularTotalTour`, y la casilla prometía «+15» sin cobrarlo. */}
+          {ninos > 0 && ficha.upgradePremium && (paquete === 'premium' || !tienePaquetes) ? (
             <label
               className={`mt-2 flex cursor-pointer items-start gap-3 rounded-card border px-3 py-2.5 ${
                 pielOscura ? 'border-white/15 bg-white/5' : 'border-linea bg-papel'
@@ -1122,14 +1141,13 @@ export function WidgetReserva({
                 onChange={(e) => setNinosPremium(e.target.checked)}
               />
               <span className="text-sm">
-                <span className={`font-semibold ${pielOscura ? 'text-papel' : 'text-navy'}`}>
+                {/* [2026-11-21] Sin invertir: dentro de la Caja oscura los tokens
+                    navy ya son claros, y «papel» era texto oscuro sobre negro
+                    (la casilla salía en blanco en la captura del Sr. Fernando). */}
+                <span className="font-semibold text-navy">
                   {t('Kids on the adult Premium menu')}
                 </span>
-                <span
-                  className={`mt-0.5 block text-xs ${
-                    pielOscura ? 'text-papel/70' : 'text-navy-sub'
-                  }`}
-                >
+                <span className="mt-0.5 block text-xs text-navy-sub">
                   {t('Instead of the Kid’s Meal.')}{' '}
                   {tp('+{precio} per child', { precio: formatoDinero(ficha.upgradePremium) })}
                 </span>
@@ -1316,6 +1334,19 @@ export function WidgetReserva({
           Fase B prometiendo un 15% que ninguna otra parte del sitio explicaba;
           ahora que la explicación existe, lo peligroso sería que las dos
           cifras pudieran separarse. */}
+      {/* [2026-10-30, Blanka: «PROMO 10% (no compatible con el 5% de 30 días
+          con anticipación)»] El descuento lo pone `/quote`; aquí solo se
+          anuncia, con la condición a la vista para que nadie cuente con los dos. */}
+      {promo ? (
+        <div className="flex flex-col items-center gap-1 text-center">
+          <ChipPromo slug={tour.slug} conFecha />
+          {promo.excludes_early_booking ? (
+            <span className="text-xs text-navy-soft">
+              {t('Not combinable with the 30-day early booking discount')}
+            </span>
+          ) : null}
+        </div>
+      ) : null}
       <div className="flex items-center justify-center gap-1.5 rounded-btn bg-menta px-3 py-1.5 text-center text-xs font-medium text-menta-texto">
         <Tag className="size-3.5 shrink-0" aria-hidden="true" />
         {t('Book direct and save up to')}{' '}{DESCUENTO_MAXIMO}%
@@ -1359,7 +1390,20 @@ export function WidgetReserva({
           Cediéndolo, el pie llega al borde real y el hueco bajo el botón lo
           pone él. */}
       <div className="widget-pie lg:sticky lg:bottom-0 lg:z-10 lg:-mx-5 lg:px-5 lg:pb-5 lg:pt-3">
-        {fecha === null ? (
+        {subActiva?.soloConsulta ? (
+          // [2026-10-30, Blanka] Saona en catamarán: lo opera un tercero y la
+          // reserva la hace la oficina. Ver `soloConsulta` en data/tours.ts.
+          <>
+            <p className="mb-3 text-sm text-navy-sub">
+              {t('This option is booked directly with our team. Message us and we will confirm availability for your date.')}
+            </p>
+            <FancyButton.Root variant="primary" className="w-full" asChild>
+              <a href={WHATSAPP_URL} target="_blank" rel="noopener">
+                {t('Ask on WhatsApp')}
+              </a>
+            </FancyButton.Root>
+          </>
+        ) : fecha === null ? (
           <FancyButton.Root variant="primary" className="w-full" disabled>
             {t('Pick a date')}
           </FancyButton.Root>
@@ -1437,7 +1481,8 @@ export function WidgetReserva({
           lineas={[
             t('Book now, pay later: confirm with just 25%'),
             t('Free cancellation up to 7 days before'),
-            t('Full refund for bad weather'),
+            // [2026-10-30] PDF HAA-LEG-002 §3.
+            t('Bad weather: we reschedule or refund in full'),
           ]}
         />
       </div>

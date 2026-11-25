@@ -121,7 +121,7 @@ export function ResumenReserva({
    *  aparte del tour, nunca fundidos en el precio base: el visitante tiene que
    *  ver qué parte del total eligió añadir — y poder reconocer el álbum que
    *  viene premarcado. */
-  lineasAddOns?: { label: string; quantity: number; amount: number }[]
+  lineasAddOns?: { label: string; quantity: number; amount: number; kind?: string }[]
   /** Las ofertas que el servidor ha aplicado a este pedido. */
   descuentos?: { id: string; label: string; pct: number; granted: boolean }[]
   importeDescuento?: number
@@ -436,18 +436,26 @@ export function ResumenReserva({
             </>
           )}
           {lineasAddOns?.map((extra) => (
-            <FilaPrecio
-              key={extra.label}
-              concepto={
-                <>
-                  {t(extra.label)}{' '}
-                  {extra.quantity > 1 ? (
-                    <span className="text-navy-soft">× {extra.quantity}</span>
-                  ) : null}
-                </>
-              }
-              importe={extra.amount}
-            />
+            <div key={extra.label}>
+              <FilaPrecio
+                concepto={
+                  <>
+                    {t(extra.label)}{' '}
+                    {extra.quantity > 1 ? (
+                      <span className="text-navy-soft">× {extra.quantity}</span>
+                    ) : null}
+                  </>
+                }
+                importe={extra.amount}
+              />
+              {/* [2026-11-19, Sr. Fernando: nota junto al precio] El
+                  transporte privado entra entero en el depósito. */}
+              {extra.kind === 'transporte' ? (
+                <p className="text-xs text-navy-sub">
+                  {t('Private transportation is paid in full at the time of booking.')}
+                </p>
+              ) : null}
+            </div>
           ))}
           {/* [2026-09-01, Derick: «que aparezcan los descuentos en el checkout»
               y «que no solo se aplique, sino que el cliente sepa que se
@@ -543,7 +551,8 @@ export function ResumenReserva({
           </div>
           <div className="mt-1.5 flex items-center justify-between">
             <span className="text-navy-sub">
-              {pagaEnEfectivo ? t('On the day, in cash') : t('On the day of the tour')}
+              {/* [2026-10-30] PDF HAA-LEG-002 §6: «antes del inicio de la excursión». */}
+              {pagaEnEfectivo ? t('Before the tour starts, in cash') : t('Before the tour starts')}
             </span>
             <span className="text-navy">{formatoDinero(saldo)}</span>
           </div>
@@ -571,7 +580,8 @@ export function ResumenReserva({
           <li className="flex gap-2.5">
             <ShieldCheck className="size-4 shrink-0 text-aqua-dark" aria-hidden="true" />
             <span>
-              <strong className="font-semibold text-navy">{t('Total flexibility.')}</strong> {t('Free cancellation up to 7 days before and a full refund for bad weather.')}
+              <strong className="font-semibold text-navy">{t('Total flexibility.')}</strong> {/* [2026-10-30] PDF HAA-LEG-002 §1 y §3. */}
+              {t('Free cancellation up to 7 days before. If bad weather cancels the tour, we reschedule it or refund it in full.')}
             </span>
           </li>
           <li className="flex gap-2.5">

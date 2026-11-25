@@ -1,4 +1,17 @@
 import { PREMIOS } from '@/data/home'
+import { t } from '@/lib/i18n'
+import { Boton } from '@/components/ui/boton'
+
+// [2026-10-22, Marketing en «MARKETING WEB»: «Que te hable primero:
+// hispaniolatravelagents.com» + capturas «Ponlo así en móvil» y «PC»] La
+// puerta a la landing de agentes vive en esta banda, no en un popup: en PC a
+// la derecha de los logos, tras una línea vertical; en móvil, centrada debajo.
+// Es un dominio aparte, así que abre en pestaña nueva.
+//
+// [2026-10-23 → 2026-10-26] Se quitó el 23 por un «Desactivar esto» de
+// Marketing que NO iba por este enlace; Derick el 26: «este botón no se
+// eliminaba, recupéralo». Antes de volver a quitarlo, confirmar con él.
+const URL_AGENTES = 'https://hispaniolatravelagents.com/'
 
 // Banda de premios — v3-F11 (PLAN-v3.md §14): esta sección ERA "cinta de
 // stats + premios" (stats.tsx). Las 4 cifras subieron al hero (viven junto al
@@ -34,20 +47,39 @@ export function Premios() {
       {/* [v3] El hueco de desktop sale ahora de --spacing-premio-hueco (56px,
           antes gap-x-12 = 48px): a todo color cada badge necesita su margen de
           silencio o la fila se lee como un collage. */}
-      <ul className="mx-auto flex max-w-contenido flex-wrap items-center justify-center gap-x-8 gap-y-6 sm:gap-x-premio-hueco">
-        {PREMIOS.map((premio) => (
-          <li key={premio.id}>
-            <img
-              src={`/premios/${premio.foto}.webp`}
-              alt={premio.nombre}
-              width={premio.ancho}
-              height={premio.alto}
-              loading="lazy"
-              className={`premio-logo${premio.fondo === 'macizo' ? ' premio-logo--macizo' : ''}`}
-            />
-          </li>
-        ))}
-      </ul>
+      {/* [2026-10-22] Con el enlace al lado, los 8 logos (770px) + 7 huecos de
+          56px ya no caben en una fila: desde xl el hueco baja a 24px (40px en
+          2xl). Por debajo de xl el enlace va centrado debajo, como en móvil. */}
+      {/* [2026-10-27, Marketing por WhatsApp: «centrarlo debajo de los logos,
+          ponerlo un poco más grande y con el formato del fondo naranja como
+          los demás» — «Fernando quiere que destaquen»] El enlace deja de ir a
+          la derecha y pasa a ir centrado debajo en TODOS los anchos (como
+          karayapuntacana.com). Sin nada al lado, los logos recuperan su hueco
+          de siempre (--spacing-premio-hueco) y se va la línea vertical. */}
+      <div className="mx-auto flex max-w-contenido flex-col items-center gap-y-10">
+        <ul className="flex flex-wrap items-center justify-center gap-x-8 gap-y-6 sm:gap-x-premio-hueco">
+          {PREMIOS.map((premio) => (
+            <li key={premio.id}>
+              <img
+                src={`/premios/${premio.foto}.webp`}
+                alt={premio.nombre}
+                width={premio.ancho}
+                height={premio.alto}
+                loading="lazy"
+                className={`premio-logo${premio.fondo === 'macizo' ? ' premio-logo--macizo' : ''}`}
+              />
+            </li>
+          ))}
+        </ul>
+        {/* [2026-10-27] Antes era un enlace de texto subrayado (text-sm,
+            navy-sub) tras una línea vertical. Ahora es el Boton coral 'lg', el
+            mismo de los CTA principales de la home (hero, WhyDirect): mismo
+            padding, hover a coral-dark con levantamiento y foco del sistema.
+            El hueco entre texto y flecha lo pone el gap-2 del propio Boton. */}
+        <Boton href={URL_AGENTES} target="_blank" rel="noopener" tamaño="lg" className="whitespace-nowrap">
+          {t('Travel agents only')} <span aria-hidden="true">→</span>
+        </Boton>
+      </div>
     </section>
   )
 }

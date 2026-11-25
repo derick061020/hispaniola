@@ -288,7 +288,7 @@ export type DesglosePago = {
   descuento: number
   /** El total ya con el descuento aplicado (o el mismo total con tarjeta). */
   total: number
-  /** Lo que se cobra HOY. Con efectivo es 0: no hay nada que cobrar online. */
+  /** Lo que se cobra HOY: el depósito, en los dos métodos. */
   hoy: number
   /** Lo que queda por pagar el día del tour. */
   pendiente: number
@@ -301,13 +301,15 @@ export type DesglosePago = {
  *  fija de móvil— y antes cada una calculaba su parte. Redondeo a dólar entero,
  *  igual que hacía el depósito: los importes se enseñan sin decimales. */
 export function desglosePago(totalBruto: number, metodo: MetodoPago): DesglosePago {
-  if (metodo === 'efectivo') {
-    const descuento = Math.round((totalBruto * DESCUENTO_EFECTIVO) / 100)
-    const total = totalBruto - descuento
-    return { descuento, total, hoy: 0, pendiente: total }
-  }
+  // [2026-10-30, Samuel: seguir el PDF HAA-LEG-002 §6, «para confirmar la reserva se paga un depósito»]
+  // El depósito se cobra igual con efectivo, y el 5 % cae sobre el SALDO, no
+  // sobre el total: es la cuenta que hace Odoo (/quote, 2026-10-30: 188,10 →
+  // depósito 47,03 + saldo 141,07; con efectivo, saldo 134,02). Antes, con
+  // efectivo, esto devolvía `hoy: 0`.
   const hoy = Math.round(totalBruto * 0.25)
-  return { descuento: 0, total: totalBruto, hoy, pendiente: totalBruto - hoy }
+  const saldo = totalBruto - hoy
+  const descuento = metodo === 'efectivo' ? Math.round((saldo * DESCUENTO_EFECTIVO) / 100) : 0
+  return { descuento, total: totalBruto - descuento, hoy, pendiente: saldo - descuento }
 }
 
 /** Aplica los descuentos SUMADOS (15% plano si aplican los tres), no

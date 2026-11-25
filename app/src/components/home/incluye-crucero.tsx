@@ -1,4 +1,6 @@
 import { useRef, useState, type CSSProperties } from 'react'
+import { Link } from 'react-router-dom'
+import { ArrowRight } from 'lucide-react'
 import { Etiqueta } from '@/components/ui/etiqueta'
 import { useDevFlag } from '@/dev/use-dev-flag'
 import { useIncluyeScroll } from '@/components/home/use-incluye-scroll'
@@ -162,6 +164,16 @@ export function IncluyeCrucero() {
               <p className="incluye-item-texto mt-3 text-incluye-item-texto-movil text-white/75 lg:text-incluye-item-texto">
                 {item.texto}
               </p>
+              {/* [2026-10-17] Food & Bar — ver `enlace` en data/home.ts. */}
+              {item.enlace ? (
+                <Link
+                  to={item.enlace.to}
+                  className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-aqua-claro hover:text-white"
+                >
+                  {item.enlace.texto}
+                  <ArrowRight className="size-4" aria-hidden="true" />
+                </Link>
+              ) : null}
             </div>
           )
         })}

@@ -23,6 +23,7 @@ export function GaleriaLightbox({
   onCerrar,
   origen = null,
   video = null,
+  alts,
 }: {
   fotos: string[]
   indiceInicial: number
@@ -39,6 +40,9 @@ export function GaleriaLightbox({
    *  la DIAPOSITIVA 0 y se pasa como una foto más, con sus flechas, su
    *  miniatura y su contador. `null` = galería solo de fotos, como siempre. */
   video?: { src: string; poster: string } | null
+  /** [2026-10-17, QA de /food-and-bar] Alt descriptivo de cada foto, en el
+   *  mismo orden que `fotos`. Sin él, se compone «etiqueta, foto N de M». */
+  alts?: string[]
 }) {
   const [indice, setIndice] = useState(indiceInicial)
   // Con video, la diapositiva 0 es el video y la foto `i` cae en `i + 1`. Ese
@@ -187,7 +191,7 @@ export function GaleriaLightbox({
               <img
                 ref={refExpansion}
                 src={`/fotos/${fotos[indice - desfase]}.webp`}
-                alt={`${etiqueta}, foto ${indice + 1 - desfase} de ${fotos.length}`}
+                alt={alts?.[indice - desfase] ?? `${etiqueta}, ${t('photo')} ${indice + 1 - desfase} ${t('of')} ${fotos.length}`}
                 onClick={(e) => e.stopPropagation()}
                 className="max-h-full max-w-full rounded-card object-contain"
               />
@@ -234,7 +238,9 @@ export function GaleriaLightbox({
                 key={f ?? 'video'}
                 type="button"
                 onClick={() => ir(i)}
-                aria-label={f === null ? 'Ver el video' : `Ver la foto ${i + 1 - desfase} de ${fotos.length}`}
+                // [2026-10-17] Estaban escritos en español fijo y salían así en la web en
+                // inglés; ahora pasan por el diccionario.
+                aria-label={f === null ? t('Watch the video') : `${t('See photo')} ${i + 1 - desfase} ${t('of')} ${fotos.length}`}
                 aria-current={i === indice}
                 // BORDE, no `ring`. Un ring de Tailwind se pinta POR FUERA de
                 // la caja, y esta tira es un contenedor con `overflow-x-auto`

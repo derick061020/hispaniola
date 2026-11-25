@@ -8,14 +8,15 @@ import { CuentaPage } from '@/pages/cuenta'
 import { MiReservaPage } from '@/pages/mi-reserva'
 import { EventoPage } from '@/pages/evento'
 import { EventsPage } from '@/pages/events'
+import { FiestaOnDeckPage } from '@/pages/fiesta-on-deck'
 import { ToursYEventosPage } from '@/pages/tours-y-eventos'
 import { GraciasEventoPage } from '@/pages/gracias-evento'
 import { VentajaCompetitivaPage } from '@/pages/ventaja-competitiva'
 import { FlotaPage } from '@/pages/flota'
+import { ComidaYBarPage } from '@/pages/comida-y-bar'
 import { TripulacionPage } from '@/pages/tripulacion'
 import { TripulacionBarcoPage } from '@/pages/tripulacion-barco'
 import { InstalacionesPage } from '@/pages/instalaciones'
-import { ComidaYBarPage } from '@/pages/comida-y-bar'
 import { MarineParkPage } from '@/pages/marine-park'
 import { MuseoSubacuaticoPage } from '@/pages/museo-subacuatico'
 import { FundacionPage } from '@/pages/fundacion'
@@ -31,7 +32,6 @@ import { LegalPage } from '@/pages/legal'
 import { FundacionesPage } from '@/pages/fundaciones'
 import { ScrollAlNavegar } from '@/lib/scroll-al-navegar'
 import { NavFlotante } from '@/components/home/nav-flotante'
-import { AvisoPartyBoat } from '@/components/ui/aviso-party-boat'
 import { AvisoMuseo } from '@/components/ui/aviso-museo'
 import { Topbar } from '@/components/home/topbar'
 import { DevMode } from '@/dev/dev-mode'
@@ -121,8 +121,8 @@ const REDIRECCIONES_ES_EN: [string, string][] = [
   ['/ventaja-competitiva', '/competitive-advantage'],
   ['/tripulacion', '/crew'],
   ['/instalaciones', '/facilities'],
-  ['/comida-y-bar', '/food-and-bar'],
   ['/flota', '/fleet'],
+  ['/comida-y-bar', '/food-and-bar'],
   ['/fundacion', '/foundation'],
   ['/guias', '/guides'],
   ['/agentes-de-viaje', '/travel-agents'],
@@ -177,8 +177,15 @@ function App() {
       {/* [2026-10-02] El puente al party boat, 2ª versión: al rincón y con
           foto. La 1ª iba centrada abajo y tapaba las tarjetas de tours. Fuera
           de <Routes> porque es de todo el sitio; el propio componente decide
-          dónde callarse. */}
-      <AvisoPartyBoat />
+          dónde callarse.
+          [2026-10-22, Marketing en «MARKETING WEB», captura del aviso + «@Derick
+          Desactivar»] Fuera el party boat.
+          [2026-10-22, Samuel: «reutiliza este popup para que ahora mande a la
+          landing de agentes»] El mismo aviso, ahora a hispaniolatravelagents.com.
+          [2026-10-23, Derick: «elimina esto definitivamente»] Borrado del todo,
+          componente incluido (ui/aviso-party-boat.tsx, recuperable del
+          historial de git). A los agentes se llega por el enlace «Travel
+          agents only» de la banda de premios. */}
       {/* [2026-10-08] El ojo de buey del museo. Va en otra esquina que el
           aviso del party boat —arriba a la derecha, no abajo— para que los
           dos puedan convivir sin taparse. */}
@@ -199,6 +206,14 @@ function App() {
         <Route path="/account" element={<CuentaPage />} />
         {/* [2026-09-08] Las tres ocasiones juntas, igual que /tours. */}
         <Route path="/events" element={<EventsPage />} />
+        {/* [2026-11-24, Sr. Fernando en Gerencia] Fiesta on Deck: las dos
+            experiencias de la marca nueva, dentro de /events. Rutas ESTÁTICAS
+            (React Router las puntúa por encima de /events/:slug, así que ganan
+            aunque vayan en cualquier orden); su plantilla no es la de evento
+            —ver pages/fiesta-on-deck.tsx—. `key` para que al cambiar de una a
+            otra se reinicie el estado (paquete, invitados, banderas). */}
+        <Route path="/events/fiesta-on-deck-afro" element={<FiestaOnDeckPage key="afro" slug="fiesta-on-deck-afro" />} />
+        <Route path="/events/fiesta-on-deck-latin" element={<FiestaOnDeckPage key="latin" slug="fiesta-on-deck-latin" />} />
         <Route path="/events/:slug" element={<EventoPorSlug />} />
         <Route path="/events/:slug/thank-you" element={<GraciasEventoPage />} />
         {/* [2026-10-02, pedido de marketing] Tours y eventos en UNA página,
@@ -224,8 +239,6 @@ function App() {
             cabecera de pages/tripulacion-barco.tsx. */}
         <Route path="/crew-boat" element={<TripulacionBarcoPage />} />
         <Route path="/facilities" element={<InstalacionesPage />} />
-        {/* [2026-10-16] Food & Bar — en QA hasta que el cliente la apruebe. */}
-        <Route path="/food-and-bar" element={<ComidaYBarPage />} />
         {/* [v3 2026-08-06, plan 05 §6] Pagina NUEVA: el parque marino.
             Solo en ingles — nace despues de la decision de slugs EN, asi que
             no tiene ruta vieja en español de la que redirigir. */}
@@ -236,6 +249,10 @@ function App() {
             de Sostenibilidad (NAV_SOSTENIBILIDAD). */}
         <Route path="/underwater-museum" element={<MuseoSubacuaticoPage />} />
         <Route path="/fleet" element={<FlotaPage />} />
+        {/* [2026-10-17] Food & Bar — pendiente de aprobación de Marketing en QA.
+            [2026-10-22, Samuel] Aquí vive la propuesta 3 de Food & Bar, aprobada
+            como versión definitiva. */}
+        <Route path="/food-and-bar" element={<ComidaYBarPage />} />
         {/* ⚠️ SINGULAR. Es la fundación del cliente. NO confundir con
             `/fundaciones` (plural, abajo), que es la página interna de tokens. */}
         <Route path="/foundation" element={<FundacionPage />} />

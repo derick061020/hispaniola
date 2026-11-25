@@ -100,7 +100,7 @@ export function HomePage() {
     <div className="pb-[calc(4rem+env(safe-area-inset-bottom))] md:pb-0">
       <Meta
         titulo={t('Original catamaran tours in Punta Cana')}
-        descripcion={t('Snorkeling in a real coral nursery, a secluded beach and food cooked on board. Small groups, 4.9★ from 1,782 reviews and #1 on TripAdvisor 7 years running. Book direct, no middleman fees.')}
+        descripcion={t('Snorkeling in a real coral nursery, a secluded beach and food cooked on board. Small groups, 4.9★ from 5,720 reviews and #1 on TripAdvisor 7 years running. Book direct, no middleman fees.')}
         ruta="/"
       />
       <SchemaJsonLd datos={schemaOrganizacion()} />

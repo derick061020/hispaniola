@@ -96,6 +96,15 @@ function plano(texto: string): string {
     .trim()
 }
 
+/** [2026-11-19] La zona de un hotel del catálogo, por su nombre (la que usa
+ *  el transporte privado para enseñar su precio antes de que conteste Odoo).
+ *  null = escrito a mano o todavía sin lista. */
+export function zonaDeHotel(nombre: string): string | null {
+  const buscado = plano(nombre)
+  if (!buscado) return null
+  return (cache ?? HOTELES).find((h) => plano(h.name) === buscado)?.zone ?? null
+}
+
 // Orden de las zonas en el desplegable: primero donde se aloja casi todo el
 // mundo. Una zona que Odoo traiga y no este aqui cae al final, no se pierde.
 const ZONAS = ['Bavaro', 'Punta Cana', 'Cap Cana', 'Uvero Alto', 'Bayahibe', 'Macao']

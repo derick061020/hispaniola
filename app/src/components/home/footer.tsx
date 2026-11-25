@@ -30,6 +30,15 @@ const ICONO_RED: Record<string, (p: { className?: string }) => React.ReactElemen
   youtube: IconoYouTube,
 }
 
+// [2026-10-30, Blanka: «también los iconos que sean en colores»] Cada red en
+// su color de marca, con el glifo en blanco encima.
+const COLOR_RED: Record<string, string> = {
+  instagram: 'bg-[linear-gradient(45deg,#f9ce34_0%,#ee2a7b_50%,#6228d7_100%)]',
+  facebook: 'bg-[#1877f2]',
+  tiktok: 'bg-black ring-1 ring-white/25',
+  youtube: 'bg-[#ff0000]',
+}
+
 // Footer «océano» (2026-07-17, pedido de Samuel) — reemplaza el corte duro
 // blanco→navy: misma TÉCNICA de espuma que IncluyeCrucero (ver
 // .footer-espuma en componentes.css) pero ESTÁTICA — img en vez de video,
@@ -121,7 +130,7 @@ export function Footer({ cta = t('Ready for an unforgettable day?') }: { cta?: s
             <br />
             {t('Eco-friendly · Zero plastic · Since 2010.')}
           </p>
-          <p className="mt-3 text-xs text-white/50">{t('★ 4.9 · 1,782 reviews · #1 on TripAdvisor for 7 years')}</p>
+          <p className="mt-3 text-xs text-white/50">{t('★ 4.9 · 5,720 reviews · #1 on TripAdvisor for 7 years')}</p>
         </div>
 
         <div>
@@ -170,13 +179,13 @@ export function Footer({ cta = t('Ready for an unforgettable day?') }: { cta?: s
               </Link>
             </li>
             <li>
-              <Link to="/food-and-bar" className="hover:text-white">
-                {t('Food & Bar')}
+              <Link to="/fleet" className="hover:text-white">
+                {t('Fleet')}
               </Link>
             </li>
             <li>
-              <Link to="/fleet" className="hover:text-white">
-                {t('Fleet')}
+              <Link to="/food-and-bar" className="hover:text-white">
+                {t('Food & Bar')}
               </Link>
             </li>
             <li>
@@ -320,31 +329,29 @@ export function Footer({ cta = t('Ready for an unforgettable day?') }: { cta?: s
           <p className="text-sm font-semibold text-white">{t('How guests rate us')}</p>
           <p className="mt-1 text-sm text-white/70">
             <span className="font-semibold text-white">★ {RESENAS_AGREGADO.rating}</span> ·{' '}
-            {numero(RESENAS_AGREGADO.total)} {t('reviews · #1 on TripAdvisor for 7 years')}
+            {/* [2026-11-19] useGrouping 'always': en español el separador de
+                miles solo sale desde 5 cifras y aquí se leía «5720 reseñas»
+                (antes «1782») mientras el resto del sitio dice «5.720». Igual
+                que en data/por-que-reservar.ts. */}
+            {numero(RESENAS_AGREGADO.total, { useGrouping: 'always' })} {t('reviews · #1 on TripAdvisor for 7 years')}
           </p>
-          {/* [2026-10-18, Marketing: «los íconos de redes sociales que resalten
-              más»] Con su propio rótulo y en círculo BLANCO macizo (antes
-              blanco al 10% sobre el océano, que se perdía): 44 px, icono navy,
-              coral al pasar por encima. Sin colores de marca de cada red: la
-              paleta sigue siendo la de Hispaniola. */}
-          <p className="mt-5 text-sm font-semibold text-white">{t('Follow us')}</p>
-          <ul className="mt-2 flex flex-wrap items-center gap-3">
+          {/* [2026-10-30, Fernando via Blanka: «en horizontal y más grandes»]
+              48 px (antes 36) y siempre en una fila, sin saltar de línea. */}
+          <ul className="mt-4 flex flex-nowrap items-center gap-3">
             {REDES.map((red) => {
               const Icono = ICONO_RED[red.id]
-              const clases =
-                'grid size-11 place-items-center rounded-full bg-white text-navy shadow-card ring-2 ring-white/30 transition hover:-translate-y-0.5 hover:bg-coral hover:text-white'
+              const clases = `grid size-12 place-items-center rounded-full text-white shadow-md transition-transform hover:scale-110 ${COLOR_RED[red.id] ?? 'bg-white/10'}`
               // Sin URL real no se inventa un destino: EnlacePrototipo deja
               // claro (title) que el enlace está pendiente del cliente.
               return (
                 <li key={red.id}>
                   {red.url ? (
-                    <a href={red.url} target="_blank" rel="noopener noreferrer" aria-label={red.nombre} className={clases}>
-                      <Icono className="size-5" aria-hidden="true" />
-                      <span className="sr-only">{red.nombre}</span>
+                    <a href={red.url} target="_blank" rel="noopener" aria-label={red.nombre} className={clases}>
+                      <Icono className="size-6" aria-hidden="true" />
                     </a>
                   ) : (
                     <EnlacePrototipo aria-label={red.nombre} className={clases}>
-                      <Icono className="size-4" aria-hidden="true" />
+                      <Icono className="size-6" aria-hidden="true" />
                     </EnlacePrototipo>
                   )}
                 </li>
@@ -373,7 +380,8 @@ export function Footer({ cta = t('Ready for an unforgettable day?') }: { cta?: s
               se conserva — es el ÚNICO medio de pago que el proyecto tiene
               confirmado. */}
           <p className="mt-3 text-xs text-white/50">
-            {t('Confirm with 25% online. The rest on the day of the tour. Cash on board works too.')}
+            {/* [2026-10-30] PDF HAA-LEG-002 §6. */}
+            {t('Confirm with 25% online. The rest before the tour starts. Cash on board works too.')}
           </p>
         </div>
 
@@ -411,7 +419,8 @@ export function Footer({ cta = t('Ready for an unforgettable day?') }: { cta?: s
         <ul className="flex flex-wrap items-center gap-x-4 gap-y-1">
           <li>
             <Link to="/legal/cancellation-policy" className="hover:text-white/70">
-              {t('Cancellation policy')}
+              {/* [2026-10-30] Nombre del documento oficial HAA-LEG-002. */}
+              {t('Cancellation and refund policy')}
             </Link>
           </li>
           <li>

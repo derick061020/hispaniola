@@ -9,6 +9,7 @@
 
 import type { AddOn } from '@/lib/tarifas'
 import { traducible } from '@/lib/i18n'
+import { REELS_PRODUCTO } from '@/data/reels-producto'
 
 export type PasoItinerario = {
   hora: string
@@ -76,6 +77,14 @@ export type SubVarianteTour = {
   descripcion: string
   capacidad: string
   tabla: TramoPrecio[]
+  /** [2026-10-30, Blanka en «Hispaniola Gerencia»: «Saona por catamaran no
+   *  puede tener funcion de reservar en linea, solo porque contamos con
+   *  disponibilidad de un tercero. Subcontratamos. Esas reservas las tengo que
+   *  hacer yo. Con lancha esta bien en linea»] Se sigue enseñando (info,
+   *  itinerario, precio), pero el widget no deja reservarla: manda a WhatsApp.
+   *  Odoo tambien se niega a cobrarla (`/pay`), por si alguien llega al pago
+   *  con un enlace viejo. */
+  soloConsulta?: boolean
   /** Foto del bote/modalidad, en /fotos (sin extensión). Opcional —
    *    sin foto, el widget pinta solo el nombre. */
   foto?: string
@@ -240,6 +249,23 @@ export type FichaTour = {
    *  (hero.mp4), que es el único video real que hay; cuando el cliente mande
    *  clips POR TOUR se cambia aquí y la ficha no se toca. */
   videoGaleria: string | null
+  /** [2026-11-04, Sr. Fernando, grupo MARKETING WEB: «el Snorkel Lover va para
+   *  el Coral Quest y el Semi-Privado para el Caribbean Escape… sé que son
+   *  horizontales, pero que al hacer clic salga el vídeo como un pop-up»]
+   *  Clip corto, vertical y mudo para la columna 9:16 del mosaico y el mini
+   *  reproductor. Así la página no descarga el vídeo entero (20-25 MB) solo
+   *  para el cartel: el completo se pide al pulsar. Sin cartel, se usa
+   *  `videoGaleria` para todo, como antes. */
+  videoGaleriaCartel?: { src: string; poster: string }
+  /** [2026-11-19, Sr. Fernando, Gerencia] Hasta 5 reels verticales que van
+   *  ARRIBA de la galería de fotos (que pasa a compacta). `cartel` = clip corto
+   *  mudo para el bucle; `src` = el reel completo con sonido. Ver `reels` en
+   *  galeria-mosaico.tsx. */
+  reels?: { src: string; poster: string; cartel?: string }[]
+  /** El vídeo completo es horizontal (16:9): el reproductor se abre apaisado
+   *  en vez de copiar la proporción 9:16 de la celda, que le recortaría los
+   *  lados. */
+  videoGaleriaApaisado?: boolean
   /** Quote sobre la foto principal del mosaico — portada de primeraResenaTour()
    *  de prototipo/app.js. Prueba social ANTES de scrollear (wireframe A1). */
   quoteDestacada: string
@@ -297,6 +323,17 @@ export type FichaTour = {
    *  Son ventajas REALES sacadas de `incluye`/`menuPremium` de esta misma
    *  ficha — no se inventa ninguna. */
   ventajasPremium?: string[]
+  /** [2026-11-19, Sr. Fernando, Gerencia: «desplazar comida hacia abajo»,
+   *  con la flecha a debajo de «What to Bring»] El menú se pinta después de
+   *  «What's Included / What to Bring» y antes de los vídeos, en vez de
+   *  arriba del itinerario. Solo en las fichas que lo pidieron. */
+  menuAbajo?: boolean
+  /** [2026-11-19, Sr. Fernando, Gerencia] Transporte privado ida y vuelta,
+   *  contratable en el checkout (paso de recogida). El precio de verdad lo pone
+   *  Odoo (`haa.addon` kind «transporte», según la zona del hotel); estos
+   *  números solo rotulan la casilla antes de que conteste. Por reserva, no
+   *  por persona: «por un cargo adicional». */
+  transportePrivado?: { precio: number; precioZonaLejana: number; zonasLejanas: string[] }
   /** [v2 2026-07-28] El widget de esta ficha abre SIEMPRE en piel premium
    *  (oscura con terminaciones doradas), haya o no toggle Light/Premium.
    *
@@ -357,7 +394,13 @@ const INCLUYE_MARINE_PARK: BeneficioIncluido[] = [
     titulo: 'Premium Open Bar',
     texto: 'Beer, aged rum, vodka, tequila, juices, soft drinks and water throughout the tour.',
   },
-  { titulo: 'Round-Trip Hotel Transportation', texto: 'Air-conditioned transportation from your hotel.' },
+  // [2026-11-19, Sr. Fernando, captura: «Private transportation can be added
+  // for an additional fee»] Esta lista la comparten Coral Quest y Caribbean
+  // Escape, que son justo los dos tours con transporte privado.
+  {
+    titulo: 'Round-Trip Hotel Transportation',
+    texto: 'Air-conditioned transportation from your hotel. Private transportation can be added for an additional fee.',
+  },
   { titulo: 'Wi-Fi On Board', texto: 'Stay connected throughout your experience.' },
   {
     titulo: 'Floating Bar at the Natural Pool',
@@ -368,8 +411,33 @@ const INCLUYE_MARINE_PARK: BeneficioIncluido[] = [
   // profesionales»] Texto literal de la variante 1 que mandaron. La
   // plataforma no se nombra —ellos mismos no la nombran en sus variantes—:
   // si mañana cambian de proveedor, «our online photo gallery» sigue valiendo.
-  { titulo: 'Complimentary Tour Photos', texto: 'GoPro photos uploaded after your tour to our online photo gallery.' },
+  // [2026-11-19, Sr. Fernando: «en todos los lugares que aparece fotos cambiar
+  // por go pro fotos»] Título con GoPro; el texto ya lo decía.
+  { titulo: 'Complimentary GoPro Photos', texto: 'GoPro photos uploaded after your tour to our online photo gallery.' },
 ]
+
+// [2026-11-19, Sr. Fernando, Gerencia] Caribbean Escape se separa de la lista
+// compartida: (1) «eliminar artificial reefs del primer bloque: Exclusive
+// marine park access» y (2) «añadir otro punto después de floating bar and the
+// natural pool», texto literal suyo. Coral Quest sigue con la compartida: no
+// pidió tocarla. ⚠️ El texto literal dice «ideal spot for families with
+// children», y esta ficha es 15+: se publica tal cual lo mandó.
+const INCLUYE_CARIBBEAN_ESCAPE: BeneficioIncluido[] = INCLUYE_MARINE_PARK.flatMap((b) => {
+  if (b.titulo === 'Exclusive Marine Park Access') {
+    return [{ ...b, texto: 'Snorkel in our protected Marine Park featuring the Underwater Museum and coral restoration gardens.' }]
+  }
+  if (b.titulo === 'Floating Bar at the Natural Pool') {
+    return [
+      b,
+      {
+        titulo: 'Second Snorkeling Stop at the Artificial Reef',
+        texto:
+          'Snorkel in shallow waters at our artificial reef, where schools of fish gather and you can spot some of the greatest variety of marine life in the Bávaro Reef. It’s an ideal spot for families with children and beginner snorkelers.',
+      },
+    ]
+  }
+  return [b]
+})
 
 // Traducción NUESTRA (el cliente no da estos dos bloques): son datos reales
 // portados del tarifario y de la web, solo cambian de idioma. Compartidos por
@@ -429,12 +497,13 @@ export const FICHAS: Record<string, FichaTour> = traducible({
     // y por eso ocupa el H1 tal cual, con su «(15+)» incluido. El corto
     // —«Caribbean Escape»— vive en TOURS de data/home.ts; ahí está la tabla
     // que traduce los dos nombres viejos.
-    tituloLargo: 'Caribbean Escape: An Adults-Only Ocean Experience (15+)',
+    // [2026-10-30] PDF HAA-LEG-002 §8: edad mínima 15, no «solo adultos».
+    tituloLargo: 'Caribbean Escape: An Ocean Experience for Ages 15+',
     // [v3 2026-08-06, WEBSITE-TOURS pág. 2] Título APROBADO del bloque de
     // descripción, literal. Convive con el H1 del hero, que sigue siendo el
     // NOMBRE del producto (el que usan el ticker, el grid y el megamenú): uno
     // dice qué compras, el otro por qué.
-    promesa: 'The Ultimate Adults-Only Catamaran Tour in Punta Cana',
+    promesa: 'The Ultimate 15+ Catamaran Tour in Punta Cana',
     // [v3 2026-08-06, WEBSITE-TOURS pág. 1 + slide 71] Los 4 chips aprobados
     // (el cliente tachó «Cancelación gratis») + «Ages 15+», que es la regla
     // concreta que pidió en la reunión («los niños de 15 en adelante»).
@@ -450,7 +519,8 @@ export const FICHAS: Record<string, FichaTour> = traducible({
       'Premium Lunch',
       'Ages 15+',
     ],
-    audiencia: 'Adults only',
+    // [2026-10-30] PDF HAA-LEG-002 §8: edad mínima 15, no «solo adultos».
+    audiencia: 'Ages 15+',
     // «4 hours», no «4 horas»: este string se compone dentro del título del
     // itinerario aprobado («Itinerary — 4 Hours») y de la ficha técnica. Las
     // otras 3 fichas lo pasan a inglés en su propio commit de F3.
@@ -531,7 +601,11 @@ export const FICHAS: Record<string, FichaTour> = traducible({
       'tour-escape-15',
       'tour-escape-16',
     ],
-    videoGaleria: '/video/hero.mp4',
+    // [2026-11-19, Sr. Fernando] Los 5 reels de arriba. Reparto en data/reels-producto.ts.
+    reels: REELS_PRODUCTO.caribbeanEscape,
+    videoGaleria: '/video/tours/caribbean-escape.mp4',
+    videoGaleriaCartel: { src: '/video/tours/caribbean-escape-cartel.mp4', poster: '/video/tours/caribbean-escape-cartel.jpg' },
+    videoGaleriaApaisado: true,
     quoteDestacada: 'The coral was the highlight of the trip. The biologist explained everything to us.',
     // [v3 2026-08-06, WEBSITE-TOURS pág. 8] Itinerario APROBADO, con DOBLE
     // SALIDA: cada parada trae la hora del turno de mañana y la del de tarde
@@ -559,7 +633,8 @@ export const FICHAS: Record<string, FichaTour> = traducible({
       },
       {
         hora: '10:00 AM / 2:00 PM',
-        titulo: 'Snorkeling at the Marine Park',
+        // [2026-11-19, Sr. Fernando] Título literal («texto negrita»).
+        titulo: 'Snorkeling at the Marine Park / Exclusive for Hispaniola Clients',
         texto:
           'Explore our exclusive Marine Park, home to the Underwater Museum (launch date: Nov 15th), coral restoration gardens and artificial reefs that attract abundant tropical marine life.',
       },
@@ -571,7 +646,8 @@ export const FICHAS: Record<string, FichaTour> = traducible({
       },
       {
         hora: '12:00 PM / 4:00 PM',
-        titulo: 'Natural Pool & Floating Kitchen',
+        // [2026-11-19, Sr. Fernando] Título literal («texto negrita»).
+        titulo: 'Natural Pool, Floating Kitchen & Artificial Reefs / Exclusive for Hispaniola Clients',
         texto:
           "Swim in Punta Cana's famous crystal-clear natural pool before enjoying your freshly prepared gourmet lunch from our signature Floating Kitchen. No buffets. Every meal is cooked fresh on board.",
       },
@@ -591,12 +667,13 @@ export const FICHAS: Record<string, FichaTour> = traducible({
     // esta ficha y los 8 pesan igual, que es como él los presenta.
     // ⚠️ «Wi-Fi On Board» ya se prometía (estaba en incluyeExtra) — el dato no
     // es nuevo, solo sube de categoría.
-    incluye: INCLUYE_MARINE_PARK,
+    incluye: INCLUYE_CARIBBEAN_ESCAPE,
     noIncluido: NO_INCLUIDO_MARINE_PARK,
     queLlevar: QUE_LLEVAR_MARINE_PARK,
     recomendaciones: RECOMENDACIONES_V3,
     faqTour: [
-      { p: 'What if it rains?', r: 'Full refund or a date change, at no cost.' },
+      // [2026-10-30] Cláusula 3 de HAA-LEG-002 (Marketing): se intenta reprogramar y, si no se puede, reembolso total. Antes daba a elegir.
+      { p: 'What if it rains?', r: 'If the tour is canceled due to weather or sea conditions, we will try to reschedule it. If that is not possible, we will refund the full price of the tour.' },
       { p: 'Is there a restroom on board?', r: 'Yes, every one of our boats has a restroom.' },
       { p: 'Can I come if I cannot swim?', r: 'Yes, the snorkeling is in shallow water and life jackets are available.' },
       {
@@ -604,6 +681,10 @@ export const FICHAS: Record<string, FichaTour> = traducible({
         r: 'Only if you choose to pay the 25% deposit, the balance gets a 5% discount when paid in cash.',
       },
     ],
+    // [2026-11-19, Sr. Fernando] Comida debajo de «What to Bring».
+    menuAbajo: true,
+    // [2026-11-19, Sr. Fernando] «Uvero Alto y Cap Cana: US$60. Demás zonas: US$50».
+    transportePrivado: { precio: 50, precioZonaLejana: 60, zonasLejanas: ['Uvero Alto', 'Cap Cana'] },
     tambienTeGusta: ['coral-quest', 'private-charter'],
     // [v2 2026-07-27] Las 4 ventajas del comparador (slide 17) y de la caja de
     // upsell del widget (slide 5). Salen de menuPremium/incluye de esta misma
@@ -618,7 +699,8 @@ export const FICHAS: Record<string, FichaTour> = traducible({
       'Lobster, certified Angus beef and Surf & Turf on your plate',
       '7 dishes to choose from instead of 2',
       'Vegetarian options and seafood cocktail',
-      'Your tour photos, included',
+      // [2026-11-19, Sr. Fernando] Fuera «Your tour photos, included»: las
+      // fotos van en Light y en Premium, no son ventaja de ninguno.
     ],
     // ⚡ [2026-09-01, Samuel: «eliminar el upsell del álbum completo máxima
     // calidad»] ESTA FICHA SE QUEDA SIN EXTRAS. El álbum de fotos era el único
@@ -707,6 +789,13 @@ export const FICHAS: Record<string, FichaTour> = traducible({
     menuLight: [
       { nombre: 'Grilled chicken breast', desc: 'With potatoes and vegetables', foto: 'plato-chicken-bodegon' },
       { nombre: 'Grilled fish fillet', desc: 'With potatoes and vegetables', foto: 'plato-fish-bodegon' },
+      // [2026-11-19, Sr. Fernando] El Light también lleva el Kid's Meal.
+      {
+        nombre: "Kid's Meal",
+        desc: 'Burger, chicken strips, sausage and fries',
+        foto: 'plato-kids-meal',
+        soloNinos: true,
+      },
     ],
     menuPremium: [
       ...MENU_PREMIUM_CASA,
@@ -751,7 +840,10 @@ export const FICHAS: Record<string, FichaTour> = traducible({
       'Lobster, certified Angus beef and Surf & Turf on your plate',
       '8 dishes to choose from instead of 2',
       'Vegetarian options and seafood cocktail',
-      "Kid's Meal for the little ones",
+      // [2026-11-19, Sr. Fernando, Gerencia, con captura del comparador: «sí
+      // incluye el kids meal para los pequeños el Light»] Fuera de las
+      // ventajas: el Kid's Meal va en los dos paquetes (Odoo ya lo daba así:
+      // el niño lleva su Kid's Meal salvo que suba al menú de adulto).
     ],
     // v3 (2026-07-17, web del cliente): 18 fotos reales de la excursión
     // familiar (la web tenía `images/excursions/educational/{4,5,7,8,10,11,
@@ -776,7 +868,11 @@ export const FICHAS: Record<string, FichaTour> = traducible({
       'tour-coral-11',
       'tour-coral-2',
     ],
-    videoGaleria: '/video/hero.mp4',
+    // [2026-11-19, Sr. Fernando] Los 5 reels de arriba. Reparto en data/reels-producto.ts.
+    reels: REELS_PRODUCTO.coralQuest,
+    videoGaleria: '/video/tours/coral-quest.mp4',
+    videoGaleriaCartel: { src: '/video/tours/coral-quest-cartel.mp4', poster: '/video/tours/coral-quest-cartel.jpg' },
+    videoGaleriaApaisado: true,
     quoteDestacada: 'Perfect for going with kids. Everyone felt safe.',
     itinerarioTitulo: 'Marine Park Journey',
     itinerarioNota:
@@ -801,19 +897,22 @@ export const FICHAS: Record<string, FichaTour> = traducible({
       {
         // ⚡ [2026-09-01, Samuel] 9:15/1:15 → 9:00/1:00, igual que `horarios`.
         hora: '9:00 AM / 1:00 PM',
-        titulo: 'Private Marina & Marine Interpretation Center',
+        // [2026-11-19, Sr. Fernando] Título y texto literales.
+        titulo: 'Marine Interpretation Center',
         texto:
-          "Check in at our private marina before visiting our Marine Interpretation Center, where you'll meet our Foundation Conservation Team and discover how we're restoring and protecting Punta Cana's coral reefs through one of the Dominican Republic's leading marine conservation projects.",
+          "Upon arrival, visit our Marine Interpretation Center, where you’ll meet our Foundation’s conservation team and discover how we’re restoring and protecting Punta Cana’s coral reefs through one of the Dominican Republic’s leading marine conservation projects.",
       },
       {
         hora: '10:00 AM / 2:00 PM',
-        titulo: 'Natural Pool & Symbolic Coral Planting',
+        // [2026-11-19, Sr. Fernando] Título literal («texto negrita»).
+        titulo: 'Natural Pool, Symbolic Coral Planting / Exclusive for Hispaniola Clients',
         texto:
           'Take part in a symbolic coral planting activity, then enjoy your first snorkeling experience in the crystal-clear Natural Pool, surrounded by our artificial reefs designed to attract tropical marine life.',
       },
       {
         hora: '10:45 AM / 2:45 PM',
-        titulo: 'Snorkeling at the Marine Park',
+        // [2026-11-19, Sr. Fernando] Título literal («texto negrita»).
+        titulo: 'Snorkeling at the Marine Park / Exclusive for Hispaniola Clients',
         texto:
           'Explore our protected Marine Park, home to the Underwater Museum (launch date: Nov 15th), coral restoration gardens and thriving reef ecosystems. Keep an eye out for sea turtles, which are frequently spotted during this part of the journey.',
       },
@@ -857,6 +956,10 @@ export const FICHAS: Record<string, FichaTour> = traducible({
         r: 'Only if you choose to pay the 25% deposit, the balance gets a 5% discount when paid in cash.',
       },
     ],
+    // [2026-11-19, Sr. Fernando] Comida debajo de «What to Bring».
+    menuAbajo: true,
+    // [2026-11-19, Sr. Fernando] «Uvero Alto y Cap Cana: US$60. Demás zonas: US$50».
+    transportePrivado: { precio: 50, precioZonaLejana: 60, zonasLejanas: ['Uvero Alto', 'Cap Cana'] },
     tambienTeGusta: ['caribbean-escape', 'private-charter'],
     // ⚡ [2026-09-01, Samuel] Sin extras: el álbum de fotos sale de las 4
     // fichas. Ver la nota del semi-privado y lib/tarifas.ts.
@@ -1322,7 +1425,16 @@ export const FICHAS: Record<string, FichaTour> = traducible({
       'tour-charter-17',
       'tour-charter-18',
     ],
-    videoGaleria: '/video/hero.mp4',
+    // [2026-11-17, MARKETING WEB / Sr. Fernando] El montaje de los botes
+    // privados reemplaza al placeholder `/video/hero.mp4`. Es el mismo clip que
+    // ahora acompaña a bodas y party boat. 9:16, se abre con sonido al pulsar.
+    // [2026-11-19, Sr. Fernando] Los 5 reels de arriba. Reparto en data/reels-producto.ts.
+    reels: REELS_PRODUCTO.privateCharter,
+    videoGaleria: '/video/private-boats.mp4',
+    videoGaleriaCartel: {
+      src: '/video/private-boats-cartel.mp4',
+      poster: '/video/private-boats-poster.jpg',
+    },
     quoteDestacada: 'They tailored everything for us, the whole boat just for the family.',
     // [v3 2026-08-06, WEBSITE-TOURS pag. 20: «QUITAR HORAS Y PONER DEBAJO DE
     // PLAYA DESIERTA SOLO EN TOUR DE 4 HORAS»] Las horas desaparecen — un
@@ -1373,7 +1485,8 @@ export const FICHAS: Record<string, FichaTour> = traducible({
       'WiFi on board',
       'Snorkeling gear (every size)',
       'Marine biologist as your guide on the reef',
-      'Free photos uploaded to our online photo gallery',
+      // [2026-11-19, Sr. Fernando] «go pro fotos».
+      'Free GoPro photos uploaded to our online photo gallery',
     ],
     // ⚡ [2026-09-01, Samuel] Fuera la langosta (ya no se vende aquí) y fuera el
     // álbum de fotos, que además nunca estuvo en esta línea. Lo que queda son
@@ -1405,7 +1518,8 @@ export const FICHAS: Record<string, FichaTour> = traducible({
       // add-on de este tour.
       { p: 'Can I choose the menu?', r: 'Yes, we agree the seven dishes with you (seafood, meat, Surf & Turf, vegetarian and the chicken, beef or shrimp skewers).' },
       { p: 'Do you accept corporate payments?', r: 'Yes, see the Corporate & MICE page for formal invoicing.' },
-      { p: 'What if it rains?', r: 'Full refund or a date change, at no cost.' },
+      // [2026-10-30] Cláusula 3 de HAA-LEG-002 (Marketing): se intenta reprogramar y, si no se puede, reembolso total. Antes daba a elegir.
+      { p: 'What if it rains?', r: 'If the tour is canceled due to weather or sea conditions, we will try to reschedule it. If that is not possible, we will refund the full price of the tour.' },
     ],
     tambienTeGusta: ['caribbean-escape', 'coral-quest'],
     // ⚡⚡ [2026-09-01, Samuel] LOS DOS ADD-ONS QUE HABÍA AQUÍ SE VAN, Y ENTRAN
@@ -1594,6 +1708,7 @@ export const FICHAS: Record<string, FichaTour> = traducible({
       },
       {
         id: 'catamaran',
+        soloConsulta: true,
         nombre: 'Catamaran',
         descripcion: 'The classic Caribbean sailing experience',
         capacidad: 'Up to 70 guests',
@@ -1637,7 +1752,8 @@ export const FICHAS: Record<string, FichaTour> = traducible({
       // no es verdad —se puede añadir aquí mismo—, así que cambia.
       addOn: {
         nombre: 'Premium lobster',
-        precio: 30,
+        // [2026-11-19, Sr. Fernando, Gerencia: «Saona: subir precio a 40$»] 30 -> 40.
+        precio: 40,
         // [2026-09-12, Rossanna: «para las excursiones de Saona poner MENU:
         // BEACH BUFFET y quitar boat»] En Saona se come en la playa, no a
         // bordo: «on board» describia el tour equivocado.
@@ -1717,7 +1833,7 @@ export const FICHAS: Record<string, FichaTour> = traducible({
     // [v3 2026-08-07, pedido de Samuel] SIN «professional photographer (on
     // request, extra cost)», igual que en snorkel-lovers.
     noIncluido:
-      'Not included: transportation from Casa de Campo (surcharge). Optional add-on at checkout: premium lobster (US$ 30/person).',
+      'Not included: transportation from Casa de Campo (surcharge). Optional add-on at checkout: premium lobster (US$ 40/person).',
     queLlevar: [
       'Swimsuit',
       'Towel',
@@ -1732,8 +1848,9 @@ export const FICHAS: Record<string, FichaTour> = traducible({
         p: 'What is the difference between the three options?',
         r: 'Saona Island Catuano goes by speedboat to Catuano beach and the Las Palmillas Natural Pool. Saona Island Mano Juan goes by speedboat to the fishing village of Mano Juan, Playa Toro and the Natural Pool. The Catamaran does the Catuano route at a relaxed pace and is the option for large groups (up to 70 guests).',
       },
-      { p: 'Can I add premium lobster?', r: 'Yes, at checkout: US$ 30 per person.' },
-      { p: 'What if it rains?', r: 'Full refund or a date change, at no cost.' },
+      { p: 'Can I add premium lobster?', r: 'Yes, at checkout: US$ 40 per person.' },
+      // [2026-10-30] Cláusula 3 de HAA-LEG-002 (Marketing): se intenta reprogramar y, si no se puede, reembolso total. Antes daba a elegir.
+      { p: 'What if it rains?', r: 'If the tour is canceled due to weather or sea conditions, we will try to reschedule it. If that is not possible, we will refund the full price of the tour.' },
       {
         p: 'Is there a minimum age for children?',
         r: 'No minimum age. We carry life jackets in every size on both the speedboat and the catamaran.',
@@ -1753,7 +1870,8 @@ export const FICHAS: Record<string, FichaTour> = traducible({
         descripcion:
           'Lobster for every person on board, on top of the buffet. Added when you book.',
         base: 'persona',
-        precio: 30,
+        // [2026-11-19, Sr. Fernando, Gerencia: «Saona: subir precio a 40$»] 30 -> 40.
+        precio: 40,
         nota: 'From March to June lobster may be unavailable; if so it is replaced with jumbo shrimp.',
       },
       // ⚡ [2026-09-01, Samuel] Aquí estaba el álbum de fotos, retirado de las 4

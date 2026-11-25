@@ -205,9 +205,13 @@ CHARTER = [
 #     un error, pero en el muro sera el unico logo distinto.
 #   · Y esta SENTADA, con un plano mas abierto que los 28 de pie. Como la
 #     fuente ya es 3:4 no se recorta, asi que su encuadre se nota mas suelto.
+# [2026-10-30, Marketing de Hispaniola: «puede eliminar a los dos hombres de
+# esta foto, quitarlos de la web que ya no trabajan con nosotros»] Fuera
+# IMG_9005 (y el IMG_9055 que entró el 10-10, commit 3d032bc). Queda solo
+# IMG_1000, que pasa a ser `crew-ventas-1`: si se vuelve a correr este script,
+# no los resucita.
 RETRATOS = [
-    ("ABOUT US/CREW - ABOUT US/AGREGAR - SALES AND MARKETING/IMG_9005.jpg", "crew-ventas-1"),
-    ("ABOUT US/CREW - ABOUT US/AGREGAR - SALES AND MARKETING/IMG_1000.png", "crew-ventas-2"),
+    ("ABOUT US/CREW - ABOUT US/AGREGAR - SALES AND MARKETING/IMG_1000.png", "crew-ventas-1"),
 ]
 
 # ── El retrato de Omar ──────────────────────────────────────────────────────

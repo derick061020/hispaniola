@@ -139,6 +139,9 @@ export function HeroInterna({
             <img
               src={imagen.src}
               alt={imagen.alt}
+              // [2026-10-17, QA de /food-and-bar] Es el LCP de la página: que el
+              // navegador la pida antes que el resto.
+              fetchPriority="high"
               className="absolute inset-0 size-full rounded-hero object-cover"
             />
           ) : (

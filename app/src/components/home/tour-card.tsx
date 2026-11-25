@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { ArrowRight, Clock, Star, Users } from 'lucide-react'
 import type { Tour } from '@/data/home'
 import { formatoDinero } from '@/data/home'
+import { ChipPromo } from '@/components/ui/chip-promo'
 import { CarruselImagenes } from '@/components/ui/carrusel-imagenes'
 import { useTextoRecortado } from '@/lib/use-texto-recortado'
 import { t } from '@/lib/i18n'
@@ -91,6 +92,9 @@ export function TourCard({
             <p className="shrink-0 text-right leading-none">
               <span className="mb-0.5 block text-xs text-navy-soft">{t('from')}</span>
               <span className="font-display text-precio font-semibold text-navy">{formatoDinero(tour.precioLight)}</span>
+              <span className="mt-1.5 flex justify-end">
+                <ChipPromo slug={tour.slug} />
+              </span>
             </p>
           )}
         </div>

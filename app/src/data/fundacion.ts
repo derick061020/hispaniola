@@ -332,6 +332,20 @@ export const FUNDACION = traducible({
       fotoAlt: 'A sea turtle over the reef of the protected marine area',
       contexto: true,
     },
+    // [2026-11-19, Sr. Fernando, Gerencia] El mismo punto nuevo del Marine Park
+    // («añadir ese mismo punto ahí con una foto similar pero no la misma»),
+    // justo después del área protegida, que es de lo que sale.
+    // ⚠️ FOTO PROVISIONAL: la pidió al equipo; mientras, la tortuga cenital del
+    // Marine Park, distinta de la del frente anterior.
+    {
+      clave: 'Patrols',
+      titulo: 'Marine Monitoring & Patrols',
+      claim: "Protecting Bávaro’s Reef and Our Beloved Sea Turtles",
+      texto:
+        "Years of conservation work helped lay the groundwork for the Bávaro Reef Lagoon’s designation as a protected area. Following that milestone and agreements signed with the Dominican Republic’s Ministry of Environment and Natural Resources, two park rangers joined a joint program run by the Ministry and the Bávaro Reefs Foundation. They patrol the lagoon daily to protect its habitats and marine wildlife, with special attention to our beloved sea turtles.",
+      foto: 'marine-park-tortuga',
+      fotoAlt: 'A green sea turtle swimming in the protected lagoon',
+    },
   ],
 
   // Slide 64, banda verde. El botón lleva a /contacto y no a una página de

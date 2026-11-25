@@ -1,0 +1,18 @@
+/* FOOD & BAR (/food-and-bar) — lo que Tailwind no dice bien en una clase.
+   Ver los tokens --spacing-*-comida en tokens.css. */
+
+/* Margen de ancla de cada sección: el título no puede quedar debajo de la
+   píldora del nav en escritorio. (El submenú de la v2 ya no existe.) */
+.ancla-comida {
+  scroll-margin-top: var(--spacing-ancla-comida-movil);
+}
+@media (min-width: 768px) {
+  .ancla-comida {
+    scroll-margin-top: var(--spacing-ancla-comida);
+  }
+}
+
+/* La «barra» del Open Bar: una línea de luz donde apoyan las bebidas. */
+.estante-comida {
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--color-aqua-claro) 55%, transparent), transparent);
+}
