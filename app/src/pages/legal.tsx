@@ -27,7 +27,12 @@ export function LegalPage() {
       </HeroInterna>
 
       <div className="mx-auto max-w-contenido px-5 py-12 sm:px-10 lg:py-16">
-        <CuerpoLegal doc={doc} />
+        {/* [2026-11-25, Sr. Fernando: fondo marino en toda la web, «las
+            casillas con texto se quedan con fondo blanco»] Un texto legal
+            largo no se lee en blanco sobre agua: va en su tarjeta blanca. */}
+        <div className="rounded-card-grande bg-papel px-5 py-8 shadow-card sm:px-10 sm:py-12">
+          <CuerpoLegal doc={doc} />
+        </div>
       </div>
 
       <Footer />

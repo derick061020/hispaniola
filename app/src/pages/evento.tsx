@@ -155,7 +155,7 @@ export function EventoPage() {
       {/* Área de contenido — fondo blanco, mismo patrón que la ficha
           de tour. Las secciones viven en la columna izquierda con el
           widget sticky al lado. */}
-      <div className="bg-papel">
+      <div className="fondo-pagina bg-papel">
         <div className="mx-auto max-w-contenido px-5 py-8 sm:px-10 sm:py-12">
             {/* En movil la columna de reservar va PRIMERO y el contenido
                 despues: el visitante que llega a la ficha quiere el precio y el

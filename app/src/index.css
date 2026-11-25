@@ -15,6 +15,8 @@
 @import './styles/comida-y-bar-v3.css';
 /* [2026-11-24] Las dos landings de Fiesta on Deck (/events/fiesta-on-deck-*). */
 @import './styles/fiesta-on-deck.css';
+/* [2026-11-25, Sr. Fernando] El fondo de agua y burbujas de toda la web. */
+@import './styles/marino.css';
 
 *,
 *::before,

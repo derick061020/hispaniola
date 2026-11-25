@@ -57,7 +57,11 @@ export function Premios() {
           karayapuntacana.com). Sin nada al lado, los logos recuperan su hueco
           de siempre (--spacing-premio-hueco) y se va la línea vertical. */}
       <div className="mx-auto flex max-w-contenido flex-col items-center gap-y-10">
-        <ul className="flex flex-wrap items-center justify-center gap-x-8 gap-y-6 sm:gap-x-premio-hueco">
+        {/* [2026-11-25, Sr. Fernando: fondo marino en toda la web] Los logos
+            van sobre una banda blanca: muchos son PNG con letra oscura sobre
+            transparente (TripAdvisor, LTG, Luxury Travel Guide) y sobre el
+            agua no se leían. */}
+        <ul className="flex flex-wrap items-center justify-center gap-x-8 gap-y-6 rounded-card-grande bg-papel px-6 py-6 shadow-card sm:gap-x-premio-hueco sm:px-10">
           {PREMIOS.map((premio) => (
             <li key={premio.id}>
               <img

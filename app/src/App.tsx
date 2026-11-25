@@ -34,6 +34,7 @@ import { ScrollAlNavegar } from '@/lib/scroll-al-navegar'
 import { NavFlotante } from '@/components/home/nav-flotante'
 import { AvisoMuseo } from '@/components/ui/aviso-museo'
 import { Topbar } from '@/components/home/topbar'
+import { FondoMarino } from '@/components/ui/fondo-marino'
 import { DevMode } from '@/dev/dev-mode'
 
 // ── UNA FICHA, UN COMPONENTE ─────────────────────────────────────────────
@@ -169,6 +170,10 @@ function App() {
       {/* React Router no resetea el scroll al navegar — sin esto, entrar a una
           ficha desde el footer de la home aterriza con el scroll al fondo. */}
       <ScrollAlNavegar />
+      {/* [2026-11-25, Sr. Fernando] El agua con burbujas detrás de todas las
+          páginas públicas (menos museo, Food & Bar, Fiesta on Deck y el
+          funnel). Ver components/ui/fondo-marino.tsx y styles/marino.css. */}
+      <FondoMarino />
       {/* Fuera de <Routes>: en flujo normal (no fixed, a diferencia de
           NavFlotante), así queda ANTES del hero de cada página con su propio
           fondo blanco — nunca dentro de la caja del hero. */}

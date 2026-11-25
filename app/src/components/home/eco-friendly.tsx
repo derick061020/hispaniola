@@ -228,7 +228,7 @@ export function EcoFriendly() {
             Cada texto se arrima a su lado del sello (justify-self + text-*)
             para que al envolver en pantallas estrechas crezca hacia afuera y
             no se despegue del sello. */}
-        <div className="relative z-10 grid w-full grid-cols-[1fr_auto_1fr] items-center gap-4 sm:gap-6">
+        <div className="marino-sin-cambio relative z-10 grid w-full grid-cols-[1fr_auto_1fr] items-center gap-4 sm:gap-6">
           <span className="eco-reveal justify-self-end text-right text-sm font-semibold uppercase tracking-[0.2em] text-navy sm:text-base">
             {t('Eco-friendly')}
           </span>

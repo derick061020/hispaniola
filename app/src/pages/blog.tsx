@@ -48,7 +48,7 @@ export function BlogPage() {
         </HeroInterna>
       </div>
 
-      <div className="bg-fondo-ficha">
+      <div className="fondo-pagina bg-fondo-ficha">
         <div className="mx-auto max-w-contenido px-5 pt-12 sm:px-10 lg:pt-16">
           <ListaArticulos />
         </div>

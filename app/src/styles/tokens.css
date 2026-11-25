@@ -2498,6 +2498,28 @@
   /* [2026-11-19, Sr. Fernando] Foto de las tarjetas de comida en las páginas de
      evento, más baja: «la sección de comida se ve demasiado grande». */
   --aspect-tm-foto-compacta-v3: 2 / 1;
+
+  /* ── FONDO MARINO de toda la web (2026-11-25, Sr. Fernando, Gerencia) ────
+     «Necesitamos que toda la web tenga ese formato de agua y burbujas» (el del
+     museo), y sobre la captura de Caribbean Escape: «los laterales y las
+     aberturas, todo el background con ese estilo marino; las casillas con
+     texto se quedan tal cual, fondo blanco». O sea: el FONDO de la página es
+     agua; las tarjetas, el widget y los paneles siguen blancos.
+     ⚠️ Deroga para el fondo el guardarraíl de la dirección B («el aqua nunca de
+     fondo grande»): lo pide el cliente. Ver styles/marino.css.
+     El agua es la de las dos primeras paradas del museo, sin hundirse al navy:
+     aquí no hay descenso, es la misma agua en toda la página (capa fija). */
+  --color-marino-alto: color-mix(in srgb, var(--color-museo-superficie) 62%, var(--color-museo-somero)); /* bajo la superficie, arriba de la pantalla */
+  --color-marino-medio: var(--color-museo-somero); /* el cuerpo del agua — blanco encima: 5,3:1 */
+  --color-marino-hondo: color-mix(in srgb, var(--color-museo-somero) 70%, var(--color-museo-medio)); /* abajo de la pantalla */
+  --color-marino-luz: color-mix(in srgb, var(--color-museo-luz) 26%, transparent); /* los rayos de sol que entran */
+  --color-marino-texto: var(--color-museo-texto);
+  --color-marino-texto-suave: rgb(236 246 248 / 88%); /* párrafos sobre el agua: más que el 74% del museo porque aquí el agua es más clara */
+  --color-marino-acento: var(--color-aqua-claro); /* el eyebrow aqua-dark no se lee sobre agua: pasa a su versión clara */
+  --color-marino-sombra-texto: rgb(5 15 29 / 35%); /* apoyo del blanco en el agua más clara (la de Food & Bar) */
+  --spacing-marino-subida: 110vh; /* lo que sube una burbuja: la pantalla entera */
+  --color-marino-burbuja-lejana: color-mix(in srgb, var(--color-museo-luz) 24%, transparent); /* las burbujas pequeñas del fondo */
+  --spacing-marino-baldosa: 24rem; /* la baldosa del mapa de burbujas lejanas */
   /* El resorte «Gentle» de Figma (masa 1, rigidez 100, amortiguación 15),
      muestreado: 0,78 s hasta asentarse, ~3 % de rebote. */
   --ease-resorte-gentil: linear(0, 0.03, 0.104, 0.204, 0.316, 0.43, 0.539, 0.638, 0.726, 0.8, 0.862, 0.911, 0.949, 0.978, 0.999, 1.013, 1.022, 1.027, 1.028, 1.028, 1.026, 1.023, 1.02, 1.017, 1.014, 1.011, 1.008, 1.006, 1.004, 1.003, 1.002, 1);

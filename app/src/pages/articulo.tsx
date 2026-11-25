@@ -87,7 +87,7 @@ export function ArticuloPage() {
   const relacionados = ARTICULOS.filter((a) => a.slug !== articulo.slug).slice(0, 2)
 
   return (
-    <div className="bg-papel">
+    <div className="fondo-pagina bg-papel">
       <Meta titulo={articulo.titulo} descripcion={articulo.extracto} ruta={`/blog/${articulo.slug}`} />
 
       <HeroInterna
@@ -102,7 +102,9 @@ export function ArticuloPage() {
         {/* Medida de lectura cómoda (max-w-3xl) SOLO para índice + cuerpo +
             CTA — el resto del artículo («Sigue leyendo», comentarios,
             newsletter) vive al ancho completo del `<article>`. */}
-        <div className="mx-auto max-w-3xl">
+        {/* [2026-11-25, Sr. Fernando: fondo marino] El cuerpo del artículo va
+            en tarjeta blanca: prosa larga, como el texto legal. */}
+        <div className="mx-auto max-w-3xl rounded-card-grande bg-papel px-5 py-8 shadow-card sm:px-10 sm:py-10">
           {/* Índice. Solo se pinta si el cuerpo tiene encabezados (h2/h3) —
               null en el resto de artículos, que no lo necesitan. Sin margen
               propio: es el primer bloque bajo el hero, el py-12/py-16 del

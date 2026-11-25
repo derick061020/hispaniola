@@ -201,7 +201,7 @@ export function TourPage() {
           — antes era --color-fondo-ficha gris). Cada bloque se separa del
           fondo y de sus vecinos por su BORDE gris (BLOQUE_FICHA: ring-linea,
           sin sombra), no por contraste card-blanca-sobre-gris. */}
-      <div className="bg-papel">
+      <div className="fondo-pagina bg-papel">
         {/* TODAS las secciones viven en la columna izquierda, con el widget
             sticky al lado — no a ancho completo debajo del widget. Es una
             decisión de conversión, no de layout: en desktop no hay barra
