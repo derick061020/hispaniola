@@ -122,6 +122,7 @@ export function PaquetesEvento({
         <TarjetasPaquetesComida
           etiqueta={paquetes.titulo}
           columna
+          slugPromo={evento.slug}
           precio={(p) => (p.precioBase != null ? formatoDinero(p.precioBase) : p.precio)}
           extra={(p) =>
             p.porPersonaExtra ? <>+{formatoDinero(p.porPersonaExtra)} {t('per extra guest')}</> : t(p.extraPrecio ?? '')

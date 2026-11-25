@@ -57,7 +57,7 @@ export function EventosV3() {
         </div>
 
         <div className="mt-14">
-          <TarjetasPaquetesComida etiqueta={E.titulo} />
+          <TarjetasPaquetesComida etiqueta={E.titulo} slugPromo="party-boat" />
         </div>
         <p className="mx-auto mt-10 max-w-3xl text-center text-xs leading-relaxed text-navy-soft">{t(NOTA_PAQUETES)}</p>
         <CartaCanapesV3 />

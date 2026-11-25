@@ -86,6 +86,9 @@ export type PromoWeb = {
   until: string | null
   /** Si aplica, el 5% por reservar con 30 días no se suma. */
   excludes_early_booking: boolean
+  /** [2026-11-24] Si viene, la promo vale SOLO para esas variantes (el
+   *  Premium de eventos): se pinta en su tarjeta, no en todo el producto. */
+  variants?: string[]
 }
 
 export type Tour = {

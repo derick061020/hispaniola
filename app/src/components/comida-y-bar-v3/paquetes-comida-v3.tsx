@@ -1,3 +1,5 @@
+import { ChipPromo } from '@/components/ui/chip-promo'
+import { slugOdooDePaquete } from '@/lib/eventos-reservables'
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowDown, ArrowRight, Sparkles, Users } from 'lucide-react'
@@ -151,8 +153,12 @@ export function TarjetasPaquetesComida({
   precio,
   extra,
   columna = false,
+  slugPromo,
 }: {
   etiqueta: string
+  /** [2026-11-24] Producto de Odoo cuya promo se mira (party-boat, weddings):
+   *  la del 5 % solo vale para el Premium y sale solo en esa tarjeta. */
+  slugPromo?: string
   acciones?: (p: PaqueteEvento, premium: boolean) => ReactNode
   precio?: (p: PaqueteEvento) => ReactNode
   extra?: (p: PaqueteEvento) => ReactNode
@@ -187,6 +193,9 @@ export function TarjetasPaquetesComida({
                       <h3 className={`font-display text-2xl font-semibold leading-tight ${premium ? 'text-white' : 'text-navy'}`}>
                         {pegaUltima(nombre)}
                       </h3>
+                      {slugPromo ? (
+                        <ChipPromo slug={slugPromo} variante={slugOdooDePaquete(p.id)} className="mt-2" />
+                      ) : null}
                       <p className={`mt-3 text-xs font-semibold uppercase tracking-[0.12em] ${suave}`}>{t('Starting at')}*</p>
                       <p className={`font-display text-4xl font-semibold ${premium ? 'text-premium-oro' : 'text-coral-dark'}`}>
                         {precio ? precio(p) : p.precio}
