@@ -9,6 +9,8 @@ import {
   type FiestaOnDeck,
 } from '@/data/fiesta-on-deck'
 import { formatoDinero } from '@/data/home'
+import { BARRAS_EVENTO } from '@/data/eventos'
+import { TarjetasBarra } from '@/components/evento/tarjetas-barra'
 import { t } from '@/lib/i18n'
 
 // Las secciones de las landings de Fiesta on Deck (2026-11-24). Mismo orden
@@ -155,6 +157,52 @@ export function SonidoFod({ fiesta }: { fiesta: FiestaOnDeck }) {
             <strong className="text-fod-acento">{t('Or your playlist.')}</strong> {s.tuLista}
           </p>
         </div>
+      </div>
+    </Seccion>
+  )
+}
+
+// ── El open bar ─────────────────────────────────────────────────────────
+
+/** [2026-11-25, Sr. Fernando en Gerencia, 24/11 19:50] «Se nos olvidó el open
+ *  bar, mismo formato de hispaniola · 3 paquetes con costo extra los dos
+ *  siguientes». Son LAS MISMAS tres barras y las mismas tarjetas que las
+ *  landings de evento (BARRAS_EVENTO + TarjetasBarra): Caribbean incluida,
+ *  Caribbean Plus +US$ 15 y Signature +US$ 30 por invitado. Va ANTES de la
+ *  comida, por la regla que fijó el 19/11 («barras primero, comida después»).
+ *
+ *  Cómo encaja en el tema oscuro: el titular es de Fiesta on Deck (sobre
+ *  negro / azul bandera), y las tarjetas van sobre un panel CLARO (papel),
+ *  tal cual son en Hispaniola. Pintarlas en oscuro habría obligado a tocar
+ *  la pieza compartida o a duplicarla, y lo pedido es «el mismo formato». El
+ *  borde y la sombra dura del panel son de la marca: así no parece una
+ *  página incrustada dentro de otra. El copy del intro es el de la landing de
+ *  party boat (`barras.intro`), el mismo producto. */
+export function BarraFod({ elegida, onElegir }: { elegida: string; onElegir: (id: string) => void }) {
+  return (
+    <Seccion id="fod-barra">
+      <CabeceraFod
+        eyebrow={t('The open bar')}
+        linea1={t('Choose your')}
+        linea2={t('bar.')}
+        intro={t(
+          'Every package sails with our Caribbean open bar included. Upgrade it for the whole group if you want wine, cocktails or premium labels on board — the price is per guest, and it is added on top of your food package.',
+        )}
+      />
+      <div className="fod-sombra mt-12 border-2 border-fod-texto bg-papel p-4 sm:p-6">
+        <TarjetasBarra
+          items={BARRAS_EVENTO}
+          elegida={elegida}
+          onElegir={(id) => {
+            onElegir(id)
+            // Igual que al elegir un paquete en las landings de evento: el
+            // efecto (el total) está en la calculadora, así que se baja a ella.
+            document.getElementById('fod-reserva')?.scrollIntoView({
+              block: 'start',
+              behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+            })
+          }}
+        />
       </div>
     </Seccion>
   )

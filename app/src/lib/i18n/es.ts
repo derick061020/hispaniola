@@ -3544,4 +3544,18 @@ export const ES: Record<string, string> = {
   "Fiesta on Deck · Afro Caribbean": "Fiesta on Deck · Afro Caribbean",
   "Private party boat with Afrobeats, Hip-Hop, R&B and Dancehall.": "Party boat privado con afrobeats, hip-hop, R&B y dancehall.",
   "Private party boat with reggaetón, dembow, bachata and merengue.": "Party boat privado con reguetón, dembow, bachata y merengue.",
+  // ── [2026-11-25] Open bar en Fiesta on Deck (y textos de las tarjetas de barra
+  // que no tenían traducción en las landings de evento) ──
+  "Choose this bar": "Elegir esta barra",
+  "Choose your": "Elige tu",
+  "bar.": "barra.",
+  "Choose your bar": "Elige tu barra",
+  "Every package sails with our Caribbean open bar included. Upgrade it for the whole group if you want wine, cocktails or premium labels on board — the price is per guest, and it is added on top of your food package.": "Todos los paquetes zarpan con nuestro open bar Caribbean incluido. Súbelo para todo el grupo si quieres vino, cócteles o marcas premium a bordo: el precio es por invitado y se suma al paquete de comida.",
+  "Open bar": "Open bar",
+  "See what each bar pours": "Mira qué sirve cada barra",
+  "The Caribbean open bar is included. Upgrades are per guest, for the whole group.": "El open bar Caribbean está incluido. Las mejoras son por invitado, para todo el grupo.",
+  "The open bar": "El open bar",
+  "Top shelf": "Lo mejor de la barra",
+  "{barra} bar · {n} guests × {precio}": "Barra {barra} · {n} invitados × {precio}",
+  "pp": "p/p",
 }

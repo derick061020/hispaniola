@@ -16,6 +16,7 @@ import {
   type PaqueteFod,
 } from '@/data/fiesta-on-deck'
 import { formatoDinero } from '@/data/home'
+import { BARRAS_EVENTO } from '@/data/eventos'
 import { crudo, t, tp } from '@/lib/i18n'
 import { CabeceraFod } from './secciones-fod'
 
@@ -61,6 +62,8 @@ export function CalculadoraFod({
   invitados,
   onInvitados,
   banderas,
+  barra,
+  onBarra,
 }: {
   fiesta: FiestaOnDeck
   paquetes: PaqueteFod[]
@@ -69,6 +72,10 @@ export function CalculadoraFod({
   invitados: number
   onInvitados: (n: number) => void
   banderas: string[]
+  /** [2026-11-25] id de BARRAS_EVENTO: Caribbean (incluida), Caribbean Plus
+   *  (+15) o Signature (+30), por invitado. */
+  barra: string
+  onBarra: (id: string) => void
 }) {
   const [fecha, setFecha] = useState('')
   const [ocasion, setOcasion] = useState('')
@@ -84,7 +91,11 @@ export function CalculadoraFod({
 
   const p = paquetes.find((x) => x.id === paquete) ?? paquetes[0]
   const extraInvitados = Math.max(0, invitados - PAX_INCLUIDOS_FOD)
-  const bruto = p.precioBase + extraInvitados * p.porPersonaExtra
+  // [2026-11-25] La barra suma por invitado ANTES de descuentos, como en las
+  // landings de evento («added on top of your food package»).
+  const b = BARRAS_EVENTO.find((x) => x.id === barra) ?? BARRAS_EVENTO[0]
+  const extraBarra = b.extraPorPersona * invitados
+  const bruto = p.precioBase + extraInvitados * p.porPersonaExtra + extraBarra
   const pack = packDe(bruto)
   const infoPack = pack ? PACKS_FOD[pack - 1] : null
 
@@ -123,6 +134,7 @@ export function CalculadoraFod({
       `Package: ${pq.nombre} (${formatoDinero(pq.precioBase)} up to ${PAX_INCLUIDOS_FOD} guests + ${formatoDinero(pq.porPersonaExtra)} per extra guest)`,
       `Date: ${fecha || 'to confirm'}`,
       `Guests: ${invitados}`,
+      `Open bar: ${b.nombre}${b.extraPorPersona ? ` (+${formatoDinero(b.extraPorPersona)} per guest = ${formatoDinero(extraBarra)})` : ' (included)'}`,
       `Celebrating: ${ocasion || '-'}`,
       `Music: ${musicaPropia ? `our own playlist${lista ? ` ${lista}` : ' (link later)'}` : `${f.nombre} mix (${f.sonido.estilos.join(', ')})`}`,
     ]
@@ -140,7 +152,7 @@ export function CalculadoraFod({
     lineas.push(`Estimated total: ${formatoDinero(total)} · 25% deposit ${formatoDinero(deposito)}`)
     if (nombre.trim()) lineas.push(`Name: ${nombre.trim()}`)
     return lineas.join('\n')
-  }, [fiesta, p, fecha, invitados, ocasion, musicaPropia, lista, banderas, pack, pancarta, extrasValidos, tarta, efectivo, repetidor, notas, total, deposito, nombre])
+  }, [fiesta, p, fecha, invitados, ocasion, musicaPropia, lista, banderas, pack, pancarta, extrasValidos, tarta, efectivo, repetidor, notas, total, deposito, nombre, b, extraBarra])
 
   const campo = 'w-full border-2 border-fod-linea bg-fod-fondo px-3 py-2.5 text-sm text-fod-texto focus:border-fod-acento focus:outline-none'
   const rotulo = 'mb-1.5 block font-mono text-xs uppercase tracking-wider text-fod-humo'
@@ -207,10 +219,47 @@ export function CalculadoraFod({
               </div>
             </fieldset>
 
-            {/* 2 · Fecha y grupo */}
+            {/* 2 · La barra (25/11). Va pegada al paquete: son las dos mitades
+                de lo que se come y se bebe, igual que en las landings de evento. */}
             <fieldset>
               <legend className="font-fod text-xl font-extrabold uppercase">
                 <span className="text-fod-acento">2 · </span>
+                {t('Choose your bar')}
+              </legend>
+              <p className="mt-1 text-sm text-fod-humo">
+                {t('The Caribbean open bar is included. Upgrades are per guest, for the whole group.')}
+              </p>
+              <div role="radiogroup" aria-label={t('Open bar')} className="mt-5 grid gap-3 sm:grid-cols-3">
+                {BARRAS_EVENTO.map((x) => {
+                  const sel = x.id === barra
+                  return (
+                    <button
+                      key={x.id}
+                      type="button"
+                      role="radio"
+                      aria-checked={sel}
+                      onClick={() => onBarra(x.id)}
+                      className={`flex items-center justify-between gap-3 border-2 p-4 text-left ${
+                        sel ? 'fod-sombra-2 border-fod-texto bg-fod-acento text-fod-sobre-acento' : 'border-fod-linea bg-fod-panel'
+                      }`}
+                    >
+                      <span className="font-fod text-sm font-extrabold uppercase leading-tight">{t(x.nombre)}</span>
+                      <span className="shrink-0 font-mono text-xs">
+                        {x.extraPorPersona ? `+${formatoDinero(x.extraPorPersona)} ${t('pp')}` : t('Included')}
+                      </span>
+                    </button>
+                  )
+                })}
+              </div>
+              <a href="#fod-barra" className="mt-3 inline-block text-xs text-fod-acento underline">
+                {t('See what each bar pours')}
+              </a>
+            </fieldset>
+
+            {/* 2 · Fecha y grupo */}
+            <fieldset>
+              <legend className="font-fod text-xl font-extrabold uppercase">
+                <span className="text-fod-acento">3 · </span>
                 {t('When, and how many?')}
               </legend>
               <p className="mt-1 text-sm text-fod-humo">
@@ -281,7 +330,7 @@ export function CalculadoraFod({
             {/* 3 · Tu día */}
             <fieldset>
               <legend className="font-fod text-xl font-extrabold uppercase">
-                <span className="text-fod-acento">3 · </span>
+                <span className="text-fod-acento">4 · </span>
                 {t('Make it yours')}
               </legend>
               <p className="mt-1 text-sm text-fod-humo">{t('None of this changes the price, except how you pay the balance.')}</p>
@@ -418,6 +467,7 @@ export function CalculadoraFod({
                 [t('Package'), p.nombre],
                 [t('Date'), fecha || t('Choose a date')],
                 [t('Guests'), String(invitados)],
+                [t('Open bar'), t(b.nombre)],
                 [t('Celebration'), pack ? `${t('Pack')} ${pack}` : t('From US$1,100')],
                 [t('On board'), t('3 hours · 2 stops')],
               ].map(([k, v]) => (
@@ -450,6 +500,14 @@ export function CalculadoraFod({
                     {tp('{n} extra guests × {precio}', { n: extraInvitados, precio: formatoDinero(p.porPersonaExtra) })}
                   </span>
                   <span className="tabular-nums">{formatoDinero(extraInvitados * p.porPersonaExtra)}</span>
+                </div>
+              ) : null}
+              {extraBarra ? (
+                <div className="flex justify-between">
+                  <span>
+                    {tp('{barra} bar · {n} guests × {precio}', { barra: t(b.nombre), n: invitados, precio: formatoDinero(b.extraPorPersona) })}
+                  </span>
+                  <span className="tabular-nums">{formatoDinero(extraBarra)}</span>
                 </div>
               ) : null}
               {descuentos.map((d) => (

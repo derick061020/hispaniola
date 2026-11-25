@@ -365,6 +365,10 @@ export type BarraEvento = {
   nombre: string
   /** Lo que cuesta ADEMÁS del paquete de comida: "Included" o "+US$ 15". */
   precio: string
+  /** [2026-11-25] El mismo precio, como NÚMERO: lo que suma por invitado
+   *  sobre el paquete (0 en la incluida). Lo usa la calculadora de Fiesta on
+   *  Deck; la lógica de precio no lee el texto visible (CLAUDE.md, 2026-08-18). */
+  extraPorPersona: number
   /** La unidad del precio, siempre por cabeza. Va debajo y pequeño: el
    *  número solo se leería como el precio de la barra entera. */
   precioNota: string
@@ -408,6 +412,7 @@ export const BARRAS_EVENTO: BarraEvento[] = [
     id: 'caribbean',
     nombre: 'Caribbean',
     precio: 'Included',
+    extraPorPersona: 0,
     precioNota: 'per person',
     texto:
       'Dominican rum, vodka, tequila, whisky and Presidente beer. Cuba Libre, '
@@ -424,6 +429,7 @@ export const BARRAS_EVENTO: BarraEvento[] = [
     id: 'caribbean-plus',
     nombre: 'Caribbean Plus / Premium',
     precio: '+US$ 15',
+    extraPorPersona: 15,
     precioNota: 'per person',
     texto:
       'Everything in Caribbean, with white wine and five cocktails: Mojito, '
@@ -440,6 +446,7 @@ export const BARRAS_EVENTO: BarraEvento[] = [
     id: 'signature',
     nombre: 'Signature',
     precio: '+US$ 30',
+    extraPorPersona: 30,
     precioNota: 'per person',
     texto:
       'Brugal Extra Viejo, Absolut, José Cuervo and Johnnie Walker. Red and '

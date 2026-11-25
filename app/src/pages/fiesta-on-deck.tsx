@@ -5,6 +5,7 @@ import { HeroFod } from '@/components/fiesta-on-deck/hero-fod'
 import { CalculadoraFod } from '@/components/fiesta-on-deck/calculadora-fod'
 import {
   BanderasFod,
+  BarraFod,
   BuenoSaberFod,
   CelebraFod,
   CierreFod,
@@ -24,6 +25,7 @@ import {
   type PaqueteFod,
 } from '@/data/fiesta-on-deck'
 import { crudo } from '@/lib/i18n'
+import { BARRAS_EVENTO } from '@/data/eventos'
 
 // /events/fiesta-on-deck-afro y /events/fiesta-on-deck-latin (2026-11-24,
 // Sr. Fernando en «Hispaniola Gerencia»: «ambas landing pages deben estar
@@ -42,7 +44,8 @@ import { crudo } from '@/lib/i18n'
 // reglas de precio del tarifario de eventos.
 //
 // Orden de secciones = el de las referencias:
-//   hero · cinta · cuatro cosas · sonido · cinta de ritmos · comida ·
+//   hero · cinta · cuatro cosas · sonido · cinta de ritmos ·
+//   open bar (25/11, antes de la comida) · comida ·
 //   (Latin: banderas) · Celebration Packs · Build your party · galería ·
 //   (Afro: un día real | Latin: habla como local) · bueno saber · cierre.
 export function FiestaOnDeckPage({ slug }: { slug: 'fiesta-on-deck-afro' | 'fiesta-on-deck-latin' }) {
@@ -56,9 +59,17 @@ export function FiestaOnDeckPage({ slug }: { slug: 'fiesta-on-deck-afro' | 'fies
   const [paquete, setPaquete] = useState<PaqueteFod['id']>('snacks')
   const [invitados, setInvitados] = useState(20)
   const [banderas, setBanderas] = useState<string[]>([])
+  // [2026-11-25] La barra: Caribbean (incluida) por defecto. La eligen las
+  // tarjetas del open bar y el selector de la calculadora.
+  const [barra, setBarra] = useState(BARRAS_EVENTO[0].id)
 
   const p = paquetes.find((x) => x.id === paquete) ?? paquetes[0]
-  const bruto = p.precioBase + Math.max(0, invitados - PAX_INCLUIDOS_FOD) * p.porPersonaExtra
+  // ⚠️ La barra cuenta para el Celebration Pack: el pack se decide por el
+  // «party total, before discounts», y la barra es parte de ese total. Las
+  // referencias no tenían barra, así que esto es una lectura, no un dato:
+  // confirmar con Miguel.
+  const extraBarra = (BARRAS_EVENTO.find((b) => b.id === barra)?.extraPorPersona ?? 0) * invitados
+  const bruto = p.precioBase + Math.max(0, invitados - PAX_INCLUIDOS_FOD) * p.porPersonaExtra + extraBarra
   const pack = packDe(bruto)
   const esLatin = fiesta.marca === 'latin'
 
@@ -70,6 +81,7 @@ export function FiestaOnDeckPage({ slug }: { slug: 'fiesta-on-deck-afro' | 'fies
       <CuatroFod fiesta={fiesta} />
       <SonidoFod fiesta={fiesta} />
       <CintaFod items={fiesta.sonido.estilos} invertida />
+      <BarraFod elegida={barra} onElegir={setBarra} />
       <ComidaFod fiesta={fiesta} />
       {esLatin ? <BanderasFod elegidas={banderas} onCambiar={setBanderas} /> : null}
       <CelebraFod packActual={pack} />
@@ -81,6 +93,8 @@ export function FiestaOnDeckPage({ slug }: { slug: 'fiesta-on-deck-afro' | 'fies
         invitados={invitados}
         onInvitados={setInvitados}
         banderas={banderas}
+        barra={barra}
+        onBarra={setBarra}
       />
       <GaleriaFod fiesta={fiesta} />
       {esLatin ? <JergaFod fiesta={fiesta} /> : <DiaRealFod fiesta={fiesta} />}
