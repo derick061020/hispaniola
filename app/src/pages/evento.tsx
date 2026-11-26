@@ -122,7 +122,13 @@ export function EventoPage() {
     // ahí donde el widget de la columna derecha se vuelve sticky y releva a la
     // barra.
     <div className="pb-[calc(4rem+env(safe-area-inset-bottom))] lg:pb-0">
-      <Meta titulo={evento.titulo} descripcion={evento.sub} ruta={`/events/${slug}`} />
+      <Meta
+        titulo={evento.titulo}
+        descripcion={evento.sub}
+        ruta={`/events/${slug}`}
+        imagen={`/fotos/${evento.foto}.webp`}
+        imagenAlt={evento.fotoAlt}
+      />
 
       {/* HeroInterna compartido con la home y la ficha de tour — mismo
           box redondeado, mismo video de marca, Header DENTRO del box

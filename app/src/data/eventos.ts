@@ -905,14 +905,21 @@ const PARTY_BOAT: FichaEvento = {
   },
   // Foto de portada (la 1ª del mosaico). Sin quote sobre la foto: el
   // party boat no tiene un review de 5★ "famoso" que destaque.
-  foto: 'ev-partyboat-1',
-  fotoAlt: 'The catamaran deck set up for a celebration with lights and decorations',
+  // [2026-11-26, Sr. Fernando, Gerencia: «esa fotografía [la miniatura de Google]
+  // transmite navegación y piscinas naturales, no una fiesta a bordo… sería más
+  // atractiva una con gente bailando, bebidas y ambiente festivo»] Portada nueva:
+  // la de la fiesta en cubierta (antes ev-partyboat-4), con nombre descriptivo para
+  // Google. Es también la imagen principal que declara la página (og:image y
+  // primaryImageOfPage, ver components/seo/meta.tsx).
+  foto: 'party-boat-punta-cana',
+  fotoAlt: 'Guests dancing and celebrating with champagne on a private party boat catamaran in Punta Cana',
   // 8 fotos de la galería original del cliente. La 1ª (`events-1`) es
   // la portada — el mosaico la pone primera.
   // [2026-08-21] Las 13 fotos de EVENTS/PARTYBOATS, y SOLO esas: las
   // `events-*` de antes salen de aquí (siguen vivas en la home, /fleet y
   // /facilities, que es donde también se usan).
   galeria: [
+    'party-boat-punta-cana',
     'ev-partyboat-1',
     'ev-partyboat-3',
     'ev-partyboat-6',
@@ -921,7 +928,6 @@ const PARTY_BOAT: FichaEvento = {
     'ev-partyboat-11',
     'ev-partyboat-10',
     'ev-partyboat-2',
-    'ev-partyboat-4',
     'ev-partyboat-5',
     'ev-partyboat-12',
     'ev-partyboat-13',

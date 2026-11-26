@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { SEO_POR_RUTA } from '@/data/seo'
 import { idiomaUI } from '@/lib/i18n'
 
@@ -21,11 +22,17 @@ type Props = {
   ruta: string
   /** false = noindex,nofollow (páginas internas tipo /fundaciones). */
   indexable?: boolean
+  /** [2026-11-26, Sr. Fernando] Imagen principal de la página (ruta desde la
+   *  raíz, p. ej. '/fotos/party-boat-punta-cana.webp') y su texto alternativo.
+   *  Se declara como og:image y como `primaryImageOfPage` (schema.org WebPage):
+   *  es lo que Google mira para elegir la miniatura del resultado. */
+  imagen?: string
+  imagenAlt?: string
 }
 
 const NOMBRE_SITIO = 'Hispaniola Aquatic Adventures'
 
-export function Meta({ titulo, descripcion, ruta, indexable = true }: Props) {
+export function Meta({ titulo, descripcion, ruta, indexable = true, imagen, imagenAlt }: Props) {
   const url = `${window.location.origin}${ruta}`
   // [2026-10-23, Marketing, SEO punto 3] Las rutas con texto de buscador
   // escrito por Marketing lo usan tal cual (ya incluye la marca donde cabe).
@@ -39,6 +46,61 @@ export function Meta({ titulo, descripcion, ruta, indexable = true }: Props) {
       <meta name="description" content={seo ? seo.descripcion : descripcion} />
       <link rel="canonical" href={url} />
       {indexable ? null : <meta name="robots" content="noindex, nofollow" />}
+      {imagen ? (
+        <>
+          <OgImagen src={`${window.location.origin}${imagen}`} alt={imagenAlt} />
+          <script type="application/ld+json">
+            {JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'WebPage',
+              url,
+              name: tituloFinal,
+              primaryImageOfPage: {
+                '@type': 'ImageObject',
+                url: `${window.location.origin}${imagen}`,
+                ...(imagenAlt ? { caption: imagenAlt } : {}),
+              },
+            })}
+          </script>
+        </>
+      ) : null}
     </>
   )
+}
+
+/** El og:image ESTÁTICO de index.html (el de la home) se SUSTITUYE en vez de
+ *  añadir un segundo: con dos, los lectores se quedan con el primero, que era
+ *  el genérico. Al salir de la página se restaura. */
+function OgImagen({ src, alt }: { src: string; alt?: string }) {
+  useEffect(() => {
+    const tag = document.head.querySelector<HTMLMetaElement>('meta[property="og:image"]')
+    const previo = tag?.content
+    let creado: HTMLMetaElement | null = null
+    if (tag) tag.content = src
+    else {
+      creado = document.createElement('meta')
+      creado.setAttribute('property', 'og:image')
+      creado.content = src
+      document.head.appendChild(creado)
+    }
+    let altTag = document.head.querySelector<HTMLMetaElement>('meta[property="og:image:alt"]')
+    const altPrevio = altTag?.content
+    let altCreado = false
+    if (alt) {
+      if (!altTag) {
+        altTag = document.createElement('meta')
+        altTag.setAttribute('property', 'og:image:alt')
+        document.head.appendChild(altTag)
+        altCreado = true
+      }
+      altTag.content = alt
+    }
+    return () => {
+      if (creado) creado.remove()
+      else if (tag && previo !== undefined) tag.content = previo
+      if (altCreado) altTag?.remove()
+      else if (altTag && altPrevio !== undefined) altTag.content = altPrevio
+    }
+  }, [src, alt])
+  return null
 }
