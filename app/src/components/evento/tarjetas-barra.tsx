@@ -2,6 +2,13 @@ import { Sparkles, Wine } from 'lucide-react'
 import type { BarraEvento } from '@/data/eventos'
 import { idiomaUI, t } from '@/lib/i18n'
 
+// El texto del precio de una barra. [2026-11-26] Sale a función para que la
+// variante de Fiesta on Deck (fiesta-on-deck/tarjetas-barra-fod.tsx) diga
+// exactamente lo mismo; el porqué de «Included» está junto al precio, abajo.
+export function textoPrecioBarra(barra: BarraEvento): string {
+  return barra.precio.startsWith('+') ? barra.precio : idiomaUI() === 'en' ? 'Included' : t('Included in the price')
+}
+
 // Las tres tarjetas de barra (Caribbean · Caribbean Plus · Signature).
 //
 // [2026-11-25, Sr. Fernando en Gerencia: «se nos olvidó el open bar, mismo
@@ -65,7 +72,7 @@ export function TarjetasBarra({
               {/* La ficha del evento llega ya traducida (`traducible`), y
                   «Included» se traduce como «Qué incluye» (el título de otra
                   sección). La barra incluida es la que no lleva «+US$». */}
-              {barra.precio.startsWith('+') ? barra.precio : idiomaUI() === 'en' ? 'Included' : t('Included in the price')}
+              {textoPrecioBarra(barra)}
             </p>
             <p className="text-xs uppercase tracking-wide text-navy-sub">{t(barra.precioNota)}</p>
 

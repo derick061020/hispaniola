@@ -17,7 +17,7 @@ import {
 } from '@/data/fiesta-on-deck'
 import { formatoDinero } from '@/data/home'
 // (las barras salen de barrasFod: la carta de cócteles cambia por temático)
-import { TarjetasBarra } from '@/components/evento/tarjetas-barra'
+import { TarjetasBarraFod } from '@/components/fiesta-on-deck/tarjetas-barra-fod'
 import { t } from '@/lib/i18n'
 
 // Las secciones de las landings de Fiesta on Deck (2026-11-24). Mismo orden
@@ -196,21 +196,23 @@ export function BarraFod({ marca, elegida, onElegir }: { marca: MarcaFod; elegid
           'Every package sails with our Caribbean open bar included. Upgrade it for the whole group if you want wine, cocktails or premium labels on board — the price is per guest, and it is added on top of your food package.',
         ) + ' ' + t(introCartaFod(marca))}
       />
-      <div className="fod-sombra mt-12 border-2 border-fod-texto bg-papel p-4 sm:p-6">
-        <TarjetasBarra
-          items={barrasFod(marca)}
-          elegida={elegida}
-          onElegir={(id) => {
-            onElegir(id)
-            // Igual que al elegir un paquete en las landings de evento: el
-            // efecto (el total) está en la calculadora, así que se baja a ella.
-            document.getElementById('fod-reserva')?.scrollIntoView({
-              block: 'start',
-              behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
-            })
-          }}
-        />
-      </div>
+      {/* [2026-11-26, Sr. Fernando: «los menús en Afro y Latin… con cada estilo
+          de la página»] Sin el panel blanco: las tarjetas ya llevan la línea
+          visual de la landing (ver tarjetas-barra-fod.tsx). */}
+      <TarjetasBarraFod
+        marca={marca}
+        items={barrasFod(marca)}
+        elegida={elegida}
+        onElegir={(id) => {
+          onElegir(id)
+          // Igual que al elegir un paquete en las landings de evento: el
+          // efecto (el total) está en la calculadora, así que se baja a ella.
+          document.getElementById('fod-reserva')?.scrollIntoView({
+            block: 'start',
+            behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+          })
+        }}
+      />
     </Seccion>
   )
 }

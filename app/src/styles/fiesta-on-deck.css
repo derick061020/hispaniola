@@ -160,3 +160,110 @@
 .fod-latin {
   color-scheme: dark;
 }
+
+/* ── Tarjetas del open bar (2026-11-26, Sr. Fernando en Gerencia: «los menús
+   en Afro y Latin los necesitamos con cada estilo de la página», con dos
+   maquetas). Cada marca solo define sus colores --barra-*; las reglas de
+   abajo son las mismas para las dos. Qué va en bloque (precio en Afro, nombre
+   en Latin) lo decide tarjetas-barra-fod.tsx. */
+.fod-afro .fod-barra {
+  --barra-fondo: var(--fod-acento); /* amarillo Afro */
+  --barra-texto: var(--fod-fondo); /* negro */
+  --barra-suave: var(--fod-fondo);
+  --barra-borde: var(--fod-fondo);
+  --barra-bloque: var(--fod-fondo);
+  --barra-sobre-bloque: var(--fod-acento);
+  --barra-precio: var(--fod-fondo);
+  --barra-detalle: var(--fod-fondo); /* viñetas, icono, filete de la caja */
+  --barra-chip-fondo: var(--fod-fondo);
+  --barra-chip-texto: var(--fod-acento);
+  --barra-chip-borde: var(--fod-fondo);
+  --barra-sello-fondo: var(--fod-fondo);
+  --barra-sello-texto: var(--fod-acento);
+  --barra-elegido-fondo: var(--fod-fondo);
+  --barra-elegido-texto: var(--fod-acento);
+  --barra-elegir-fondo: transparent;
+  --barra-elegir-texto: var(--fod-fondo);
+  --barra-elegir-borde: var(--fod-fondo);
+}
+.fod-latin .fod-barra {
+  --barra-fondo: var(--fod-fondo); /* azul bandera de noche */
+  --barra-texto: var(--fod-texto);
+  --barra-suave: var(--fod-humo);
+  --barra-borde: var(--fod-acento); /* mango */
+  --barra-bloque: var(--fod-acento-2); /* rojo bandera */
+  --barra-sobre-bloque: var(--fod-texto);
+  --barra-precio: var(--fod-acento);
+  --barra-detalle: var(--fod-acento);
+  --barra-chip-fondo: transparent;
+  --barra-chip-texto: var(--fod-texto);
+  --barra-chip-borde: var(--fod-acento);
+  --barra-sello-fondo: var(--fod-acento);
+  --barra-sello-texto: var(--fod-sobre-acento);
+  --barra-elegido-fondo: var(--fod-acento-2);
+  --barra-elegido-texto: var(--fod-texto);
+  --barra-elegir-fondo: var(--fod-acento);
+  --barra-elegir-texto: var(--fod-sobre-acento);
+  --barra-elegir-borde: var(--fod-acento);
+}
+.fod-barra {
+  background: var(--barra-fondo);
+  color: var(--barra-texto);
+  border: 3px solid var(--barra-borde);
+}
+/* Bloque inclinado: paralelogramo (clip-path) + letra oblicua. Se recorta en
+   vez de usar skew para que el texto no salga deformado. */
+.fod-barra__bloque {
+  display: inline-block;
+  max-width: 100%;
+  padding: 0.12em 0.75em 0.08em 0.6em;
+  background: var(--barra-bloque);
+  color: var(--barra-sobre-bloque);
+  font-style: italic;
+  clip-path: polygon(0.45em 0, 100% 0, calc(100% - 0.45em) 100%, 0 100%);
+  transform: rotate(-1.5deg);
+  transform-origin: left center;
+}
+.fod-barra__precio {
+  color: var(--barra-precio);
+}
+.fod-barra__suave {
+  color: var(--barra-suave);
+}
+.fod-barra__icono,
+.fod-barra__titulo-caja {
+  color: var(--barra-detalle);
+}
+.fod-barra__vineta {
+  background: var(--barra-detalle);
+}
+.fod-barra__caja {
+  border: 2px solid var(--barra-detalle);
+}
+.fod-barra__sello {
+  background: var(--barra-sello-fondo);
+  color: var(--barra-sello-texto);
+}
+.fod-barra__chip {
+  background: var(--barra-chip-fondo);
+  color: var(--barra-chip-texto);
+  border: 2px solid var(--barra-chip-borde);
+}
+.fod-barra__boton {
+  background: var(--barra-elegir-fondo);
+  color: var(--barra-elegir-texto);
+  border: 2px solid var(--barra-elegir-borde);
+  transition: transform 0.12s;
+}
+.fod-barra__boton:hover {
+  transform: translateY(-1px);
+}
+.fod-barra__boton[aria-pressed='true'] {
+  background: var(--barra-elegido-fondo);
+  color: var(--barra-elegido-texto);
+  border-color: var(--barra-elegido-fondo);
+}
+.fod-latin .fod-barra__boton {
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
