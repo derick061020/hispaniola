@@ -244,6 +244,12 @@ function FlujoReserva({
     telefono: '',
   })
   const [celebracion, setCelebracion] = useState<DatosCelebracion>({ ocasion: null, nota: '' })
+  // [27/11, Marketing] Casilla «Quiero recibir ofertas y novedades». Empieza
+  // SIEMPRE sin marcar y no se guarda en el navegador: el permiso es de esta
+  // visita. `consentimiento` es el trozo de parche que la lleva a Odoo, y solo
+  // existe cuando está marcada (un `false` no debe parecer una baja).
+  const [aceptaMarketing, setAceptaMarketing] = useState(false)
+  const consentimiento = aceptaMarketing ? { consent: { marketing_optin: true } } : {}
 
   // ── EL PRECIO YA NO SE CALCULA AQUÍ (2026-08-10, conexión con Odoo) ──────
   //
@@ -567,6 +573,7 @@ function FlujoReserva({
     ...(celebracion.ocasion && celebracion.ocasion !== 'ninguna'
       ? { occasion: celebracion.ocasion, occasion_note: celebracion.nota.trim() }
       : {}),
+    ...consentimiento,
   })
 
   // Copia local de la reserva. Ya NO es el almacén —la buena está en Odoo— pero
@@ -689,6 +696,7 @@ function FlujoReserva({
                 email: contacto.email.trim(),
                 phone: telefonoDe(contacto),
               },
+              ...consentimiento,
             })
           },
         }
@@ -940,6 +948,14 @@ function FlujoReserva({
                   }
                   celebracion={celebracion}
                   onCambioCelebracion={(parcial) => setCelebracion((c) => ({ ...c, ...parcial }))}
+                  aceptaMarketing={aceptaMarketing}
+                  // [27/11, Marketing] Al marcarla se guarda ya (si aún no hay
+                  // email, Odoo la aplica cuando llegue: también viaja con
+                  // «Continue» y con el pago). Desmarcar no manda nada.
+                  onCambioMarketing={(acepta) => {
+                    setAceptaMarketing(acepta)
+                    if (acepta) checkout.sincronizar({ step: 'contact', consent: { marketing_optin: true } })
+                  }}
                 />
                 {/* [2026-10-02, Marketing: «reducir la cantidad de pasos»]
                     La recogida ya no es un paso: son dos campos más de esta
@@ -981,6 +997,7 @@ function FlujoReserva({
                       ...(celebracion.ocasion && celebracion.ocasion !== 'ninguna'
                         ? { occasion: celebracion.ocasion, occasion_note: celebracion.nota.trim() }
                         : {}),
+                      ...consentimiento,
                     })
                     setPaso(siguienteDe('contacto'))
                   }}

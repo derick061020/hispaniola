@@ -389,6 +389,11 @@ export type ParcheCheckout = {
    *  antes de `/pay`, para que un back que lo rechace no se lleve por delante
    *  el guardado del formulario. Ver PARA-DERICK.md §4. */
   legal_acceptance?: AceptacionLegal
+  /** [27/11, Marketing] Casilla «Quiero recibir ofertas y novedades» del paso
+   *  de contacto. Solo se manda cuando está MARCADA: Odoo la apunta en la
+   *  ficha del cliente (`marketing_opt_in` + fecha). Un `false` no retira un
+   *  permiso dado antes; la baja va por el enlace de los correos. */
+  consent?: { marketing_optin?: boolean }
 }
 
 /** Constancia de aceptación de las políticas. Ejemplo:

@@ -43,6 +43,8 @@ export function PasoContacto({
   onGuardarContacto,
   celebracion,
   onCambioCelebracion,
+  aceptaMarketing = false,
+  onCambioMarketing,
 }: {
   datos: DatosContacto
   onCambio: (parcial: Partial<DatosContacto>) => void
@@ -51,6 +53,11 @@ export function PasoContacto({
   onGuardarContacto?: (parcial: { email?: string; phone?: string }) => void
   celebracion: DatosCelebracion
   onCambioCelebracion: (parcial: Partial<DatosCelebracion>) => void
+  /** [27/11, Marketing] Autorización de marketing. Empieza SIEMPRE sin marcar:
+   *  el consentimiento tiene que ser un gesto del cliente, nunca un valor por
+   *  defecto. */
+  aceptaMarketing?: boolean
+  onCambioMarketing?: (acepta: boolean) => void
 }) {
   const [nombreTocado, setNombreTocado] = useState(false)
   const idAvisoNombre = useId()
@@ -150,6 +157,30 @@ export function PasoContacto({
             {t('Only to let you know about last-minute changes, for example if the weather forces us to move the tour.')}
           </p>
         </div>
+
+        {/* [27/11, Marketing: «hoy ningún cliente tiene marcado
+            marketing_opt_in»] Casilla de autorización de marketing. Opcional y
+            SIN MARCAR por defecto: el permiso solo vale si lo da la persona.
+            Va justo debajo del teléfono porque es de esos dos datos —email y
+            WhatsApp— de los que habla. Marcarla apunta en la ficha del cliente
+            `marketing_opt_in` con su fecha; desmarcarla no borra un permiso que
+            ya hubiera dado antes (la baja va por el enlace de los correos). */}
+        {onCambioMarketing ? (
+          <label className="flex cursor-pointer items-start gap-3 rounded-lg border border-linea px-3 py-2.5">
+            <input
+              type="checkbox"
+              className="mt-0.5 size-4 shrink-0 accent-aqua"
+              checked={aceptaMarketing}
+              onChange={(e) => onCambioMarketing(e.target.checked)}
+            />
+            <span className="text-sm leading-relaxed text-navy-sub">
+              {t('I’d like to receive offers and news from Hispaniola by email/WhatsApp')}
+              <span className="mt-0.5 block text-xs text-navy-soft">
+                {t('Optional. You can unsubscribe at any time.')}
+              </span>
+            </span>
+          </label>
+        ) : null}
 
         {/* [2026-10-03, Derick: «quita del checkout el apartado de idioma de
             los correos»] Aquí se elegía en qué lengua le escribía Odoo a este

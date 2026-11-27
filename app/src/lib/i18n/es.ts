@@ -27,6 +27,9 @@
  *  nombres propios (Maite, GrandMa, Bávaro Reefs Foundation), marcas y los
  *  códigos de idioma del propio selector. */
 export const ES: Record<string, string> = {
+  // [27/11, Marketing] Casilla de autorización de marketing del checkout.
+  "I’d like to receive offers and news from Hispaniola by email/WhatsApp": "Quiero recibir ofertas y novedades de Hispaniola por email/WhatsApp",
+  "Optional. You can unsubscribe at any time.": "Opcional. Puedes darte de baja cuando quieras.",
   " It's a ": " Es una ",
   " · Free cancellation": " · Cancelación gratuita",
   "#1 in water activities for 7 years": "#1 en actividades acuáticas 7 años",
